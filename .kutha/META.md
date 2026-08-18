@@ -41,6 +41,7 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 | `concat_absent` | concatenated files contain none of the needles |
 | `concat_contains_any` | concatenated files contain at least one needle |
 | `glob_absent` | no glob match contains any needle |
+| `glob_none` | glob must match no files (build artifacts) |
 | `markdown_heading_tag` | files matching glob have `## Status` + allowed tag |
 | `pointer_in_other_file` | exactly one regex capture in A must appear in B |
 

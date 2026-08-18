@@ -1,5 +1,6 @@
 //! In-memory P0 runtime: log = SoT, fold = picture, quantum = emit→idle (ADR-010).
 
+mod allow;
 mod csr;
 mod fold;
 mod leapfrog;

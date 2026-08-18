@@ -1,0 +1,10 @@
+schema: kutha-relations/v1
+# FF6 stub of ADR-050 Relation kind. Append a row to allow a write.
+# Unknown relation → no log append. Intern map (ADR-011) is not this list.
+# Override path with KUTHA_RELATIONS_PATH.
+
+relations:
+  - knows
+  - knownBy
+  - relatedTo
+  - inForceAs

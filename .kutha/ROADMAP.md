@@ -12,7 +12,7 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
   > After this: `as_of(T1) ≠ as_of(T2)` on a three-fact statute-shaped log; FF5 test exists.
 - [x] **S02: CSR agrees with the cut** `risk:medium` `depends:[S01]`
   > After this: rebuilding the CSR lease at T_old vs T_new matches the fold.
-- [ ] **S03: Relation allowlist fail-closed** `risk:low` `depends:[S01]`
+- [x] **S03: Relation allowlist fail-closed** `risk:low` `depends:[S01]`
   > After this: unknown relation does not append (FF6 stub, not six dictionaries).
 
 ## Boundary map
@@ -36,6 +36,6 @@ Do not start until M001 capability is green.
 - **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
 - **M005** — HNSW fence as retrieve-not-truth.
 
-## Freeze until M001 S03 (FF6 stub)
+## Freeze until explicit M002 lease
 
-RocksDB crate, Cypher parser, HNSW, ABAC rewrite, RVF as hot store, bulk honeycomb Accepted, Consensus 103+. S01/S02 (named `as_of` + CSR cut) are done.
+RocksDB crate, Cypher parser, HNSW, ABAC rewrite, RVF as hot store, bulk honeycomb Accepted, Consensus 103+. M001 S01–S03 are done.

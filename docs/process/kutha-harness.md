@@ -154,4 +154,4 @@ Adding a check: append a row to `.kutha/dictionaries/checks.yaml` using a kind f
 - System `python3` / 3.12 as the harness interpreter (must be uv + 3.13).
 - Harness as a workflow engine (Cui remains pack composition, not GSD).
 - Implementing the STCA-guide §5 tutorial runtime as a second graph (JSON merge-patch objects). That skeleton is **pedagogical**; Kutha events are typed `Op`.
-- Legal / science **product** packs (ADR-090/093) as the next crate — first product steel thread is M001; S01/S02 (named AS OF + CSR cut) are done; next is S03 (FF6 allowlist stub).
+- Legal / science **product** packs (ADR-090/093) as the next crate — M001 S01–S03 are done; do not start Rocks until STATE names M002. Next harness rung is H1.

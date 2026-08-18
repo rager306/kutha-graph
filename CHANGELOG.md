@@ -22,3 +22,22 @@ All notable changes to this repository are recorded here. Process plane (harness
 ### Trajectory
 
 - M001 S01 and S02 done. Active slice is S03 (FF6 relation-allowlist stub). Honeycomb ADRs stay Proposed.
+
+## 2026-08-18 — Wave 2: FF6 relation allowlist + harness hygiene
+
+### Product
+
+- Fail-closed writes: `Runtime::emit` admits only relations listed in `crates/kutha-runtime/dictionaries/relations.yaml` (`schema: kutha-relations/v1`). Unknown relation → `RuntimeError::UnknownRelation`; log does not grow.
+- Path override: `KUTHA_RELATIONS_PATH`. Cascade default: `KUTHA_MAX_CASCADE` (also from repo `.env`).
+- FF6 tests: `crates/kutha-runtime/tests/ff6_allowlist.rs`.
+
+### Process
+
+- Kind `glob_none`: forbidden globs (setuptools `*.egg-info` must not live in the tree).
+- Check `relation-allowlist` guards the product dictionary.
+- FSM transitions must use `event:` (test rejects YAML 1.1 boolean keys).
+
+### Trajectory
+
+- M001 S03 done. Active slice **None**. Next: H1 (cargo test as harness evidence). M002 Rocks stays frozen until STATE names it.
+

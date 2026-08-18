@@ -57,7 +57,23 @@ class FsmTests(unittest.TestCase):
         )
         self.assertEqual(0, outcome.high)
 
-    def test_budget_comes_from_env_or_fsm_not_python_literal(self) -> None:
+    def test_fsm_transition_keys_are_not_yaml_booleans(self) -> None:
+        machine = load_machine(ROOT)
+        for row in machine.transitions:
+            self.assertIn("event", row)
+            self.assertNotIn(True, row.keys())
+            self.assertNotIn(False, row.keys())
+
+    def test_glob_none_fails_when_a_match_exists(self) -> None:
+        from kutha_gov.kinds import run_step
+        from kutha_gov.protocol import CheckResult
+
+        result = CheckResult(check="probe")
+        ctx = Context(root=ROOT)
+        run_step("probe", {"kind": "glob_none", "glob": "Cargo.toml"}, ctx, result)
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertEqual(1, len(highs))
+        self.assertEqual("glob-none", highs[0].category)
         self.assertEqual(4, resolve_budget(cli=4, fsm_default=32))
         previous = os.environ.pop("KUTHA_GOV_BUDGET", None)
         try:

@@ -29,6 +29,7 @@ class HarnessTests(unittest.TestCase):
                 "dogfood",
                 "toolchain",
                 "meta-prompt",
+                "relation-allowlist",
             }.issubset(names)
         )
 

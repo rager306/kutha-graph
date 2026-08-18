@@ -28,13 +28,13 @@ Governor green ≠ ADR Accepted ≠ capability. Honeycomb **Proposed** ≠ deliv
 - **Idea stack (top → down):** **STCA** (ADR-002) → vision (ADR-001) → locks D1–D10 (ADR-000) → honeycomb cells (ADR-010–093, all **Proposed**).
 - **Formula:** event log = SoT; graph = deterministic fold; CSR/HNSW/views = droppable leases; LLM proposes; dictionaries + log own audited truth.
 - **Wedge:** legal / normative temporal agents (norm **AS OF** a date). Science next; finance/clinical are receipt/hold riders until a pack exists.
-- **P0 spike (in crates, not Accepted product):** log, fold, quantum emit→idle, receipt, snapshot, WAL-cousin, CSR lease, leapfrog intersect, `Materializer` trait, `fork_at`. **Not in spike:** RocksDB crate, Cypher, HNSW, ABAC, legal corpus.
+- **P0 spike (in crates, not Accepted product):** log, fold, quantum emit→idle, receipt, snapshot, WAL-cousin, CSR lease, leapfrog intersect, `Materializer` trait, `fork_at`, named `as_of`/`live_at`, FF6 relation allowlist. **Not in spike:** RocksDB crate, Cypher, HNSW, ABAC, legal corpus, ADR-050 six dictionaries.
 
 ## Current execution position
 
-Read `.kutha/STATE.md` first (lease, not SoT). Active delivery is **M001 Legal PIT / S03**. Capability **FF5** is green (`as_of(2015) ≠ as_of(2021)` on the statute fixture). Next slice is **FF6 stub**: one relation allowlist, fail-closed.
+Read `.kutha/STATE.md` first (lease, not SoT). **M001 S01–S03 are done** (named AS OF, CSR cut, FF6 allowlist). Capability **FF5** is green. Active slice is **None** until a new lease. Next thin slice: harness **H1** (observe `cargo test` as evidence). Do not start M002 Rocks until STATE names it.
 
-Until S03: do not add RocksDB, Cypher/GPML parser, HNSW, ADR-050 six dictionaries, ADR-080/081, full ADR-090/093 packs, ADR-100+, or Consensus Query 103+.
+Until explicit M002: do not add RocksDB, Cypher/GPML parser, HNSW, ADR-050 six dictionaries, ADR-080/081, full ADR-090/093 packs, ADR-100+, or Consensus Query 103+.
 
 Literature bound is **closed** (163 cards). Do not mint aggregator waves. Matrix: `.compound-engineering/artifacts/research/applicability/` (`cards/` = SoT; `matrix.md` = rollup; `architecture-gtm-readout.md` = GTM translation).
 
@@ -57,7 +57,7 @@ kutha-graph/
 │   └── events.jsonl                   # process log (gitignored; H0 Time axis)
 ├── crates/                            # product plane (Rust)
 │   ├── kutha-common/                  # Event, Op::{Assert,Retract,Correct,Behavior}, intern, UUID v7
-│   └── kutha-runtime/                 # log, fold, quantum, receipt, snapshot, WAL, CSR, LFTJ
+│   └── kutha-runtime/                 # log, fold, quantum, receipt, snapshot, WAL, CSR, LFTJ, allowlist
 ├── docs/
 │   ├── ADR/                           # spine 000–002 + honeycomb 010–093 (all Proposed)
 │   ├── architecture/stca-guide.md     # STCA manifesto (do not copy §5 JSON tutorial into harness)
@@ -100,7 +100,7 @@ Pin: `.python-version`. Copy `.env.example` to `.env` for `KUTHA_GOV_BUDGET` / `
 
 1. Honor locked ADR-000 **D1–D10**. Do not revive: pure Samyama product, pure ActiveGraph without hot projections, hard FSM as sole agent control, TypeScript as graph core, RVF as primary storage, Graphiti/Dify/Hindsight as SoT.
 2. STCA first. New product detail → honeycomb ADR-010+ (`docs/ADR/README.md`), never silent rewrites of 000/001/002. **Accepted** only when that cell is in the running engine.
-3. Honeycomb is a **map**. One steel thread at a time (now M001 S03). “Promote all” is forbidden.
+3. Honeycomb is a **map**. One steel thread at a time (next: H1, not M002). “Promote all” is forbidden.
 4. Prefer falsifiable spikes over generic “build a graph DB” advice.
 5. Core stays self-contained Rust (no mandatory external graph DB / Graphiti runtime / LLM for temporal truth).
 6. Harness is a **parallel STCA plane** that dogfoods with the engine (`docs/process/kutha-harness.md`). H0 = files + JSONL + **meta-prompt dictionaries + FSM**; H2 (later) = same typed triples on the Kutha log. Do not clone law-nexus 171-milestone GSD or copy `stca-guide.md` §5 merge-patch runtime. New check = YAML row; new CI phase = FSM row; new kind = rare `kinds.py` / `fsm.py` change. Unknown kind → HIGH.

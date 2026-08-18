@@ -6,6 +6,7 @@
 **/*.rs.bk
 **/__pycache__/
 .venv/
+*.egg-info/
 uv.toml.bak
 
 # Local harness settings (committed template: .env.example)

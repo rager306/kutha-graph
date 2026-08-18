@@ -1,9 +1,11 @@
+use crate::allow::load_allowed_names;
 use crate::csr::CsrLease;
 use crate::fold::GraphFold;
 use crate::log::EventLog;
 use crate::receipt::QuantumReceipt;
 use crate::snapshot::Snapshot;
 use kutha_common::{Event, Op, TermDictionary, TermId};
+use std::collections::HashSet;
 use std::fmt;
 
 #[derive(Debug)]
@@ -15,6 +17,9 @@ pub enum RuntimeError {
     UnknownFact {
         fact_seq: u64,
     },
+    UnknownRelation {
+        name: String,
+    },
 }
 
 impl fmt::Display for RuntimeError {
@@ -22,7 +27,17 @@ impl fmt::Display for RuntimeError {
         match self {
             RuntimeError::ReplayDivergence { .. } => write!(f, "ReplayDivergenceError"),
             RuntimeError::UnknownFact { fact_seq } => write!(f, "unknown fact {fact_seq}"),
+            RuntimeError::UnknownRelation { name } => {
+                write!(f, "unknown relation {name} (not in allowlist)")
+            }
         }
+    }
+}
+
+fn op_relation(op: &Op) -> Option<TermId> {
+    match op {
+        Op::Assert { relation, .. } | Op::Behavior { relation, .. } => Some(*relation),
+        Op::Retract { .. } | Op::Correct { .. } => None,
     }
 }
 
@@ -43,11 +58,20 @@ pub struct Runtime {
     pub max_cascade: usize,
     knows: TermId,
     known_by: TermId,
+    allowed: HashSet<String>,
 }
 
 impl Default for Runtime {
     fn default() -> Self {
-        Self::new(32)
+        let v = {
+            crate::allow::apply_dotenv();
+            std::env::var("KUTHA_MAX_CASCADE")
+                .ok()
+                .and_then(|s| s.parse().ok())
+                .filter(|n: &usize| *n > 0)
+                .unwrap_or(32)
+        };
+        Self::new(v)
     }
 }
 
@@ -64,6 +88,7 @@ impl Runtime {
             max_cascade,
             knows,
             known_by,
+            allowed: load_allowed_names(),
         }
     }
 
@@ -112,6 +137,7 @@ impl Runtime {
             max_cascade: snap.max_cascade,
             knows: snap.knows,
             known_by: snap.known_by,
+            allowed: load_allowed_names(),
         }
     }
 
@@ -132,6 +158,7 @@ impl Runtime {
             max_cascade: self.max_cascade,
             knows: self.knows,
             known_by: self.known_by,
+            allowed: self.allowed.clone(),
         }
     }
 
@@ -150,6 +177,23 @@ impl Runtime {
         t
     }
 
+    fn admit(&self, op: &Op) -> Result<(), RuntimeError> {
+        let Some(rel) = op_relation(op) else {
+            return Ok(());
+        };
+        let name = self.dict.lookup(rel).unwrap_or("").to_string();
+        if self.allowed.contains(&name) {
+            return Ok(());
+        }
+        Err(RuntimeError::UnknownRelation {
+            name: if name.is_empty() {
+                format!("#{rel}")
+            } else {
+                name
+            },
+        })
+    }
+
     /// Admit a user op, append, fold, cascade inverse-`knows` until idle or budget.
     pub fn emit(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
         if let Op::Retract { fact_seq } | Op::Correct { fact_seq, .. } = &op {
@@ -159,10 +203,15 @@ impl Runtime {
                 });
             }
         }
+        self.admit(&op)?;
+        let first = Event::new(op, self.next_tt());
+        for follow in self.follow_ons(&first) {
+            self.admit(&follow.op)?;
+        }
         let mut ids = Vec::new();
         let mut digests = Vec::new();
         let mut aborted = false;
-        let mut pending = vec![Event::new(op, self.next_tt())];
+        let mut pending = vec![first];
         let mut used = 0usize;
 
         while let Some(event) = pending.pop() {

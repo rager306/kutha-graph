@@ -111,6 +111,22 @@ checks:
         needles: ["kutha_gov"]
         category: plane-mix
         message: "kutha-runtime must not import the harness"
+      - kind: glob_none
+        glob: "**/*.egg-info/*"
+        category: build-artifact
+        message: "setuptools egg-info must not be in the tree: {path}"
+
+  - id: relation-allowlist
+    description: FF6 stub — one relation dictionary, fail-closed writes
+    steps:
+      - kind: file_exists
+        path: crates/kutha-runtime/dictionaries/relations.yaml
+      - kind: file_contains
+        path: crates/kutha-runtime/dictionaries/relations.yaml
+        needles: ["schema: kutha-relations/v1", "inForceAs", "knows", "knownBy"]
+        require: all
+        category: allowlist
+        message: "relation dictionary missing {missing}"
 
   - id: toolchain
     description: harness is Python >=3.13 under uv with ruff+ty+pyrefly
@@ -124,7 +140,7 @@ checks:
         path: .env.example
       - kind: file_contains
         path: .env.example
-        needles: ["KUTHA_GOV_BUDGET=", "KUTHA_GOV_FAIL_ON_WARN="]
+        needles: ["KUTHA_GOV_BUDGET=", "KUTHA_GOV_FAIL_ON_WARN=", "KUTHA_MAX_CASCADE="]
         require: all
         category: env
         message: ".env.example missing harness settings: {missing}"
@@ -160,6 +176,7 @@ checks:
           - "Do not add `scripts/kutha_gov/checks/*.py`"
           - "unknown-fsm-kind"
           - "require_file"
+          - "glob_none"
         require: all
         category: constitution
         message: "META.md missing constitution clauses"

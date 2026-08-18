@@ -17,6 +17,7 @@ ALLOWED_KINDS: frozenset[str] = frozenset(
         "concat_absent",
         "concat_contains_any",
         "glob_absent",
+        "glob_none",
         "markdown_heading_tag",
         "pointer_in_other_file",
     }
@@ -242,6 +243,23 @@ def _kind_glob_absent(check: str, step: Step, ctx: Context, result: CheckResult)
                 )
 
 
+def _kind_glob_none(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
+    pattern = _str(step, "glob")
+    hits = [path for path in sorted(ctx.root.glob(pattern)) if path.is_file() or path.is_dir()]
+    result.scanned = len(hits)
+    if not hits:
+        return
+    rel = str(hits[0].relative_to(ctx.root))
+    message = _fmt(
+        _str(step, "message", "forbidden path exists: {path}"),
+        path=rel,
+        n=len(hits),
+    )
+    result.findings.append(
+        Finding(check, _severity(step), _category(step, "glob-none"), message, rel)
+    )
+
+
 def _kind_markdown_heading_tag(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
     pattern = _str(step, "glob")
     heading = _str(step, "heading", "## Status")
@@ -366,6 +384,7 @@ RUNNERS: dict[str, Runner] = {
     "concat_absent": _kind_concat_absent,
     "concat_contains_any": _kind_concat_contains_any,
     "glob_absent": _kind_glob_absent,
+    "glob_none": _kind_glob_none,
     "markdown_heading_tag": _kind_markdown_heading_tag,
     "pointer_in_other_file": _kind_pointer_in_other_file,
 }
