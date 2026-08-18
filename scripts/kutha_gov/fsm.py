@@ -20,6 +20,7 @@ ALLOWED_STATE_KINDS: frozenset[str] = frozenset(
         "noop",
         "require_file",
         "run_checks",
+        "observe_cargo",
         "emit_log",
         "fold_log",
         "decide",
@@ -46,8 +47,9 @@ class QuantumOutcome:
     high: int = 0
     low: int = 0
     skipped: int = 0
-    findings: list[Finding] = field(default_factory=list)
     results: list[CheckResult] = field(default_factory=list)
+    findings: list[Finding] = field(default_factory=list)
+    observations: list[tuple[str, str]] = field(default_factory=list)
 
 
 def load_machine(root: Path) -> Machine:
@@ -214,10 +216,30 @@ def _execute(
         outcome.skipped = len(ordered) - len(selected)
         outcome.results = [_run_one(chk, ctx) for _, chk in selected]
         return "done"
+    if kind == "observe_cargo":
+        from kutha_gov.observe import run_cargo_observation
+
+        code, seen_ok, findings = run_cargo_observation(ctx.root, spec)
+        outcome.findings.extend(findings)
+        status = "ok" if code == 0 and not findings else "fail"
+        outcome.observations.append(("cargo", status))
+        for name in seen_ok:
+            outcome.observations.append((name, "ok"))
+        return "done"
     if kind == "emit_log":
-        high = sum(r.high_count for r in outcome.results)
-        low = sum(r.low_count for r in outcome.results)
-        append_run(ctx.root, high=high, low=low, check_count=len(outcome.results))
+        high = sum(r.high_count for r in outcome.results) + sum(
+            1 for f in outcome.findings if f.severity is Severity.HIGH
+        )
+        low = sum(r.low_count for r in outcome.results) + sum(
+            1 for f in outcome.findings if f.severity is Severity.LOW
+        )
+        append_run(
+            ctx.root,
+            high=high,
+            low=low,
+            check_count=len(outcome.results),
+            observations=outcome.observations,
+        )
         return "ok"
     if kind == "fold_log":
         fold_log(ctx.root / LOG_REL)

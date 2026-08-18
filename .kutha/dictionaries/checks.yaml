@@ -116,6 +116,22 @@ checks:
         category: build-artifact
         message: "setuptools egg-info must not be in the tree: {path}"
 
+  - id: observe-required-fn
+    description: FSM observe_cargo required names exist as Rust tests (static, not SoT)
+    steps:
+      - kind: file_contains
+        path: crates/kutha-runtime/tests/ff5_legal_pit.rs
+        needles: ["fn ff5_as_of_t1_differs_from_as_of_t2_on_statute_log"]
+        require: all
+        category: observe-fn
+        message: "FF5 test name missing from crate: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/tests/ff6_allowlist.rs
+        needles: ["fn ff6_unknown_relation_does_not_append"]
+        require: all
+        category: observe-fn
+        message: "FF6 test name missing from crate: {missing}"
+
   - id: relation-allowlist
     description: FF6 stub — one relation dictionary, fail-closed writes
     steps:
@@ -140,7 +156,7 @@ checks:
         path: .env.example
       - kind: file_contains
         path: .env.example
-        needles: ["KUTHA_GOV_BUDGET=", "KUTHA_GOV_FAIL_ON_WARN=", "KUTHA_MAX_CASCADE="]
+        needles: ["KUTHA_GOV_BUDGET=", "KUTHA_GOV_FAIL_ON_WARN=", "KUTHA_MAX_CASCADE=", "KUTHA_GOV_CARGO_TIMEOUT_SEC="]
         require: all
         category: env
         message: ".env.example missing harness settings: {missing}"
@@ -177,6 +193,7 @@ checks:
           - "unknown-fsm-kind"
           - "require_file"
           - "glob_none"
+          - "observe_cargo"
         require: all
         category: constitution
         message: "META.md missing constitution clauses"

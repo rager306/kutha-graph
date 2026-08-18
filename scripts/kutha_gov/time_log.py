@@ -104,7 +104,14 @@ def fold_log(path: Path) -> HarnessFold:
     return picture
 
 
-def append_run(root: Path, *, high: int, low: int, check_count: int) -> HarnessEvent:
+def append_run(
+    root: Path,
+    *,
+    high: int,
+    low: int,
+    check_count: int,
+    observations: list[tuple[str, str]] | None = None,
+) -> HarnessEvent:
     """One runtime quantum: emit run status (+ counts). File adapter, not product WAL."""
     log_path = root / LOG_REL
     log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -130,6 +137,19 @@ def append_run(root: Path, *, high: int, low: int, check_count: int) -> HarnessE
             run_id,
         ),
     ]
+    for relation, obj in observations or []:
+        events.append(
+            HarnessEvent(
+                _now_v7(),
+                "assert",
+                "harness.observe",
+                relation,
+                obj,
+                ingested,
+                ingested,
+                run_id,
+            )
+        )
     with log_path.open("a", encoding="utf-8") as handle:
         for event in events:
             handle.write(json.dumps(event.to_json(), separators=(",", ":")) + "\n")

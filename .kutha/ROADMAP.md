@@ -27,6 +27,12 @@ Consumes: existing `Fact::is_live_at`.
 Produces: CSR rebuild at a cut.  
 Consumes: S01 fixture.
 
+## Harness dogfood (process plane, not M00x)
+
+- [x] **H0** — dictionary FSM + file trajectory.
+- [x] **H1** — `kutha-gov ci` observes named FF tests via `cargo test` (evidence, not SoT).
+- [ ] **H2** — harness facts on the Kutha log; query AS OF the process.
+
 ## Later milestones (not active)
 
 Do not start until M001 capability is green.

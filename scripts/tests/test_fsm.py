@@ -48,6 +48,7 @@ class FsmTests(unittest.TestCase):
                 "load_checks",
                 "load_fsm",
                 "run_checks",
+                "observe_cargo",
                 "emit",
                 "fold",
                 "decide",
@@ -56,6 +57,7 @@ class FsmTests(unittest.TestCase):
             outcome.trace,
         )
         self.assertEqual(0, outcome.high)
+        self.assertIn(("cargo", "ok"), outcome.observations)
 
     def test_fsm_transition_keys_are_not_yaml_booleans(self) -> None:
         machine = load_machine(ROOT)
@@ -74,6 +76,8 @@ class FsmTests(unittest.TestCase):
         highs = [f for f in result.findings if f.severity is Severity.HIGH]
         self.assertEqual(1, len(highs))
         self.assertEqual("glob-none", highs[0].category)
+
+    def test_budget_comes_from_env_or_fsm_not_python_literal(self) -> None:
         self.assertEqual(4, resolve_budget(cli=4, fsm_default=32))
         previous = os.environ.pop("KUTHA_GOV_BUDGET", None)
         try:
@@ -86,6 +90,35 @@ class FsmTests(unittest.TestCase):
                 os.environ.pop("KUTHA_GOV_BUDGET", None)
             else:
                 os.environ["KUTHA_GOV_BUDGET"] = previous
+
+
+class ObserveTests(unittest.TestCase):
+    def test_missing_required_ff_is_high_evidence_not_sot(self) -> None:
+        from kutha_gov.observe import interpret_cargo_output
+
+        findings = interpret_cargo_output(
+            "test foo ... ok\n", ["ff5_as_of_t1_differs_from_as_of_t2_on_statute_log"]
+        )[1]
+        highs = [f for f in findings if f.severity is Severity.HIGH]
+        self.assertEqual(1, len(highs))
+        self.assertEqual("observe-missing", highs[0].category)
+
+    def test_required_ff_ok_is_observation_without_high(self) -> None:
+        from kutha_gov.observe import interpret_cargo_output
+
+        name = "ff5_as_of_t1_differs_from_as_of_t2_on_statute_log"
+        seen, findings = interpret_cargo_output(f"test {name} ... ok\n", [name])
+        self.assertEqual([name], seen)
+        self.assertEqual([], findings)
+
+    def test_required_ff_failed_is_high(self) -> None:
+        from kutha_gov.observe import interpret_cargo_output
+
+        name = "ff5_as_of_t1_differs_from_as_of_t2_on_statute_log"
+        seen, findings = interpret_cargo_output(f"test {name} ... FAILED\n", [name])
+        self.assertEqual([], seen)
+        self.assertEqual(1, len(findings))
+        self.assertEqual("observe-fail", findings[0].category)
 
 
 if __name__ == "__main__":

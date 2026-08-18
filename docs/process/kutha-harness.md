@@ -45,7 +45,7 @@ Each rung is a harness capability that **uses a newly real product surface**. Do
 | Rung | Harness does | Unlocks when |
 |------|----------------|--------------|
 | **H0** | File trajectory + dictionary FSM: STATE ↔ ROADMAP, ADR vocabulary, freeze, one active milestone/slice | Now |
-| **H1** | Evidence: `cargo test` / named FF tests as observations (not SoT) | FF1–FF5 in crates |
+| **H1** | Evidence: `cargo test` / named FF tests as observations (not SoT) | **Now** (FF5/FF6 in crates) |
 | **H2** | Assert harness events onto the **Kutha log** (delivery facts, not product norms); query **AS OF** the process | FF5 green — **unlocked, not started** |
 | **H3** | Fail-closed writes through a **relation allowlist** (stub of ADR-050) | FF6 stub (S03) |
 | **H4** | Legal pack dictionaries version the *process* rules the same way as norms | ADR-090 overlay + H2 |
@@ -86,13 +86,14 @@ Nakajima still holds: **graph = world, behaviors = physics, log = proof.** For t
 | honeycomb-map | IntentPort | STATE+ROADMAP text | treat honeycomb as M001 |
 | dogfood | ManifestPort | `docs/process/kutha-harness.md` | mix into `kutha-runtime` |
 | meta-prompt | ConstitutionPort | `.kutha/META.md` + dictionaries | Python Check subclasses as intake |
+| observe-required-fn | EvidencePort | named `fn` in `crates/*/tests` | treat cargo green as product SoT |
 
 Hexagon lives **inside** a slice (ADR-022). Do not grow a repo-root `ports/` / `adapters/` / `domain/` tree — that is the cohesion failure the manifesto forbids. Composition root is `uv run kutha-gov` (Python 3.13). Later a Rust `kutha-harness` bin that **only** wires adapters. Checks are Behaviors: they propose findings; they do not mutate ADRs.
 
 ### Time (ActiveGraph / ADR-010, typed)
 
 1. Human **asserts** intent (active milestone) in STATE — until H2 this is a typed fact on the Kutha log.
-2. Each `ci` quantum **emits** `harness.run` triples into `.kutha/events.jsonl` (append-only).
+2. Each `ci` quantum **emits** `harness.run` triples (and H1 `harness.observe` evidence) into `.kutha/events.jsonl` (append-only).
 3. `kutha_gov fold` is \(G = \mathrm{foldl}(\mathrm{apply}, G_0, L)\).
 4. Replay of the JSONL must reproduce the same last-run picture (process Strict Replay). Fork-and-diff of process history waits for product `fork_at` at H2.
 
@@ -112,7 +113,7 @@ Relation Behaviors (later): `finding --raisedOn--> check` triggers lifecycle war
 
 ### Isolation laws (guide §3)
 
-1. Domain ignorance: check logic does not import `kutha_runtime` at H0; H2 talks **only** through the runtime API (append/fold/as_of).
+1. Domain ignorance: check logic does not import `kutha_runtime`. H1 observes via a `cargo test` subprocess (evidence, not SoT). H2 talks **only** through the runtime API (append/fold/as_of).
 2. Private-by-default: kind interpreters stay in `kinds.py`; check *lists* stay in the dictionary.
 3. One composition root: CLI / future `kutha-harness` bin. Python stays repository-control (neighbors’ ADR-0007 lesson), never inside the graph crate.
 
@@ -126,7 +127,7 @@ assert  subject=M001         relation=active   object=S01     (intent)
 
 Intern map (ADR-011) ≠ process dictionaries (ADR-050). Process allowlist at H3.
 
-## CLI (H0)
+## CLI (H0–H1)
 
 ```text
 uv run kutha-gov list
@@ -139,9 +140,9 @@ uv run kutha-gov py
 uv run pytest
 ```
 
-Pin: `.python-version` → `3.13`. Copy `.env.example` to `.env` (`KUTHA_GOV_BUDGET`, `KUTHA_GOV_FAIL_ON_WARN`). CLI flags override env; env overrides `defaults.budget` in `.kutha/dictionaries/fsm.yaml`. Toolchain: **uv** + **ruff** + **ty** (Astral) + **pyrefly** (Meta). `kutha-gov py` is recursive dogfood of the harness Python. Do not invoke system `python3` (this host may be 3.12). HIGH findings → exit 1. LOW → exit 0 unless `--fail-on-warn`.
+Pin: `.python-version` → `3.13`. Copy `.env.example` to `.env` (`KUTHA_GOV_BUDGET`, `KUTHA_GOV_FAIL_ON_WARN`, `KUTHA_GOV_CARGO_TIMEOUT_SEC`). CLI flags override env; env overrides `defaults.budget` in `.kutha/dictionaries/fsm.yaml`. Toolchain: **uv** + **ruff** + **ty** (Astral) + **pyrefly** (Meta). `kutha-gov py` is recursive dogfood of the harness Python. Do not invoke system `python3` (this host may be 3.12). HIGH findings → exit 1. LOW → exit 0 unless `--fail-on-warn`.
 
-`ci` walks the FSM in `.kutha/dictionaries/fsm.yaml` (idle → load constitution/dictionaries → run checks → emit → fold → decide → ok|fail). Unknown FSM kind or missing transition → fail-closed. Do not hardcode a new CI phase in Python.
+`ci` walks the FSM in `.kutha/dictionaries/fsm.yaml` (idle → load constitution/dictionaries → run checks → **observe_cargo** → emit → fold → decide → ok|fail). `observe_cargo` records named FF tests as evidence; it does not become product SoT. Unknown FSM kind or missing transition → fail-closed. Do not hardcode a new CI phase in Python.
 
 Adding a check: append a row to `.kutha/dictionaries/checks.yaml` using a kind from `.kutha/META.md`. Adding a CI phase: append a state/transition in `fsm.yaml` using an allowed FSM kind. Do not add `scripts/kutha_gov/checks/*.py`. A new *kind* is a rare kernel change (`kinds.py` or `fsm.py` + META allowlist + a test). Unknown kind → HIGH (fail-closed). LLM does not execute checks. Do not add `scripts/ports/`.
 
@@ -154,4 +155,4 @@ Adding a check: append a row to `.kutha/dictionaries/checks.yaml` using a kind f
 - System `python3` / 3.12 as the harness interpreter (must be uv + 3.13).
 - Harness as a workflow engine (Cui remains pack composition, not GSD).
 - Implementing the STCA-guide §5 tutorial runtime as a second graph (JSON merge-patch objects). That skeleton is **pedagogical**; Kutha events are typed `Op`.
-- Legal / science **product** packs (ADR-090/093) as the next crate — M001 S01–S03 are done; do not start Rocks until STATE names M002. Next harness rung is H1.
+- Legal / science **product** packs (ADR-090/093) as the next crate — M001 S01–S03 are done; do not start Rocks until STATE names M002. Next harness rung is H2.

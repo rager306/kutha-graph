@@ -82,11 +82,16 @@ def cmd_ci(ctx: Context, *, budget: int) -> int:
         for finding in result.findings:
             if finding.severity is Severity.HIGH or ctx.fail_on_warn:
                 print(f"     {finding.format()}")
+    if outcome.observations:
+        joined = ", ".join(f"{rel}={obj}" for rel, obj in outcome.observations)
+        print(f"observe: {joined}  (evidence, not SoT)")
     for finding in outcome.findings:
-        print(f"     {finding.format()}")
+        if finding.severity is Severity.HIGH or ctx.fail_on_warn:
+            print(f"     {finding.format()}")
+    rung = "H1" if any(rel == "cargo" for rel, _obj in outcome.observations) else "H0"
     print(
         f"\nharness: {outcome.high} HIGH, {outcome.low} LOW, "
-        f"{len(outcome.results)} checks  (H0 dogfood)"
+        f"{len(outcome.results)} checks  ({rung} dogfood)"
     )
     if outcome.skipped:
         print(
@@ -188,7 +193,7 @@ def cmd_py(root: Path) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="kutha_gov", description="Kutha parallel harness (H0)")
+    parser = argparse.ArgumentParser(prog="kutha_gov", description="Kutha parallel harness (H1)")
     parser.add_argument("--root", type=Path, default=None)
     parser.add_argument("--fail-on-warn", action="store_true")
     parser.add_argument(

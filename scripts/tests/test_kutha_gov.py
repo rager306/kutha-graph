@@ -30,6 +30,7 @@ class HarnessTests(unittest.TestCase):
                 "toolchain",
                 "meta-prompt",
                 "relation-allowlist",
+                "observe-required-fn",
             }.issubset(names)
         )
 

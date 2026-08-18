@@ -11,7 +11,8 @@ This is the **process analog of ADR-050**: a versioned constitution plus diction
 ci → load META.md → load dictionaries/checks.yaml → load dictionaries/fsm.yaml
   → walk FSM (unknown kind/transition → fail)
   → for each check, for each step: kind must be in the allowlist
-  → execute → emit log → fold → terminal ok|fail
+  → observe_cargo (cargo test is evidence, not product SoT)
+  → emit log → fold → terminal ok|fail
 ```
 
 Unknown `kind` → HIGH. Unknown FSM kind → HIGH (`unknown-fsm-kind`). Missing dictionary → HIGH. Python `Check` subclasses are not the intake path.
@@ -24,7 +25,7 @@ Unknown `kind` → HIGH. Unknown FSM kind → HIGH (`unknown-fsm-kind`). Missing
 
 ## How to add a kind (last responsible moment)
 
-Only when no existing kind can express the rule. Then: name it here, implement it in `kinds.py`, add a test, ship a YAML row that uses it.
+Only when no existing kind can express the rule. Then: name it here, implement it in `kinds.py` (check kinds) or `fsm.py` (FSM kinds), add a test, ship a YAML row that uses it.
 
 ## How to extend the FSM
 
@@ -52,6 +53,7 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 | `noop` | no work; emit `ok` |
 | `require_file` | path must exist |
 | `run_checks` | interpret the checks dictionary (budget from env / FSM defaults) |
+| `observe_cargo` | run `cargo test` as evidence (not SoT); required test names must appear `... ok` |
 | `emit_log` | append `harness.run` triples |
 | `fold_log` | fold the process JSONL |
 | `decide` | `ok` iff HIGH == 0 (LOW fails only with fail-on-warn) |
@@ -59,4 +61,4 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 
 Severity on a check step: `high` (default) or `low`.
 
-Settings: copy `.env.example` to `.env`. CLI `--budget` / `--fail-on-warn` override env `KUTHA_GOV_BUDGET` / `KUTHA_GOV_FAIL_ON_WARN`, which override `defaults.budget` in `fsm.yaml`.
+Settings: copy `.env.example` to `.env`. CLI `--budget` / `--fail-on-warn` override env `KUTHA_GOV_BUDGET` / `KUTHA_GOV_FAIL_ON_WARN`, which override `defaults.budget` in `fsm.yaml`. Cargo observe timeout: `KUTHA_GOV_CARGO_TIMEOUT_SEC`, then `timeout_sec` on the FSM state.
