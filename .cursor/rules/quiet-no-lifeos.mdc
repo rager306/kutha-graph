@@ -1,0 +1,10 @@
+---
+description: Quiet profile — do not load LifeOS/Claude noise unless asked
+alwaysApply: true
+---
+
+# Quiet agent profile
+
+Do **not** load, follow, or invoke LifeOS / PAI skills, hooks, Council, notify (`localhost:31337`), voice, or spinner tips unless the user explicitly asks.
+
+Prefer project docs (`AGENTS.md`, `docs/`, ADRs) and the task at hand. Ignore LifeOS `CLAUDE.md` bootstrap and skill spam from `~/.claude/skills/LifeOS*`.

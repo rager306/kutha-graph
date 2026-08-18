@@ -1,0 +1,165 @@
+schema: kutha-harness-checks/v1
+meta_prompt: .kutha/META.md
+# Dictionary of governor checks. Append a row to add a check.
+# Kinds: see .kutha/META.md. Unknown kind → HIGH (fail-closed).
+
+checks:
+  - id: trajectory
+    description: exactly one Active Milestone, and it exists on ROADMAP
+    steps:
+      - kind: file_exists
+        path: .kutha/STATE.md
+        stop_on_fail: true
+      - kind: file_exists
+        path: .kutha/ROADMAP.md
+        stop_on_fail: true
+      - kind: pointer_in_other_file
+        path: .kutha/STATE.md
+        pattern: '^\*\*Active Milestone:\*\*\s*(?P<id>M\d+|None)\s*$'
+        flags: [multiline]
+        other: .kutha/ROADMAP.md
+        skip_values: ["None"]
+        inflation_pattern: '\bM\d{3}\b'
+        inflation_max: 12
+      - kind: pointer_in_other_file
+        path: .kutha/STATE.md
+        pattern: '^\*\*Active Slice:\*\*\s*(?P<id>S\d+|None)\s*$'
+        flags: [multiline]
+        other: .kutha/ROADMAP.md
+        skip_values: ["None"]
+        label: Active Slice
+
+  - id: lifecycles
+    description: STATE names three orthogonal lifecycles
+    steps:
+      - kind: file_contains
+        path: .kutha/STATE.md
+        needles: ["L_map=", "L_delivery=", "L_capability="]
+        require: all
+        category: collapse
+        message: "STATE missing lifecycle rows: {missing}"
+      - kind: file_absent
+        path: .kutha/STATE.md
+        needles: ["L_delivery=L_capability", "governor green = product"]
+        case: lower
+        category: collapse
+        message: "STATE collapses delivery into capability"
+
+  - id: adr-status
+    description: every docs/ADR/ADR-*.md has a known Status tag
+    steps:
+      - kind: markdown_heading_tag
+        glob: docs/ADR/ADR-*.md
+        heading: "## Status"
+        allowed: [Research, Proposed, Accepted, Deprecated, Superseded]
+        forbid_accepted_prefix: "ADR-0"
+        forbid_accepted_not_prefix: "ADR-00"
+
+  - id: freeze
+    description: Cargo.toml members do not add frozen product deps
+    steps:
+      - kind: glob_absent
+        glob: crates/*/Cargo.toml
+        needles: [rocksdb, neo4j, graphiti, hnswlib, falkordb]
+        case: lower
+        category: frozen-dep
+        message: "found {needle} before M001 L_capability is green"
+
+  - id: honeycomb-map
+    description: STATE/ROADMAP do not treat honeycomb as the active backlog
+    steps:
+      - kind: concat_absent
+        paths: [.kutha/STATE.md, .kutha/ROADMAP.md]
+        needles:
+          - "implement all adr-010"
+          - "implement all honeycomb"
+          - "promote all honeycomb"
+          - "active milestone:** honeycomb"
+          - "active milestone: honeycomb"
+        case: lower
+        category: backlog
+        message: "harness text treats the map as work: {needle}"
+      - kind: concat_contains_any
+        paths: [.kutha/ROADMAP.md]
+        needles: ["map, not this list", "is a **map**"]
+        case: lower
+        severity: low
+        category: legend
+        message: "ROADMAP should say honeycomb is a map, not the delivery list"
+
+  - id: dogfood
+    description: docs/process/kutha-harness.md names H0-H4 and non-authority
+    steps:
+      - kind: file_exists
+        path: docs/process/kutha-harness.md
+        stop_on_fail: true
+      - kind: file_contains
+        path: docs/process/kutha-harness.md
+        needles: ["**H0**", "**H1**", "**H2**", "**H3**", "**H4**"]
+        require: all
+        category: ladder
+        message: "dogfood ladder missing rungs: {missing}"
+      - kind: file_contains
+        path: docs/process/kutha-harness.md
+        needles: ["not an ADR"]
+        case: lower
+        severity: low
+        category: authority
+        message: "harness doc should state it is not an ADR"
+      - kind: file_absent
+        path: crates/kutha-runtime/src/lib.rs
+        needles: ["kutha_gov"]
+        category: plane-mix
+        message: "kutha-runtime must not import the harness"
+
+  - id: toolchain
+    description: harness is Python >=3.13 under uv with ruff+ty+pyrefly
+    steps:
+      - kind: file_equals
+        path: .python-version
+        equals: "3.13"
+        category: python-pin
+        message: ".python-version must be 3.13, found {found!r}"
+      - kind: file_exists
+        path: .env.example
+      - kind: file_contains
+        path: .env.example
+        needles: ["KUTHA_GOV_BUDGET=", "KUTHA_GOV_FAIL_ON_WARN="]
+        require: all
+        category: env
+        message: ".env.example missing harness settings: {missing}"
+      - kind: file_contains
+        path: pyproject.toml
+        needles:
+          - 'requires-python = ">=3.13"'
+          - "[tool.uv]"
+          - "ruff>="
+          - "ty>="
+          - "pyrefly>="
+          - "[tool.ty"
+          - "[tool.pyrefly]"
+        require: all
+        category: toolchain
+        message: "pyproject.toml missing toolchain pins (uv / ruff / ty / pyrefly)"
+
+  - id: meta-prompt
+    description: constitution and dictionary exist; META lists fail-closed unknown kinds
+    steps:
+      - kind: file_exists
+        path: .kutha/META.md
+      - kind: file_exists
+        path: .kutha/dictionaries/checks.yaml
+      - kind: file_exists
+        path: .kutha/dictionaries/fsm.yaml
+      - kind: file_contains
+        path: .kutha/META.md
+        needles:
+          - "Unknown `kind`"
+          - "file_exists"
+          - "pointer_in_other_file"
+          - "Do not add `scripts/kutha_gov/checks/*.py`"
+          - "unknown-fsm-kind"
+          - "require_file"
+        require: all
+        category: constitution
+        message: "META.md missing constitution clauses"

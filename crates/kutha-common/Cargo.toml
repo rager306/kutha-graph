@@ -1,0 +1,11 @@
+[package]
+name = "kutha-common"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+description = "Lean events, UUID v7 ids, interned term map (ADR-011)"
+
+[dependencies]
+uuid.workspace = true
+sha2.workspace = true
+serde.workspace = true

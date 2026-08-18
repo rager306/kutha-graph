@@ -1,0 +1,7 @@
+# Compound Engineering — team defaults for kutha-graph
+# Local overrides: .compound-engineering/config.local.yaml (gitignored)
+
+# Keep ADR research docs under docs/ADR; CE plans/solutions live here.
+docs_root: .compound-engineering/artifacts
+
+pulse_product_name: "Kutha"

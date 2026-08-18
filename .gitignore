@@ -1,0 +1,19 @@
+# Local install artifact from codebase-memory-mcp
+/codebase-memory-mcp
+
+# Rust
+/target/
+**/*.rs.bk
+**/__pycache__/
+.venv/
+uv.toml.bak
+
+# Local harness settings (committed template: .env.example)
+.env
+
+# Compound Engineering local overrides / scratch
+.compound-engineering/config.local.yaml
+.context/compound-engineering/
+
+# Harness observation log (process Time axis; product SoT is crates/)
+.kutha/events.jsonl

@@ -1,0 +1,43 @@
+schema: kutha-harness-fsm/v1
+meta_prompt: .kutha/META.md
+# Process quantum for `kutha-gov ci`. Append a transition to extend the machine.
+# Unknown state kind or missing transition → fail (fail-closed). LLM does not walk this.
+# Use `event:` not `on:` — YAML 1.1 treats unquoted `on` as boolean true.
+
+defaults:
+  budget: 32
+
+initial: idle
+terminal: [ok, fail]
+
+states:
+  idle: { kind: noop }
+  load_constitution: { kind: require_file, path: .kutha/META.md }
+  load_checks: { kind: require_file, path: .kutha/dictionaries/checks.yaml }
+  load_fsm: { kind: require_file, path: .kutha/dictionaries/fsm.yaml }
+  run_checks: { kind: run_checks }
+  emit: { kind: emit_log }
+  fold: { kind: fold_log }
+  decide: { kind: decide }
+  ok: { kind: terminal }
+  fail: { kind: terminal }
+
+transitions:
+  - { from: idle, event: start, to: load_constitution }
+  - { from: load_constitution, event: ok, to: load_checks }
+  - { from: load_constitution, event: fail, to: fail }
+  - { from: load_checks, event: ok, to: load_fsm }
+  - { from: load_checks, event: fail, to: fail }
+  - { from: load_fsm, event: ok, to: run_checks }
+  - { from: load_fsm, event: fail, to: fail }
+  - { from: run_checks, event: done, to: emit }
+  - { from: emit, event: ok, to: fold }
+  - { from: emit, event: fail, to: fail }
+  - { from: fold, event: ok, to: decide }
+  - { from: fold, event: fail, to: fail }
+  - { from: decide, event: ok, to: ok }
+  - { from: decide, event: fail, to: fail }
+
+completion:
+  ok: high == 0
+  fail: high > 0

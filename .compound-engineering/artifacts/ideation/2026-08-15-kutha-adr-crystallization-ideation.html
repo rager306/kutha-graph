@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kutha — архитектурное видение STCA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1f1c; --paper: #f3f0e8; --panel: #fff; --muted: #5c675f;
+  --line: #d4d0c4; --accent: #b45309; --accent-soft: #fef3c7; --soft: #faf9f5;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; color: var(--ink); line-height: 1.6;
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(1100px 480px at 8% -8%, #e8efe6 0%, transparent 55%),
+    radial-gradient(800px 360px at 100% 0%, #fde68a33 0%, transparent 50%),
+    var(--paper);
+}
+header, main, footer { max-width: 860px; margin: 0 auto; padding: 0 1.35rem; }
+header { padding-top: 2.2rem; padding-bottom: 0.75rem; }
+h1 { font-family: "IBM Plex Serif", Georgia, serif; font-size: clamp(1.65rem, 3vw, 2.15rem); margin: 0.35rem 0 0.6rem; letter-spacing: -0.02em; }
+h2 { font-family: "IBM Plex Serif", Georgia, serif; font-size: 1.25rem; margin: 0 0 0.7rem; }
+h3 { font-family: "IBM Plex Serif", Georgia, serif; font-size: 1.05rem; margin: 0 0 0.4rem; }
+.meta { color: var(--muted); font-size: 0.9rem; }
+.lead { font-size: 1.06rem; margin: 0.6rem 0 0; }
+.card {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 1.15rem 1.25rem 1.3rem; margin: 1rem 0;
+}
+.tag {
+  display: inline-block; font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.04em; color: #92400e; background: var(--accent-soft);
+  padding: 0.12rem 0.5rem; border-radius: 999px; margin-bottom: 0.5rem;
+}
+.nav { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.85rem; }
+.nav a {
+  font-size: 0.84rem; padding: 0.32rem 0.65rem; border-radius: 999px;
+  background: var(--accent-soft); color: #92400e; text-decoration: none; font-weight: 500;
+}
+.pillars { display: grid; gap: 0.55rem; margin-top: 0.75rem; }
+@media (min-width: 700px) { .pillars { grid-template-columns: 1fr 1fr 1fr; } }
+.pillar {
+  background: var(--soft); border-radius: 8px; padding: 0.75rem 0.85rem;
+  border: 1px solid var(--line);
+}
+.pillar strong { display: block; margin-bottom: 0.25rem; }
+.pillar span { font-size: 0.9rem; color: #333; }
+.diagram {
+  margin: 0.8rem 0 0.35rem; padding: 0.75rem 0.85rem; background: #f7f5ef;
+  border-radius: 8px; overflow-x: auto;
+}
+.diagram .mermaid { display: flex; justify-content: center; }
+.note { font-size: 0.86rem; color: var(--muted); margin: 0.3rem 0 0; }
+details.deep {
+  margin-top: 0.55rem; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--soft); padding: 0.3rem 0.75rem 0.5rem;
+}
+details.deep summary {
+  cursor: pointer; font-weight: 600; font-size: 0.92rem; color: var(--accent);
+  padding: 0.3rem 0; list-style: none;
+}
+details.deep summary::-webkit-details-marker { display: none; }
+details.deep summary::before { content: "▸ "; }
+details.deep[open] summary::before { content: "▾ "; }
+.idea { border-top: 1px solid var(--line); padding-top: 0.95rem; margin-top: 0.95rem; }
+.idea:first-of-type { border-top: 0; padding-top: 0; margin-top: 0.2rem; }
+.map td, .map th { text-align: left; vertical-align: top; padding: 0.45rem 0.35rem; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
+.map th { color: var(--muted); font-size: 0.78rem; }
+.steps { counter-reset: s; list-style: none; padding: 0; margin: 0.5rem 0 0; }
+.steps li {
+  counter-increment: s; position: relative;
+  padding: 0.55rem 0.7rem 0.55rem 2.5rem; margin: 0.35rem 0;
+  background: var(--soft); border-radius: 8px;
+}
+.steps li::before {
+  content: counter(s); position: absolute; left: 0.65rem; top: 0.6rem;
+  width: 1.3rem; height: 1.3rem; border-radius: 50%; background: #1a1f1c; color: #f3f0e8;
+  font-size: 0.78rem; font-weight: 600; display: flex; align-items: center; justify-content: center;
+}
+code { font-family: ui-monospace, Menlo, monospace; font-size: 0.88em; background: #f1efe6; padding: 0.05em 0.28em; border-radius: 4px; }
+footer { padding: 0.75rem 1.35rem 2.2rem; color: var(--muted); font-size: 0.85rem; }
+a { color: var(--accent); }
+.formula {
+  font-family: "IBM Plex Serif", Georgia, serif; background: #1a1f1c; color: #f3f0e8;
+  padding: 0.85rem 1rem; border-radius: 8px; margin: 0.75rem 0 0; font-size: 0.98rem;
+}
+</style>
+</head>
+<body>
+<header>
+  <p class="meta"><strong>Идеация + архитектурное видение</strong> · Kutha · синтез с <code>STRATEGY.md</code> · 17 авг 2026 · от боли к формальному</p>
+  <h1>STCA: как мы строим графовый движок</h1>
+  <p class="lead"><strong>Spatiotemporal Compositional Architecture</strong> — это не слоган, а каркас: <em>пространство</em> (изолированные доменные модули) × <em>время</em> (журнал событий → граф) × <em>композиция</em> (плагины как «предметы» с бюджетом). Kutha — реализация STCA на Rust плюс быстрые картины графа и словари для агентов. Продуктовый якорь: корневой <strong><code>STRATEGY.md</code></strong>. Стек ADR: <strong>001 видение → 002 STCA → 000 locks → соты 010+</strong>.</p>
+  <nav class="nav" aria-label="Навигация">
+    <a href="#problem">Боль и ниша</a>
+    <a href="#gtm">Кто / GTM</a>
+    <a href="#invest">Инвестиции</a>
+    <a href="#metrics">Метрики</a>
+    <a href="#vision">Видение</a>
+    <a href="#axes">Два контура</a>
+    <a href="#cui">Свёртка</a>
+    <a href="#kutha">Kutha поверх STCA</a>
+    <a href="#perf">Граф-СУБД / MVP</a>
+    <a href="#ruvector">RuVector packs</a>
+    <a href="#backlog">P0–P3</a>
+    <a href="#ideas">Идеи</a>
+    <a href="#rust">Rust / тесты</a>
+    <a href="#reject">Не делаем</a>
+    <a href="#glossary">Словарь</a>
+  </nav>
+</header>
+
+<main>
+
+<section class="card" id="problem">
+  <div class="tag">Продукт · боль (из ADR-000 + логов 2026-08-15)</div>
+  <h2>Какую проблему решаем</h2>
+  <p>Нужен графовый движок, в котором <strong>одновременно</strong>:</p>
+  <ol class="steps">
+    <li><strong>Агенты и GenAI</strong> живут внутри runtime, а не как надстройка над storage.</li>
+    <li><strong>Время и аудит</strong> — first-class: bi-temporal, lineage, point-in-time, fork.</li>
+    <li><strong>Производительность</strong> multi-hop / vector / analytics — класса Samyama / FalkorDB.</li>
+    <li><strong>Расширяемость</strong> — плагины с обратимыми эффектами, без переписывания ядра.</li>
+  </ol>
+  <p>Классика не закрывает набор: state-first БД быстры, но слабы на агентах/истории/fork; чистый event-sourced граф аудитируем, но теряет multi-hop; memory-frameworks (Graphiti/Zep) — не СУБД и зависят от внешнего графа; document + in-DB GenAI — слабый native graph.</p>
+  <p class="note"><strong>White space (сессия):</strong> in-DB agents + event projections + bi-temporal + reversible hot views + portable cognitive packs — в одном Rust-движке. Квадрант: <em>high temporal × high hybrid × in-DB agents</em>. Исследовательские дыры рядом: write-time contradiction contracts, provenance×time, LLM вне trust boundary для temporal operators (не «ещё больше RAG»). См. <code>STRATEGY.md</code> · Target problem; <code>artifacts/research/patterns.md</code>.</p>
+</section>
+
+<section class="card" id="gtm">
+  <div class="tag">Продукт · персоны / GTM</div>
+  <h2>Для кого (клин, не клетка)</h2>
+  <div class="pillars">
+    <div class="pillar">
+      <strong>Primary</strong>
+      <span>Legal / нормативные temporal-агенты: assert / invalidate / AS OF с replayable lineage; LLM не юридический авторитет.</span>
+    </div>
+    <div class="pillar">
+      <strong>Secondary сейчас</strong>
+      <span>Scientific / scholarly archive (revision-scoped evidence) — sibling pack на той же физике (ADR-093).</span>
+    </div>
+    <div class="pillar">
+      <strong>Лестница дальше</strong>
+      <span>Regulated finance → horizontal agent runtime → enterprise KG + security. Меняются словари/packs, не runtime.</span>
+    </div>
+  </div>
+  <p class="note">Enterprise must-have до «корабля»: ABAC / temporal policies, agent sandbox, multi-tenancy, immutable audit, CMK / air-gap — после доказанной физики ядра. Fit (research): regulated ~9/10; hybrid ~8–9/10; чистая замена Samyama ~5–6/10 — гипотезы, не маркетинг.</p>
+</section>
+
+<section class="card" id="invest">
+  <div class="tag">Продукт · инвестиции простыми словами</div>
+  <h2>Куда кладём усилия</h2>
+  <ol class="steps">
+    <li><strong>Сделать время честным</strong> — лог, fold, bi-temporal, один такт emit→cascade→idle с квитанцией.</li>
+    <li><strong>Сделать граф достаточно быстрым</strong> — скорость = съёмные картины того же лога (CSR…), не вторая БД; сначала одна hot-проекция.</li>
+    <li><strong>Сделать модули и вертикали втыкаемыми</strong> — порты + packs (legal / science / …).</li>
+    <li><strong>Сделать агентов управляемыми и проверяемыми</strong> — словари + meta-prompt; тесты = replay/fork; sandbox до enterprise.</li>
+  </ol>
+  <p class="note">Это те же четыре tracks в <code>STRATEGY.md</code>, без жаргона осей. Оси STCA (Space / Time / Composition / Verify) — как читают инженеры; tracks — как читает продукт.</p>
+</section>
+
+<section class="card" id="metrics">
+  <div class="tag">Продукт · метрики (честный статус)</div>
+  <h2>Что измеряем — и чего ещё нет</h2>
+  <p><strong>Пока нет PRD.</strong> Ниже — <em>кандидаты-фальсификаторы</em> из ADR-000 R9 / exit criteria, не продуктовые KPI go-to-market. Их нужно пересмотреть в PRD.</p>
+  <ul>
+    <li><strong>Replay integrity</strong> — расхождение strict replay на golden logs → 0.</li>
+    <li><strong>Cascade / quantum bound</strong> — глубина и wall time такта под бюджетом.</li>
+    <li><strong>Legal PIT probe</strong> — корректность (и позже latency) norm@date.</li>
+    <li><strong>Hot-path proximity</strong> — multi-hop vs Samyama/FalkorDB-класс; цель «близко», не всегда обогнать.</li>
+    <li><strong>Fork cost</strong> — время/место fork-and-diff на фиксированной нагрузке.</li>
+  </ul>
+  <p class="note">Следующий шаг продукта: PRD, который зафиксирует north-star и leading/lagging метрики для wedge (legal). Strategy намеренно не притворяется, что KPI уже известны.</p>
+</section>
+
+<section class="card" id="vision">
+  <div class="tag">Уровень 1 · видение одной фразой</div>
+  <h2>Что мы собираем</h2>
+  <p class="formula">Журнал = доказательство · Граф = мир · Поведения = физика · Модули = вертикальные срезы · Бюджеты = свёртка Cui</p>
+  <p>Чужие «память-фреймворки» (Graphiti и т.п.) и чужие графовые СУБД — не ядро. Ядро — <strong>свой</strong> событийный рантайм на Rust. Семантику времени можно <em>подсмотреть</em> у Graphiti и <strong>встроить нативно</strong> — без Graphiti как зависимости.</p>
+  <div class="diagram">
+    <pre class="mermaid">
+flowchart TB
+  V["ADR-001 Vision"]
+  S["ADR-002 STCA on top"]
+  F["ADR-000 D1-D10 locks"]
+  H["Honeycomb ADR-010+"]
+  V --> S
+  S --> F
+  S --> H
+    </pre>
+  </div>
+  <p class="note"><strong>Зафиксировано:</strong> сверху идея STCA (ADR-002), общее видение — ADR-001, фундамент D1–D10 — ADR-000; детали — соты ADR-010+. Полный манифест: <a href="stca-guide.md">stca-guide.md</a> (также в репо: <code>docs/architecture/stca-guide.md</code>). Опора: ADR-000 (D1–D2).</p>
+  <div class="diagram">
+    <pre class="mermaid">
+flowchart TB
+  STCA["STCA — синтез"]
+  S["ПРОСТРАНСТВО\nвертикальные срезы · порты"]
+  T["ВРЕМЯ\nжурнал событий · fold → граф"]
+  C["КОМПОЗИЦИЯ\nплагины · max-свёртка Cui"]
+  K["Kutha на Rust\n+ быстрые картины + словари агентов"]
+  S --> STCA
+  T --> STCA
+  C --> STCA
+  STCA --> K
+    </pre>
+  </div>
+</section>
+
+<section class="card" id="axes">
+  <div class="tag">Уровень 2 · два контура</div>
+  <h2>Пространство и время</h2>
+  <div class="pillars">
+    <div class="pillar">
+      <strong>Пространство</strong>
+      <span>Домен режется <em>по функциям</em> (заказ, норма, агент…), а не по папкам «controllers / services / repos». Снаружи модуля видны только <em>порты</em> (интерфейсы). Внутри — свой маленький гексагон.</span>
+    </div>
+    <div class="pillar">
+      <strong>Время</strong>
+      <span>Правда не в «текущей таблице». Правда в <em>ленте событий</em>. Граф — это пересчёт ленты слева направо. Можно проиграть заново и получить то же; можно ответвиться (fork) и сравнить.</span>
+    </div>
+    <div class="pillar">
+      <strong>Связка</strong>
+      <span>Плагин/pack регистрируется в общем контексте. Эффекты должны уметь <em>откатываться</em>. Глобальное поведение — не один гигантский workflow, а сборка локальных функций.</span>
+    </div>
+  </div>
+  <div class="diagram">
+    <pre class="mermaid">
+flowchart LR
+  subgraph Space["Пространство"]
+    V1["Срез A"]
+    V2["Срез B"]
+    P["Порты"]
+    V1 --- P
+    V2 --- P
+  end
+  subgraph Time["Время"]
+    L["Event Log"]
+    G["Граф = fold(L)"]
+    B["Behaviors"]
+    L --> G
+    G --> B
+    B -->|patch| L
+  end
+  Space --> CTX["Общий контекст STCA"]
+  Time --> CTX
+    </pre>
+  </div>
+  <details class="deep">
+    <summary>Откуда это (авторы и опоры)</summary>
+    <div>
+      <p><strong>Пространство:</strong> Cockburn (hexagonal, 2005), Palermo (onion, 2008), Martin (clean, 2012); вертикальные срезы — Oliver Drotbohm (2026). <strong>Время:</strong> ActiveGraph, Yohei Nakajima, arXiv:2605.21997 — «лог есть агент»; принцип «граф / поведения / лог». <strong>Композиция плагинов:</strong> Cordis spatiotemporal composability. В ADR-000 это уже заложено в D1–D2.</p>
+    </div>
+  </details>
+</section>
+
+<section class="card" id="cui">
+  <div class="tag">Уровень 2 · композиция</div>
+  <h2>Зачем «рюкзак» Cui в архитектуре</h2>
+  <p>Каждый модуль — как предмет: при выделении ресурса \(v\) (время CPU, глубина cascade, токены агента) даёт локальный выигрыш \(h_i(v)\). Система выбирает раскладку бюджетов через <strong>max-свёртку</strong> — без жёстко прошитого сценария «сначала всегда шаг 1, потом 2».</p>
+  <ol class="steps">
+    <li>Есть общий бюджет \(V\) (например лимит cascade на один такт).</li>
+    <li>Каждый pack объявляет, что умеет при доле бюджета.</li>
+    <li>Свёртка даёт лучшую допустимую комбинацию — или явный отказ с квитанцией «бюджет исчерпан».</li>
+  </ol>
+  <details class="deep">
+    <summary>Формула (для инженера)</summary>
+    <div>
+      <p>\(H_{\mathrm{next}}[W]=\max_{0\le v\le W}\{h_i(v)+H[W-v]\}\) — лекция 8 Tianyi Cui, «Nine Lectures on the Knapsack Problem». В Kutha это мост к идеям cascade budgets и конкуренции материализаторов.</p>
+    </div>
+  </details>
+</section>
+
+<section class="card" id="kutha">
+  <div class="tag">Уровень 2 · продукт</div>
+  <h2>Чем Kutha дополняет «чистый» ActiveGraph</h2>
+  <p>Чистый событийный граф силён в истории и детерминизме, но слаб в «быстром мире» (многопрыжковые обходы, векторы). State-first СУБД — наоборот. Kutha стоит на STCA и добавляет:</p>
+  <ol class="steps">
+    <li><strong>Быстрые картины</strong> (CSR, HNSW…) как <em>съёмные</em> проекции над тем же логом — не второй источник правды.</li>
+    <li><strong>Словари и meta-prompt</strong> — агенты внутри движка, нейросеть не единственный судья.</li>
+    <li><strong>Время фактов</strong> — семантика «как у Graphiti» (сроки, закрытие устаревшего), реализованная <em>своим</em> кодом.</li>
+    <li><strong>Самодостаточность</strong> — ядро на RocksDB + in-process модули; чужие графовые БД и облачные API не обязательны для assert / invalidate / «на дату».</li>
+  </ol>
+  <div class="diagram">
+    <pre class="mermaid">
+flowchart TB
+  Client["Клиент / запрос на дату"]
+  Packs["Packs: словари · behaviors · опц. GenAI"]
+  Log["Append-only лог = SoT"]
+  Fold["Fold → логический граф"]
+  Hot["Горячие картины\nCSR · HNSW · temporal view"]
+  Client --> Packs
+  Packs -->|события| Log
+  Log --> Fold
+  Fold --> Hot
+  Hot --> Client
+    </pre>
+  </div>
+</section>
+
+<section class="card" id="perf">
+  <div class="tag">Глубина STCA · как графовая СУБД</div>
+  <h2>Оптимальность, скорость MVP, тесты</h2>
+  <p>Манифест STCA задаёт физику. Продукт Kutha ещё должен <strong>доказать себя как graph DB</strong>:</p>
+  <ol class="steps">
+    <li><strong>Оптимальность / производительность</strong> — hot path (CSR / sparse / GraphBLAS-like) и join-стратегии (кандидат: Leapfrog Triejoin / WCOJ-класс) оценивать по output/bound, не по «ещё один Cypher». AS OF + multi-hop — отдельная cost model (R3/R6).</li>
+    <li><strong>Скорость до MVP</strong> — P0 = один heartbeat (log+fold+cascade+replay), не полный honeycomb. Одна reversible CSR-проекция раньше зоопарка индексов.</li>
+    <li><strong>Стратегия тестирования</strong> — Strict Replay + Fork-and-Diff как default (дешёвый аудит); sociable in-memory ports; content-addressed cache внешних LLM/tool; Regimes held-out — опция для agent seams, не блокер P0.</li>
+  </ol>
+  <p class="note">Антипаттерны производительности (D8): replay tax без snapshots; single-writer без WAL batching; fat events. Без них «надёжный event-sourcing на больших логах мёртв» (лог сессии 2026-08-15).</p>
+</section>
+
+<section class="card" id="ruvector">
+  <div class="tag">Наследие · RuVector → packs</div>
+  <h2>Богатое наследие — узкая адаптация</h2>
+  <p>RuVector огромен (~531k nodes в codebase-memory <code>root-vendor-source-ruvector</code>): реальные HNSW/ANN, RVF COW, WitnessChain, GNN-примитивы, sparse+dense hybrid. Рядом — маркетинг и facade-заглушки: Cypher executor → пустой success; GraphRAG → fabricated docs; часть hybrid SQL → mock scores (аудит 2026-07: <code>ruvector-blas/docs/audit/ruvector-graph-stub-capability-map.md</code>).</p>
+  <p><strong>Правило:</strong> не вендорим «RuVector-продукт». Режем на STCA-packs за Ports; в CI только REAL + happy path + fail path.</p>
+  <table class="map">
+    <thead><tr><th>Pack</th><th>Берём (REAL-leaning)</th><th>Не берём</th><th>Фаза</th></tr></thead>
+    <tbody>
+      <tr><td><strong>P-HNSW</strong></td><td>HNSW build/search crates</td><td>Mock hybrid_search / fixed scores</td><td>P2 · ADR-042</td></tr>
+      <tr><td><strong>P-RVF-Seal</strong></td><td>CowEngine, freeze/fork, WitnessChain</td><td>RVF как hot SoT; npm FALLBACK stubs</td><td>P3 · ADR-091</td></tr>
+      <tr><td><strong>P-Hybrid-Retrieve</strong></td><td>crate <code>ruvector-hybrid</code> BM25+dense+RRF</td><td>GraphRAG fabricated context</td><td>P2 · ADR-071</td></tr>
+      <tr><td><strong>P-GNN-Rerank</strong></td><td>GNN primitives / optional message_pass</td><td>Facade с константами [0.7,0.2,0.1]</td><td>P2–P4 · ADR-052</td></tr>
+      <tr><td><strong>P-Agent-Memory</strong></td><td>Узкие паттерны за dictionaries</td><td>MemoryMiddleware как D3 control plane</td><td>позже</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Прецедент слоёв: daily-archive ADR-040 (Samyama=KG · RuVector=brain · RVF=experience) → в Kutha: <em>log=SoT · materializations · optional brain packs · RVF packaging</em>. Полный текст: <code>.compound-engineering/artifacts/research/ruvector-plugin-adaptation.md</code>. Следы: GSD deep-audit 2026-07-10, stub map 2026-07-15.</p>
+</section>
+
+<section class="card" id="backlog">
+  <div class="tag">Honeycomb · P0–P3 простыми словами</div>
+  <h2>Порядок доказательств</h2>
+  <table class="map">
+    <thead><tr><th>Фаза</th><th>Простыми словами</th><th>Соты / выход</th></tr></thead>
+    <tbody>
+      <tr><td><strong>P0</strong></td><td>Доказать сердцебиение: лог → fold → cascade → replay</td><td>ADR-010…012 · mini-runtime</td></tr>
+      <tr><td><strong>P1</strong></td><td>Факты во времени + первая быстрая картина + словари агентов</td><td>ADR-013, 040, 050</td></tr>
+      <tr><td><strong>P2</strong></td><td>Векторы/hybrid, опц. GenAI pack, набросок security</td><td>ADR-042/043, 052, 080</td></tr>
+      <tr><td><strong>P3</strong></td><td>Вертикальный клинок (legal norm@date), portable packs, бенчмарки</td><td>ADR-090 (+093), 091, BENCHMARKS</td></tr>
+      <tr><td><strong>P4</strong></td><td>Распределение / learned indexes — только после single-node hybrid</td><td>Raft, GNN</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Полосы сот: Time 010– · Space 020– · Composition 030– · Data 040– · Agent 050– · Verify 060– · Query 070– · Security 080– · Vertical 090–. Новая работа открывает клетку, а не переписывает D1–D10. Уже открыты: <a href="../../docs/ADR/ADR-090-legal-reference-pack.md">ADR-090</a>, <a href="../../docs/ADR/ADR-093-scientific-archive-pack.md">ADR-093</a> (пути относительно репо: <code>docs/ADR/…</code>).</p>
+</section>
+
+<section class="card" id="ideas">
+  <div class="tag">Уровень 3 · идеи = грани STCA</div>
+  <h2>Как идеи идеации ложатся на парадигму</h2>
+  <table class="map">
+    <thead><tr><th>Простыми словами</th><th>Столб STCA</th><th>Код идеи</th></tr></thead>
+    <tbody>
+      <tr><td>Квитанция каждого такта + тот же отпечаток при replay</td><td>Время · доказательство</td><td>1 · Quantum Receipt</td></tr>
+      <tr><td>Сначала зафиксировать запись, потом разнести последствия с лимитом</td><td>Время · Cui-бюджет</td><td>2 · Two-phase + cascade</td></tr>
+      <tr><td>Быструю картину можно снять и откатить</td><td>Пространство · обратимый pack</td><td>3 · Epoch leases</td></tr>
+      <tr><td>Общий язык: утвердить / заменить / закрыть факт</td><td>Время · семантика фактов</td><td>4 · Temporal algebra</td></tr>
+      <tr><td>Словари решают «можно ли»; LLM — опция</td><td>Пространство · control pack</td><td>5 · Dict-first</td></tr>
+      <tr><td>Два вопроса аудита: правило@X и знание тенанта@X</td><td>Продукт поверх STCA</td><td>6 · Two-Clocks (P3)</td></tr>
+      <tr><td>Семантика Graphiti — нативно в ядре, без Graphiti</td><td>Время · D4</td><td>17–18</td></tr>
+      <tr><td>Ядро без обязательных внешних БД/API</td><td>Пространство · изоляция</td><td>21 · + 24 CI</td></tr>
+    </tbody>
+  </table>
+
+  <article class="idea">
+    <h3>Такт runtime (emit → стабилизация)</h3>
+    <p>Событие попадает в лог → граф обновляется fold’ом → behaviors и relation behaviors предлагают патчи → снова в лог — пока очередь не пуста или бюджет cascade не исчерпан. Итог такта — <strong>квитанция</strong>.</p>
+    <div class="diagram">
+      <pre class="mermaid">
+sequenceDiagram
+  participant E as Emit
+  participant L as Лог
+  participant G as Граф
+  participant B as Behaviors
+  E->>L: append event
+  L->>G: apply / fold
+  G->>B: trigger
+  B->>L: patches as events
+  Note over L,G: пока очередь не пуста\nили бюджет исчерпан
+  L-->>E: Quantum Receipt
+      </pre>
+    </div>
+    <details class="deep">
+      <summary>Связь с алгоритмами манифеста</summary>
+      <div>
+        <p>Алгоритм 1 (fold), Алгоритм 2 (relation behaviors), идея-2 (бюджеты), ADR-000 D2. Идентификаторы событий — UUID v7.</p>
+      </div>
+    </details>
+  </article>
+
+  <article class="idea">
+    <h3>Время фактов (референс Graphiti → наш код)</h3>
+    <p>У связи есть сроки «в мире» и отметки «когда система учла». Противоречие закрывает старый факт правилами/поведением и пишет событие invalidation — не молчаливое удаление и не обязательный вызов LLM.</p>
+    <details class="deep">
+      <summary>Детали идей 17–18</summary>
+      <div>
+        <p>Карта полей EntityEdge → D4 on-wire. Cascade invalidation — native offline. Graphiti / Neo4j / cloud LLM не входят в core profile (идея 21).</p>
+      </div>
+    </details>
+  </article>
+
+  <details class="deep">
+    <summary>Остальные идеи программы (7–16, 19–20, 22, 24) — кратко</summary>
+    <div>
+      <ul>
+        <li><strong>7–11, 16:</strong> матрицы требований и vendor borrow/contrast; disqualifier-first пробы.</li>
+        <li><strong>12–13:</strong> не путать видимость лога и версии внутри картины; HNSW как сменный access method.</li>
+        <li><strong>14, 22:</strong> переносимые капсулы доказательств; сага — рассказ, не SoT.</li>
+        <li><strong>15, 19:</strong> enrichment / episodes — опциональные packs.</li>
+        <li><strong>20:</strong> hybrid/RRF/community — in-process.</li>
+        <li><strong>24:</strong> CI ломается, если ядро требует внешний graph/LLM для истины.</li>
+      </ul>
+    </div>
+  </details>
+</section>
+
+<section class="card" id="rust">
+  <div class="tag">Уровень 3 · инженерия</div>
+  <h2>Границы в Rust и как проверяем</h2>
+  <ol class="steps">
+    <li><strong>Workspace:</strong> <code>common</code> (Event, Patch) · <code>modules/*</code> (вертикальные срезы) · <code>app-shell</code> (единственный composition root).</li>
+    <li><strong>Законы:</strong> домен не знает БД; наружу только ports; инфраструктура подключается в shell.</li>
+    <li><strong>Strict Replay:</strong> тот же лог → тот же граф; внешние ответы из content-addressed кэша.</li>
+    <li><strong>Fork-and-Diff:</strong> ветка с другого правила с середины истории → сравнение графов.</li>
+    <li><strong>Regimes (опционально для агент-паков):</strong> правка промпта/кода только через гейты, held-out падение = discard.</li>
+  </ol>
+  <p class="note">Эталонный каркас ActiveRuntime и полный текст законов — в <code>docs/architecture/stca-guide.md</code>.</p>
+</section>
+
+<section class="card" id="glossary">
+  <div class="tag">Словарь</div>
+  <h2>Расшифровки</h2>
+  <p><strong>STCA</strong> — Spatiotemporal Compositional Architecture: пространство × время × свёртка плагинов.</p>
+  <p><strong>SoT</strong> — source of truth, источник истины (у нас — event log).</p>
+  <p><strong>Fold / foldl</strong> — последовательное применение событий к пустому графу.</p>
+  <p><strong>Behavior / Relation Behavior</strong> — реакция на событие или на тип ребра; выдаёт патчи/новые события.</p>
+  <p><strong>Port / Adapter</strong> — порт = интерфейс домена; адаптер = реализация снаружи (БД, HTTP) — в ядре Kutha часто не обязателен.</p>
+  <p><strong>Vertical slice</strong> — модуль «по фиче», а не по техническому слою.</p>
+  <p><strong>Max-convolution (Cui)</strong> — способ собрать глобальный оптимум из локальных функций бюджета.</p>
+  <p><strong>Materialization</strong> — быстрая картина для запросов; пересобираема из лога.</p>
+  <p><strong>ADR / D1–D10 / R1–R10 / P0–P3</strong> — решения, открытые вопросы и этапы бэклога в ADR-000.</p>
+</section>
+
+<section class="card" id="reject">
+  <div class="tag">Границы</div>
+  <h2>Что отвергаем — и какая за этим проблема</h2>
+  <table class="map">
+    <thead><tr><th>Не делаем</th><th>Какая проблема, если сделаем</th></tr></thead>
+    <tbody>
+      <tr><td>Обязательный Neo4j / Falkor / Graphiti / cloud LLM для assert→invalidate→AS OF</td><td>Становимся оболочкой; теряем владение temporal truth и CI самодостаточного ядра</td></tr>
+      <tr><td>Позиционирование «ещё одна graph DB» / «memory на Neo4j»</td><td>Падаем в crowded GraphRAG/memory; бросаем hybrid-квадрант</td></tr>
+      <tr><td>Чистый state-first Samyama + bolted agents</td><td>Быстро сегодня; история/fork/агенты — вечная надстройка (fit замены ~5–6/10)</td></tr>
+      <tr><td>Чистый ActiveGraph без hot projections</td><td>Отличный lineage; мёртвый multi-hop на Profile B/C</td></tr>
+      <tr><td>Hard FSM как единственный agent control</td><td>Каждая вертикаль форкает runtime; вместо словарей+meta-prompt</td></tr>
+      <tr><td>Workflow-engine вместо Cui-композиции packs</td><td>Ломает обратимые packs и конкуренцию бюджетов</td></tr>
+      <tr><td>TypeScript как ядро графа</td><td>GC/event-loop душат hot graph; TS ок только для agent I/O</td></tr>
+      <tr><td>RVF / portable packs как primary hot storage</td><td>Путаем packaging с SoT; hot path = RocksDB + projections</td></tr>
+      <tr><td>Весь monorepo RuVector как зависимость / «agent brain»</td><td>Маркетинг + STUB/NO-OP facades; тянем ложь в CI — только REAL crates за Ports</td></tr>
+      <tr><td>Внешний ETL + внешний agent orchestrator как цель</td><td>Агенты уходят из runtime — против «agents inside»</td></tr>
+      <tr><td>Ранний Raft / GNN до P0–P1 evidence</td><td>Отвлекает от доказательства single-node hybrid</td></tr>
+      <tr><td>Техническая нарезка папок вместо vertical slices</td><td>Низкая cohesion; STCA требует гексагон <em>внутри</em> среза</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</main>
+
+<footer>
+  Синтез: <code>STRATEGY.md</code> ↔ эта идеация · манифест <code>docs/architecture/stca-guide.md</code> · ADR-000 · логи сессии 2026-08-15 · Mermaid: локальный <code>mermaid.min.js</code>.<br>
+  Просмотр: <a href="http://10.66.66.1:8765/2026-08-15-kutha-adr-crystallization-ideation.html">http://10.66.66.1:8765/2026-08-15-kutha-adr-crystallization-ideation.html</a>
+  · обновите страницу с очисткой кэша (Ctrl+Shift+R).
+</footer>
+<script src="mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "strict",
+    flowchart: { htmlLabels: true, curve: "basis" },
+    sequence: { mirrorActors: false } });
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+[project]
+name = "kutha-harness"
+version = "0.0.0"
+description = "Kutha parallel STCA harness — repository control plane, not product runtime."
+requires-python = ">=3.13"
+dependencies = [
+    "pyyaml>=6",
+]
+
+[project.scripts]
+kutha-gov = "kutha_gov.__main__:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.15",
+    "ty>=0.0.56",
+    "pyrefly>=1.1",
+]
+
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = { "" = "scripts" }
+
+[tool.setuptools.packages.find]
+where = ["scripts"]
+include = ["kutha_gov*"]
+exclude = ["tests*"]
+
+[tool.uv]
+package = true
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["scripts/tests"]
+pythonpath = ["scripts"]
+python_files = ["test_*.py"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+src = ["scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4", "RUF"]
+ignore = ["E501"]
+
+[tool.ty.environment]
+python-version = "3.13"
+
+[tool.ty.src]
+include = ["scripts"]
+exclude = ["scripts/**/__pycache__/**"]
+
+[tool.ty.rules]
+unresolved-attribute = "warn"
+unresolved-import = "warn"
+
+[tool.pyrefly]
+python-version = "3.13"
+project-includes = ["scripts/**/*.py"]
+project-excludes = [".venv/**", "**/__pycache__/**"]
