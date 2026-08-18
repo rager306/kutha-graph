@@ -50,6 +50,7 @@ class FsmTests(unittest.TestCase):
                 "run_checks",
                 "observe_cargo",
                 "emit",
+                "emit_tenant",
                 "fold",
                 "decide",
                 "ok",
@@ -58,6 +59,7 @@ class FsmTests(unittest.TestCase):
         )
         self.assertEqual(0, outcome.high)
         self.assertIn(("cargo", "ok"), outcome.observations)
+        self.assertIn(("tenant", "ok"), outcome.observations)
 
     def test_fsm_transition_keys_are_not_yaml_booleans(self) -> None:
         machine = load_machine(ROOT)
@@ -119,6 +121,21 @@ class ObserveTests(unittest.TestCase):
         self.assertEqual([], seen)
         self.assertEqual(1, len(findings))
         self.assertEqual("observe-fail", findings[0].category)
+
+
+class TenantTests(unittest.TestCase):
+    def test_missing_tenant_line_is_high(self) -> None:
+        from kutha_gov.tenant import interpret_tenant_output
+
+        findings = interpret_tenant_output("cargo finished\n")
+        self.assertEqual(1, len(findings))
+        self.assertEqual("tenant-missing", findings[0].category)
+
+    def test_as_of_match_is_silent(self) -> None:
+        from kutha_gov.tenant import interpret_tenant_output
+
+        text = "tenant: ingested=4 last_status=ok last_vf=2000 as_of_match=1 dir=.kutha/tenant\n"
+        self.assertEqual([], interpret_tenant_output(text))
 
 
 if __name__ == "__main__":

@@ -162,10 +162,6 @@ impl Runtime {
         }
     }
 
-    pub fn csr_lease(&self) -> CsrLease {
-        self.csr_lease_at(u64::MAX, 0)
-    }
-
     /// CSR lease at an explicit cut. Callers must name valid-time (no silent “now”).
     pub fn csr_lease_at(&self, tt: u64, vt: u64) -> CsrLease {
         CsrLease::from_fold(&self.fold, tt, vt, self.dict.len())
@@ -480,12 +476,13 @@ mod tests {
             valid_to: None,
         })
         .unwrap();
-        let csr = rt.csr_lease();
+        // Fixture facts use valid_from=0; name that cut (no silent “now”).
+        let csr = rt.csr_lease_at(u64::MAX, 0);
         assert_eq!(csr.neighbors(a), &[b]);
         assert_eq!(csr.seek(a, b), Some(b));
         assert_eq!(csr.seek(a, b.saturating_add(1)), None);
         drop(csr);
-        let csr2 = rt.csr_lease();
+        let csr2 = rt.csr_lease_at(u64::MAX, 0);
         assert_eq!(csr2.neighbors(a), &[b]);
     }
 

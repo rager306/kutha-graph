@@ -10,6 +10,7 @@ mod quantum;
 mod receipt;
 mod snapshot;
 pub mod store;
+mod tenant;
 mod wal;
 
 pub use csr::CsrLease;
@@ -20,3 +21,4 @@ pub use materializer::{CsrMaterializer, Materializer};
 pub use quantum::{QuantumOutcome, Runtime, RuntimeError};
 pub use receipt::QuantumReceipt;
 pub use snapshot::Snapshot;
+pub use tenant::{ingest_harness_jsonl, ingest_harness_jsonl_str, IngestReport, TenantError};

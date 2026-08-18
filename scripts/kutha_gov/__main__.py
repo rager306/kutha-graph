@@ -88,7 +88,11 @@ def cmd_ci(ctx: Context, *, budget: int) -> int:
     for finding in outcome.findings:
         if finding.severity is Severity.HIGH or ctx.fail_on_warn:
             print(f"     {finding.format()}")
-    rung = "H1" if any(rel == "cargo" for rel, _obj in outcome.observations) else "H0"
+    rung = "H0"
+    if any(rel == "cargo" for rel, _obj in outcome.observations):
+        rung = "H1"
+    if any(rel == "tenant" for rel, _obj in outcome.observations):
+        rung = "H2"
     print(
         f"\nharness: {outcome.high} HIGH, {outcome.low} LOW, "
         f"{len(outcome.results)} checks  ({rung} dogfood)"
@@ -101,7 +105,9 @@ def cmd_ci(ctx: Context, *, budget: int) -> int:
     picture = fold_log(ctx.root / LOG_REL)
     print(
         f"fold: runs={picture.run_count} last={picture.last_run} "
-        f"high={picture.last_high}  ({LOG_REL} = process log, not product SoT)"
+        f"high={picture.last_high} cargo={picture.last_cargo} "
+        f"tenant={picture.last_tenant}  "
+        f"({LOG_REL} = process log, not product SoT)"
     )
     if outcome.terminal != "ok":
         return 1
@@ -193,7 +199,7 @@ def cmd_py(root: Path) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="kutha_gov", description="Kutha parallel harness (H1)")
+    parser = argparse.ArgumentParser(prog="kutha_gov", description="Kutha parallel harness (H2)")
     parser.add_argument("--root", type=Path, default=None)
     parser.add_argument("--fail-on-warn", action="store_true")
     parser.add_argument(
@@ -238,6 +244,8 @@ def main(argv: list[str] | None = None) -> int:
                     "last_run": picture.last_run,
                     "last_high": picture.last_high,
                     "last_low": picture.last_low,
+                    "last_cargo": picture.last_cargo,
+                    "last_tenant": picture.last_tenant,
                 },
                 indent=2,
             )

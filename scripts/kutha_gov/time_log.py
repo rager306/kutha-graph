@@ -1,8 +1,8 @@
 """Time axis for the harness: append-only observation log + deterministic fold.
 
 H0: JSONL beside `.kutha/` is the *process* SoT for CI quanta. Product SoT
-remains `crates/kutha-runtime`. H2 will map these records onto `kutha_common::Op`
-(typed interned triples), not the STCA-guide tutorial JSON merge-patch skeleton.
+remains `crates/kutha-runtime`. H2 maps status/cargo rows onto `kutha_common::Op`
+via `kutha-tenant` (typed interned triples), not the STCA-guide tutorial JSON merge-patch skeleton.
 
 STATE.md / ROADMAP.md are droppable pictures of human intent + last fold.
 They are not a second SoT (ADR-002 Time).
@@ -75,6 +75,8 @@ class HarnessFold:
     last_run: str = "none"  # ok | fail | none
     last_high: int = 0
     last_low: int = 0
+    last_cargo: str = "none"
+    last_tenant: str = "none"
     run_count: int = 0
 
     def apply(self, event: HarnessEvent) -> None:
@@ -87,6 +89,10 @@ class HarnessFold:
             self.last_high = int(event.object)
         elif event.subject == "harness.run" and event.relation == "low":
             self.last_low = int(event.object)
+        elif event.subject == "harness.observe" and event.relation == "cargo":
+            self.last_cargo = event.object
+        elif event.subject == "harness.observe" and event.relation == "tenant":
+            self.last_tenant = event.object
 
 
 def fold_log(path: Path) -> HarnessFold:
@@ -154,3 +160,13 @@ def append_run(
         for event in events:
             handle.write(json.dumps(event.to_json(), separators=(",", ":")) + "\n")
     return events[0]
+
+
+def append_observe(root: Path, relation: str, obj: str) -> None:
+    """One extra process observation after a later FSM step (H2 tenant)."""
+    log_path = root / LOG_REL
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    ingested = int(datetime.now(UTC).timestamp())
+    event = HarnessEvent(_now_v7(), "assert", "harness.observe", relation, obj, ingested, ingested)
+    with log_path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(event.to_json(), separators=(",", ":")) + "\n")

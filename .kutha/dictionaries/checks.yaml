@@ -131,6 +131,21 @@ checks:
         require: all
         category: observe-fn
         message: "FF6 test name missing from crate: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/tests/h2_harness_tenant.rs
+        needles: ["fn h2_harness_status_as_of_t1_differs_from_as_of_t2"]
+        require: all
+        category: observe-fn
+        message: "H2 test name missing from crate: {missing}"
+
+  - id: unnamed-csr
+    description: no silent CSR “now” — callers must use csr_lease_at
+    steps:
+      - kind: file_absent
+        path: crates/kutha-runtime/src/quantum.rs
+        needles: ["pub fn csr_lease("]
+        category: unnamed-now
+        message: "csr_lease() is an unnamed now; use csr_lease_at(tt, vt)"
 
   - id: relation-allowlist
     description: FF6 stub — one relation dictionary, fail-closed writes
@@ -139,7 +154,7 @@ checks:
         path: crates/kutha-runtime/dictionaries/relations.yaml
       - kind: file_contains
         path: crates/kutha-runtime/dictionaries/relations.yaml
-        needles: ["schema: kutha-relations/v1", "inForceAs", "knows", "knownBy"]
+        needles: ["schema: kutha-relations/v1", "inForceAs", "knows", "knownBy", "runStatus", "observed"]
         require: all
         category: allowlist
         message: "relation dictionary missing {missing}"
@@ -156,7 +171,7 @@ checks:
         path: .env.example
       - kind: file_contains
         path: .env.example
-        needles: ["KUTHA_GOV_BUDGET=", "KUTHA_GOV_FAIL_ON_WARN=", "KUTHA_MAX_CASCADE=", "KUTHA_GOV_CARGO_TIMEOUT_SEC="]
+        needles: ["KUTHA_GOV_BUDGET=", "KUTHA_GOV_FAIL_ON_WARN=", "KUTHA_MAX_CASCADE=", "KUTHA_GOV_CARGO_TIMEOUT_SEC=", "KUTHA_TENANT_DIR=", "KUTHA_HARNESS_LOG=", "KUTHA_TENANT_TIMEOUT_SEC="]
         require: all
         category: env
         message: ".env.example missing harness settings: {missing}"
@@ -194,6 +209,7 @@ checks:
           - "require_file"
           - "glob_none"
           - "observe_cargo"
+          - "emit_tenant"
         require: all
         category: constitution
         message: "META.md missing constitution clauses"

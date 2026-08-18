@@ -147,4 +147,4 @@ Hindsight / Graphiti   ≠  Agent memory SoT
 
 ## Implementation note (2026-08-18)
 
-P0 FF6 stub: one Relation list at `crates/kutha-runtime/dictionaries/relations.yaml`. Unknown relation → no log append. Intern map remains ADR-011. This is **not** the six dictionary kinds, not SMO, not Accepted. Adding a legal edge type is a YAML row (override path `KUTHA_RELATIONS_PATH`).
+P0 FF6 stub: one Relation list at `crates/kutha-runtime/dictionaries/relations.yaml`. Unknown relation → no log append. Intern map remains ADR-011. This is **not** the six dictionary kinds, not SMO, not Accepted. Adding a legal edge type is a YAML row (override path `KUTHA_RELATIONS_PATH`). H2 tenant rows `runStatus` and `observed` are **delivery facts** on that same list (harness as a tenant of the engine), not a second dictionary kind and not legal norms.

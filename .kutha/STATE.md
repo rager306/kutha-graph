@@ -6,7 +6,7 @@
 
 **Active Milestone:** M001
 **Active Slice:** None
-**Phase:** H1
+**Phase:** H2
 
 ## Lifecycles (do not collapse)
 
@@ -24,7 +24,7 @@ L_capability=ff5-green
 
 ## Next action
 
-H1 is in: `kutha-gov ci` observes named FF tests via `cargo test` (evidence, not SoT). Do **not** start M002 (Rocks) until STATE names it. Next thin slice: **H2** — append harness facts onto the Kutha log and query AS OF the process. Do not open ADR-100. Do not implement Cypher/HNSW.
+H2 is in: process JSONL is ingested onto the Kutha log (`kutha-tenant`); `as_of` last status must match. Do **not** start M002 (Rocks) until STATE names it. Next thin slice: **H3** — fail-closed process writes through a relation allowlist (harness plane). Do not open ADR-100. Do not implement Cypher/HNSW.
 
 ## Freeze (until explicit M002 lease)
 

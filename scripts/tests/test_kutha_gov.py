@@ -31,6 +31,7 @@ class HarnessTests(unittest.TestCase):
                 "meta-prompt",
                 "relation-allowlist",
                 "observe-required-fn",
+                "unnamed-csr",
             }.issubset(names)
         )
 
@@ -65,6 +66,7 @@ class HarnessTests(unittest.TestCase):
             HarnessEvent("b", "assert", "harness.run", "high", "0", 1, 1, "a"),
             HarnessEvent("c", "assert", "harness.run", "status", "fail", 2, 2),
             HarnessEvent("d", "assert", "harness.run", "high", "2", 2, 2, "c"),
+            HarnessEvent("e", "assert", "harness.observe", "cargo", "ok", 2, 2, "c"),
         ]
         first, second = HarnessFold(), HarnessFold()
         for event in events:
@@ -74,6 +76,7 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual("fail", first.last_run)
         self.assertEqual(2, first.last_high)
         self.assertEqual(2, first.run_count)
+        self.assertEqual("ok", first.last_cargo)
 
     def test_harness_ids_are_uuid_version_7(self) -> None:
         from kutha_gov.time_log import _now_v7

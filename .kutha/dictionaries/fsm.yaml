@@ -24,7 +24,13 @@ states:
     required:
       - ff5_as_of_t1_differs_from_as_of_t2_on_statute_log
       - ff6_unknown_relation_does_not_append
+      - h2_harness_status_as_of_t1_differs_from_as_of_t2
   emit: { kind: emit_log }
+  emit_tenant:
+    kind: emit_tenant
+    bin: cargo
+    args: ["run", "--offline", "--quiet", "-p", "kutha-runtime", "--bin", "kutha-tenant"]
+    timeout_sec: 180
   fold: { kind: fold_log }
   decide: { kind: decide }
   ok: { kind: terminal }
@@ -40,8 +46,9 @@ transitions:
   - { from: load_fsm, event: fail, to: fail }
   - { from: run_checks, event: done, to: observe_cargo }
   - { from: observe_cargo, event: done, to: emit }
-  - { from: emit, event: ok, to: fold }
+  - { from: emit, event: ok, to: emit_tenant }
   - { from: emit, event: fail, to: fail }
+  - { from: emit_tenant, event: done, to: fold }
   - { from: fold, event: ok, to: decide }
   - { from: fold, event: fail, to: fail }
   - { from: decide, event: ok, to: ok }

@@ -1,0 +1,4 @@
+{"id":"h1","op":"assert","subject":"harness.run","relation":"status","object":"fail","ingested_at":1000,"valid_from":1000,"caused_by":null}
+{"id":"h2","op":"assert","subject":"harness.run","relation":"high","object":"1","ingested_at":1000,"valid_from":1000,"caused_by":"h1"}
+{"id":"h3","op":"assert","subject":"harness.run","relation":"status","object":"ok","ingested_at":2000,"valid_from":2000,"caused_by":null}
+{"id":"h4","op":"assert","subject":"harness.observe","relation":"cargo","object":"ok","ingested_at":2000,"valid_from":2000,"caused_by":"h3"}

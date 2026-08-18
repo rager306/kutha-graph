@@ -31,7 +31,8 @@ Consumes: S01 fixture.
 
 - [x] **H0** — dictionary FSM + file trajectory.
 - [x] **H1** — `kutha-gov ci` observes named FF tests via `cargo test` (evidence, not SoT).
-- [ ] **H2** — harness facts on the Kutha log; query AS OF the process.
+- [x] **H2** — harness JSONL ingested onto the Kutha log; query AS OF last process status.
+- [ ] **H3** — fail-closed process writes through a relation allowlist.
 
 ## Later milestones (not active)
 

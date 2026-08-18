@@ -10,7 +10,7 @@ import yaml
 
 from kutha_gov.checks import get_checks
 from kutha_gov.protocol import Check, CheckResult, Context, Finding, Severity
-from kutha_gov.time_log import LOG_REL, append_run, fold_log
+from kutha_gov.time_log import LOG_REL, append_observe, append_run, fold_log
 
 FSM_REL = ".kutha/dictionaries/fsm.yaml"
 SCHEMA = "kutha-harness-fsm/v1"
@@ -22,6 +22,7 @@ ALLOWED_STATE_KINDS: frozenset[str] = frozenset(
         "run_checks",
         "observe_cargo",
         "emit_log",
+        "emit_tenant",
         "fold_log",
         "decide",
         "terminal",
@@ -241,6 +242,15 @@ def _execute(
             observations=outcome.observations,
         )
         return "ok"
+    if kind == "emit_tenant":
+        from kutha_gov.tenant import run_tenant_observation
+
+        code, findings, _text = run_tenant_observation(ctx.root, spec)
+        outcome.findings.extend(findings)
+        status = "ok" if code == 0 and not findings else "fail"
+        outcome.observations.append(("tenant", status))
+        append_observe(ctx.root, "tenant", status)
+        return "done"
     if kind == "fold_log":
         fold_log(ctx.root / LOG_REL)
         return "ok"

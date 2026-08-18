@@ -8,3 +8,5 @@ relations:
   - knownBy
   - relatedTo
   - inForceAs
+  - runStatus
+  - observed

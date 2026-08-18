@@ -12,7 +12,8 @@ ci → load META.md → load dictionaries/checks.yaml → load dictionaries/fsm.
   → walk FSM (unknown kind/transition → fail)
   → for each check, for each step: kind must be in the allowlist
   → observe_cargo (cargo test is evidence, not product SoT)
-  → emit log → fold → terminal ok|fail
+  → emit log → emit_tenant (harness JSONL → Kutha log, AS OF process)
+  → fold → terminal ok|fail
 ```
 
 Unknown `kind` → HIGH. Unknown FSM kind → HIGH (`unknown-fsm-kind`). Missing dictionary → HIGH. Python `Check` subclasses are not the intake path.
@@ -55,10 +56,11 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 | `run_checks` | interpret the checks dictionary (budget from env / FSM defaults) |
 | `observe_cargo` | run `cargo test` as evidence (not SoT); required test names must appear `... ok` |
 | `emit_log` | append `harness.run` triples |
+| `emit_tenant` | ingest process JSONL through `kutha-tenant` (`runStatus` / `observed`); AS OF must match last status |
 | `fold_log` | fold the process JSONL |
 | `decide` | `ok` iff HIGH == 0 (LOW fails only with fail-on-warn) |
 | `terminal` | accepting/rejecting sink |
 
 Severity on a check step: `high` (default) or `low`.
 
-Settings: copy `.env.example` to `.env`. CLI `--budget` / `--fail-on-warn` override env `KUTHA_GOV_BUDGET` / `KUTHA_GOV_FAIL_ON_WARN`, which override `defaults.budget` in `fsm.yaml`. Cargo observe timeout: `KUTHA_GOV_CARGO_TIMEOUT_SEC`, then `timeout_sec` on the FSM state.
+Settings: copy `.env.example` to `.env`. CLI `--budget` / `--fail-on-warn` override env `KUTHA_GOV_BUDGET` / `KUTHA_GOV_FAIL_ON_WARN`, which override `defaults.budget` in `fsm.yaml`. Cargo observe timeout: `KUTHA_GOV_CARGO_TIMEOUT_SEC`, then `timeout_sec` on the FSM state. Tenant ingest: `KUTHA_HARNESS_LOG`, `KUTHA_TENANT_DIR`, `KUTHA_TENANT_TIMEOUT_SEC`.

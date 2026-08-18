@@ -2,6 +2,25 @@
 
 All notable changes to this repository are recorded here. Process plane (harness) and product plane (crates) stay distinct.
 
+## 2026-08-18 — Wave 4: H2 tenant ingest + unnamed CSR cut
+
+### Product
+
+- Removed `Runtime::csr_lease()` (silent valid-time `0`). Callers name a cut with `csr_lease_at(tt, vt)`.
+- H2 tenant: `ingest_harness_jsonl` maps process `harness.run`/`status` → `runStatus` and `harness.observe`/`cargo` → `observed`, with monotonic `valid_to` windows. Same log, two process times, different live status (fixture).
+- Binary `kutha-tenant` persists the tenant picture under `KUTHA_TENANT_DIR` (default `.kutha/tenant`, gitignored).
+- Allowlist rows `runStatus` and `observed` are delivery facts on the FF6 list, not a second dictionary kind (ADR-050 note).
+
+### Process
+
+- FSM kind `emit_tenant` after `emit_log`: run `kutha-tenant`, require `as_of(last)` to match last status.
+- Fold pictures `last_cargo` and `last_tenant`.
+- Check `unnamed-csr` forbids bringing `csr_lease()` back.
+
+### Trajectory
+
+- Phase **H2**. Next: H3 (process-plane allowlist). M002 Rocks stays frozen until STATE names it.
+
 ## 2026-08-18 — Wave 3: H1 cargo observation as evidence
 
 ### Process (harness)

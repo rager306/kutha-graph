@@ -18,3 +18,4 @@ uv.toml.bak
 
 # Harness observation log (process Time axis; product SoT is crates/)
 .kutha/events.jsonl
+.kutha/tenant/
