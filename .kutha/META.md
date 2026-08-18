@@ -9,10 +9,12 @@ This is the **process analog of ADR-050**: a versioned constitution plus diction
 
 ```text
 ci → load META.md → load dictionaries/checks.yaml → load dictionaries/fsm.yaml
+  → load dictionaries/relations.yaml
   → walk FSM (unknown kind/transition → fail)
   → for each check, for each step: kind must be in the allowlist
   → observe_cargo (cargo test is evidence, not product SoT)
-  → emit log → emit_tenant (harness JSONL → Kutha log, AS OF process)
+  → emit log (unknown process relation → no JSONL append)
+  → emit_tenant (harness JSONL → Kutha log, AS OF process)
   → fold → terminal ok|fail
 ```
 
@@ -46,6 +48,7 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 | `glob_none` | glob must match no files (build artifacts) |
 | `markdown_heading_tag` | files matching glob have `## Status` + allowed tag |
 | `pointer_in_other_file` | exactly one regex capture in A must appear in B |
+| `yaml_needles_in_glob` | every string at a YAML path must appear (with prefix) in a glob of files |
 
 ## Allowed FSM kinds
 
@@ -55,7 +58,7 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 | `require_file` | path must exist |
 | `run_checks` | interpret the checks dictionary (budget from env / FSM defaults) |
 | `observe_cargo` | run `cargo test` as evidence (not SoT); required test names must appear `... ok` |
-| `emit_log` | append `harness.run` triples |
+| `emit_log` | append `harness.run` triples (fail-closed on `kutha-harness-relations/v1`) |
 | `emit_tenant` | ingest process JSONL through `kutha-tenant` (`runStatus` / `observed`); AS OF must match last status |
 | `fold_log` | fold the process JSONL |
 | `decide` | `ok` iff HIGH == 0 (LOW fails only with fail-on-warn) |
@@ -63,4 +66,4 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 
 Severity on a check step: `high` (default) or `low`.
 
-Settings: copy `.env.example` to `.env`. CLI `--budget` / `--fail-on-warn` override env `KUTHA_GOV_BUDGET` / `KUTHA_GOV_FAIL_ON_WARN`, which override `defaults.budget` in `fsm.yaml`. Cargo observe timeout: `KUTHA_GOV_CARGO_TIMEOUT_SEC`, then `timeout_sec` on the FSM state. Tenant ingest: `KUTHA_HARNESS_LOG`, `KUTHA_TENANT_DIR`, `KUTHA_TENANT_TIMEOUT_SEC`.
+Settings: copy `.env.example` to `.env`. CLI `--budget` / `--fail-on-warn` override env `KUTHA_GOV_BUDGET` / `KUTHA_GOV_FAIL_ON_WARN`, which override `defaults.budget` in `fsm.yaml`. Cargo observe timeout: `KUTHA_GOV_CARGO_TIMEOUT_SEC`, then `timeout_sec` on the FSM state. Tenant ingest: `KUTHA_HARNESS_LOG`, `KUTHA_TENANT_DIR`, `KUTHA_TENANT_TIMEOUT_SEC`. Process allowlist path: `KUTHA_HARNESS_RELATIONS_PATH`, then `.kutha/dictionaries/relations.yaml`.

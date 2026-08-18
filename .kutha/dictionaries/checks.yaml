@@ -119,24 +119,25 @@ checks:
   - id: observe-required-fn
     description: FSM observe_cargo required names exist as Rust tests (static, not SoT)
     steps:
-      - kind: file_contains
-        path: crates/kutha-runtime/tests/ff5_legal_pit.rs
-        needles: ["fn ff5_as_of_t1_differs_from_as_of_t2_on_statute_log"]
-        require: all
+      - kind: yaml_needles_in_glob
+        path: .kutha/dictionaries/fsm.yaml
+        select: states.observe_cargo.required
+        glob: "crates/**/*.rs"
+        prefix: "fn "
         category: observe-fn
-        message: "FF5 test name missing from crate: {missing}"
+        message: "FSM required names missing as fn in crates: {missing}"
+
+  - id: harness-relations
+    description: H3 process allowlist — one list, fail-closed JSONL writes
+    steps:
+      - kind: file_exists
+        path: .kutha/dictionaries/relations.yaml
       - kind: file_contains
-        path: crates/kutha-runtime/tests/ff6_allowlist.rs
-        needles: ["fn ff6_unknown_relation_does_not_append"]
+        path: .kutha/dictionaries/relations.yaml
+        needles: ["schema: kutha-harness-relations/v1", "status", "high", "low", "checks", "cargo", "tenant"]
         require: all
-        category: observe-fn
-        message: "FF6 test name missing from crate: {missing}"
-      - kind: file_contains
-        path: crates/kutha-runtime/tests/h2_harness_tenant.rs
-        needles: ["fn h2_harness_status_as_of_t1_differs_from_as_of_t2"]
-        require: all
-        category: observe-fn
-        message: "H2 test name missing from crate: {missing}"
+        category: process-allowlist
+        message: "process relation dictionary missing {missing}"
 
   - id: unnamed-csr
     description: no silent CSR “now” — callers must use csr_lease_at
@@ -171,7 +172,7 @@ checks:
         path: .env.example
       - kind: file_contains
         path: .env.example
-        needles: ["KUTHA_GOV_BUDGET=", "KUTHA_GOV_FAIL_ON_WARN=", "KUTHA_MAX_CASCADE=", "KUTHA_GOV_CARGO_TIMEOUT_SEC=", "KUTHA_TENANT_DIR=", "KUTHA_HARNESS_LOG=", "KUTHA_TENANT_TIMEOUT_SEC="]
+        needles: ["KUTHA_GOV_BUDGET=", "KUTHA_GOV_FAIL_ON_WARN=", "KUTHA_MAX_CASCADE=", "KUTHA_GOV_CARGO_TIMEOUT_SEC=", "KUTHA_TENANT_DIR=", "KUTHA_HARNESS_LOG=", "KUTHA_TENANT_TIMEOUT_SEC=", "KUTHA_HARNESS_RELATIONS_PATH="]
         require: all
         category: env
         message: ".env.example missing harness settings: {missing}"
@@ -198,6 +199,8 @@ checks:
         path: .kutha/dictionaries/checks.yaml
       - kind: file_exists
         path: .kutha/dictionaries/fsm.yaml
+      - kind: file_exists
+        path: .kutha/dictionaries/relations.yaml
       - kind: file_contains
         path: .kutha/META.md
         needles:
@@ -210,6 +213,8 @@ checks:
           - "glob_none"
           - "observe_cargo"
           - "emit_tenant"
+          - "yaml_needles_in_glob"
+          - "kutha-harness-relations/v1"
         require: all
         category: constitution
         message: "META.md missing constitution clauses"

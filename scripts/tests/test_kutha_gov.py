@@ -32,6 +32,7 @@ class HarnessTests(unittest.TestCase):
                 "relation-allowlist",
                 "observe-required-fn",
                 "unnamed-csr",
+                "harness-relations",
             }.issubset(names)
         )
 
@@ -77,6 +78,50 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(2, first.last_high)
         self.assertEqual(2, first.run_count)
         self.assertEqual("ok", first.last_cargo)
+
+    def test_unknown_process_relation_does_not_append(self) -> None:
+        import tempfile
+
+        from kutha_gov.time_log import LOG_REL, append_run
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            dict_dir = root / ".kutha" / "dictionaries"
+            dict_dir.mkdir(parents=True)
+            (dict_dir / "relations.yaml").write_text(
+                "schema: kutha-harness-relations/v1\nrelations:\n"
+                "  - status\n  - high\n  - low\n  - checks\n  - cargo\n",
+                encoding="utf-8",
+            )
+            _event, rejected = append_run(
+                root,
+                high=0,
+                low=0,
+                check_count=1,
+                observations=[("notAProcessRelation", "ok")],
+            )
+            self.assertIn("notAProcessRelation", rejected)
+            log = (root / LOG_REL).read_text(encoding="utf-8")
+            self.assertNotIn("notAProcessRelation", log)
+            self.assertIn('"relation":"status"', log)
+
+    def test_yaml_needles_in_glob_fails_when_fn_missing(self) -> None:
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "yaml_needles_in_glob",
+                "path": ".kutha/dictionaries/fsm.yaml",
+                "select": "states.observe_cargo.required",
+                "glob": "AGENTS.md",
+                "prefix": "fn ",
+            },
+            self.ctx,
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertTrue(highs)
+        self.assertEqual("yaml-needles", highs[0].category)
 
     def test_harness_ids_are_uuid_version_7(self) -> None:
         from kutha_gov.time_log import _now_v7

@@ -1,0 +1,2 @@
+# Indexer noise: minified vendor JS in ideation HTML (not product/harness code).
+.compound-engineering/artifacts/ideation/mermaid.min.js

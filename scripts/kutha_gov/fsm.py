@@ -51,6 +51,7 @@ class QuantumOutcome:
     results: list[CheckResult] = field(default_factory=list)
     findings: list[Finding] = field(default_factory=list)
     observations: list[tuple[str, str]] = field(default_factory=list)
+    evidence: list[tuple[str, str]] = field(default_factory=list)
 
 
 def load_machine(root: Path) -> Machine:
@@ -225,7 +226,7 @@ def _execute(
         status = "ok" if code == 0 and not findings else "fail"
         outcome.observations.append(("cargo", status))
         for name in seen_ok:
-            outcome.observations.append((name, "ok"))
+            outcome.evidence.append((name, "ok"))
         return "done"
     if kind == "emit_log":
         high = sum(r.high_count for r in outcome.results) + sum(
@@ -234,13 +235,22 @@ def _execute(
         low = sum(r.low_count for r in outcome.results) + sum(
             1 for f in outcome.findings if f.severity is Severity.LOW
         )
-        append_run(
+        _event, rejected = append_run(
             ctx.root,
             high=high,
             low=low,
             check_count=len(outcome.results),
             observations=outcome.observations,
         )
+        for rel in rejected:
+            outcome.findings.append(
+                Finding(
+                    "emit_log",
+                    Severity.HIGH,
+                    "unknown-relation",
+                    f"unknown process relation {rel!r} (not in allowlist) — fail-closed",
+                )
+            )
         return "ok"
     if kind == "emit_tenant":
         from kutha_gov.tenant import run_tenant_observation
@@ -249,7 +259,15 @@ def _execute(
         outcome.findings.extend(findings)
         status = "ok" if code == 0 and not findings else "fail"
         outcome.observations.append(("tenant", status))
-        append_observe(ctx.root, "tenant", status)
+        if not append_observe(ctx.root, "tenant", status):
+            outcome.findings.append(
+                Finding(
+                    "emit_tenant",
+                    Severity.HIGH,
+                    "unknown-relation",
+                    "unknown process relation 'tenant' (not in allowlist) — fail-closed",
+                )
+            )
         return "done"
     if kind == "fold_log":
         fold_log(ctx.root / LOG_REL)

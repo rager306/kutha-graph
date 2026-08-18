@@ -2,6 +2,20 @@
 
 All notable changes to this repository are recorded here. Process plane (harness) and product plane (crates) stay distinct.
 
+## 2026-08-18 — Wave 5: H3 process allowlist + one source for FF names
+
+### Process
+
+- Fail-closed process writes: `.kutha/dictionaries/relations.yaml` (`schema: kutha-harness-relations/v1`). Unknown relation does not append to `.kutha/events.jsonl`.
+- FSM loads `relations.yaml` before checks. Override: `KUTHA_HARNESS_RELATIONS_PATH`.
+- Named FF tests are CLI **evidence**, not process relations (aligned with H2 tenant mapping of `cargo` only).
+- Kind `yaml_needles_in_glob`: FSM `observe_cargo.required` must appear as `fn` in `crates/**/*.rs` (one list, not a copy in checks.yaml).
+- `.cbmignore` excludes ideation `mermaid.min.js` from the code index.
+
+### Trajectory
+
+- Phase **H3**. Next: H4 waits on ADR-090 overlay (do not start a legal pack). M002 Rocks stays frozen until STATE names it.
+
 ## 2026-08-18 — Wave 4: H2 tenant ingest + unnamed CSR cut
 
 ### Product

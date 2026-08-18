@@ -1,0 +1,12 @@
+schema: kutha-harness-relations/v1
+# Process-plane FF6 twin. Not ADR-050's six kinds. Not legal norms.
+# Unknown relation → the process JSONL does not grow.
+# Override path with KUTHA_HARNESS_RELATIONS_PATH.
+
+relations:
+  - status
+  - high
+  - low
+  - checks
+  - cargo
+  - tenant

@@ -32,7 +32,7 @@ Governor green ≠ ADR Accepted ≠ capability. Honeycomb **Proposed** ≠ deliv
 
 ## Current execution position
 
-Read `.kutha/STATE.md` first (lease, not SoT). **M001 S01–S03 are done**. Harness **H2** is on: process JSONL is a tenant of the Kutha log (`kutha-tenant` + `as_of`). Next: **H3** (process-plane allowlist). Do not start M002 Rocks until STATE names it.
+Read `.kutha/STATE.md` first (lease, not SoT). **M001 S01–S03 are done**. Harness **H3** is on: process JSONL writes fail-closed against `.kutha/dictionaries/relations.yaml`. Next: **H4** (ADR-090 overlay — do not start a legal pack). Do not start M002 Rocks until STATE names it.
 
 Until explicit M002: do not add RocksDB, Cypher/GPML parser, HNSW, ADR-050 six dictionaries, ADR-080/081, full ADR-090/093 packs, ADR-100+, or Consensus Query 103+.
 
@@ -85,7 +85,7 @@ cargo test --workspace
 Harness (Python **3.13** via **uv** only — not system `python3`):
 
 ```text
-uv run kutha-gov ci          # FSM quantum: checks → observe cargo → emit → tenant → fold
+uv run kutha-gov ci          # FSM quantum: relations → checks → observe → emit → tenant → fold
 uv run kutha-gov fsm         # print the process machine
 uv run kutha-gov py          # ruff + ty (Astral) + pyrefly (Meta)
 uv run kutha-gov fold        # fold .kutha/events.jsonl
@@ -100,7 +100,7 @@ Pin: `.python-version`. Copy `.env.example` to `.env` for `KUTHA_GOV_BUDGET` / `
 
 1. Honor locked ADR-000 **D1–D10**. Do not revive: pure Samyama product, pure ActiveGraph without hot projections, hard FSM as sole agent control, TypeScript as graph core, RVF as primary storage, Graphiti/Dify/Hindsight as SoT.
 2. STCA first. New product detail → honeycomb ADR-010+ (`docs/ADR/README.md`), never silent rewrites of 000/001/002. **Accepted** only when that cell is in the running engine.
-3. Honeycomb is a **map**. One steel thread at a time (next: H3, not M002). “Promote all” is forbidden.
+3. Honeycomb is a **map**. One steel thread at a time (next: H4 waits on ADR-090; not M002). “Promote all” is forbidden.
 4. Prefer falsifiable spikes over generic “build a graph DB” advice.
 5. Core stays self-contained Rust (no mandatory external graph DB / Graphiti runtime / LLM for temporal truth).
 6. Harness is a **parallel STCA plane** that dogfoods with the engine (`docs/process/kutha-harness.md`). H0 = files + JSONL + **meta-prompt dictionaries + FSM**; H2 = same typed triples on the Kutha log via `kutha-tenant`. Do not clone law-nexus 171-milestone GSD or copy `stca-guide.md` §5 merge-patch runtime. New check = YAML row; new CI phase = FSM row; new kind = rare `kinds.py` / `fsm.py` change. Unknown kind → HIGH.

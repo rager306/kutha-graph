@@ -20,6 +20,7 @@ ALLOWED_KINDS: frozenset[str] = frozenset(
         "glob_none",
         "markdown_heading_tag",
         "pointer_in_other_file",
+        "yaml_needles_in_glob",
     }
 )
 
@@ -376,6 +377,64 @@ def _kind_pointer_in_other_file(check: str, step: Step, ctx: Context, result: Ch
             )
 
 
+def _yaml_select(loaded: object, dotted: str) -> object:
+    cur: object = loaded
+    for part in dotted.split("."):
+        if not isinstance(cur, dict) or part not in cur:
+            return None
+        cur = cur[part]
+    return cur
+
+
+def _kind_yaml_needles_in_glob(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
+    import yaml
+
+    path = _str(step, "path")
+    select = _str(step, "select")
+    pattern = _str(step, "glob")
+    prefix = _str(step, "prefix")
+    text = ctx.read(path)
+    if text is None:
+        _high_missing(check, path, result)
+        return
+    try:
+        loaded = yaml.safe_load(text)
+    except yaml.YAMLError as exc:
+        result.findings.append(Finding(check, Severity.HIGH, "yaml", f"{path}: {exc}", path))
+        return
+    names = _yaml_select(loaded, select)
+    if not isinstance(names, list) or not names:
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "yaml-select",
+                f"{path} select {select!r} is not a non-empty list",
+                path,
+            )
+        )
+        return
+    parts: list[str] = []
+    for hit in sorted(ctx.root.glob(pattern)):
+        if hit.is_file():
+            parts.append(hit.read_text(encoding="utf-8"))
+            result.scanned += 1
+    blob = "\n".join(parts)
+    missing = [item for item in names if isinstance(item, str) and f"{prefix}{item}" not in blob]
+    if missing:
+        message = _fmt(
+            _str(
+                step, "message", "FSM required names missing as {prefix}<name> in {glob}: {missing}"
+            ),
+            prefix=prefix,
+            glob=pattern,
+            missing=", ".join(missing),
+        )
+        result.findings.append(
+            Finding(check, _severity(step), _category(step, "yaml-needles"), message, path)
+        )
+
+
 RUNNERS: dict[str, Runner] = {
     "file_exists": _kind_file_exists,
     "file_equals": _kind_file_equals,
@@ -387,4 +446,5 @@ RUNNERS: dict[str, Runner] = {
     "glob_none": _kind_glob_none,
     "markdown_heading_tag": _kind_markdown_heading_tag,
     "pointer_in_other_file": _kind_pointer_in_other_file,
+    "yaml_needles_in_glob": _kind_yaml_needles_in_glob,
 }

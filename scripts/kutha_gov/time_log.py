@@ -19,6 +19,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from kutha_gov.process_allow import admit, load_process_relations
+
 LOG_REL = ".kutha/events.jsonl"
 
 
@@ -117,21 +119,44 @@ def append_run(
     low: int,
     check_count: int,
     observations: list[tuple[str, str]] | None = None,
-) -> HarnessEvent:
-    """One runtime quantum: emit run status (+ counts). File adapter, not product WAL."""
+) -> tuple[HarnessEvent, list[str]]:
+    """One runtime quantum: emit run status (+ counts). File adapter, not product WAL.
+
+    Unknown process relations are not appended (H3 fail-closed).
+    """
     log_path = root / LOG_REL
     log_path.parent.mkdir(parents=True, exist_ok=True)
     ingested = int(datetime.now(UTC).timestamp())
     run_id = _now_v7()
     status = "fail" if high else "ok"
-    events = [
+    allowed = load_process_relations(root)
+    rejected: list[str] = []
+    events: list[HarnessEvent] = []
+
+    def _maybe(rel: str, event: HarnessEvent) -> None:
+        if rel in allowed:
+            events.append(event)
+        else:
+            rejected.append(rel)
+
+    _maybe(
+        "status",
         HarnessEvent(run_id, "assert", "harness.run", "status", status, ingested, ingested),
+    )
+    _maybe(
+        "high",
         HarnessEvent(
             _now_v7(), "assert", "harness.run", "high", str(high), ingested, ingested, run_id
         ),
+    )
+    _maybe(
+        "low",
         HarnessEvent(
             _now_v7(), "assert", "harness.run", "low", str(low), ingested, ingested, run_id
         ),
+    )
+    _maybe(
+        "checks",
         HarnessEvent(
             _now_v7(),
             "assert",
@@ -142,31 +167,39 @@ def append_run(
             ingested,
             run_id,
         ),
-    ]
+    )
     for relation, obj in observations or []:
-        events.append(
-            HarnessEvent(
-                _now_v7(),
-                "assert",
-                "harness.observe",
-                relation,
-                obj,
-                ingested,
-                ingested,
-                run_id,
-            )
+        event = HarnessEvent(
+            _now_v7(),
+            "assert",
+            "harness.observe",
+            relation,
+            obj,
+            ingested,
+            ingested,
+            run_id,
         )
-    with log_path.open("a", encoding="utf-8") as handle:
-        for event in events:
-            handle.write(json.dumps(event.to_json(), separators=(",", ":")) + "\n")
-    return events[0]
+        _maybe(relation, event)
+    if events:
+        with log_path.open("a", encoding="utf-8") as handle:
+            for event in events:
+                handle.write(json.dumps(event.to_json(), separators=(",", ":")) + "\n")
+    first = (
+        events[0]
+        if events
+        else HarnessEvent(run_id, "assert", "harness.run", "status", status, ingested, ingested)
+    )
+    return first, rejected
 
 
-def append_observe(root: Path, relation: str, obj: str) -> None:
-    """One extra process observation after a later FSM step (H2 tenant)."""
+def append_observe(root: Path, relation: str, obj: str) -> bool:
+    """One extra process observation after a later FSM step (H2 tenant). False if rejected."""
+    if not admit(root, relation):
+        return False
     log_path = root / LOG_REL
     log_path.parent.mkdir(parents=True, exist_ok=True)
     ingested = int(datetime.now(UTC).timestamp())
     event = HarnessEvent(_now_v7(), "assert", "harness.observe", relation, obj, ingested, ingested)
     with log_path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(event.to_json(), separators=(",", ":")) + "\n")
+    return True

@@ -47,6 +47,7 @@ class FsmTests(unittest.TestCase):
                 "load_constitution",
                 "load_checks",
                 "load_fsm",
+                "load_relations",
                 "run_checks",
                 "observe_cargo",
                 "emit",
@@ -60,6 +61,7 @@ class FsmTests(unittest.TestCase):
         self.assertEqual(0, outcome.high)
         self.assertIn(("cargo", "ok"), outcome.observations)
         self.assertIn(("tenant", "ok"), outcome.observations)
+        self.assertIn(("ff5_as_of_t1_differs_from_as_of_t2_on_statute_log", "ok"), outcome.evidence)
 
     def test_fsm_transition_keys_are_not_yaml_booleans(self) -> None:
         machine = load_machine(ROOT)

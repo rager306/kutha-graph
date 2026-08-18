@@ -6,7 +6,7 @@
 
 **Active Milestone:** M001
 **Active Slice:** None
-**Phase:** H2
+**Phase:** H3
 
 ## Lifecycles (do not collapse)
 
@@ -24,7 +24,7 @@ L_capability=ff5-green
 
 ## Next action
 
-H2 is in: process JSONL is ingested onto the Kutha log (`kutha-tenant`); `as_of` last status must match. Do **not** start M002 (Rocks) until STATE names it. Next thin slice: **H3** — fail-closed process writes through a relation allowlist (harness plane). Do not open ADR-100. Do not implement Cypher/HNSW.
+H3 is in: process JSONL writes are fail-closed against `.kutha/dictionaries/relations.yaml`. Do **not** start M002 (Rocks) until STATE names it. Next thin slice: **H4** waits on ADR-090 overlay (do not start a legal pack). Do not open ADR-100. Do not implement Cypher/HNSW.
 
 ## Freeze (until explicit M002 lease)
 
