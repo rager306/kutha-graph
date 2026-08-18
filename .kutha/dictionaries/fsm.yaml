@@ -22,15 +22,18 @@ states:
     bin: cargo
     args: ["test", "--workspace", "--offline"]
     timeout_sec: 180
+    build:
+      bin: cargo
+      args: ["build", "--offline", "-p", "kutha-runtime", "--bin", "kutha-tenant"]
     required:
       - ff5_as_of_t1_differs_from_as_of_t2_on_statute_log
       - ff6_unknown_relation_does_not_append
       - h2_harness_status_as_of_t1_differs_from_as_of_t2
+      - h2_same_second_status_as_of_uses_emitted_cut
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant
-    bin: cargo
-    args: ["run", "--offline", "--quiet", "-p", "kutha-runtime", "--bin", "kutha-tenant"]
+    bin: kutha-tenant
     timeout_sec: 180
   fold: { kind: fold_log }
   decide: { kind: decide }

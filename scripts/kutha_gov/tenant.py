@@ -59,13 +59,28 @@ def _timeout_sec(step: Step) -> int:
     return raw if isinstance(raw, int) and raw > 0 else 180
 
 
+def resolve_tenant_bin(root: Path, spec: Step) -> str:
+    """Binary path: env, then an existing spec path, then CARGO_TARGET_DIR/debug/<name>."""
+    env_bin = os.environ.get("KUTHA_TENANT_BIN", "").strip()
+    if env_bin:
+        return env_bin
+    named = spec.get("bin")
+    named_s = named.strip() if isinstance(named, str) and named.strip() else "kutha-tenant"
+    candidate = Path(named_s)
+    if candidate.is_file():
+        return str(candidate)
+    rooted = root / named_s
+    if rooted.is_file():
+        return str(rooted)
+    target = os.environ.get("CARGO_TARGET_DIR", "").strip()
+    target_path = Path(target) if target else root / "target"
+    return str(target_path / "debug" / Path(named_s).name)
+
+
 def run_tenant_observation(root: object, spec: Step) -> tuple[int, list[Finding], str]:
     cwd = root if isinstance(root, Path) else Path(str(root))
-    bin_name = spec.get("bin", "cargo")
-    bin_s = bin_name if isinstance(bin_name, str) else "cargo"
+    bin_s = resolve_tenant_bin(cwd, spec)
     args = _str_list(spec, "args")
-    if not args:
-        args = ["run", "--offline", "--quiet", "-p", "kutha-runtime", "--bin", "kutha-tenant"]
     env = os.environ.copy()
     env["CARGO_TERM_COLOR"] = "never"
     harness = env.get("KUTHA_HARNESS_LOG", "").strip() or ".kutha/events.jsonl"

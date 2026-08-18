@@ -50,6 +50,11 @@ def _str_list(step: Step, key: str) -> list[str]:
     return [item for item in value if isinstance(item, str)]
 
 
+def _mapping(step: Step, key: str) -> Mapping[str, object] | None:
+    value = step.get(key)
+    return value if isinstance(value, Mapping) else None
+
+
 def _timeout_sec(step: Step) -> int:
     raw_env = os.environ.get("KUTHA_GOV_CARGO_TIMEOUT_SEC", "").strip()
     if raw_env:
@@ -61,14 +66,17 @@ def _timeout_sec(step: Step) -> int:
     return raw if isinstance(raw, int) and raw > 0 else 180
 
 
-def run_cargo_observation(root: object, spec: Step) -> tuple[int, list[str], list[Finding]]:
-    cwd = root if isinstance(root, Path) else Path(str(root))
+def _run_cargo(
+    cwd: Path,
+    spec: Step,
+    *,
+    default_args: list[str],
+    timeout: int,
+    label: str,
+) -> tuple[int, str, list[Finding]]:
     bin_name = spec.get("bin", "cargo")
     bin_s = bin_name if isinstance(bin_name, str) else "cargo"
-    args = _str_list(spec, "args")
-    if not args:
-        args = ["test", "--workspace", "--offline"]
-    required = _str_list(spec, "required")
+    args = _str_list(spec, "args") or default_args
     cmd = [bin_s, *args]
     env = os.environ.copy()
     env["CARGO_TERM_COLOR"] = "never"
@@ -79,44 +87,74 @@ def run_cargo_observation(root: object, spec: Step) -> tuple[int, list[str], lis
             check=False,
             capture_output=True,
             text=True,
-            timeout=_timeout_sec(spec),
+            timeout=timeout,
             env=env,
         )
     except FileNotFoundError:
         return (
             127,
-            [],
+            "",
             [
                 Finding(
                     "observe_cargo",
                     Severity.HIGH,
                     "observe-error",
-                    f"{bin_s} not found (cannot observe product tests)",
+                    f"{bin_s} not found (cannot {label})",
                 )
             ],
         )
     except subprocess.TimeoutExpired:
         return (
             124,
-            [],
+            "",
             [
                 Finding(
                     "observe_cargo",
                     Severity.HIGH,
                     "observe-error",
-                    "cargo test timed out (evidence, not SoT)",
+                    f"{label} timed out (evidence, not SoT)",
                 )
             ],
         )
     text = (completed.stdout or "") + "\n" + (completed.stderr or "")
-    seen_ok, findings = interpret_cargo_output(text, required)
+    findings: list[Finding] = []
     if completed.returncode != 0:
         findings.append(
             Finding(
                 "observe_cargo",
                 Severity.HIGH,
                 "observe-fail",
-                f"cargo test exit {completed.returncode} (evidence, not SoT)",
+                f"{label} exit {completed.returncode} (evidence, not SoT)",
             )
         )
-    return completed.returncode, seen_ok, findings
+    return completed.returncode, text, findings
+
+
+def run_cargo_observation(root: object, spec: Step) -> tuple[int, list[str], list[Finding]]:
+    cwd = root if isinstance(root, Path) else Path(str(root))
+    timeout = _timeout_sec(spec)
+    code, text, findings = _run_cargo(
+        cwd,
+        spec,
+        default_args=["test", "--workspace", "--offline"],
+        timeout=timeout,
+        label="cargo test",
+    )
+    seen_ok, observe_findings = interpret_cargo_output(text, _str_list(spec, "required"))
+    findings.extend(observe_findings)
+    build = _mapping(spec, "build")
+    # Timeout / missing cargo: do not spend a second wall-clock budget on build.
+    # Non-zero test status still builds so emit_tenant can ingest fail.
+    if build is not None and code not in {124, 127}:
+        build_timeout = _timeout_sec(build) if "timeout_sec" in build else timeout
+        build_code, _build_text, build_findings = _run_cargo(
+            cwd,
+            build,
+            default_args=["build", "--offline", "-p", "kutha-runtime", "--bin", "kutha-tenant"],
+            timeout=build_timeout,
+            label="cargo build kutha-tenant",
+        )
+        findings.extend(build_findings)
+        if code == 0:
+            code = build_code
+    return code, seen_ok, findings

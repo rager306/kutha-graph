@@ -173,7 +173,7 @@ def cmd_py(root: Path) -> int:
     tools: list[tuple[str, list[str]]] = [
         ("ruff check", ["uv", "run", "ruff", "check", "scripts/"]),
         ("ruff format --check", ["uv", "run", "ruff", "format", "--check", "scripts/"]),
-        ("ty check", ["uv", "run", "ty", "check"]),
+        ("ty check", ["uv", "run", "ty", "check", "--error-on-warning"]),
         # Editable install maps site-packages -> scripts/ via .pth; project-mode
         # then excludes that tree. File-mode + explicit excludes keeps dogfood honest.
         (

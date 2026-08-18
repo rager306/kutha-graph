@@ -139,6 +139,137 @@ class TenantTests(unittest.TestCase):
         text = "tenant: ingested=4 last_status=ok last_vf=2000 as_of_match=1 dir=.kutha/tenant\n"
         self.assertEqual([], interpret_tenant_output(text))
 
+    def test_tenant_bin_prefers_env(self) -> None:
+        from kutha_gov.tenant import resolve_tenant_bin
+
+        previous = os.environ.get("KUTHA_TENANT_BIN")
+        try:
+            os.environ["KUTHA_TENANT_BIN"] = "/tmp/kutha-tenant-probe"
+            self.assertEqual(
+                "/tmp/kutha-tenant-probe",
+                resolve_tenant_bin(ROOT, {"bin": "ignored"}),
+            )
+        finally:
+            if previous is None:
+                os.environ.pop("KUTHA_TENANT_BIN", None)
+            else:
+                os.environ["KUTHA_TENANT_BIN"] = previous
+
+    def test_tenant_bin_uses_cargo_target_dir(self) -> None:
+        from kutha_gov.tenant import resolve_tenant_bin
+
+        previous_bin = os.environ.pop("KUTHA_TENANT_BIN", None)
+        previous_td = os.environ.get("CARGO_TARGET_DIR")
+        try:
+            os.environ["CARGO_TARGET_DIR"] = "/tmp/kutha-target"
+            self.assertEqual(
+                "/tmp/kutha-target/debug/kutha-tenant",
+                resolve_tenant_bin(ROOT, {"bin": "kutha-tenant"}),
+            )
+        finally:
+            if previous_bin is None:
+                os.environ.pop("KUTHA_TENANT_BIN", None)
+            else:
+                os.environ["KUTHA_TENANT_BIN"] = previous_bin
+            if previous_td is None:
+                os.environ.pop("CARGO_TARGET_DIR", None)
+            else:
+                os.environ["CARGO_TARGET_DIR"] = previous_td
+
+    def test_tenant_observation_execs_env_bin_not_cargo(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        from kutha_gov.tenant import run_tenant_observation
+
+        previous = os.environ.get("KUTHA_TENANT_BIN")
+        calls: list[list[str]] = []
+
+        def fake_run(cmd: list[str], **_kwargs: object) -> MagicMock:
+            calls.append(list(cmd))
+            completed = MagicMock()
+            completed.returncode = 0
+            completed.stdout = (
+                "tenant: ingested=2 last_status=ok last_vf=1001 as_of_match=1 dir=.kutha/tenant\n"
+            )
+            completed.stderr = ""
+            return completed
+
+        try:
+            os.environ["KUTHA_TENANT_BIN"] = "/tmp/kutha-tenant-probe"
+            with patch("kutha_gov.tenant.subprocess.run", side_effect=fake_run):
+                code, findings, _text = run_tenant_observation(ROOT, {"bin": "kutha-tenant"})
+            self.assertEqual(0, code)
+            self.assertEqual([], findings)
+            self.assertEqual([["/tmp/kutha-tenant-probe"]], calls)
+        finally:
+            if previous is None:
+                os.environ.pop("KUTHA_TENANT_BIN", None)
+            else:
+                os.environ["KUTHA_TENANT_BIN"] = previous
+
+
+class ObserveBuildTests(unittest.TestCase):
+    def test_observe_runs_build_after_test(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        from kutha_gov.observe import run_cargo_observation
+
+        calls: list[list[str]] = []
+
+        def fake_run(cmd: list[str], **_kwargs: object) -> MagicMock:
+            calls.append(list(cmd))
+            completed = MagicMock()
+            completed.returncode = 0
+            completed.stdout = "test foo ... ok\n"
+            completed.stderr = ""
+            return completed
+
+        spec = {
+            "bin": "cargo",
+            "args": ["test", "--workspace", "--offline"],
+            "build": {
+                "bin": "cargo",
+                "args": ["build", "--offline", "-p", "kutha-runtime", "--bin", "kutha-tenant"],
+            },
+            "required": ["foo"],
+        }
+        with patch("kutha_gov.observe.subprocess.run", side_effect=fake_run):
+            code, seen, findings = run_cargo_observation(ROOT, spec)
+        self.assertEqual(0, code)
+        self.assertEqual(["foo"], seen)
+        self.assertEqual([], findings)
+        self.assertEqual(
+            [
+                ["cargo", "test", "--workspace", "--offline"],
+                ["cargo", "build", "--offline", "-p", "kutha-runtime", "--bin", "kutha-tenant"],
+            ],
+            calls,
+        )
+
+    def test_observe_skips_build_after_timeout(self) -> None:
+        import subprocess
+        from unittest.mock import patch
+
+        from kutha_gov.observe import run_cargo_observation
+
+        calls: list[list[str]] = []
+
+        def fake_run(cmd: list[str], **_kwargs: object) -> object:
+            calls.append(list(cmd))
+            raise subprocess.TimeoutExpired(cmd=cmd, timeout=1)
+
+        spec = {
+            "bin": "cargo",
+            "args": ["test", "--offline"],
+            "build": {"bin": "cargo", "args": ["build", "--offline"]},
+            "required": ["foo"],
+        }
+        with patch("kutha_gov.observe.subprocess.run", side_effect=fake_run):
+            code, _seen, findings = run_cargo_observation(ROOT, spec)
+        self.assertEqual(124, code)
+        self.assertEqual(1, len(calls))
+        self.assertTrue(any(f.category == "observe-error" for f in findings))
+
 
 if __name__ == "__main__":
     unittest.main()

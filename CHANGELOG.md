@@ -2,6 +2,23 @@
 
 All notable changes to this repository are recorded here. Process plane (harness) and product plane (crates) stay distinct.
 
+## 2026-08-18 — Wave 6: same-second tenant AS OF + one cargo compile per quantum
+
+### Product
+
+- Tenant ingest reports `last_valid_from` as the **emitted** cut after monotonic chaining. Two status rows with the same unix second no longer query AS OF a closed window (`as_of_match=0`).
+- Test `h2_same_second_status_as_of_uses_emitted_cut` (TDD).
+
+### Process
+
+- `observe_cargo` optional `build:` compiles `kutha-tenant` once after `cargo test`. `emit_tenant` executes that binary (`KUTHA_TENANT_BIN`, else `$CARGO_TARGET_DIR/debug/kutha-tenant`). No second `cargo run`.
+- Checks `plane-mix-dicts` and `tenant-bin`: process/product relation schemas stay distinct; FSM must not `cargo run` the tenant.
+- `kutha-gov py` treats ty warnings as errors (`--error-on-warning`).
+
+### Trajectory
+
+- Phase **H3**. Next: H4 waits on ADR-090 overlay (do not start a legal pack). M002 Rocks stays frozen until STATE names it.
+
 ## 2026-08-18 — Wave 5: H3 process allowlist + one source for FF names
 
 ### Process

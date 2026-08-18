@@ -33,6 +33,8 @@ class HarnessTests(unittest.TestCase):
                 "observe-required-fn",
                 "unnamed-csr",
                 "harness-relations",
+                "plane-mix-dicts",
+                "tenant-bin",
             }.issubset(names)
         )
 

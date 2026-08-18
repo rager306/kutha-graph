@@ -87,6 +87,8 @@ Nakajima still holds: **graph = world, behaviors = physics, log = proof.** For t
 | dogfood | ManifestPort | `docs/process/kutha-harness.md` | mix into `kutha-runtime` |
 | meta-prompt | ConstitutionPort | `.kutha/META.md` + dictionaries | Python Check subclasses as intake |
 | observe-required-fn | EvidencePort | FSM `required` list → `fn` in `crates/**/*.rs` | duplicate name lists / cargo green as SoT |
+| plane-mix-dicts | PlanePort | process vs product relation schemas | one allowlist for both planes |
+| tenant-bin | CutPort | built `kutha-tenant`; `KUTHA_TENANT_BIN` | `cargo run` as a second compile |
 | unnamed-csr | CutPort | `csr_lease_at` only | silent `csr_lease()` now |
 | harness-relations | ProcessAllowPort | `.kutha/dictionaries/relations.yaml` | log unknown process relations |
 
@@ -126,9 +128,9 @@ assert  subject=harness.run      relation=runStatus   object=ok|fail
 assert  subject=harness.observe  relation=observed    object=ok|fail
 ```
 
-Windows: successive status rows close `valid_to` at the next monotonic valid-from. Tenant ingest maps only `status`→`runStatus` and `cargo`→`observed`; `high`/`checks` stay on the process JSONL. Per-test FF names are CLI evidence, not process relations. Tenant picture is `.kutha/tenant/` (`KUTHA_TENANT_DIR`), gitignored — not architecture SoT.
+Windows: successive status rows close `valid_to` at the next monotonic valid-from. Same unix second is legal on the process JSONL; the tenant **bumps** the emitted cut so AS OF last status is live (`[from, to)`). `last_valid_from` is that emitted cut, not the source `valid_from`. Tenant ingest maps only `status`→`runStatus` and `cargo`→`observed`; `high`/`checks` stay on the process JSONL. Per-test FF names are CLI evidence, not process relations. Tenant picture is `.kutha/tenant/` (`KUTHA_TENANT_DIR`), gitignored — not architecture SoT.
 
-Intern map (ADR-011) ≠ process dictionaries (ADR-050). Process allowlist at H3: `.kutha/dictionaries/relations.yaml`. Product allowlist remains `crates/kutha-runtime/dictionaries/relations.yaml`.
+Intern map (ADR-011) ≠ process dictionaries (ADR-050). Process allowlist at H3: `.kutha/dictionaries/relations.yaml`. Product allowlist remains `crates/kutha-runtime/dictionaries/relations.yaml`. Mixing the two schemas is a HIGH `plane-mix` finding.
 
 ## CLI (H0–H3)
 
@@ -143,9 +145,9 @@ uv run kutha-gov py
 uv run pytest
 ```
 
-Pin: `.python-version` → `3.13`. Copy `.env.example` to `.env` (`KUTHA_GOV_BUDGET`, `KUTHA_GOV_FAIL_ON_WARN`, `KUTHA_GOV_CARGO_TIMEOUT_SEC`, `KUTHA_TENANT_DIR`, `KUTHA_HARNESS_RELATIONS_PATH`). CLI flags override env; env overrides `defaults.budget` in `.kutha/dictionaries/fsm.yaml`. Toolchain: **uv** + **ruff** + **ty** (Astral) + **pyrefly** (Meta). `kutha-gov py` is recursive dogfood of the harness Python. Do not invoke system `python3` (this host may be 3.12). HIGH findings → exit 1. LOW → exit 0 unless `--fail-on-warn`.
+Pin: `.python-version` → `3.13`. Copy `.env.example` to `.env` (`KUTHA_GOV_BUDGET`, `KUTHA_GOV_FAIL_ON_WARN`, `KUTHA_GOV_CARGO_TIMEOUT_SEC`, `KUTHA_TENANT_DIR`, `KUTHA_TENANT_BIN`, `KUTHA_HARNESS_RELATIONS_PATH`). CLI flags override env; env overrides `defaults.budget` in `.kutha/dictionaries/fsm.yaml`. Toolchain: **uv** + **ruff** + **ty** (Astral) + **pyrefly** (Meta). `kutha-gov py` is recursive dogfood of the harness Python. Do not invoke system `python3` (this host may be 3.12). HIGH findings → exit 1. LOW → exit 0 unless `--fail-on-warn`.
 
-`ci` walks the FSM in `.kutha/dictionaries/fsm.yaml` (idle → load constitution/dictionaries including **relations.yaml** → run checks → **observe_cargo** → emit → **emit_tenant** → fold → decide → ok|fail). Unknown process relation → no JSONL append (`unknown-relation`). `observe_cargo` records named FF tests as evidence; `emit_tenant` ingests the process JSONL through `kutha-tenant`. Neither is product SoT. Unknown FSM kind or missing transition → fail-closed. Do not hardcode a new CI phase in Python.
+`ci` walks the FSM in `.kutha/dictionaries/fsm.yaml` (idle → load constitution/dictionaries including **relations.yaml** → run checks → **observe_cargo** (test + build `kutha-tenant`) → emit → **emit_tenant** (built binary) → fold → decide → ok|fail). Unknown process relation → no JSONL append (`unknown-relation`). `observe_cargo` records named FF tests as evidence; `emit_tenant` ingests the process JSONL through `kutha-tenant` and queries AS OF the emitted cut. Neither is product SoT. Unknown FSM kind or missing transition → fail-closed. Do not hardcode a new CI phase in Python.
 
 Adding a check: append a row to `.kutha/dictionaries/checks.yaml` using a kind from `.kutha/META.md`. Adding a CI phase: append a state/transition in `fsm.yaml` using an allowed FSM kind. Do not add `scripts/kutha_gov/checks/*.py`. A new *kind* is a rare kernel change (`kinds.py` or `fsm.py` + META allowlist + a test). Unknown kind → HIGH (fail-closed). LLM does not execute checks. Do not add `scripts/ports/`.
 

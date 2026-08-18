@@ -34,6 +34,38 @@ fn h2_harness_status_as_of_t1_differs_from_as_of_t2() {
 }
 
 #[test]
+fn h2_same_second_status_as_of_uses_emitted_cut() {
+    let mut rt = Runtime::default();
+    let report = kutha_runtime::ingest_harness_jsonl_str(
+        &mut rt,
+        concat!(
+            r#"{"op":"assert","subject":"harness.run","relation":"status","object":"fail","ingested_at":1000,"valid_from":1000}"#,
+            "\n",
+            r#"{"op":"assert","subject":"harness.run","relation":"status","object":"ok","ingested_at":1000,"valid_from":1000}"#,
+        ),
+    )
+    .unwrap();
+    assert_eq!(2, report.status_facts);
+    assert_eq!(Some("ok"), report.last_status.as_deref());
+    let cut = report.last_valid_from.expect("emitted cut");
+    assert_eq!(
+        1001, cut,
+        "same-second statuses must bump the emitted cut, not reuse source valid_from"
+    );
+    let run = rt.intern("harness.run");
+    let rel = rt.intern("runStatus");
+    let ok = rt.intern("ok");
+    let fail = rt.intern("fail");
+    let live = rt.fold().as_of(cut);
+    assert!(
+        live.contains(&(run, rel, ok)),
+        "AS OF last_valid_from must see the chained last status, not the source unix second"
+    );
+    assert!(!live.contains(&(run, rel, fail)));
+    rt.replay_check().unwrap();
+}
+
+#[test]
 fn h2_unmapped_harness_relation_does_not_append() {
     let mut rt = Runtime::default();
     let n = rt.log().len();

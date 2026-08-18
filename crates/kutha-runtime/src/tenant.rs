@@ -88,10 +88,10 @@ pub fn ingest_harness_jsonl_str(rt: &mut Runtime, text: &str) -> Result<IngestRe
     }
 
     let mut report = IngestReport::default();
-    emit_chained(rt, "harness.run", "runStatus", &statuses)?;
+    let last_cut = emit_chained(rt, "harness.run", "runStatus", &statuses)?;
     report.status_facts = statuses.len();
-    if let Some((vf, obj)) = statuses.last() {
-        report.last_valid_from = Some(*vf);
+    if let Some((_, obj)) = statuses.last() {
+        report.last_valid_from = last_cut;
         report.last_status = Some(obj.clone());
     }
     emit_chained(rt, "harness.observe", "observed", &cargo)?;
@@ -99,14 +99,16 @@ pub fn ingest_harness_jsonl_str(rt: &mut Runtime, text: &str) -> Result<IngestRe
     Ok(report)
 }
 
+/// Emit successive facts with monotonic `[valid_from, valid_to)`.
+/// Returns the last *emitted* valid_from (may be later than the source unix second).
 fn emit_chained(
     rt: &mut Runtime,
     subject: &str,
     relation: &str,
     rows: &[(u64, String)],
-) -> Result<(), TenantError> {
+) -> Result<Option<u64>, TenantError> {
     if rows.is_empty() {
-        return Ok(());
+        return Ok(None);
     }
     let mut cursor = 0u64;
     let mut timed: Vec<(u64, &str)> = Vec::with_capacity(rows.len());
@@ -128,5 +130,5 @@ fn emit_chained(
             valid_to,
         })?;
     }
-    Ok(())
+    Ok(timed.last().map(|row| row.0))
 }

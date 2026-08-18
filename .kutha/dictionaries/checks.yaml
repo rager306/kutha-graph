@@ -127,6 +127,40 @@ checks:
         category: observe-fn
         message: "FSM required names missing as fn in crates: {missing}"
 
+  - id: plane-mix-dicts
+    description: process and product relation dictionaries keep distinct schemas
+    steps:
+      - kind: file_absent
+        path: .kutha/dictionaries/relations.yaml
+        needles: ["kutha-relations/v1", "inForceAs"]
+        category: plane-mix
+        message: "process allowlist must not carry product schema/relations: {needle}"
+      - kind: file_absent
+        path: crates/kutha-runtime/dictionaries/relations.yaml
+        needles: ["kutha-harness-relations/v1"]
+        category: plane-mix
+        message: "product allowlist must not carry process schema: {needle}"
+
+  - id: tenant-bin
+    description: emit_tenant runs a built binary, not a second cargo compile
+    steps:
+      - kind: file_absent
+        path: .kutha/dictionaries/fsm.yaml
+        needles: ['"run", "--offline"', "cargo run"]
+        category: second-compile
+        message: "emit_tenant must not cargo run (second compile): {needle}"
+      - kind: file_absent
+        path: scripts/kutha_gov/tenant.py
+        needles: ["cargo run", '"run", "--offline"']
+        category: second-compile
+        message: "tenant interpreter must not cargo run: {needle}"
+      - kind: file_contains
+        path: .kutha/dictionaries/fsm.yaml
+        needles: ["build:", "kutha-tenant"]
+        require: all
+        category: second-compile
+        message: "observe_cargo must build kutha-tenant once: {missing}"
+
   - id: harness-relations
     description: H3 process allowlist — one list, fail-closed JSONL writes
     steps:
@@ -172,7 +206,7 @@ checks:
         path: .env.example
       - kind: file_contains
         path: .env.example
-        needles: ["KUTHA_GOV_BUDGET=", "KUTHA_GOV_FAIL_ON_WARN=", "KUTHA_MAX_CASCADE=", "KUTHA_GOV_CARGO_TIMEOUT_SEC=", "KUTHA_TENANT_DIR=", "KUTHA_HARNESS_LOG=", "KUTHA_TENANT_TIMEOUT_SEC=", "KUTHA_HARNESS_RELATIONS_PATH="]
+        needles: ["KUTHA_GOV_BUDGET=", "KUTHA_GOV_FAIL_ON_WARN=", "KUTHA_MAX_CASCADE=", "KUTHA_GOV_CARGO_TIMEOUT_SEC=", "KUTHA_TENANT_DIR=", "KUTHA_HARNESS_LOG=", "KUTHA_TENANT_TIMEOUT_SEC=", "KUTHA_HARNESS_RELATIONS_PATH=", "KUTHA_TENANT_BIN="]
         require: all
         category: env
         message: ".env.example missing harness settings: {missing}"
@@ -215,6 +249,7 @@ checks:
           - "emit_tenant"
           - "yaml_needles_in_glob"
           - "kutha-harness-relations/v1"
+          - "plane-mix"
         require: all
         category: constitution
         message: "META.md missing constitution clauses"
