@@ -42,12 +42,14 @@ This matches daily-archive ADR-040’s three-tier *intent*, remapped to Kutha lo
 
 | Pack (working name) | Borrow from RuVector (REAL-leaning) | Explicitly do **not** borrow | Kutha cell / phase |
 |---------------------|--------------------------------------|------------------------------|--------------------|
-| **P-HNSW** | `rvf-index` / core HNSW build+search; postgres `hnsw_am` as *reference*, not dependency | Mock `ruvector_hybrid_search`, fixed-score facades | ADR-042 · P2 |
+| **P-HNSW** | `rvf-index` core HNSW; `ruvector-hnsw-repair` (TombstoneOnly, BatchRepair, EagerRepair); `ruvector-acorn` predicate-agnostic filtered graph | Mock `ruvector_hybrid_search`, fixed-score facades | ADR-042 · P2 |
 | **P-RVF-Seal** | `rvf-runtime` CowEngine, freeze/fork, segment layout; WitnessChain generate/verify | RVF as primary store; npm fallback VectorDB stubs | ADR-091 · P3 |
 | **P-Witness-Bridge** | Witness receipts ↔ Quantum Receipt digests (event segment + lease IDs + dict@version) | Fabricated GraphRAG “reasoning paths” | ADR-014/091 · P1–P3 |
+| **P-Retrieval-Receipt** | `ruvector-retrieval-receipt` Merkle provenance commitments over query result sets (read-path tamper evidence) | Unverified query-engine scores as truth | ADR-014/071 · P2 |
+| **P-Temporal-Tensor** | `ruvector-temporal-tensor` tiered quantization (8/7/5/3-bit), segment delta reuse, random-access frame decode | Uncompressed f32 storage for cold history | ADR-012 · P1–P2 |
 | **P-Hybrid-Retrieve** | `ruvector-hybrid` BM25+dense+RRF **crate** (REAL per audit) | PostgreSQL hybrid SQL mock; GraphRAG context retrieval stub | ADR-071 · P2 |
 | **P-GNN-Rerank** | `ruvector-gnn` layer/attention primitives; optional message_pass | Graph-hybrid GNN facade with fixed `[0.7,0.2,0.1]` / zero embeddings | ADR-052 · P2–P4 |
-| **P-Agent-Memory** (optional) | Narrow agent-memory / SONA patterns *as content behind dictionaries* | MemoryMiddleware as D3 control plane; whole “agent brain” product | ADR-050/052 · later |
+| **P-Agent-Memory** (optional) | `ruvector-temporal-coherence` (decay + graph coherence gate); narrow SONA patterns *as content behind dictionaries* | MemoryMiddleware as D3 control plane; whole “agent brain” product | ADR-050/052 · later |
 | **Never as Kutha query SoT** | — | Cypher QueryExecutor empty path; SET/DELETE no-ops; federated empty success; npm FALLBACK-STUB backends | Rejected |
 
 ## Adoption ladder

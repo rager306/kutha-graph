@@ -2,6 +2,20 @@
 
 All notable changes to this repository are recorded here. Process plane (harness) and product plane (crates) stay distinct.
 
+## 2026-09-13 — Architecture: ruVector algorithmic adapters grounded into honeycomb ADRs
+
+### Research & ADRs
+
+- **P-Temporal-Tensor (ADR-012):** Grounded `ruvector-temporal-tensor` for diachronic vector tiering (8/7/5/3-bit quantization, segment deltas, random-access frame decode) in `D012-5`. Tiered embeddings remain droppable leases (`Vector tiering lease ≠ Authoritative fact history`).
+- **P-Retrieval-Receipt (ADR-014):** Grounded `ruvector-retrieval-receipt` Merkle provenance commitments for read-path query verification in `D014-5` (`Quantum receipt (write) ≠ Retrieval receipt (read evidence)`).
+- **P-HNSW / ACORN & Repair (ADR-042):** Grounded `ruvector-hnsw-repair` (tombstone/batch/eager delete repair in `D042-2`) and `ruvector-acorn` (predicate-agnostic graph traversal for low-selectivity temporal filters in `D042-3`) behind the HNSW access method port.
+- **P-Agent-Memory / Coherence (ADR-052):** Grounded `ruvector-temporal-coherence` composite scoring ($\text{Cosine} \times \text{TemporalDecay} \times \text{CoherenceGate}$) in `D052-4` for derived memory representations (`Coherence decay score ≠ Fact validity`).
+- **Adaptation Matrix:** Updated `ruvector-plugin-adaptation.md` with explicit pack boundaries, keeping Cypher/GraphRAG facades rejected.
+
+### Trajectory
+
+- All honeycomb cells remain **Proposed**. Product core crates (`kutha-common`, `kutha-runtime`) remain untouched. Harness phase **H3** verified green. Next: H4 waits on ADR-090 overlay.
+
 ## 2026-08-18 — Wave 6: same-second tenant AS OF + one cargo compile per quantum
 
 ### Product

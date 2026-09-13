@@ -28,6 +28,7 @@ Grounding cards:
 - `paper-bach-lsm-csr-bridge` — `.compound-engineering/artifacts/research/applicability/cards/paper-bach-lsm-csr-bridge.md`
 - `paper-semi-external-graph` — `.compound-engineering/artifacts/research/applicability/cards/paper-semi-external-graph.md`
 - `paper-event-log-vacuum-legal-hold` — `.compound-engineering/artifacts/research/applicability/cards/paper-event-log-vacuum-legal-hold.md`
+- `ruvector-temporal-tensor` — `/root/vendor-source/ruvector/crates/ruvector-temporal-tensor`
 
 LSM snapshots are a **compaction policy**: place them where queries land, not on a uniform wall clock. BACH ages adjacency lists into CSR inside LSM levels for mixed TP/AP. Semi-external graphs keep vertex state in RAM and stream edges from SSD — still a lease. Vacuum is **policy GC of the SoT**; legal hold pins ranges so vacuum cannot touch them. After vacuum, AS-OF of a removed state is a **defined failure**, not a silent hole.
 
@@ -49,12 +50,17 @@ When edges do not fit RAM, **semi-external** placement (vertex state in RAM, edg
 
 Vacuum physically removes expired transaction-time history under a **declared policy**, and logs that the drop happened. A **legal hold** is a grant-shaped fact: vacuum must fail closed on held ranges. LLM does not choose what to forget. P0 may be append-only-forever; honeycomb owns vacuum+hold as a pack.
 
+### D012-5. Temporal vector tiering (ruvector-temporal-tensor adapter)
+
+Historical vector embeddings over diachronic entities (norm editions, agent memories) must not induce memory exhaustion (Profile B/C). Borrow `ruvector-temporal-tensor` tiered quantization: Hot (8-bit, ~4.0x), Warm (7/5-bit, ~4.57–6.4x), and Cold (3-bit, ~10.67x) with temporal segment delta reuse and frame-level random access decode. Like CSR/HNSW, tiered vector buffers are droppable leases derived from the log, not secondary sources of truth.
+
 **Hard separations:**
 
 ```text
 Snapshot placement     ≠  Vacuum (physical erase)
 Layout compaction      ≠  Deleting losers
 SEM / SSD edge shards  ≠  Event log
+Vector tiering lease   ≠  Authoritative fact history
 Legal hold             ≠  LSM tombstone
 Defined AS-OF failure  ≠  Silent hole after GC
 ```

@@ -35,15 +35,15 @@ Insert/search/remove index vectors that *name* interned graph ids. Valid-time, i
 
 ### D042-2. Delete-repair is neighbor rewiring, not constraint repair
 
-Tombstones skip dead ids but stale edges drop recall. Repair strategies (tombstone-only / batch / eager) are **index maintenance**, not PG-constraint repair and not “self-reconstructing agent memory” marketing. Maintenance is `apply(delta)` under ADR-040; it may fall back to rebuild.
+Tombstones skip dead ids but stale edges drop recall. Repair strategies are **index maintenance**, borrowed directly from `ruvector-hnsw-repair` (`TombstoneOnly` for fast deletes, `BatchRepair` for amortised sweeps, `EagerRepair` for maximum recall preservation), not PG-constraint repair and not “self-reconstructing agent memory” marketing. Maintenance is `apply(delta)` under ADR-040; it may fall back to rebuild.
 
-### D042-3. Filtered kNN uses existing HNSW, not a new hybrid index in this cell
+### D042-3. Filtered kNN via predicate-agnostic traversal (ruvector-acorn adapter)
 
-NaviX-style: predicate-agnostic prefilter then kNN robust to selectivity. ACORN-style: traverse the predicate subgraph of HNSW. This cell does not invent a specialized hybrid structure; Compass/SIEVE coordination is ADR-043.
+Predicate-filtered vector search over temporal entity subsets (`valid_to IS NULL`, jurisdiction, document category) collapses standard HNSW beam search at low selectivity. Adopt `ruvector-acorn` (`AcornIndex1`, `AcornIndexGamma` implementing Patel et al., SIGMOD 2024): denser graphs ($\gamma \cdot M$) with predicate-agnostic traversal to explore neighbor topology through failing nodes without returning them. NaviX-style prefiltering remains an alternative access path for high-selectivity ranges.
 
 ### D042-4. Ports own the contract; RuVector is an adapter
 
-Borrow REAL HNSW crates behind a port. Do not vendor the RuVector monorepo, Cypher stubs, or GNN-as-MATCH. Whole-product “agent brain” is rejected (STRATEGY).
+Borrow REAL HNSW crates (`rvf-index`, `ruvector-hnsw-repair`, `ruvector-acorn`) behind a port trait. Do not vendor the RuVector monorepo, Cypher stubs, or GNN-as-MATCH. Whole-product “agent brain” is rejected (STRATEGY).
 
 **Hard separations:**
 

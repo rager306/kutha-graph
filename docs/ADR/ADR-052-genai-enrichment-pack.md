@@ -23,6 +23,7 @@ Grounding cards:
 - `samyama-agentic-enrichment-gak` — `.compound-engineering/artifacts/research/applicability/cards/samyama-agentic-enrichment-gak.md`
 - `raven-in-db-ai-agents` — `.compound-engineering/artifacts/research/applicability/cards/raven-in-db-ai-agents.md`
 - `paper-llm-compiler-not-executor` — `.compound-engineering/artifacts/research/applicability/cards/paper-llm-compiler-not-executor.md`
+- `ruvector-temporal-coherence` — `/root/vendor-source/ruvector/crates/ruvector-temporal-coherence`
 
 Contrast: Dify/oxify DAG, Hindsight four-network, Graphiti memory, Harvey-as-SoT.
 
@@ -40,6 +41,12 @@ Hot write of admitted evidence does **not** require LLM. Enrichment is async. Sa
 
 Enrichment cannot override L_KB / statutory facts. Supersession follows Kutha's temporal and provenance contracts (ADR-011/013); memory-system literature is a reference, not an authority over the fold. ULTRA/GNN scoring is a retrieve lease (071), not MATCH.
 
+### D052-4. Temporal coherence gating (ruvector-temporal-coherence adapter)
+
+Agent memory scoring over derived representations evaluates contextual relevance through composite scoring rather than flat cosine similarity:
+$$\text{Score} = \text{Cosine} \times \text{TemporalDecay} \times \text{CoherenceGate}$$
+Borrow `ruvector-temporal-coherence` (`CoherenceSearch`, `DecayConfig`, `CoherenceGraph`). The coherence gate evaluates memory connectedness in a lightweight local adjacency graph, giving higher voting weight to memories that are topologically confirmed by adjacent context while adhering to exponential decay over elapsed time.
+
 **Clarification (2026-09-13, Proposed; not implemented):** An observed source response, an extracted proposition, and an admitted claim are distinct records. Logging a response establishes what was observed; a well-formed extraction does not establish that its proposition is true. Derived outputs identify the source revisions and evidence they consumed, together with the model/prompt/cache identity needed for replay (ADR-011/014/060). Source correction, retraction, or supersession makes affected summaries, embeddings, cached answers, and action justifications ineligible for current use until re-evaluated under the applicable policy. Historical outputs and their lineage remain available at the appropriate historical cut; replaying cached output does not renew its admission or current authority.
 
 **Hard separations:**
@@ -47,6 +54,7 @@ Enrichment cannot override L_KB / statutory facts. Supersession follows Kutha's 
 ```text
 Enrichment event       ≠  Kernel assert
 Optional pack          ≠  Mandatory cloud LLM
+Coherence decay score  ≠  Fact validity
 CA cache               ≠  Model as SoT
 Raven/Samyama pattern  ≠  Vendor as Kutha core
 Dify DAG               ≠  This pack

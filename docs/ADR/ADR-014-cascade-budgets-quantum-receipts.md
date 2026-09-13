@@ -22,6 +22,8 @@ Grounding cards:
 
 - `paper-max-convolution-budgets` — `.compound-engineering/artifacts/research/applicability/cards/paper-max-convolution-budgets.md`
 - `paper-constant-size-evidence` — `.compound-engineering/artifacts/research/applicability/cards/paper-constant-size-evidence.md`
+- `ruvector-proof-gate` — `/root/vendor-source/ruvector/crates/ruvector-proof-gate`
+- `ruvector-retrieval-receipt` — `/root/vendor-source/ruvector/crates/ruvector-retrieval-receipt`
 
 Max-convolution / tropical `(max,+)` composes pack budgets: CSR rebuild vs HNSW vs agent vs materializer share envelope \(V\). Admission of *one* query is a different noun (gate vs envelope). Constant-size cryptographic evidence (Kao; Crosby–Wallach log ADS) is the literature shape of **quantum receipts**: fixed-size tuple, hash/Merkle link, optional epoch anchor. Graph ADS / blockchain papers are **anchors**, not SoT (`paper-blockchain-graph-ads` contrast).
 
@@ -43,6 +45,10 @@ Optional epoch root-of-roots (Merkle, transparency log, even a chain) may **anch
 
 A receipt may include `meta_prompt_version` and dictionary snapshot ids (ADR-050). This cell does not define those entities. Content-addressed LLM/tool cache keys (D6) belong in the quantum’s evidence so replay is cheap.
 
+### D014-5. Read provenance receipts (ruvector-retrieval-receipt adapter)
+
+While D014-1 certifies write quanta (emit→idle cascades), regulated agent reasoning also requires tamper-evident read commitments: binding the exact evidence subset handed to the agent during a query. Borrow `ruvector-retrieval-receipt` Merkle receipts (`RetrievalReceipt::Merkle(query_hash, index_root, results)`). Read receipts detect post-issuance evidence mutation in agent workflows and link to the action justification (ADR-052) without making retrieval a secondary write SoT.
+
 ### Clarification (2026-09-13): partial progress and recoverable outcomes
 
 The proposed contract permits prefix commit; it does not promise rollback on budget exhaustion. An outcome must distinguish completed, budget-stopped, and failed execution, and bind the input cut, committed range, rule/environment versions, consumed budget, and continuation disposition. A constant-size commitment may reference larger evidence; it does not make that evidence optional or constant-size. The P0 receipt is not yet the full cryptographic contract above.
@@ -54,6 +60,7 @@ Current `Runtime::emit` returns `Ok(QuantumOutcome)` even when its receipt says 
 **Hard separations:**
 
 ```text
+Quantum receipt (write) ≠  Retrieval receipt (read evidence)
 Quantum receipt        ≠  How-polynomial (ADR-011)
 Envelope V             ≠  Per-query admission gate
 Max-convolution        ≠  Airflow / Dify DAG
