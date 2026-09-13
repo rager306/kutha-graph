@@ -107,6 +107,17 @@ Pin: `.python-version`. Copy `.env.example` to `.env` for `KUTHA_GOV_BUDGET` / `
 7. Three lifecycles stay orthogonal: **L_map** (ADRs) · **L_delivery** (`.kutha` milestones) · **L_capability** (fitness tests). Bridges may cite; they may not copy state machines.
 8. Intern map (ADR-011) ≠ agent dictionaries (ADR-050). Do not collapse them.
 
+## Codex subagents
+
+Delegate bounded, independent work to subagents when it improves speed or confidence. The parent owns the current steel thread, scope decisions, integration, and the final Russian response. Small or tightly coupled tasks stay local. Use the workflow in `docs/process/codex-subagents.md`.
+
+- Read `.kutha/STATE.md` and pass the relevant freeze and lifecycle constraints to every helper. Parallelism does not authorize another milestone or a new research wave.
+- Prefer `codebase-memory-scout` for provisional discovery, `codebase-memory` for verified questions, `codebase-memory-auditor` for bounded audits, `implementation-worker` for assigned edits, and `correctness-reviewer` for independent review. Use an available built-in role with the same brief if a custom role is missing.
+- Before code delegation, provide project/generation, relevant graph queries and pagination, paths/symbols, coverage gaps, source fallback, and unresolved questions. Do not assume a helper has MCP access. Configuration and documentation outside the code graph require exact source evidence and an explicit not-applicable scope.
+- Assign disjoint file ownership. Keep product and harness responsibilities explicit, including any cross-plane contract. Workers share the workspace and must preserve other edits. Only the designated integrator changes shared lockfiles, process events, tenant data, or graph indexes, and runs `uv run kutha-gov ci` when required by the task.
+- Use up to three helpers, subject to the runtime limit; reuse helpers for related follow-ups. Do not recursively delegate by default. Coordinate cargo/uv checks that share output directories.
+- Require changed paths or evidence locations, check results, and limitations in each handoff. The parent validates the combined result; graph coverage, review approval, and governor green retain their distinct meanings.
+
 ## Research notes (agent memory)
 
 ### Leapfrog Triejoin (arXiv:1210.0481v5)
