@@ -88,7 +88,7 @@ YYYY-MM-DD
 
 ## Index — honeycomb cells (planned)
 
-All coordinate-band working titles listed in this README are **opened** as Research cells. Numbers remain bands, not a waterfall. New work opens **ADR-100+** (or a named spike report) rather than silently rewriting D1–D10.
+All coordinate-band working titles listed in this README are **opened** as Proposed cells. Numbers remain bands, not a waterfall. Clarifications belong in the existing cell without silently rewriting D1–D10. New ADR-100+ cells remain frozen under `.kutha/STATE.md`; this index does not authorize opening them.
 
 | Band | Axis | Notes |
 |------|------|--------|
@@ -103,6 +103,8 @@ All coordinate-band working titles listed in this README are **opened** as Resea
 | **090–099** | Vertical / packaging | Opened 090–093 |
 
 Manifest / algorithms: [`../architecture/stca-guide.md`](../architecture/stca-guide.md).
+
+Cross-cell contract review (2026-09-13): [semantic contract validation](../architecture/semantic-contract-validation.md). It connects recovery, supports, temporal cuts, trace/admission, and completion to proposed acceptance probes. It is not a new milestone or evidence that those capabilities ship.
 
 ## Process
 

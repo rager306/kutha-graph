@@ -39,6 +39,12 @@ Replay from any offset (060) stays. Named branches compose *on top*: two refs ma
 
 Compare two folds/slices with an explicit distance/edit script. LLM narrative is not the diff. Exact GED is hard; honeycomb may restrict to labeled tree/DAG cuts or property-graph edit scripts as a lease.
 
+### Clarification (2026-09-13): branch identity and counterfactual limits
+
+Portable references must bind stable event/claim identity and branch ancestry, not a bare local `fact_seq`. Two branches can assign the same next sequence to different assertions; cross-branch correction must resolve the intended version or reject it. Publish requires explicit base/cut and conflict checks, not implicit last-writer-wins. Delivery keys (ADR-011) prevent retry from becoming another independent assertion. Exact merge encoding remains Proposed.
+
+A fork changes recorded state, not the external world. Reusing an old tool response after changing its inputs is scenario playback, not evidence of a real counterfactual outcome; obtain or model new dependent observations and label that distinction. Fork, replay, and compensation must never silently reexecute external effects (ADR-062). P0 `fork_at` is a prefix experiment, not a merge or effect-isolation implementation.
+
 **Hard separations:**
 
 ```text

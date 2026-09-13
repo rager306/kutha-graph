@@ -36,9 +36,11 @@ Agents and packs hold capabilities (append-to-log, rebuild-CSR, call-remote, rea
 
 An allow-list of tools is necessary and insufficient. PACT-grain: untrusted content must not bind authority-bearing arguments. Fail closed.
 
+**Clarification (2026-09-13, Proposed; not implemented):** Resolve authority-bearing arguments through explicit references to the authorized target, operation, principal, and scope. Retrieved text or a remembered claim may propose a value; it cannot grant authority for that value. The action record binds the resolved arguments to their provenance (ADR-011), the admission/authorization decision, and the policy version (ADR-014). Valid dictionary structure alone does not establish either factual truth or permission to act. Current invocation authority remains required when evidence or grants are queried at a historical cut (ADR-080).
+
 ### D051-3. P0 = operator allow-list; honeycomb = grant events
 
-Unforgeable tokens on the log (capability grant/revoke as events, VT×TT like 013). Skip membranes-as-manual-wrappers and CHERI until a hardware spike.
+Capability grant/revoke records on the log (VT×TT like 013) describe authority history; recording a grant does not make an arbitrary event reference an unforgeable bearer capability. Token representation and custody remain open. Skip membranes-as-manual-wrappers and CHERI until a hardware spike.
 
 **Hard separations:**
 

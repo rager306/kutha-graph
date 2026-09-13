@@ -17,7 +17,7 @@ Papers: [Cypher/GQL vs RPQs](https://consensus.app/papers/details/f21b7cc2f07a54
 
 ## 1. Raw idea
 
-`(p)-[:KNOWS*]->(q)` is not a join of `KNOWS` with itself. It is a **regular path query**: an automaton over edge labels, product with the graph [1][3]. You must pick a **path mode** (walk / trail / simple / shortest) or the answer set is infinite [6]. Most production regexes are easy (transitive restricted) [8]; arbitrary simple paths are not. Cypher historically under-expressed RPQs; GQL/SQL-PGQ closed some of that [1].
+`(p)-[:KNOWS*]->(q)` has a **regular path query** core: an automaton over edge labels, product with the graph [1][3]. Its output contract matters: on a finite graph, the set of reachable endpoint pairs is finite even when cycles admit infinitely many matching walks. Path enumeration must specify repetition restrictions and a finite selection or bound; shortest is a selection criterion, not vertex injectivity. [Cypher's repeated-path documentation](https://neo4j.com/docs/cypher-manual/current/patterns/repeatable-node-and-relationship-paths/#bounded-path-length) illustrates why unrestricted repeated traversal needs a bound. Most production regexes are easy (transitive restricted) [8]; arbitrary simple paths are not. Cypher historically under-expressed RPQs; GQL/SQL-PGQ closed some of that [1].
 
 ## 2. STCA applicability
 
@@ -25,7 +25,7 @@ Query 070: compile `*` / RPQ to an automaton + product traversal (or matrix alge
 
 ## 3. Quality / cost
 
-Usefulness high: every Cypher surface has `*`. Optimality high: automata product is the right algorithm class; restricted regexes are the practical fragment. Cost: P0 = bounded `*1..k` as unrolled joins (sound for small k); honeycomb = NFA product + explicit path mode (default **trail**); skip query-by-example regex inference unless a pack.
+Usefulness high: variable-length patterns are a common query surface. Optimality high: automata product is the right algorithm class for the corresponding RPQ fragment. Cost: current P0 has `leapfrog_intersect`, not a bounded-path parser or full join matcher. Future bounded `*1..k` can use unrolled joins only with the declared uniqueness and output semantics; an NFA product likewise needs an explicit mode and selection contract. This card does not choose one universal default for every query language.
 
 ## 4. Demand
 

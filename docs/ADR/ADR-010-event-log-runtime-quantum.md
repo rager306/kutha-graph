@@ -33,11 +33,17 @@ We need this cell so later ADRs can cite one quantum instead of restating D1.
 
 ### D010-1. Log is SoT; fold is a picture
 
-The append-only event log is the only source of temporal truth. The property graph, CSR, HNSW, interval indexes, named-graph slices, and receipts are **droppable leases** of a fold at a log offset. Unloading a lease must not change history. LLM compiles or proposes; it never writes truth.
+The append-only event log is the only source of temporal truth. The property graph, CSR, HNSW, interval indexes, named-graph slices, and receipt projections are **droppable leases** of a fold at a log offset. The authoritative inputs needed to reconstruct meaning and quantum outcomes must survive dropping these leases (ADR-011/014). Unloading a lease must not change history. LLM compiles or proposes; it never writes truth.
 
 ### D010-2. Runtime quantum = emit → cascade → idle
 
 One quantum is: admit an event (or a validated patch) → append to the log → project into subscribed leases → trigger relation/behavior reactions \(B\) / \(R_B\) → cascade until idle (or until a budget bound from ADR-014 fires). No component instructs another except **via** logged events. Direct mutate of the fold is forbidden.
+
+### Clarification (2026-09-13): idle is a scoped completion claim
+
+For deterministic positive rules over a finite fact domain, saturation uses `X[n+1] = X[n] union T(X[n])` with monotone `T` and duplicate suppression. Completion means a fixed point for the declared rule set and input cut, not merely an empty worker queue. Fresh-entity generation requires an explicit bound; negation requires a declared evaluation discipline such as stratification. External tool effects are not pure rules (ADR-062).
+
+Budget exhaustion is incomplete evaluation, not saturation or proof of absence. This is a **Proposed** contract: the P0 inverse-`knows` behavior is not a general rule engine. See ADR-014 for partial-quantum outcomes.
 
 ### D010-3. Typed writes, not free MERGE-as-truth
 

@@ -44,6 +44,14 @@ DBSP-shaped incrementalization is the target for rich views. DRed-style delete/r
 
 Neo4j / Graphiti / Falkor / Samyama may inform **kernels** (041/042) but must not be required for assert → invalidate → AS OF.
 
+### Clarification (2026-09-13): a lease preserves a declared query contract
+
+Proposed lease identity binds branch/prefix, log offset, TT/VT cut, schema/term interpretation, projection version, relation filter, and set/bag/provenance mode. An arbitrary offset supplied beside a fold does not establish that they describe the same cut. Query execution must reject an incompatible/stale lease or rebuild it; authorization is checked separately (ADR-080), including any permission-filtered cache scope.
+
+For each supported **exact** query contract, require `answer(rebuild(history, cut)) = answer(apply_deltas(view, history_tail), cut)` after assertions, retractions, and corrections, including support/multiplicity when requested. [DBSP](https://arxiv.org/abs/2203.16684) grounds incremental maintenance; positive provenance is a different algebra (ADR-011). Approximate leases such as HNSW instead declare quality metrics, allowed candidate differences, and controlled nondeterminism if identical results are required. Temporal cuts, authorization, and mandatory filters remain hard constraints in both cases. A lease may omit information only if its advertised operator does not need it, or if execution rechecks the base fold.
+
+Current `CsrLease::from_fold` is an **untyped neighbor set**: it discards relation labels and deduplicates neighbors. It is not a typed MATCH/provenance view. `CsrMaterializer::build` records a supplied offset without verifying cut consistency. These are declared spike limits, not claims that typed projection or generic IVM is implemented.
+
 **Hard separations:**
 
 ```text

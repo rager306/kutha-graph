@@ -23,7 +23,7 @@ Grounding cards (cousins, not a dedicated regimes paper):
 - `paper-cordon-semantic-tx` — `.compound-engineering/artifacts/research/applicability/cards/paper-cordon-semantic-tx.md`
 - `paper-kumiho-agm-revision` — `.compound-engineering/artifacts/research/applicability/cards/paper-kumiho-agm-revision.md`
 
-Cordon: semantic transaction for tool effects (commit/rollback of *effects*). Kumiho: AGM-style revision — cousin of belief change, not a product loop.
+Cordon: semantic transaction for staged tool effects; the external adapter determines what can actually be committed or rolled back. Kumiho: AGM-style revision — cousin of belief change, not a product loop.
 
 ## Decision
 
@@ -33,7 +33,9 @@ P0–P2 do not require a regimes loop. If enabled later, it is a **pack** that g
 
 ### D062-2. Derived from dictionaries, not hard-coded
 
-Regimes, if any, are snapshots of State/mode + Policy dictionaries (050 derived FSM). Tool effects still commit only via the log (Cordon-shaped: effects that bypass the log cannot roll back).
+Regimes, if any, are snapshots of State/mode + Policy dictionaries (050 derived FSM). Tool-effect intent and observed outcome belong on the log; a log commit alone does not atomically commit or undo an external effect.
+
+**Clarification (2026-09-13, Proposed; not implemented):** An external effect has a stable identity across retries, a durable authorized intent before dispatch, and a separately recorded outcome. The adapter uses that identity as an idempotency key where supported. A crash after remote success but before the local outcome record leaves an unknown outcome: reconcile with the remote service before retrying, or retain the unknown state when reconciliation is unavailable. Exactly-once execution requires an explicit endpoint guarantee; local replay cannot supply it. Compensation is a new authorized, recorded action, not deletion of history or a promise to roll back an irreversible action. Strict replay consumes recorded outcomes without redispatching effects (ADR-014/060). These effect boundaries apply independently of whether an optional regimes pack is enabled; they introduce no mandatory workflow infrastructure.
 
 ### D062-3. Not an orchestrator
 

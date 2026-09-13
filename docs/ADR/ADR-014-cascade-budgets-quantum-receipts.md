@@ -37,11 +37,19 @@ Cascade/agent/materializer local functions \(h_i(v)\) compose by tropical max-co
 
 ### D014-3. Anchor ≠ SoT
 
-Optional epoch root-of-roots (Merkle, transparency log, even a chain) may **anchor** receipts. Rocks WAL + event log remain SoT. Public blockchain as graph store is rejected.
+Optional epoch root-of-roots (Merkle, transparency log, even a chain) may **anchor** receipts. The semantic event log remains SoT; Rocks WAL is its storage-durability cousin (ADR-010), not another source of semantic truth. Public blockchain as graph store is rejected.
 
 ### D014-4. Receipt may bind control-plane versions
 
 A receipt may include `meta_prompt_version` and dictionary snapshot ids (ADR-050). This cell does not define those entities. Content-addressed LLM/tool cache keys (D6) belong in the quantum’s evidence so replay is cheap.
+
+### Clarification (2026-09-13): partial progress and recoverable outcomes
+
+The proposed contract permits prefix commit; it does not promise rollback on budget exhaustion. An outcome must distinguish completed, budget-stopped, and failed execution, and bind the input cut, committed range, rule/environment versions, consumed budget, and continuation disposition. A constant-size commitment may reference larger evidence; it does not make that evidence optional or constant-size. The P0 receipt is not yet the full cryptographic contract above.
+
+Completion evidence and enough information to reconstruct or explicitly reject continuation must be authoritative, not available only in a dropped receipt/cache. If a crash leaves no terminal evidence, recovery reports incomplete/unknown, never inferred success. Resumption must identify the original quantum and prevent duplicate delivery/effects (ADR-011/062); exact record encoding remains a future implementation choice.
+
+Current `Runtime::emit` returns `Ok(QuantumOutcome)` even when its receipt says budget-aborted, may retain a committed prefix, and `store::persist` does not persist that receipt. Call success is therefore not quantum completion. Future budget-0/1/2 and crash-boundary fixtures must test this distinction before stronger guarantees are claimed.
 
 **Hard separations:**
 

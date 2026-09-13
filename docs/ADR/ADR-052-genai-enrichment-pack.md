@@ -30,7 +30,7 @@ Contrast: Dify/oxify DAG, Hindsight four-network, Graphiti memory, Harvey-as-SoT
 
 ### D052-1. Enrichment is a reversible pack
 
-LLM extract/summarize/embed runs as ADR-021 pack. Outputs are events (`enrichment.proposed` / applied after validate). Content-addressed cache of model calls (D6) is mandatory for replay. Unload drops derived leases (HNSW of embeddings, etc.), not the log.
+LLM extract/summarize/embed runs as ADR-021 pack. Outputs are proposed events; applying an output requires an explicit admission decision in addition to structural validation. Content-addressed cache of model calls (D6) is mandatory for replay. Unload drops derived leases (HNSW of embeddings, etc.), not the log.
 
 ### D052-2. Dual-process ingest (ADR-090 TR-07 cousin)
 
@@ -38,7 +38,9 @@ Hot write of admitted evidence does **not** require LLM. Enrichment is async. Sa
 
 ### D052-3. Derived ≠ kernel fact
 
-Enrichment cannot override L_KB / statutory facts. MemStrata still owns supersession. ULTRA/GNN scoring is a retrieve lease (071), not MATCH.
+Enrichment cannot override L_KB / statutory facts. Supersession follows Kutha's temporal and provenance contracts (ADR-011/013); memory-system literature is a reference, not an authority over the fold. ULTRA/GNN scoring is a retrieve lease (071), not MATCH.
+
+**Clarification (2026-09-13, Proposed; not implemented):** An observed source response, an extracted proposition, and an admitted claim are distinct records. Logging a response establishes what was observed; a well-formed extraction does not establish that its proposition is true. Derived outputs identify the source revisions and evidence they consumed, together with the model/prompt/cache identity needed for replay (ADR-011/014/060). Source correction, retraction, or supersession makes affected summaries, embeddings, cached answers, and action justifications ineligible for current use until re-evaluated under the applicable policy. Historical outputs and their lineage remain available at the appropriate historical cut; replaying cached output does not renew its admission or current authority.
 
 **Hard separations:**
 

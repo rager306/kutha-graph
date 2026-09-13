@@ -36,7 +36,9 @@ ABAC/path policy is a Port. Compile policy into the plan (070 IR) so the engine 
 
 ### D080-2. Grants are log facts with VT×TT
 
-`Grant` / `Revoke` / role-enable are events like TOKI facts. AS-OF query applies the grant in force at T, not today’s role table. ReBAC/Zanzibar-shaped tuples may overlay as a **lease** of the grant fold — oxify is evidence of a kernel, not Kutha SoT.
+`Grant` / `Revoke` / role-enable are events like TOKI facts. A historical permission audit evaluates grants at the named VT×TT cut (ADR-013), not today's role table. ReBAC/Zanzibar-shaped tuples may overlay as a **lease** of the grant fold — oxify is evidence of a kernel, not Kutha SoT.
+
+**Clarification (2026-09-13, Proposed; not implemented):** Current authorization to execute a query and receive its evidence is checked independently of the historical data or grant cut. Choosing AS OF before a revocation must not restore the caller's present access. An explicitly authorized auditor may ask what permission held then; permission to perform that audit is checked now. Ordinary historical reads still obey current invocation and disclosure policy (ADR-051). A receipt distinguishes the historical cut from the current authorization decision and its policy version (ADR-014); no silent substitution of one for the other is allowed.
 
 ### D080-3. Tenant is a slice of one fold
 
