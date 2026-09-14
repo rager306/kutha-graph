@@ -14,6 +14,7 @@ uv.toml.bak
 
 # Compound Engineering local overrides / scratch
 .compound-engineering/config.local.yaml
+.compound-engineering/config.example.yaml
 .context/compound-engineering/
 
 # Harness observation log (process Time axis; product SoT is crates/)
