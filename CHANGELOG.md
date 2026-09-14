@@ -1,20 +1,46 @@
 # Changelog
 
-All notable changes to this repository are recorded here. Process plane (harness) and product plane (crates) stay distinct.
+All notable changes to **this repository** are recorded here. This is project history, not GitHub Releases and not a Compound Engineering skill catalog.
 
-## 2026-09-13 — Architecture: ruVector algorithmic adapters grounded into honeycomb ADRs
+Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
-### Research & ADRs
+## [Unreleased]
 
-- **P-Temporal-Tensor (ADR-012):** Grounded `ruvector-temporal-tensor` for diachronic vector tiering (8/7/5/3-bit quantization, segment deltas, random-access frame decode) in `D012-5`. Tiered embeddings remain droppable leases (`Vector tiering lease ≠ Authoritative fact history`).
-- **P-Retrieval-Receipt (ADR-014):** Grounded `ruvector-retrieval-receipt` Merkle provenance commitments for read-path query verification in `D014-5` (`Quantum receipt (write) ≠ Retrieval receipt (read evidence)`).
-- **P-HNSW / ACORN & Repair (ADR-042):** Grounded `ruvector-hnsw-repair` (tombstone/batch/eager delete repair in `D042-2`) and `ruvector-acorn` (predicate-agnostic graph traversal for low-selectivity temporal filters in `D042-3`) behind the HNSW access method port.
-- **P-Agent-Memory / Coherence (ADR-052):** Grounded `ruvector-temporal-coherence` composite scoring ($\text{Cosine} \times \text{TemporalDecay} \times \text{CoherenceGate}$) in `D052-4` for derived memory representations (`Coherence decay score ≠ Fact validity`).
-- **Adaptation Matrix:** Updated `ruvector-plugin-adaptation.md` with explicit pack boundaries, keeping Cypher/GraphRAG facades rejected.
+## 2026-09-14 — Process: governor intake split and docs entry
+
+### Added
+
+- Root `README.md` and `CLAUDE.md` (`@AGENTS.md`) as the human / Claude Code entry points.
+- Harness `kutha-gov precommit` (dictionary checks only: no cargo quantum, no JSONL) plus `--check ID`, `git_path_implies` coupling, and `.pre-commit-config.yaml`. Neighbor surfaces: daily-archive `--check-only`, law-nexus `--check`; not a baoyu release bumper.
+- Control-loop ledger `.kutha/dictionaries/invariants.yaml` and bridge ledger `.kutha/dictionaries/bridges.yaml` (`docs/process/governor-intake.md`). Kind `yaml_map_list` keeps each check id in exactly one ledger.
+
+### Changed
+
+- RuVector adapter citations in ADR-012/014/042/052 and the CE adaptation note: in-repo cards + `.compound-engineering/artifacts/research/ruvector-plugin-adaptation.md`; no machine-local vendor paths. Mapping does not lift the HNSW freeze.
+
+### Process
+
+- Pre-commit profile is FAST-ONLY: ruff on `scripts/` and `kutha-gov precommit`. Product `cargo test` remains `kutha-gov ci`. Versions stay `0.0.0`. CHANGELOG remains plane-dated history, not GitHub Releases.
+- Control loop and Kutha requirements stay partitioned: honeycomb / fitness live in ADRs, STATE, and crates tests; `map-only` and `capability` are not process dispositions. Bridges may cite product freeze or named tests; they do not copy L_map or L_capability.
 
 ### Trajectory
 
-- All honeycomb cells remain **Proposed**. Product core crates (`kutha-common`, `kutha-runtime`) remain untouched. Harness phase **H3** verified green. Next: H4 waits on ADR-090 overlay.
+- Cells remain **Proposed**. Product crates untouched. Delivery lease remains H3; next thin slice is still H4 (ADR-090 overlay).
+
+## 2026-09-13 — Architecture: ruVector adapter mapping (L_map)
+
+### Research & ADRs
+
+- Mapped five named adapter crates onto already-open honeycomb cells via `.compound-engineering/artifacts/research/ruvector-plugin-adaptation.md`. Literature bound stays **163 cards**; no new matrix rows.
+- **P-Temporal-Tensor** → ADR-012 D012-5 (vector tiering lease ≠ fact history).
+- **P-Retrieval-Receipt** → ADR-014 D014-5 (`paper-constant-size-evidence`; write quantum receipt ≠ read evidence). `ruvector-proof-gate` remains a D014-2 cousin, not a new decision.
+- **P-HNSW** → ADR-042 D042-2/3 citing existing cards `ruvector-hnsw-delete-repair`, `paper-acorn-predicate-subgraph`, `paper-navix-filtered-hnsw`. Mapping does not lift the HNSW freeze.
+- **P-Agent-Memory** → ADR-052 D052-4 (coherence score ≠ fact validity).
+- ADRs cite in-repo cards and the adaptation note. Machine-local vendor paths are not architecture SoT.
+
+### Trajectory
+
+- Cells remain **Proposed**. Product crates untouched. Delivery lease remains H3; next thin slice is still H4 (ADR-090 overlay). This mapping does not authorize HNSW, Cypher, or M002.
 
 ## 2026-08-18 — Wave 6: same-second tenant AS OF + one cargo compile per quantum
 

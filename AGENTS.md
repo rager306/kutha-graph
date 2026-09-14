@@ -38,11 +38,16 @@ Until explicit M002: do not add RocksDB, Cypher/GPML parser, HNSW, ADR-050 six d
 
 Literature bound is **closed** (163 cards). Do not mint aggregator waves. Matrix: `.compound-engineering/artifacts/research/applicability/` (`cards/` = SoT; `matrix.md` = rollup; `architecture-gtm-readout.md` = GTM translation).
 
+Compound Engineering `docs_root` is `.compound-engineering/artifacts` (set in `.compound-engineering/config.yaml`). Plans, research notes, ideation, and handoffs live there — not under `docs/`. Captured learnings, when a solved problem is written down, go in `.compound-engineering/artifacts/solutions/` (category folders, YAML frontmatter: `module`, `tags`, `problem_type`). That store is relevant when implementing or debugging in a documented area; it is not architecture SoT and not a delivery backlog. `ce-setup` owns config health; it does not author `README.md`.
+
 ## Repository layout
 
 ```text
 kutha-graph/
+├── README.md                          # human entry (status, commands, where to read)
+├── CLAUDE.md                          # shim → this file (Claude Code)
 ├── AGENTS.md                          # this file
+├── CHANGELOG.md                       # dated product/process history
 ├── STRATEGY.md                        # product strategy (wedge, metrics, non-goals)
 ├── Cargo.toml                         # Rust workspace (kutha-common, kutha-runtime)
 ├── pyproject.toml                     # harness only: Python >=3.13, uv, kutha-gov
@@ -66,10 +71,14 @@ kutha-graph/
 │   ├── kutha-gov                      # uv wrapper
 │   ├── kutha_gov/                     # harness interpreter (kinds.py; checks are YAML)
 │   └── tests/                         # pytest for harness
-└── .compound-engineering/artifacts/
-    ├── research/applicability/        # 163 cards, matrix, GTM readout
-    ├── plans/                         # CE plans (spine-without-sprawl, P0 spikes)
-    └── ideation/                      # ADR crystallization HTML
+└── .compound-engineering/
+    ├── config.yaml                    # CE team defaults (docs_root)
+    └── artifacts/                    # CE docs_root (not product SoT)
+        ├── research/applicability/    # 163 cards, matrix, GTM readout
+        ├── plans/                     # CE plans (spine-without-sprawl, P0 spikes)
+        ├── ideation/                  # ADR crystallization HTML
+        ├── handoffs/                 # session continuity snapshots
+        └── solutions/                 # ce-compound learnings when captured
 ```
 
 Do **not** add repo-root `ports/` / `adapters/` / `domain/` (ADR-022: hexagon lives *inside* a slice). Do **not** put Python inside `kutha-runtime`.
@@ -86,6 +95,7 @@ Harness (Python **3.13** via **uv** only — not system `python3`):
 
 ```text
 uv run kutha-gov ci          # FSM quantum: relations → checks → observe → emit → tenant → fold
+uv run kutha-gov precommit   # dictionary checks only (no cargo, no JSONL); optional --check ID
 uv run kutha-gov fsm         # print the process machine
 uv run kutha-gov py          # ruff + ty (Astral) + pyrefly (Meta)
 uv run kutha-gov fold        # fold .kutha/events.jsonl
@@ -94,7 +104,7 @@ uv run kutha-gov explain trajectory
 uv run pytest
 ```
 
-Pin: `.python-version`. Copy `.env.example` to `.env` for `KUTHA_GOV_BUDGET` / `KUTHA_GOV_FAIL_ON_WARN` (CLI flags win). Dev tools live in `pyproject.toml` dependency group `dev`. Add a governor check by appending `.kutha/dictionaries/checks.yaml`; add a CI phase by appending `.kutha/dictionaries/fsm.yaml`. Do not add a Python class.
+Pin: `.python-version`. Copy `.env.example` to `.env` for `KUTHA_GOV_BUDGET` / `KUTHA_GOV_FAIL_ON_WARN` (CLI flags win). Dev tools live in `pyproject.toml` dependency group `dev`. Add a governor check by appending `.kutha/dictionaries/invariants.yaml` (control loop) or `.kutha/dictionaries/bridges.yaml` (cite product), then `.kutha/dictionaries/checks.yaml`; add a CI phase by appending `.kutha/dictionaries/fsm.yaml`. Kutha requirements stay in ADRs / STATE / crates tests. Do not add a Python class. Commit hook: `uvx pre-commit install --overwrite` (`.pre-commit-config.yaml` calls `kutha-gov precommit`, not `ci`).
 
 ## Working conventions
 
@@ -103,9 +113,10 @@ Pin: `.python-version`. Copy `.env.example` to `.env` for `KUTHA_GOV_BUDGET` / `
 3. Honeycomb is a **map**. One steel thread at a time (next: H4 waits on ADR-090; not M002). “Promote all” is forbidden.
 4. Prefer falsifiable spikes over generic “build a graph DB” advice.
 5. Core stays self-contained Rust (no mandatory external graph DB / Graphiti runtime / LLM for temporal truth).
-6. Harness is a **parallel STCA plane** that dogfoods with the engine (`docs/process/kutha-harness.md`). H0 = files + JSONL + **meta-prompt dictionaries + FSM**; H2 = same typed triples on the Kutha log via `kutha-tenant`. Do not clone law-nexus 171-milestone GSD or copy `stca-guide.md` §5 merge-patch runtime. New check = YAML row; new CI phase = FSM row; new kind = rare `kinds.py` / `fsm.py` change. Unknown kind → HIGH.
+6. Harness is a **parallel STCA plane** that dogfoods with the engine (`docs/process/kutha-harness.md`). H0 = files + JSONL + **meta-prompt dictionaries + FSM**; H2 = same typed triples on the Kutha log via `kutha-tenant`. Do not clone law-nexus 171-milestone GSD or copy `stca-guide.md` §5 merge-patch runtime. Control loop → check: append `.kutha/dictionaries/invariants.yaml` first (`docs/process/governor-intake.md`). A fence that cites product is `.kutha/dictionaries/bridges.yaml`. Kutha requirements stay in ADRs / STATE / crates tests. New check = YAML row; new CI phase = FSM row; new kind = rare `kinds.py` / `fsm.py` change. Unknown kind → HIGH.
 7. Three lifecycles stay orthogonal: **L_map** (ADRs) · **L_delivery** (`.kutha` milestones) · **L_capability** (fitness tests). Bridges may cite; they may not copy state machines.
 8. Intern map (ADR-011) ≠ agent dictionaries (ADR-050). Do not collapse them.
+9. Humans start at `README.md`. Agents follow this file. Dated history goes in `CHANGELOG.md` (product vs process; do not collapse Trajectory into “the product shipped”).
 
 ## Codex subagents
 

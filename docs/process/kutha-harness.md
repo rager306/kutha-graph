@@ -82,15 +82,17 @@ Nakajima still holds: **graph = world, behaviors = physics, log = proof.** For t
 | trajectory | StatePort, RoadmapPort | filesystem `.kutha/*.md` + YAML row | global `scripts/ports/` |
 | lifecycles | StatePort | same | collapse L_* into one enum |
 | adr-status | AdrCorpusPort | `docs/ADR/*.md` | rewrite ADR Status |
-| freeze | CargoPort | `crates/*/Cargo.toml` | product deps |
+| freeze | CargoPort | `crates/*/Cargo.toml` (bridge cites STATE freeze) | product deps as SoT |
 | honeycomb-map | IntentPort | STATE+ROADMAP text | treat honeycomb as M001 |
 | dogfood | ManifestPort | `docs/process/kutha-harness.md` | mix into `kutha-runtime` |
 | meta-prompt | ConstitutionPort | `.kutha/META.md` + dictionaries | Python Check subclasses as intake |
 | observe-required-fn | EvidencePort | FSM `required` list → `fn` in `crates/**/*.rs` | duplicate name lists / cargo green as SoT |
 | plane-mix-dicts | PlanePort | process vs product relation schemas | one allowlist for both planes |
 | tenant-bin | CutPort | built `kutha-tenant`; `KUTHA_TENANT_BIN` | `cargo run` as a second compile |
-| unnamed-csr | CutPort | `csr_lease_at` only | silent `csr_lease()` now |
+| unnamed-csr | CutPort | `csr_lease_at` only (bridge cites crates) | silent `csr_lease()` now |
 | harness-relations | ProcessAllowPort | `.kutha/dictionaries/relations.yaml` | log unknown process relations |
+| invariants-ledger | IntakePort | `.kutha/dictionaries/invariants.yaml` | honeycomb cells / L_capability as process dispositions |
+| bridges-ledger | BridgePort | `.kutha/dictionaries/bridges.yaml` | copy ADR Status or fitness into the harness |
 
 Hexagon lives **inside** a slice (ADR-022). Do not grow a repo-root `ports/` / `adapters/` / `domain/` tree — that is the cohesion failure the manifesto forbids. Composition root is `uv run kutha-gov` (Python 3.13). Later a Rust `kutha-harness` bin that **only** wires adapters. Checks are Behaviors: they propose findings; they do not mutate ADRs.
 
@@ -140,6 +142,8 @@ uv run kutha-gov explain trajectory
 uv run kutha-gov fsm
 uv run kutha-gov ci
 uv run kutha-gov ci --budget 4
+uv run kutha-gov precommit
+uv run kutha-gov precommit --check docs-coupling
 uv run kutha-gov fold
 uv run kutha-gov py
 uv run pytest
@@ -147,13 +151,15 @@ uv run pytest
 
 Pin: `.python-version` → `3.13`. Copy `.env.example` to `.env` (`KUTHA_GOV_BUDGET`, `KUTHA_GOV_FAIL_ON_WARN`, `KUTHA_GOV_CARGO_TIMEOUT_SEC`, `KUTHA_TENANT_DIR`, `KUTHA_TENANT_BIN`, `KUTHA_HARNESS_RELATIONS_PATH`). CLI flags override env; env overrides `defaults.budget` in `.kutha/dictionaries/fsm.yaml`. Toolchain: **uv** + **ruff** + **ty** (Astral) + **pyrefly** (Meta). `kutha-gov py` is recursive dogfood of the harness Python. Do not invoke system `python3` (this host may be 3.12). HIGH findings → exit 1. LOW → exit 0 unless `--fail-on-warn`.
 
-`ci` walks the FSM in `.kutha/dictionaries/fsm.yaml` (idle → load constitution/dictionaries including **relations.yaml** → run checks → **observe_cargo** (test + build `kutha-tenant`) → emit → **emit_tenant** (built binary) → fold → decide → ok|fail). Unknown process relation → no JSONL append (`unknown-relation`). `observe_cargo` records named FF tests as evidence; `emit_tenant` ingests the process JSONL through `kutha-tenant` and queries AS OF the emitted cut. Neither is product SoT. Unknown FSM kind or missing transition → fail-closed. Do not hardcode a new CI phase in Python.
+`precommit` is the neighbor **check-only** surface (daily-archive `--check-only`: no trajectory artifact write; law-nexus `--check` / `--list-checks`): it runs the dictionary, including `git_path_implies` against the **staged** diff, and does not walk observe_cargo / emit / tenant. `--check ID` is valid only with `json` or `precommit`. Full `ci` still runs coupling with `git_against=auto` (staged if nonempty, else worktree, else last commit). Optional hook file: `.pre-commit-config.yaml` (`uvx pre-commit install --overwrite`). Cargo stays path-filtered in neighbors; here cargo stays in `ci`, not in the hook.
 
-Adding a check: append a row to `.kutha/dictionaries/checks.yaml` using a kind from `.kutha/META.md`. Adding a CI phase: append a state/transition in `fsm.yaml` using an allowed FSM kind. Do not add `scripts/kutha_gov/checks/*.py`. A new *kind* is a rare kernel change (`kinds.py` or `fsm.py` + META allowlist + a test). Unknown kind → HIGH (fail-closed). LLM does not execute checks. Do not add `scripts/ports/`.
+`ci` walks the FSM in `.kutha/dictionaries/fsm.yaml` (idle → load constitution/dictionaries including **relations.yaml**, **invariants.yaml**, and **bridges.yaml** → run checks → **observe_cargo** (test + build `kutha-tenant`) → emit → **emit_tenant** (built binary) → fold → decide → ok|fail). Unknown process relation → no JSONL append (`unknown-relation`). `observe_cargo` records named FF tests as evidence; `emit_tenant` ingests the process JSONL through `kutha-tenant` and queries AS OF the emitted cut. Neither is product SoT. Unknown FSM kind or missing transition → fail-closed. Do not hardcode a new CI phase in Python.
+
+Adding a check: control loop → `.kutha/dictionaries/invariants.yaml`; a fence that cites product → `.kutha/dictionaries/bridges.yaml`; then a row in `.kutha/dictionaries/checks.yaml` using a kind from `.kutha/META.md` (`docs/process/governor-intake.md`). Kutha requirements stay in ADRs / STATE / crates tests. Adding a CI phase: append a state/transition in `fsm.yaml` using an allowed FSM kind. Do not add `scripts/kutha_gov/checks/*.py`. A new *kind* is a rare kernel change (`kinds.py` or `fsm.py` + META allowlist + a test). Unknown kind → HIGH (fail-closed). LLM does not execute checks. Do not add `scripts/ports/`.
 
 ## Non-goals
 
-- Porting law-nexus `governor.py` or daily-archive hexagonal YAML fleet (shape of “add a row, not a class” is adopted; their fleet is not).
+- Porting law-nexus `governor.py` or daily-archive hexagonal YAML fleet (CLI check-only / `--check` / non-mutating hooks are borrowed; their check fleets and GSD machines are not).
 - Initializing a 100+ GSD milestone machine.
 - Marking honeycomb Accepted because the harness is green.
 - Python inside `kutha-runtime`.

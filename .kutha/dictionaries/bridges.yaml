@@ -1,0 +1,27 @@
+schema: kutha-harness-bridges/v1
+meta_prompt: .kutha/META.md
+process: docs/process/governor-intake.md
+# Process checks that cite product freeze or named tests.
+# Bridges may cite; they may not copy L_map or L_capability state machines.
+# Kutha requirements stay in ADRs, STATE freeze, and crates tests.
+
+bridges:
+  - id: B-freeze-deps
+    claim: "Cargo members do not add frozen product deps before STATE names them"
+    cites: ".kutha/STATE.md"
+    check: freeze
+
+  - id: B-observe-required-fn
+    claim: "FSM observe_cargo.required names exist as fn in crates"
+    cites: "crates/kutha-runtime"
+    check: observe-required-fn
+
+  - id: B-unnamed-csr
+    claim: "No silent CSR now; callers use csr_lease_at"
+    cites: "crates/kutha-runtime"
+    check: unnamed-csr
+
+  - id: B-relation-allowlist
+    claim: "Product writes stay on one FF6 relation dictionary"
+    cites: "crates/kutha-runtime/dictionaries/relations.yaml"
+    check: relation-allowlist

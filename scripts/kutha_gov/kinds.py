@@ -6,6 +6,8 @@ import re
 from collections.abc import Callable, Mapping
 from pathlib import Path
 
+import yaml
+
 from kutha_gov.protocol import CheckResult, Context, Finding, Severity
 
 ALLOWED_KINDS: frozenset[str] = frozenset(
@@ -21,6 +23,8 @@ ALLOWED_KINDS: frozenset[str] = frozenset(
         "markdown_heading_tag",
         "pointer_in_other_file",
         "yaml_needles_in_glob",
+        "git_path_implies",
+        "yaml_map_list",
     }
 )
 
@@ -53,6 +57,15 @@ def _str_list(step: Step, key: str) -> list[str]:
     if not isinstance(value, list):
         return []
     return [item for item in value if isinstance(item, str)]
+
+
+def _path_list(step: Step, key: str) -> list[str]:
+    value = step.get(key, [])
+    if isinstance(value, str) and value.strip():
+        return [value]
+    if not isinstance(value, list):
+        return []
+    return [item for item in value if isinstance(item, str) and item.strip()]
 
 
 def _int(step: Step, key: str, default: int) -> int:
@@ -387,8 +400,6 @@ def _yaml_select(loaded: object, dotted: str) -> object:
 
 
 def _kind_yaml_needles_in_glob(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
-    import yaml
-
     path = _str(step, "path")
     select = _str(step, "select")
     pattern = _str(step, "glob")
@@ -435,6 +446,253 @@ def _kind_yaml_needles_in_glob(check: str, step: Step, ctx: Context, result: Che
         )
 
 
+def _kind_git_path_implies(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
+    from kutha_gov.gitdiff import changed_relpaths, path_matches
+
+    when_any = _str_list(step, "when_any")
+    then_any = _str_list(step, "then_any")
+    if not when_any or not then_any:
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "git-path-implies",
+                "git_path_implies requires when_any and then_any",
+            )
+        )
+        return
+    if ctx.changed_paths is not None:
+        changed = set(ctx.changed_paths)
+    else:
+        listed = changed_relpaths(ctx.root, ctx.git_against)
+        if listed is None:
+            result.note = "no git; coupling skipped"
+            return
+        changed = listed
+    result.scanned += len(changed)
+    if not any(path_matches(rel, pattern) for rel in changed for pattern in when_any):
+        return
+    if any(path_matches(rel, pattern) for rel in changed for pattern in then_any):
+        return
+    message = _fmt(
+        _str(step, "message", "diff matches {when} without {then}"),
+        when=", ".join(when_any),
+        then=", ".join(then_any),
+    )
+    result.findings.append(
+        Finding(check, _severity(step), _category(step, "docs-coupling"), message)
+    )
+
+
+def _as_str_map(value: object) -> dict[str, str]:
+    if not isinstance(value, dict):
+        return {}
+    out: dict[str, str] = {}
+    for key, item in value.items():
+        if isinstance(key, str) and isinstance(item, str):
+            out[key] = item
+    return out
+
+
+def _yaml_document(
+    check: str, path: str, ctx: Context, result: CheckResult
+) -> tuple[object | None, bool]:
+    text = ctx.read(path)
+    if text is None:
+        _high_missing(check, path, result)
+        return None, False
+    try:
+        return yaml.safe_load(text), True
+    except yaml.YAMLError as exc:
+        result.findings.append(Finding(check, Severity.HIGH, "yaml", f"{path}: {exc}", path))
+        return None, False
+
+
+def _yaml_map_list_finding(
+    check: str,
+    step: Step,
+    category: str,
+    message_template: str,
+    loc: str,
+    result: CheckResult,
+    **fmt: object,
+) -> None:
+    result.findings.append(
+        Finding(
+            check,
+            _severity(step),
+            _category(step, category),
+            _fmt(_str(step, "message", message_template), **fmt),
+            loc,
+        )
+    )
+
+
+def _yaml_map_rows_missing_fields(maps: list[dict], require: list[str]) -> list[str]:
+    missing_rows: list[str] = []
+    for row in maps:
+        row_id = str(row.get("id", "?"))
+        absent = [
+            key
+            for key in require
+            if not isinstance(row.get(key), str) or not str(row.get(key)).strip()
+        ]
+        if absent:
+            missing_rows.append(f"{row_id}:{','.join(absent)}")
+    return missing_rows
+
+
+def _yaml_map_duplicate_values(maps: list[dict], field: str) -> list[str]:
+    seen: dict[str, int] = {}
+    dups: list[str] = []
+    for row in maps:
+        val = row.get(field)
+        if not isinstance(val, str) or not val.strip():
+            continue
+        seen[val] = seen.get(val, 0) + 1
+        if seen[val] == 2:
+            dups.append(val)
+    return dups
+
+
+def _yaml_map_non_allowed_values(maps: list[dict], field: str, allowed: list[str]) -> list[str]:
+    return sorted({str(row.get(field)) for row in maps if str(row.get(field, "")) not in allowed})
+
+
+def _yaml_map_nonempty_field_values(maps: list[dict], field: str) -> list[str]:
+    values: list[str] = []
+    for row in maps:
+        val = row.get(field)
+        if isinstance(val, str) and val.strip():
+            values.append(val.strip())
+    return values
+
+
+def _kind_yaml_map_list(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
+    """Interpret a YAML list of maps: required fields, closed vocab, unique ids, cross-file refs."""
+    path = _str(step, "path")
+    select = _str(step, "select")
+    loaded, ok = _yaml_document(check, path, ctx, result)
+    if not ok:
+        return
+    rows = _yaml_select(loaded, select)
+    if not isinstance(rows, list):
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "yaml-select",
+                f"{path} select {select!r} is not a list",
+                path,
+            )
+        )
+        return
+    maps = [row for row in rows if isinstance(row, dict)]
+    when = _as_str_map(step.get("when"))
+    if when:
+        maps = [
+            row
+            for row in maps
+            if all(str(row.get(key, "")) == value for key, value in when.items())
+        ]
+    result.scanned = len(maps)
+
+    require = _str_list(step, "require_fields")
+    if require:
+        missing_rows = _yaml_map_rows_missing_fields(maps, require)
+        if missing_rows:
+            _yaml_map_list_finding(
+                check,
+                step,
+                "yaml-map-fields",
+                "{path} rows missing fields: {missing}",
+                path,
+                result,
+                path=path,
+                missing=", ".join(missing_rows),
+            )
+            return
+
+    unique = _str(step, "unique")
+    if unique:
+        dups = _yaml_map_duplicate_values(maps, unique)
+        if dups:
+            _yaml_map_list_finding(
+                check,
+                step,
+                "yaml-map-unique",
+                "{path} duplicate {unique}: {missing}",
+                path,
+                result,
+                path=path,
+                unique=unique,
+                missing=", ".join(dups),
+            )
+            return
+
+    field = _str(step, "field")
+    allowed = _str_list(step, "allowed")
+    if field and allowed:
+        bad = _yaml_map_non_allowed_values(maps, field, allowed)
+        if bad:
+            _yaml_map_list_finding(
+                check,
+                step,
+                "yaml-map-vocab",
+                "{path} field {field} not in allowlist: {missing}",
+                path,
+                result,
+                path=path,
+                field=field,
+                missing=", ".join(bad),
+            )
+            return
+
+    other_paths = _path_list(step, "other")
+    prefix = _str(step, "prefix")
+    if field and other_paths:
+        parts: list[str] = []
+        for other_path in other_paths:
+            other_text = ctx.read(other_path)
+            if other_text is None:
+                _high_missing(check, other_path, result)
+                return
+            parts.append(other_text)
+        haystack = "\n".join(parts)
+        other_label = ", ".join(other_paths)
+        values = _yaml_map_nonempty_field_values(maps, field)
+        if step.get("absent_other") is True:
+            hits = [val for val in values if f"{prefix}{val}" in haystack]
+            if hits:
+                _yaml_map_list_finding(
+                    check,
+                    step,
+                    "yaml-map-overlap",
+                    "{path} {field} also in {other}: {missing}",
+                    path,
+                    result,
+                    path=path,
+                    field=field,
+                    other=other_label,
+                    missing=", ".join(hits),
+                )
+            return
+        missing = [val for val in values if f"{prefix}{val}" not in haystack]
+        if missing:
+            _yaml_map_list_finding(
+                check,
+                step,
+                "yaml-map-ref",
+                "{path} {field} missing in {other}: {missing}",
+                path,
+                result,
+                path=path,
+                field=field,
+                other=other_label,
+                missing=", ".join(missing),
+            )
+
+
 RUNNERS: dict[str, Runner] = {
     "file_exists": _kind_file_exists,
     "file_equals": _kind_file_equals,
@@ -447,4 +705,6 @@ RUNNERS: dict[str, Runner] = {
     "markdown_heading_tag": _kind_markdown_heading_tag,
     "pointer_in_other_file": _kind_pointer_in_other_file,
     "yaml_needles_in_glob": _kind_yaml_needles_in_glob,
+    "git_path_implies": _kind_git_path_implies,
+    "yaml_map_list": _kind_yaml_map_list,
 }

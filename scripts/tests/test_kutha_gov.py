@@ -35,6 +35,13 @@ class HarnessTests(unittest.TestCase):
                 "harness-relations",
                 "plane-mix-dicts",
                 "tenant-bin",
+                "docs-entry",
+                "state-readme",
+                "version-freeze",
+                "changelog-planes",
+                "docs-coupling",
+                "invariants-ledger",
+                "bridges-ledger",
             }.issubset(names)
         )
 
@@ -124,6 +131,112 @@ class HarnessTests(unittest.TestCase):
         highs = [f for f in result.findings if f.severity is Severity.HIGH]
         self.assertTrue(highs)
         self.assertEqual("yaml-needles", highs[0].category)
+
+    def test_git_path_implies_requires_changelog_for_crate_diff(self) -> None:
+        ctx = Context(root=ROOT, changed_paths=frozenset({"crates/kutha-runtime/src/lib.rs"}))
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "git_path_implies",
+                "when_any": ["crates/**/*.rs"],
+                "then_any": ["CHANGELOG.md"],
+            },
+            ctx,
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertEqual(1, len(highs))
+        self.assertEqual("docs-coupling", highs[0].category)
+
+    def test_git_path_implies_passes_when_changelog_in_same_diff(self) -> None:
+        ctx = Context(
+            root=ROOT,
+            changed_paths=frozenset({"crates/kutha-runtime/src/lib.rs", "CHANGELOG.md"}),
+        )
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "git_path_implies",
+                "when_any": ["crates/**/*.rs"],
+                "then_any": ["CHANGELOG.md"],
+            },
+            ctx,
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertEqual([], highs)
+
+    def test_yaml_map_list_rejects_unknown_disposition(self) -> None:
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "yaml_map_list",
+                "path": ".kutha/dictionaries/invariants.yaml",
+                "select": "invariants",
+                "field": "disposition",
+                "allowed": ["never-a-disposition"],
+            },
+            self.ctx,
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertTrue(highs)
+        self.assertEqual("yaml-map-vocab", highs[0].category)
+
+    def test_yaml_map_list_requires_check_ids_in_other_file(self) -> None:
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "yaml_map_list",
+                "path": ".kutha/dictionaries/checks.yaml",
+                "select": "checks",
+                "field": "id",
+                "other": "AGENTS.md",
+                "prefix": "governor-check-id-absent-",
+            },
+            self.ctx,
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertTrue(highs)
+        self.assertEqual("yaml-map-ref", highs[0].category)
+
+    def test_yaml_map_list_absent_other_flags_overlap(self) -> None:
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "yaml_map_list",
+                "path": ".kutha/dictionaries/checks.yaml",
+                "select": "checks",
+                "field": "id",
+                "other": ".kutha/dictionaries/invariants.yaml",
+                "prefix": "    check: ",
+                "absent_other": True,
+            },
+            self.ctx,
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertTrue(highs)
+        self.assertEqual("yaml-map-overlap", highs[0].category)
+
+    def test_precommit_unknown_check_is_contract_error(self) -> None:
+        self.assertEqual(2, main(["--root", str(ROOT), "--check", "no-such-check", "precommit"]))
+
+    def test_precommit_one_check_skips_cargo(self) -> None:
+        self.assertEqual(0, main(["--root", str(ROOT), "--check", "docs-entry", "precommit"]))
+
+    def test_path_matches_dir_glob_covers_nested_files(self) -> None:
+        from kutha_gov.gitdiff import path_matches
+
+        self.assertTrue(path_matches("scripts/kutha_gov/kinds.py", "scripts/kutha_gov/**"))
+        self.assertTrue(path_matches("crates/kutha-runtime/src/lib.rs", "crates/**/*.rs"))
+        self.assertFalse(path_matches("CHANGELOG.md", "crates/**/*.rs"))
 
     def test_harness_ids_are_uuid_version_7(self) -> None:
         from kutha_gov.time_log import _now_v7

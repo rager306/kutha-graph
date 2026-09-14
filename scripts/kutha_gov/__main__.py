@@ -1,4 +1,4 @@
-"""CLI: uv run kutha-gov [list|ci|explain NAME|fsm]. Python >=3.13."""
+"""CLI: uv run kutha-gov [list|ci|explain NAME|fsm|precommit]. Python >=3.13."""
 
 from __future__ import annotations
 
@@ -38,6 +38,37 @@ def _run_one(check, ctx: Context) -> CheckResult:
         )
     result.check = check.name
     return result
+
+
+def _select_checks(root: Path, check_id: str | None) -> tuple[dict, int]:
+    checks = get_checks(root)
+    if not check_id:
+        return checks, 0
+    if check_id not in checks:
+        print(f"unknown check: {check_id}", file=sys.stderr)
+        return {}, 2
+    return {check_id: checks[check_id]}, 0
+
+
+def _print_check_results(
+    results: list[CheckResult], ctx: Context, *, header: str | None = None
+) -> int:
+    if header:
+        print(header)
+    for result in results:
+        status = "OK" if result.passed else "FAIL"
+        print(
+            f"{status:4} {result.check}  high={result.high_count} low={result.low_count}"
+            + (f"  {result.note}" if result.note else "")
+        )
+        for finding in result.findings:
+            if finding.severity is Severity.HIGH or ctx.fail_on_warn:
+                print(f"     {finding.format()}")
+    high = sum(r.high_count for r in results)
+    low = sum(r.low_count for r in results)
+    if high or (ctx.fail_on_warn and low):
+        return 1
+    return 0
 
 
 def cmd_list(root: Path) -> int:
@@ -119,8 +150,10 @@ def cmd_ci(ctx: Context, *, budget: int) -> int:
     return 0
 
 
-def cmd_json(ctx: Context) -> int:
-    checks = get_checks(ctx.root)
+def cmd_json(ctx: Context, *, check_id: str | None) -> int:
+    checks, err = _select_checks(ctx.root, check_id)
+    if err:
+        return err
     results = [_run_one(chk, ctx) for _, chk in sorted(checks.items())]
     payload = {
         "schema": "kutha-harness-report/v1",
@@ -148,6 +181,19 @@ def cmd_json(ctx: Context) -> int:
     }
     print(json.dumps(payload, indent=2))
     return 0 if all(r.passed for r in results) else 1
+
+
+def cmd_precommit(ctx: Context, *, check_id: str | None) -> int:
+    """Dictionary checks only — neighbor --check-only: no cargo quantum, no JSONL write."""
+    checks, err = _select_checks(ctx.root, check_id)
+    if err:
+        return err
+    results = [_run_one(chk, ctx) for _, chk in sorted(checks.items())]
+    return _print_check_results(
+        results,
+        ctx,
+        header="precommit: checks only (no cargo quantum, no JSONL)",
+    )
 
 
 def cmd_fsm(root: Path) -> int:
@@ -214,10 +260,16 @@ def main(argv: list[str] | None = None) -> int:
         help="Cui-lite V (overrides KUTHA_GOV_BUDGET and fsm.yaml defaults.budget)",
     )
     parser.add_argument(
+        "--check",
+        default=None,
+        metavar="ID",
+        help="Run one check id (json/precommit; law-nexus --check)",
+    )
+    parser.add_argument(
         "command",
         nargs="?",
         default="ci",
-        choices=("list", "ci", "explain", "json", "fold", "py", "fsm"),
+        choices=("list", "ci", "explain", "json", "fold", "py", "fsm", "precommit"),
     )
     parser.add_argument("name", nargs="?", help="check name for explain")
     args = parser.parse_args(argv)
@@ -225,6 +277,9 @@ def main(argv: list[str] | None = None) -> int:
     load_dotenv(root)
     fail_on_warn = args.fail_on_warn or env_flag(ENV_FAIL_ON_WARN)
     ctx = Context(root=root, fail_on_warn=fail_on_warn)
+    if args.check and args.command not in {"json", "precommit"}:
+        print("--check is only valid with json or precommit", file=sys.stderr)
+        return 2
     if args.command == "list":
         return cmd_list(root)
     if args.command == "explain":
@@ -233,7 +288,10 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         return cmd_explain(root, args.name)
     if args.command == "json":
-        return cmd_json(ctx)
+        return cmd_json(ctx, check_id=args.check)
+    if args.command == "precommit":
+        ctx.git_against = "staged"
+        return cmd_precommit(ctx, check_id=args.check)
     if args.command == "py":
         return cmd_py(root)
     if args.command == "fsm":

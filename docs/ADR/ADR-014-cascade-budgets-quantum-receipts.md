@@ -22,8 +22,8 @@ Grounding cards:
 
 - `paper-max-convolution-budgets` — `.compound-engineering/artifacts/research/applicability/cards/paper-max-convolution-budgets.md`
 - `paper-constant-size-evidence` — `.compound-engineering/artifacts/research/applicability/cards/paper-constant-size-evidence.md`
-- `ruvector-proof-gate` — `/root/vendor-source/ruvector/crates/ruvector-proof-gate`
-- `ruvector-retrieval-receipt` — `/root/vendor-source/ruvector/crates/ruvector-retrieval-receipt`
+- `paper-query-admission-control` — `.compound-engineering/artifacts/research/applicability/cards/paper-query-admission-control.md`
+- Adapter mapping (crate identifiers, not new cards): `.compound-engineering/artifacts/research/ruvector-plugin-adaptation.md` (P-Retrieval-Receipt; `ruvector-proof-gate` is a D014-2 cousin, not a D014-n)
 
 Max-convolution / tropical `(max,+)` composes pack budgets: CSR rebuild vs HNSW vs agent vs materializer share envelope \(V\). Admission of *one* query is a different noun (gate vs envelope). Constant-size cryptographic evidence (Kao; Crosby–Wallach log ADS) is the literature shape of **quantum receipts**: fixed-size tuple, hash/Merkle link, optional epoch anchor. Graph ADS / blockchain papers are **anchors**, not SoT (`paper-blockchain-graph-ads` contrast).
 
@@ -45,9 +45,9 @@ Optional epoch root-of-roots (Merkle, transparency log, even a chain) may **anch
 
 A receipt may include `meta_prompt_version` and dictionary snapshot ids (ADR-050). This cell does not define those entities. Content-addressed LLM/tool cache keys (D6) belong in the quantum’s evidence so replay is cheap.
 
-### D014-5. Read provenance receipts (ruvector-retrieval-receipt adapter)
+### D014-5. Read provenance receipts (Proposed adapter mapping)
 
-While D014-1 certifies write quanta (emit→idle cascades), regulated agent reasoning also requires tamper-evident read commitments: binding the exact evidence subset handed to the agent during a query. Borrow `ruvector-retrieval-receipt` Merkle receipts (`RetrievalReceipt::Merkle(query_hash, index_root, results)`). Read receipts detect post-issuance evidence mutation in agent workflows and link to the action justification (ADR-052) without making retrieval a secondary write SoT.
+D014-1 certifies write quanta (emit→idle). A separate noun is a tamper-evident **read** commitment: the evidence subset handed to an agent for one query. Shape is the constant-size / Merkle family already named by `paper-constant-size-evidence`. When a query surface exists (ADR-071) and STATE names that pack, the adapter identifier is `ruvector-retrieval-receipt` (P-Retrieval-Receipt). Read receipts must not become a second write SoT. Per-query admission remains D014-2 (`paper-query-admission-control`); do not collapse that gate into this receipt.
 
 ### Clarification (2026-09-13): partial progress and recoverable outcomes
 
@@ -111,3 +111,4 @@ Hard FSM allocator     ≠  Cui envelope
 - ADR-011 — polynomials are different evidence
 - ADR-040 — materializers consume budget
 - ADR-050 — versions bound into receipts
+- ADR-071 — hybrid retrieve (read receipts attach there when implemented)

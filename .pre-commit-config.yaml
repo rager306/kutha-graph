@@ -1,0 +1,30 @@
+# Fast, non-mutating commit profile (daily-archive FAST-ONLY + law-nexus local hooks).
+# Governor hook is dictionary checks only — no cargo quantum, no JSONL write.
+#
+# Install: uvx pre-commit install --overwrite
+# Run:     uvx pre-commit run --all-files
+# Direct:  uv run kutha-gov precommit
+
+repos:
+  - repo: local
+    hooks:
+      - id: kutha-gov-precommit
+        name: kutha-gov checks (no cargo quantum)
+        entry: uv run kutha-gov precommit
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      - id: ruff-check-python
+        name: ruff check staged Python files
+        entry: uv run ruff check
+        language: system
+        types: [python]
+        files: ^scripts/
+
+      - id: ruff-format-python
+        name: ruff format --check staged Python files
+        entry: uv run ruff format --check
+        language: system
+        types: [python]
+        files: ^scripts/

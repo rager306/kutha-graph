@@ -16,6 +16,8 @@ states:
   load_checks: { kind: require_file, path: .kutha/dictionaries/checks.yaml }
   load_fsm: { kind: require_file, path: .kutha/dictionaries/fsm.yaml }
   load_relations: { kind: require_file, path: .kutha/dictionaries/relations.yaml }
+  load_invariants: { kind: require_file, path: .kutha/dictionaries/invariants.yaml }
+  load_bridges: { kind: require_file, path: .kutha/dictionaries/bridges.yaml }
   run_checks: { kind: run_checks }
   observe_cargo:
     kind: observe_cargo
@@ -48,8 +50,12 @@ transitions:
   - { from: load_checks, event: fail, to: fail }
   - { from: load_fsm, event: ok, to: load_relations }
   - { from: load_fsm, event: fail, to: fail }
-  - { from: load_relations, event: ok, to: run_checks }
+  - { from: load_relations, event: ok, to: load_invariants }
   - { from: load_relations, event: fail, to: fail }
+  - { from: load_invariants, event: ok, to: load_bridges }
+  - { from: load_invariants, event: fail, to: fail }
+  - { from: load_bridges, event: ok, to: run_checks }
+  - { from: load_bridges, event: fail, to: fail }
   - { from: run_checks, event: done, to: observe_cargo }
   - { from: observe_cargo, event: done, to: emit }
   - { from: emit, event: ok, to: emit_tenant }

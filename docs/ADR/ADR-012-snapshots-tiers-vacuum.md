@@ -28,7 +28,7 @@ Grounding cards:
 - `paper-bach-lsm-csr-bridge` — `.compound-engineering/artifacts/research/applicability/cards/paper-bach-lsm-csr-bridge.md`
 - `paper-semi-external-graph` — `.compound-engineering/artifacts/research/applicability/cards/paper-semi-external-graph.md`
 - `paper-event-log-vacuum-legal-hold` — `.compound-engineering/artifacts/research/applicability/cards/paper-event-log-vacuum-legal-hold.md`
-- `ruvector-temporal-tensor` — `/root/vendor-source/ruvector/crates/ruvector-temporal-tensor`
+- Adapter mapping (crate identifier, not a new card): `.compound-engineering/artifacts/research/ruvector-plugin-adaptation.md` (P-Temporal-Tensor)
 
 LSM snapshots are a **compaction policy**: place them where queries land, not on a uniform wall clock. BACH ages adjacency lists into CSR inside LSM levels for mixed TP/AP. Semi-external graphs keep vertex state in RAM and stream edges from SSD — still a lease. Vacuum is **policy GC of the SoT**; legal hold pins ranges so vacuum cannot touch them. After vacuum, AS-OF of a removed state is a **defined failure**, not a silent hole.
 
@@ -50,9 +50,9 @@ When edges do not fit RAM, **semi-external** placement (vertex state in RAM, edg
 
 Vacuum physically removes expired transaction-time history under a **declared policy**, and logs that the drop happened. A **legal hold** is a grant-shaped fact: vacuum must fail closed on held ranges. LLM does not choose what to forget. P0 may be append-only-forever; honeycomb owns vacuum+hold as a pack.
 
-### D012-5. Temporal vector tiering (ruvector-temporal-tensor adapter)
+### D012-5. Temporal vector tiering (Proposed adapter mapping)
 
-Historical vector embeddings over diachronic entities (norm editions, agent memories) must not induce memory exhaustion (Profile B/C). Borrow `ruvector-temporal-tensor` tiered quantization: Hot (8-bit, ~4.0x), Warm (7/5-bit, ~4.57–6.4x), and Cold (3-bit, ~10.67x) with temporal segment delta reuse and frame-level random access decode. Like CSR/HNSW, tiered vector buffers are droppable leases derived from the log, not secondary sources of truth.
+Historical vector embeddings over diachronic entities (norm editions, agent memories) must not induce memory exhaustion (Profile B/C). When this cell is implemented, the named adapter identifier is `ruvector-temporal-tensor` (P-Temporal-Tensor in the RuVector adaptation note): Hot (8-bit), Warm (7/5-bit), and Cold (3-bit) with temporal segment delta reuse and frame-level random access decode. Like CSR/HNSW, tiered vector buffers are droppable leases derived from the log, not secondary sources of truth. This mapping does not add a Cargo dependency and does not authorize HNSW or M002.
 
 **Hard separations:**
 
@@ -105,4 +105,5 @@ Defined AS-OF failure  ≠  Silent hole after GC
 - ADR-010 — log quantum
 - ADR-013 — losers stay until vacuum policy says otherwise
 - ADR-040/041 — leases and CSR
+- ADR-042 — HNSW fence (vector access method; still frozen in STATE)
 - ADR-080 — who may vacuum (later)

@@ -48,6 +48,8 @@ class FsmTests(unittest.TestCase):
                 "load_checks",
                 "load_fsm",
                 "load_relations",
+                "load_invariants",
+                "load_bridges",
                 "run_checks",
                 "observe_cargo",
                 "emit",

@@ -235,6 +235,10 @@ checks:
         path: .kutha/dictionaries/fsm.yaml
       - kind: file_exists
         path: .kutha/dictionaries/relations.yaml
+      - kind: file_exists
+        path: .kutha/dictionaries/invariants.yaml
+      - kind: file_exists
+        path: .kutha/dictionaries/bridges.yaml
       - kind: file_contains
         path: .kutha/META.md
         needles:
@@ -248,8 +252,275 @@ checks:
           - "observe_cargo"
           - "emit_tenant"
           - "yaml_needles_in_glob"
+          - "git_path_implies"
+          - "yaml_map_list"
+          - "invariants.yaml"
+          - "bridges.yaml"
           - "kutha-harness-relations/v1"
           - "plane-mix"
         require: all
         category: constitution
         message: "META.md missing constitution clauses"
+
+  - id: docs-entry
+    description: human and Claude Code entry files exist and CLAUDE.md shims AGENTS.md
+    steps:
+      - kind: file_exists
+        path: README.md
+        stop_on_fail: true
+      - kind: file_exists
+        path: CLAUDE.md
+        stop_on_fail: true
+      - kind: file_contains
+        path: CLAUDE.md
+        needles: ["@AGENTS.md"]
+        require: all
+        category: entry
+        message: "CLAUDE.md must shim AGENTS.md"
+
+  - id: state-readme
+    description: README shows the same Active Milestone and Phase as STATE
+    steps:
+      - kind: pointer_in_other_file
+        path: .kutha/STATE.md
+        pattern: '^\*\*Active Milestone:\*\*\s*(?P<id>M\d+|None)\s*$'
+        flags: [multiline]
+        other: README.md
+        skip_values: ["None"]
+        label: Active Milestone
+      - kind: pointer_in_other_file
+        path: .kutha/STATE.md
+        pattern: '^\*\*Phase:\*\*\s*(?P<id>H\d+|None)\s*$'
+        flags: [multiline]
+        other: README.md
+        skip_values: ["None"]
+        label: Phase
+
+  - id: version-freeze
+    description: research-stage versions stay 0.0.0 until STATE names a release
+    steps:
+      - kind: file_contains
+        path: Cargo.toml
+        needles: ['version = "0.0.0"']
+        require: all
+        category: version-freeze
+        message: "workspace version must stay 0.0.0 until STATE names a release"
+      - kind: file_contains
+        path: pyproject.toml
+        needles: ['version = "0.0.0"']
+        require: all
+        category: version-freeze
+        message: "harness version must stay 0.0.0 until STATE names a release"
+      - kind: file_absent
+        path: Cargo.toml
+        needles: ["publish = true"]
+        category: version-freeze
+        message: "crates stay publish = false at 0.0.0"
+
+  - id: changelog-planes
+    description: CHANGELOG keeps product/process/Trajectory distinct and is not a GitHub Release
+    steps:
+      - kind: file_exists
+        path: CHANGELOG.md
+        stop_on_fail: true
+      - kind: file_contains
+        path: CHANGELOG.md
+        needles: ["not GitHub Releases", "product", "process", "Trajectory"]
+        require: all
+        category: changelog-planes
+        message: "CHANGELOG.md missing plane legend: {missing}"
+
+  - id: docs-coupling
+    description: plane-bearing git diffs must include the owning docs (pre-commit / auto worktree)
+    steps:
+      - kind: git_path_implies
+        when_any: ["crates/**/*.rs"]
+        then_any: ["CHANGELOG.md"]
+        message: "product crate diff without CHANGELOG.md (product plane)"
+      - kind: git_path_implies
+        when_any:
+          - "scripts/kutha_gov/**"
+          - "scripts/tests/**"
+          - ".kutha/dictionaries/**"
+          - ".kutha/META.md"
+          - "docs/process/**"
+        then_any: ["CHANGELOG.md"]
+        message: "harness diff without CHANGELOG.md (process plane)"
+      - kind: git_path_implies
+        when_any: ["docs/ADR/**/*.md"]
+        then_any: ["CHANGELOG.md"]
+        message: "ADR diff without CHANGELOG.md (L_map / Trajectory)"
+      - kind: git_path_implies
+        when_any: [".kutha/STATE.md"]
+        then_any: ["README.md"]
+        message: "STATE.md diff without README.md (human lease table)"
+      - kind: git_path_implies
+        when_any: [".kutha/dictionaries/checks.yaml"]
+        then_any:
+          - ".kutha/dictionaries/invariants.yaml"
+          - ".kutha/dictionaries/bridges.yaml"
+        message: "checks.yaml diff without invariants.yaml or bridges.yaml (control loop / bridge ledger)"
+
+  - id: invariants-ledger
+    description: control-loop claims get an explicit process disposition; not a Kutha requirements catalog
+    steps:
+      - kind: file_exists
+        path: .kutha/dictionaries/invariants.yaml
+        stop_on_fail: true
+      - kind: file_exists
+        path: docs/process/governor-intake.md
+        stop_on_fail: true
+      - kind: file_contains
+        path: .kutha/dictionaries/invariants.yaml
+        needles:
+          - "schema: kutha-harness-invariants/v1"
+          - "disposition: check"
+          - "disposition: deferred"
+        require: all
+        category: intake
+        message: "invariants.yaml missing schema or control-loop disposition vocab: {missing}"
+      - kind: file_absent
+        path: .kutha/dictionaries/invariants.yaml
+        needles:
+          - "disposition: capability"
+          - "disposition: map-only"
+          - "docs/ADR/ADR-"
+        category: intake
+        message: "invariants.yaml copied L_map/L_capability into the control loop: {needle}"
+      - kind: file_contains
+        path: docs/process/governor-intake.md
+        needles:
+          - "Silence is not a requirement"
+          - "disposition: check"
+          - "Do not add `scripts/kutha_gov/checks/*.py`"
+          - "Bridges may cite"
+          - "control loop"
+          - "Kutha requirements stay"
+        require: all
+        category: intake
+        message: "governor-intake.md missing protocol clauses: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/invariants.yaml
+        select: invariants
+        require_fields: [id, claim, source, disposition]
+        message: "invariants.yaml rows missing id/claim/source/disposition: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/invariants.yaml
+        select: invariants
+        unique: id
+        message: "invariants.yaml duplicate id: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/invariants.yaml
+        select: invariants
+        field: disposition
+        allowed: [check, kind, deferred]
+        message: "invariants.yaml unknown disposition: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/invariants.yaml
+        select: invariants
+        when:
+          disposition: check
+        require_fields: [check]
+        message: "disposition=check rows missing check id: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/invariants.yaml
+        select: invariants
+        when:
+          disposition: check
+        unique: check
+        message: "disposition=check rows share a check id: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/invariants.yaml
+        select: invariants
+        when:
+          disposition: deferred
+        require_fields: [until]
+        message: "disposition=deferred rows missing until: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/invariants.yaml
+        select: invariants
+        when:
+          disposition: kind
+        require_fields: [kind]
+        message: "disposition=kind rows missing kind name: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/invariants.yaml
+        select: invariants
+        when:
+          disposition: check
+        field: check
+        other: .kutha/dictionaries/checks.yaml
+        prefix: "  - id: "
+        message: "control-loop check ids missing from checks.yaml: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/invariants.yaml
+        select: invariants
+        when:
+          disposition: check
+        field: check
+        other: .kutha/dictionaries/bridges.yaml
+        prefix: "    check: "
+        absent_other: true
+        message: "control-loop check ids also listed as bridges: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/checks.yaml
+        select: checks
+        field: id
+        other:
+          - .kutha/dictionaries/invariants.yaml
+          - .kutha/dictionaries/bridges.yaml
+        prefix: "    check: "
+        message: "checks.yaml ids missing a control-loop or bridge ledger row: {missing}"
+
+  - id: bridges-ledger
+    description: bridges cite product freeze or tests; they do not copy Kutha requirements into the harness
+    steps:
+      - kind: file_exists
+        path: .kutha/dictionaries/bridges.yaml
+        stop_on_fail: true
+      - kind: file_contains
+        path: .kutha/dictionaries/bridges.yaml
+        needles:
+          - "schema: kutha-harness-bridges/v1"
+          - "cites:"
+        require: all
+        category: bridge
+        message: "bridges.yaml missing schema or cites vocab: {missing}"
+      - kind: file_absent
+        path: .kutha/dictionaries/bridges.yaml
+        needles:
+          - "disposition:"
+          - "disposition: map-only"
+          - "disposition: capability"
+        category: bridge
+        message: "bridges.yaml copied control-loop dispositions: {needle}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/bridges.yaml
+        select: bridges
+        require_fields: [id, claim, cites, check]
+        message: "bridges.yaml rows missing id/claim/cites/check: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/bridges.yaml
+        select: bridges
+        unique: id
+        message: "bridges.yaml duplicate id: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/bridges.yaml
+        select: bridges
+        unique: check
+        message: "bridges.yaml duplicate check id: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/bridges.yaml
+        select: bridges
+        field: check
+        other: .kutha/dictionaries/checks.yaml
+        prefix: "  - id: "
+        message: "bridge check ids missing from checks.yaml: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/bridges.yaml
+        select: bridges
+        field: check
+        other: .kutha/dictionaries/invariants.yaml
+        prefix: "    check: "
+        absent_other: true
+        message: "bridge check ids also listed in the control-loop ledger: {missing}"
