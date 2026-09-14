@@ -42,6 +42,8 @@ Literature bound is **closed** (163 cards). Do not mint aggregator waves. Matrix
 
 Compound Engineering `docs_root` is `.compound-engineering/artifacts` (set in `.compound-engineering/config.yaml`). Plans, research notes, ideation, and handoffs live there — not under `docs/`. Captured learnings, when a solved problem is written down, go in `.compound-engineering/artifacts/solutions/` (category folders, YAML frontmatter: `module`, `tags`, `problem_type`). That store is relevant when implementing or debugging in a documented area; it is not architecture SoT and not a delivery backlog. `ce-setup` owns config health; it does not author `README.md`.
 
+Durable CE outputs that must survive sessions stay under that `docs_root` (and in git when they are team knowledge). Do **not** write those to `/tmp`, `$TMPDIR`, or `.tmp`. In particular `ce-handoff` defaults to `/tmp/compound-engineering-<uid>/ce-handoff/` (OS-evictable): always create at `.compound-engineering/artifacts/handoffs/<topic>.md` instead. `ce-sweep` state, if used, is `sweep_state_path` under `docs_root` in tracked `config.yaml`, not a `/tmp` path. `docs_root` in `config.local.yaml` is ignored. One-shot scratch (elevation prompts, dogfood screenshots, pack cache, `ce-work` run roots) may use `mktemp`. `.context/compound-engineering/` is gitignored checkout scratch, not SoT.
+
 ## Repository layout
 
 ```text

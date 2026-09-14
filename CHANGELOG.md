@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-14 — Process: durable CE artifacts stay under docs_root
+
+### Process
+
+- Standing rule: session-surviving Compound Engineering writes (plans, handoffs, sweep state) go under `.compound-engineering/artifacts/`, not `/tmp`. `ce-handoff` must use `.compound-engineering/artifacts/handoffs/<topic>.md`; the skill's default managed store is OS-evictable.
+
+### Trajectory
+
+- Cells remain **Proposed**. Delivery lease remains H3; next thin slice is still H4 (ADR-090 overlay). Product crates untouched.
+
 ## 2026-09-14 — Process: CE skill routing for Russian chat
 
 ### Process
