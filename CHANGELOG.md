@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-14 — Process: CE skill routing for Russian chat
+
+### Process
+
+- Always-on Cursor rule `.cursor/rules/ce-skills-ru.mdc` maps Russian verbs (коммит, changelog, PR, план, …) onto Compound Engineering skills and `kutha-changelog`. Plugin-cache `description` fields stay English; do not patch them. Git user-rule remains safety-only; commit workflow is `ce-commit`.
+
+### Trajectory
+
+- Cells remain **Proposed**. Delivery lease remains H3; next thin slice is still H4 (ADR-090 overlay). Product crates untouched.
+
+## 2026-09-14 — Process: changelog skill (not a release bumper)
+
+### Process
+
+- Adapted baoyu `release-skills` into `.cursor/skills/kutha-changelog/`: dated `CHANGELOG.md` on product / process / Trajectory planes. Versions stay `0.0.0`. Commit handoff is **ce-commit**; this skill does not tag, `gh release`, or push.
+
+### Trajectory
+
+- Cells remain **Proposed**. Delivery lease remains H3; next thin slice is still H4 (ADR-090 overlay). Product crates untouched.
+
 ## 2026-09-14 — Process: L_map compact honeycomb index
 
 ### Added

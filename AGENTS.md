@@ -13,6 +13,8 @@ Agent operating notes for this repository. Read this before honeycomb ADRs or th
 
 Do not mix languages inside a single artifact.
 
+Russian chat still has to hit **English** Compound Engineering skill descriptions. Route verbs via `.cursor/rules/ce-skills-ru.mdc` (always on): коммит → `ce-commit`, changelog → `kutha-changelog`, PR/запушь → `ce-commit-push-pr`. Do not patch plugin-cache skill files.
+
 ## Two planes (do not collapse)
 
 | Plane | Owns | Must not own |
@@ -121,7 +123,7 @@ Pin: `.python-version`. Copy `.env.example` to `.env` for `KUTHA_GOV_BUDGET` / `
 6. Harness is a **parallel STCA plane** that dogfoods with the engine (`docs/process/kutha-harness.md`). H0 = files + JSONL + **meta-prompt dictionaries + FSM**; H2 = same typed triples on the Kutha log via `kutha-tenant`. Do not clone law-nexus 171-milestone GSD or copy `stca-guide.md` §5 merge-patch runtime. Control loop → check: append `.kutha/dictionaries/invariants.yaml` first (`docs/process/governor-intake.md`). A fence that cites product is `.kutha/dictionaries/bridges.yaml`. Compact L_map index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov map`). New check = YAML row; new CI phase = FSM row; new kind = rare `kinds.py` / `fsm.py` change. Unknown kind → HIGH.
 7. Three lifecycles stay orthogonal: **L_map** (ADRs) · **L_delivery** (`.kutha` milestones) · **L_capability** (fitness tests). Bridges may cite; they may not copy state machines.
 8. Intern map (ADR-011) ≠ agent dictionaries (ADR-050). Do not collapse them.
-9. Humans start at `README.md`. Agents follow this file. Dated history goes in `CHANGELOG.md` (product vs process; do not collapse Trajectory into “the product shipped”).
+9. Humans start at `README.md`. Agents follow this file. Dated history goes in `CHANGELOG.md` (product vs process; do not collapse Trajectory into “the product shipped”). Author entries with `.cursor/skills/kutha-changelog/SKILL.md` (not baoyu `release-skills`). Commit with **ce-commit** (Russian: коммит / закоммить / зафиксируй); do not bump `0.0.0`, tag, or publish GitHub Releases. Git user-rule stays safety-only.
 
 ## Codex subagents
 
