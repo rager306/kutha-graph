@@ -4,7 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
-## [Unreleased]
+## 2026-09-14 — Process: L_map compact honeycomb index
+
+### Added
+
+- Compact L_map index `.kutha/dictionaries/honeycomb.yaml` (`kutha-map-honeycomb/v1`): D1–D10 plus all opened ADR cells, with orthogonal `map` / `delivery` / `capability` stages and `depends_on` / `locks` / `evidence` links.
+- `kutha-gov map` (optional cell id, neighborhood dump, `--format json`) so agents can load the graph without a second markdown coverage table.
+- Governor check `honeycomb-ledger`, FSM state `load_honeycomb`, kind `glob_paths_in_file`, and `yaml_map_list` list/path/embed/glob steps. ADR diffs must include the index (`docs-coupling`).
+
+### Process
+
+- The map dictionary is a fourth intake surface: governor validates shape and links; it does not accept cells, enforce HNSW/Cypher, or treat the index as a delivery backlog.
+- Control-loop claims stay in `invariants.yaml`; product freeze/tests stay in `bridges.yaml`. Honeycomb rows are not YAML checks.
+
+### Trajectory
+
+- Cells remain **Proposed**. Delivery annotations (`spike` / `frozen` / `map-only`) and named FF evidence do not promote L_map or L_capability. Lease stays H3; next thin slice is still H4 (ADR-090 overlay). Product crates untouched.
 
 ## 2026-09-14 — Process: governor intake split and docs entry
 

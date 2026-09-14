@@ -32,6 +32,7 @@ Harness (Python **3.13** via **uv**, not system `python3`):
 cp .env.example .env
 uv run kutha-gov ci
 uv run kutha-gov precommit
+uv run kutha-gov map
 uv run pytest
 ```
 
@@ -47,7 +48,7 @@ If this host sets `rustc-wrapper = "sccache"` and the wrapper cannot run, use `c
 | `STRATEGY.md` | Wedge, metrics, non-goals |
 | `AGENTS.md` | Agent operating contract (language, freeze, commands) |
 | `CHANGELOG.md` | Dated project history (product vs process) |
-| `docs/process/governor-intake.md` | Control loop / bridge → governor check protocol (not Kutha requirements) |
+| `docs/process/governor-intake.md` | Control loop / bridge / map → governor dictionaries |
 | `.compound-engineering/` | Compound Engineering config + `docs_root` artifacts |
 
 ## Where to read next

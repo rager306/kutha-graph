@@ -42,6 +42,7 @@ class HarnessTests(unittest.TestCase):
                 "docs-coupling",
                 "invariants-ledger",
                 "bridges-ledger",
+                "honeycomb-ledger",
             }.issubset(names)
         )
 
@@ -224,6 +225,43 @@ class HarnessTests(unittest.TestCase):
         highs = [f for f in result.findings if f.severity is Severity.HIGH]
         self.assertTrue(highs)
         self.assertEqual("yaml-map-overlap", highs[0].category)
+
+    def test_glob_paths_in_file_flags_missing_adr(self) -> None:
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "glob_paths_in_file",
+                "glob": "docs/ADR/ADR-*.md",
+                "path": "AGENTS.md",
+                "prefix": "    path: ",
+            },
+            self.ctx,
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertTrue(highs)
+        self.assertEqual("glob-paths", highs[0].category)
+
+    def test_map_command_dumps_honeycomb(self) -> None:
+        import json
+        from contextlib import redirect_stdout
+        from io import StringIO
+
+        self.assertEqual(0, main(["--root", str(ROOT), "map"]))
+        self.assertEqual(0, main(["--root", str(ROOT), "map", "ADR-042"]))
+        self.assertEqual(0, main(["--root", str(ROOT), "map", "adr-042"]))
+        buf = StringIO()
+        with redirect_stdout(buf):
+            self.assertEqual(0, main(["--root", str(ROOT), "--format", "json", "map", "042"]))
+        payload = json.loads(buf.getvalue())
+        self.assertEqual("kutha-map-report/v1", payload["schema"])
+        self.assertFalse(payload["authoritative"])
+        ids = {cell["id"] for cell in payload["cells"]}
+        self.assertIn("ADR-042", ids)
+        self.assertIn("ADR-000", ids)
+        self.assertNotIn("ADR-093", ids)
+        self.assertEqual(2, main(["--root", str(ROOT), "map", "ADR-999"]))
 
     def test_precommit_unknown_check_is_contract_error(self) -> None:
         self.assertEqual(2, main(["--root", str(ROOT), "--check", "no-such-check", "precommit"]))

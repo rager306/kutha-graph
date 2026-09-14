@@ -93,6 +93,7 @@ Nakajima still holds: **graph = world, behaviors = physics, log = proof.** For t
 | harness-relations | ProcessAllowPort | `.kutha/dictionaries/relations.yaml` | log unknown process relations |
 | invariants-ledger | IntakePort | `.kutha/dictionaries/invariants.yaml` | honeycomb cells / L_capability as process dispositions |
 | bridges-ledger | BridgePort | `.kutha/dictionaries/bridges.yaml` | copy ADR Status or fitness into the harness |
+| honeycomb-ledger | MapPort | `.kutha/dictionaries/honeycomb.yaml` | treat the index as backlog or Accepted |
 
 Hexagon lives **inside** a slice (ADR-022). Do not grow a repo-root `ports/` / `adapters/` / `domain/` tree — that is the cohesion failure the manifesto forbids. Composition root is `uv run kutha-gov` (Python 3.13). Later a Rust `kutha-harness` bin that **only** wires adapters. Checks are Behaviors: they propose findings; they do not mutate ADRs.
 
@@ -144,6 +145,8 @@ uv run kutha-gov ci
 uv run kutha-gov ci --budget 4
 uv run kutha-gov precommit
 uv run kutha-gov precommit --check docs-coupling
+uv run kutha-gov map
+uv run kutha-gov map ADR-042 --format json
 uv run kutha-gov fold
 uv run kutha-gov py
 uv run pytest
@@ -153,9 +156,9 @@ Pin: `.python-version` → `3.13`. Copy `.env.example` to `.env` (`KUTHA_GOV_BUD
 
 `precommit` is the neighbor **check-only** surface (daily-archive `--check-only`: no trajectory artifact write; law-nexus `--check` / `--list-checks`): it runs the dictionary, including `git_path_implies` against the **staged** diff, and does not walk observe_cargo / emit / tenant. `--check ID` is valid only with `json` or `precommit`. Full `ci` still runs coupling with `git_against=auto` (staged if nonempty, else worktree, else last commit). Optional hook file: `.pre-commit-config.yaml` (`uvx pre-commit install --overwrite`). Cargo stays path-filtered in neighbors; here cargo stays in `ci`, not in the hook.
 
-`ci` walks the FSM in `.kutha/dictionaries/fsm.yaml` (idle → load constitution/dictionaries including **relations.yaml**, **invariants.yaml**, and **bridges.yaml** → run checks → **observe_cargo** (test + build `kutha-tenant`) → emit → **emit_tenant** (built binary) → fold → decide → ok|fail). Unknown process relation → no JSONL append (`unknown-relation`). `observe_cargo` records named FF tests as evidence; `emit_tenant` ingests the process JSONL through `kutha-tenant` and queries AS OF the emitted cut. Neither is product SoT. Unknown FSM kind or missing transition → fail-closed. Do not hardcode a new CI phase in Python.
+`ci` walks the FSM in `.kutha/dictionaries/fsm.yaml` (idle → load constitution/dictionaries including **relations.yaml**, **invariants.yaml**, **bridges.yaml**, and **honeycomb.yaml** → run checks → **observe_cargo** (test + build `kutha-tenant`) → emit → **emit_tenant** (built binary) → fold → decide → ok|fail). Unknown process relation → no JSONL append (`unknown-relation`). `observe_cargo` records named FF tests as evidence; `emit_tenant` ingests the process JSONL through `kutha-tenant` and queries AS OF the emitted cut. Neither is product SoT. Unknown FSM kind or missing transition → fail-closed. Do not hardcode a new CI phase in Python.
 
-Adding a check: control loop → `.kutha/dictionaries/invariants.yaml`; a fence that cites product → `.kutha/dictionaries/bridges.yaml`; then a row in `.kutha/dictionaries/checks.yaml` using a kind from `.kutha/META.md` (`docs/process/governor-intake.md`). Kutha requirements stay in ADRs / STATE / crates tests. Adding a CI phase: append a state/transition in `fsm.yaml` using an allowed FSM kind. Do not add `scripts/kutha_gov/checks/*.py`. A new *kind* is a rare kernel change (`kinds.py` or `fsm.py` + META allowlist + a test). Unknown kind → HIGH (fail-closed). LLM does not execute checks. Do not add `scripts/ports/`.
+Adding a check: control loop → `.kutha/dictionaries/invariants.yaml`; a fence that cites product → `.kutha/dictionaries/bridges.yaml`; then a row in `.kutha/dictionaries/checks.yaml` using a kind from `.kutha/META.md` (`docs/process/governor-intake.md`). Compact L_map index: `.kutha/dictionaries/honeycomb.yaml` (`kutha-gov map`) — not a check and not Accepted. Adding a CI phase: append a state/transition in `fsm.yaml` using an allowed FSM kind. Do not add `scripts/kutha_gov/checks/*.py`. A new *kind* is a rare kernel change (`kinds.py` or `fsm.py` + META allowlist + a test). Unknown kind → HIGH (fail-closed). LLM does not execute checks. Do not add `scripts/ports/`.
 
 ## Non-goals
 

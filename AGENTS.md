@@ -59,6 +59,9 @@ kutha-graph/
 │   ├── META.md                        # harness constitution (allowed kinds + FSM kinds)
 │   ├── dictionaries/checks.yaml       # governor checks (append a row to add one)
 │   ├── dictionaries/fsm.yaml          # CI quantum states/transitions
+│   ├── dictionaries/invariants.yaml   # control-loop ledger
+│   ├── dictionaries/bridges.yaml      # cite product freeze/tests
+│   ├── dictionaries/honeycomb.yaml    # L_map compact index (`kutha-gov map`)
 │   └── events.jsonl                   # process log (gitignored; H0 Time axis)
 ├── crates/                            # product plane (Rust)
 │   ├── kutha-common/                  # Event, Op::{Assert,Retract,Correct,Behavior}, intern, UUID v7
@@ -66,7 +69,8 @@ kutha-graph/
 ├── docs/
 │   ├── ADR/                           # spine 000–002 + honeycomb 010–093 (all Proposed)
 │   ├── architecture/stca-guide.md     # STCA manifesto (do not copy §5 JSON tutorial into harness)
-│   └── process/kutha-harness.md       # harness contract (not an ADR)
+│   ├── process/kutha-harness.md       # harness contract (not an ADR)
+│   └── process/governor-intake.md     # control loop / bridge / map → dictionaries
 ├── scripts/
 │   ├── kutha-gov                      # uv wrapper
 │   ├── kutha_gov/                     # harness interpreter (kinds.py; checks are YAML)
@@ -97,6 +101,7 @@ Harness (Python **3.13** via **uv** only — not system `python3`):
 uv run kutha-gov ci          # FSM quantum: relations → checks → observe → emit → tenant → fold
 uv run kutha-gov precommit   # dictionary checks only (no cargo, no JSONL); optional --check ID
 uv run kutha-gov fsm         # print the process machine
+uv run kutha-gov map         # compact L_map index (optional cell id; --format json)
 uv run kutha-gov py          # ruff + ty (Astral) + pyrefly (Meta)
 uv run kutha-gov fold        # fold .kutha/events.jsonl
 uv run kutha-gov list
@@ -104,7 +109,7 @@ uv run kutha-gov explain trajectory
 uv run pytest
 ```
 
-Pin: `.python-version`. Copy `.env.example` to `.env` for `KUTHA_GOV_BUDGET` / `KUTHA_GOV_FAIL_ON_WARN` (CLI flags win). Dev tools live in `pyproject.toml` dependency group `dev`. Add a governor check by appending `.kutha/dictionaries/invariants.yaml` (control loop) or `.kutha/dictionaries/bridges.yaml` (cite product), then `.kutha/dictionaries/checks.yaml`; add a CI phase by appending `.kutha/dictionaries/fsm.yaml`. Kutha requirements stay in ADRs / STATE / crates tests. Do not add a Python class. Commit hook: `uvx pre-commit install --overwrite` (`.pre-commit-config.yaml` calls `kutha-gov precommit`, not `ci`).
+Pin: `.python-version`. Copy `.env.example` to `.env` for `KUTHA_GOV_BUDGET` / `KUTHA_GOV_FAIL_ON_WARN` (CLI flags win). Dev tools live in `pyproject.toml` dependency group `dev`. Add a governor check by appending `.kutha/dictionaries/invariants.yaml` (control loop) or `.kutha/dictionaries/bridges.yaml` (cite product), then `.kutha/dictionaries/checks.yaml`. Add or restage a honeycomb cell in `.kutha/dictionaries/honeycomb.yaml` (not a check). Add a CI phase by appending `.kutha/dictionaries/fsm.yaml`. Do not add a Python class. Commit hook: `uvx pre-commit install --overwrite` (`.pre-commit-config.yaml` calls `kutha-gov precommit`, not `ci`).
 
 ## Working conventions
 
@@ -113,7 +118,7 @@ Pin: `.python-version`. Copy `.env.example` to `.env` for `KUTHA_GOV_BUDGET` / `
 3. Honeycomb is a **map**. One steel thread at a time (next: H4 waits on ADR-090; not M002). “Promote all” is forbidden.
 4. Prefer falsifiable spikes over generic “build a graph DB” advice.
 5. Core stays self-contained Rust (no mandatory external graph DB / Graphiti runtime / LLM for temporal truth).
-6. Harness is a **parallel STCA plane** that dogfoods with the engine (`docs/process/kutha-harness.md`). H0 = files + JSONL + **meta-prompt dictionaries + FSM**; H2 = same typed triples on the Kutha log via `kutha-tenant`. Do not clone law-nexus 171-milestone GSD or copy `stca-guide.md` §5 merge-patch runtime. Control loop → check: append `.kutha/dictionaries/invariants.yaml` first (`docs/process/governor-intake.md`). A fence that cites product is `.kutha/dictionaries/bridges.yaml`. Kutha requirements stay in ADRs / STATE / crates tests. New check = YAML row; new CI phase = FSM row; new kind = rare `kinds.py` / `fsm.py` change. Unknown kind → HIGH.
+6. Harness is a **parallel STCA plane** that dogfoods with the engine (`docs/process/kutha-harness.md`). H0 = files + JSONL + **meta-prompt dictionaries + FSM**; H2 = same typed triples on the Kutha log via `kutha-tenant`. Do not clone law-nexus 171-milestone GSD or copy `stca-guide.md` §5 merge-patch runtime. Control loop → check: append `.kutha/dictionaries/invariants.yaml` first (`docs/process/governor-intake.md`). A fence that cites product is `.kutha/dictionaries/bridges.yaml`. Compact L_map index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov map`). New check = YAML row; new CI phase = FSM row; new kind = rare `kinds.py` / `fsm.py` change. Unknown kind → HIGH.
 7. Three lifecycles stay orthogonal: **L_map** (ADRs) · **L_delivery** (`.kutha` milestones) · **L_capability** (fitness tests). Bridges may cite; they may not copy state machines.
 8. Intern map (ADR-011) ≠ agent dictionaries (ADR-050). Do not collapse them.
 9. Humans start at `README.md`. Agents follow this file. Dated history goes in `CHANGELOG.md` (product vs process; do not collapse Trajectory into “the product shipped”).

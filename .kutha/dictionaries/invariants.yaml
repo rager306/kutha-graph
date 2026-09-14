@@ -109,6 +109,12 @@ invariants:
     disposition: check
     check: bridges-ledger
 
+  - id: I-honeycomb-ledger
+    claim: "Honeycomb cells have a compact governor index with orthogonal stages and links"
+    source: "docs/process/governor-intake.md"
+    disposition: check
+    check: honeycomb-ledger
+
   - id: I-h4-adr-090-overlay
     claim: "H4 is the next harness rung; it waits on STATE naming an overlay, not a legal pack"
     source: "docs/process/kutha-harness.md"

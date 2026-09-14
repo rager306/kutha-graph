@@ -1,4 +1,4 @@
-"""CLI: uv run kutha-gov [list|ci|explain NAME|fsm|precommit]. Python >=3.13."""
+"""CLI: uv run kutha-gov [list|ci|explain NAME|fsm|precommit|map]. Python >=3.13."""
 
 from __future__ import annotations
 
@@ -11,6 +11,7 @@ from kutha_gov.checks import get_checks
 from kutha_gov.config import ENV_FAIL_ON_WARN, env_flag, load_dotenv, resolve_budget
 from kutha_gov.dictionary import DICT_REL, DictCheck
 from kutha_gov.fsm import FSM_REL, load_machine, run_quantum
+from kutha_gov.honeycomb import MAP_REL, format_map, load_map, neighborhood, resolve_cell_id
 from kutha_gov.protocol import CheckResult, Context, Finding, Severity
 from kutha_gov.time_log import LOG_REL, fold_log
 
@@ -68,6 +69,45 @@ def _print_check_results(
     low = sum(r.low_count for r in results)
     if high or (ctx.fail_on_warn and low):
         return 1
+    return 0
+
+
+def cmd_map(root: Path, focus: str | None, *, as_json: bool) -> int:
+    try:
+        loaded = load_map(root)
+    except (OSError, ValueError) as exc:
+        print(f"{MAP_REL}: {exc}", file=sys.stderr)
+        return 1
+    if as_json:
+        cells = [row for row in loaded.get("cells", []) if isinstance(row, dict)]
+        by_id = {str(row.get("id", "")): row for row in cells}
+        selected = cells
+        if focus:
+            key = resolve_cell_id(by_id, focus)
+            ids = neighborhood(by_id, key) if key else []
+            if not ids:
+                print(f"unknown cell: {focus}", file=sys.stderr)
+                return 2
+            selected = [by_id[cid] for cid in ids if cid in by_id]
+        print(
+            json.dumps(
+                {
+                    "schema": "kutha-map-report/v1",
+                    "source": MAP_REL,
+                    "authoritative": False,
+                    "focus": focus,
+                    "locks": loaded.get("locks", []),
+                    "cells": selected,
+                },
+                indent=2,
+            )
+        )
+        return 0
+    text = format_map(loaded, focus=focus)
+    if text.startswith("unknown cell:"):
+        print(text, end="", file=sys.stderr)
+        return 2
+    print(text, end="")
     return 0
 
 
@@ -266,12 +306,18 @@ def main(argv: list[str] | None = None) -> int:
         help="Run one check id (json/precommit; law-nexus --check)",
     )
     parser.add_argument(
+        "--format",
+        choices=("text", "json"),
+        default="text",
+        help="map output format (text table or JSON)",
+    )
+    parser.add_argument(
         "command",
         nargs="?",
         default="ci",
-        choices=("list", "ci", "explain", "json", "fold", "py", "fsm", "precommit"),
+        choices=("list", "ci", "explain", "json", "fold", "py", "fsm", "precommit", "map"),
     )
-    parser.add_argument("name", nargs="?", help="check name for explain")
+    parser.add_argument("name", nargs="?", help="check name for explain, or cell id for map")
     args = parser.parse_args(argv)
     root = _detect_root(args.root or Path.cwd())
     load_dotenv(root)
@@ -296,6 +342,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_py(root)
     if args.command == "fsm":
         return cmd_fsm(root)
+    if args.command == "map":
+        return cmd_map(root, args.name, as_json=args.format == "json")
     if args.command == "fold":
         picture = fold_log(root / LOG_REL)
         print(

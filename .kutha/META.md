@@ -12,6 +12,7 @@ ci → load META.md → load dictionaries/checks.yaml → load dictionaries/fsm.
   → load dictionaries/relations.yaml
   → load dictionaries/invariants.yaml
   → load dictionaries/bridges.yaml
+  → load dictionaries/honeycomb.yaml
   → walk FSM (unknown kind/transition → fail)
   → for each check, for each step: kind must be in the allowlist
   → observe_cargo (cargo test is evidence, not product SoT)
@@ -20,18 +21,19 @@ ci → load META.md → load dictionaries/checks.yaml → load dictionaries/fsm.
   → fold → terminal ok|fail
 ```
 
-Unknown `kind` → HIGH. Unknown FSM kind → HIGH (`unknown-fsm-kind`). Missing dictionary → HIGH. Python `Check` subclasses are not the intake path. `git_path_implies` is coupling, not a release bumper; it does not tag, publish, or rewrite changelog sections. `yaml_map_list` is ledger interpretation, not product ADR-050 dictionaries. `invariants.yaml` is the control loop; `bridges.yaml` cites product freeze/tests; honeycomb cells stay in `docs/ADR/`.
+Unknown `kind` → HIGH. Unknown FSM kind → HIGH (`unknown-fsm-kind`). Missing dictionary → HIGH. Python `Check` subclasses are not the intake path. `git_path_implies` is coupling, not a release bumper; it does not tag, publish, or rewrite changelog sections. `yaml_map_list` is ledger interpretation, not product ADR-050 dictionaries. `invariants.yaml` is the control loop; `bridges.yaml` cites product freeze/tests; `honeycomb.yaml` is the L_map compact index (`kutha-gov map`). Honeycomb cells stay Proposed in `docs/ADR/` until Accepted in the engine.
 
 ## How to add a check
 
-A control-loop “must” is not a governor requirement until it has a row in `.kutha/dictionaries/invariants.yaml`. A fence that cites product is a row in `.kutha/dictionaries/bridges.yaml`. Kutha requirements stay in ADRs / STATE / crates tests. Protocol: `docs/process/governor-intake.md`.
+A control-loop “must” is not a governor requirement until it has a row in `.kutha/dictionaries/invariants.yaml`. A fence that cites product is a row in `.kutha/dictionaries/bridges.yaml`. A honeycomb cell is a row in `.kutha/dictionaries/honeycomb.yaml` (stages + links), not a YAML check. Protocol: `docs/process/governor-intake.md`.
 
-1. Choose the surface. Do not put honeycomb cells in either ledger.
+1. Choose the surface. Do not put honeycomb cells in invariants or bridges.
 2. Control loop: append an **invariants** row (`id`, `claim`, `source`, `disposition`). Silence is not a disposition. Dispositions: `deferred` | `check` | `kind`.
 3. Bridge: append a **bridges** row (`id`, `claim`, `cites`, `check`). No `disposition`.
-4. Append `.kutha/dictionaries/checks.yaml` using an **allowed kind**. The check id lives in exactly one ledger (`invariants-ledger` / `bridges-ledger`).
-5. Run `uv run kutha-gov precommit --check invariants-ledger` and `uv run kutha-gov explain <id>`. Full `ci` still owns cargo quantum.
-6. Do not add `scripts/kutha_gov/checks/*.py`.
+4. Map: append a **cells** row (`id`, `axis`, `must`, `path`, `map`, `delivery`, `capability`, `depends_on`, `locks`, `evidence`). `map` stays orthogonal to `delivery` and `capability`. Dump: `uv run kutha-gov map`.
+5. Append `.kutha/dictionaries/checks.yaml` using an **allowed kind** only for control-loop or bridge checks. The check id lives in exactly one ledger (`invariants-ledger` / `bridges-ledger`).
+6. Run `uv run kutha-gov precommit --check honeycomb-ledger` (map) or `--check invariants-ledger`. Full `ci` still owns cargo quantum.
+7. Do not add `scripts/kutha_gov/checks/*.py`.
 
 ## How to add a kind (last responsible moment)
 
@@ -57,7 +59,8 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 | `pointer_in_other_file` | exactly one regex capture in A must appear in B |
 | `yaml_needles_in_glob` | every string at a YAML path must appear (with prefix) in a glob of files |
 | `git_path_implies` | if the git diff matches `when_any`, it must also match `then_any` (empty/no-git skips) |
-| `yaml_map_list` | YAML list of maps: required fields, unique ids, closed vocab, cross-file refs (`other` may be a list), or `absent_other` partition |
+| `yaml_map_list` | YAML list of maps: required fields, unique ids, closed vocab, list refs, path exists, embed-in-file, glob haystack, or `absent_other` partition |
+| `glob_paths_in_file` | every globbed relative path appears in a file with an optional prefix |
 
 ## Allowed FSM kinds
 

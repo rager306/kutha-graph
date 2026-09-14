@@ -239,6 +239,8 @@ checks:
         path: .kutha/dictionaries/invariants.yaml
       - kind: file_exists
         path: .kutha/dictionaries/bridges.yaml
+      - kind: file_exists
+        path: .kutha/dictionaries/honeycomb.yaml
       - kind: file_contains
         path: .kutha/META.md
         needles:
@@ -254,8 +256,10 @@ checks:
           - "yaml_needles_in_glob"
           - "git_path_implies"
           - "yaml_map_list"
+          - "glob_paths_in_file"
           - "invariants.yaml"
           - "bridges.yaml"
+          - "honeycomb.yaml"
           - "kutha-harness-relations/v1"
           - "plane-mix"
         require: all
@@ -354,6 +358,10 @@ checks:
         when_any: [".kutha/STATE.md"]
         then_any: ["README.md"]
         message: "STATE.md diff without README.md (human lease table)"
+      - kind: git_path_implies
+        when_any: ["docs/ADR/**/*.md"]
+        then_any: [".kutha/dictionaries/honeycomb.yaml"]
+        message: "ADR diff without honeycomb.yaml (L_map index)"
       - kind: git_path_implies
         when_any: [".kutha/dictionaries/checks.yaml"]
         then_any:
@@ -524,3 +532,132 @@ checks:
         prefix: "    check: "
         absent_other: true
         message: "bridge check ids also listed in the control-loop ledger: {missing}"
+
+  - id: honeycomb-ledger
+    description: L_map compact index stays fail-closed; not a delivery backlog and not product dictionaries
+    steps:
+      - kind: file_exists
+        path: .kutha/dictionaries/honeycomb.yaml
+        stop_on_fail: true
+      - kind: file_contains
+        path: .kutha/dictionaries/honeycomb.yaml
+        needles:
+          - "schema: kutha-map-honeycomb/v1"
+          - "delivery: spike"
+          - "delivery: frozen"
+          - "delivery: map-only"
+          - "capability: none"
+          - "capability: named"
+        require: all
+        category: map
+        message: "honeycomb.yaml missing schema or stage vocab: {missing}"
+      - kind: file_absent
+        path: .kutha/dictionaries/honeycomb.yaml
+        needles:
+          - "disposition: check"
+          - "promote all"
+        category: map
+        message: "honeycomb.yaml mixed into control-loop or backlog: {needle}"
+      - kind: glob_paths_in_file
+        glob: docs/ADR/ADR-*.md
+        path: .kutha/dictionaries/honeycomb.yaml
+        prefix: "    path: "
+        message: "ADR files missing from honeycomb.yaml: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/honeycomb.yaml
+        select: locks
+        require_fields: [id, must, path]
+        unique: id
+        message: "honeycomb locks missing id/must/path: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/honeycomb.yaml
+        select: cells
+        require_fields: [id, axis, must, path, map, delivery, capability]
+        require_list_fields: [depends_on, locks, evidence]
+        unique: id
+        message: "honeycomb cells missing required fields: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/honeycomb.yaml
+        select: cells
+        field: path
+        must_exist: true
+        message: "honeycomb cell paths do not exist: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/honeycomb.yaml
+        select: cells
+        field: map
+        allowed: [Research, Proposed, Deprecated, Superseded]
+        message: "honeycomb map status not in ADR vocab (Accepted is Nygard, not this ledger): {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/honeycomb.yaml
+        select: cells
+        field: delivery
+        allowed: [map-only, frozen, spike]
+        message: "honeycomb unknown delivery stage: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/honeycomb.yaml
+        select: cells
+        field: capability
+        allowed: [none, named]
+        message: "honeycomb unknown capability stage: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/honeycomb.yaml
+        select: cells
+        field: axis
+        allowed: [Time, Space, Composition, Data, Agent, Verify, Query, Security, Vertical, Packaging]
+        message: "honeycomb unknown axis: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/honeycomb.yaml
+        select: cells
+        field: map
+        in_path_field: path
+        prefix: "**"
+        suffix: "**"
+        message: "honeycomb map status missing from ADR Status: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/honeycomb.yaml
+        select: cells
+        when:
+          delivery: frozen
+        require_fields: [freeze_as]
+        message: "frozen cells missing freeze_as: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/honeycomb.yaml
+        select: cells
+        when:
+          delivery: frozen
+        field: freeze_as
+        other: .kutha/STATE.md
+        prefix: ""
+        message: "freeze_as needles missing from STATE freeze: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/honeycomb.yaml
+        select: cells
+        when:
+          capability: named
+        nonempty_list: evidence
+        message: "capability=named cells missing evidence tests: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/honeycomb.yaml
+        select: cells
+        when:
+          capability: named
+        list_field: evidence
+        glob: crates/**/*.rs
+        prefix: "fn "
+        message: "honeycomb evidence names missing as fn in crates: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/honeycomb.yaml
+        select: cells
+        list_field: depends_on
+        other: .kutha/dictionaries/honeycomb.yaml
+        prefix: "  - id: "
+        message: "depends_on ids missing from honeycomb cells: {missing}"
+      - kind: yaml_map_list
+        path: .kutha/dictionaries/honeycomb.yaml
+        select: cells
+        list_field: locks
+        other: .kutha/dictionaries/honeycomb.yaml
+        prefix: "  - id: "
+        message: "lock ids missing from honeycomb locks: {missing}"
+

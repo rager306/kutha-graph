@@ -25,6 +25,7 @@ ALLOWED_KINDS: frozenset[str] = frozenset(
         "yaml_needles_in_glob",
         "git_path_implies",
         "yaml_map_list",
+        "glob_paths_in_file",
     }
 )
 
@@ -559,6 +560,38 @@ def _yaml_map_non_allowed_values(maps: list[dict], field: str, allowed: list[str
     return sorted({str(row.get(field)) for row in maps if str(row.get(field, "")) not in allowed})
 
 
+def _yaml_map_rows_missing_list_fields(maps: list[dict], require: list[str]) -> list[str]:
+    missing_rows: list[str] = []
+    for row in maps:
+        row_id = str(row.get("id", "?"))
+        absent = [key for key in require if not isinstance(row.get(key), list)]
+        if absent:
+            missing_rows.append(f"{row_id}:{','.join(absent)}")
+    return missing_rows
+
+
+def _yaml_map_empty_list_rows(maps: list[dict], field: str) -> list[str]:
+    empty: list[str] = []
+    for row in maps:
+        raw = row.get(field)
+        if not isinstance(raw, list) or not any(
+            isinstance(item, str) and item.strip() for item in raw
+        ):
+            empty.append(str(row.get("id", "?")))
+    return empty
+
+
+def _yaml_map_list_values(maps: list[dict], field: str) -> list[str]:
+    values: list[str] = []
+    for row in maps:
+        raw = row.get(field)
+        if isinstance(raw, list):
+            values.extend(item.strip() for item in raw if isinstance(item, str) and item.strip())
+        elif isinstance(raw, str) and raw.strip():
+            values.append(raw.strip())
+    return values
+
+
 def _yaml_map_nonempty_field_values(maps: list[dict], field: str) -> list[str]:
     values: list[str] = []
     for row in maps:
@@ -613,6 +646,39 @@ def _kind_yaml_map_list(check: str, step: Step, ctx: Context, result: CheckResul
             )
             return
 
+    require_lists = _str_list(step, "require_list_fields")
+    if require_lists:
+        missing_lists = _yaml_map_rows_missing_list_fields(maps, require_lists)
+        if missing_lists:
+            _yaml_map_list_finding(
+                check,
+                step,
+                "yaml-map-fields",
+                "{path} rows missing list fields: {missing}",
+                path,
+                result,
+                path=path,
+                missing=", ".join(missing_lists),
+            )
+            return
+
+    nonempty_list = _str(step, "nonempty_list")
+    if nonempty_list:
+        empty_rows = _yaml_map_empty_list_rows(maps, nonempty_list)
+        if empty_rows:
+            _yaml_map_list_finding(
+                check,
+                step,
+                "yaml-map-fields",
+                "{path} rows missing {nonempty_list} items: {missing}",
+                path,
+                result,
+                path=path,
+                nonempty_list=nonempty_list,
+                missing=", ".join(empty_rows),
+            )
+            return
+
     unique = _str(step, "unique")
     if unique:
         dups = _yaml_map_duplicate_values(maps, unique)
@@ -631,6 +697,7 @@ def _kind_yaml_map_list(check: str, step: Step, ctx: Context, result: CheckResul
             return
 
     field = _str(step, "field")
+    prefix = _str(step, "prefix")
     allowed = _str_list(step, "allowed")
     if field and allowed:
         bad = _yaml_map_non_allowed_values(maps, field, allowed)
@@ -648,19 +715,79 @@ def _kind_yaml_map_list(check: str, step: Step, ctx: Context, result: CheckResul
             )
             return
 
+    if field and step.get("must_exist") is True:
+        missing_files = sorted(
+            {loc for loc in _yaml_map_nonempty_field_values(maps, field) if ctx.read(loc) is None}
+        )
+        if missing_files:
+            _yaml_map_list_finding(
+                check,
+                step,
+                "yaml-map-missing",
+                "{path} {field} paths do not exist: {missing}",
+                path,
+                result,
+                path=path,
+                field=field,
+                missing=", ".join(missing_files),
+            )
+            return
+
+    in_path_field = _str(step, "in_path_field")
+    if field and in_path_field:
+        suffix = _str(step, "suffix")
+        missing_embed: list[str] = []
+        for row in maps:
+            loc = row.get(in_path_field)
+            val = row.get(field)
+            if not isinstance(loc, str) or not loc.strip() or not isinstance(val, str):
+                continue
+            text = ctx.read(loc.strip())
+            needle = f"{prefix}{val}{suffix}"
+            if text is None or needle not in text:
+                missing_embed.append(f"{row.get('id', '?')}:{val}")
+        if missing_embed:
+            _yaml_map_list_finding(
+                check,
+                step,
+                "yaml-map-embed",
+                "{path} {field} missing from {in_path_field} files: {missing}",
+                path,
+                result,
+                path=path,
+                field=field,
+                in_path_field=in_path_field,
+                missing=", ".join(missing_embed),
+            )
+            return
+
     other_paths = _path_list(step, "other")
-    prefix = _str(step, "prefix")
-    if field and other_paths:
+    list_field = _str(step, "list_field")
+    glob_pattern = _str(step, "glob")
+    ref_field = list_field or field
+    if ref_field and (other_paths or glob_pattern):
         parts: list[str] = []
-        for other_path in other_paths:
-            other_text = ctx.read(other_path)
-            if other_text is None:
-                _high_missing(check, other_path, result)
-                return
-            parts.append(other_text)
+        if glob_pattern:
+            for hit in sorted(ctx.root.glob(glob_pattern)):
+                if not hit.is_file():
+                    continue
+                parts.append(hit.read_text(encoding="utf-8"))
+                result.scanned += 1
+            other_label = glob_pattern
+        else:
+            for other_path in other_paths:
+                other_text = ctx.read(other_path)
+                if other_text is None:
+                    _high_missing(check, other_path, result)
+                    return
+                parts.append(other_text)
+            other_label = ", ".join(other_paths)
         haystack = "\n".join(parts)
-        other_label = ", ".join(other_paths)
-        values = _yaml_map_nonempty_field_values(maps, field)
+        values = (
+            _yaml_map_list_values(maps, ref_field)
+            if list_field
+            else _yaml_map_nonempty_field_values(maps, ref_field)
+        )
         if step.get("absent_other") is True:
             hits = [val for val in values if f"{prefix}{val}" in haystack]
             if hits:
@@ -672,7 +799,7 @@ def _kind_yaml_map_list(check: str, step: Step, ctx: Context, result: CheckResul
                     path,
                     result,
                     path=path,
-                    field=field,
+                    field=ref_field,
                     other=other_label,
                     missing=", ".join(hits),
                 )
@@ -687,10 +814,38 @@ def _kind_yaml_map_list(check: str, step: Step, ctx: Context, result: CheckResul
                 path,
                 result,
                 path=path,
-                field=field,
+                field=ref_field,
                 other=other_label,
                 missing=", ".join(missing),
             )
+
+
+def _kind_glob_paths_in_file(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
+    pattern = _str(step, "glob")
+    path = _str(step, "path")
+    prefix = _str(step, "prefix")
+    text = ctx.read(path)
+    if text is None:
+        _high_missing(check, path, result)
+        return
+    missing: list[str] = []
+    for hit in sorted(ctx.root.glob(pattern)):
+        if not hit.is_file():
+            continue
+        rel = str(hit.relative_to(ctx.root)).replace("\\", "/")
+        result.scanned += 1
+        if f"{prefix}{rel}" not in text:
+            missing.append(rel)
+    if missing:
+        message = _fmt(
+            _str(step, "message", "{glob} paths missing from {path}: {missing}"),
+            glob=pattern,
+            path=path,
+            missing=", ".join(missing),
+        )
+        result.findings.append(
+            Finding(check, _severity(step), _category(step, "glob-paths"), message, path)
+        )
 
 
 RUNNERS: dict[str, Runner] = {
@@ -707,4 +862,5 @@ RUNNERS: dict[str, Runner] = {
     "yaml_needles_in_glob": _kind_yaml_needles_in_glob,
     "git_path_implies": _kind_git_path_implies,
     "yaml_map_list": _kind_yaml_map_list,
+    "glob_paths_in_file": _kind_glob_paths_in_file,
 }

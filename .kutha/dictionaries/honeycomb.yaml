@@ -1,0 +1,388 @@
+schema: kutha-map-honeycomb/v1
+meta_prompt: .kutha/META.md
+process: docs/process/governor-intake.md
+# L_map compact index. Governor validates shape and links; it does not accept cells.
+# Not ADR-050 product dictionaries. Not a delivery backlog. Not invariants.yaml.
+# map ∈ ADR Status. delivery ∈ {map-only | frozen | spike}. capability ∈ {none | named}.
+# Edit a row when a stage or edge changes; ADR body stays the narrative home.
+
+locks:
+  - id: D1
+    must: "event log = SoT; graph = deterministic fold"
+    path: docs/ADR/ADR-000-kutha-hybrid-architecture-research.md
+  - id: D2
+    must: "reactive quantum: behaviors emit; no silent fold mutate"
+    path: docs/ADR/ADR-000-kutha-hybrid-architecture-research.md
+  - id: D3
+    must: "agent control is meta-prompt + dictionaries, not hard FSM alone"
+    path: docs/ADR/ADR-000-kutha-hybrid-architecture-research.md
+  - id: D4
+    must: "facts are bi-temporal"
+    path: docs/ADR/ADR-000-kutha-hybrid-architecture-research.md
+  - id: D5
+    must: "materializations are droppable plugin leases"
+    path: docs/ADR/ADR-000-kutha-hybrid-architecture-research.md
+  - id: D6
+    must: "graph core is self-contained Rust"
+    path: docs/ADR/ADR-000-kutha-hybrid-architecture-research.md
+  - id: D7
+    must: "one product, three load profiles"
+    path: docs/ADR/ADR-000-kutha-hybrid-architecture-research.md
+  - id: D8
+    must: "anti-pattern controllers stay on"
+    path: docs/ADR/ADR-000-kutha-hybrid-architecture-research.md
+  - id: D9
+    must: "testing is a first-class capability"
+    path: docs/ADR/ADR-000-kutha-hybrid-architecture-research.md
+  - id: D10
+    must: "wedge is legal/normative temporal agents first"
+    path: docs/ADR/ADR-000-kutha-hybrid-architecture-research.md
+
+cells:
+  - id: ADR-000
+    axis: Composition
+    must: "D1–D10 foundation locks"
+    path: docs/ADR/ADR-000-kutha-hybrid-architecture-research.md
+    map: Proposed
+    delivery: spike
+    capability: none
+    depends_on: []
+    locks: [D1, D2, D3, D4, D5, D6, D7, D8, D9, D10]
+    evidence: []
+
+  - id: ADR-001
+    axis: Vertical
+    must: "product vision and non-goals"
+    path: docs/ADR/ADR-001-kutha-overall-vision.md
+    map: Proposed
+    delivery: spike
+    capability: none
+    depends_on: [ADR-000]
+    locks: [D10]
+    evidence: []
+
+  - id: ADR-002
+    axis: Composition
+    must: "STCA: space × time × composition"
+    path: docs/ADR/ADR-002-stca-paradigm.md
+    map: Proposed
+    delivery: spike
+    capability: none
+    depends_on: [ADR-000, ADR-001]
+    locks: [D1, D2]
+    evidence: []
+
+  - id: ADR-010
+    axis: Time
+    must: "log is SoT; runtime quantum emit→idle"
+    path: docs/ADR/ADR-010-event-log-runtime-quantum.md
+    map: Proposed
+    delivery: spike
+    capability: none
+    depends_on: [ADR-000, ADR-001, ADR-002]
+    locks: [D1, D2, D9]
+    evidence: []
+
+  - id: ADR-011
+    axis: Time
+    must: "lean event schema and lineage; FF6 write allowlist"
+    path: docs/ADR/ADR-011-lean-event-schema-lineage.md
+    map: Proposed
+    delivery: spike
+    capability: named
+    depends_on: [ADR-000, ADR-010]
+    locks: [D1, D2]
+    evidence: [ff6_unknown_relation_does_not_append]
+
+  - id: ADR-012
+    axis: Time
+    must: "snapshots and tiers are leases; vacuum is policy"
+    path: docs/ADR/ADR-012-snapshots-tiers-vacuum.md
+    map: Proposed
+    delivery: spike
+    capability: none
+    depends_on: [ADR-000, ADR-010]
+    locks: [D1, D5]
+    evidence: []
+
+  - id: ADR-013
+    axis: Time
+    must: "bi-temporal facts; AS OF cuts differ"
+    path: docs/ADR/ADR-013-bitemporal-facts-invalidation.md
+    map: Proposed
+    delivery: spike
+    capability: named
+    depends_on: [ADR-000, ADR-010, ADR-011]
+    locks: [D4]
+    evidence: [ff5_as_of_t1_differs_from_as_of_t2_on_statute_log]
+
+  - id: ADR-014
+    axis: Time
+    must: "cascade budgets and quantum receipts"
+    path: docs/ADR/ADR-014-cascade-budgets-quantum-receipts.md
+    map: Proposed
+    delivery: spike
+    capability: none
+    depends_on: [ADR-000, ADR-002, ADR-010]
+    locks: [D2, D3, D9]
+    evidence: []
+
+  - id: ADR-020
+    axis: Space
+    must: "Cargo workspace; hexagon stays inside a slice"
+    path: docs/ADR/ADR-020-cargo-workspace-port-isolation.md
+    map: Proposed
+    delivery: spike
+    capability: none
+    depends_on: [ADR-000, ADR-001, ADR-002]
+    locks: [D6]
+    evidence: []
+
+  - id: ADR-021
+    axis: Space
+    must: "pack/plugin lifecycle with reversible effects"
+    path: docs/ADR/ADR-021-pack-plugin-lifecycle.md
+    map: Proposed
+    delivery: map-only
+    capability: none
+    depends_on: [ADR-000, ADR-010, ADR-020, ADR-040]
+    locks: [D5]
+    evidence: []
+
+  - id: ADR-022
+    axis: Space
+    must: "vertical-slice module conventions"
+    path: docs/ADR/ADR-022-vertical-slice-module-conventions.md
+    map: Proposed
+    delivery: map-only
+    capability: none
+    depends_on: [ADR-002, ADR-020]
+    locks: []
+    evidence: []
+
+  - id: ADR-030
+    axis: Composition
+    must: "Cui budget traits / max-convolution allocation"
+    path: docs/ADR/ADR-030-cui-budget-traits.md
+    map: Proposed
+    delivery: map-only
+    capability: none
+    depends_on: [ADR-002, ADR-014]
+    locks: []
+    evidence: []
+
+  - id: ADR-031
+    axis: Composition
+    must: "pack scheduling under V"
+    path: docs/ADR/ADR-031-pack-scheduling-under-v.md
+    map: Proposed
+    delivery: map-only
+    capability: none
+    depends_on: [ADR-014, ADR-030]
+    locks: []
+    evidence: []
+
+  - id: ADR-040
+    axis: Data
+    must: "materializer protocol; CSR is a named lease"
+    path: docs/ADR/ADR-040-materialization-plugin-protocol.md
+    map: Proposed
+    delivery: spike
+    capability: none
+    depends_on: [ADR-000, ADR-010, ADR-014]
+    locks: [D5]
+    evidence: []
+
+  - id: ADR-041
+    axis: Data
+    must: "CSR / GraphBLAS hot path; leapfrog intersect"
+    path: docs/ADR/ADR-041-csr-graphblas-hot-path.md
+    map: Proposed
+    delivery: spike
+    capability: none
+    depends_on: [ADR-000, ADR-011, ADR-040]
+    locks: [D5, D6]
+    evidence: []
+
+  - id: ADR-042
+    axis: Data
+    must: "HNSW is a fenced access method, not SoT"
+    path: docs/ADR/ADR-042-hnsw-access-method-fence.md
+    map: Proposed
+    delivery: frozen
+    freeze_as: HNSW
+    capability: none
+    depends_on: [ADR-000, ADR-040]
+    locks: [D5]
+    evidence: []
+
+  - id: ADR-043
+    axis: Query
+    must: "hybrid query planner; no specialized hybrid index here"
+    path: docs/ADR/ADR-043-hybrid-query-planner.md
+    map: Proposed
+    delivery: map-only
+    capability: none
+    depends_on: [ADR-013, ADR-040, ADR-041, ADR-042]
+    locks: []
+    evidence: []
+
+  - id: ADR-050
+    axis: Agent
+    must: "product six dictionary kinds; not the harness intake"
+    path: docs/ADR/ADR-050-meta-prompt-dictionaries.md
+    map: Proposed
+    delivery: frozen
+    freeze_as: "ADR-050 six dictionaries"
+    capability: none
+    depends_on: [ADR-000, ADR-010, ADR-011, ADR-013]
+    locks: [D3]
+    evidence: []
+
+  - id: ADR-051
+    axis: Agent
+    must: "capability security for agents"
+    path: docs/ADR/ADR-051-capability-security.md
+    map: Proposed
+    delivery: map-only
+    capability: none
+    depends_on: [ADR-000, ADR-050]
+    locks: [D3]
+    evidence: []
+
+  - id: ADR-052
+    axis: Agent
+    must: "GenAI enrichment is an optional pack"
+    path: docs/ADR/ADR-052-genai-enrichment-pack.md
+    map: Proposed
+    delivery: map-only
+    capability: none
+    depends_on: [ADR-010, ADR-050, ADR-040]
+    locks: []
+    evidence: []
+
+  - id: ADR-060
+    axis: Verify
+    must: "strict replay of the event log"
+    path: docs/ADR/ADR-060-strict-replay.md
+    map: Proposed
+    delivery: spike
+    capability: none
+    depends_on: [ADR-000, ADR-010, ADR-014]
+    locks: [D9]
+    evidence: []
+
+  - id: ADR-061
+    axis: Verify
+    must: "fork-and-diff at a log cut"
+    path: docs/ADR/ADR-061-fork-and-diff.md
+    map: Proposed
+    delivery: spike
+    capability: none
+    depends_on: [ADR-000, ADR-010, ADR-060]
+    locks: [D9]
+    evidence: []
+
+  - id: ADR-062
+    axis: Verify
+    must: "regimes gated loop stays optional/off"
+    path: docs/ADR/ADR-062-regimes-gated-loop.md
+    map: Proposed
+    delivery: map-only
+    capability: none
+    depends_on: [ADR-050, ADR-060]
+    locks: []
+    evidence: []
+
+  - id: ADR-070
+    axis: Query
+    must: "Cypher/GPML + temporal AS OF surface"
+    path: docs/ADR/ADR-070-cypher-temporal-as-of.md
+    map: Proposed
+    delivery: frozen
+    freeze_as: Cypher
+    capability: none
+    depends_on: [ADR-013, ADR-041, ADR-043, ADR-050]
+    locks: []
+    evidence: []
+
+  - id: ADR-071
+    axis: Query
+    must: "hybrid retrieval composition"
+    path: docs/ADR/ADR-071-hybrid-retrieval-composition.md
+    map: Proposed
+    delivery: map-only
+    capability: none
+    depends_on: [ADR-042, ADR-043, ADR-070]
+    locks: []
+    evidence: []
+
+  - id: ADR-080
+    axis: Security
+    must: "ABAC and multi-tenant slices"
+    path: docs/ADR/ADR-080-abac-multi-tenant-slices.md
+    map: Proposed
+    delivery: frozen
+    freeze_as: ADR-080/081
+    capability: none
+    depends_on: [ADR-000, ADR-013, ADR-050, ADR-070]
+    locks: []
+    evidence: []
+
+  - id: ADR-081
+    axis: Security
+    must: "agent sandbox"
+    path: docs/ADR/ADR-081-agent-sandbox.md
+    map: Proposed
+    delivery: frozen
+    freeze_as: ADR-080/081
+    capability: none
+    depends_on: [ADR-051, ADR-052, ADR-021]
+    locks: []
+    evidence: []
+
+  - id: ADR-090
+    axis: Vertical
+    must: "legal reference pack; overlay later, not a legal corpus now"
+    path: docs/ADR/ADR-090-legal-reference-pack.md
+    map: Proposed
+    delivery: frozen
+    freeze_as: "full ADR-090 ontology"
+    capability: none
+    depends_on: [ADR-000, ADR-001, ADR-002]
+    locks: [D1, D10]
+    evidence: []
+
+  - id: ADR-091
+    axis: Packaging
+    must: "RVF portable capsules"
+    path: docs/ADR/ADR-091-rvf-portable-capsules.md
+    map: Proposed
+    delivery: map-only
+    capability: none
+    depends_on: [ADR-000, ADR-012, ADR-014, ADR-061]
+    locks: [D5]
+    evidence: []
+
+  - id: ADR-092
+    axis: Packaging
+    must: "naming and license"
+    path: docs/ADR/ADR-092-naming-and-license.md
+    map: Proposed
+    delivery: map-only
+    capability: none
+    depends_on: [ADR-000, ADR-001]
+    locks: []
+    evidence: []
+
+  - id: ADR-093
+    axis: Vertical
+    must: "scientific archive pack"
+    path: docs/ADR/ADR-093-scientific-archive-pack.md
+    map: Proposed
+    delivery: frozen
+    freeze_as: ADR-093
+    capability: none
+    depends_on: [ADR-000, ADR-001, ADR-002, ADR-090]
+    locks: [D1]
+    evidence: []
