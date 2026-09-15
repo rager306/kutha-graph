@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-15 — Product + Process: lease M010 S01 semantic recovery open
+
+### Product
+
+- `persist` retains authoritative `terms.jsonl`; `open` recovers fold + intern meanings without `snapshot.json`. Named test `open_without_snapshot_recovers_intern_meanings`.
+
+### Process
+
+- STATE/ROADMAP/README lease M010 S01. Governor `m010-semantic-open` + FSM observe required. Bridge cites store.rs.
+
+### Trajectory
+
+- ADR-011 and semantic-contract-validation note M010 S01 limit (companion terms file; event-logged term ops deferred to S02). Cells remain Proposed; M002 freeze unchanged.
+
 ## 2026-09-15 — Process: live H4 membership emit on CI quanta
 
 ### Process

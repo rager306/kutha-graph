@@ -141,6 +141,39 @@ impl Runtime {
         }
     }
 
+    /// Rebuild from authoritative term strings + full event replay (no snapshot lease).
+    pub fn from_dict_and_events(
+        dict_strings: Vec<String>,
+        all_events: Vec<Event>,
+        max_cascade: usize,
+    ) -> Result<Self, RuntimeError> {
+        let dict = TermDictionary::from_strings(dict_strings);
+        let knows = dict.id("knows").ok_or_else(|| RuntimeError::UnknownRelation {
+            name: "knows".into(),
+        })?;
+        let known_by = dict
+            .id("knownBy")
+            .ok_or_else(|| RuntimeError::UnknownRelation {
+                name: "knownBy".into(),
+            })?;
+        let mut fold = GraphFold::default();
+        let mut next_tt = 0u64;
+        for e in &all_events {
+            fold.apply(e);
+            next_tt = next_tt.max(e.ingested_at.saturating_add(1));
+        }
+        Ok(Self {
+            log: EventLog::from_events(all_events),
+            fold,
+            dict,
+            next_tt,
+            max_cascade,
+            knows,
+            known_by,
+            allowed: load_allowed_names(),
+        })
+    }
+
     /// Named overlay: replay a log prefix (ADR-061 P0). Does not share tentatives.
     pub fn fork_at(&self, n: usize) -> Self {
         let prefix = self.log.prefix(n);

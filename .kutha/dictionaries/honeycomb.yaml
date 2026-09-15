@@ -386,3 +386,4 @@ cells:
     depends_on: [ADR-000, ADR-001, ADR-002, ADR-090]
     locks: [D1]
     evidence: []
+# M010 S01 leases semantic recovery without promoting L_map Accepted.

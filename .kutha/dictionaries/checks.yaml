@@ -200,6 +200,22 @@ checks:
         category: h4-overlay
         message: "H4 membership AS OF test missing {missing}"
 
+  - id: m010-semantic-open
+    description: M010 S01 — open recovers intern meanings without snapshot lease
+    steps:
+      - kind: file_contains
+        path: crates/kutha-runtime/tests/m010_semantic_open.rs
+        needles: ["fn open_without_snapshot_recovers_intern_meanings"]
+        require: all
+        category: m010-s01
+        message: "M010 semantic open test missing {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/store.rs
+        needles: ["terms.jsonl"]
+        require: all
+        category: m010-s01
+        message: "store persist/open missing terms.jsonl retention: {missing}"
+
   - id: h4-lease
     description: H4 delivery lease named without promoting ADR-090 L_map
     steps:

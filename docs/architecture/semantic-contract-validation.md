@@ -20,7 +20,7 @@ Claim support, computational dependency, and permission remain distinct relation
 
 | Contract home | Clarified requirement | Current evidence / limit |
 |---|---|---|
-| [ADR-011](../ADR/ADR-011-lean-event-schema-lineage.md), [012](../ADR/ADR-012-snapshots-tiers-vacuum.md) | Recover term meanings from retained authoritative history without leases | [store.rs](../../crates/kutha-runtime/src/store.rs) still requires a snapshot for the intern map |
+| [ADR-011](../ADR/ADR-011-lean-event-schema-lineage.md), [012](../ADR/ADR-012-snapshots-tiers-vacuum.md) | Recover term meanings from retained authoritative history without leases | [store.rs](../../crates/kutha-runtime/src/store.rs) persists `terms.jsonl`; `open` recovers without `snapshot.json` (M010 S01). Term defs still not logged as event ops (S02 deferred) |
 | [ADR-011](../ADR/ADR-011-lean-event-schema-lineage.md), [013](../ADR/ADR-013-bitemporal-facts-invalidation.md) | Independent supports survive withdrawal of another; disagreement is not implicit supersession | [quantum.rs](../../crates/kutha-runtime/src/quantum.rs) has a small inverse behavior, not support maintenance |
 | [ADR-013](../ADR/ADR-013-bitemporal-facts-invalidation.md), [070](../ADR/ADR-070-cypher-temporal-as-of.md) | Explicit TT/VT and whole-version versus interval correction | [fold.rs](../../crates/kutha-runtime/src/fold.rs) replaces a whole version; [FF5](../../crates/kutha-runtime/tests/ff5_legal_pit.rs) compares two VT cuts |
 | [ADR-010](../ADR/ADR-010-event-log-runtime-quantum.md), [014](../ADR/ADR-014-cascade-budgets-quantum-receipts.md) | Saturation, budget stop, and unknown recovery are distinguishable | A budget-stopped emit can retain events; its receipt is not persisted by the file store |

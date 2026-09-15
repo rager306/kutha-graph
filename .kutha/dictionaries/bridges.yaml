@@ -30,3 +30,8 @@ bridges:
     claim: "Process-relations membership editions are queryable AS OF a prior tenant cut"
     cites: "crates/kutha-runtime/tests/h4_process_allows.rs"
     check: h4-membership-as-of
+
+  - id: B-m010-semantic-open
+    claim: "store::open recovers intern meanings without snapshot.json when terms.jsonl is retained"
+    cites: "crates/kutha-runtime/tests/m010_semantic_open.rs"
+    check: m010-semantic-open

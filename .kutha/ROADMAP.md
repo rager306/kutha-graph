@@ -8,7 +8,7 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 **Success:** same log, two valid-times, different live triples; replay bit-stable; CSR cut agrees with fold. Cosine is not the oracle.
 
-**Closed:** S01–S03 delivered; Active Milestone cleared in STATE (`L_delivery=M001-closed`). Not product Accepted; not M002.
+**Closed:** S01–S03 delivered. Historical lease was `L_delivery=M001-closed` before M010. Not product Accepted; not M002.
 
 - [x] **S01: Named AS OF cut + fixture** `risk:high` `depends:[]`
   > After this: `as_of(T1) ≠ as_of(T2)` on a three-fact statute-shaped log; FF5 test exists.
@@ -17,17 +17,31 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 - [x] **S03: Relation allowlist fail-closed** `risk:low` `depends:[S01]`
   > After this: unknown relation does not append (FF6 stub, not six dictionaries).
 
-## Boundary map
+## M010: Semantic recovery without snapshot lease — ACTIVE
 
-### S01 → S02
+**Success:** discarding `snapshot.json` still restores term meanings and fold fingerprint from retained history; missing authoritative terms fail explicitly. Not M002 Rocks; not ADR Accepted.
+
+- [x] **S01: Open recovers intern meanings** `risk:high` `depends:[]`
+  > After this: persist writes `terms.jsonl`; `open` without snapshot replays events with restored dictionary; named test green.
+- [ ] **S02: (deferred) Logged term-definition ops** `risk:medium` `depends:[S01]`
+  > After this: term strings live in the event log itself (or integrity-checked objects cited by it), not only a companion file.
+
+## Boundary map (M001)
+
+### M001 S01 → S02
 
 Produces: named `live_at`/`as_of` on `GraphFold`; golden fixture under `crates/kutha-runtime`.  
 Consumes: existing `Fact::is_live_at`.
 
-### S02 → S03
+### M001 S02 → S03
 
 Produces: CSR rebuild at a cut.  
 Consumes: S01 fixture.
+
+### M010 S01 → S02
+
+Produces: open without snapshot from `terms.jsonl` + event replay.  
+Consumes: persist path; ADR-011 semantic recovery contract.
 
 ## Harness dogfood (process plane, not M00x)
 
@@ -39,7 +53,7 @@ Consumes: S01 fixture.
 
 ## Later milestones (not active)
 
-Do not start until STATE names an Active Milestone. M001 is closed; capability evidence remains FF5-green.
+Do not start until STATE names them. M010 S01 is the active delivery lease; M002+ stay frozen until leased.
 
 - **M002** — Rocks adapter behind the same events (persistence, not a second SoT).
 - **M003** — Cypher skin over the already-correct AS OF cut.

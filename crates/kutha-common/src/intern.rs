@@ -23,6 +23,10 @@ impl TermDictionary {
         self.to_str.get(id as usize).map(|s| s.as_str())
     }
 
+    pub fn id(&self, s: &str) -> Option<TermId> {
+        self.to_id.get(s).copied()
+    }
+
     pub fn len(&self) -> usize {
         self.to_str.len()
     }
