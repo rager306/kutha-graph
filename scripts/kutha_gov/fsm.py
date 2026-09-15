@@ -10,7 +10,13 @@ import yaml
 
 from kutha_gov.checks import get_checks
 from kutha_gov.protocol import Check, CheckResult, Context, Finding, Severity
-from kutha_gov.time_log import LOG_REL, append_observe, append_run, fold_log
+from kutha_gov.time_log import (
+    LOG_REL,
+    append_observe,
+    append_run,
+    fold_log,
+    sync_membership_edition_if_changed,
+)
 
 FSM_REL = ".kutha/dictionaries/fsm.yaml"
 SCHEMA = "kutha-harness-fsm/v1"
@@ -243,6 +249,16 @@ def _execute(
             observations=outcome.observations,
         )
         for rel in rejected:
+            outcome.findings.append(
+                Finding(
+                    "emit_log",
+                    Severity.HIGH,
+                    "unknown-relation",
+                    f"unknown process relation {rel!r} (not in allowlist) — fail-closed",
+                )
+            )
+        _, membership_rejected = sync_membership_edition_if_changed(ctx.root)
+        for rel in membership_rejected:
             outcome.findings.append(
                 Finding(
                     "emit_log",

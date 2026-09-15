@@ -48,7 +48,7 @@ Each rung is a harness capability that **uses a newly real product surface**. Do
 | **H1** | Evidence: `cargo test` / named FF tests as observations (not SoT) | **Now** (FF5/FF6 in crates) |
 | **H2** | Assert harness events onto the **Kutha log** (delivery facts, not product norms); query **AS OF** the process | **Now** (FF5 green + `kutha-tenant`) |
 | **H3** | Fail-closed writes through a **relation allowlist** (stub of ADR-050) | **Now** (process JSONL + `.kutha/dictionaries/relations.yaml`) |
-| **H4** | Process dictionaries version like norms via ADR-090 overlay dogfood | **Now** (membership snapshot AS OF + H2 tenant) |
+| **H4** | Process dictionaries version like norms via ADR-090 overlay dogfood | **Now** (live tip→JSONL membership sync on `emit_log` + AS OF tenant) |
 
 H2 is the Kutha-specific dogfood the neighbors cannot do with markdown alone: the control plane becomes a **tenant of the engine**, still not architecture authority.
 

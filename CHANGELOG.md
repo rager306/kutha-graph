@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-15 — Process: live H4 membership emit on CI quanta
+
+### Process
+
+- `emit_log` syncs tip process-relation membership into `.kutha/events.jsonl` when the tip set differs from the last logged `allows` edition (H4 dogfood no longer test-only).
+- kutha-changelog skill example lease text updated past H3→H4.
+
+### Trajectory
+
+- Cells and freeze unchanged. Active Milestone remains None; no M002 lease.
+
 ## 2026-09-15 — Process: post-M001 lease debt wave 1
 
 ### Process

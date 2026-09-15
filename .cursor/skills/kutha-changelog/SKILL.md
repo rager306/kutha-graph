@@ -128,5 +128,5 @@ If the user wants a preview only: print the proposed H2+body, the plane classifi
 
 ### Trajectory
 
-- Cells remain **Proposed**. Lease stays H3; next thin slice is still H4.
+- Cells remain **Proposed**. Phase H4 overlay dogfood is in; Active Milestone stays None until the next steel thread is leased.
 ```

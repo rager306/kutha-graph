@@ -100,7 +100,7 @@ class HarnessTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
             dict_dir = root / ".kutha" / "dictionaries"
-            dict_dir.mkdir(parents=True)
+            dict_dir.mkdir(parents=True, exist_ok=True)
             (dict_dir / "relations.yaml").write_text(
                 "schema: kutha-harness-relations/v1\nrelations:\n"
                 "  - status\n  - high\n  - low\n  - checks\n  - cargo\n",
@@ -120,7 +120,7 @@ class HarnessTests(unittest.TestCase):
 
     def _write_process_relations(self, root: Path, names: list[str]) -> None:
         dict_dir = root / ".kutha" / "dictionaries"
-        dict_dir.mkdir(parents=True)
+        dict_dir.mkdir(parents=True, exist_ok=True)
         body = "schema: kutha-harness-relations/v1\nrelations:\n" + "".join(
             f"  - {name}\n" for name in names
         )
@@ -388,6 +388,54 @@ class HarnessTests(unittest.TestCase):
         self.assertTrue(path_matches("crates/kutha-runtime/src/lib.rs", "crates/**/*.rs"))
         self.assertFalse(path_matches("CHANGELOG.md", "crates/**/*.rs"))
 
+    def test_sync_membership_appends_when_tip_differs(self) -> None:
+        import tempfile
+
+        from kutha_gov.time_log import (
+            LOG_REL,
+            MEMBERSHIP_RELATION,
+            sync_membership_edition_if_changed,
+        )
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._write_process_relations(
+                root, ["status", "high", "low", "checks", "cargo", "allows"]
+            )
+            appended, rejected = sync_membership_edition_if_changed(root)
+            self.assertEqual([], rejected)
+            self.assertTrue(appended)
+            log = (root / LOG_REL).read_text(encoding="utf-8")
+            self.assertIn(f'"relation":"{MEMBERSHIP_RELATION}"', log)
+            self.assertIn("allows,cargo,checks,high,low,status", log)
+
+            appended2, rejected2 = sync_membership_edition_if_changed(root)
+            self.assertEqual([], rejected2)
+            self.assertFalse(appended2)
+            log2 = (root / LOG_REL).read_text(encoding="utf-8")
+            self.assertEqual(1, log2.count('"relation":"allows"'))
+
+    def test_sync_membership_appends_again_after_tip_change(self) -> None:
+        import tempfile
+
+        from kutha_gov.time_log import LOG_REL, sync_membership_edition_if_changed
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._write_process_relations(
+                root, ["status", "high", "low", "checks", "cargo", "allows"]
+            )
+            sync_membership_edition_if_changed(root)
+            self._write_process_relations(
+                root, ["status", "high", "low", "checks", "cargo", "allows", "tenant"]
+            )
+            appended, rejected = sync_membership_edition_if_changed(root)
+            self.assertEqual([], rejected)
+            self.assertTrue(appended)
+            log = (root / LOG_REL).read_text(encoding="utf-8")
+            self.assertEqual(2, log.count('"relation":"allows"'))
+            self.assertIn("allows,cargo,checks,high,low,status,tenant", log)
+
     def test_harness_ids_are_uuid_version_7(self) -> None:
         from kutha_gov.time_log import _now_v7
 
@@ -475,9 +523,7 @@ class HarnessTests(unittest.TestCase):
             self.assertEqual([], result.findings)
 
     def test_freeze_message_does_not_cite_closed_m001_gate(self) -> None:
-        yaml_text = (ROOT / ".kutha" / "dictionaries" / "checks.yaml").read_text(
-            encoding="utf-8"
-        )
+        yaml_text = (ROOT / ".kutha" / "dictionaries" / "checks.yaml").read_text(encoding="utf-8")
         self.assertNotIn("before M001 L_capability is green", yaml_text)
         self.assertIn("until Active Milestone names M002", yaml_text)
 

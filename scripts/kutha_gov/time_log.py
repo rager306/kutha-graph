@@ -31,6 +31,52 @@ def encode_membership_object(members: frozenset[str] | set[str]) -> str:
     return ",".join(sorted(members))
 
 
+def decode_membership_object(encoded: str) -> frozenset[str]:
+    """Inverse of encode_membership_object for empty-safe tip comparison."""
+    text = encoded.strip()
+    if not text:
+        return frozenset()
+    return frozenset(part for part in text.split(",") if part)
+
+
+def last_logged_membership(root: Path) -> frozenset[str] | None:
+    """Last H4 membership edition in the process JSONL, or None if never logged."""
+    path = root / LOG_REL
+    if not path.is_file():
+        return None
+    last: frozenset[str] | None = None
+    with path.open(encoding="utf-8") as handle:
+        for raw in handle:
+            line = raw.strip()
+            if not line:
+                continue
+            try:
+                row: dict[str, Any] = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if row.get("subject") != MEMBERSHIP_SUBJECT:
+                continue
+            if row.get("relation") != MEMBERSHIP_RELATION:
+                continue
+            obj = row.get("object")
+            if isinstance(obj, str):
+                last = decode_membership_object(obj)
+    return last
+
+
+def sync_membership_edition_if_changed(root: Path) -> tuple[bool, list[str]]:
+    """Append one tip membership edition when it differs from the last logged set.
+
+    Tip YAML remains the admit lease. Returns (appended, rejected_relations).
+    """
+    tip = load_process_relations(root)
+    previous = last_logged_membership(root)
+    if previous is not None and previous == tip:
+        return False, []
+    event, rejected = append_membership_edition(root, tip)
+    return event is not None, rejected
+
+
 def _now_v7() -> str:
     """RFC 9562 UUID v7. stdlib uuid.uuid7 arrives in 3.14; harness pins 3.13."""
     unix_ms = int(time.time() * 1000) & ((1 << 48) - 1)

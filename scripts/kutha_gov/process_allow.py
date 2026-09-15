@@ -43,9 +43,7 @@ def load_process_relations(root: Path) -> frozenset[str]:
             continue
         # CSV membership snapshots cannot distinguish "a,b" from {"a","b"}.
         if "," in name:
-            raise ValueError(
-                f"{path}: relation name must not contain ',': {name!r}"
-            )
+            raise ValueError(f"{path}: relation name must not contain ',': {name!r}")
         names.add(name)
     return frozenset(names)
 

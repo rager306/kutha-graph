@@ -333,9 +333,7 @@ def _kind_markdown_heading_tag(check: str, step: Step, ctx: Context, result: Che
             )
 
 
-def _kind_when_match_then_match(
-    check: str, step: Step, ctx: Context, result: CheckResult
-) -> None:
+def _kind_when_match_then_match(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
     """If `pattern` matches `path`, require `then_pattern` in the same file."""
     path = _str(step, "path")
     when = _str(step, "pattern")
