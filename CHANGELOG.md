@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-15 — Process: H4 session handoff after architecture POV
+
+### Process
+
+- Session continuity: `.compound-engineering/artifacts/handoffs/h4-after-architecture-pov.md` records the architecture POV (accept lifecycle self-correction; reject Stages 1–4 as delivery order) and the next CE path: H4 overlay brainstorm/plan, not a legal pack.
+
+### Trajectory
+
+- Cells remain **Proposed**. Delivery lease remains H3; next thin slice is still H4 (ADR-090 overlay). Product crates untouched.
+
 ## 2026-09-14 — Process: durable CE artifacts stay under docs_root
 
 ### Process
