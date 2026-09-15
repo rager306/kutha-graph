@@ -33,6 +33,7 @@ states:
       - ff6_unknown_relation_does_not_append
       - h2_harness_status_as_of_t1_differs_from_as_of_t2
       - h2_same_second_status_as_of_uses_emitted_cut
+      - h4_prior_cut_keeps_status_membership_after_later_edition_drops_it
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant

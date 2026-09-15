@@ -43,6 +43,8 @@ class HarnessTests(unittest.TestCase):
                 "invariants-ledger",
                 "bridges-ledger",
                 "honeycomb-ledger",
+                "h4-membership-as-of",
+                "h4-lease",
             }.issubset(names)
         )
 
@@ -114,6 +116,88 @@ class HarnessTests(unittest.TestCase):
             log = (root / LOG_REL).read_text(encoding="utf-8")
             self.assertNotIn("notAProcessRelation", log)
             self.assertIn('"relation":"status"', log)
+
+    def _write_process_relations(self, root: Path, names: list[str]) -> None:
+        dict_dir = root / ".kutha" / "dictionaries"
+        dict_dir.mkdir(parents=True)
+        body = "schema: kutha-harness-relations/v1\nrelations:\n" + "".join(
+            f"  - {name}\n" for name in names
+        )
+        (dict_dir / "relations.yaml").write_text(body, encoding="utf-8")
+
+    def test_membership_edition_appends_one_sorted_snapshot(self) -> None:
+        import json
+        import tempfile
+
+        from kutha_gov.time_log import (
+            LOG_REL,
+            MEMBERSHIP_RELATION,
+            MEMBERSHIP_SUBJECT,
+            append_membership_edition,
+            encode_membership_object,
+        )
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._write_process_relations(
+                root, ["status", "high", "low", "checks", "cargo", "allows"]
+            )
+            event, rejected = append_membership_edition(
+                root, frozenset({"cargo", "status", "allows"})
+            )
+            self.assertEqual([], rejected)
+            self.assertIsNotNone(event)
+            assert event is not None
+            self.assertEqual(MEMBERSHIP_SUBJECT, event.subject)
+            self.assertEqual(MEMBERSHIP_RELATION, event.relation)
+            self.assertEqual("allows,cargo,status", event.object)
+            self.assertEqual(
+                "allows,cargo,status", encode_membership_object({"status", "cargo", "allows"})
+            )
+            lines = (root / LOG_REL).read_text(encoding="utf-8").strip().splitlines()
+            self.assertEqual(1, len(lines))
+            row = json.loads(lines[0])
+            self.assertEqual("assert", row["op"])
+            self.assertEqual("allows,cargo,status", row["object"])
+
+    def test_membership_edition_rejected_when_allows_omitted(self) -> None:
+        import tempfile
+
+        from kutha_gov.time_log import LOG_REL, append_membership_edition
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._write_process_relations(root, ["status", "high", "low", "checks", "cargo"])
+            event, rejected = append_membership_edition(root, frozenset({"status"}))
+            self.assertIn("allows", rejected)
+            self.assertIsNone(event)
+            self.assertFalse((root / LOG_REL).is_file())
+
+    def test_tip_without_status_rejects_status_keeps_allows(self) -> None:
+        import tempfile
+
+        from kutha_gov.time_log import LOG_REL, append_run
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._write_process_relations(root, ["high", "low", "checks", "cargo", "allows"])
+            _event, rejected = append_run(root, high=0, low=0, check_count=1)
+            self.assertIn("status", rejected)
+            log_path = root / LOG_REL
+            if log_path.is_file():
+                log = log_path.read_text(encoding="utf-8")
+                self.assertNotIn('"relation":"status"', log)
+            _event2, rejected2 = append_run(
+                root,
+                high=0,
+                low=0,
+                check_count=1,
+                observations=[("cargo", "ok")],
+            )
+            self.assertNotIn("cargo", rejected2)
+            log = (root / LOG_REL).read_text(encoding="utf-8")
+            self.assertIn('"relation":"cargo"', log)
+            self.assertNotIn('"relation":"status"', log)
 
     def test_yaml_needles_in_glob_fails_when_fn_missing(self) -> None:
         result = CheckResult(check="probe")

@@ -169,6 +169,8 @@ def cmd_ci(ctx: Context, *, budget: int) -> int:
         rung = "H2"
     if "load_relations" in outcome.trace:
         rung = "H3"
+    if any(rel.startswith("h4_") for rel, _obj in outcome.evidence):
+        rung = "H4"
     print(
         f"\nharness: {outcome.high} HIGH, {outcome.low} LOW, "
         f"{len(outcome.results)} checks  ({rung} dogfood)"

@@ -1,5 +1,5 @@
 //! H2 tenant: map process JSONL onto `Op` and admit through the product runtime.
-//! Not architecture SoT. Not ADR-050's six kinds — two rows on the FF6 list.
+//! Not architecture SoT. Not ADR-050's six kinds — H2 status/cargo plus H4 membership.
 
 use crate::quantum::{Runtime, RuntimeError};
 use kutha_common::Op;
@@ -71,6 +71,7 @@ pub fn ingest_harness_jsonl(
 pub fn ingest_harness_jsonl_str(rt: &mut Runtime, text: &str) -> Result<IngestReport, TenantError> {
     let mut statuses: Vec<(u64, String)> = Vec::new();
     let mut cargo: Vec<(u64, String)> = Vec::new();
+    let mut memberships: Vec<(u64, String)> = Vec::new();
     for raw in text.lines() {
         let line = raw.trim();
         if line.is_empty() {
@@ -84,6 +85,8 @@ pub fn ingest_harness_jsonl_str(rt: &mut Runtime, text: &str) -> Result<IngestRe
             statuses.push((row.valid_from, row.object));
         } else if row.subject == "harness.observe" && row.relation == "cargo" {
             cargo.push((row.valid_from, row.object));
+        } else if row.subject == "process.relations" && row.relation == "allows" {
+            memberships.push((row.valid_from, row.object));
         }
     }
 
@@ -96,6 +99,7 @@ pub fn ingest_harness_jsonl_str(rt: &mut Runtime, text: &str) -> Result<IngestRe
     }
     emit_chained(rt, "harness.observe", "observed", &cargo)?;
     report.observed_facts = cargo.len();
+    emit_chained(rt, "process.relations", "processAllows", &memberships)?;
     Ok(report)
 }
 

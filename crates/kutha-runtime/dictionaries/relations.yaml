@@ -10,3 +10,4 @@ relations:
   - inForceAs
   - runStatus
   - observed
+  - processAllows

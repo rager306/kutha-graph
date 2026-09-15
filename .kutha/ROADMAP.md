@@ -33,7 +33,7 @@ Consumes: S01 fixture.
 - [x] **H1** — `kutha-gov ci` observes named FF tests via `cargo test` (evidence, not SoT).
 - [x] **H2** — harness JSONL ingested onto the Kutha log; query AS OF last process status.
 - [x] **H3** — fail-closed process writes through a relation allowlist.
-- [ ] **H4** — legal pack dictionaries version process rules the same way as norms (needs ADR-090 overlay).
+- [x] **H4** — legal pack dictionaries version process rules the same way as norms (needs ADR-090 overlay).
 
 ## Later milestones (not active)
 

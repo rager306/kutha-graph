@@ -6,7 +6,7 @@
 
 **Active Milestone:** M001
 **Active Slice:** None
-**Phase:** H3
+**Phase:** H4
 
 ## Lifecycles (do not collapse)
 
@@ -24,7 +24,7 @@ L_capability=ff5-green
 
 ## Next action
 
-H3 is in: process JSONL writes are fail-closed against `.kutha/dictionaries/relations.yaml`. Same-second tenant AS OF uses the **emitted** cut. Do **not** start M002 (Rocks) until STATE names it. Next thin slice: **H4** waits on ADR-090 overlay (do not start a legal pack). Do not open ADR-100. Do not implement Cypher/HNSW.
+H4 is in: process-relation membership editions are logged as snapshots and queryable AS OF a prior tenant cut. Tip YAML remains the admit lease (`allows` reserved). Do **not** start a legal pack or M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW.
 
 ## Freeze (until explicit M002 lease)
 

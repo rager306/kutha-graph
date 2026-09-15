@@ -168,10 +168,42 @@ checks:
         path: .kutha/dictionaries/relations.yaml
       - kind: file_contains
         path: .kutha/dictionaries/relations.yaml
-        needles: ["schema: kutha-harness-relations/v1", "status", "high", "low", "checks", "cargo", "tenant"]
+        needles: ["schema: kutha-harness-relations/v1", "status", "high", "low", "checks", "cargo", "tenant", "allows"]
         require: all
         category: process-allowlist
         message: "process relation dictionary missing {missing}"
+
+  - id: h4-membership-as-of
+    description: H4 historical AE1 — membership snapshot AS OF a prior process cut
+    steps:
+      - kind: file_contains
+        path: crates/kutha-runtime/tests/h4_process_allows.rs
+        needles: ["fn h4_prior_cut_keeps_status_membership_after_later_edition_drops_it"]
+        require: all
+        category: h4-overlay
+        message: "H4 membership AS OF test missing {missing}"
+
+  - id: h4-lease
+    description: H4 delivery lease named without promoting ADR-090 L_map
+    steps:
+      - kind: file_contains
+        path: .kutha/STATE.md
+        needles: ["**Phase:** H4"]
+        require: all
+        category: h4-lease
+        message: "STATE missing H4 phase: {missing}"
+      - kind: file_contains
+        path: .kutha/ROADMAP.md
+        needles: ["- [x] **H4**"]
+        require: all
+        category: h4-lease
+        message: "ROADMAP H4 checkbox not marked: {missing}"
+      - kind: file_contains
+        path: .kutha/dictionaries/honeycomb.yaml
+        needles: ["delivery: frozen", "full ADR-090 ontology"]
+        require: all
+        category: h4-lease
+        message: "ADR-090 ontology freeze missing from honeycomb: {missing}"
 
   - id: unnamed-csr
     description: no silent CSR “now” — callers must use csr_lease_at
@@ -189,7 +221,7 @@ checks:
         path: crates/kutha-runtime/dictionaries/relations.yaml
       - kind: file_contains
         path: crates/kutha-runtime/dictionaries/relations.yaml
-        needles: ["schema: kutha-relations/v1", "inForceAs", "knows", "knownBy", "runStatus", "observed"]
+        needles: ["schema: kutha-relations/v1", "inForceAs", "knows", "knownBy", "runStatus", "observed", "processAllows"]
         require: all
         category: allowlist
         message: "relation dictionary missing {missing}"

@@ -1,4 +1,7 @@
-"""H3: process-plane relation allowlist. Not ADR-050's six kinds. Fail-closed."""
+"""H3: process-plane relation allowlist. Not ADR-050's six kinds. Fail-closed.
+
+`allows` is the reserved H4 membership-edition relation; keep it on tip YAML.
+"""
 
 from __future__ import annotations
 

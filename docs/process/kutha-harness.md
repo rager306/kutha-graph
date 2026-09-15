@@ -48,7 +48,7 @@ Each rung is a harness capability that **uses a newly real product surface**. Do
 | **H1** | Evidence: `cargo test` / named FF tests as observations (not SoT) | **Now** (FF5/FF6 in crates) |
 | **H2** | Assert harness events onto the **Kutha log** (delivery facts, not product norms); query **AS OF** the process | **Now** (FF5 green + `kutha-tenant`) |
 | **H3** | Fail-closed writes through a **relation allowlist** (stub of ADR-050) | **Now** (process JSONL + `.kutha/dictionaries/relations.yaml`) |
-| **H4** | Legal pack dictionaries version the *process* rules the same way as norms | ADR-090 overlay + H2 |
+| **H4** | Process dictionaries version like norms via ADR-090 overlay dogfood | **Now** (membership snapshot AS OF + H2 tenant) |
 
 H2 is the Kutha-specific dogfood the neighbors cannot do with markdown alone: the control plane becomes a **tenant of the engine**, still not architecture authority.
 
@@ -127,15 +127,18 @@ Relation Behaviors (later): `finding --raisedOn--> check` triggers lifecycle war
 ### Mapping H0 records → Kutha `Op` (H2)
 
 ```text
-assert  subject=harness.run      relation=runStatus   object=ok|fail
-assert  subject=harness.observe  relation=observed    object=ok|fail
+assert  subject=harness.run         relation=runStatus      object=ok|fail
+assert  subject=harness.observe     relation=observed       object=ok|fail
+assert  subject=process.relations   relation=processAllows  object=sorted,csv,members
 ```
 
-Windows: successive status rows close `valid_to` at the next monotonic valid-from. Same unix second is legal on the process JSONL; the tenant **bumps** the emitted cut so AS OF last status is live (`[from, to)`). `last_valid_from` is that emitted cut, not the source `valid_from`. Tenant ingest maps only `status`→`runStatus` and `cargo`→`observed`; `high`/`checks` stay on the process JSONL. Per-test FF names are CLI evidence, not process relations. Tenant picture is `.kutha/tenant/` (`KUTHA_TENANT_DIR`), gitignored — not architecture SoT.
+Process JSONL uses `relation=allows` for the membership snapshot; tenant rename-on-ingest matches H2 (`status`→`runStatus`). Tip YAML remains the admit lease; historical membership is the chained projection.
+
+Windows: successive status rows close `valid_to` at the next monotonic valid-from. Same unix second is legal on the process JSONL; the tenant **bumps** the emitted cut so AS OF last status is live (`[from, to)`). `last_valid_from` is that emitted cut, not the source `valid_from`. Tenant ingest maps `status`→`runStatus`, `cargo`→`observed`, and `allows`→`processAllows`; `high`/`checks` stay on the process JSONL. Per-test FF names are CLI evidence, not process relations. Tenant picture is `.kutha/tenant/` (`KUTHA_TENANT_DIR`), gitignored — not architecture SoT.
 
 Intern map (ADR-011) ≠ process dictionaries (ADR-050). Process allowlist at H3: `.kutha/dictionaries/relations.yaml`. Product allowlist remains `crates/kutha-runtime/dictionaries/relations.yaml`. Mixing the two schemas is a HIGH `plane-mix` finding.
 
-## CLI (H0–H3)
+## CLI (H0–H4)
 
 ```text
 uv run kutha-gov list
@@ -169,4 +172,4 @@ Adding a check: control loop → `.kutha/dictionaries/invariants.yaml`; a fence 
 - System `python3` / 3.12 as the harness interpreter (must be uv + 3.13).
 - Harness as a workflow engine (Cui remains pack composition, not GSD).
 - Implementing the STCA-guide §5 tutorial runtime as a second graph (JSON merge-patch objects). That skeleton is **pedagogical**; Kutha events are typed `Op`.
-- Legal / science **product** packs (ADR-090/093) as the next crate — M001 S01–S03 are done; do not start Rocks until STATE names M002. Next harness rung is H4 (needs ADR-090 overlay; do not start a legal pack).
+- Legal / science **product** packs (ADR-090/093) as the next crate — M001 S01–S03 are done; do not start Rocks until STATE names M002. Harness H4 is in (process overlay dogfood); do not start a legal pack.

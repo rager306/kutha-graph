@@ -25,3 +25,8 @@ bridges:
     claim: "Product writes stay on one FF6 relation dictionary"
     cites: "crates/kutha-runtime/dictionaries/relations.yaml"
     check: relation-allowlist
+
+  - id: B-h4-membership-as-of
+    claim: "Process-relations membership editions are queryable AS OF a prior tenant cut"
+    cites: "crates/kutha-runtime/tests/h4_process_allows.rs"
+    check: h4-membership-as-of

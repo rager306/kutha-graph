@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-15 — Product + Process: H4 process overlay dogfood
+
+### Product
+
+- Tenant ingest maps `process.relations` / `allows` snapshot editions onto `processAllows` and chains intervals. AS OF a prior cut still sees a membership set that later editions dropped. One FF6 name; not ADR-050's six kinds.
+
+### Process
+
+- Tip YAML stays the admit lease. Reserved process relation `allows` logs one sorted membership snapshot per edition. Pytest proves tip-without-`status` rejects `status` without editing the repo tip. Governor `h4-lease` / `h4-membership-as-of` and FSM `observe_cargo.required` name the H4 evidence.
+
+### Trajectory
+
+- Cells remain **Proposed**. ADR-090 ontology stays frozen. Delivery lease is **H4** overlay dogfood, not a legal pack.
+
 ## 2026-09-15 — Process: H4 session handoff after architecture POV
 
 ### Process
