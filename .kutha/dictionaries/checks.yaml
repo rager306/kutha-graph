@@ -5,7 +5,7 @@ meta_prompt: .kutha/META.md
 
 checks:
   - id: trajectory
-    description: exactly one Active Milestone, and it exists on ROADMAP
+    description: Active Milestone/Slice are None or exist on ROADMAP
     steps:
       - kind: file_exists
         path: .kutha/STATE.md

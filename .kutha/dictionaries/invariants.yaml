@@ -8,7 +8,7 @@ process: docs/process/governor-intake.md
 
 invariants:
   - id: I-trajectory
-    claim: "Exactly one Active Milestone, and it exists on ROADMAP"
+    claim: "Active Milestone is None or a ROADMAP M### id; Active Slice is None or a ROADMAP S## id"
     source: ".kutha/STATE.md"
     disposition: check
     check: trajectory

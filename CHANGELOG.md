@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-15 — Process: close M001 milestone
+
+### Process
+
+- Cleared Active Milestone after S01–S03 delivery (`Active Milestone: None`). ROADMAP marks M001 **CLOSED**. Freeze and H4 phase unchanged.
+
+### Trajectory
+
+- `L_delivery=M001-closed`. L_map stays Proposed; L_capability stays ff5-green. No M002 lease.
+
 ## 2026-09-15 — Product + Process: H4 process overlay dogfood
 
 ### Product

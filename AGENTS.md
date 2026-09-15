@@ -34,7 +34,7 @@ Governor green ≠ ADR Accepted ≠ capability. Honeycomb **Proposed** ≠ deliv
 
 ## Current execution position
 
-Read `.kutha/STATE.md` first (lease, not SoT). **M001 S01–S03 are done**. Harness **H4** is on: process-relation membership snapshots are queryable AS OF a prior tenant cut; tip YAML remains the admit lease. Do not start a legal pack. Do not start M002 Rocks until STATE names it.
+Read `.kutha/STATE.md` first (lease, not SoT). **M001 is closed** (`Active Milestone: None`, `L_delivery=M001-closed`). Harness **H4** is on: process-relation membership snapshots are queryable AS OF a prior tenant cut; tip YAML remains the admit lease. Do not start a legal pack. Do not start M002 Rocks until STATE names it.
 
 Until explicit M002: do not add RocksDB, Cypher/GPML parser, HNSW, ADR-050 six dictionaries, ADR-080/081, full ADR-090/093 packs, ADR-100+, or Consensus Query 103+.
 

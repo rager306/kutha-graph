@@ -10,7 +10,7 @@ This is not a production graph database and not Graphiti / Samyama / Harvey.
 
 | Plane | Where | Now |
 |-------|--------|-----|
-| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | Milestone **M001** S01–S03 done; harness phase **H4** (ADR-090 process overlay dogfood, not a legal pack) |
+| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | **M001 closed** (no Active Milestone); harness phase **H4** (ADR-090 process overlay dogfood, not a legal pack) |
 | Architecture map | [`docs/ADR/README.md`](docs/ADR/README.md) | Spine + honeycomb **Proposed**, not Accepted |
 | Capability | `crates/kutha-runtime` tests | FF5 green (`as_of(2015) ≠ as_of(2021)` on a statute-shaped fixture) |
 

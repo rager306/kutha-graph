@@ -4,9 +4,11 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 **Vision:** Event-sourced bi-temporal graph engine; LLM proposes; log and dictionaries own audited truth. Wedge: legal temporal agents.
 
-## M001: Legal PIT steel thread
+## M001: Legal PIT steel thread — CLOSED
 
 **Success:** same log, two valid-times, different live triples; replay bit-stable; CSR cut agrees with fold. Cosine is not the oracle.
+
+**Closed:** S01–S03 delivered; Active Milestone cleared in STATE (`L_delivery=M001-closed`). Not product Accepted; not M002.
 
 - [x] **S01: Named AS OF cut + fixture** `risk:high` `depends:[]`
   > After this: `as_of(T1) ≠ as_of(T2)` on a three-fact statute-shaped log; FF5 test exists.
@@ -37,7 +39,7 @@ Consumes: S01 fixture.
 
 ## Later milestones (not active)
 
-Do not start until M001 capability is green.
+Do not start until STATE names an Active Milestone. M001 is closed; capability evidence remains FF5-green.
 
 - **M002** — Rocks adapter behind the same events (persistence, not a second SoT).
 - **M003** — Cypher skin over the already-correct AS OF cut.
@@ -46,4 +48,4 @@ Do not start until M001 capability is green.
 
 ## Freeze until explicit M002 lease
 
-RocksDB crate, Cypher parser, HNSW, ABAC rewrite, RVF as hot store, bulk honeycomb Accepted, Consensus 103+. M001 S01–S03 are done.
+RocksDB crate, Cypher parser, HNSW, ABAC rewrite, RVF as hot store, bulk honeycomb Accepted, Consensus 103+. M001 is closed; freeze still holds.
