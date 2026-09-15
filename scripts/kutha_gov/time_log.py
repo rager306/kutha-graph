@@ -22,6 +22,13 @@ from typing import Any
 from kutha_gov.process_allow import admit, load_process_relations
 
 LOG_REL = ".kutha/events.jsonl"
+MEMBERSHIP_SUBJECT = "process.relations"
+MEMBERSHIP_RELATION = "allows"
+
+
+def encode_membership_object(members: frozenset[str] | set[str]) -> str:
+    """Deterministic snapshot of a process-relations edition (KTD3)."""
+    return ",".join(sorted(members))
 
 
 def _now_v7() -> str:
@@ -203,3 +210,26 @@ def append_observe(root: Path, relation: str, obj: str) -> bool:
     with log_path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(event.to_json(), separators=(",", ":")) + "\n")
     return True
+
+
+def append_membership_edition(
+    root: Path, members: frozenset[str]
+) -> tuple[HarnessEvent | None, list[str]]:
+    """One H4 process-relations snapshot. Tip YAML remains the admit lease."""
+    if not admit(root, MEMBERSHIP_RELATION):
+        return None, [MEMBERSHIP_RELATION]
+    log_path = root / LOG_REL
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    ingested = int(datetime.now(UTC).timestamp())
+    event = HarnessEvent(
+        _now_v7(),
+        "assert",
+        MEMBERSHIP_SUBJECT,
+        MEMBERSHIP_RELATION,
+        encode_membership_object(members),
+        ingested,
+        ingested,
+    )
+    with log_path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(event.to_json(), separators=(",", ":")) + "\n")
+    return event, []

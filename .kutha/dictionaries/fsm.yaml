@@ -16,6 +16,9 @@ states:
   load_checks: { kind: require_file, path: .kutha/dictionaries/checks.yaml }
   load_fsm: { kind: require_file, path: .kutha/dictionaries/fsm.yaml }
   load_relations: { kind: require_file, path: .kutha/dictionaries/relations.yaml }
+  load_invariants: { kind: require_file, path: .kutha/dictionaries/invariants.yaml }
+  load_bridges: { kind: require_file, path: .kutha/dictionaries/bridges.yaml }
+  load_honeycomb: { kind: require_file, path: .kutha/dictionaries/honeycomb.yaml }
   run_checks: { kind: run_checks }
   observe_cargo:
     kind: observe_cargo
@@ -30,6 +33,7 @@ states:
       - ff6_unknown_relation_does_not_append
       - h2_harness_status_as_of_t1_differs_from_as_of_t2
       - h2_same_second_status_as_of_uses_emitted_cut
+      - h4_prior_cut_keeps_status_membership_after_later_edition_drops_it
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant
@@ -48,8 +52,14 @@ transitions:
   - { from: load_checks, event: fail, to: fail }
   - { from: load_fsm, event: ok, to: load_relations }
   - { from: load_fsm, event: fail, to: fail }
-  - { from: load_relations, event: ok, to: run_checks }
+  - { from: load_relations, event: ok, to: load_invariants }
   - { from: load_relations, event: fail, to: fail }
+  - { from: load_invariants, event: ok, to: load_bridges }
+  - { from: load_invariants, event: fail, to: fail }
+  - { from: load_bridges, event: ok, to: load_honeycomb }
+  - { from: load_bridges, event: fail, to: fail }
+  - { from: load_honeycomb, event: ok, to: run_checks }
+  - { from: load_honeycomb, event: fail, to: fail }
   - { from: run_checks, event: done, to: observe_cargo }
   - { from: observe_cargo, event: done, to: emit }
   - { from: emit, event: ok, to: emit_tenant }

@@ -23,6 +23,7 @@ Grounding cards:
 - `samyama-agentic-enrichment-gak` — `.compound-engineering/artifacts/research/applicability/cards/samyama-agentic-enrichment-gak.md`
 - `raven-in-db-ai-agents` — `.compound-engineering/artifacts/research/applicability/cards/raven-in-db-ai-agents.md`
 - `paper-llm-compiler-not-executor` — `.compound-engineering/artifacts/research/applicability/cards/paper-llm-compiler-not-executor.md`
+- Adapter mapping (crate identifier, not a new card): `.compound-engineering/artifacts/research/ruvector-plugin-adaptation.md` (P-Agent-Memory)
 
 Contrast: Dify/oxify DAG, Hindsight four-network, Graphiti memory, Harvey-as-SoT.
 
@@ -30,7 +31,7 @@ Contrast: Dify/oxify DAG, Hindsight four-network, Graphiti memory, Harvey-as-SoT
 
 ### D052-1. Enrichment is a reversible pack
 
-LLM extract/summarize/embed runs as ADR-021 pack. Outputs are events (`enrichment.proposed` / applied after validate). Content-addressed cache of model calls (D6) is mandatory for replay. Unload drops derived leases (HNSW of embeddings, etc.), not the log.
+LLM extract/summarize/embed runs as ADR-021 pack. Outputs are proposed events; applying an output requires an explicit admission decision in addition to structural validation. Content-addressed cache of model calls (D6) is mandatory for replay. Unload drops derived leases (HNSW of embeddings, etc.), not the log.
 
 ### D052-2. Dual-process ingest (ADR-090 TR-07 cousin)
 
@@ -38,13 +39,24 @@ Hot write of admitted evidence does **not** require LLM. Enrichment is async. Sa
 
 ### D052-3. Derived ≠ kernel fact
 
-Enrichment cannot override L_KB / statutory facts. MemStrata still owns supersession. ULTRA/GNN scoring is a retrieve lease (071), not MATCH.
+Enrichment cannot override L_KB / statutory facts. Supersession follows Kutha's temporal and provenance contracts (ADR-011/013); memory-system literature is a reference, not an authority over the fold. ULTRA/GNN scoring is a retrieve lease (071), not MATCH.
+
+### D052-4. Temporal coherence gating (Proposed adapter mapping)
+
+Agent memory scoring over **derived** representations may use a composite relevance score instead of flat cosine:
+
+$$\text{Score} = \text{Cosine} \times \text{TemporalDecay} \times \text{CoherenceGate}$$
+
+This is a retrieve/ranking lease (ADR-071 cousin), not fact validity (ADR-013). When this optional pack is implemented, the adapter identifier is `ruvector-temporal-coherence` (P-Agent-Memory). A coherence gate must not admit, supersede, or invalidate kernel facts.
+
+**Clarification (2026-09-13, Proposed; not implemented):** An observed source response, an extracted proposition, and an admitted claim are distinct records. Logging a response establishes what was observed; a well-formed extraction does not establish that its proposition is true. Derived outputs identify the source revisions and evidence they consumed, together with the model/prompt/cache identity needed for replay (ADR-011/014/060). Source correction, retraction, or supersession makes affected summaries, embeddings, cached answers, and action justifications ineligible for current use until re-evaluated under the applicable policy. Historical outputs and their lineage remain available at the appropriate historical cut; replaying cached output does not renew its admission or current authority.
 
 **Hard separations:**
 
 ```text
 Enrichment event       ≠  Kernel assert
 Optional pack          ≠  Mandatory cloud LLM
+Coherence decay score  ≠  Fact validity
 CA cache               ≠  Model as SoT
 Raven/Samyama pattern  ≠  Vendor as Kutha core
 Dify DAG               ≠  This pack

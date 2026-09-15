@@ -1,4 +1,7 @@
-"""H3: process-plane relation allowlist. Not ADR-050's six kinds. Fail-closed."""
+"""H3: process-plane relation allowlist. Not ADR-050's six kinds. Fail-closed.
+
+`allows` is the reserved H4 membership-edition relation; keep it on tip YAML.
+"""
 
 from __future__ import annotations
 
@@ -31,8 +34,20 @@ def load_process_relations(root: Path) -> frozenset[str]:
     raw = loaded.get("relations", [])
     if not isinstance(raw, list):
         return frozenset()
-    names = frozenset(item for item in raw if isinstance(item, str) and item.strip())
-    return names
+    names: set[str] = set()
+    for item in raw:
+        if not isinstance(item, str):
+            continue
+        name = item.strip()
+        if not name:
+            continue
+        # CSV membership snapshots cannot distinguish "a,b" from {"a","b"}.
+        if "," in name:
+            raise ValueError(
+                f"{path}: relation name must not contain ',': {name!r}"
+            )
+        names.add(name)
+    return frozenset(names)
 
 
 def admit(root: Path, relation: str) -> bool:

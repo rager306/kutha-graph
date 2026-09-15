@@ -128,9 +128,9 @@ Required fields on temporal fact edges (SUPPORTS, REFUTES, CITES, MENTIONS, REFE
 
 **Non-temporal (structural):** `HAS_PART`, `FROM_SOURCE`, `AUTHORED_BY`, `HAS_MANIFESTATION`, classification membership — `created_at` only.
 
-**EpisodicNode** (or Kutha equivalent episode event): raw source ground truth; edge `reference_time` chains to episode.
+**EpisodicNode** (or Kutha equivalent episode event): the record of observed source content, not proof that its claims are true; edge `reference_time` chains to episode.
 
-**Invalidation:** overlapping same-endpoint facts invalidate old edges; no physical delete (aligns ADR-013 / Graphiti reference semantics).
+**Invalidation:** an explicit correction, retraction, or supersession policy identifies the statement being invalidated (ADR-011/013); overlapping intervals or shared endpoints alone do not establish replacement. Independent `SUPPORTS` / `CONTRADICTS` evidence may coexist. Preserve the evidence and unresolved conflict unless a named admission/resolution policy justifies a different derived view; no physical delete.
 
 Optional legal-aware extensions (`retroactive_to`, `overlap_allowed`) may appear when this pack cites normative objects; they do not replace ADR-090 clocks.
 
@@ -146,6 +146,8 @@ Adopt ADR-042-class separation:
 | Edges | `SUPPORTS` / `CONTRADICTS` / `QUALIFIES` (temporal) |
 
 **Query-local evidence activation** (HyCERAG-inspired, revised): retrieve → incidence subgraph → structural activation (PPR-like) → assemble context → LLM. Chains are **ephemeral** by default; persist only to L_XP / RVF with `retrieval_eligible=false` until gated promotion.
+
+**Clarification (2026-09-13, Proposed; not implemented):** Source observation, extracted proposition, and admitted claim remain distinct. Schema validity and successful pipeline execution establish neither scientific truth nor admission. Admission identifies the evidence and policy that justify the permitted use (ADR-014/060). Revision-bound derivations follow ADR-011/052: a correction, retraction, or supersession makes affected summaries, embeddings, cached answers, and action justifications ineligible for current use until re-evaluated, while retaining their historical records and lineage. Revision of one source must not silently invalidate independent evidence for the same claim.
 
 ### D093-7. Research Process Plane
 

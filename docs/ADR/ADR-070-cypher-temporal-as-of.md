@@ -31,13 +31,13 @@ Empty Cypher success (RuVector) is a trap. SHACL compile is verify, not this sur
 
 ### D070-1. One GPML IR; Cypher and GQL as skins
 
-Implement pattern calculus (GPML/GPC) onto LFTJ + explicit path mode (trail vs walk vs shortest — must be named; restless journeys are 013/TVG cousins). SQL/PGQ is an optional **view pack** over tabular leases, not a second SoT.
+Implement pattern calculus (GPML/GPC) onto LFTJ plus explicit walk/trail/simple uniqueness and separate shortest/foremost selection objectives; restless journeys are 013/TVG cousins. SQL/PGQ is an optional **view pack** over tabular leases, not a second SoT.
 
 ### D070-2. Temporal AS OF is native
 
 Surface binds valid-time and transaction-time cuts (013). Interval index is an access path, not the language. Compiled plans must not silently use “now” when AS OF was requested (MemStrata / statutory QA).
 
-Native fold cut (not the Cypher skin): `GraphFold::as_of(vt)` and `Runtime::csr_lease_at(tt, vt)` exist in P0. Cypher/GPML grammar remains Proposed and frozen until S03.
+Native fold cut (not the Cypher skin): `GraphFold::as_of(vt)` and `Runtime::csr_lease_at(tt, vt)` exist in P0. Cypher/GPML grammar remains Proposed and frozen under the current `.kutha/STATE.md`; completion of S03 did not authorize it.
 
 ### D070-3. Writes are typed operators, not free MERGE-as-truth
 
@@ -46,6 +46,18 @@ Assert/retract/correct (010/TGMS) may have Cypher-shaped syntax later; they stil
 ### D070-4. Named-graph / USE scope is explicit
 
 Compiled patterns do not union every pack by default (020/named graphs).
+
+### Clarification (2026-09-13): choose semantics before an access path
+
+The proposed query contract distinguishes:
+
+- **Snapshot path:** every edge is live at the same `(tt, vt)` cut.
+- **Co-temporal interval path:** edges share a nonempty validity intersection within the requested window, at a fixed knowledge cut. Alternative validity windows compose by union; simultaneous premises by intersection.
+- **Journey:** traversal times advance along edges, with explicit waiting/latency constraints. For `A->B [1,2)` and `B->C [3,4)`, waiting may permit a journey, but there is no simultaneous snapshot path. A journey is a separate operator, not the default meaning of AS OF.
+
+Specify node uniqueness, relationship uniqueness, walk/trail/simple mode, endpoint answers versus path enumeration, and set/bag multiplicity independently. Shortest/foremost are selection objectives, not substitutes for uniqueness. Cypher relationship uniqueness is not vertex-injective subgraph isomorphism; dialect defaults must be pinned by a compatibility contract (see the corrected `paper-subgraph-iso-vs-homomorphism` card).
+
+LFTJ's conjunctive-query guarantee does not automatically cover simple-path enumeration, restless journeys, or all GPML. P0 implements sorted-row `leapfrog_intersect`, not full variable-ordered MATCH. Budget-limited results must retain completeness metadata (ADR-014); an empty partial result is not proof of absence.
 
 **Hard separations:**
 

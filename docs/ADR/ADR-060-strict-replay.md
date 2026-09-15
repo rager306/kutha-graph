@@ -29,7 +29,7 @@ Grounding cards:
 
 ### D060-1. Semantic replay is fold(log, CA-cache)
 
-Replaying the event log with the same behaviors and the same content-addressed LLM/tool cache must reproduce the fold (and receipts). Divergence is a test failure, not a “best effort.” LLM is not consulted during strict replay.
+State replay folds recorded events; execution replay additionally reruns the same versioned behaviors against recorded content-addressed inputs. The proposed strict contract requires matching state and the declared deterministic receipt/evidence fields. Divergence is a test failure, not a “best effort.” LLM and external effect endpoints are not called during strict replay.
 
 ### D060-2. WAL recovery is a cousin, not the harness
 
@@ -38,6 +38,14 @@ Rocks `WALRecoveryMode` proves storage durability. Strict replay proves **Kutha 
 ### D060-3. Retroaction is optional on top of replay
 
 R3-style “what if this behavior were different” over a recorded cut belongs after 061 refs exist. Cut grain is **quantum / event offset**, not thread interleavings.
+
+### Clarification (2026-09-13): three independent verification obligations
+
+1. **State replay:** apply recorded events and compare the fold, including resolved term meanings when claiming semantic recovery (ADR-011).
+2. **Provenance/integrity verification:** validate event references, dependency links, input digests, and quantum outcomes. Mutating a cause while keeping the triple unchanged must not pass this check.
+3. **Execution replay:** reproduce derivations with pinned code/rules, policy versions, input cuts, cached observations, and controlled nondeterminism. Declare which IDs/timestamps are recorded inputs and which fields are compared; never assume fresh UUIDs or signatures reproduce byte-for-byte.
+
+`Runtime::replay_check` currently checks a fold fingerprint. It does not rerun behaviors or compare causal links and receipts. The existing passing check proves neither obligations 2/3 nor lease-independent semantic recovery. An explicit unavailable outcome for missing code/cache/history is a **proposed** obligation 2/3 requirement, not current behavior: today's API returns `Ok(rebuilt)` or `RuntimeError::ReplayDivergence` (and I/O errors from `store::open`), with no unavailable verification variant.
 
 **Hard separations:**
 
@@ -57,7 +65,7 @@ Snapshot-shortened     ≠  Snapshot as SoT (012)
 
 ### Negative / risks
 
-- No Kutha `code` harness yet (synthesis). Rocks is the closest kernel.
+- P0 has fold replay checks; provenance and execution replay remain unimplemented contracts.
 
 ### Non-goals
 

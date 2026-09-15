@@ -1,0 +1,24 @@
+---
+description: Route Russian chat verbs to Compound Engineering skills (ce-commit and neighbors)
+alwaysApply: true
+---
+
+# CE skill routing (Russian chat)
+
+Chat with the user is Russian. Compound Engineering skill `description` fields are English. Match the utterance below, then **Read that skill and follow it**. Do not replace a CE skill with a homemade protocol.
+
+The git user-rule is **safety only**: no force-push, no `--no-verify`, no commit unless asked. It is not the commit workflow.
+
+| User said (any of) | Open and follow |
+|--------------------|-----------------|
+| коммит, закоммить, закоммитить, зафиксируй, сделай коммит, сохрани в git | `ce-commit` |
+| changelog, ченджлог, запись в changelog, историю, сделай changelog | `kutha-changelog` (repo skill). If they also asked to commit → then `ce-commit` |
+| PR, пуллреквест, открой PR, запушь, запушь и PR, ship | `ce-commit-push-pr` |
+| план, распиши, разбей на шаги | `ce-plan` |
+| реализуй, сделай по плану | `ce-work` |
+| отладка, почему падает, почини, чини | `ce-debug` |
+| ревью, ревью кода, посмотри дифф | `ce-code-review` |
+| хэндофф, передай сессию | `ce-handoff` |
+| релиз, bump версии, GitHub Release, опубликуй релиз | `kutha-changelog` (refuse SemVer / tags / `gh release`) |
+
+Do not edit plugin-cache `SKILL.md` files to add Russian keywords; they are overwritten on plugin update.

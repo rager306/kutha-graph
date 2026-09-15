@@ -39,7 +39,7 @@ Assert / retract / correct (ADR-010) plus TOKI-class contradiction operators. Is
 
 ### D013-3. Supersession is deterministic, not cosine
 
-When a value is contradicted, a deterministic subject–relation–object (or interned-id equivalent) rule retires the stale row. Embedding similarity and RAG cannot own stale-fact. LLM is not on the write path except as a logged proposal that still must validate.
+An explicit correction or declared, versioned supersession policy retires the targeted claim/version/support. Equal endpoints or overlapping valid-time alone do not establish supersession: independent conflicting evidence must remain distinguishable. Embedding similarity and RAG cannot own stale-fact. LLM is not on the write path except as a logged proposal that still must validate.
 
 ### D013-4. Interval index is a lease; T-GQL is a language cousin
 
@@ -105,3 +105,10 @@ Graphiti edges         ≠  Native fact semantics
 ## Implementation note (2026-08-18)
 
 P0 now has named `GraphFold::live_at` / `as_of` (no silent “now”) and FF5 on a statute-shaped fixture (`crates/kutha-runtime/tests/ff5_legal_pit.rs`). Status stays **Proposed** until a harness promotion packet lists this cell; governor still forbids bulk honeycomb Accepted.
+
+## Semantic clarification (2026-09-13; Proposed)
+
+- `live_at(tt, vt)` asks what was known at `tt` about `vt`. `as_of(vt)` uses current transaction knowledge (`tt = MAX`); it is not historical belief replay. FF5 currently compares two VT values, not the same VT before and after a late correction.
+- Intervals are half-open. Current `Correct` replaces the entire targeted version at its new TT; it is **not** an interval-patch operator. A future partial correction of `[2015,2020)` within `[2010,infinity)` must explicitly preserve `[2010,2015)` and `[2020,infinity)` as residual versions, or reject the partial operation. Do not silently reinterpret today's API. Old TT queries must still see the old version.
+- Withdrawing one source removes its support, not independent supports for the same claim. Derived eligibility must be reevaluated from remaining supports; withdrawal is not itself evidence of the opposite proposition. The P0 inverse behavior does not yet implement this maintenance.
+- For unresolved conflict, a candidate policy-facing view is `(positive_supports, negative_supports)`: neither, positive only, negative only, or both. This is a proposed evidence summary, not an installed four-valued logic. Query completeness (`complete`, budget-limited, unavailable) is a separate axis; missing or truncated evidence cannot become a complete negative answer. Resolution/admission remains a versioned policy decision (ADR-051/093).

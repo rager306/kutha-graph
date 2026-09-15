@@ -39,6 +39,14 @@ Full convolution is hard (quadratic barrier). Research cell allows greedy/concav
 
 SPARQL MQO-class sharing of common subpatterns is allowed as *work sharing under V*, not Dify/oxify orchestration.
 
+### Clarification (2026-09-13): domain of the allocation equation
+
+The proposed scalar envelope is `H(V) = max(sum h_i(v_i))` subject to `v_i >= 0` and `sum v_i <= V`. This reduction assumes one additive resource and separable utility functions over independent allocations. Shared subplans, cache contention, or coupled quality invalidate that simple decomposition unless represented explicitly.
+
+Charge a common build once (two queries using one CSR build costing 10 do not consume 20 for that build). Keep CPU/IO work, peak RAM, concurrency, deadlines, and retries explicit rather than silently adding incompatible units. A measured scalar allocation may run inside independent hard caps; a multi-resource/Pareto envelope is a research option, not a required new optimizer. Temporal validity, authorization, and completeness are hard constraints, never utility that may be traded away.
+
+Greedy marginal allocation is exact only under its stated conditions, e.g. discrete concavity with unit increments and independent items. Otherwise label it a heuristic and measure the gap. No general Cui allocator is claimed for the current P0 or the harness slice-count budget.
+
 **Hard separations:**
 
 ```text

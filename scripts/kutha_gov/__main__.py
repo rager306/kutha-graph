@@ -1,4 +1,4 @@
-"""CLI: uv run kutha-gov [list|ci|explain NAME|fsm]. Python >=3.13."""
+"""CLI: uv run kutha-gov [list|ci|explain NAME|fsm|precommit|map]. Python >=3.13."""
 
 from __future__ import annotations
 
@@ -11,6 +11,7 @@ from kutha_gov.checks import get_checks
 from kutha_gov.config import ENV_FAIL_ON_WARN, env_flag, load_dotenv, resolve_budget
 from kutha_gov.dictionary import DICT_REL, DictCheck
 from kutha_gov.fsm import FSM_REL, load_machine, run_quantum
+from kutha_gov.honeycomb import MAP_REL, format_map, load_map, neighborhood, resolve_cell_id
 from kutha_gov.protocol import CheckResult, Context, Finding, Severity
 from kutha_gov.time_log import LOG_REL, fold_log
 
@@ -38,6 +39,76 @@ def _run_one(check, ctx: Context) -> CheckResult:
         )
     result.check = check.name
     return result
+
+
+def _select_checks(root: Path, check_id: str | None) -> tuple[dict, int]:
+    checks = get_checks(root)
+    if not check_id:
+        return checks, 0
+    if check_id not in checks:
+        print(f"unknown check: {check_id}", file=sys.stderr)
+        return {}, 2
+    return {check_id: checks[check_id]}, 0
+
+
+def _print_check_results(
+    results: list[CheckResult], ctx: Context, *, header: str | None = None
+) -> int:
+    if header:
+        print(header)
+    for result in results:
+        status = "OK" if result.passed else "FAIL"
+        print(
+            f"{status:4} {result.check}  high={result.high_count} low={result.low_count}"
+            + (f"  {result.note}" if result.note else "")
+        )
+        for finding in result.findings:
+            if finding.severity is Severity.HIGH or ctx.fail_on_warn:
+                print(f"     {finding.format()}")
+    high = sum(r.high_count for r in results)
+    low = sum(r.low_count for r in results)
+    if high or (ctx.fail_on_warn and low):
+        return 1
+    return 0
+
+
+def cmd_map(root: Path, focus: str | None, *, as_json: bool) -> int:
+    try:
+        loaded = load_map(root)
+    except (OSError, ValueError) as exc:
+        print(f"{MAP_REL}: {exc}", file=sys.stderr)
+        return 1
+    if as_json:
+        cells = [row for row in loaded.get("cells", []) if isinstance(row, dict)]
+        by_id = {str(row.get("id", "")): row for row in cells}
+        selected = cells
+        if focus:
+            key = resolve_cell_id(by_id, focus)
+            ids = neighborhood(by_id, key) if key else []
+            if not ids:
+                print(f"unknown cell: {focus}", file=sys.stderr)
+                return 2
+            selected = [by_id[cid] for cid in ids if cid in by_id]
+        print(
+            json.dumps(
+                {
+                    "schema": "kutha-map-report/v1",
+                    "source": MAP_REL,
+                    "authoritative": False,
+                    "focus": focus,
+                    "locks": loaded.get("locks", []),
+                    "cells": selected,
+                },
+                indent=2,
+            )
+        )
+        return 0
+    text = format_map(loaded, focus=focus)
+    if text.startswith("unknown cell:"):
+        print(text, end="", file=sys.stderr)
+        return 2
+    print(text, end="")
+    return 0
 
 
 def cmd_list(root: Path) -> int:
@@ -98,6 +169,8 @@ def cmd_ci(ctx: Context, *, budget: int) -> int:
         rung = "H2"
     if "load_relations" in outcome.trace:
         rung = "H3"
+    if any(rel.startswith("h4_") for rel, _obj in outcome.evidence):
+        rung = "H4"
     print(
         f"\nharness: {outcome.high} HIGH, {outcome.low} LOW, "
         f"{len(outcome.results)} checks  ({rung} dogfood)"
@@ -119,8 +192,10 @@ def cmd_ci(ctx: Context, *, budget: int) -> int:
     return 0
 
 
-def cmd_json(ctx: Context) -> int:
-    checks = get_checks(ctx.root)
+def cmd_json(ctx: Context, *, check_id: str | None) -> int:
+    checks, err = _select_checks(ctx.root, check_id)
+    if err:
+        return err
     results = [_run_one(chk, ctx) for _, chk in sorted(checks.items())]
     payload = {
         "schema": "kutha-harness-report/v1",
@@ -148,6 +223,19 @@ def cmd_json(ctx: Context) -> int:
     }
     print(json.dumps(payload, indent=2))
     return 0 if all(r.passed for r in results) else 1
+
+
+def cmd_precommit(ctx: Context, *, check_id: str | None) -> int:
+    """Dictionary checks only — neighbor --check-only: no cargo quantum, no JSONL write."""
+    checks, err = _select_checks(ctx.root, check_id)
+    if err:
+        return err
+    results = [_run_one(chk, ctx) for _, chk in sorted(checks.items())]
+    return _print_check_results(
+        results,
+        ctx,
+        header="precommit: checks only (no cargo quantum, no JSONL)",
+    )
 
 
 def cmd_fsm(root: Path) -> int:
@@ -214,17 +302,32 @@ def main(argv: list[str] | None = None) -> int:
         help="Cui-lite V (overrides KUTHA_GOV_BUDGET and fsm.yaml defaults.budget)",
     )
     parser.add_argument(
+        "--check",
+        default=None,
+        metavar="ID",
+        help="Run one check id (json/precommit; law-nexus --check)",
+    )
+    parser.add_argument(
+        "--format",
+        choices=("text", "json"),
+        default="text",
+        help="map output format (text table or JSON)",
+    )
+    parser.add_argument(
         "command",
         nargs="?",
         default="ci",
-        choices=("list", "ci", "explain", "json", "fold", "py", "fsm"),
+        choices=("list", "ci", "explain", "json", "fold", "py", "fsm", "precommit", "map"),
     )
-    parser.add_argument("name", nargs="?", help="check name for explain")
+    parser.add_argument("name", nargs="?", help="check name for explain, or cell id for map")
     args = parser.parse_args(argv)
     root = _detect_root(args.root or Path.cwd())
     load_dotenv(root)
     fail_on_warn = args.fail_on_warn or env_flag(ENV_FAIL_ON_WARN)
     ctx = Context(root=root, fail_on_warn=fail_on_warn)
+    if args.check and args.command not in {"json", "precommit"}:
+        print("--check is only valid with json or precommit", file=sys.stderr)
+        return 2
     if args.command == "list":
         return cmd_list(root)
     if args.command == "explain":
@@ -233,11 +336,16 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         return cmd_explain(root, args.name)
     if args.command == "json":
-        return cmd_json(ctx)
+        return cmd_json(ctx, check_id=args.check)
+    if args.command == "precommit":
+        ctx.git_against = "staged"
+        return cmd_precommit(ctx, check_id=args.check)
     if args.command == "py":
         return cmd_py(root)
     if args.command == "fsm":
         return cmd_fsm(root)
+    if args.command == "map":
+        return cmd_map(root, args.name, as_json=args.format == "json")
     if args.command == "fold":
         picture = fold_log(root / LOG_REL)
         print(

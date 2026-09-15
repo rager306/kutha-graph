@@ -13,6 +13,8 @@ Agent operating notes for this repository. Read this before honeycomb ADRs or th
 
 Do not mix languages inside a single artifact.
 
+Russian chat still has to hit **English** Compound Engineering skill descriptions. Route verbs via `.cursor/rules/ce-skills-ru.mdc` (always on): коммит → `ce-commit`, changelog → `kutha-changelog`, PR/запушь → `ce-commit-push-pr`. Do not patch plugin-cache skill files.
+
 ## Two planes (do not collapse)
 
 | Plane | Owns | Must not own |
@@ -32,17 +34,24 @@ Governor green ≠ ADR Accepted ≠ capability. Honeycomb **Proposed** ≠ deliv
 
 ## Current execution position
 
-Read `.kutha/STATE.md` first (lease, not SoT). **M001 S01–S03 are done**. Harness **H3** is on: process JSONL writes fail-closed against `.kutha/dictionaries/relations.yaml`. Tenant AS OF uses the emitted cut. Next: **H4** (ADR-090 overlay — do not start a legal pack). Do not start M002 Rocks until STATE names it.
+Read `.kutha/STATE.md` first (lease, not SoT). **M001 S01–S03 are done**. Harness **H4** is on: process-relation membership snapshots are queryable AS OF a prior tenant cut; tip YAML remains the admit lease. Do not start a legal pack. Do not start M002 Rocks until STATE names it.
 
 Until explicit M002: do not add RocksDB, Cypher/GPML parser, HNSW, ADR-050 six dictionaries, ADR-080/081, full ADR-090/093 packs, ADR-100+, or Consensus Query 103+.
 
 Literature bound is **closed** (163 cards). Do not mint aggregator waves. Matrix: `.compound-engineering/artifacts/research/applicability/` (`cards/` = SoT; `matrix.md` = rollup; `architecture-gtm-readout.md` = GTM translation).
 
+Compound Engineering `docs_root` is `.compound-engineering/artifacts` (set in `.compound-engineering/config.yaml`). Plans, research notes, ideation, and handoffs live there — not under `docs/`. Captured learnings, when a solved problem is written down, go in `.compound-engineering/artifacts/solutions/` (category folders, YAML frontmatter: `module`, `tags`, `problem_type`). That store is relevant when implementing or debugging in a documented area; it is not architecture SoT and not a delivery backlog. `ce-setup` owns config health; it does not author `README.md`.
+
+Durable CE outputs that must survive sessions stay under that `docs_root` (and in git when they are team knowledge). Do **not** write those to `/tmp`, `$TMPDIR`, or `.tmp`. In particular `ce-handoff` defaults to `/tmp/compound-engineering-<uid>/ce-handoff/` (OS-evictable): always create at `.compound-engineering/artifacts/handoffs/<topic>.md` instead. `ce-sweep` state, if used, is `sweep_state_path` under `docs_root` in tracked `config.yaml`, not a `/tmp` path. `docs_root` in `config.local.yaml` is ignored. One-shot scratch (elevation prompts, dogfood screenshots, pack cache, `ce-work` run roots) may use `mktemp`. `.context/compound-engineering/` is gitignored checkout scratch, not SoT.
+
 ## Repository layout
 
 ```text
 kutha-graph/
+├── README.md                          # human entry (status, commands, where to read)
+├── CLAUDE.md                          # shim → this file (Claude Code)
 ├── AGENTS.md                          # this file
+├── CHANGELOG.md                       # dated product/process history
 ├── STRATEGY.md                        # product strategy (wedge, metrics, non-goals)
 ├── Cargo.toml                         # Rust workspace (kutha-common, kutha-runtime)
 ├── pyproject.toml                     # harness only: Python >=3.13, uv, kutha-gov
@@ -54,6 +63,9 @@ kutha-graph/
 │   ├── META.md                        # harness constitution (allowed kinds + FSM kinds)
 │   ├── dictionaries/checks.yaml       # governor checks (append a row to add one)
 │   ├── dictionaries/fsm.yaml          # CI quantum states/transitions
+│   ├── dictionaries/invariants.yaml   # control-loop ledger
+│   ├── dictionaries/bridges.yaml      # cite product freeze/tests
+│   ├── dictionaries/honeycomb.yaml    # L_map compact index (`kutha-gov map`)
 │   └── events.jsonl                   # process log (gitignored; H0 Time axis)
 ├── crates/                            # product plane (Rust)
 │   ├── kutha-common/                  # Event, Op::{Assert,Retract,Correct,Behavior}, intern, UUID v7
@@ -61,15 +73,20 @@ kutha-graph/
 ├── docs/
 │   ├── ADR/                           # spine 000–002 + honeycomb 010–093 (all Proposed)
 │   ├── architecture/stca-guide.md     # STCA manifesto (do not copy §5 JSON tutorial into harness)
-│   └── process/kutha-harness.md       # harness contract (not an ADR)
+│   ├── process/kutha-harness.md       # harness contract (not an ADR)
+│   └── process/governor-intake.md     # control loop / bridge / map → dictionaries
 ├── scripts/
 │   ├── kutha-gov                      # uv wrapper
 │   ├── kutha_gov/                     # harness interpreter (kinds.py; checks are YAML)
 │   └── tests/                         # pytest for harness
-└── .compound-engineering/artifacts/
-    ├── research/applicability/        # 163 cards, matrix, GTM readout
-    ├── plans/                         # CE plans (spine-without-sprawl, P0 spikes)
-    └── ideation/                      # ADR crystallization HTML
+└── .compound-engineering/
+    ├── config.yaml                    # CE team defaults (docs_root)
+    └── artifacts/                    # CE docs_root (not product SoT)
+        ├── research/applicability/    # 163 cards, matrix, GTM readout
+        ├── plans/                     # CE plans (spine-without-sprawl, P0 spikes)
+        ├── ideation/                  # ADR crystallization HTML
+        ├── handoffs/                 # session continuity snapshots
+        └── solutions/                 # ce-compound learnings when captured
 ```
 
 Do **not** add repo-root `ports/` / `adapters/` / `domain/` (ADR-022: hexagon lives *inside* a slice). Do **not** put Python inside `kutha-runtime`.
@@ -86,7 +103,9 @@ Harness (Python **3.13** via **uv** only — not system `python3`):
 
 ```text
 uv run kutha-gov ci          # FSM quantum: relations → checks → observe → emit → tenant → fold
+uv run kutha-gov precommit   # dictionary checks only (no cargo, no JSONL); optional --check ID
 uv run kutha-gov fsm         # print the process machine
+uv run kutha-gov map         # compact L_map index (optional cell id; --format json)
 uv run kutha-gov py          # ruff + ty (Astral) + pyrefly (Meta)
 uv run kutha-gov fold        # fold .kutha/events.jsonl
 uv run kutha-gov list
@@ -94,18 +113,30 @@ uv run kutha-gov explain trajectory
 uv run pytest
 ```
 
-Pin: `.python-version`. Copy `.env.example` to `.env` for `KUTHA_GOV_BUDGET` / `KUTHA_GOV_FAIL_ON_WARN` (CLI flags win). Dev tools live in `pyproject.toml` dependency group `dev`. Add a governor check by appending `.kutha/dictionaries/checks.yaml`; add a CI phase by appending `.kutha/dictionaries/fsm.yaml`. Do not add a Python class.
+Pin: `.python-version`. Copy `.env.example` to `.env` for `KUTHA_GOV_BUDGET` / `KUTHA_GOV_FAIL_ON_WARN` (CLI flags win). Dev tools live in `pyproject.toml` dependency group `dev`. Add a governor check by appending `.kutha/dictionaries/invariants.yaml` (control loop) or `.kutha/dictionaries/bridges.yaml` (cite product), then `.kutha/dictionaries/checks.yaml`. Add or restage a honeycomb cell in `.kutha/dictionaries/honeycomb.yaml` (not a check). Add a CI phase by appending `.kutha/dictionaries/fsm.yaml`. Do not add a Python class. Commit hook: `uvx pre-commit install --overwrite` (`.pre-commit-config.yaml` calls `kutha-gov precommit`, not `ci`).
 
 ## Working conventions
 
 1. Honor locked ADR-000 **D1–D10**. Do not revive: pure Samyama product, pure ActiveGraph without hot projections, hard FSM as sole agent control, TypeScript as graph core, RVF as primary storage, Graphiti/Dify/Hindsight as SoT.
 2. STCA first. New product detail → honeycomb ADR-010+ (`docs/ADR/README.md`), never silent rewrites of 000/001/002. **Accepted** only when that cell is in the running engine.
-3. Honeycomb is a **map**. One steel thread at a time (next: H4 waits on ADR-090; not M002). “Promote all” is forbidden.
+3. Honeycomb is a **map**. One steel thread at a time (H4 overlay dogfood is in; not M002). “Promote all” is forbidden.
 4. Prefer falsifiable spikes over generic “build a graph DB” advice.
 5. Core stays self-contained Rust (no mandatory external graph DB / Graphiti runtime / LLM for temporal truth).
-6. Harness is a **parallel STCA plane** that dogfoods with the engine (`docs/process/kutha-harness.md`). H0 = files + JSONL + **meta-prompt dictionaries + FSM**; H2 = same typed triples on the Kutha log via `kutha-tenant`. Do not clone law-nexus 171-milestone GSD or copy `stca-guide.md` §5 merge-patch runtime. New check = YAML row; new CI phase = FSM row; new kind = rare `kinds.py` / `fsm.py` change. Unknown kind → HIGH.
+6. Harness is a **parallel STCA plane** that dogfoods with the engine (`docs/process/kutha-harness.md`). H0 = files + JSONL + **meta-prompt dictionaries + FSM**; H2 = same typed triples on the Kutha log via `kutha-tenant`. Do not clone law-nexus 171-milestone GSD or copy `stca-guide.md` §5 merge-patch runtime. Control loop → check: append `.kutha/dictionaries/invariants.yaml` first (`docs/process/governor-intake.md`). A fence that cites product is `.kutha/dictionaries/bridges.yaml`. Compact L_map index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov map`). New check = YAML row; new CI phase = FSM row; new kind = rare `kinds.py` / `fsm.py` change. Unknown kind → HIGH.
 7. Three lifecycles stay orthogonal: **L_map** (ADRs) · **L_delivery** (`.kutha` milestones) · **L_capability** (fitness tests). Bridges may cite; they may not copy state machines.
 8. Intern map (ADR-011) ≠ agent dictionaries (ADR-050). Do not collapse them.
+9. Humans start at `README.md`. Agents follow this file. Dated history goes in `CHANGELOG.md` (product vs process; do not collapse Trajectory into “the product shipped”). Author entries with `.cursor/skills/kutha-changelog/SKILL.md` (not baoyu `release-skills`). Commit with **ce-commit** (Russian: коммит / закоммить / зафиксируй); do not bump `0.0.0`, tag, or publish GitHub Releases. Git user-rule stays safety-only.
+
+## Codex subagents
+
+Delegate bounded, independent work to subagents when it improves speed or confidence. The parent owns the current steel thread, scope decisions, integration, and the final Russian response. Small or tightly coupled tasks stay local. Use the workflow in `docs/process/codex-subagents.md`.
+
+- Read `.kutha/STATE.md` and pass the relevant freeze and lifecycle constraints to every helper. Parallelism does not authorize another milestone or a new research wave.
+- Prefer `codebase-memory-scout` for provisional discovery, `codebase-memory` for verified questions, `codebase-memory-auditor` for bounded audits, `implementation-worker` for assigned edits, and `correctness-reviewer` for independent review. Use an available built-in role with the same brief if a custom role is missing.
+- Before code delegation, provide project/generation, relevant graph queries and pagination, paths/symbols, coverage gaps, source fallback, and unresolved questions. Do not assume a helper has MCP access. Configuration and documentation outside the code graph require exact source evidence and an explicit not-applicable scope.
+- Assign disjoint file ownership. Keep product and harness responsibilities explicit, including any cross-plane contract. Workers share the workspace and must preserve other edits. Only the designated integrator changes shared lockfiles, process events, tenant data, or graph indexes, and runs `uv run kutha-gov ci` when required by the task.
+- Use up to three helpers, subject to the runtime limit; reuse helpers for related follow-ups. Do not recursively delegate by default. Coordinate cargo/uv checks that share output directories.
+- Require changed paths or evidence locations, check results, and limitations in each handoff. The parent validates the combined result; graph coverage, review approval, and governor green retain their distinct meanings.
 
 ## Research notes (agent memory)
 

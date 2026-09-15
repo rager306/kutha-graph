@@ -1,6 +1,120 @@
 # Changelog
 
-All notable changes to this repository are recorded here. Process plane (harness) and product plane (crates) stay distinct.
+All notable changes to **this repository** are recorded here. This is project history, not GitHub Releases and not a Compound Engineering skill catalog.
+
+Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
+
+## 2026-09-15 — Product + Process: H4 process overlay dogfood
+
+### Product
+
+- Tenant ingest maps `process.relations` / `allows` snapshot editions onto `processAllows` and chains intervals. AS OF a prior cut still sees a membership set that later editions dropped. One FF6 name; not ADR-050's six kinds.
+
+### Process
+
+- Tip YAML stays the admit lease. Reserved process relation `allows` logs one sorted membership snapshot per edition. Pytest proves tip-without-`status` rejects `status` without editing the repo tip. Governor `h4-lease` / `h4-membership-as-of` and FSM `observe_cargo.required` name the H4 evidence.
+- CodeRabbit follow-ups: reject comma-bearing process relation names (CSV membership ambiguity); `pointer_in_other_file` names the real `other` path; `load_map` rejects non-mapping cells; ROADMAP H4 wording matches shipped overlay scope.
+
+### Trajectory
+
+- ADR-042/060 wording clarified (predicate filter language; `replay_check` unavailable outcome marked proposed). Lease still Phase H4; freeze unchanged.
+
+### Trajectory
+
+- Cells remain **Proposed**. ADR-090 ontology stays frozen. Delivery lease is **H4** overlay dogfood, not a legal pack.
+
+## 2026-09-15 — Process: H4 session handoff after architecture POV
+
+### Process
+
+- Session continuity: `.compound-engineering/artifacts/handoffs/h4-after-architecture-pov.md` records the architecture POV (accept lifecycle self-correction; reject Stages 1–4 as delivery order) and the next CE path: H4 overlay brainstorm/plan, not a legal pack.
+
+### Trajectory
+
+- Cells remain **Proposed**. Delivery lease remains H3; next thin slice is still H4 (ADR-090 overlay). Product crates untouched.
+
+## 2026-09-14 — Process: durable CE artifacts stay under docs_root
+
+### Process
+
+- Standing rule: session-surviving Compound Engineering writes (plans, handoffs, sweep state) go under `.compound-engineering/artifacts/`, not `/tmp`. `ce-handoff` must use `.compound-engineering/artifacts/handoffs/<topic>.md`; the skill's default managed store is OS-evictable.
+
+### Trajectory
+
+- Cells remain **Proposed**. Delivery lease remains H3; next thin slice is still H4 (ADR-090 overlay). Product crates untouched.
+
+## 2026-09-14 — Process: CE skill routing for Russian chat
+
+### Process
+
+- Always-on Cursor rule `.cursor/rules/ce-skills-ru.mdc` maps Russian verbs (коммит, changelog, PR, план, …) onto Compound Engineering skills and `kutha-changelog`. Plugin-cache `description` fields stay English; do not patch them. Git user-rule remains safety-only; commit workflow is `ce-commit`.
+
+### Trajectory
+
+- Cells remain **Proposed**. Delivery lease remains H3; next thin slice is still H4 (ADR-090 overlay). Product crates untouched.
+
+## 2026-09-14 — Process: changelog skill (not a release bumper)
+
+### Process
+
+- Adapted baoyu `release-skills` into `.cursor/skills/kutha-changelog/`: dated `CHANGELOG.md` on product / process / Trajectory planes. Versions stay `0.0.0`. Commit handoff is **ce-commit**; this skill does not tag, `gh release`, or push.
+
+### Trajectory
+
+- Cells remain **Proposed**. Delivery lease remains H3; next thin slice is still H4 (ADR-090 overlay). Product crates untouched.
+
+## 2026-09-14 — Process: L_map compact honeycomb index
+
+### Added
+
+- Compact L_map index `.kutha/dictionaries/honeycomb.yaml` (`kutha-map-honeycomb/v1`): D1–D10 plus all opened ADR cells, with orthogonal `map` / `delivery` / `capability` stages and `depends_on` / `locks` / `evidence` links.
+- `kutha-gov map` (optional cell id, neighborhood dump, `--format json`) so agents can load the graph without a second markdown coverage table.
+- Governor check `honeycomb-ledger`, FSM state `load_honeycomb`, kind `glob_paths_in_file`, and `yaml_map_list` list/path/embed/glob steps. ADR diffs must include the index (`docs-coupling`).
+
+### Process
+
+- The map dictionary is a fourth intake surface: governor validates shape and links; it does not accept cells, enforce HNSW/Cypher, or treat the index as a delivery backlog.
+- Control-loop claims stay in `invariants.yaml`; product freeze/tests stay in `bridges.yaml`. Honeycomb rows are not YAML checks.
+
+### Trajectory
+
+- Cells remain **Proposed**. Delivery annotations (`spike` / `frozen` / `map-only`) and named FF evidence do not promote L_map or L_capability. Lease stays H3; next thin slice is still H4 (ADR-090 overlay). Product crates untouched.
+
+## 2026-09-14 — Process: governor intake split and docs entry
+
+### Added
+
+- Root `README.md` and `CLAUDE.md` (`@AGENTS.md`) as the human / Claude Code entry points.
+- Harness `kutha-gov precommit` (dictionary checks only: no cargo quantum, no JSONL) plus `--check ID`, `git_path_implies` coupling, and `.pre-commit-config.yaml`. Neighbor surfaces: daily-archive `--check-only`, law-nexus `--check`; not a baoyu release bumper.
+- Control-loop ledger `.kutha/dictionaries/invariants.yaml` and bridge ledger `.kutha/dictionaries/bridges.yaml` (`docs/process/governor-intake.md`). Kind `yaml_map_list` keeps each check id in exactly one ledger.
+
+### Changed
+
+- RuVector adapter citations in ADR-012/014/042/052 and the CE adaptation note: in-repo cards + `.compound-engineering/artifacts/research/ruvector-plugin-adaptation.md`; no machine-local vendor paths. Mapping does not lift the HNSW freeze.
+
+### Process
+
+- Pre-commit profile is FAST-ONLY: ruff on `scripts/` and `kutha-gov precommit`. Product `cargo test` remains `kutha-gov ci`. Versions stay `0.0.0`. CHANGELOG remains plane-dated history, not GitHub Releases.
+- Control loop and Kutha requirements stay partitioned: honeycomb / fitness live in ADRs, STATE, and crates tests; `map-only` and `capability` are not process dispositions. Bridges may cite product freeze or named tests; they do not copy L_map or L_capability.
+
+### Trajectory
+
+- Cells remain **Proposed**. Product crates untouched. Delivery lease remains H3; next thin slice is still H4 (ADR-090 overlay).
+
+## 2026-09-13 — Architecture: ruVector adapter mapping (L_map)
+
+### Research & ADRs
+
+- Mapped five named adapter crates onto already-open honeycomb cells via `.compound-engineering/artifacts/research/ruvector-plugin-adaptation.md`. Literature bound stays **163 cards**; no new matrix rows.
+- **P-Temporal-Tensor** → ADR-012 D012-5 (vector tiering lease ≠ fact history).
+- **P-Retrieval-Receipt** → ADR-014 D014-5 (`paper-constant-size-evidence`; write quantum receipt ≠ read evidence). `ruvector-proof-gate` remains a D014-2 cousin, not a new decision.
+- **P-HNSW** → ADR-042 D042-2/3 citing existing cards `ruvector-hnsw-delete-repair`, `paper-acorn-predicate-subgraph`, `paper-navix-filtered-hnsw`. Mapping does not lift the HNSW freeze.
+- **P-Agent-Memory** → ADR-052 D052-4 (coherence score ≠ fact validity).
+- ADRs cite in-repo cards and the adaptation note. Machine-local vendor paths are not architecture SoT.
+
+### Trajectory
+
+- Cells remain **Proposed**. Product crates untouched. Delivery lease remains H3; next thin slice is still H4 (ADR-090 overlay). This mapping does not authorize HNSW, Cypher, or M002.
 
 ## 2026-08-18 — Wave 6: same-second tenant AS OF + one cargo compile per quantum
 

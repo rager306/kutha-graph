@@ -35,6 +35,16 @@ class HarnessTests(unittest.TestCase):
                 "harness-relations",
                 "plane-mix-dicts",
                 "tenant-bin",
+                "docs-entry",
+                "state-readme",
+                "version-freeze",
+                "changelog-planes",
+                "docs-coupling",
+                "invariants-ledger",
+                "bridges-ledger",
+                "honeycomb-ledger",
+                "h4-membership-as-of",
+                "h4-lease",
             }.issubset(names)
         )
 
@@ -107,6 +117,115 @@ class HarnessTests(unittest.TestCase):
             self.assertNotIn("notAProcessRelation", log)
             self.assertIn('"relation":"status"', log)
 
+    def _write_process_relations(self, root: Path, names: list[str]) -> None:
+        dict_dir = root / ".kutha" / "dictionaries"
+        dict_dir.mkdir(parents=True)
+        body = "schema: kutha-harness-relations/v1\nrelations:\n" + "".join(
+            f"  - {name}\n" for name in names
+        )
+        (dict_dir / "relations.yaml").write_text(body, encoding="utf-8")
+
+    def test_membership_edition_appends_one_sorted_snapshot(self) -> None:
+        import json
+        import tempfile
+
+        from kutha_gov.time_log import (
+            LOG_REL,
+            MEMBERSHIP_RELATION,
+            MEMBERSHIP_SUBJECT,
+            append_membership_edition,
+            encode_membership_object,
+        )
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._write_process_relations(
+                root, ["status", "high", "low", "checks", "cargo", "allows"]
+            )
+            event, rejected = append_membership_edition(
+                root, frozenset({"cargo", "status", "allows"})
+            )
+            self.assertEqual([], rejected)
+            self.assertIsNotNone(event)
+            assert event is not None
+            self.assertEqual(MEMBERSHIP_SUBJECT, event.subject)
+            self.assertEqual(MEMBERSHIP_RELATION, event.relation)
+            self.assertEqual("allows,cargo,status", event.object)
+            self.assertEqual(
+                "allows,cargo,status", encode_membership_object({"status", "cargo", "allows"})
+            )
+            lines = (root / LOG_REL).read_text(encoding="utf-8").strip().splitlines()
+            self.assertEqual(1, len(lines))
+            row = json.loads(lines[0])
+            self.assertEqual("assert", row["op"])
+            self.assertEqual("allows,cargo,status", row["object"])
+
+    def test_membership_edition_rejected_when_allows_omitted(self) -> None:
+        import tempfile
+
+        from kutha_gov.time_log import LOG_REL, append_membership_edition
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._write_process_relations(root, ["status", "high", "low", "checks", "cargo"])
+            event, rejected = append_membership_edition(root, frozenset({"status"}))
+            self.assertIn("allows", rejected)
+            self.assertIsNone(event)
+            self.assertFalse((root / LOG_REL).is_file())
+
+    def test_process_relations_reject_comma_in_name(self) -> None:
+        import tempfile
+
+        from kutha_gov.process_allow import load_process_relations
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._write_process_relations(root, ["status", "a,b"])
+            with self.assertRaisesRegex(ValueError, "must not contain"):
+                load_process_relations(root)
+
+    def test_load_map_rejects_non_mapping_cells(self) -> None:
+        import tempfile
+
+        from kutha_gov.honeycomb import load_map
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            path = root / ".kutha" / "dictionaries" / "honeycomb.yaml"
+            path.parent.mkdir(parents=True)
+            path.write_text(
+                "schema: kutha-map-honeycomb/v1\ncells:\n  - not-a-map\n",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "list of mappings"):
+                load_map(root)
+
+    def test_tip_without_status_rejects_status_keeps_allows(self) -> None:
+        import tempfile
+
+        from kutha_gov.time_log import LOG_REL, append_run
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._write_process_relations(root, ["high", "low", "checks", "cargo", "allows"])
+            _event, rejected = append_run(root, high=0, low=0, check_count=1)
+            self.assertIn("status", rejected)
+            log_path = root / LOG_REL
+            if log_path.is_file():
+                log = log_path.read_text(encoding="utf-8")
+                self.assertNotIn('"relation":"status"', log)
+            _event2, rejected2 = append_run(
+                root,
+                high=0,
+                low=0,
+                check_count=1,
+                observations=[("cargo", "ok")],
+            )
+            self.assertNotIn("cargo", rejected2)
+            log = (root / LOG_REL).read_text(encoding="utf-8")
+            self.assertIn('"relation":"cargo"', log)
+            self.assertNotIn('"relation":"status"', log)
+
     def test_yaml_needles_in_glob_fails_when_fn_missing(self) -> None:
         result = CheckResult(check="probe")
         run_step(
@@ -124,6 +243,149 @@ class HarnessTests(unittest.TestCase):
         highs = [f for f in result.findings if f.severity is Severity.HIGH]
         self.assertTrue(highs)
         self.assertEqual("yaml-needles", highs[0].category)
+
+    def test_git_path_implies_requires_changelog_for_crate_diff(self) -> None:
+        ctx = Context(root=ROOT, changed_paths=frozenset({"crates/kutha-runtime/src/lib.rs"}))
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "git_path_implies",
+                "when_any": ["crates/**/*.rs"],
+                "then_any": ["CHANGELOG.md"],
+            },
+            ctx,
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertEqual(1, len(highs))
+        self.assertEqual("docs-coupling", highs[0].category)
+
+    def test_git_path_implies_passes_when_changelog_in_same_diff(self) -> None:
+        ctx = Context(
+            root=ROOT,
+            changed_paths=frozenset({"crates/kutha-runtime/src/lib.rs", "CHANGELOG.md"}),
+        )
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "git_path_implies",
+                "when_any": ["crates/**/*.rs"],
+                "then_any": ["CHANGELOG.md"],
+            },
+            ctx,
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertEqual([], highs)
+
+    def test_yaml_map_list_rejects_unknown_disposition(self) -> None:
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "yaml_map_list",
+                "path": ".kutha/dictionaries/invariants.yaml",
+                "select": "invariants",
+                "field": "disposition",
+                "allowed": ["never-a-disposition"],
+            },
+            self.ctx,
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertTrue(highs)
+        self.assertEqual("yaml-map-vocab", highs[0].category)
+
+    def test_yaml_map_list_requires_check_ids_in_other_file(self) -> None:
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "yaml_map_list",
+                "path": ".kutha/dictionaries/checks.yaml",
+                "select": "checks",
+                "field": "id",
+                "other": "AGENTS.md",
+                "prefix": "governor-check-id-absent-",
+            },
+            self.ctx,
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertTrue(highs)
+        self.assertEqual("yaml-map-ref", highs[0].category)
+
+    def test_yaml_map_list_absent_other_flags_overlap(self) -> None:
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "yaml_map_list",
+                "path": ".kutha/dictionaries/checks.yaml",
+                "select": "checks",
+                "field": "id",
+                "other": ".kutha/dictionaries/invariants.yaml",
+                "prefix": "    check: ",
+                "absent_other": True,
+            },
+            self.ctx,
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertTrue(highs)
+        self.assertEqual("yaml-map-overlap", highs[0].category)
+
+    def test_glob_paths_in_file_flags_missing_adr(self) -> None:
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "glob_paths_in_file",
+                "glob": "docs/ADR/ADR-*.md",
+                "path": "AGENTS.md",
+                "prefix": "    path: ",
+            },
+            self.ctx,
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertTrue(highs)
+        self.assertEqual("glob-paths", highs[0].category)
+
+    def test_map_command_dumps_honeycomb(self) -> None:
+        import json
+        from contextlib import redirect_stdout
+        from io import StringIO
+
+        self.assertEqual(0, main(["--root", str(ROOT), "map"]))
+        self.assertEqual(0, main(["--root", str(ROOT), "map", "ADR-042"]))
+        self.assertEqual(0, main(["--root", str(ROOT), "map", "adr-042"]))
+        buf = StringIO()
+        with redirect_stdout(buf):
+            self.assertEqual(0, main(["--root", str(ROOT), "--format", "json", "map", "042"]))
+        payload = json.loads(buf.getvalue())
+        self.assertEqual("kutha-map-report/v1", payload["schema"])
+        self.assertFalse(payload["authoritative"])
+        ids = {cell["id"] for cell in payload["cells"]}
+        self.assertIn("ADR-042", ids)
+        self.assertIn("ADR-000", ids)
+        self.assertNotIn("ADR-093", ids)
+        self.assertEqual(2, main(["--root", str(ROOT), "map", "ADR-999"]))
+
+    def test_precommit_unknown_check_is_contract_error(self) -> None:
+        self.assertEqual(2, main(["--root", str(ROOT), "--check", "no-such-check", "precommit"]))
+
+    def test_precommit_one_check_skips_cargo(self) -> None:
+        self.assertEqual(0, main(["--root", str(ROOT), "--check", "docs-entry", "precommit"]))
+
+    def test_path_matches_dir_glob_covers_nested_files(self) -> None:
+        from kutha_gov.gitdiff import path_matches
+
+        self.assertTrue(path_matches("scripts/kutha_gov/kinds.py", "scripts/kutha_gov/**"))
+        self.assertTrue(path_matches("crates/kutha-runtime/src/lib.rs", "crates/**/*.rs"))
+        self.assertFalse(path_matches("CHANGELOG.md", "crates/**/*.rs"))
 
     def test_harness_ids_are_uuid_version_7(self) -> None:
         from kutha_gov.time_log import _now_v7

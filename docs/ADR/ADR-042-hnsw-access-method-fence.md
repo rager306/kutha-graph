@@ -12,7 +12,7 @@
 
 - Axes: **Data** (primary) · **Query**
 - Depends on: ADR-000 (D5), ADR-040
-- Anticipates: ADR-043 (scan vs ANN crossover), ADR-052 (enrichment — **not opened**), ADR-071 (hybrid retrieve surface)
+- Anticipates: ADR-043 (scan vs ANN crossover), ADR-052 (enrichment pack; cosine/coherence still ≠ fact), ADR-071 (hybrid retrieve surface)
 
 ## Context
 
@@ -24,6 +24,7 @@ Grounding cards:
 - `ruvector-hnsw-delete-repair` — `.compound-engineering/artifacts/research/applicability/cards/ruvector-hnsw-delete-repair.md`
 - `paper-navix-filtered-hnsw` — `.compound-engineering/artifacts/research/applicability/cards/paper-navix-filtered-hnsw.md`
 - `paper-acorn-predicate-subgraph` — `.compound-engineering/artifacts/research/applicability/cards/paper-acorn-predicate-subgraph.md`
+- Adapter mapping (crate identifiers on top of those cards): `.compound-engineering/artifacts/research/ruvector-plugin-adaptation.md` (P-HNSW)
 
 **Trap:** RuVector empty Cypher / fabricated success must not be cited as a capability. GNN facade is low/low. Hindsight four-network memory is not this index.
 
@@ -35,15 +36,15 @@ Insert/search/remove index vectors that *name* interned graph ids. Valid-time, i
 
 ### D042-2. Delete-repair is neighbor rewiring, not constraint repair
 
-Tombstones skip dead ids but stale edges drop recall. Repair strategies (tombstone-only / batch / eager) are **index maintenance**, not PG-constraint repair and not “self-reconstructing agent memory” marketing. Maintenance is `apply(delta)` under ADR-040; it may fall back to rebuild.
+Tombstones skip dead ids but stale edges drop recall. Repair strategies are **index maintenance** on the HNSW lease (`ruvector-hnsw-delete-repair`: TombstoneOnly / BatchRepair / EagerRepair), not PG-constraint repair and not “self-reconstructing agent memory” marketing. Maintenance is `apply(delta)` under ADR-040; it may fall back to rebuild. Crate identifier `ruvector-hnsw-repair` is the adapter target in the RuVector note, not an in-tree dependency.
 
 ### D042-3. Filtered kNN uses existing HNSW, not a new hybrid index in this cell
 
-NaviX-style: predicate-agnostic prefilter then kNN robust to selectivity. ACORN-style: traverse the predicate subgraph of HNSW. This cell does not invent a specialized hybrid structure; Compass/SIEVE coordination is ADR-043.
+Predicate-filtered vector search over temporal entity subsets (`valid_to IS NULL`, jurisdiction, document category) can collapse standard HNSW beam search when only a small fraction of candidates match the predicate. Literature poles stay as already closed cards: ACORN walks a predicate subgraph of HNSW (`paper-acorn-predicate-subgraph`); NaviX prefilters then kNN (`paper-navix-filtered-hnsw`). This cell does **not** invent a specialized hybrid structure; Compass/SIEVE coordination is ADR-043. When STATE names HNSW, the ACORN-shaped adapter identifier is `ruvector-acorn`; NaviX-style prefiltering remains an alternative access path when the predicate strongly filters the candidate set. Numeric crossover thresholds stay in ADR-043.
 
 ### D042-4. Ports own the contract; RuVector is an adapter
 
-Borrow REAL HNSW crates behind a port. Do not vendor the RuVector monorepo, Cypher stubs, or GNN-as-MATCH. Whole-product “agent brain” is rejected (STRATEGY).
+Borrow REAL HNSW crates behind a port trait. Named identifiers (`rvf-index` / `ruvector-hnsw`, `ruvector-hnsw-repair`, `ruvector-acorn`) live in the adaptation note. Do not vendor the RuVector monorepo, Cypher stubs, or GNN-as-MATCH. Whole-product “agent brain” is rejected (STRATEGY). `.kutha/STATE.md` still forbids implementing this cell until HNSW is named.
 
 **Hard separations:**
 

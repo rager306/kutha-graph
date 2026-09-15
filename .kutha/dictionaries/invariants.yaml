@@ -1,0 +1,128 @@
+schema: kutha-harness-invariants/v1
+meta_prompt: .kutha/META.md
+process: docs/process/governor-intake.md
+# Control-loop claims the governor may enforce.
+# Not Kutha product requirements. Honeycomb cells stay in docs/ADR/.
+# Silence is not a disposition. New control-loop check = row here first, then checks.yaml.
+# Bridges that cite product live in bridges.yaml, not here.
+
+invariants:
+  - id: I-trajectory
+    claim: "Exactly one Active Milestone, and it exists on ROADMAP"
+    source: ".kutha/STATE.md"
+    disposition: check
+    check: trajectory
+
+  - id: I-lifecycles
+    claim: "L_map, L_delivery, and L_capability stay named and uncollapsed"
+    source: ".kutha/STATE.md"
+    disposition: check
+    check: lifecycles
+
+  - id: I-adr-status
+    claim: "Every honeycomb ADR has a known Status tag; honeycomb is not bulk-Accepted"
+    source: "docs/ADR/README.md"
+    disposition: check
+    check: adr-status
+
+  - id: I-honeycomb-map
+    claim: "STATE/ROADMAP do not treat honeycomb as the active delivery backlog"
+    source: "docs/ADR/README.md"
+    disposition: check
+    check: honeycomb-map
+
+  - id: I-dogfood
+    claim: "Harness doc names H0–H4 and is not an ADR"
+    source: "docs/process/kutha-harness.md"
+    disposition: check
+    check: dogfood
+
+  - id: I-plane-mix-dicts
+    claim: "Process and product relation dictionaries keep distinct schemas"
+    source: "docs/process/kutha-harness.md"
+    disposition: check
+    check: plane-mix-dicts
+
+  - id: I-tenant-bin
+    claim: "emit_tenant runs a built kutha-tenant binary, not a second cargo compile"
+    source: "docs/process/kutha-harness.md"
+    disposition: check
+    check: tenant-bin
+
+  - id: I-harness-relations
+    claim: "Process JSONL writes are fail-closed against the harness relation list"
+    source: ".kutha/dictionaries/relations.yaml"
+    disposition: check
+    check: harness-relations
+
+  - id: I-toolchain
+    claim: "Harness is Python >=3.13 under uv with ruff+ty+pyrefly"
+    source: "pyproject.toml"
+    disposition: check
+    check: toolchain
+
+  - id: I-meta-prompt
+    claim: "Constitution and dictionaries exist; unknown kind is HIGH"
+    source: ".kutha/META.md"
+    disposition: check
+    check: meta-prompt
+
+  - id: I-docs-entry
+    claim: "README and CLAUDE.md exist; CLAUDE shims AGENTS.md"
+    source: "AGENTS.md"
+    disposition: check
+    check: docs-entry
+
+  - id: I-state-readme
+    claim: "README shows the same Active Milestone and Phase as STATE"
+    source: ".kutha/STATE.md"
+    disposition: check
+    check: state-readme
+
+  - id: I-version-freeze
+    claim: "Cargo and pyproject stay 0.0.0; publish = true is forbidden"
+    source: ".kutha/STATE.md"
+    disposition: check
+    check: version-freeze
+
+  - id: I-changelog-planes
+    claim: "CHANGELOG is plane-dated history, not GitHub Releases"
+    source: "CHANGELOG.md"
+    disposition: check
+    check: changelog-planes
+
+  - id: I-docs-coupling
+    claim: "Plane-bearing git diffs include the owning docs"
+    source: "docs/process/kutha-harness.md"
+    disposition: check
+    check: docs-coupling
+
+  - id: I-invariants-ledger
+    claim: "Control-loop claims are explicit in the process ledger"
+    source: "docs/process/governor-intake.md"
+    disposition: check
+    check: invariants-ledger
+
+  - id: I-bridges-ledger
+    claim: "Bridges cite product freeze or tests and do not copy L_map or L_capability"
+    source: "docs/process/governor-intake.md"
+    disposition: check
+    check: bridges-ledger
+
+  - id: I-honeycomb-ledger
+    claim: "Honeycomb cells have a compact governor index with orthogonal stages and links"
+    source: "docs/process/governor-intake.md"
+    disposition: check
+    check: honeycomb-ledger
+
+  - id: I-h4-adr-090-overlay
+    claim: "H4 overlay dogfood is leased: process membership AS OF a prior cut, not a legal pack"
+    source: "docs/process/kutha-harness.md"
+    disposition: check
+    check: h4-lease
+
+  - id: I-legal-pack-not-next
+    claim: "A legal corpus pack is not the next harness delivery after H4 overlay dogfood"
+    source: "docs/process/kutha-harness.md"
+    disposition: deferred
+    until: "STATE names a legal pack"

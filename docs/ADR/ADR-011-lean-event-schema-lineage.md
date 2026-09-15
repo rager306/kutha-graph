@@ -44,11 +44,22 @@ This intern map is **not** the D3 Action/Relation/Policy dictionaries.
 
 ### D011-3. How-provenance is a semiring polynomial
 
-Query results may carry how-provenance polynomials over event tokens (Green–Karvounarakis–Tannen). P0: why-tokens on positive conjunctive MATCH. Polynomials are a **derivation lease**, not log integrity (that is ADR-014 receipts). LLM does not invent coefficients. Negation/dual indeterminates stay out of P0.
+Query results may carry how-provenance polynomials over event tokens (Green–Karvounarakis–Tannen). The initial proposed scope is positive conjunctive queries; the current P0 spike has neither a MATCH compiler nor this provenance evaluator. Polynomials are a **derivation lease**, not log integrity (that is ADR-014 receipts). LLM does not invent coefficients. Negation/dual indeterminates stay outside this initial scope.
 
 ### D011-4. Lineage ≠ agent narrative
 
 `caused_by` / witness links point at prior events or content-addressed tool/LLM cache keys. They do not substitute dictionaries (050) or ABAC (080).
+
+### Clarification (2026-09-13): semantic closure, identity, and support
+
+These are **Proposed** requirements, not additional P0 capabilities:
+
+- **Semantic recovery:** every term reference must resolve from retained authoritative history. Canonical term definitions must be logged, or reference immutable, integrity-checked objects retained as part of that history. Such objects are not droppable caches. Only the dense intern mapping is a lease. Restoring without snapshots must recover meanings, not merely numeric triples; a missing authoritative dependency is an explicit failure. Vacuum limits this guarantee to retained history (ADR-012). Current `store::open` still requires `snapshot.json` to restore the intern map.
+- **Separate identities:** distinguish event ID, claim/version ID, support ID, and delivery/idempotency key. A retry of one delivery is not a second independent support; equal triples from independent sources need not be one assertion. A local `fact_seq` is not a portable claim identity (ADR-061).
+- **Typed dependency links:** invocation parent, data read, rule derivation, evidential support, and authorization are distinct. Several inputs may support one result despite one invocation parent. Log order alone does not prove causality, and a read edge does not prove entailment. Trace records name run/task/attempt, actor, input revisions, action arguments, policy/version, and observable outcome; private model reasoning is neither required nor authoritative. This distinction follows the entity/activity/agent separation in [W3C PROV-DM](https://www.w3.org/TR/prov-dm/), without requiring a PROV runtime.
+- **N-ary identity:** an incidence graph can preserve a claim's identity, participant roles, positions, and multiplicity. Two interactions with the same participants remain distinct. `object_ids` alone is not a typed n-ary assertion schema; no separate hypergraph SoT is required.
+
+For positive derivations, `+` represents alternatives and `*` joint premises: `a*b+c` remains supported by `c` after withdrawing `b`. This use of [provenance semirings](https://www.cs.ucdavis.edu/~green/papers/pods07.pdf) does not supply subtraction in `N[X]`. Retractions need separate change semantics (e.g. signed deltas or delete/rederive; ADR-040). Do not interpret ordinary polynomial evaluation as probabilities: repeated/shared premises are correlated. Finite fact saturation also does not imply finitely many recursive derivations; recursive provenance needs an explicit representation and termination contract.
 
 **Hard separations:**
 
