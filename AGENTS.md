@@ -34,7 +34,7 @@ Governor green ≠ ADR Accepted ≠ capability. Honeycomb **Proposed** ≠ deliv
 
 ## Current execution position
 
-Read `.kutha/STATE.md` first (lease, not SoT). **M010 S01 is active** (`L_delivery=M010-S01`): semantic recovery without snapshot lease. Harness **H4** remains on. Do not start a legal pack. Do not start M002 Rocks until STATE names it.
+Read `.kutha/STATE.md` first (lease, not SoT). **M010 S02 is active** (`L_delivery=M010-S02`): term definitions persist as `Op::Define` in the event stream; snapshot remains a droppable lease. Harness **H4** remains on. Do not start a legal pack. Do not start M002 Rocks until STATE names it.
 
 Until explicit M002: do not add RocksDB, Cypher/GPML parser, HNSW, ADR-050 six dictionaries, ADR-080/081, full ADR-090/093 packs, ADR-100+, or Consensus Query 103+.
 

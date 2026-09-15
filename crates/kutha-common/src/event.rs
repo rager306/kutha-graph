@@ -43,6 +43,10 @@ pub enum Op {
         valid_from: ValidTime,
         valid_to: Option<ValidTime>,
     },
+    /// Logged term definition (ADR-011 / M010 S02). Fold no-op; not a graph fact.
+    Define {
+        name: String,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -68,7 +72,7 @@ impl Event {
                 object,
                 ..
             } => vec![*subject, *relation, *object],
-            Op::Retract { .. } => vec![],
+            Op::Retract { .. } | Op::Define { .. } => vec![],
             Op::Correct { object, .. } => vec![*object],
         };
         Self {
@@ -131,6 +135,10 @@ impl Event {
                 h.update(object.to_le_bytes());
                 h.update(valid_from.to_le_bytes());
                 h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
+            }
+            Op::Define { name } => {
+                h.update(b"define");
+                h.update(name.as_bytes());
             }
         }
         h.finalize().into()

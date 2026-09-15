@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-15 — Product + Process: M010 S02 logged term definitions
+
+### Product
+
+- Persist encodes `Op::Define` (dictionary order) on the durable event stream. `open` recovers intern meanings without `snapshot.json` and without `terms.jsonl`. Snapshot open strips Define so log_offset still matches the in-memory graph log.
+- Named test `open_without_snapshot_or_terms_file_recovers_from_define_ops`.
+
+### Process
+
+- Lease moved to M010 S02. Governor observe accepts `module::tests::name` cargo lines. `m010-semantic-open` cites the Define recovery test.
+
+### Trajectory
+
+- ADR-011 / semantic-contract-validation record S02. ADR-011 honeycomb evidence names the new test. Cells remain Proposed; M002 freeze unchanged.
+
 ## 2026-09-15 — Product + Process: lease M010 S01 semantic recovery open
 
 ### Product

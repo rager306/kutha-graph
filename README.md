@@ -10,7 +10,7 @@ This is not a production graph database and not Graphiti / Samyama / Harvey.
 
 | Plane | Where | Now |
 |-------|--------|-----|
-| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | **M010 S01** active (semantic recovery without snapshot); harness phase **H4** |
+| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | **M010 S02** active (logged term definitions); harness phase **H4** |
 | Architecture map | [`docs/ADR/README.md`](docs/ADR/README.md) | Spine + honeycomb **Proposed**, not Accepted |
 | Capability | `crates/kutha-runtime` tests | FF5 green (`as_of(2015) ≠ as_of(2021)` on a statute-shaped fixture) |
 

@@ -37,11 +37,20 @@ impl fmt::Display for RuntimeError {
 fn op_relation(op: &Op) -> Option<TermId> {
     match op {
         Op::Assert { relation, .. } | Op::Behavior { relation, .. } => Some(*relation),
-        Op::Retract { .. } | Op::Correct { .. } => None,
+        Op::Retract { .. } | Op::Correct { .. } | Op::Define { .. } => None,
     }
 }
 
 impl std::error::Error for RuntimeError {}
+
+pub(crate) fn cascade_limit() -> usize {
+    crate::allow::apply_dotenv();
+    std::env::var("KUTHA_MAX_CASCADE")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .filter(|n: &usize| *n > 0)
+        .unwrap_or(32)
+}
 
 #[derive(Clone, Debug)]
 pub struct QuantumOutcome {
@@ -63,15 +72,7 @@ pub struct Runtime {
 
 impl Default for Runtime {
     fn default() -> Self {
-        let v = {
-            crate::allow::apply_dotenv();
-            std::env::var("KUTHA_MAX_CASCADE")
-                .ok()
-                .and_then(|s| s.parse().ok())
-                .filter(|n: &usize| *n > 0)
-                .unwrap_or(32)
-        };
-        Self::new(v)
+        Self::new(cascade_limit())
     }
 }
 

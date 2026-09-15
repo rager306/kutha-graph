@@ -145,6 +145,7 @@ impl GraphFold {
                     }
                 }
             }
+            Op::Define { .. } => {}
         }
     }
 

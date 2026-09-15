@@ -201,7 +201,7 @@ checks:
         message: "H4 membership AS OF test missing {missing}"
 
   - id: m010-semantic-open
-    description: M010 S01 — open recovers intern meanings without snapshot lease
+    description: M010 — open recovers intern meanings without snapshot; Define ops recover without terms sidecar
     steps:
       - kind: file_contains
         path: crates/kutha-runtime/tests/m010_semantic_open.rs
@@ -209,6 +209,18 @@ checks:
         require: all
         category: m010-s01
         message: "M010 semantic open test missing {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/tests/m010_semantic_open.rs
+        needles: ["fn open_without_snapshot_or_terms_file_recovers_from_define_ops"]
+        require: all
+        category: m010-s02
+        message: "M010 Define-op recovery test missing {missing}"
+      - kind: file_contains
+        path: crates/kutha-common/src/event.rs
+        needles: ["Define"]
+        require: all
+        category: m010-s02
+        message: "Op::Define missing from lean event schema: {missing}"
       - kind: file_contains
         path: crates/kutha-runtime/src/store.rs
         needles: ["terms.jsonl"]

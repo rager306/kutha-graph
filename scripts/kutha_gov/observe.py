@@ -18,8 +18,8 @@ def interpret_cargo_output(text: str, required: Sequence[str]) -> tuple[list[str
     findings: list[Finding] = []
     for name in required:
         escaped = re.escape(name)
-        ok_pat = re.compile(rf"^test {escaped} \.\.\. ok\b", re.MULTILINE)
-        fail_pat = re.compile(rf"^test {escaped} \.\.\. FAILED\b", re.MULTILINE)
+        ok_pat = re.compile(rf"^test (?:[\w:]+::)?{escaped} \.\.\. ok\b", re.MULTILINE)
+        fail_pat = re.compile(rf"^test (?:[\w:]+::)?{escaped} \.\.\. FAILED\b", re.MULTILINE)
         if ok_pat.search(text):
             seen_ok.append(name)
         elif fail_pat.search(text):

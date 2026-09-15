@@ -23,8 +23,8 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 - [x] **S01: Open recovers intern meanings** `risk:high` `depends:[]`
   > After this: persist writes `terms.jsonl`; `open` without snapshot replays events with restored dictionary; named test green.
-- [ ] **S02: (deferred) Logged term-definition ops** `risk:medium` `depends:[S01]`
-  > After this: term strings live in the event log itself (or integrity-checked objects cited by it), not only a companion file.
+- [x] **S02: Logged term-definition ops** `risk:medium` `depends:[S01]`
+  > After this: durable `Op::Define` prefix in events.wal / events.jsonl restores intern meanings without `terms.jsonl`; sidecar remains a derived picture.
 
 ## Boundary map (M001)
 
@@ -43,6 +43,11 @@ Consumes: S01 fixture.
 Produces: open without snapshot from `terms.jsonl` + event replay.  
 Consumes: persist path; ADR-011 semantic recovery contract.
 
+### M010 S02
+
+Produces: `Op::Define` prefix on the durable event stream; open without snapshot or terms sidecar.  
+Consumes: S01 persist/open; intern order = Define order.
+
 ## Harness dogfood (process plane, not M00x)
 
 - [x] **H0** — dictionary FSM + file trajectory.
@@ -53,7 +58,7 @@ Consumes: persist path; ADR-011 semantic recovery contract.
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M010 S01 is the active delivery lease; M002+ stay frozen until leased.
+Do not start until STATE names them. M010 S02 is the active delivery lease; M002+ stay frozen until leased.
 
 - **M002** — Rocks adapter behind the same events (persistence, not a second SoT).
 - **M003** — Cypher skin over the already-correct AS OF cut.

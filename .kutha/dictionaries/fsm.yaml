@@ -35,6 +35,7 @@ states:
       - h2_same_second_status_as_of_uses_emitted_cut
       - h4_prior_cut_keeps_status_membership_after_later_edition_drops_it
       - open_without_snapshot_recovers_intern_meanings
+      - open_without_snapshot_or_terms_file_recovers_from_define_ops
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant

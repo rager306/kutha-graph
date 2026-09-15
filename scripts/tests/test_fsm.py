@@ -118,6 +118,15 @@ class ObserveTests(unittest.TestCase):
         self.assertEqual([name], seen)
         self.assertEqual([], findings)
 
+    def test_required_ff_ok_accepts_module_prefix(self) -> None:
+        from kutha_gov.observe import interpret_cargo_output
+
+        name = "open_without_snapshot_recovers_intern_meanings"
+        line = "test quantum::tests::open_without_snapshot_recovers_intern_meanings ... ok\n"
+        seen, findings = interpret_cargo_output(line, [name])
+        self.assertEqual([name], seen)
+        self.assertEqual([], findings)
+
     def test_required_ff_failed_is_high(self) -> None:
         from kutha_gov.observe import interpret_cargo_output
 
