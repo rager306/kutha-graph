@@ -40,7 +40,7 @@ Tombstones skip dead ids but stale edges drop recall. Repair strategies are **in
 
 ### D042-3. Filtered kNN uses existing HNSW, not a new hybrid index in this cell
 
-Predicate-filtered vector search over temporal entity subsets (`valid_to IS NULL`, jurisdiction, document category) can collapse standard HNSW beam search at low selectivity. Literature poles stay as already closed cards: ACORN walks a predicate subgraph of HNSW (`paper-acorn-predicate-subgraph`); NaviX prefilters then kNN (`paper-navix-filtered-hnsw`). This cell does **not** invent a specialized hybrid structure; Compass/SIEVE coordination is ADR-043. When STATE names HNSW, the ACORN-shaped adapter identifier is `ruvector-acorn`; NaviX-style prefiltering remains an alternative access path for high-selectivity ranges.
+Predicate-filtered vector search over temporal entity subsets (`valid_to IS NULL`, jurisdiction, document category) can collapse standard HNSW beam search when only a small fraction of candidates match the predicate. Literature poles stay as already closed cards: ACORN walks a predicate subgraph of HNSW (`paper-acorn-predicate-subgraph`); NaviX prefilters then kNN (`paper-navix-filtered-hnsw`). This cell does **not** invent a specialized hybrid structure; Compass/SIEVE coordination is ADR-043. When STATE names HNSW, the ACORN-shaped adapter identifier is `ruvector-acorn`; NaviX-style prefiltering remains an alternative access path when the predicate strongly filters the candidate set. Numeric crossover thresholds stay in ADR-043.
 
 ### D042-4. Ports own the contract; RuVector is an adapter
 

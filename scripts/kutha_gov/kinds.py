@@ -370,7 +370,7 @@ def _kind_pointer_in_other_file(check: str, step: Step, ctx: Context, result: Ch
                 check,
                 Severity.HIGH,
                 "phantom",
-                f"{label} {captured} is not present in ROADMAP",
+                f"{label} {captured} is not present in {other}",
                 path,
                 line,
             )

@@ -206,7 +206,7 @@ cells:
 
   - id: ADR-042
     axis: Data
-    must: "HNSW is a fenced access method, not SoT"
+    must: "HNSW is a fenced access method, not SoT; filter language avoids ambiguous selectivity"
     path: docs/ADR/ADR-042-hnsw-access-method-fence.md
     map: Proposed
     delivery: frozen
@@ -263,7 +263,7 @@ cells:
 
   - id: ADR-060
     axis: Verify
-    must: "strict replay of the event log"
+    must: "strict replay of the event log; unavailable outcome proposed beyond fingerprint check"
     path: docs/ADR/ADR-060-strict-replay.md
     map: Proposed
     delivery: spike

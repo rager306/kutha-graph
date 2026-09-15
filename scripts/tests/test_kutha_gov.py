@@ -173,6 +173,33 @@ class HarnessTests(unittest.TestCase):
             self.assertIsNone(event)
             self.assertFalse((root / LOG_REL).is_file())
 
+    def test_process_relations_reject_comma_in_name(self) -> None:
+        import tempfile
+
+        from kutha_gov.process_allow import load_process_relations
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._write_process_relations(root, ["status", "a,b"])
+            with self.assertRaisesRegex(ValueError, "must not contain"):
+                load_process_relations(root)
+
+    def test_load_map_rejects_non_mapping_cells(self) -> None:
+        import tempfile
+
+        from kutha_gov.honeycomb import load_map
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            path = root / ".kutha" / "dictionaries" / "honeycomb.yaml"
+            path.parent.mkdir(parents=True)
+            path.write_text(
+                "schema: kutha-map-honeycomb/v1\ncells:\n  - not-a-map\n",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "list of mappings"):
+                load_map(root)
+
     def test_tip_without_status_rejects_status_keeps_allows(self) -> None:
         import tempfile
 

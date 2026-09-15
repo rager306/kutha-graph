@@ -13,6 +13,11 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Process
 
 - Tip YAML stays the admit lease. Reserved process relation `allows` logs one sorted membership snapshot per edition. Pytest proves tip-without-`status` rejects `status` without editing the repo tip. Governor `h4-lease` / `h4-membership-as-of` and FSM `observe_cargo.required` name the H4 evidence.
+- CodeRabbit follow-ups: reject comma-bearing process relation names (CSV membership ambiguity); `pointer_in_other_file` names the real `other` path; `load_map` rejects non-mapping cells; ROADMAP H4 wording matches shipped overlay scope.
+
+### Trajectory
+
+- ADR-042/060 wording clarified (predicate filter language; `replay_check` unavailable outcome marked proposed). Lease still Phase H4; freeze unchanged.
 
 ### Trajectory
 

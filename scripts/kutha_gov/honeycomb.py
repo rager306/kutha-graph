@@ -21,6 +21,9 @@ def load_map(root: Path) -> dict[str, Any]:
         raise ValueError(f"{MAP_REL} root must be a mapping")
     if loaded.get("schema") != SCHEMA:
         raise ValueError(f"{MAP_REL} unknown schema {loaded.get('schema')!r}")
+    cells = loaded.get("cells")
+    if not isinstance(cells, list) or any(not isinstance(cell, dict) for cell in cells):
+        raise ValueError(f"{MAP_REL} cells must be a list of mappings")
     return loaded
 
 
