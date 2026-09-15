@@ -63,7 +63,24 @@ checks:
         needles: [rocksdb, neo4j, graphiti, hnswlib, falkordb]
         case: lower
         category: frozen-dep
-        message: "found {needle} before M001 L_capability is green"
+        message: "found {needle}; STATE freeze still blocks it until Active Milestone names M002"
+      - kind: file_contains
+        path: .kutha/dictionaries/checks.yaml
+        needles: ["until Active Milestone names M002"]
+        require: all
+        category: frozen-dep
+        message: "freeze check message must cite Active Milestone M002 lease"
+
+  - id: idle-delivery-closed
+    description: Active Milestone None requires L_delivery token ending in -closed
+    steps:
+      - kind: when_match_then_match
+        path: .kutha/STATE.md
+        pattern: '^\*\*Active Milestone:\*\*\s*None\s*$'
+        flags: [multiline]
+        then_pattern: '(?m)^L_delivery=\S+-closed\s*$'
+        category: lease
+        message: "Active Milestone is None but L_delivery is not *-closed"
 
   - id: honeycomb-map
     description: STATE/ROADMAP do not treat honeycomb as the active backlog
@@ -279,6 +296,7 @@ checks:
           - "Unknown `kind`"
           - "file_exists"
           - "pointer_in_other_file"
+          - "when_match_then_match"
           - "Do not add `scripts/kutha_gov/checks/*.py`"
           - "unknown-fsm-kind"
           - "require_file"
@@ -390,6 +408,14 @@ checks:
         when_any: [".kutha/STATE.md"]
         then_any: ["README.md"]
         message: "STATE.md diff without README.md (human lease table)"
+      - kind: git_path_implies
+        when_any: [".kutha/STATE.md"]
+        then_any: ["CHANGELOG.md"]
+        message: "STATE.md lease diff without CHANGELOG.md (process plane)"
+      - kind: git_path_implies
+        when_any: ["docs/architecture/**"]
+        then_any: ["CHANGELOG.md"]
+        message: "architecture note diff without CHANGELOG.md (Trajectory)"
       - kind: git_path_implies
         when_any: ["docs/ADR/**/*.md"]
         then_any: [".kutha/dictionaries/honeycomb.yaml"]

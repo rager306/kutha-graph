@@ -45,6 +45,7 @@ class HarnessTests(unittest.TestCase):
                 "honeycomb-ledger",
                 "h4-membership-as-of",
                 "h4-lease",
+                "idle-delivery-closed",
             }.issubset(names)
         )
 
@@ -392,6 +393,93 @@ class HarnessTests(unittest.TestCase):
 
         parsed = __import__("uuid").UUID(_now_v7())
         self.assertEqual(7, parsed.version)
+
+    def test_when_match_then_match_skips_without_when(self) -> None:
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            state = root / "STATE.md"
+            state.write_text(
+                "**Active Milestone:** M002\nL_delivery=M002-open\n",
+                encoding="utf-8",
+            )
+            ctx = Context(root=root)
+            result = CheckResult(check="probe")
+            run_step(
+                "probe",
+                {
+                    "kind": "when_match_then_match",
+                    "path": "STATE.md",
+                    "pattern": r"^\*\*Active Milestone:\*\*\s*None\s*$",
+                    "flags": ["multiline"],
+                    "then_pattern": r"(?m)^L_delivery=\S+-closed\s*$",
+                },
+                ctx,
+                result,
+            )
+            self.assertEqual([], result.findings)
+
+    def test_when_match_then_match_fails_when_then_missing(self) -> None:
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            state = root / "STATE.md"
+            state.write_text(
+                "**Active Milestone:** None\nL_delivery=M001-open\n",
+                encoding="utf-8",
+            )
+            ctx = Context(root=root)
+            result = CheckResult(check="probe")
+            run_step(
+                "probe",
+                {
+                    "kind": "when_match_then_match",
+                    "path": "STATE.md",
+                    "pattern": r"^\*\*Active Milestone:\*\*\s*None\s*$",
+                    "flags": ["multiline"],
+                    "then_pattern": r"(?m)^L_delivery=\S+-closed\s*$",
+                    "message": "idle without closed delivery",
+                },
+                ctx,
+                result,
+            )
+            self.assertEqual(1, len(result.findings))
+            self.assertIn("idle without closed delivery", result.findings[0].message)
+
+    def test_when_match_then_match_passes_idle_closed(self) -> None:
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            state = root / "STATE.md"
+            state.write_text(
+                "**Active Milestone:** None\nL_delivery=M001-closed\n",
+                encoding="utf-8",
+            )
+            ctx = Context(root=root)
+            result = CheckResult(check="probe")
+            run_step(
+                "probe",
+                {
+                    "kind": "when_match_then_match",
+                    "path": "STATE.md",
+                    "pattern": r"^\*\*Active Milestone:\*\*\s*None\s*$",
+                    "flags": ["multiline"],
+                    "then_pattern": r"(?m)^L_delivery=\S+-closed\s*$",
+                },
+                ctx,
+                result,
+            )
+            self.assertEqual([], result.findings)
+
+    def test_freeze_message_does_not_cite_closed_m001_gate(self) -> None:
+        yaml_text = (ROOT / ".kutha" / "dictionaries" / "checks.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn("before M001 L_capability is green", yaml_text)
+        self.assertIn("until Active Milestone names M002", yaml_text)
 
 
 if __name__ == "__main__":

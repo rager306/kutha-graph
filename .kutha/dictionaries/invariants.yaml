@@ -79,6 +79,12 @@ invariants:
     disposition: check
     check: state-readme
 
+  - id: I-idle-delivery-closed
+    claim: "Active Milestone None requires L_delivery token ending in -closed"
+    source: ".kutha/STATE.md"
+    disposition: check
+    check: idle-delivery-closed
+
   - id: I-version-freeze
     claim: "Cargo and pyproject stay 0.0.0; publish = true is forbidden"
     source: ".kutha/STATE.md"

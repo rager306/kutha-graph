@@ -22,6 +22,7 @@ ALLOWED_KINDS: frozenset[str] = frozenset(
         "glob_none",
         "markdown_heading_tag",
         "pointer_in_other_file",
+        "when_match_then_match",
         "yaml_needles_in_glob",
         "git_path_implies",
         "yaml_map_list",
@@ -330,6 +331,33 @@ def _kind_markdown_heading_tag(check: str, step: Step, ctx: Context, result: Che
                     "honeycomb Accepted without harness promotion packet: " + ", ".join(honeycomb),
                 )
             )
+
+
+def _kind_when_match_then_match(
+    check: str, step: Step, ctx: Context, result: CheckResult
+) -> None:
+    """If `pattern` matches `path`, require `then_pattern` in the same file."""
+    path = _str(step, "path")
+    when = _str(step, "pattern")
+    then = _str(step, "then_pattern")
+    text = ctx.read(path)
+    if text is None:
+        _high_missing(check, path, result)
+        return
+    result.scanned += 1
+    flags = _re_flags(step)
+    if not re.search(when, text, flags):
+        result.note = _str(step, "skip_note", "when pattern not matched")
+        return
+    if re.search(then, text, flags):
+        return
+    message = _fmt(
+        _str(step, "message", "{path} matched when-pattern but not then_pattern"),
+        path=path,
+    )
+    result.findings.append(
+        Finding(check, _severity(step), _category(step, "when-then"), message, path)
+    )
 
 
 def _kind_pointer_in_other_file(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
@@ -859,6 +887,7 @@ RUNNERS: dict[str, Runner] = {
     "glob_none": _kind_glob_none,
     "markdown_heading_tag": _kind_markdown_heading_tag,
     "pointer_in_other_file": _kind_pointer_in_other_file,
+    "when_match_then_match": _kind_when_match_then_match,
     "yaml_needles_in_glob": _kind_yaml_needles_in_glob,
     "git_path_implies": _kind_git_path_implies,
     "yaml_map_list": _kind_yaml_map_list,

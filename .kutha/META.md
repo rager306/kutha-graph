@@ -57,6 +57,7 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 | `glob_none` | glob must match no files (build artifacts) |
 | `markdown_heading_tag` | files matching glob have `## Status` + allowed tag |
 | `pointer_in_other_file` | exactly one regex capture in A must appear in B |
+| `when_match_then_match` | if `pattern` matches a file, `then_pattern` must also match that file |
 | `yaml_needles_in_glob` | every string at a YAML path must appear (with prefix) in a glob of files |
 | `git_path_implies` | if the git diff matches `when_any`, it must also match `then_any` (empty/no-git skips) |
 | `yaml_map_list` | YAML list of maps: required fields, unique ids, closed vocab, list refs, path exists, embed-in-file, glob haystack, or `absent_other` partition |

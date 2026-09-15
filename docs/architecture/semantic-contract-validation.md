@@ -2,7 +2,7 @@
 
 Date: 2026-09-13. **Proposed validation design, not implemented capability or delivery authorization.**
 
-This note connects existing honeycomb contracts; it is not another ADR, research wave, or milestone list. The normative homes remain the linked ADRs. `.kutha/STATE.md` still names H3, M001 S01–S03 done, and H4 as the next thin process overlay. Nothing here starts M002, a legal/science pack, a query parser, or new dictionaries. ADR-000/001/002 and the 163-card literature boundary are unchanged.
+This note connects existing honeycomb contracts; it is not another ADR, research wave, or milestone list. The normative homes remain the linked ADRs. `.kutha/STATE.md` names Phase H4 with Active Milestone None and `L_delivery=M001-closed`. H3 allowlist and H4 membership overlay dogfood are in; the next product steel thread needs an explicit Active Milestone lease (semantic recovery is a candidate, not authorized by this note). Nothing here starts M002, a legal/science pack, a query parser, or new dictionaries. ADR-000/001/002 and the 163-card literature boundary are unchanged.
 
 ## What needs strengthening
 
@@ -66,7 +66,7 @@ These expectations are proposed oracles. They are not satisfied merely because t
 
 The clarified invariants are more stable than their encoding. Future implementation must still select the logged term-definition format, stable claim/support references, quantum outcome/continuation records, partial-correction API, and admitted rule subset. Those choices should be made for one authorized fixture, not by building every honeycomb cell.
 
-The first technical prerequisite is semantic recovery without snapshots. Next in dependency order are claim/support identity and explicit completion/replay guarantees. This is a dependency assessment, **not a replacement for H4 or a new delivery order**. General multi-resource optimization, four-valued reasoning, full recursive provenance, and hypergraph-native storage are not prerequisites for the initial fixture.
+The first technical prerequisite is semantic recovery without snapshots. Next in dependency order are claim/support identity and explicit completion/replay guarantees. This is a dependency assessment, **not an Active Milestone lease and not a delivery authorization**. General multi-resource optimization, four-valued reasoning, full recursive provenance, and hypergraph-native storage are not prerequisites for the initial fixture.
 
 Stop expanding the design when one authorized end-to-end fixture can distinguish preserved history, current evidence, and allowed action. Add architecture only in response to a failing oracle or a concrete consumer requirement.
 

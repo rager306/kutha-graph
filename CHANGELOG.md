@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-15 — Process: post-M001 lease debt wave 1
+
+### Process
+
+- Added governor kind `when_match_then_match` and check `idle-delivery-closed` so Active Milestone None requires `L_delivery=*-closed`.
+- Retargeted freeze finding text to the live M002 lease gate; extended `docs-coupling` so STATE and architecture-note diffs require CHANGELOG.
+- Indexed `kutha-graph` in GitNexus for session blast-radius queries.
+
+### Trajectory
+
+- Refreshed `docs/architecture/semantic-contract-validation.md` lease wording to Phase H4 / M001-closed (no Active Milestone). Cells and freeze unchanged.
+
 ## 2026-09-15 — Process: close M001 milestone
 
 ### Process
