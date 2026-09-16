@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M010
-**Active Slice:** S02
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H4
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M010-S02
+L_delivery=M010-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M010 S02 active (term definitions in the persisted event log) | Capability proven / Rocks started / M002 leased |
+| L_delivery | M010 closed (S01–S03: terms sidecar, durable Define, live intern Define) | Capability proven / Rocks started / M002 leased |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M010 S02 is in:** persist encodes `Op::Define`; `open` recovers without snapshot and without `terms.jsonl`. Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW. Further M010 slices need an explicit Active Slice lease.
+**M010 is closed.** Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW. Next product steel thread needs an explicit Active Milestone lease.
 
 ## Freeze (until explicit M002 lease)
 

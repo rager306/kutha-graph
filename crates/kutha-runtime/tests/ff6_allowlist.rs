@@ -44,6 +44,6 @@ fn ff6_allowlisted_relation_still_appends() {
         valid_to: None,
     })
     .unwrap();
-    assert_eq!(1, rt.log().len());
+    assert_eq!(1, rt.graph_len(), "one Assert; Define ops are not graph facts");
     rt.replay_check().unwrap();
 }

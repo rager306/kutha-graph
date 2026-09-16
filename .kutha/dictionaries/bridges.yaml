@@ -32,6 +32,6 @@ bridges:
     check: h4-membership-as-of
 
   - id: B-m010-semantic-open
-    claim: "store::open recovers intern meanings without snapshot.json from Op::Define or terms.jsonl"
+    claim: "store::open recovers meanings without snapshot; live intern appends Op::Define"
     cites: "crates/kutha-runtime/tests/m010_semantic_open.rs"
     check: m010-semantic-open

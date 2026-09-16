@@ -2,7 +2,7 @@
 
 Date: 2026-09-13. **Proposed validation design, not implemented capability or delivery authorization.**
 
-This note connects existing honeycomb contracts; it is not another ADR, research wave, or milestone list. The normative homes remain the linked ADRs. `.kutha/STATE.md` names Phase H4 with Active Milestone None and `L_delivery=M001-closed`. H3 allowlist and H4 membership overlay dogfood are in; the next product steel thread needs an explicit Active Milestone lease (semantic recovery is a candidate, not authorized by this note). Nothing here starts M002, a legal/science pack, a query parser, or new dictionaries. ADR-000/001/002 and the 163-card literature boundary are unchanged.
+This note connects existing honeycomb contracts; it is not another ADR, research wave, or milestone list. The normative homes remain the linked ADRs. `.kutha/STATE.md` names Phase H4 with Active Milestone None and `L_delivery=M010-closed`. H3 allowlist, H4 membership overlay, and M010 semantic recovery (S01–S03) are in; the next product steel thread needs an explicit Active Milestone lease. Nothing here starts M002, a legal/science pack, a query parser, or new dictionaries. ADR-000/001/002 and the 163-card literature boundary are unchanged.
 
 ## What needs strengthening
 
@@ -20,7 +20,7 @@ Claim support, computational dependency, and permission remain distinct relation
 
 | Contract home | Clarified requirement | Current evidence / limit |
 |---|---|---|
-| [ADR-011](../ADR/ADR-011-lean-event-schema-lineage.md), [012](../ADR/ADR-012-snapshots-tiers-vacuum.md) | Recover term meanings from retained authoritative history without leases | [store.rs](../../crates/kutha-runtime/src/store.rs) persists `Op::Define` plus derived `terms.jsonl`; `open` recovers without `snapshot.json` (M010 S02). Live in-memory intern still does not auto-append Define events |
+| [ADR-011](../ADR/ADR-011-lean-event-schema-lineage.md), [012](../ADR/ADR-012-snapshots-tiers-vacuum.md) | Recover term meanings from retained authoritative history without leases | [store.rs](../../crates/kutha-runtime/src/store.rs) + live `Runtime::intern` append `Op::Define`; `open` recovers without `snapshot.json` (M010 S01–S03). Bootstrap `knows`/`knownBy` stay silent until persist synthesizes them |
 | [ADR-011](../ADR/ADR-011-lean-event-schema-lineage.md), [013](../ADR/ADR-013-bitemporal-facts-invalidation.md) | Independent supports survive withdrawal of another; disagreement is not implicit supersession | [quantum.rs](../../crates/kutha-runtime/src/quantum.rs) has a small inverse behavior, not support maintenance |
 | [ADR-013](../ADR/ADR-013-bitemporal-facts-invalidation.md), [070](../ADR/ADR-070-cypher-temporal-as-of.md) | Explicit TT/VT and whole-version versus interval correction | [fold.rs](../../crates/kutha-runtime/src/fold.rs) replaces a whole version; [FF5](../../crates/kutha-runtime/tests/ff5_legal_pit.rs) compares two VT cuts |
 | [ADR-010](../ADR/ADR-010-event-log-runtime-quantum.md), [014](../ADR/ADR-014-cascade-budgets-quantum-receipts.md) | Saturation, budget stop, and unknown recovery are distinguishable | A budget-stopped emit can retain events; its receipt is not persisted by the file store |

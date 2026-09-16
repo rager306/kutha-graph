@@ -401,6 +401,30 @@ def _kind_pointer_in_other_file(check: str, step: Step, ctx: Context, result: Ch
                 line,
             )
         )
+    require_tpl = _str(step, "require_template")
+    if require_tpl and captured not in skip:
+        needle = require_tpl.format(id=captured)
+        if needle not in other_text:
+            line = text[: matches[0].start()].count("\n") + 1
+            result.findings.append(
+                Finding(
+                    check,
+                    Severity.HIGH,
+                    "lease-drift",
+                    _fmt(
+                        _str(
+                            step,
+                            "require_message",
+                            "{label} {id} is leased but ROADMAP lacks open checkbox `{needle}`",
+                        ),
+                        label=label,
+                        id=captured,
+                        needle=needle,
+                    ),
+                    path,
+                    line,
+                )
+            )
     inflation = _str(step, "inflation_pattern")
     if inflation:
         ids = set(re.findall(inflation, other_text))

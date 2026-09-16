@@ -9,7 +9,7 @@ use std::path::Path;
 const TERMS_REL: &str = "terms.jsonl";
 
 /// File-backed semantic log + snapshot lease. WAL file is durability cousin, not Rocks-as-SoT.
-/// `terms.jsonl` is a derived intern picture. Durable term meanings also ride `Op::Define` in the event stream (M010 S02).
+/// `terms.jsonl` is a derived intern picture. Durable term meanings ride `Op::Define` (persist prefix + live intern, M010 S02–S03).
 pub fn persist(runtime: &Runtime, dir: &Path) -> std::io::Result<()> {
     fs::create_dir_all(dir)?;
     let events = encoded_log(runtime);

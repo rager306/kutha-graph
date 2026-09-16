@@ -17,14 +17,18 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 - [x] **S03: Relation allowlist fail-closed** `risk:low` `depends:[S01]`
   > After this: unknown relation does not append (FF6 stub, not six dictionaries).
 
-## M010: Semantic recovery without snapshot lease — ACTIVE
+## M010: Semantic recovery without snapshot lease — CLOSED
 
-**Success:** discarding `snapshot.json` still restores term meanings and fold fingerprint from retained history; missing authoritative terms fail explicitly. Not M002 Rocks; not ADR Accepted.
+**Success:** discarding `snapshot.json` still restores term meanings and fold fingerprint from retained history; missing authoritative terms fail explicitly. Live intern appends `Op::Define`. Not M002 Rocks; not ADR Accepted.
+
+**Closed:** S01–S03 delivered. Historical lease was `L_delivery=M010-closed`. Not product Accepted; not M002.
 
 - [x] **S01: Open recovers intern meanings** `risk:high` `depends:[]`
   > After this: persist writes `terms.jsonl`; `open` without snapshot replays events with restored dictionary; named test green.
 - [x] **S02: Logged term-definition ops** `risk:medium` `depends:[S01]`
   > After this: durable `Op::Define` prefix in events.wal / events.jsonl restores intern meanings without `terms.jsonl`; sidecar remains a derived picture.
+- [x] **S03: Live intern appends Define** `risk:medium` `depends:[S02]`
+  > After this: `Runtime::intern` logs `Op::Define` for new terms; bootstrap stays silent; graph-oriented snapshot offset; named test green.
 
 ## Boundary map (M001)
 
@@ -48,6 +52,11 @@ Consumes: persist path; ADR-011 semantic recovery contract.
 Produces: `Op::Define` prefix on the durable event stream; open without snapshot or terms sidecar.  
 Consumes: S01 persist/open; intern order = Define order.
 
+### M010 S02 → S03
+
+Produces: live in-memory log carries Define for new interns (SoT before persist).  
+Consumes: S02 Op::Define schema; fold no-op; encoded_log still synthesizes durable Define prefix.
+
 ## Harness dogfood (process plane, not M00x)
 
 - [x] **H0** — dictionary FSM + file trajectory.
@@ -58,7 +67,7 @@ Consumes: S01 persist/open; intern order = Define order.
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M010 S02 is the active delivery lease; M002+ stay frozen until leased.
+Do not start until STATE names them. M010 is closed; M002+ stay frozen until leased.
 
 - **M002** — Rocks adapter behind the same events (persistence, not a second SoT).
 - **M003** — Cypher skin over the already-correct AS OF cut.

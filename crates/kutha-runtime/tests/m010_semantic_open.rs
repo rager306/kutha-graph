@@ -1,7 +1,25 @@
-//! M010 S01: open recovers intern meanings without snapshot.json (ADR-011).
+//! M010: open recovers intern meanings; live intern logs Op::Define (ADR-011).
 
 use kutha_common::Op;
 use kutha_runtime::{store, Runtime};
+
+#[test]
+fn intern_appends_define_for_new_terms_only() {
+    let mut rt = Runtime::default();
+    assert_eq!(0, rt.log().len(), "bootstrap knows/knownBy must not log Define");
+    let a = rt.intern("Alice");
+    assert_eq!(1, rt.log().len());
+    assert!(matches!(
+        &rt.log().as_slice()[0].op,
+        Op::Define { name } if name == "Alice"
+    ));
+    assert_eq!(a, rt.intern("Alice"), "re-intern is stable");
+    assert_eq!(1, rt.log().len(), "existing term must not append again");
+    let _ = rt.intern("knows");
+    assert_eq!(1, rt.log().len(), "bootstrap relation re-intern stays silent");
+    assert_eq!(0, rt.graph_len());
+    rt.replay_check().unwrap();
+}
 
 #[test]
 fn open_without_snapshot_recovers_intern_meanings() {

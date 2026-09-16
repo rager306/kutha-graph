@@ -92,7 +92,7 @@ cells:
     capability: named
     depends_on: [ADR-000, ADR-010]
     locks: [D1, D2]
-    evidence: [ff6_unknown_relation_does_not_append, open_without_snapshot_or_terms_file_recovers_from_define_ops]
+    evidence: [ff6_unknown_relation_does_not_append, open_without_snapshot_or_terms_file_recovers_from_define_ops, intern_appends_define_for_new_terms_only]
 
   - id: ADR-012
     axis: Time
@@ -386,4 +386,4 @@ cells:
     depends_on: [ADR-000, ADR-001, ADR-002, ADR-090]
     locks: [D1]
     evidence: []
-# M010 S02 logs Op::Define without promoting L_map Accepted.
+# M010 S01–S03: terms sidecar, durable Define, live intern Define — L_map stays Proposed.

@@ -93,12 +93,30 @@ impl Runtime {
         }
     }
 
+    /// Intern a term string. New strings append `Op::Define` to the live log (fold no-op).
+    /// Bootstrap `knows`/`knownBy` from [`Runtime::new`] stay silent until persist synthesizes them.
     pub fn intern(&mut self, s: &str) -> TermId {
-        self.dict.intern(s)
+        if let Some(id) = self.dict.id(s) {
+            return id;
+        }
+        let id = self.dict.intern(s);
+        let event = Event::new(Op::Define { name: s.to_string() }, self.next_tt());
+        self.fold.apply(&event);
+        self.log.append(event);
+        id
     }
 
     pub fn log(&self) -> &EventLog {
         &self.log
+    }
+
+    /// Count of non-`Define` events (graph ops). Snapshot `log_offset` uses this so open-with-snapshot
+    /// stays aligned with the Define-stripped durable graph stream.
+    pub fn graph_len(&self) -> usize {
+        self.log
+            .iter()
+            .filter(|e| !matches!(e.op, Op::Define { .. }))
+            .count()
     }
 
     pub fn fold(&self) -> &GraphFold {
@@ -111,7 +129,7 @@ impl Runtime {
 
     pub fn snapshot(&self) -> Snapshot {
         Snapshot {
-            log_offset: self.log.len(),
+            log_offset: self.graph_len(),
             next_tt: self.next_tt,
             max_cascade: self.max_cascade,
             fold: self.fold.clone(),
@@ -123,15 +141,20 @@ impl Runtime {
 
     pub fn from_snapshot(snap: Snapshot, all_events: Vec<Event>) -> Self {
         let dict = TermDictionary::from_strings(snap.dict_strings);
+        // Snapshot offset indexes the graph stream; Define ops are durable SoT but not fold/offset.
+        let graph: Vec<Event> = all_events
+            .into_iter()
+            .filter(|e| !matches!(e.op, Op::Define { .. }))
+            .collect();
         let mut fold = snap.fold;
         let mut next_tt = snap.next_tt;
-        let offset = snap.log_offset.min(all_events.len());
-        for e in &all_events[offset..] {
+        let offset = snap.log_offset.min(graph.len());
+        for e in &graph[offset..] {
             fold.apply(e);
             next_tt = next_tt.max(e.ingested_at.saturating_add(1));
         }
         Self {
-            log: EventLog::from_events(all_events),
+            log: EventLog::from_events(graph),
             fold,
             dict,
             next_tt,
@@ -381,7 +404,7 @@ mod tests {
             .unwrap();
         assert_eq!(q.events_in_quantum, 2);
         assert!(!q.receipt.aborted_on_budget);
-        assert_eq!(rt.log().len(), 2);
+        assert_eq!(rt.graph_len(), 2);
     }
 
     #[test]

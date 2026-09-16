@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-16 — Product + Process: M010 S03 live intern Define; M010 closed
+
+### Product
+
+- `Runtime::intern` appends `Op::Define` for newly created terms; bootstrap `knows`/`knownBy` stay silent. `graph_len()` and graph-oriented `snapshot.log_offset`; `from_snapshot` strips Define before applying the tail.
+- Named test `intern_appends_define_for_new_terms_only`. Allowlist tests assert graph growth via `graph_len`.
+
+### Process
+
+- M010 S03 delivered then milestone closed (`L_delivery=M010-closed`). FSM observe requires the live-intern test; `m010-semantic-open` cites S03 needles.
+- `pointer_in_other_file` supports `require_template` so an Active Slice must remain unchecked on ROADMAP (blocks done-but-leased drift).
+
+### Trajectory
+
+- ADR-011 / semantic-contract-validation / honeycomb evidence record S03. Cells remain Proposed; M002 freeze unchanged.
+
 ## 2026-09-15 — Product + Process: M010 S02 logged term definitions
 
 ### Product

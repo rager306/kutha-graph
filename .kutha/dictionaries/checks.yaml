@@ -28,6 +28,8 @@ checks:
         other: .kutha/ROADMAP.md
         skip_values: ["None"]
         label: Active Slice
+        require_template: "- [ ] **{id}:"
+        require_message: "Active Slice {id} is leased but ROADMAP marks it done (missing `{needle}`); close the lease or reopen the checkbox"
 
   - id: lifecycles
     description: STATE names three orthogonal lifecycles
@@ -201,7 +203,7 @@ checks:
         message: "H4 membership AS OF test missing {missing}"
 
   - id: m010-semantic-open
-    description: M010 — open recovers intern meanings without snapshot; Define ops recover without terms sidecar
+    description: M010 — open recovers intern meanings; Define ops; live intern appends Define
     steps:
       - kind: file_contains
         path: crates/kutha-runtime/tests/m010_semantic_open.rs
@@ -216,11 +218,23 @@ checks:
         category: m010-s02
         message: "M010 Define-op recovery test missing {missing}"
       - kind: file_contains
+        path: crates/kutha-runtime/tests/m010_semantic_open.rs
+        needles: ["fn intern_appends_define_for_new_terms_only"]
+        require: all
+        category: m010-s03
+        message: "M010 live intern Define test missing {missing}"
+      - kind: file_contains
         path: crates/kutha-common/src/event.rs
         needles: ["Define"]
         require: all
         category: m010-s02
         message: "Op::Define missing from lean event schema: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/quantum.rs
+        needles: ["Op::Define", "graph_len"]
+        require: all
+        category: m010-s03
+        message: "live intern Define / graph_len missing: {missing}"
       - kind: file_contains
         path: crates/kutha-runtime/src/store.rs
         needles: ["terms.jsonl"]
