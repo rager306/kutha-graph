@@ -17,12 +17,16 @@ pub type TransactionTime = u64;
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum Op {
     /// N-ary objects: subject, relation, object (interned).
+    /// `claim`: when set, this Assert is another support for that claim id;
+    /// when absent, the new event id becomes the claim id (ADR-011 / M011 S01).
     Assert {
         subject: TermId,
         relation: TermId,
         object: TermId,
         valid_from: ValidTime,
         valid_to: Option<ValidTime>,
+        #[serde(default)]
+        claim: Option<EventId>,
     },
     Retract {
         fact_seq: u64,
@@ -94,6 +98,7 @@ impl Event {
                 object,
                 valid_from,
                 valid_to,
+                claim,
             } => {
                 h.update(b"assert");
                 h.update(subject.to_le_bytes());
@@ -101,6 +106,10 @@ impl Event {
                 h.update(object.to_le_bytes());
                 h.update(valid_from.to_le_bytes());
                 h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
+                if let Some(c) = claim {
+                    h.update(b"claim");
+                    h.update(c.as_bytes());
+                }
             }
             Op::Retract { fact_seq } => {
                 h.update(b"retract");

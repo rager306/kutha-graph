@@ -33,6 +33,8 @@ fn open_without_snapshot_recovers_intern_meanings() {
         object: b,
         valid_from: 0,
         valid_to: None,
+
+        claim: None,
     })
     .unwrap();
     let dir = std::env::temp_dir().join(format!("kutha-m010-{}", uuid_like()));
@@ -59,6 +61,8 @@ fn open_without_snapshot_or_terms_file_recovers_from_define_ops() {
         object: b,
         valid_from: 0,
         valid_to: None,
+
+        claim: None,
     })
     .unwrap();
     let dir = std::env::temp_dir().join(format!("kutha-m010-s02-{}", uuid_like()));

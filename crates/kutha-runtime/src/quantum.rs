@@ -297,6 +297,7 @@ impl Runtime {
                 object,
                 valid_from,
                 valid_to,
+                claim: _,
             } if *relation == self.knows => {
                 let exists = self.fold.facts().iter().any(|f| {
                     f.subject == *object
@@ -359,6 +360,8 @@ mod tests {
             object: bob,
             valid_from: 0,
             valid_to: None,
+
+            claim: None,
         })
         .unwrap();
         assert_eq!(rt.fold().live_count(u64::MAX, 0), 2); // knows + inverse
@@ -377,6 +380,8 @@ mod tests {
             object: b,
             valid_from: 0,
             valid_to: None,
+
+            claim: None,
         })
         .unwrap();
         let seq = rt.fold().facts()[0].seq;
@@ -400,6 +405,8 @@ mod tests {
                 object: b,
                 valid_from: 0,
                 valid_to: None,
+
+                claim: None,
             })
             .unwrap();
         assert_eq!(q.events_in_quantum, 2);
@@ -420,6 +427,8 @@ mod tests {
                 object: b,
                 valid_from: 0,
                 valid_to: None,
+
+                claim: None,
             })
             .unwrap();
         assert!(q.receipt.aborted_on_budget);
@@ -438,6 +447,8 @@ mod tests {
             object: b,
             valid_from: 0,
             valid_to: None,
+
+            claim: None,
         })
         .unwrap();
         rt.tamper_fold();
@@ -458,6 +469,8 @@ mod tests {
                 object: o,
                 valid_from: 0,
                 valid_to: None,
+
+                claim: None,
             })
             .unwrap();
         }
@@ -486,6 +499,8 @@ mod tests {
                 object: o,
                 valid_from: 0,
                 valid_to: None,
+
+                claim: None,
             })
             .unwrap();
         }
@@ -508,6 +523,8 @@ mod tests {
             object: b,
             valid_from: 0,
             valid_to: None,
+
+            claim: None,
         })
         .unwrap();
         let dir = std::env::temp_dir().join(format!("kutha-p0-{}", uuid_like()));
@@ -531,6 +548,8 @@ mod tests {
             object: b,
             valid_from: 0,
             valid_to: None,
+
+            claim: None,
         })
         .unwrap();
         // Fixture facts use valid_from=0; name that cut (no silent “now”).
@@ -556,6 +575,8 @@ mod tests {
             object: n1,
             valid_from: 0,
             valid_to: None,
+
+            claim: None,
         })
         .unwrap();
         let cut = rt.log().len();
@@ -565,6 +586,8 @@ mod tests {
             object: n2,
             valid_from: 0,
             valid_to: None,
+
+            claim: None,
         })
         .unwrap();
         let fork = rt.fork_at(cut);

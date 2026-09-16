@@ -1,5 +1,9 @@
-use kutha_common::{Event, Op, TermId, TransactionTime, ValidTime};
+use kutha_common::{Event, EventId, Op, TermId, TransactionTime, ValidTime};
 use sha2::{Digest, Sha256};
+
+fn nil_claim() -> EventId {
+    EventId::nil()
+}
 
 /// One asserted (or behavior-asserted) fact in the fold. Losers stay on retract (ADR-013).
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -12,6 +16,9 @@ pub struct Fact {
     pub valid_to: Option<ValidTime>,
     pub ingested_at: TransactionTime,
     pub invalidated_at: Option<TransactionTime>,
+    /// Portable claim identity (ADR-011). Multiple Facts may share one claim_id (supports).
+    #[serde(default = "nil_claim")]
+    pub claim_id: EventId,
 }
 
 impl Fact {
@@ -78,8 +85,25 @@ impl GraphFold {
             h.update(f.valid_to.unwrap_or(u64::MAX).to_le_bytes());
             h.update(f.ingested_at.to_le_bytes());
             h.update(f.invalidated_at.unwrap_or(u64::MAX).to_le_bytes());
+            h.update(f.claim_id.as_bytes());
         }
         h.finalize().into()
+    }
+
+    /// Live Facts that support `claim` at an explicit cut.
+    pub fn live_supports(&self, claim: EventId, tt: TransactionTime, vt: ValidTime) -> Vec<&Fact> {
+        self.facts
+            .iter()
+            .filter(|f| f.claim_id == claim && f.is_live_at(tt, vt))
+            .collect()
+    }
+
+    pub fn live_support_count(&self, claim: EventId, tt: TransactionTime, vt: ValidTime) -> usize {
+        self.live_supports(claim, tt, vt).len()
+    }
+
+    pub fn claim_supported_at(&self, claim: EventId, tt: TransactionTime, vt: ValidTime) -> bool {
+        self.live_support_count(claim, tt, vt) > 0
     }
 
     pub fn apply(&mut self, event: &Event) {
@@ -90,8 +114,24 @@ impl GraphFold {
                 object,
                 valid_from,
                 valid_to,
+                claim,
+            } => {
+                let seq = self.next_seq;
+                self.next_seq += 1;
+                let claim_id = claim.unwrap_or(event.id);
+                self.facts.push(Fact {
+                    seq,
+                    subject: *subject,
+                    relation: *relation,
+                    object: *object,
+                    valid_from: *valid_from,
+                    valid_to: *valid_to,
+                    ingested_at: event.ingested_at,
+                    invalidated_at: None,
+                    claim_id,
+                });
             }
-            | Op::Behavior {
+            Op::Behavior {
                 subject,
                 relation,
                 object,
@@ -110,6 +150,7 @@ impl GraphFold {
                     valid_to: *valid_to,
                     ingested_at: event.ingested_at,
                     invalidated_at: None,
+                    claim_id: event.id,
                 });
             }
             Op::Retract { fact_seq } => {
@@ -130,6 +171,7 @@ impl GraphFold {
                         old.invalidated_at = Some(event.ingested_at);
                         let s = old.subject;
                         let r = old.relation;
+                        let claim_id = old.claim_id;
                         let seq = self.next_seq;
                         self.next_seq += 1;
                         self.facts.push(Fact {
@@ -141,6 +183,7 @@ impl GraphFold {
                             valid_to: *valid_to,
                             ingested_at: event.ingested_at,
                             invalidated_at: None,
+                            claim_id,
                         });
                     }
                 }

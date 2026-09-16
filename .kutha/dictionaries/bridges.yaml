@@ -35,3 +35,8 @@ bridges:
     claim: "store::open recovers meanings without snapshot; live intern appends Op::Define"
     cites: "crates/kutha-runtime/tests/m010_semantic_open.rs"
     check: m010-semantic-open
+
+  - id: B-m011-claim-supports
+    claim: "Independent supports share claim_id; retracting one leaves the other"
+    cites: "crates/kutha-runtime/tests/m011_claim_supports.rs"
+    check: m011-claim-supports

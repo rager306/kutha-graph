@@ -30,6 +30,13 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 - [x] **S03: Live intern appends Define** `risk:medium` `depends:[S02]`
   > After this: `Runtime::intern` logs `Op::Define` for new terms; bootstrap stays silent; graph-oriented snapshot offset; named test green.
 
+## M011: Claim / support identity — ACTIVE
+
+**Success:** two independent supports for one claim remain distinguishable; withdrawing one support does not erase the other at the same cut. Not full P→Q derivation; not M002; not ADR Accepted.
+
+- [x] **S01: Portable claim_id on facts** `risk:high` `depends:[]`
+  > After this: Assert may attach to an existing claim; retracting one support leaves the claim supported when another support is live; named test green.
+
 ## Boundary map (M001)
 
 ### M001 S01 → S02
@@ -57,6 +64,11 @@ Consumes: S01 persist/open; intern order = Define order.
 Produces: live in-memory log carries Define for new interns (SoT before persist).  
 Consumes: S02 Op::Define schema; fold no-op; encoded_log still synthesizes durable Define prefix.
 
+### M011 S01
+
+Produces: `Fact.claim_id` + optional Assert.claim; live support queries.  
+Consumes: M010 recovery; existing Retract + `is_live_at`.
+
 ## Harness dogfood (process plane, not M00x)
 
 - [x] **H0** — dictionary FSM + file trajectory.
@@ -67,7 +79,7 @@ Consumes: S02 Op::Define schema; fold no-op; encoded_log still synthesizes durab
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M010 is closed; M002+ stay frozen until leased.
+Do not start until STATE names them. M011 is active (S01 done; further slices need lease); M002+ stay frozen until leased.
 
 - **M002** — Rocks adapter behind the same events (persistence, not a second SoT).
 - **M003** — Cypher skin over the already-correct AS OF cut.

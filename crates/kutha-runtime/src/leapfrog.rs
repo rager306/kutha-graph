@@ -96,6 +96,8 @@ mod tests {
                 object: o,
                 valid_from: 0,
                 valid_to: None,
+
+                claim: None,
             })
             .unwrap();
         }

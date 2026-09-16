@@ -70,6 +70,8 @@ mod tests {
             object: b,
             valid_from: 0,
             valid_to: None,
+
+            claim: None,
         })
         .unwrap();
         let mut m = CsrMaterializer::default();

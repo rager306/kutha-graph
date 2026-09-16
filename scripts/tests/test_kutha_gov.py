@@ -47,6 +47,7 @@ class HarnessTests(unittest.TestCase):
                 "h4-lease",
                 "idle-delivery-closed",
                 "m010-semantic-open",
+                "m011-claim-supports",
             }.issubset(names)
         )
 

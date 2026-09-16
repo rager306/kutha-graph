@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-16 — Product + Process: M011 S01 independent claim supports
+
+### Product
+
+- `Op::Assert.claim` / `Fact.claim_id`: absent claim opens a new claim (`event.id`); `Some(id)` attaches another support. Fold helpers `live_support_count` / `claim_supported_at`. Correct inherits `claim_id`.
+- Named test `retracting_one_support_leaves_claim_supported`.
+
+### Process
+
+- Leased M011; S01 delivered (`L_delivery=M011-S01-done`). Governor `m011-claim-supports` + FSM observe required.
+
+### Trajectory
+
+- ADR-011 / semantic-contract-validation / honeycomb evidence record S01. Cells remain Proposed; M002 freeze unchanged.
+
 ## 2026-09-16 — Product + Process: M010 S03 live intern Define; M010 closed
 
 ### Product

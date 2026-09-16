@@ -34,7 +34,7 @@ Governor green ≠ ADR Accepted ≠ capability. Honeycomb **Proposed** ≠ deliv
 
 ## Current execution position
 
-Read `.kutha/STATE.md` first (lease, not SoT). **M010 is closed** (`L_delivery=M010-closed`): semantic recovery without snapshot (terms sidecar, durable `Op::Define`, live intern Define). Harness **H4** remains on. Do not start a legal pack. Do not start M002 Rocks until STATE names it. Next product steel thread needs an explicit Active Milestone lease.
+Read `.kutha/STATE.md` first (lease, not SoT). **M011 is active** (`L_delivery=M011-S01-done`): portable `claim_id` / independent supports. Harness **H4** remains on. Do not start a legal pack. Do not start M002 Rocks until STATE names it. Further M011 slices need an explicit Active Slice lease.
 
 Until explicit M002: do not add RocksDB, Cypher/GPML parser, HNSW, ADR-050 six dictionaries, ADR-080/081, full ADR-090/093 packs, ADR-100+, or Consensus Query 103+.
 

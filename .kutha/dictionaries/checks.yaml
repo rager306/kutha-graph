@@ -242,6 +242,28 @@ checks:
         category: m010-s01
         message: "store persist/open missing terms.jsonl retention: {missing}"
 
+  - id: m011-claim-supports
+    description: M011 — independent supports share claim_id; retract one leaves the other
+    steps:
+      - kind: file_contains
+        path: crates/kutha-runtime/tests/m011_claim_supports.rs
+        needles: ["fn retracting_one_support_leaves_claim_supported"]
+        require: all
+        category: m011-s01
+        message: "M011 claim-support test missing {missing}"
+      - kind: file_contains
+        path: crates/kutha-common/src/event.rs
+        needles: ["claim"]
+        require: all
+        category: m011-s01
+        message: "Assert claim field missing: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/fold.rs
+        needles: ["claim_id", "live_support_count", "claim_supported_at"]
+        require: all
+        category: m011-s01
+        message: "claim support fold helpers missing: {missing}"
+
   - id: h4-lease
     description: H4 delivery lease named without promoting ADR-090 L_map
     steps:

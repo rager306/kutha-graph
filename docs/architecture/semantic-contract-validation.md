@@ -2,7 +2,7 @@
 
 Date: 2026-09-13. **Proposed validation design, not implemented capability or delivery authorization.**
 
-This note connects existing honeycomb contracts; it is not another ADR, research wave, or milestone list. The normative homes remain the linked ADRs. `.kutha/STATE.md` names Phase H4 with Active Milestone None and `L_delivery=M010-closed`. H3 allowlist, H4 membership overlay, and M010 semantic recovery (S01–S03) are in; the next product steel thread needs an explicit Active Milestone lease. Nothing here starts M002, a legal/science pack, a query parser, or new dictionaries. ADR-000/001/002 and the 163-card literature boundary are unchanged.
+This note connects existing honeycomb contracts; it is not another ADR, research wave, or milestone list. The normative homes remain the linked ADRs. `.kutha/STATE.md` names Phase H4 with Active Milestone M011 and `L_delivery=M011-S01-done`. H3/H4 dogfood, M010 semantic recovery, and M011 S01 claim supports are in; further M011 slices need an explicit Active Slice lease. Nothing here starts M002, a legal/science pack, a query parser, or new dictionaries. ADR-000/001/002 and the 163-card literature boundary are unchanged.
 
 ## What needs strengthening
 
@@ -21,7 +21,7 @@ Claim support, computational dependency, and permission remain distinct relation
 | Contract home | Clarified requirement | Current evidence / limit |
 |---|---|---|
 | [ADR-011](../ADR/ADR-011-lean-event-schema-lineage.md), [012](../ADR/ADR-012-snapshots-tiers-vacuum.md) | Recover term meanings from retained authoritative history without leases | [store.rs](../../crates/kutha-runtime/src/store.rs) + live `Runtime::intern` append `Op::Define`; `open` recovers without `snapshot.json` (M010 S01–S03). Bootstrap `knows`/`knownBy` stay silent until persist synthesizes them |
-| [ADR-011](../ADR/ADR-011-lean-event-schema-lineage.md), [013](../ADR/ADR-013-bitemporal-facts-invalidation.md) | Independent supports survive withdrawal of another; disagreement is not implicit supersession | [quantum.rs](../../crates/kutha-runtime/src/quantum.rs) has a small inverse behavior, not support maintenance |
+| [ADR-011](../ADR/ADR-011-lean-event-schema-lineage.md), [013](../ADR/ADR-013-bitemporal-facts-invalidation.md) | Independent supports survive withdrawal of another; disagreement is not implicit supersession | [fold.rs](../../crates/kutha-runtime/src/fold.rs) `claim_id` + [m011_claim_supports.rs](../../crates/kutha-runtime/tests/m011_claim_supports.rs); inverse behavior remains separate from support maintenance |
 | [ADR-013](../ADR/ADR-013-bitemporal-facts-invalidation.md), [070](../ADR/ADR-070-cypher-temporal-as-of.md) | Explicit TT/VT and whole-version versus interval correction | [fold.rs](../../crates/kutha-runtime/src/fold.rs) replaces a whole version; [FF5](../../crates/kutha-runtime/tests/ff5_legal_pit.rs) compares two VT cuts |
 | [ADR-010](../ADR/ADR-010-event-log-runtime-quantum.md), [014](../ADR/ADR-014-cascade-budgets-quantum-receipts.md) | Saturation, budget stop, and unknown recovery are distinguishable | A budget-stopped emit can retain events; its receipt is not persisted by the file store |
 | [ADR-040](../ADR/ADR-040-materialization-plugin-protocol.md), [060](../ADR/ADR-060-strict-replay.md) | Exact lease identity and separate state/provenance/execution checks | [CSR](../../crates/kutha-runtime/src/csr.rs) is untyped neighbor-set adjacency; replay currently checks fold fingerprints |
@@ -66,7 +66,7 @@ These expectations are proposed oracles. They are not satisfied merely because t
 
 The clarified invariants are more stable than their encoding. Future implementation must still select the logged term-definition format, stable claim/support references, quantum outcome/continuation records, partial-correction API, and admitted rule subset. Those choices should be made for one authorized fixture, not by building every honeycomb cell.
 
-The first technical prerequisite is semantic recovery without snapshots. Next in dependency order are claim/support identity and explicit completion/replay guarantees. This is a dependency assessment, **not an Active Milestone lease and not a delivery authorization**. General multi-resource optimization, four-valued reasoning, full recursive provenance, and hypergraph-native storage are not prerequisites for the initial fixture.
+The first technical prerequisite is semantic recovery without snapshots (M010 done). Claim/support identity S01 is in (`claim_id`). Next in dependency order: explicit completion/replay guarantees and a thin P→Q derivation fixture under a new Active Slice lease. This is a dependency assessment for remaining work, **not** authorization to start M002. General multi-resource optimization, four-valued reasoning, full recursive provenance, and hypergraph-native storage are not prerequisites for the initial fixture.
 
 Stop expanding the design when one authorized end-to-end fixture can distinguish preserved history, current evidence, and allowed action. Add architecture only in response to a failing oracle or a concrete consumer requirement.
 

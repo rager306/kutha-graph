@@ -19,6 +19,8 @@ fn ff6_unknown_relation_does_not_append() {
             object: limit,
             valid_from: 2010,
             valid_to: None,
+
+            claim: None,
         })
         .unwrap_err();
 
@@ -42,6 +44,8 @@ fn ff6_allowlisted_relation_still_appends() {
         object: limit,
         valid_from: 2010,
         valid_to: None,
+
+        claim: None,
     })
     .unwrap();
     assert_eq!(1, rt.graph_len(), "one Assert; Define ops are not graph facts");
