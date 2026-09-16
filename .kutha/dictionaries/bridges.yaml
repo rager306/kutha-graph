@@ -37,6 +37,6 @@ bridges:
     check: m010-semantic-open
 
   - id: B-m011-claim-supports
-    claim: "Independent supports share claim_id; unknown claim and dangling caused_by fail closed"
+    claim: "Independent supports share claim_id; unknown claim and dangling caused_by fail closed; thin P→Q eligibility tracks premise supports"
     cites: "crates/kutha-runtime/tests/m011_claim_supports.rs"
     check: m011-claim-supports

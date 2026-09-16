@@ -2,7 +2,7 @@
 
 Date: 2026-09-13. **Proposed validation design, not implemented capability or delivery authorization.**
 
-This note connects existing honeycomb contracts; it is not another ADR, research wave, or milestone list. The normative homes remain the linked ADRs. `.kutha/STATE.md` names Phase H4 with Active Milestone M011 and `L_delivery=M011-S02-done`. H3/H4 dogfood, M010 semantic recovery, and M011 S01–S02 claim/lineage are in; a P→Q derivation fixture needs an explicit Active Slice lease. Nothing here starts M002, a legal/science pack, a query parser, or new dictionaries. ADR-000/001/002 and the 163-card literature boundary are unchanged.
+This note connects existing honeycomb contracts; it is not another ADR, research wave, or milestone list. The normative homes remain the linked ADRs. `.kutha/STATE.md` names Phase H4 with Active Milestone M011 and `L_delivery=M011-S03-done`. H3/H4 dogfood, M010 semantic recovery, and M011 S01–S03 claim/lineage/P→Q eligibility are in. Nothing here starts M002, a legal/science pack, a query parser, or new dictionaries. ADR-000/001/002 and the 163-card literature boundary are unchanged.
 
 ## What needs strengthening
 
@@ -22,6 +22,7 @@ Claim support, computational dependency, and permission remain distinct relation
 |---|---|---|
 | [ADR-011](../ADR/ADR-011-lean-event-schema-lineage.md), [012](../ADR/ADR-012-snapshots-tiers-vacuum.md) | Recover term meanings from retained authoritative history without leases | [store.rs](../../crates/kutha-runtime/src/store.rs) + live `Runtime::intern` append `Op::Define`; `open` recovers without `snapshot.json` (M010 S01–S03). Bootstrap `knows`/`knownBy` stay silent until persist synthesizes them |
 | [ADR-011](../ADR/ADR-011-lean-event-schema-lineage.md), [013](../ADR/ADR-013-bitemporal-facts-invalidation.md) | Independent supports survive withdrawal of another; disagreement is not implicit supersession | [fold.rs](../../crates/kutha-runtime/src/fold.rs) `claim_id` + [m011_claim_supports.rs](../../crates/kutha-runtime/tests/m011_claim_supports.rs); inverse behavior remains separate from support maintenance |
+| [ADR-011](../ADR/ADR-011-lean-event-schema-lineage.md), [060](../ADR/ADR-060-strict-replay.md) | Thin P→Q: derived claim eligibility tracks premise supports at a cut | [quantum.rs](../../crates/kutha-runtime/src/quantum.rs) `derivation_eligible_at`; named test `derived_q_loses_eligibility_when_last_premise_support_withdrawn` (not full provenance polynomials) |
 | [ADR-013](../ADR/ADR-013-bitemporal-facts-invalidation.md), [070](../ADR/ADR-070-cypher-temporal-as-of.md) | Explicit TT/VT and whole-version versus interval correction | [fold.rs](../../crates/kutha-runtime/src/fold.rs) replaces a whole version; [FF5](../../crates/kutha-runtime/tests/ff5_legal_pit.rs) compares two VT cuts |
 | [ADR-010](../ADR/ADR-010-event-log-runtime-quantum.md), [014](../ADR/ADR-014-cascade-budgets-quantum-receipts.md) | Saturation, budget stop, and unknown recovery are distinguishable | A budget-stopped emit can retain events; its receipt is not persisted by the file store |
 | [ADR-040](../ADR/ADR-040-materialization-plugin-protocol.md), [060](../ADR/ADR-060-strict-replay.md) | Exact lease identity and separate state/provenance/execution checks | [CSR](../../crates/kutha-runtime/src/csr.rs) is untyped neighbor-set adjacency; replay checks fold fingerprints **and** Behavior `caused_by` against earlier event ids (M011 S02); execution replay still absent |
@@ -31,7 +32,7 @@ Claim support, computational dependency, and permission remain distinct relation
 
 ## One candidate acceptance fixture
 
-Use a synthetic rule and two evidence sources, not a legal corpus. This is a future fixture specification, not a test already run and not the next active slice.
+Use a synthetic rule and two evidence sources, not a legal corpus. M011 S03 ships a thinned executable slice of observations 1–2 (eligibility via `derivation_eligible_at`); the fuller narrative below remains a future fixture specification beyond that oracle.
 
 At TT `t1`, admitted source versions `a` and `b` independently support proposition `P` over VT `[2010,infinity)`. A pinned deterministic rule `r` derives `Q` from `P`; no other rule or source supports `Q` in this fixture. A summary and proposed agent action cite that derivation. At `t2`, source `a` explicitly withdraws its support for `P` over `[2015,2020)` and proposes a replacement `P'` that does not entail `P`. Source `b` has not changed. At `t3`, `b` withdraws support for `P` on that interval. In the conflict variant, set `P' = not-P`. Admission of the replacement and permission to act are explicit policy decisions, not automatic effects of ingestion.
 
@@ -66,7 +67,7 @@ These expectations are proposed oracles. They are not satisfied merely because t
 
 The clarified invariants are more stable than their encoding. Future implementation must still select the logged term-definition format, stable claim/support references, quantum outcome/continuation records, partial-correction API, and admitted rule subset. Those choices should be made for one authorized fixture, not by building every honeycomb cell.
 
-The first technical prerequisite is semantic recovery without snapshots (M010 done). Claim/support identity S01–S02 are in (`claim_id`, unknown-claim fail-closed, replay `caused_by`). Next in dependency order: a thin P→Q derivation fixture under a new Active Slice lease. This is a dependency assessment for remaining work, **not** authorization to start M002. General multi-resource optimization, four-valued reasoning, full recursive provenance, and hypergraph-native storage are not prerequisites for the initial fixture.
+The first technical prerequisite is semantic recovery without snapshots (M010 done). Claim/support identity S01–S03 are in (`claim_id`, unknown-claim fail-closed, replay `caused_by`, thin P→Q eligibility). Next dependency work still needs an explicit Active Slice lease. This is a dependency assessment for remaining work, **not** authorization to start M002. General multi-resource optimization, four-valued reasoning, full recursive provenance, and hypergraph-native storage are not prerequisites for the initial fixture.
 
 Stop expanding the design when one authorized end-to-end fixture can distinguish preserved history, current evidence, and allowed action. Add architecture only in response to a failing oracle or a concrete consumer requirement.
 

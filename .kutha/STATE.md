@@ -12,19 +12,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M011-S02-done
+L_delivery=M011-S03-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M011 S02 done (unknown claim fail-closed; replay lineage); further slices need lease | Capability proven / Rocks started / M002 leased |
+| L_delivery | M011 S03 done (thin P→Q derivation eligibility); further slices need lease | Capability proven / Rocks started / M002 leased |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M011 S02 is in.** Further M011 slices (P→Q derivation fixture) need an explicit Active Slice lease. Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW.
+**M011 S03 is in.** Further M011 slices need an explicit Active Slice lease. Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW.
 
 ## Freeze (until explicit M002 lease)
 

@@ -40,6 +40,7 @@ states:
       - retracting_one_support_leaves_claim_supported
       - unknown_claim_does_not_append
       - replay_rejects_behavior_without_prior_cause
+      - derived_q_loses_eligibility_when_last_premise_support_withdrawn
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant

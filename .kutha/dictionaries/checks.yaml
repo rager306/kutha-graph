@@ -243,7 +243,7 @@ checks:
         message: "store persist/open missing terms.jsonl retention: {missing}"
 
   - id: m011-claim-supports
-    description: M011 — independent supports; unknown claim fail-closed; replay lineage
+    description: M011 — independent supports; unknown claim fail-closed; replay lineage; thin P→Q eligibility
     steps:
       - kind: file_contains
         path: crates/kutha-runtime/tests/m011_claim_supports.rs
@@ -257,6 +257,12 @@ checks:
         require: all
         category: m011-s02
         message: "M011 claim lineage tests missing {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/tests/m011_claim_supports.rs
+        needles: ["fn derived_q_loses_eligibility_when_last_premise_support_withdrawn"]
+        require: all
+        category: m011-s03
+        message: "M011 P→Q eligibility test missing {missing}"
       - kind: file_contains
         path: crates/kutha-common/src/event.rs
         needles: ["claim"]
@@ -275,6 +281,12 @@ checks:
         require: all
         category: m011-s02
         message: "unknown-claim / lineage errors missing: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/quantum.rs
+        needles: ["derivation_eligible_at"]
+        require: all
+        category: m011-s03
+        message: "P→Q derivation eligibility oracle missing: {missing}"
 
   - id: h4-lease
     description: H4 delivery lease named without promoting ADR-090 L_map

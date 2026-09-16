@@ -34,7 +34,7 @@ Governor green ≠ ADR Accepted ≠ capability. Honeycomb **Proposed** ≠ deliv
 
 ## Current execution position
 
-Read `.kutha/STATE.md` first (lease, not SoT). **M011 is active** (`L_delivery=M011-S02-done`): portable `claim_id`, unknown-claim fail-closed, replay lineage on `caused_by`. Harness **H4** remains on. Do not start a legal pack. Do not start M002 Rocks until STATE names it. Further M011 slices (P→Q) need an explicit Active Slice lease.
+Read `.kutha/STATE.md` first (lease, not SoT). **M011 is active** (`L_delivery=M011-S03-done`): portable `claim_id`, unknown-claim fail-closed, replay lineage on `caused_by`, thin P→Q `derivation_eligible_at`. Harness **H4** remains on. Do not start a legal pack. Do not start M002 Rocks until STATE names it. Further M011 slices need an explicit Active Slice lease.
 
 Until explicit M002: do not add RocksDB, Cypher/GPML parser, HNSW, ADR-050 six dictionaries, ADR-080/081, full ADR-090/093 packs, ADR-100+, or Consensus Query 103+.
 

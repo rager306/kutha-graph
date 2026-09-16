@@ -371,6 +371,36 @@ impl Runtime {
         Ok(rebuilt)
     }
 
+    /// Thin P→Q oracle (M011 S03): a Behavior-derived claim is eligible at a cut
+    /// iff the derived fact is still live and its premise claim still has a live support.
+    /// `caused_by` may name any prior Assert/Behavior event; eligibility keys on that
+    /// event's claim identity, so withdrawing one of several supports does not drop Q.
+    pub fn derivation_eligible_at(
+        &self,
+        derived: EventId,
+        tt: u64,
+        vt: u64,
+    ) -> bool {
+        if !self.fold.claim_supported_at(derived, tt, vt) {
+            return false;
+        }
+        let Some(event) = self.log.iter().find(|e| e.id == derived) else {
+            return false;
+        };
+        let Op::Behavior { caused_by, .. } = &event.op else {
+            return false;
+        };
+        let Some(cause) = self.log.iter().find(|e| e.id == *caused_by) else {
+            return false;
+        };
+        let premise = match &cause.op {
+            Op::Assert { claim, .. } => claim.unwrap_or(cause.id),
+            Op::Behavior { .. } => cause.id,
+            Op::Retract { .. } | Op::Correct { .. } | Op::Define { .. } => return false,
+        };
+        self.fold.claim_supported_at(premise, tt, vt)
+    }
+
     #[cfg(test)]
     fn tamper_fold(&mut self) {
         self.fold.tamper_invalidate_first();

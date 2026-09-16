@@ -92,7 +92,7 @@ cells:
     capability: named
     depends_on: [ADR-000, ADR-010]
     locks: [D1, D2]
-    evidence: [ff6_unknown_relation_does_not_append, open_without_snapshot_or_terms_file_recovers_from_define_ops, intern_appends_define_for_new_terms_only, retracting_one_support_leaves_claim_supported, unknown_claim_does_not_append, replay_rejects_behavior_without_prior_cause]
+    evidence: [ff6_unknown_relation_does_not_append, open_without_snapshot_or_terms_file_recovers_from_define_ops, intern_appends_define_for_new_terms_only, retracting_one_support_leaves_claim_supported, unknown_claim_does_not_append, replay_rejects_behavior_without_prior_cause, derived_q_loses_eligibility_when_last_premise_support_withdrawn]
 
   - id: ADR-012
     axis: Time

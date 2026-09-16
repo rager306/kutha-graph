@@ -32,12 +32,14 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 ## M011: Claim / support identity — ACTIVE
 
-**Success:** two independent supports for one claim remain distinguishable; withdrawing one support does not erase the other at the same cut. Not full P→Q derivation; not M002; not ADR Accepted.
+**Success:** two independent supports for one claim remain distinguishable; withdrawing one support does not erase the other at the same cut. Thin P→Q: a Behavior-derived claim stays eligible while its premise claim has a live support. Not full provenance polynomials; not M002; not ADR Accepted.
 
 - [x] **S01: Portable claim_id on facts** `risk:high` `depends:[]`
   > After this: Assert may attach to an existing claim; retracting one support leaves the claim supported when another support is live; named test green.
 - [x] **S02: Unknown claim fail-closed + replay lineage** `risk:medium` `depends:[S01]`
   > After this: Assert onto a never-seen claim does not append; `replay_check` rejects Behavior whose `caused_by` is not an earlier log event.
+- [x] **S03: Thin P→Q derivation eligibility** `risk:medium` `depends:[S02]`
+  > After this: Behavior-derived `Q` is eligible at a cut iff its premise claim still has a live support; retracting one of two supports leaves `Q` eligible; retracting the last drops eligibility without erasing historical `Q`; named test green.
 
 ## Boundary map (M001)
 
@@ -76,6 +78,11 @@ Consumes: M010 recovery; existing Retract + `is_live_at`.
 Produces: fail-closed unknown claim; replay checks Behavior `caused_by` against prior event ids.  
 Consumes: S01 claim_id; ADR-060 obligation 2 (causal refs only, not execution replay).
 
+### M011 S02 → S03
+
+Produces: `derivation_eligible_at` oracle for Behavior-derived claims keyed on premise `claim_id`.  
+Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/architecture/semantic-contract-validation.md` (thinned).
+
 ## Harness dogfood (process plane, not M00x)
 
 - [x] **H0** — dictionary FSM + file trajectory.
@@ -86,7 +93,7 @@ Consumes: S01 claim_id; ADR-060 obligation 2 (causal refs only, not execution re
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M011 is active (S02 done; further slices need lease); M002+ stay frozen until leased.
+Do not start until STATE names them. M011 is active (S03 done; further slices need lease); M002+ stay frozen until leased.
 
 - **M002** — Rocks adapter behind the same events (persistence, not a second SoT).
 - **M003** — Cypher skin over the already-correct AS OF cut.

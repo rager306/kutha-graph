@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-16 — Product + Process: M011 S03 thin P→Q eligibility
+
+### Product
+
+- `Runtime::derivation_eligible_at`: Behavior-derived claim `Q` is eligible at a TT×VT cut iff `Q` is still live and its premise claim (from `caused_by`) still has a live support.
+- Named test `derived_q_loses_eligibility_when_last_premise_support_withdrawn`: two supports for `P`; retract one → `Q` stays eligible; retract last → eligibility drops; historical `Q` and earlier TT cut remain.
+
+### Process
+
+- Lease `L_delivery=M011-S03-done`. FSM observe + `m011-claim-supports` needles cover S03.
+
+### Trajectory
+
+- ADR-011 / semantic-contract-validation / honeycomb evidence record the thin oracle. Cells remain Proposed; full provenance polynomials and M002 freeze unchanged.
+
 ## 2026-09-16 — Process: session handoff after M011 S02
 
 ### Process
