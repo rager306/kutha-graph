@@ -1,0 +1,42 @@
+---
+description: CBM is the structural code graph; GitNexus is secondary; do not replace CE skills
+alwaysApply: true
+---
+
+# Code graph (codebase-memory-mcp)
+
+Structural code search uses **codebase-memory-mcp** (CBM). This is an evidence plane inside Compound Engineering (`ce-plan`, `ce-work`, `ce-debug`, `ce-code-review`). It does not replace those skills and is not product SoT, honeycomb ADR, or a governor check.
+
+Read `.cursor/skills/codebase-memory/SKILL.md` for tool matrix and Scout / Verify / Auditor tiers.
+
+## Primary vs secondary
+
+- **Primary:** CBM `list_projects`, `search_graph`, `trace_path`, `get_code_snippet`, `detect_changes`, `check_index_coverage`. Add `search_code` for literals or coverage gaps; `query_graph` / `get_architecture` only for Verify / Auditor.
+- **Grep / Glob:** literals, non-code text, YAML/docs, or ranges CBM flags as partial / skipped / stale.
+- **GitNexus:** secondary. Do not run GitNexus `query` / `impact` / `detect_changes` in parallel “just in case”. Use it only if the user asks or CBM cannot answer. Reindex GitNexus with `gitnexus analyze --index-only` (or a local `.gitnexusrc` with `skipAgentsMd` + `skipSkills`). Do not let analyze rewrite `AGENTS.md` or `CLAUDE.md`.
+
+## Compound Engineering map
+
+| Phase | CBM |
+|-------|-----|
+| `ce-plan` | Scout (provisional). Plans stay portable — symbols, files, risks; no MCP choreography. |
+| `ce-work` | Verify: graph + inbound `trace_path` or `detect_changes` before edits; `detect_changes` + `check_index_coverage` on touched paths after. |
+| `ce-debug` | `trace_path` / `search_graph`, then source. |
+| `ce-code-review` | `detect_changes` on the reviewed diff. |
+
+Do not patch CE plugin-cache `SKILL.md` files. Do not invent a parallel “kutha-cbm-work” protocol.
+
+## Index and forbidden tools
+
+- `list_projects` / `index_status` before first structural query in a session (or after compaction).
+- `index_repository` only if the project is missing, coverage freshness is `metadata_changed` / `not_tracked`, or the user asks to rebuild. Parent / integrator only.
+- Never `delete_project`.
+- Never `manage_adr` (Kutha ADRs live in `docs/ADR/`).
+- Do not `ingest_traces` unless the user asks.
+- Graph coverage ≠ governor green ≠ review approval.
+
+## Subagents (`Task`)
+
+Children do not inherit this rule. Every `Task` prompt that needs the code graph must say: use `codebase-memory-mcp`; `list_projects` first; graph before Grep for symbols; `check_index_coverage` on cited paths. A child without MCP must read source and must not claim graph verification.
+
+Cursor has no `codebase-memory-scout` Task type. Map Codex roles in `AGENTS.md`.

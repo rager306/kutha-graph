@@ -1,6 +1,9 @@
 # Local install artifact from codebase-memory-mcp
 /codebase-memory-mcp
 
+# Local GitNexus analyze defaults (skip AGENTS.md / CLAUDE.md / skills inject)
+.gitnexusrc
+
 # Rust
 /target/
 **/*.rs.bk

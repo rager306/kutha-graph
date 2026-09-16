@@ -20,5 +20,6 @@ The git user-rule is **safety only**: no force-push, no `--no-verify`, no commit
 | ревью, ревью кода, посмотри дифф | `ce-code-review` |
 | хэндофф, передай сессию | `ce-handoff` |
 | релиз, bump версии, GitHub Release, опубликуй релиз | `kutha-changelog` (refuse SemVer / tags / `gh release`) |
+| переиндексируй CBM, rebuild CBM, перестрой индекс CBM | not a CE skill — `.cursor/rules/code-graph-cbm.mdc` (`index_repository` only if missing, stale, or explicitly asked) |
 
 Do not edit plugin-cache `SKILL.md` files to add Russian keywords; they are overwritten on plugin update.

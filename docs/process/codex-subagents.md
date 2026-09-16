@@ -25,6 +25,8 @@ The cap excludes the primary agent; the runtime may impose a lower limit. Model 
 
 Keep ambiguous architecture, temporal truth changes, and difficult correctness reasoning with the parent or an explicitly assigned high-effort worker. Role files that set effort override spawn defaults; use a suitable available role when a different effort is necessary. If custom roles are unavailable, use built-in roles with the same task constraints.
 
+Cursor `Task` types do not use these Codex role names. Map briefs in `AGENTS.md` § Code graph (Cursor). Structural graph there is CBM; GitNexus stays secondary.
+
 ## Delegation contract
 
 Use parallel agents when the work is independently useful. One or two helpers are usually enough. Keep the critical path with the parent, avoid duplicate investigation, and reuse an existing helper for related follow-ups. Do not start additional work merely to occupy slots.

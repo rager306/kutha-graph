@@ -57,6 +57,7 @@ kutha-graph/
 ├── pyproject.toml                     # harness only: Python >=3.13, uv, kutha-gov
 ├── uv.lock
 ├── .python-version                    # 3.13
+├── .cursor/                           # Cursor MCP + rules + repo skills (CBM adapter)
 ├── .kutha/                            # harness pyramid (process plane)
 │   ├── STATE.md                       # lease: active milestone / lifecycles
 │   ├── ROADMAP.md                     # M001 slices; honeycomb is a map
@@ -137,6 +138,26 @@ Delegate bounded, independent work to subagents when it improves speed or confid
 - Assign disjoint file ownership. Keep product and harness responsibilities explicit, including any cross-plane contract. Workers share the workspace and must preserve other edits. Only the designated integrator changes shared lockfiles, process events, tenant data, or graph indexes, and runs `uv run kutha-gov ci` when required by the task.
 - Use up to three helpers, subject to the runtime limit; reuse helpers for related follow-ups. Do not recursively delegate by default. Coordinate cargo/uv checks that share output directories.
 - Require changed paths or evidence locations, check results, and limitations in each handoff. The parent validates the combined result; graph coverage, review approval, and governor green retain their distinct meanings.
+
+## Code graph (Cursor)
+
+CBM (`codebase-memory-mcp`) is the **structural code-graph evidence plane** for Cursor. It is harness/tooling, not product SoT and not a honeycomb ADR. Tool matrix and tiers: `.cursor/skills/codebase-memory/SKILL.md`. Always-on adapter: `.cursor/rules/code-graph-cbm.mdc`. Project MCP: `.cursor/mcp.json` (`command`: `codebase-memory-mcp` on `PATH`, not a machine-local absolute path). Approvals stay machine-local.
+
+Do not dump the MCP catalog here. Do not call every CBM tool on every prompt. Do not replace Compound Engineering skills with a CBM protocol. `delete_project` and CBM `manage_adr` are forbidden (`docs/ADR/` owns ADRs). Only the parent/integrator runs `index_repository`. Graph coverage ≠ governor green.
+
+**GitNexus is secondary.** Do not dual-query GitNexus and CBM. `gitnexus analyze` must not rewrite `AGENTS.md` / `CLAUDE.md` or reinstall skills: local gitignored `.gitnexusrc` (`skipAgentsMd` + `skipSkills`) or `gitnexus analyze --index-only`.
+
+Cursor has no Codex Task types named `codebase-memory-scout`. Map briefs:
+
+| Codex role (`docs/process/codex-subagents.md`) | Cursor `Task` |
+|------------------------------------------------|---------------|
+| `codebase-memory-scout` | `explore` (narrow, composer-class) |
+| `codebase-memory` (verify) | `generalPurpose` (heavier model when the graph span is large) |
+| `codebase-memory-auditor` | `generalPurpose` (bounded audit brief; heavier model) |
+| `implementation-worker` | `generalPurpose` or `implementation-worker` if present — owned files only |
+| `correctness-reviewer` | `code-reviewer` (stable diff; not a CBM auditor) |
+
+Every `Task` prompt that needs the graph must name `codebase-memory-mcp`; children do not inherit Cursor rules. If a helper has no MCP, it reads source and must not claim graph verification.
 
 ## Research notes (agent memory)
 
