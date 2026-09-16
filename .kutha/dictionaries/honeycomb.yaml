@@ -270,7 +270,7 @@ cells:
     capability: none
     depends_on: [ADR-000, ADR-010, ADR-014]
     locks: [D9]
-    evidence: []
+    evidence: [replay_rejects_behavior_without_prior_cause]
 
   - id: ADR-061
     axis: Verify
