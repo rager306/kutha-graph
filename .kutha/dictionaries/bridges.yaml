@@ -37,6 +37,6 @@ bridges:
     check: m010-semantic-open
 
   - id: B-m011-claim-supports
-    claim: "Independent supports share claim_id; retracting one leaves the other"
+    claim: "Independent supports share claim_id; unknown claim and dangling caused_by fail closed"
     cites: "crates/kutha-runtime/tests/m011_claim_supports.rs"
     check: m011-claim-supports

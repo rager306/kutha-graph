@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-16 — Product + Process: M011 S02 unknown claim and replay lineage
+
+### Product
+
+- `emit` rejects `Assert.claim` that never appeared as `Fact.claim_id` (`UnknownClaim`; log does not grow).
+- `replay_check` rejects `Behavior.caused_by` that is not an earlier event id (`BrokenLineage`). Named tests `unknown_claim_does_not_append`, `replay_rejects_behavior_without_prior_cause`.
+
+### Process
+
+- Lease `L_delivery=M011-S02-done`. FSM observe + `m011-claim-supports` needles cover S02.
+
+### Trajectory
+
+- ADR-060 / semantic-contract-validation record causal-ref check. Cells remain Proposed; M002 freeze unchanged.
+
 ## 2026-09-16 — Product + Process: M011 S01 independent claim supports
 
 ### Product

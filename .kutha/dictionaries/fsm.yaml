@@ -38,6 +38,8 @@ states:
       - open_without_snapshot_or_terms_file_recovers_from_define_ops
       - intern_appends_define_for_new_terms_only
       - retracting_one_support_leaves_claim_supported
+      - unknown_claim_does_not_append
+      - replay_rejects_behavior_without_prior_cause
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant

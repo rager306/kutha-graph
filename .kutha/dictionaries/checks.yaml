@@ -243,7 +243,7 @@ checks:
         message: "store persist/open missing terms.jsonl retention: {missing}"
 
   - id: m011-claim-supports
-    description: M011 — independent supports share claim_id; retract one leaves the other
+    description: M011 — independent supports; unknown claim fail-closed; replay lineage
     steps:
       - kind: file_contains
         path: crates/kutha-runtime/tests/m011_claim_supports.rs
@@ -251,6 +251,12 @@ checks:
         require: all
         category: m011-s01
         message: "M011 claim-support test missing {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/tests/m011_claim_supports.rs
+        needles: ["fn unknown_claim_does_not_append", "fn replay_rejects_behavior_without_prior_cause"]
+        require: all
+        category: m011-s02
+        message: "M011 claim lineage tests missing {missing}"
       - kind: file_contains
         path: crates/kutha-common/src/event.rs
         needles: ["claim"]
@@ -263,6 +269,12 @@ checks:
         require: all
         category: m011-s01
         message: "claim support fold helpers missing: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/quantum.rs
+        needles: ["UnknownClaim", "BrokenLineage"]
+        require: all
+        category: m011-s02
+        message: "unknown-claim / lineage errors missing: {missing}"
 
   - id: h4-lease
     description: H4 delivery lease named without promoting ADR-090 L_map

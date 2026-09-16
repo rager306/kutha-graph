@@ -36,6 +36,8 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 - [x] **S01: Portable claim_id on facts** `risk:high` `depends:[]`
   > After this: Assert may attach to an existing claim; retracting one support leaves the claim supported when another support is live; named test green.
+- [x] **S02: Unknown claim fail-closed + replay lineage** `risk:medium` `depends:[S01]`
+  > After this: Assert onto a never-seen claim does not append; `replay_check` rejects Behavior whose `caused_by` is not an earlier log event.
 
 ## Boundary map (M001)
 
@@ -69,6 +71,11 @@ Consumes: S02 Op::Define schema; fold no-op; encoded_log still synthesizes durab
 Produces: `Fact.claim_id` + optional Assert.claim; live support queries.  
 Consumes: M010 recovery; existing Retract + `is_live_at`.
 
+### M011 S01 → S02
+
+Produces: fail-closed unknown claim; replay checks Behavior `caused_by` against prior event ids.  
+Consumes: S01 claim_id; ADR-060 obligation 2 (causal refs only, not execution replay).
+
 ## Harness dogfood (process plane, not M00x)
 
 - [x] **H0** — dictionary FSM + file trajectory.
@@ -79,7 +86,7 @@ Consumes: M010 recovery; existing Retract + `is_live_at`.
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M011 is active (S01 done; further slices need lease); M002+ stay frozen until leased.
+Do not start until STATE names them. M011 is active (S02 done; further slices need lease); M002+ stay frozen until leased.
 
 - **M002** — Rocks adapter behind the same events (persistence, not a second SoT).
 - **M003** — Cypher skin over the already-correct AS OF cut.

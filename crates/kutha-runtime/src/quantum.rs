@@ -4,7 +4,7 @@ use crate::fold::GraphFold;
 use crate::log::EventLog;
 use crate::receipt::QuantumReceipt;
 use crate::snapshot::Snapshot;
-use kutha_common::{Event, Op, TermDictionary, TermId};
+use kutha_common::{Event, EventId, Op, TermDictionary, TermId};
 use std::collections::HashSet;
 use std::fmt;
 
@@ -20,6 +20,12 @@ pub enum RuntimeError {
     UnknownRelation {
         name: String,
     },
+    UnknownClaim {
+        claim: EventId,
+    },
+    BrokenLineage {
+        caused_by: EventId,
+    },
 }
 
 impl fmt::Display for RuntimeError {
@@ -29,6 +35,10 @@ impl fmt::Display for RuntimeError {
             RuntimeError::UnknownFact { fact_seq } => write!(f, "unknown fact {fact_seq}"),
             RuntimeError::UnknownRelation { name } => {
                 write!(f, "unknown relation {name} (not in allowlist)")
+            }
+            RuntimeError::UnknownClaim { claim } => write!(f, "unknown claim {claim}"),
+            RuntimeError::BrokenLineage { caused_by } => {
+                write!(f, "broken lineage caused_by={caused_by}")
             }
         }
     }
@@ -247,6 +257,19 @@ impl Runtime {
         })
     }
 
+    fn admit_claim(&self, op: &Op) -> Result<(), RuntimeError> {
+        let Op::Assert {
+            claim: Some(claim), ..
+        } = op
+        else {
+            return Ok(());
+        };
+        if self.fold.facts().iter().any(|f| f.claim_id == *claim) {
+            return Ok(());
+        }
+        Err(RuntimeError::UnknownClaim { claim: *claim })
+    }
+
     /// Admit a user op, append, fold, cascade inverse-`knows` until idle or budget.
     pub fn emit(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
         if let Op::Retract { fact_seq } | Op::Correct { fact_seq, .. } = &op {
@@ -257,6 +280,7 @@ impl Runtime {
             }
         }
         self.admit(&op)?;
+        self.admit_claim(&op)?;
         let first = Event::new(op, self.next_tt());
         for follow in self.follow_ons(&first) {
             self.admit(&follow.op)?;
@@ -332,6 +356,17 @@ impl Runtime {
         let actual = rebuilt.fingerprint();
         if expected != actual {
             return Err(RuntimeError::ReplayDivergence { expected, actual });
+        }
+        let mut seen = HashSet::new();
+        for e in self.log.iter() {
+            if let Op::Behavior { caused_by, .. } = &e.op {
+                if !seen.contains(caused_by) {
+                    return Err(RuntimeError::BrokenLineage {
+                        caused_by: *caused_by,
+                    });
+                }
+            }
+            seen.insert(e.id);
         }
         Ok(rebuilt)
     }

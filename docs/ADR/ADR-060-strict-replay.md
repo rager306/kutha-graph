@@ -45,7 +45,7 @@ R3-style “what if this behavior were different” over a recorded cut belongs 
 2. **Provenance/integrity verification:** validate event references, dependency links, input digests, and quantum outcomes. Mutating a cause while keeping the triple unchanged must not pass this check.
 3. **Execution replay:** reproduce derivations with pinned code/rules, policy versions, input cuts, cached observations, and controlled nondeterminism. Declare which IDs/timestamps are recorded inputs and which fields are compared; never assume fresh UUIDs or signatures reproduce byte-for-byte.
 
-`Runtime::replay_check` currently checks a fold fingerprint. It does not rerun behaviors or compare causal links and receipts. The existing passing check proves neither obligations 2/3 nor lease-independent semantic recovery. An explicit unavailable outcome for missing code/cache/history is a **proposed** obligation 2/3 requirement, not current behavior: today's API returns `Ok(rebuilt)` or `RuntimeError::ReplayDivergence` (and I/O errors from `store::open`), with no unavailable verification variant.
+`Runtime::replay_check` currently checks a fold fingerprint **and** that every `Op::Behavior.caused_by` names an earlier event in the same log (M011 S02). It still does not rerun behaviors or compare receipts. The passing check does not prove execution-replay obligation 3. An explicit unavailable outcome for missing code/cache/history remains a **proposed** requirement: today's API returns `Ok(rebuilt)` or `RuntimeError::ReplayDivergence` / `BrokenLineage` (and I/O errors from `store::open`).
 
 **Hard separations:**
 
