@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-16 — Process: session handoff after M011 S02
+
+### Process
+
+- Durable handoff at `.compound-engineering/artifacts/handoffs/m011-s02-cbm-mcp.md`. Project `.cursor/mcp.json` points Cursor at local `codebase-memory-mcp` stdio (agent sessions were missing user MCP servers).
+
 ## 2026-09-16 — Product + Process: M011 S02 unknown claim and replay lineage
 
 ### Product
