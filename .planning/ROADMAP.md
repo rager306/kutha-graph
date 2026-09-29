@@ -48,10 +48,11 @@ Full detail: [milestones/v0.01-ROADMAP.md](./milestones/v0.01-ROADMAP.md) · req
   3. This slice ships a named cargo test registered in the governor (FSM observe + check needle), and `uv run kutha-gov ci` stays at 0 HIGH (GATE-01; the same named-test pattern applies to every later slice)
   4. This phase executes only while S04 is the Active Slice (GATE-02 applies; S04 is currently leased)
   5. Freeze items stay unstarted and honeycomb cells stay Proposed (GATE-03 applies)
-**Plans**: 3 plans
+
+**Plans**: 1/3 plans executed
 
 Plans:
-- [ ] 04-01-PLAN.md — Explicit interval-patch tracer: residuals at VT 2012/2021 (CORR-01)
+- [x] 04-01-PLAN.md — Explicit interval-patch tracer: residuals at VT 2012/2021 (CORR-01)
 - [ ] 04-02-PLAN.md — Whole-version Correct leaves no implicit residuals (CORR-02)
 - [ ] 04-03-PLAN.md — Governor GATE-01 registration, changelog Process, ci HIGH-free
 
@@ -66,6 +67,7 @@ Plans:
   2. After a crash following a committed prefix, reopening the log shows no terminal-success record; resume is an explicit record, never inferred (OUT-02)
   3. A named cargo test is registered in the governor and `uv run kutha-gov ci` stays at 0 HIGH (GATE-01 applies)
   4. This phase executes only while S05 is the Active Slice; until then it is planning-only (GATE-02 applies). Freeze items stay unstarted and honeycomb cells stay Proposed (GATE-03 applies)
+
 **Plans**: TBD
 
 ### Phase 6: Typed CSR lease
@@ -79,6 +81,7 @@ Plans:
   2. The untyped neighbor-set path stays available, and the FF5 lease-agrees-with-fold check stays green (CSR-02)
   3. A named cargo test is registered in the governor and `uv run kutha-gov ci` stays at 0 HIGH (GATE-01 applies)
   4. This phase executes only while S06 is the Active Slice; until then it is planning-only (GATE-02 applies). Freeze items stay unstarted and honeycomb cells stay Proposed (GATE-03 applies)
+
 **Plans**: TBD
 
 ### Phase 7: Provenance and rule-version check
@@ -92,6 +95,7 @@ Plans:
   2. Verification detects a change to only a pinned rule version the same way; execution replay is not required (PROV-02)
   3. A named cargo test is registered in the governor and `uv run kutha-gov ci` stays at 0 HIGH (GATE-01 applies)
   4. This phase executes only while S07 is the Active Slice; until then it is planning-only (GATE-02 applies). Freeze items stay unstarted and honeycomb cells stay Proposed (GATE-03 applies)
+
 **Plans**: TBD
 
 ### Phase 8: End-to-end candidate fixture
@@ -106,6 +110,7 @@ Plans:
   3. Incremental maintenance and clean reconstruction agree on values, active supports, and completeness; discarding CSR and snapshots changes no answer (FIX-03)
   4. Each slice's GSD phase executed only while that slice was the Active Slice; otherwise it stayed planning-only (GATE-02). Named cargo tests and `uv run kutha-gov ci` at 0 HIGH still apply (GATE-01 applies)
   5. Freeze items stay unstarted and honeycomb cells stay Proposed; any ADR Accepted decision is a separate review at milestone close (GATE-03)
+
 **Plans**: TBD
 
 ## Progress
@@ -115,7 +120,7 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8. Phases 5–8 remain 
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 4. Partial correction with residual intervals | 0/3 | Planned | - |
+| 4. Partial correction with residual intervals | 1/3 | In Progress|  |
 | 5. Persisted quantum outcome | 0/TBD | Not started (lease-gated) | - |
 | 6. Typed CSR lease | 0/TBD | Not started (lease-gated) | - |
 | 7. Provenance and rule-version check | 0/TBD | Not started (lease-gated) | - |
