@@ -11,11 +11,11 @@ Requirements for this GSD overlay. Each maps to exactly one roadmap phase.
 
 ### Fitness (L_capability)
 
-- [ ] **FIT-01**: On the statute-shaped fixture, `as_of(2015)` and `as_of(2021)` yield different live triples (FF5; `ff5_as_of_t1_differs_from_as_of_t2_on_statute_log`)
-- [ ] **FIT-02**: An emit with an unknown product relation does not append (FF6; `ff6_unknown_relation_does_not_append`)
-- [ ] **FIT-03**: Opening a persisted log without `snapshot.json` restores intern meanings from retained history (M010; including Define-op recovery and live intern `Op::Define`)
-- [ ] **FIT-04**: Independent supports share `claim_id`; withdrawing one leaves the claim supported; unknown claim does not append; replay rejects Behavior whose `caused_by` is not a prior event; derived Q loses eligibility when the last premise support is withdrawn (M011 S01–S03)
-- [ ] **FIT-05**: H2 tenant ingest: harness status AS OF two process cuts differs, and same-second statuses use the emitted cut. H4: a prior tenant cut still shows process-relation membership after a later edition drops it. Not a legal pack and not ADR-090 ontology
+- [x] **FIT-01**: On the statute-shaped fixture, `as_of(2015)` and `as_of(2021)` yield different live triples (FF5; `ff5_as_of_t1_differs_from_as_of_t2_on_statute_log`)
+- [x] **FIT-02**: An emit with an unknown product relation does not append (FF6; `ff6_unknown_relation_does_not_append`)
+- [x] **FIT-03**: Opening a persisted log without `snapshot.json` restores intern meanings from retained history (M010; including Define-op recovery and live intern `Op::Define`)
+- [x] **FIT-04**: Independent supports share `claim_id`; withdrawing one leaves the claim supported; unknown claim does not append; replay rejects Behavior whose `caused_by` is not a prior event; derived Q loses eligibility when the last premise support is withdrawn (M011 S01–S03)
+- [x] **FIT-05**: H2 tenant ingest: harness status AS OF two process cuts differs, and same-second statuses use the emitted cut. H4: a prior tenant cut still shows process-relation membership after a later edition drops it. Not a legal pack and not ADR-090 ontology
 
 ### Governor honesty
 
