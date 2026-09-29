@@ -89,11 +89,11 @@ Which phases cover which requirements. Populated at roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FIT-01 | Phase 1 | Pending |
-| FIT-02 | Phase 1 | Pending |
-| FIT-03 | Phase 1 | Pending |
-| FIT-04 | Phase 1 | Pending |
-| FIT-05 | Phase 1 | Pending |
+| FIT-01 | Phase 1 | Complete |
+| FIT-02 | Phase 1 | Complete |
+| FIT-03 | Phase 1 | Complete |
+| FIT-04 | Phase 1 | Complete |
+| FIT-05 | Phase 1 | Complete |
 | GOV-01 | Phase 2 | Pending |
 | GOV-02 | Phase 2 | Pending |
 | PLANE-01 | Phase 2 | Pending |
