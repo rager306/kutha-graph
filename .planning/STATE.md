@@ -2,17 +2,17 @@
 gsd_state_version: "1.0"
 current_phase: 3
 current_phase_name: Lease-gated next slice
-current_plan: Not started
-status: planning
-stopped_at: Phase 3 RESEARCH complete — ready to plan
+current_plan: 03-01
+status: ready to execute
+stopped_at: Phase 3 plans written — ready to execute
 last_updated: "2026-09-29T11:00:00.000Z"
 last_activity: 2026-09-29
-last_activity_desc: Phase 3 research complete — GOV-03/NEXT negative-proof probes; ready to plan
+last_activity_desc: Phase 3 PLAN.md written (03-01…03-03); verification-only lease gate
 state_head: b15f514
 progress:
   total_phases: 3
   completed_phases: 2
-  total_plans: 6
+  total_plans: 9
   completed_plans: 6
   percent: 67
 ---
@@ -33,10 +33,10 @@ See: `.planning/PROJECT.md` (updated 2026-09-29)
 ## Current Position
 
 Phase: 3 — Lease-gated next slice
-Current Plan: Not started
+Current Plan: 03-01 (not started)
 Total Plans in Phase: 3
-Status: Ready to plan (RESEARCH done)
-Last activity: 2026-09-29 — Phase 3 RESEARCH complete (03-RESEARCH.md)
+Status: Ready to execute (PLAN.md written)
+Last activity: 2026-09-29 — Phase 3 plans 03-01…03-03 written
 
 Progress: [███████░░░] 67%
 
@@ -114,4 +114,4 @@ None yet.
 Last session: 2026-09-29T08:21:55.560Z
 Stopped at: Phase 2 complete, ready to plan Phase 3
 Resume file: None
-Next: Phase 3 (lease-gated next slice) only under Active Slice lease — do not thaw freeze / assume M002
+Next: `/gsd-execute-phase 3` — verification-only GOV-03/NEXT under Active Slice None (D-L1); do not thaw freeze / assume M002
