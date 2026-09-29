@@ -42,5 +42,6 @@ Twelve rows align to `fsm.yaml` `states.observe_cargo.required` (exact fn name s
 ## Notes
 
 - Tracer plan 01-01: hard gate observed end-to-end; cells remain `pending` for wave 2 evidence paint (D-04).
+- Diagnostic (not a substitute gate): `cargo test --workspace --offline -- --list` — all twelve evidence-map fn names present (≥12 matches).
 - Do not treat `uv run kutha-gov ci` as Phase 1 hard gate (D-03).
 - Do not use cargo `--test` / `--exact` filters as the acceptance gate (D-01).

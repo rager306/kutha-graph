@@ -3,7 +3,7 @@ phase: "01"
 slug: "legal-pit-fitness"
 status: draft
 nyquist_compliant: false
-wave_0_complete: false
+wave_0_complete: true
 created: "2026-09-29"
 ---
 
@@ -46,7 +46,7 @@ created: "2026-09-29"
 | 01-03-01 | 01-03 | 3 | FIT-01…05 | T-01-09 | REQUIREMENTS FIT [x] batch | docs | grep FIT [x] count == 5 | ✅ | ⬜ pending |
 | 01-03-02 | 01-03 | 3 | FIT-01…05 | T-01-11 | STATE/ROADMAP/SUMMARY closeout | docs | STATE Phase 1 + no `.kutha/STATE.md` diff | ✅ | ⬜ pending |
 
-*Planner fills concrete Task IDs. Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
+*Task IDs filled by plan 01-01 (`01-01-01`…`01-03-02`). Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky — leave pending until later plans paint.*
 
 ---
 
