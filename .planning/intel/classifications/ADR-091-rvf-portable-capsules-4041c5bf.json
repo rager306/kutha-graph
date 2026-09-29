@@ -1,0 +1,30 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-091-rvf-portable-capsules.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-091: RVF Portable Capsules",
+  "summary": "Proposes RVF as sealed portable transport for fold slices, not hot event-log SoT; witness may embed ADR-014 receipts.",
+  "scope": [
+    "RVF capsules",
+    "portable packaging",
+    "export/import",
+    "WitnessChain",
+    "RuVector COW freeze",
+    "ADR-014 constant-size evidence",
+    "graph fork export"
+  ],
+  "cross_refs": [
+    "ADR-000",
+    "ADR-012",
+    "ADR-014",
+    "ADR-061",
+    "ADR-090",
+    "ADR-093",
+    "STRATEGY",
+    ".compound-engineering/artifacts/research/applicability/cards/ruvector-rvf-cow-seal.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-constant-size-evidence.md"
+  ],
+  "locked": false,
+  "precedence": null
+}

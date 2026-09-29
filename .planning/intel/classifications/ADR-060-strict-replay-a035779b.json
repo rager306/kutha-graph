@@ -1,0 +1,34 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-060-strict-replay.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-060: Strict Replay",
+  "summary": "Proposes strict semantic replay via fold-from-log, three verification obligations, and separation from WAL recovery.",
+  "scope": [
+    "strict replay",
+    "semantic replay",
+    "D9",
+    "ReplayDivergenceError",
+    "fold-from-log",
+    "WAL recovery",
+    "execution replay",
+    "provenance verification",
+    "content-addressed cache",
+    "Runtime::replay_check"
+  ],
+  "cross_refs": [
+    "ADR-000",
+    "ADR-010",
+    "ADR-011",
+    "ADR-012",
+    "ADR-014",
+    "ADR-061",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-activegraph-log-is-sot.md",
+    ".compound-engineering/artifacts/research/applicability/cards/rocksdb-wal-recovery.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-r3-record-replay-retroaction.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-yankin-event-sourced-query.md"
+  ],
+  "locked": false,
+  "precedence": null
+}

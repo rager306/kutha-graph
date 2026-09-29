@@ -1,0 +1,31 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-071-hybrid-retrieval-composition.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-071: Hybrid Retrieval Composition",
+  "summary": "Proposes named hybrid retrieve operators (keyword, BM25+dense, ANN) as leases distinct from exact MATCH, composed via ADR-042/043.",
+  "scope": [
+    "hybrid retrieval",
+    "exact MATCH",
+    "BM25+dense fusion",
+    "keyword connecting trees",
+    "HNSW",
+    "planner composition",
+    "community detection lease",
+    "ANN kNN"
+  ],
+  "cross_refs": [
+    ".compound-engineering/artifacts/research/applicability/cards/ruvector-hybrid-bm25-dense.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-keyword-search-graphs.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-mixed-vector-relational-access.md",
+    "ADR-042",
+    "ADR-043",
+    "ADR-070",
+    "ADR-052",
+    "ADR-080"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

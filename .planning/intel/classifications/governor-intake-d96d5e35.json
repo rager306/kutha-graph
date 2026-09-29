@@ -1,0 +1,32 @@
+{
+  "source_path": "/root/kutha-graph/docs/process/governor-intake.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Governor intake (control loop → check)",
+  "summary": "Harness process runbook for intake of control-loop and bridge claims into governor YAML ledgers; explicitly not an ADR.",
+  "scope": [
+    "governor intake",
+    "control loop",
+    "invariants.yaml",
+    "bridges.yaml",
+    "honeycomb.yaml",
+    "checks.yaml",
+    "kutha-gov",
+    "harness plane"
+  ],
+  "cross_refs": [
+    ".kutha/META.md",
+    ".kutha/dictionaries/invariants.yaml",
+    ".kutha/dictionaries/bridges.yaml",
+    ".kutha/dictionaries/honeycomb.yaml",
+    ".kutha/dictionaries/checks.yaml",
+    "docs/ADR/",
+    "scripts/kutha_gov/checks/*.py",
+    "kinds.py",
+    "CHANGELOG"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

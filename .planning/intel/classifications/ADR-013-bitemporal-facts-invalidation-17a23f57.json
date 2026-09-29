@@ -1,0 +1,37 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-013-bitemporal-facts-invalidation.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-013: Bi-temporal Facts & Invalidation",
+  "summary": "Proposed bi-temporal VT×TT fact semantics, typed invalidation, deterministic supersession, and interval index leases without Graphiti runtime.",
+  "scope": [
+    "bitemporal facts",
+    "valid-time",
+    "transaction-time",
+    "invalidation",
+    "supersession",
+    "interval index",
+    "TOKI contradiction operators",
+    "GraphFold live_at/as_of"
+  ],
+  "cross_refs": [
+    "ADR-000",
+    "ADR-010",
+    "ADR-011",
+    "ADR-012",
+    "ADR-043",
+    "ADR-050",
+    "ADR-070",
+    "ADR-090",
+    "ADR-051",
+    "ADR-093",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-toki-contradiction-ops.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-memstrata-stale-fact.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-tgql-intervals.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-temporal-interval-index.md",
+    "crates/kutha-runtime/tests/ff5_legal_pit.rs"
+  ],
+  "locked": false,
+  "precedence": null
+}

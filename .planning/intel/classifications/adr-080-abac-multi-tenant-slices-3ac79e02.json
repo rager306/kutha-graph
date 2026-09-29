@@ -1,0 +1,28 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-080-abac-multi-tenant-slices.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-080: ABAC & Multi-Tenant Slices",
+  "summary": "Proposed security cell: path-ABAC on GPML IR, bi-temporal grant facts, tenant slices, and vacuum or hold authority.",
+  "scope": ["ABAC", "multi-tenant slices", "GPML IR", "grants", "ReBAC", "vacuum", "legal hold", "query rewrite"],
+  "cross_refs": [
+    "ADR-000",
+    "ADR-012",
+    "ADR-013",
+    "ADR-014",
+    "ADR-050",
+    "ADR-051",
+    "ADR-070",
+    "ADR-071",
+    "ADR-081",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-xacml4g-path-abac.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-temporal-grants-as-facts.md",
+    ".compound-engineering/artifacts/research/applicability/cards/oxify-zanzibar-rebac.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-graph-tenant-isolation.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-event-log-vacuum-legal-hold.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

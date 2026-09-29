@@ -1,0 +1,36 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-022-vertical-slice-module-conventions.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-022: Vertical-Slice Module Conventions",
+  "summary": "Proposed conventions for vertical-slice pack crates: internal hexagon, Port and log-only communication, named-graph compile scope.",
+  "scope": [
+    "vertical slice",
+    "hexagon",
+    "Ports",
+    "event log",
+    "named graphs",
+    "pack crates",
+    "kutha-common",
+    "materializers",
+    "WorldDB",
+    "tenant quotas"
+  ],
+  "cross_refs": [
+    "ADR-002",
+    "ADR-020",
+    "ADR-021",
+    "ADR-090",
+    "ADR-093",
+    "ADR-010",
+    "ADR-080",
+    "ADR-070",
+    "STRATEGY",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-worlddb-worlds-edge-programs.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-named-graphs-rdf-dataset.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

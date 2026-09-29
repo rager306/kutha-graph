@@ -1,0 +1,31 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-051-capability-security.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-051: Capability Security",
+  "summary": "Proposes unforgeable capability references as the agent security kernel for validate, separate from ACL, path-ABAC, and WASM.",
+  "scope": [
+    "capability security",
+    "agent validate kernel",
+    "ADR-050",
+    "PACT argument provenance",
+    "operator allow-list",
+    "grant/revoke events",
+    "confused deputy"
+  ],
+  "cross_refs": [
+    "ADR-000",
+    "ADR-050",
+    "ADR-080",
+    "ADR-081",
+    "ADR-011",
+    "ADR-014",
+    "ADR-013",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-object-capabilities.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-pact-argument-provenance.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-mas-isolation-lattice.md"
+  ],
+  "locked": false,
+  "precedence": null
+}

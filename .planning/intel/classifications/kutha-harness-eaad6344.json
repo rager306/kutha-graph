@@ -1,0 +1,42 @@
+{
+  "source_path": "/root/kutha-graph/docs/process/kutha-harness.md",
+  "type": "DOC",
+  "confidence": "medium",
+  "manifest_override": false,
+  "title": "Kutha harness (parallel control plane)",
+  "summary": "Process contract for the parallel Kutha harness: lifecycles, H0–H4 dogfood, STCA mapping, and kutha-gov CLI behavior.",
+  "scope": [
+    "kutha-gov",
+    "harness",
+    "L_map",
+    "L_delivery",
+    "L_capability",
+    "dogfood ladder",
+    "process JSONL",
+    "kutha-tenant",
+    "STCA",
+    "dictionaries"
+  ],
+  "cross_refs": [
+    ".kutha/STATE.md",
+    ".kutha/ROADMAP.md",
+    "scripts/kutha_gov/",
+    "docs/architecture/stca-guide.md",
+    "docs/ADR/*.md",
+    "docs/process/governor-intake.md",
+    ".kutha/META.md",
+    ".kutha/dictionaries/fsm.yaml",
+    ".kutha/dictionaries/relations.yaml",
+    ".kutha/dictionaries/invariants.yaml",
+    ".kutha/dictionaries/bridges.yaml",
+    ".kutha/dictionaries/honeycomb.yaml",
+    ".kutha/dictionaries/checks.yaml",
+    "crates/kutha-runtime/dictionaries/relations.yaml",
+    ".pre-commit-config.yaml",
+    ".env.example",
+    ".python-version"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": "Explicitly not an ADR (line 3). Strong SPEC-like Op/FSM/CLI contracts embedded in a process guide; dominant framing → DOC."
+}

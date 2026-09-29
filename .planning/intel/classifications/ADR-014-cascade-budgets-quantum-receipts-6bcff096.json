@@ -1,0 +1,37 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-014-cascade-budgets-quantum-receipts.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-014: Cascade Budgets & Quantum Receipts",
+  "summary": "Proposes constant-size quantum receipts and max-convolution budget envelopes for emit→idle; optional anchors, log remains SoT.",
+  "scope": [
+    "quantum receipts",
+    "cascade budgets",
+    "max-convolution",
+    "emit→idle",
+    "Merkle anchors",
+    "retrieval receipts",
+    "meta-prompt versioning"
+  ],
+  "cross_refs": [
+    "ADR-000",
+    "ADR-002",
+    "ADR-010",
+    "ADR-011",
+    "ADR-030",
+    "ADR-031",
+    "ADR-040",
+    "ADR-050",
+    "ADR-062",
+    "ADR-071",
+    "ADR-091",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-max-convolution-budgets.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-constant-size-evidence.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-query-admission-control.md",
+    ".compound-engineering/artifacts/research/ruvector-plugin-adaptation.md",
+    "STRATEGY"
+  ],
+  "locked": false,
+  "precedence": null
+}

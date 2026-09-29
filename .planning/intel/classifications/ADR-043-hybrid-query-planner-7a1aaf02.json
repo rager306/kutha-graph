@@ -1,0 +1,34 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-043-hybrid-query-planner.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-043: Hybrid Query Planner",
+  "summary": "Proposes a hybrid query planner as a compiler over leases, coordinating indexes with cardinality estimates—not LLM or new join algorithms.",
+  "scope": [
+    "hybrid query planner",
+    "leases",
+    "LFTJ",
+    "HNSW",
+    "cardinality estimation",
+    "index collection",
+    "exact MATCH"
+  ],
+  "cross_refs": [
+    "ADR-013",
+    "ADR-014",
+    "ADR-040",
+    "ADR-041",
+    "ADR-042",
+    "ADR-050",
+    "ADR-070",
+    "ADR-071",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-mixed-vector-relational-access.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-compass-cooperative-hybrid.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-graph-cardinality-estimation.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-sieve-index-collection.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

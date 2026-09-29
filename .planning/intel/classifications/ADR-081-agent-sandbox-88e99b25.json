@@ -1,0 +1,30 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-081-agent-sandbox.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-081: Agent Sandbox",
+  "summary": "Proposes WASM/SFI sandbox for pack UDFs with capability-limited WASI; trusted in-process Cypher/GPML compilation.",
+  "scope": [
+    "agent sandbox",
+    "WASM",
+    "SFI",
+    "pack UDFs",
+    "WASI",
+    "capabilities",
+    "shared-memory CSR views",
+    "Security",
+    "Composition"
+  ],
+  "cross_refs": [
+    "ADR-051",
+    "ADR-052",
+    "ADR-021",
+    "ADR-010",
+    "ADR-080",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-wasm-udf-sandbox.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-object-capabilities.md"
+  ],
+  "locked": false,
+  "precedence": null
+}

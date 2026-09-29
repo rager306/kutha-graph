@@ -1,0 +1,38 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-010-event-log-runtime-quantum.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-010: Event Log & Reactive Runtime Quantum",
+  "summary": "Proposes log-as-SoT, emit-to-idle runtime quantum, typed TGMS writes, and hard separation of semantic replay from storage WAL.",
+  "scope": [
+    "event log",
+    "runtime quantum",
+    "deterministic fold",
+    "WAL recovery",
+    "TGMS operators",
+    "behaviors",
+    "droppable leases"
+  ],
+  "cross_refs": [
+    "ADR-000",
+    "ADR-001",
+    "ADR-002",
+    "ADR-011",
+    "ADR-012",
+    "ADR-013",
+    "ADR-014",
+    "ADR-040",
+    "ADR-050",
+    "ADR-060/061",
+    "ADR-062",
+    "ADR-070",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-activegraph-log-is-sot.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-yankin-event-sourced-query.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-tgms-operators.md",
+    ".compound-engineering/artifacts/research/applicability/cards/rocksdb-wal-recovery.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

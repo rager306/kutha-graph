@@ -1,0 +1,31 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-062-regimes-gated-loop.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-062: Regimes Gated Loop (Optional)",
+  "summary": "Proposes optional default-off regimes pack using dictionaries and receipts, not hard FSM or workflow orchestration.",
+  "scope": [
+    "regimes gated loop",
+    "Verify",
+    "Agent",
+    "Composition",
+    "ADR-050 dictionaries",
+    "semantic transaction effects",
+    "external adapter idempotency",
+    "P0 scope"
+  ],
+  "cross_refs": [
+    "ADR-050",
+    "ADR-060",
+    "ADR-014",
+    "ADR-010",
+    "ADR-030",
+    "ADR-031",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-cordon-semantic-tx.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-kumiho-agm-revision.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

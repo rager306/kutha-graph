@@ -1,0 +1,30 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-042-hnsw-access-method-fence.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-042: HNSW Access-Method Fence",
+  "summary": "Proposed fence: HNSW as droppable vector pack over interned ids, not log SoT, with RuVector adapter ports.",
+  "scope": ["HNSW", "vector access method", "RuVector", "filtered kNN", "event log", "delete-repair", "interned node ids"],
+  "cross_refs": [
+    "ADR-000",
+    "ADR-010",
+    "ADR-013",
+    "ADR-040",
+    "ADR-043",
+    "ADR-050",
+    "ADR-052",
+    "ADR-071",
+    "ADR-091",
+    "STRATEGY",
+    ".kutha/STATE.md",
+    ".compound-engineering/artifacts/research/applicability/cards/ruvector-hnsw.md",
+    ".compound-engineering/artifacts/research/applicability/cards/ruvector-hnsw-delete-repair.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-navix-filtered-hnsw.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-acorn-predicate-subgraph.md",
+    ".compound-engineering/artifacts/research/ruvector-plugin-adaptation.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

@@ -1,0 +1,39 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-070-cypher-temporal-as-of.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-070: Cypher + Temporal AS OF Surface",
+  "summary": "Proposes one GPML IR with Cypher/GQL skins, native AS OF temporal cuts, and typed write operators for the query language surface.",
+  "scope": [
+    "GPML IR",
+    "Cypher",
+    "GQL",
+    "Temporal AS OF",
+    "LFTJ",
+    "leapfrog_intersect",
+    "GraphFold",
+    "CSR lease",
+    "named graphs",
+    "query compiler"
+  ],
+  "cross_refs": [
+    "ADR-013",
+    "ADR-041",
+    "ADR-043",
+    "ADR-050",
+    "ADR-071",
+    "ADR-080",
+    "ADR-014",
+    "ADR-010",
+    "ADR-020",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-iso-gql-gpml.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-az-projected-schema-cypher.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-regular-path-queries.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-tgql-intervals.md",
+    ".kutha/STATE.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

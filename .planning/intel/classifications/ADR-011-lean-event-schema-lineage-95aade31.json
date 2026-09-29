@@ -1,0 +1,39 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-011-lean-event-schema-lineage.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-011: Lean Event Schema & Lineage",
+  "summary": "Proposed encoding for lean events, intern map lease, semiring how-provenance, and lineage separate from agent dictionaries.",
+  "scope": [
+    "lean event schema",
+    "intern map",
+    "how-provenance polynomials",
+    "lineage",
+    "OCPM",
+    "UUID v7",
+    "caused_by",
+    "claim_id",
+    "semantic recovery"
+  ],
+  "cross_refs": [
+    "ADR-000",
+    "ADR-010",
+    "ADR-012",
+    "ADR-013",
+    "ADR-014",
+    "ADR-040",
+    "ADR-041",
+    "ADR-050",
+    "ADR-061",
+    "ADR-080",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-ocpm-multi-object-events.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-rdf-term-dictionary.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-provenance-semirings.md",
+    "https://www.w3.org/TR/prov-dm/",
+    "https://www.cs.ucdavis.edu/~green/papers/pods07.pdf"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

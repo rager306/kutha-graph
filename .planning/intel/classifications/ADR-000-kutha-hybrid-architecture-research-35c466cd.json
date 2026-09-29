@@ -1,0 +1,12 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-000-kutha-hybrid-architecture-research.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-000: Kutha Hybrid Architecture — Research Foundation",
+  "summary": "Proposed foundation ADR locking D1–D10 for Kutha: event-log SoT, reversible materializations, meta-prompt agent control on Rust.",
+  "scope": ["Kutha", "hybrid architecture", "event log", "D1–D10", "materializations", "meta-prompt", "dictionaries", "bi-temporal", "CSR", "HNSW", "Rust", "agent runtime"],
+  "cross_refs": ["docs/ADR/README.md", "./ADR-001-kutha-overall-vision.md", "./ADR-002-stca-paradigm.md", "BENCHMARKS.md", "ADR-010", "ADR-011", "ADR-012", "ADR-013", "ADR-040", "ADR-050", "ADR-051", "ADR-070", "ADR-043", "ADR-052", "ADR-080", "ADR-081", "ADR-090", "ADR-091", "ADR-092"],
+  "locked": false,
+  "precedence": null
+}

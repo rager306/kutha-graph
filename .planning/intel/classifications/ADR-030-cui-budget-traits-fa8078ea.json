@@ -1,0 +1,27 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-030-cui-budget-traits.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-030: Cui Budget Traits / Max-Convolution Allocation",
+  "summary": "Proposed trait-level Cui max-convolution envelope for pack h_i(v), P0 greedy approximation, and MQO work-sharing boundaries.",
+  "scope": [
+    "Cui budget traits",
+    "max-convolution allocation",
+    "h_i(v) ports",
+    "quantum receipt algebra",
+    "multi-query work sharing",
+    "Composition honeycomb"
+  ],
+  "cross_refs": [
+    "ADR-002",
+    "ADR-014",
+    "ADR-031",
+    "ADR-043",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-max-convolution-budgets.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-sparql-multi-query-opt.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}
