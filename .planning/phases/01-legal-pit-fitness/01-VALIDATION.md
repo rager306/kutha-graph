@@ -41,8 +41,8 @@ created: "2026-09-29"
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
 | 01-01-01 | 01-01 | 1 | FIT-01…05 | T-01-01 | Hard gate + evidence skeleton | integration | `cargo test --workspace --offline` | ✅ | ⬜ pending |
 | 01-01-02 | 01-01 | 1 | FIT-01…05 | T-01-02 | Twelve fns in `--list` + VALIDATION Task IDs | diagnostic | `cargo test --workspace --offline -- --list` | ✅ | ⬜ pending |
-| 01-02-01 | 01-02 | 2 | FIT-01…05 | T-01-05 | Twelve-row pass/fail map | integration | hard gate + evidence cells | ✅ | ⬜ pending |
-| 01-02-02 | 01-02 | 2 | FIT-01…05 | T-01-06 | SUMMARY + VALIDATION ✅ | docs | file presence + FIT cites | ✅ | ⬜ pending |
+| 01-02-01 | 01-02 | 2 | FIT-01…05 | T-01-05 | Twelve-row pass/fail map | integration | hard gate + evidence cells | ✅ | ✅ |
+| 01-02-02 | 01-02 | 2 | FIT-01…05 | T-01-06 | SUMMARY + VALIDATION ✅ | docs | file presence + FIT cites | ✅ | ✅ |
 | 01-03-01 | 01-03 | 3 | FIT-01…05 | T-01-09 | REQUIREMENTS FIT [x] batch | docs | grep FIT [x] count == 5 | ✅ | ⬜ pending |
 | 01-03-02 | 01-03 | 3 | FIT-01…05 | T-01-11 | STATE/ROADMAP/SUMMARY closeout | docs | STATE Phase 1 + no `.kutha/STATE.md` diff | ✅ | ⬜ pending |
 
@@ -71,4 +71,6 @@ All phase behaviors have automated verification via cargo hard gate + evidence m
 - [ ] Feedback latency acceptable
 - [ ] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** pending (Plan 01-03 hygiene — REQUIREMENTS FIT `[x]` batch + full sign-off; `nyquist_compliant` stays false until then)
+
+*Plan 01-02 note:* cargo hard gate + twelve-row evidence sampling satisfied for wave 2; leave frontmatter `nyquist_compliant: false` until Plan 03 closes checkbox/sign-off hygiene.
