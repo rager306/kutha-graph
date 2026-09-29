@@ -5,16 +5,16 @@ milestone_name: Semantic core close
 current_phase: 4
 current_phase_name: Partial correction with residual intervals
 status: planning
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-09-29T15:07:09.775Z"
+stopped_at: Completed 04-02-PLAN.md
+last_updated: "2026-09-29T15:18:11.982Z"
 last_activity: 2026-09-29
 last_activity_desc: Phase 4 plans revised (VALIDATION.md, D-C5 wave-close ci, Correct-arm awk)
-state_head: 2dd5190e40e54daa59eb4cfddbd4e36d78e03a8b
+state_head: 6185c2e4f436a89bbf4eacf5fe9685ee43f58baf
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -33,9 +33,9 @@ See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 ## Current Position
 
 Phase: 4 of 5 (Partial correction with residual intervals)
-Plan: 2 of 3
-Status: In progress (04-01 complete; next 04-02 CORR-02)
-Last activity: 2026-09-29 — 04-01 Op::CorrectInterval residuals shipped (CORR-01)
+Plan: 3 of 3
+Status: In progress (04-02 complete; next 04-03 GATE-01)
+Last activity: 2026-09-29 — 04-02 whole-version Correct residual freeze (CORR-02)
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -64,6 +64,7 @@ Progress: [░░░░░░░░░░] 0%
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | Phase 04 P01 | 7min | 3 tasks | 5 files |
+| Phase 04 P02 | 6min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -76,6 +77,8 @@ Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constrain
 - [v0.02]: Harness deps preserved — S05/S06 depend on S03; S07 on S04; S08 on S04–S07
 - [Phase 04]: CorrectInterval match arm immediately after Correct and before Define; Correct arm unchanged (D-C1)
 - [Phase 04]: Product changelog shipped with crate diff for docs-coupling; GATE-01 needles deferred to 04-03 (D-C6)
+- [Phase 04]: Whole-version Op::Correct fold arm left unchanged; leftover splitting stays on CorrectInterval (D-C1 / CORR-02)
+- [Phase 04]: CORR-02 Product changelog shipped with the crate test for docs-coupling; GATE-01 needles stay on 04-03 (D-C6)
 
 ### Pending Todos
 
@@ -94,11 +97,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-29T15:07:09.579Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-09-29T15:18:11.938Z
+Stopped at: Completed 04-02-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 4` (S04 is the Active Slice)
 
 ## Operator Next Steps
 
-- Continue Phase 4 with `/gsd-execute-phase 4` (next: 04-02)
+- Continue Phase 4 with `/gsd-execute-phase 4` (next: 04-03)

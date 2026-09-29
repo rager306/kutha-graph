@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 6
+open_count: 7
 waived_count: 0
 fixed_count: 0
-total_count: 6
-last_updated: 2026-09-29T15:07:11.391Z
+total_count: 7
+last_updated: 2026-09-29T15:18:13.481Z
 ---
 
 # Broken Windows Ledger
@@ -21,6 +21,7 @@ last_updated: 2026-09-29T15:07:11.391Z
 | 4 | 02 | deviation | .kutha/STATE.md | 8 | Plan verify grep Active Slice: None misses markdown **Active Slice:** None; cite-only, no harness edit | open |  | 2026-09-29T08:23:38.090Z |  |
 | 5 | 03 | deviation | .planning/STATE.md |  | Relabeled Current Plan to numeric N so state.advance-plan can parse (Rule 3) | open |  | 2026-09-29T11:06:24.445Z |  |
 | 6 | 04 | deviation | crates/kutha-runtime/tests/m011_partial_correction.rs |  | Task 2 tdd=true had no RED: tracer already shipped IntervalPatchRejected; tests committed green | open |  | 2026-09-29T15:07:11.391Z |  |
+| 7 | 04 | deviation | CHANGELOG.md |  | Wave-close ci auto-mode includes uncommitted .kutha/STATE.md; CHANGELOG kept in worktree set for docs-coupling | open |  | 2026-09-29T15:18:13.481Z |  |
 
 ````json
 [
@@ -99,6 +100,19 @@ last_updated: 2026-09-29T15:07:11.391Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-09-29T15:07:11.391Z",
+    "resolved_at": null,
+    "milestone": "v0.02"
+  },
+  {
+    "id": 7,
+    "kind": "deviation",
+    "phase": "04",
+    "file": "CHANGELOG.md",
+    "line": null,
+    "description": "Wave-close ci auto-mode includes uncommitted .kutha/STATE.md; CHANGELOG kept in worktree set for docs-coupling",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-09-29T15:18:13.481Z",
     "resolved_at": null,
     "milestone": "v0.02"
   }

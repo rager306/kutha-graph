@@ -13,7 +13,7 @@ Each requirement maps to exactly one roadmap phase (one phase per harness slice)
 ### Partial correction (M011 S04 — leased)
 
 - [x] **CORR-01**: Developer can apply an explicit interval-patch correction and observe residual versions on both sides of the corrected VT range at the same TT cut (fixture: source `a` keeps VT 2012 and 2021)
-- [ ] **CORR-02**: Developer can still use whole-version `Correct` and observe unchanged behavior, with no implicit residuals
+- [x] **CORR-02**: Developer can still use whole-version `Correct` and observe unchanged behavior, with no implicit residuals
 
 ### Quantum outcome (M011 S05 — blocked until leased)
 
@@ -64,7 +64,7 @@ Primary owner is listed below. GATE-01/02/03 still apply to every slice's succes
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | CORR-01 | Phase 4 | Complete |
-| CORR-02 | Phase 4 | Pending |
+| CORR-02 | Phase 4 | Complete |
 | GATE-01 | Phase 4 | Pending |
 | OUT-01 | Phase 5 | Pending |
 | OUT-02 | Phase 5 | Pending |
