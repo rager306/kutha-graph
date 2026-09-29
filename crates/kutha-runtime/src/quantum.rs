@@ -2,7 +2,7 @@ use crate::allow::load_allowed_names;
 use crate::csr::CsrLease;
 use crate::fold::GraphFold;
 use crate::log::EventLog;
-use crate::receipt::QuantumReceipt;
+use crate::receipt::{digest_to_hex, QuantumReceipt};
 use crate::snapshot::Snapshot;
 use kutha_common::{Event, EventId, Op, TermDictionary, TermId};
 use std::collections::HashSet;
@@ -29,6 +29,9 @@ pub enum RuntimeError {
     IntervalPatchRejected {
         fact_seq: u64,
     },
+    DuplicateResume {
+        resume_of: String,
+    },
 }
 
 impl fmt::Display for RuntimeError {
@@ -46,7 +49,41 @@ impl fmt::Display for RuntimeError {
             RuntimeError::IntervalPatchRejected { fact_seq } => {
                 write!(f, "interval patch rejected for fact {fact_seq}")
             }
+            RuntimeError::DuplicateResume { resume_of } => {
+                write!(f, "duplicate resume for quantum {resume_of}")
+            }
         }
+    }
+}
+
+/// Durable progress encoding for a quantum (OUT-01 / D-O2). Call `Ok` is not completion.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum OutcomeDisposition {
+    Zero,
+    Partial,
+    Full,
+    Resume,
+}
+
+/// Authoritative row for `quantum_outcomes.jsonl` (D-O1). Not a droppable lease.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct PersistedQuantumOutcome {
+    pub quantum_id: String,
+    pub disposition: OutcomeDisposition,
+    pub aborted_on_budget: bool,
+    pub events_in_quantum: usize,
+    pub event_ids: Vec<EventId>,
+    pub receipt_digest_hex: String,
+    pub resume_of: Option<String>,
+}
+
+/// Map emit abort × committed count to Zero / Partial / Full (D-O2).
+pub fn disposition(aborted: bool, events_in_quantum: usize) -> OutcomeDisposition {
+    match (aborted, events_in_quantum) {
+        (true, 0) => OutcomeDisposition::Zero,
+        (true, _) => OutcomeDisposition::Partial,
+        (false, _) => OutcomeDisposition::Full,
     }
 }
 
@@ -87,6 +124,8 @@ pub struct Runtime {
     knows: TermId,
     known_by: TermId,
     allowed: HashSet<String>,
+    /// In-memory buffer of durable quantum outcomes (SoT is `quantum_outcomes.jsonl`).
+    outcomes: Vec<PersistedQuantumOutcome>,
 }
 
 impl Default for Runtime {
@@ -109,6 +148,7 @@ impl Runtime {
             knows,
             known_by,
             allowed: load_allowed_names(),
+            outcomes: Vec::new(),
         }
     }
 
@@ -151,6 +191,39 @@ impl Runtime {
         &self.dict
     }
 
+    /// Persisted quantum outcome rows buffered for `store::persist` (D-O1).
+    pub fn outcome_records(&self) -> &[PersistedQuantumOutcome] {
+        &self.outcomes
+    }
+
+    /// Attach rows loaded from `quantum_outcomes.jsonl` (store open paths).
+    pub fn attach_outcomes(&mut self, rows: Vec<PersistedQuantumOutcome>) {
+        self.outcomes = rows;
+    }
+
+    /// Explicit resume citation for a prior quantum (D-O3). Open never calls this.
+    pub fn record_resume(&mut self, quantum_id: &str) -> Result<(), RuntimeError> {
+        if self
+            .outcomes
+            .iter()
+            .any(|r| r.resume_of.as_deref() == Some(quantum_id))
+        {
+            return Err(RuntimeError::DuplicateResume {
+                resume_of: quantum_id.to_string(),
+            });
+        }
+        self.outcomes.push(PersistedQuantumOutcome {
+            quantum_id: format!("resume:{quantum_id}"),
+            disposition: OutcomeDisposition::Resume,
+            aborted_on_budget: false,
+            events_in_quantum: 0,
+            event_ids: Vec::new(),
+            receipt_digest_hex: String::new(),
+            resume_of: Some(quantum_id.to_string()),
+        });
+        Ok(())
+    }
+
     pub fn snapshot(&self) -> Snapshot {
         Snapshot {
             log_offset: self.graph_len(),
@@ -186,6 +259,7 @@ impl Runtime {
             knows: snap.knows,
             known_by: snap.known_by,
             allowed: load_allowed_names(),
+            outcomes: Vec::new(),
         }
     }
 
@@ -221,6 +295,7 @@ impl Runtime {
             knows,
             known_by,
             allowed: load_allowed_names(),
+            outcomes: Vec::new(),
         })
     }
 
@@ -242,6 +317,7 @@ impl Runtime {
             knows: self.knows,
             known_by: self.known_by,
             allowed: self.allowed.clone(),
+            outcomes: Vec::new(),
         }
     }
 
@@ -349,9 +425,23 @@ impl Runtime {
             }
         }
 
+        let receipt = QuantumReceipt::from_events(ids, &digests, aborted);
+        let events_in_quantum = used;
+        let receipt_digest_hex = digest_to_hex(&receipt.digest);
+        let disp = disposition(aborted, events_in_quantum);
+        self.outcomes.push(PersistedQuantumOutcome {
+            quantum_id: receipt_digest_hex.clone(),
+            disposition: disp,
+            aborted_on_budget: aborted,
+            events_in_quantum,
+            event_ids: receipt.event_ids.clone(),
+            receipt_digest_hex,
+            resume_of: None,
+        });
+
         Ok(QuantumOutcome {
-            receipt: QuantumReceipt::from_events(ids, &digests, aborted),
-            events_in_quantum: used,
+            receipt,
+            events_in_quantum,
         })
     }
 

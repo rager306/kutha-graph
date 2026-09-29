@@ -18,7 +18,10 @@ pub use fold::{Fact, GraphFold};
 pub use leapfrog::{leapfrog_intersect, AdjacencyIter};
 pub use log::EventLog;
 pub use materializer::{CsrMaterializer, Materializer};
-pub use quantum::{QuantumOutcome, Runtime, RuntimeError};
-pub use receipt::QuantumReceipt;
+pub use quantum::{
+    disposition, OutcomeDisposition, PersistedQuantumOutcome, QuantumOutcome, Runtime,
+    RuntimeError,
+};
+pub use receipt::{digest_to_hex, QuantumReceipt};
 pub use snapshot::Snapshot;
 pub use tenant::{ingest_harness_jsonl, ingest_harness_jsonl_str, IngestReport, TenantError};

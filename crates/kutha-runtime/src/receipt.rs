@@ -23,3 +23,12 @@ impl QuantumReceipt {
         }
     }
 }
+
+/// Lowercase hex for persisted outcome rows; RAM digest stays `[u8; 32]`.
+pub fn digest_to_hex(digest: &[u8; 32]) -> String {
+    let mut out = String::with_capacity(64);
+    for b in digest {
+        out.push_str(&format!("{b:02x}"));
+    }
+    out
+}

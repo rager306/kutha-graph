@@ -1,4 +1,4 @@
-use crate::quantum::{cascade_limit, Runtime, RuntimeError};
+use crate::quantum::{cascade_limit, PersistedQuantumOutcome, Runtime, RuntimeError};
 use crate::snapshot::Snapshot;
 use crate::wal;
 use kutha_common::{Event, Op};
@@ -7,6 +7,8 @@ use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
 
 const TERMS_REL: &str = "terms.jsonl";
+/// Authoritative quantum outcome sidecar (not a droppable lease — D-O1 / ADR-010).
+pub const OUTCOMES_REL: &str = "quantum_outcomes.jsonl";
 
 /// File-backed semantic log + snapshot lease. WAL file is durability cousin, not Rocks-as-SoT.
 /// `terms.jsonl` is a derived intern picture. Durable term meanings ride `Op::Define` (persist prefix + live intern, M010 S02–S03).
@@ -23,6 +25,8 @@ pub fn persist(runtime: &Runtime, dir: &Path) -> std::io::Result<()> {
     let snap = runtime.snapshot();
     let mut sf = File::create(dir.join("snapshot.json"))?;
     serde_json::to_writer(&mut sf, &snap).map_err(json_err)?;
+    // Outcomes after events so mid-crash cannot orphan a Full row (RESEARCH pitfall 3).
+    write_outcomes(dir, runtime.outcome_records())?;
     Ok(())
 }
 
@@ -47,24 +51,35 @@ pub fn open(dir: &Path) -> std::io::Result<Runtime> {
     } else {
         Vec::new()
     };
+    let outcomes = load_outcomes(&dir.join(OUTCOMES_REL))?;
     if snap_path.exists() {
         let snap: Snapshot = serde_json::from_reader(File::open(&snap_path)?).map_err(json_err)?;
         let graph: Vec<Event> = events
             .into_iter()
             .filter(|e| !matches!(e.op, Op::Define { .. }))
             .collect();
-        return Ok(Runtime::from_snapshot(snap, graph));
+        let mut rt = Runtime::from_snapshot(snap, graph);
+        rt.attach_outcomes(outcomes);
+        return Ok(rt);
     }
     let defined = defined_names(&events);
     if !defined.is_empty() {
-        return Runtime::from_dict_and_events(defined, events, cascade_limit()).map_err(runtime_err);
+        let mut rt =
+            Runtime::from_dict_and_events(defined, events, cascade_limit()).map_err(runtime_err)?;
+        rt.attach_outcomes(outcomes);
+        return Ok(rt);
     }
     if terms_path.exists() {
         let strings = read_terms(&terms_path)?;
-        return Runtime::from_dict_and_events(strings, events, cascade_limit()).map_err(runtime_err);
+        let mut rt =
+            Runtime::from_dict_and_events(strings, events, cascade_limit()).map_err(runtime_err)?;
+        rt.attach_outcomes(outcomes);
+        return Ok(rt);
     }
     if events.is_empty() {
-        return Ok(Runtime::default());
+        let mut rt = Runtime::default();
+        rt.attach_outcomes(outcomes);
+        return Ok(rt);
     }
     Err(std::io::Error::new(
         std::io::ErrorKind::InvalidData,
@@ -104,6 +119,31 @@ fn write_terms(dir: &Path, strings: &[String]) -> std::io::Result<()> {
         f.write_all(b"\n")?;
     }
     Ok(())
+}
+
+fn write_outcomes(dir: &Path, rows: &[PersistedQuantumOutcome]) -> std::io::Result<()> {
+    let mut f = File::create(dir.join(OUTCOMES_REL))?;
+    for row in rows {
+        serde_json::to_writer(&mut f, row).map_err(json_err)?;
+        f.write_all(b"\n")?;
+    }
+    Ok(())
+}
+
+fn load_outcomes(path: &Path) -> std::io::Result<Vec<PersistedQuantumOutcome>> {
+    if !path.exists() {
+        return Ok(Vec::new());
+    }
+    let f = File::open(path)?;
+    let mut out = Vec::new();
+    for line in BufReader::new(f).lines() {
+        let line = line?;
+        if line.trim().is_empty() {
+            continue;
+        }
+        out.push(serde_json::from_str(&line).map_err(json_err)?);
+    }
+    Ok(out)
 }
 
 fn read_terms(path: &Path) -> std::io::Result<Vec<String>> {
