@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 current_phase: 3
 current_plan: Not started
 status: completed
-stopped_at: Phase 3 complete — all phases complete
-last_updated: "2026-09-29T11:18:31.919Z"
+stopped_at: Phase 3 UAT complete — all phases complete
+last_updated: "2026-09-29T11:29:39Z"
 last_activity: 2026-09-29
-last_activity_desc: Phase 3 complete
+last_activity_desc: Phase 3 UAT complete (12/12) + SECURITY.md verified
 state_head: fd03f1b956f655d3fe6650fe0835c5d6b64512b1
 progress:
   total_phases: 3
@@ -125,7 +125,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-29T11:14:27.809Z
-Stopped at: Phase 3 complete — all phases complete
+Last session: 2026-09-29T11:29:39Z
+Stopped at: Phase 3 UAT complete — all phases complete
 Resume file: None
-Next: new GSD discuss/plan only if `.kutha/STATE.md` names an Active Slice — not freeze thaw / not assumed M002 / not legal pack
+Next: `/gsd-complete-milestone` to archive the overlay, or new GSD discuss/plan only if `.kutha/STATE.md` names an Active Slice — not freeze thaw / not assumed M002 / not legal pack
