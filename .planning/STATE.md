@@ -4,10 +4,10 @@ current_phase: 2
 current_phase_name: Honest harness and freeze
 current_plan: Not started
 status: planning
-stopped_at: Phase 1 complete, ready to plan Phase 2
-last_updated: "2026-09-29T07:37:23.404Z"
+stopped_at: Phase 2 CONTEXT ready for planning (D-G1…G3, D-10…D-15)
+last_updated: "2026-09-29T07:45:00.000Z"
 last_activity: 2026-09-29
-last_activity_desc: Phase 1 complete, transitioned to Phase 2
+last_activity_desc: Phase 2 discuss complete — D-10…D-15 Claude-decided; ready to plan
 state_head: 03e63d13cb712f39929f330f195e7a538c498679
 progress:
   total_phases: 3
@@ -24,7 +24,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-29)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** Phase 1 — Legal PIT fitness complete; next is Phase 2 (honest harness), not product thaw
+**Current focus:** Phase 2 — Honest harness and freeze; D-G1…D-G3 locked (governor cycle each wave); not product thaw
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -36,7 +36,7 @@ Phase: 2 — Honest harness and freeze
 Current Plan: Not started
 Total Plans in Phase: 3
 Status: Ready to plan
-Last activity: 2026-09-29 — Phase 1 complete, transitioned to Phase 2
+Last activity: 2026-09-29 — Phase 2 CONTEXT complete (D-G1…G3 + D-10…D-15)
 
 Progress: [███░░░░░░░] 33%
 

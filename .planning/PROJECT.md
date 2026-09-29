@@ -101,6 +101,16 @@ Narrative locks in `docs/ADR/ADR-000-kutha-hybrid-architecture-research.md`. **N
 - **Write operators:** ADR-010 D010-3 typed Assert/Retract/Correct (product `kutha_common::Op`) wins over stca-guide Algorithm 1 / §5 JSON merge-patch.
 - **Honeycomb:** ADR-010–093 stay Proposed/map. Do not schedule one GSD phase per cell.
 
+## GSD Phase 2 — Governor cycle (locked 2026-09-29)
+
+Standing control loop for every GSD execute cycle starting Phase 2 (see `.planning/phases/02-honest-harness-and-freeze/02-CONTEXT.md`):
+
+- **D-G1:** After each execute-wave and before phase-verify — required `uv run kutha-gov ci` + brief `explain trajectory` in SUMMARY.
+- **D-G2:** HIGH stops the wave; WARN is recorded in VERIFICATION/STATE (never masked).
+- **D-G3:** Improvements stay in harness YAML/docs and clarity of ADR/roadmap/trajectory; not a new milestone, not assumed M002, not freeze thaw / legal pack.
+
+Claude-decided companions (same CONTEXT): **D-10** SUMMARY template (≤8-line trajectory excerpt); **D-11** WARN ledgered ≠ block (HIGH blocks); **D-12…D-14** PLANE/FREEZE/MAP path probes; **D-15** cargo smoke at tracer + pre-verify only.
+
 ### Claude's Discretion
 
 Slice internals, test split vs `quantum.rs` size, and verification-plan shape — as long as freeze, planes, and typed Op hold. Do **not** discretionary-start M002, Cypher, HNSW, legal pack, or ADR-050.
