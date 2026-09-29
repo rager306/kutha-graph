@@ -19,19 +19,19 @@ Requirements for this GSD overlay. Each maps to exactly one roadmap phase.
 
 ### Governor honesty
 
-- [ ] **GOV-01**: `uv run kutha-gov ci` is fail-closed on HIGH findings; a green run is not treated as ADR Accepted or as L_capability
-- [ ] **GOV-02**: `.kutha/STATE.md` keeps `L_map`, `L_delivery`, and `L_capability` named separately (no collapse into one “green = shipped” status)
+- [x] **GOV-01**: `uv run kutha-gov ci` is fail-closed on HIGH findings; a green run is not treated as ADR Accepted or as L_capability
+- [x] **GOV-02**: `.kutha/STATE.md` keeps `L_map`, `L_delivery`, and `L_capability` named separately (no collapse into one “green = shipped” status)
 - [ ] **GOV-03**: New product-crate slice work starts only when `.kutha/STATE.md` names that Active Slice (today: None)
 
 ### Planes and write surface
 
-- [ ] **PLANE-01**: Product truth stays in `crates/kutha-*`; harness stays in `scripts/kutha_gov` + `.kutha/`; Python is not added inside `kutha-runtime`; repo-root `ports/` / `adapters/` / `domain/` are not introduced
-- [ ] **PLANE-02**: Product and process writes use typed `Op` (Assert/Retract/Correct/Behavior/Define). STCA-guide §5 JSON merge-patch / `object.created` is not the product write surface
-- [ ] **PLANE-03**: Product `kutha-relations/v1` and harness `kutha-harness-relations/v1` remain distinct files and schemas
+- [x] **PLANE-01**: Product truth stays in `crates/kutha-*`; harness stays in `scripts/kutha_gov` + `.kutha/`; Python is not added inside `kutha-runtime`; repo-root `ports/` / `adapters/` / `domain/` are not introduced
+- [x] **PLANE-02**: Product and process writes use typed `Op` (Assert/Retract/Correct/Behavior/Define). STCA-guide §5 JSON merge-patch / `object.created` is not the product write surface
+- [x] **PLANE-03**: Product `kutha-relations/v1` and harness `kutha-harness-relations/v1` remain distinct files and schemas
 
 ### Freeze
 
-- [ ] **FREEZE-01**: Until `.kutha/STATE.md` explicitly leases them: no RocksDB crate, Cypher/GPML parser, HNSW, ADR-050 six dictionaries, ADR-080/081, full ADR-090/093 packs, legal corpus start, or Consensus Query 103+
+- [x] **FREEZE-01**: Until `.kutha/STATE.md` explicitly leases them: no RocksDB crate, Cypher/GPML parser, HNSW, ADR-050 six dictionaries, ADR-080/081, full ADR-090/093 packs, legal corpus start, or Consensus Query 103+
 
 ### Delivery next
 
@@ -40,7 +40,7 @@ Requirements for this GSD overlay. Each maps to exactly one roadmap phase.
 
 ### Map discipline
 
-- [ ] **MAP-01**: Honeycomb cells ADR-010–093 remain Proposed/map. This GSD v1 does not schedule them as a phase-per-cell backlog
+- [x] **MAP-01**: Honeycomb cells ADR-010–093 remain Proposed/map. This GSD v1 does not schedule them as a phase-per-cell backlog
 
 ## v2 Requirements
 
@@ -94,13 +94,13 @@ Which phases cover which requirements. Populated at roadmap creation.
 | FIT-03 | Phase 1 | Complete |
 | FIT-04 | Phase 1 | Complete |
 | FIT-05 | Phase 1 | Complete |
-| GOV-01 | Phase 2 | Pending |
-| GOV-02 | Phase 2 | Pending |
-| PLANE-01 | Phase 2 | Pending |
-| PLANE-02 | Phase 2 | Pending |
-| PLANE-03 | Phase 2 | Pending |
-| FREEZE-01 | Phase 2 | Pending |
-| MAP-01 | Phase 2 | Pending |
+| GOV-01 | Phase 2 | Complete |
+| GOV-02 | Phase 2 | Complete |
+| PLANE-01 | Phase 2 | Complete |
+| PLANE-02 | Phase 2 | Complete |
+| PLANE-03 | Phase 2 | Complete |
+| FREEZE-01 | Phase 2 | Complete |
+| MAP-01 | Phase 2 | Complete |
 | GOV-03 | Phase 3 | Pending |
 | NEXT-01 | Phase 3 | Pending |
 | NEXT-02 | Phase 3 | Pending |
