@@ -59,22 +59,30 @@ Deferred to later milestones in `.kutha/ROADMAP.md` "Later milestones": M012 dic
 
 ## Traceability
 
-Populated by the roadmapper.
+Primary owner is listed below. GATE-01/02/03 still apply to every slice's success criteria (see `.planning/ROADMAP.md`).
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CORR-01, CORR-02 | TBD | Pending |
-| OUT-01, OUT-02 | TBD | Pending |
-| CSR-01, CSR-02 | TBD | Pending |
-| PROV-01, PROV-02 | TBD | Pending |
-| FIX-01, FIX-02, FIX-03 | TBD | Pending |
-| GATE-01, GATE-02, GATE-03 | TBD | Pending |
+| CORR-01 | Phase 4 | Pending |
+| CORR-02 | Phase 4 | Pending |
+| GATE-01 | Phase 4 | Pending |
+| OUT-01 | Phase 5 | Pending |
+| OUT-02 | Phase 5 | Pending |
+| CSR-01 | Phase 6 | Pending |
+| CSR-02 | Phase 6 | Pending |
+| PROV-01 | Phase 7 | Pending |
+| PROV-02 | Phase 7 | Pending |
+| FIX-01 | Phase 8 | Pending |
+| FIX-02 | Phase 8 | Pending |
+| FIX-03 | Phase 8 | Pending |
+| GATE-02 | Phase 8 | Pending |
+| GATE-03 | Phase 8 | Pending |
 
 **Coverage:**
 - v0.02 requirements: 14 total
-- Mapped to phases: 0
-- Unmapped: 14
+- Mapped to phases: 14
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-09-29*
-*Last updated: 2026-09-29 after v0.02 milestone start*
+*Last updated: 2026-09-29 after v0.02 roadmap*

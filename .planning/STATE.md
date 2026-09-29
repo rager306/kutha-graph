@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 milestone: v0.02
 milestone_name: Semantic core close
 status: planning
-last_updated: "2026-09-29T12:14:08.838Z"
+last_updated: "2026-09-29T12:20:00.000Z"
 last_activity: 2026-09-29
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,7 +20,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.02 Semantic core close — defining requirements; only M011 S04 is leased, S05–S08 unleased
+**Current focus:** Phase 4 — Partial correction with residual intervals (M011 S04)
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -28,17 +28,19 @@ See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-09-29 — Milestone v0.02 started
+Phase: 4 of 5 (Partial correction with residual intervals)
+Plan: 0 of TBD
+Status: Not started (ready to plan; S04 leased)
+Last activity: 2026-09-29 — v0.02 roadmap written (Phases 4–8)
+
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 1min
-- Total execution time: 10min
+- Total plans completed: 9 (v0.01)
+- Average duration: 2min
+- Total execution time: ~23min
 
 **By Phase:**
 
@@ -46,61 +48,22 @@ Last activity: 2026-09-29 — Milestone v0.02 started
 |-------|-------|-------|----------|
 | 1. Legal PIT fitness | 3/3 | 3min | 1min |
 | 2. Honest harness and freeze | 3/3 | 5min | 2min |
-| 3. Lease-gated next slice | 3/3 | 7min | 2min |
-| 2 | 3 | - | - |
-| 3 | 3 | - | - |
+| 3. Lease-gated next slice | 3/3 | 14min | 5min |
+| 4–8 (v0.02) | 0/TBD | — | — |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (3min), 02-03 (1min), 03-01 (5min), 03-02 (5min), 03-03 (in progress)
+- Last 5 plans: 02-03 (1min), 03-01 (5min), 03-02 (5min), 03-03 (4min)
 - Trend: steady
-
-**Per-Plan Metrics:**
-
-| Plan | Duration | Tasks | Files |
-|------|----------|-------|-------|
-| Phase 01 P01 | 1min | 2 tasks | 2 files |
-| Phase 01-legal-pit-fitness P02 | 1min | 2 tasks | 3 files |
-| Phase 01-legal-pit-fitness P03 | 1min | 2 tasks | 5 files |
-| Phase 02 P01 | 1min | 2 tasks | 3 files |
-| Phase 02 P02 | 3min | 2 tasks | 3 files |
-| Phase 02 P03 | 1min | 2 tasks | 5 files |
-| Phase 02 P03 | 2min | 2 tasks | 5 files |
-| Phase 03 P01 | 5min | 2 tasks | 3 files |
-| Phase 03 P02 | 5min | 2 tasks | 5 files |
-| Phase 03-lease-gated-next-slice P03 | 4min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
 ### Decisions
 
-Full table: `.planning/PROJECT.md`. Ingest (approved): ADR-002 STCA paradigm; stca-guide = constraints; typed Op > §5 merge-patch; honeycomb = map.
-- [Phase 01]: Tracer leaves pass/fail as pending; hard gate exit 0 recorded without painting cells
-- [Phase 01]: wave_0_complete true — existing crates tests cover FIT-01…05; no new stubs
-- [Phase 01-legal-pit-fitness]: Evidence SoT remains 01-VERIFICATION.md; SUMMARY does not invent a parallel fn list
-- [Phase 01-legal-pit-fitness]: REQUIREMENTS FIT checkboxes stay unchecked until Plan 01-03 (D-04/D-05)
-- [Phase 01-legal-pit-fitness]: kutha-gov ci not required for Phase 1 evidence completion (D-03)
-- [Phase 01-legal-pit-fitness]: FIT-01…05 batched to [x] only after VERIFICATION status passed (D-05); Phase 2 next — not freeze thaw
-- [Phase 02]: Tracer leaves probe pass/fail as pending; records ci/explain/cargo exits without painting cells
-- [Phase 02]: wave_0_complete true — VERIFICATION skeleton + Task IDs; nyquist_compliant stays false
-- [Phase 02]: LOW=0 → empty WARN ledger; HIGH=0 LOW=0 on summary line suffices (D-11)
-- [Phase 02]: Evidence SoT remains 02-VERIFICATION.md; SUMMARY does not invent a parallel probe list
-- [Phase 02]: REQUIREMENTS GOV/PLANE/FREEZE/MAP checkboxes stay unchecked until Plan 02-03
-- [Phase 02]: LOW=0 empty WARN ledger; intermediate wave relies on ci observe_cargo (D-15)
-- [Phase 02]: GOV-01/02, PLANE-01…03, FREEZE-01, MAP-01 batched to [x] only after VERIFICATION status passed + pre-verify ci/cargo (D-G1/D-10/D-15)
-- [Phase 02]: Next is Phase 3 lease gate — not freeze thaw, not M002, not legal pack; green≠Accepted≠L_capability
-- [Phase 02]: GOV/PLANE/FREEZE/MAP batched to [x] only after VERIFICATION passed + pre-verify ci/cargo
-- [Phase 02]: Next is Phase 3 lease gate — not freeze thaw, not M002, not legal pack; green≠Accepted≠L_capability
-- [Phase 03]: Tracer leaves probe pass/fail as pending; records ci/explain/cargo exits without painting cells
-- [Phase 03]: wave_0_complete true — VERIFICATION skeleton + Task IDs; nyquist_compliant stays false
-- [Phase 03]: LOW=0 → empty WARN ledger; HIGH=0 LOW=0 on summary line suffices (D-11)
-- [Phase 03]: Evidence SoT remains 03-VERIFICATION.md; SUMMARY does not invent a parallel probe list
-- [Phase 03]: REQUIREMENTS GOV-03/NEXT stay unchecked until Plan 03-03
-- [Phase 03]: D-G3 Overview is verification-only negative proof under Active Slice None (D-L1)
-- [Phase 03]: GOV-03, NEXT-01, NEXT-02 batched to [x] only after VERIFICATION status passed + pre-verify ci/cargo (D-L1/D-L3)
-- [Phase 03]: Further crate work is a new discuss/plan only if STATE later names an Active Slice — not freeze thaw, not assumed M002, not legal pack
-- [Phase 03-lease-gated-next-slice]: GOV-03, NEXT-01, NEXT-02 batched to [x] only after VERIFICATION passed + pre-verify ci/cargo
-- [Phase 03-lease-gated-next-slice]: Further crate work is a new discuss/plan only if STATE later names an Active Slice — not freeze thaw, not assumed M002, not legal pack
-- [Phase 03-lease-gated-next-slice]: Governor green ≠ ADR Accepted ≠ L_capability ≠ lease grant; D-L4 still None
+Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constraints; typed Op; honeycomb = map.
+- [v0.01]: Phases 1–3 verification overlay shipped; green ≠ Accepted ≠ L_capability ≠ lease grant
+- [v0.02]: One GSD phase per remaining M011 slice; Phase 4 executable (S04 leased); Phases 5–8 planning-only until leased
+- [v0.02]: GATE-01 primary owner Phase 4; GATE-02 and GATE-03 primary owner Phase 8; all three gates apply to every slice
+- [v0.02]: Harness deps preserved — S05/S06 depend on S03; S07 on S04; S08 on S04–S07
 
 ### Pending Todos
 
@@ -108,22 +71,22 @@ None yet.
 
 ### Blockers/Concerns
 
-- Further product-crate work waits for a named Active Slice in `.kutha/STATE.md` (still **None**). Do not implement under closed Phase 3 plans (D-L4).
-- Do not start M002, legal pack, Cypher, HNSW, or ADR-050 because GSD Phase 3 completed verification — GOV-03/NEXT [x] is not a freeze thaw and not a lease grant.
+- Phases 5–8 are lease-gated until `.kutha/STATE.md` names S05, S06, S07, or S08 as Active Slice. Do not execute those phases under the S04 lease.
+- Do not start M002, legal pack, Cypher, HNSW, or ADR-050 because a GSD phase is planned — freeze holds until STATE names otherwise.
 
 ## Deferred Items
 
 | Category | Item | Status | Deferred At | Milestone |
 |----------|------|--------|-------------|-----------|
-| v2 | Rocks / Cypher / HNSW / ADR-050 / packs | Frozen | 2026-09-29 | until STATE names M002+ |
+| later | Rocks / Cypher / HNSW / ADR-050 / packs | Frozen | 2026-09-29 | until STATE names M002+ |
 
 ## Session Continuity
 
-Last session: 2026-09-29T11:29:39Z
-Stopped at: Phase 3 UAT complete — all phases complete
+Last session: 2026-09-29
+Stopped at: v0.02 ROADMAP written — Phase 4 not started
 Resume file: None
-Next: `/gsd-complete-milestone` to archive the overlay, or new GSD discuss/plan only if `.kutha/STATE.md` names an Active Slice — not freeze thaw / not assumed M002 / not legal pack
+Next: `/gsd-plan-phase 4` (S04 is the Active Slice)
 
 ## Operator Next Steps
 
-- Start the next milestone with /gsd-new-milestone
+- Plan Phase 4 with `/gsd-plan-phase 4`
