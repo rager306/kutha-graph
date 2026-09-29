@@ -3,7 +3,7 @@ phase: "02"
 slug: "honest-harness-and-freeze"
 status: draft
 nyquist_compliant: false
-wave_0_complete: false
+wave_0_complete: true
 created: "2026-09-29"
 ---
 
@@ -39,22 +39,21 @@ created: "2026-09-29"
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| TBD | TBD | TBD | GOV-01 | — | ci fail-closed HIGH; green≠Accepted | smoke | `uv run kutha-gov ci` | ✅ harness / ❌ VERIFICATION W0 | ⬜ pending |
-| TBD | TBD | TBD | GOV-02 | — | three L_* separate | check | `uv run kutha-gov precommit --check lifecycles` | ✅ | ⬜ pending |
-| TBD | TBD | TBD | PLANE-01 | — | plane paths / no root hexagon | path | catalog probes | ✅ sources | ⬜ pending |
-| TBD | TBD | TBD | PLANE-02 | — | typed Op only | source | `rg` Op + no merge-patch write | ✅ | ⬜ pending |
-| TBD | TBD | TBD | PLANE-03 | — | distinct relation schemas | check | `precommit --check plane-mix-dicts` | ✅ | ⬜ pending |
-| TBD | TBD | TBD | FREEZE-01 | — | freeze lease + absence | check+path | `precommit --check freeze` + Cargo.toml | ✅ | ⬜ pending |
-| TBD | TBD | TBD | MAP-01 | — | honeycomb map / Proposed | CLI+check | `kutha-gov map`; honeycomb-map/adr-status | ✅ | ⬜ pending |
+| 02-01-01 | 02-01 | 1 | GOV-01 | T-02-01, T-02-02 | ci fail-closed HIGH; green≠Accepted; VERIFICATION skeleton | smoke | `uv run kutha-gov ci` + D-15 cargo | ✅ VERIFICATION | ⬜ pending |
+| 02-01-02 | 02-01 | 1 | GOV-01 | T-02-01 | VALIDATION Task IDs + wave_0 + SUMMARY § Trajectory D-10 | docs | grep Task IDs / Trajectory | ✅ | ⬜ pending |
+| 02-02-01 | 02-02 | 2 | GOV-02, PLANE-01, PLANE-02, PLANE-03, FREEZE-01, MAP-01 | T-02-03, T-02-04 | Probe paint GOV/PLANE/FREEZE/MAP | path+check | RESEARCH catalog probes | ✅ sources | ⬜ pending |
+| 02-02-02 | 02-02 | 2 | GOV-01…MAP-01 | T-02-01 | Wave-2 SUMMARY + Trajectory D-10 | docs | SUMMARY § Trajectory | ❌ until 02-02 | ⬜ pending |
+| 02-03-01 | 02-03 | 3 | GOV-01…MAP-01 | T-02-01 | REQUIREMENTS GOV/PLANE/FREEZE/MAP [x] batch | docs | REQUIREMENTS checkboxes | ✅ REQUIREMENTS | ⬜ pending |
+| 02-03-02 | 02-03 | 3 | GOV-01…MAP-01 | T-02-02 | STATE/ROADMAP/VALIDATION closeout | docs | STATE/ROADMAP; no `.kutha/STATE.md` edit | ✅ | ⬜ pending |
 
-*Planner fills concrete Task IDs.*
+*Task IDs filled by plan 02-01 (`02-01-01`…`02-03-02`). Status: ⬜ pending until later plans paint. Do not set `nyquist_compliant: true` yet.*
 
 ---
 
 ## Wave 0 Requirements
 
-- [ ] `.planning/phases/02-honest-harness-and-freeze/02-VERIFICATION.md` — GOV/PLANE/FREEZE/MAP evidence tables (tracer)
-- [ ] Task IDs filled in this file; `wave_0_complete: true` when skeleton exists
+- [x] `.planning/phases/02-honest-harness-and-freeze/02-VERIFICATION.md` — GOV/PLANE/FREEZE/MAP evidence tables (tracer)
+- [x] Task IDs filled in this file; `wave_0_complete: true` when skeleton exists
 
 Existing harness automation covers gates; Wave 0 is GSD evidence artifacts only.
 
