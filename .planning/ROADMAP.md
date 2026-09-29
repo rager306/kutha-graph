@@ -81,7 +81,7 @@ Plans:
   2. When STATE names a slice, only that slice is implemented; a legal corpus/pack is not started in its place
   3. When M011 is closed in `.kutha/STATE.md`, the next product milestone is whatever STATE then names — not an assumed M002 and not “implement honeycomb”
 
-**Plans**: 3/3 plans executed
+**Plans**: 3/3 plans complete
 Plans:
 **Wave 1**
 - [x] 03-01-PLAN.md — Tracer: ci + cargo smoke + VERIFICATION skeleton + D-L4 snapshot
