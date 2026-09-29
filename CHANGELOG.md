@@ -15,7 +15,8 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Process
 
-- FSM `observe_cargo.required` plus `m011-partial-correction` / `B-m011-partial-correction` needles for named CORR-01 and CORR-02 tests (GATE-01). The harness lease file was not edited; this is not a closed-delivery sentence.
+- FSM `observe_cargo.required` plus `m011-partial-correction` / `B-m011-partial-correction` needles for named CORR-01 and CORR-02 tests (GATE-01).
+- Harness lease: Active Slice **S04** (partial correction with residual intervals). M011 tail candidates S05–S08 and a long-horizon later-milestones order are named in `.kutha/ROADMAP.md` without thawing freeze. Not ADR Accepted; not closed delivery.
 
 ### Trajectory
 
