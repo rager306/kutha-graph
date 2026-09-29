@@ -18,12 +18,12 @@ affects:
   - 02-03 REQUIREMENTS batch + STATE/ROADMAP closeout
 
 actuals:
-  tokens: 4200
+  tokens: 3647
   tasks: 2
   commits: 2
 
 plan_head_before: 500aa4a23dbe1067f88d29838407addde1d68dcf
-plan_head_after: PLACEHOLDER
+plan_head_after: 30962ed5dfa59d58ba5719cb9dddb0510633a73f
 
 tech-stack:
   added: []
@@ -105,7 +105,7 @@ status: complete
 ## Task Commits
 
 1. **Task 1: End-to-end ci + cargo smoke + VERIFICATION evidence skeleton** - `165d01e` (docs)
-2. **Task 2: Fill VALIDATION Task IDs, wave_0 complete, and 02-01-SUMMARY Trajectory** - (this commit)
+2. **Task 2: Fill VALIDATION Task IDs, wave_0 complete, and 02-01-SUMMARY Trajectory** - `30962ed` (docs)
 
 ## Trajectory
 
@@ -136,6 +136,11 @@ Probes remain **pending** for Plan 02-02 paint. Do **not** batch REQUIREMENTS ch
 
 None - plan executed exactly as written.
 
-## Self-Check
+## Self-Check: PASSED
 
-Pending post-commit hash fill.
+- FOUND: `.planning/phases/02-honest-harness-and-freeze/02-VERIFICATION.md`
+- FOUND: `.planning/phases/02-honest-harness-and-freeze/02-01-SUMMARY.md`
+- FOUND: `.planning/phases/02-honest-harness-and-freeze/02-VALIDATION.md` (`wave_0_complete: true`, Task IDs `02-01-01`…`02-03-02`)
+- FOUND: commit `165d01e` (task 1)
+- FOUND: commit `30962ed` (task 2)
+- MEASURED: `commits: 2` from `500aa4a23dbe1067f88d29838407addde1d68dcf`..`30962ed5dfa59d58ba5719cb9dddb0510633a73f`
