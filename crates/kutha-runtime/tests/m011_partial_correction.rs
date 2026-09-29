@@ -1,7 +1,7 @@
 //! M011 S04: explicit interval patch leaves residual VT versions of source `a`.
 
 use kutha_common::{Event, EventId, Op};
-use kutha_runtime::Runtime;
+use kutha_runtime::{Runtime, RuntimeError};
 
 /// Year-like valid-time instants for the residual oracle (not wall-clock).
 const VF_WIDE: u64 = 2010;
@@ -109,4 +109,158 @@ fn interval_patch_leaves_vt_2012_and_2021_residuals() {
     assert_eq!(round_trip.op, back.op);
 
     rt.replay_check().unwrap();
+}
+
+#[test]
+fn interval_patch_unknown_fact_does_not_append() {
+    let mut rt = Runtime::default();
+    let p_prime = rt.intern("P-prime");
+    let n = rt.log().len();
+    let err = rt
+        .emit(Op::CorrectInterval {
+            fact_seq: 99,
+            object: p_prime,
+            patch_from: PATCH_FROM,
+            patch_to: Some(PATCH_TO),
+        })
+        .unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::UnknownFact { fact_seq: 99 }),
+        "{err:?}"
+    );
+    assert_eq!(
+        n,
+        rt.log().len(),
+        "fail-closed: unknown fact_seq must not append"
+    );
+}
+
+#[test]
+fn interval_patch_non_intersect_does_not_append() {
+    let mut rt = Runtime::default();
+    let related = rt.intern("relatedTo");
+    let a = rt.intern("a");
+    let p = rt.intern("P");
+    let p_prime = rt.intern("P-prime");
+    rt.emit(Op::Assert {
+        subject: a,
+        relation: related,
+        object: p,
+        valid_from: VF_WIDE,
+        valid_to: Some(PATCH_FROM),
+        claim: None,
+    })
+    .unwrap();
+    let fact_seq = rt
+        .fold()
+        .facts()
+        .iter()
+        .find(|f| f.object() == p && f.invalidated_at.is_none())
+        .expect("live Assert")
+        .seq;
+    let n = rt.log().len();
+    let err = rt
+        .emit(Op::CorrectInterval {
+            fact_seq,
+            object: p_prime,
+            patch_from: PATCH_FROM,
+            patch_to: Some(PATCH_TO),
+        })
+        .unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::IntervalPatchRejected { fact_seq: seq } if seq == fact_seq),
+        "{err:?}"
+    );
+    assert_eq!(
+        n,
+        rt.log().len(),
+        "fail-closed: half-open touching [2010,2015) vs [2015,2020) must not append"
+    );
+}
+
+#[test]
+fn interval_patch_inverted_does_not_append() {
+    let mut rt = Runtime::default();
+    let related = rt.intern("relatedTo");
+    let a = rt.intern("a");
+    let p = rt.intern("P");
+    let p_prime = rt.intern("P-prime");
+    rt.emit(Op::Assert {
+        subject: a,
+        relation: related,
+        object: p,
+        valid_from: VF_WIDE,
+        valid_to: None,
+        claim: None,
+    })
+    .unwrap();
+    let fact_seq = rt
+        .fold()
+        .facts()
+        .iter()
+        .find(|f| f.object() == p && f.invalidated_at.is_none())
+        .expect("live Assert")
+        .seq;
+    let n = rt.log().len();
+    let err = rt
+        .emit(Op::CorrectInterval {
+            fact_seq,
+            object: p_prime,
+            patch_from: PATCH_TO,
+            patch_to: Some(PATCH_FROM),
+        })
+        .unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::IntervalPatchRejected { fact_seq: seq } if seq == fact_seq),
+        "{err:?}"
+    );
+    assert_eq!(
+        n,
+        rt.log().len(),
+        "fail-closed: inverted patch_from/patch_to must not append"
+    );
+}
+
+#[test]
+fn interval_patch_not_live_does_not_append() {
+    let mut rt = Runtime::default();
+    let related = rt.intern("relatedTo");
+    let a = rt.intern("a");
+    let p = rt.intern("P");
+    let p_prime = rt.intern("P-prime");
+    rt.emit(Op::Assert {
+        subject: a,
+        relation: related,
+        object: p,
+        valid_from: VF_WIDE,
+        valid_to: None,
+        claim: None,
+    })
+    .unwrap();
+    let fact_seq = rt
+        .fold()
+        .facts()
+        .iter()
+        .find(|f| f.object() == p && f.invalidated_at.is_none())
+        .expect("live Assert")
+        .seq;
+    rt.emit(Op::Retract { fact_seq }).unwrap();
+    let n = rt.log().len();
+    let err = rt
+        .emit(Op::CorrectInterval {
+            fact_seq,
+            object: p_prime,
+            patch_from: PATCH_FROM,
+            patch_to: Some(PATCH_TO),
+        })
+        .unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::IntervalPatchRejected { fact_seq: seq } if seq == fact_seq),
+        "{err:?}"
+    );
+    assert_eq!(
+        n,
+        rt.log().len(),
+        "fail-closed: already-invalidated target must not append"
+    );
 }
