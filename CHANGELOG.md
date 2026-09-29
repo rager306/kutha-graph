@@ -15,7 +15,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Process
 
-- FSM `observe_cargo.required` plus `m011-partial-correction` / `B-m011-partial-correction` needles for named CORR-01 and CORR-02 tests (GATE-01).
+- FSM `observe_cargo.required` plus `m011-partial-correction` / `B-m011-partial-correction` needles for named CORR-01 and CORR-02 tests (GATE-01). The harness lease file was not edited; this is not a closed-delivery sentence.
 
 ### Trajectory
 
