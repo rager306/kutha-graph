@@ -4,10 +4,10 @@ current_phase: 2
 current_phase_name: Honest harness and freeze
 current_plan: Not started
 status: planning
-stopped_at: Phase 2 CONTEXT ready for planning (D-G1…G3, D-10…D-15)
+stopped_at: Phase 2 RESEARCH complete — ready for PLAN.md
 last_updated: "2026-09-29T07:45:00.000Z"
 last_activity: 2026-09-29
-last_activity_desc: Phase 2 discuss complete — D-10…D-15 Claude-decided; ready to plan
+last_activity_desc: Phase 2 RESEARCH.md written (ci/FSM/probes)
 state_head: 03e63d13cb712f39929f330f195e7a538c498679
 progress:
   total_phases: 3
@@ -33,9 +33,9 @@ See: `.planning/PROJECT.md` (updated 2026-09-29)
 ## Current Position
 
 Phase: 2 — Honest harness and freeze
-Current Plan: Not started
+Current Plan: Not started (research done)
 Total Plans in Phase: 3
-Status: Ready to plan
+Status: Research complete — ready to plan
 Last activity: 2026-09-29 — Phase 2 CONTEXT complete (D-G1…G3 + D-10…D-15)
 
 Progress: [███░░░░░░░] 33%
@@ -100,4 +100,4 @@ None yet.
 Last session: 2026-09-29T07:30:47.867Z
 Stopped at: Phase 1 complete, ready to plan Phase 2
 Resume file: None
-Next: `/gsd-verify-work` or Phase 2 planning (honest harness) — do not thaw freeze; do not start Active Slice work
+Next: `/gsd-plan-phase` continue — planner consumes 02-RESEARCH.md; do not thaw freeze
