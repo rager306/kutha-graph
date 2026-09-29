@@ -19,9 +19,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Trajectory
 
-- Active Slice remains **S05** (leased); ADR-014 remains Proposed (not Accepted, not L_capability). Green governor is not ADR Accepted and not L_capability.
-
-## 2026-09-29 — Product: interval-patch CorrectInterval residuals
+- Active Slice remains **S05** (leased); ADR-014 honeycomb evidence names the OUT-01/OUT-02 tests; map stays Proposed (not Accepted, not L_capability). Green governor is not ADR Accepted and not L_capability.
 
 ### Product
 

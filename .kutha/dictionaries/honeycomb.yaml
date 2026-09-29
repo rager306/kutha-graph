@@ -128,7 +128,9 @@ cells:
     capability: none
     depends_on: [ADR-000, ADR-002, ADR-010]
     locks: [D2, D3, D9]
-    evidence: []
+    evidence:
+      - budgets_0_1_2_distinguish_zero_partial_full_after_persist_open
+      - crash_after_prefix_has_no_terminal_success_until_explicit_resume
 
   - id: ADR-020
     axis: Space
