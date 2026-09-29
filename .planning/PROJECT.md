@@ -42,7 +42,8 @@ GSD overlay v0.01 (Phases 1–3 verification-first):
 
 - [ ] Keep FF5/FF6/H2/H4/M010/M011 named fitness **green** (L_capability)
 - [ ] Keep governor CI honest; three lifecycles uncollapsed; freeze until STATE names otherwise
-- [ ] Further M011 product work **only** under an explicit Active Slice lease (currently **None**)
+- [ ] Further M011 product work **only** under an explicit Active Slice lease (currently **S04**; S05–S08 unleased)
+- [ ] Deliver M011 tail S04–S08 to a single fixture that distinguishes history, evidence, and allowed action (v0.02)
 - [ ] After M011 closes, start only the milestone `.kutha/STATE.md` names — do not assume M002
 
 ### Out of Scope
@@ -138,9 +139,18 @@ Harness compact index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov m
 
 Shipped **GSD v0.01 — GSD foundation** (2026-09-29): verification overlay Phases 1–3 (9 plans). Fitness FIT-01…05, governor honesty, planes/freeze/map, and lease-gate negative proof are archived under `.planning/milestones/`. Product crates unchanged by Phase 3; harness M011 remains open.
 
-## Next Milestone Goals
+## Current Milestone: v0.02 Semantic core close
 
-Defined by `/gsd-new-milestone` after a named Active Slice (or M011 close) appears in `.kutha/STATE.md`. Do not assume M002 or honeycomb promotion.
+**Goal:** Close the M011 semantic core with one end-to-end fixture that separates preserved history, current evidence, and allowed action — without thawing Rocks, Cypher, HNSW, ADR-050 six dictionaries, or a legal pack.
+
+**Target features** (harness M011 tail; long-horizon order in `.kutha/ROADMAP.md` "Later milestones"):
+- S04 partial correction with residual intervals (**leased** in `.kutha/STATE.md`)
+- S05 persisted quantum outcome and continuation
+- S06 typed CSR lease keeps relation labels and support multiplicity
+- S07 provenance and rule-version check apart from state replay
+- S08 end-to-end candidate fixture (semantic-contract observations 1–5)
+
+**Lease rule:** one GSD phase per slice; a phase executes only while its slice is the Active Slice. S05–S08 are planned but blocked until leased. GSD versions here are overlay versions; they do not bump product `0.0.0`.
 
 ## Context
 
@@ -149,10 +159,10 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 **Harness lease** (process intent, not GSD memory, not product SoT): `.kutha/STATE.md`
 
 - Active Milestone: **M011**
-- Active Slice: **None**
+- Active Slice: **S04**
 - Phase: **H4**
 - Lifecycles: `L_map=honeycomb-proposed` · `L_delivery=M011-S03-done` · `L_capability=ff5-green`
-- Next: further M011 slices need an explicit Active Slice lease. Do not start a legal pack. Do not start M002 until STATE names it.
+- Next: S05–S08 need their own Active Slice lease. Do not start a legal pack. Do not start M002 until STATE names it.
 
 GSD files live under `.planning/`. **Never overwrite** `.kutha/STATE.md` with GSD STATE.
 
@@ -202,4 +212,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-29 after v0.01 GSD foundation milestone*
+*Last updated: 2026-09-29 after starting v0.02 Semantic core close*
