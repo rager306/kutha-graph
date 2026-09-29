@@ -4,12 +4,12 @@
 
 GSD overlay tracks the steel thread already in crates — not honeycomb waterfall. Harness delivery stays in `.kutha/STATE.md` / `.kutha/ROADMAP.md`. Do not plan ADR-010–093 as sequential GSD phases.
 
-v0.02 closes the M011 semantic core with one GSD phase per remaining harness slice (S04–S08). Phase 4 (S04) is complete. Phase 5 (S05) is leased and executable. Phases 6–8 are planned but blocked until `.kutha/STATE.md` names their slice as Active Slice. Stop when one fixture separates preserved history, current evidence, and allowed action. Frozen surfaces (RocksDB, Cypher/GPML, HNSW, ADR-050 six dictionaries, legal/science packs) stay unstarted.
+v0.02 closes the M011 semantic core with one GSD phase per remaining harness slice (S04–S08). Phases 4–5 are complete. Phases 6–8 are planned but blocked until `.kutha/STATE.md` names their slice as Active Slice. Stop when one fixture separates preserved history, current evidence, and allowed action. Frozen surfaces (RocksDB, Cypher/GPML, HNSW, ADR-050 six dictionaries, legal/science packs) stay unstarted.
 
 ## Milestones
 
 - ✅ **v0.01 GSD foundation** — Phases 1–3 (shipped 2026-09-29) — [archive](./milestones/v0.01-ROADMAP.md)
-- 🚧 **v0.02 Semantic core close** — Phases 4–8 (Phase 4 leased; Phases 5–8 lease-gated)
+- 🚧 **v0.02 Semantic core close** — Phases 4–8 (Phases 4–5 complete; Phases 6–8 lease-gated)
 
 ## Phases
 
@@ -29,7 +29,7 @@ Full detail: [milestones/v0.01-ROADMAP.md](./milestones/v0.01-ROADMAP.md) · req
 - Decimal phases (4.1, 4.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 4: Partial correction with residual intervals** - Explicit interval-patch leaves VT 2012/2021 residuals; whole-version Correct unchanged (S04 leased) (completed 2026-09-29)
-- [ ] **Phase 5: Persisted quantum outcome** - Budgets 0/1/2 and crash-after-prefix are distinguishable; resume is an explicit record (S05 leased)
+- [x] **Phase 5: Persisted quantum outcome - Budgets 0/1/2 and crash-after-prefix are distinguishable; resume is an explicit record (S05 delivered) (completed 2026-09-30) (completed 2026-09-30)
 - [ ] **Phase 6: Typed CSR lease** - Same endpoints keep relation labels and support multiplicity; untyped neighbor-set path remains (lease-gated)
 - [ ] **Phase 7: Provenance and rule-version check** - Causal-ref or rule-version change is detected without execution replay (lease-gated)
 - [ ] **Phase 8: End-to-end candidate fixture** - Semantic-contract observations 1–5 hold; incremental and reconstructed answers agree (lease-gated)
@@ -60,7 +60,7 @@ Plans:
 
 **Goal**: A developer can tell zero, partial, and full quantum progress apart from persisted outcome records, and resume after a crash without treating missing terminal evidence as success
 **Depends on**: Phase 3 (harness S05 `depends:[S03]`; not S04)
-**Lease**: executable — Active Slice S05 in `.kutha/STATE.md`
+**Lease**: delivered — Active Slice was S05; now None until S06+ lease in `.kutha/STATE.md`
 **Requirements**: OUT-01, OUT-02
 **Success Criteria** (what must be TRUE):
   1. Budgets 0/1/2 are distinguishable as zero, partial, and full progress from persisted quantum outcome records (OUT-01)
@@ -68,14 +68,14 @@ Plans:
   3. A named cargo test is registered in the governor and `uv run kutha-gov ci` stays at 0 HIGH (GATE-01 applies)
   4. This phase executes only while S05 is the Active Slice; until then it is planning-only (GATE-02 applies). Freeze items stay unstarted and honeycomb cells stay Proposed (GATE-03 applies)
 
-**Plans**: 2 plans
+**Plans**: 2/2 plans complete
 
 Plans:
 **Wave 1**
-- [ ] 05-01-PLAN.md — Persist quantum outcomes; budgets 0/1/2 Zero/Partial/Full + crash resume (OUT-01, OUT-02)
+- [x] 05-01-PLAN.md — Persist quantum outcomes; budgets 0/1/2 Zero/Partial/Full + crash resume (OUT-01, OUT-02)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 05-02-PLAN.md — Governor GATE-01 registration, changelog Process, ci HIGH-free
+- [x] 05-02-PLAN.md — Governor GATE-01 registration, changelog Process, ci HIGH-free
 
 ### Phase 6: Typed CSR lease
 
@@ -123,14 +123,14 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 4 → 5 → 6 → 7 → 8. Phases 6–8 remain planning-only until `.kutha/STATE.md` names their slice as Active Slice. Phase 5 (S05) is leased. Harness slice dependencies: S05 and S06 depend on S03 (not S04); S07 depends on S04; S08 depends on S04–S07.
+Phases execute in numeric order: 4 → 5 → 6 → 7 → 8. Phases 6–8 remain planning-only until `.kutha/STATE.md` names their slice as Active Slice. Phase 5 (S05) is delivered (`L_delivery=M011-S05-done`; Active Slice None). Harness slice dependencies: S05 and S06 depend on S03 (not S04); S07 depends on S04; S08 depends on S04–S07.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 4. Partial correction with residual intervals | 3/3 | Complete    | 2026-09-29 |
-| 5. Persisted quantum outcome | 0/2 | Planned (S05 leased) | - |
+| 5. Persisted quantum outcome | 2/2 | Complete    | 2026-09-30 |
 | 6. Typed CSR lease | 0/TBD | Not started (lease-gated) | - |
 | 7. Provenance and rule-version check | 0/TBD | Not started (lease-gated) | - |
 | 8. End-to-end candidate fixture | 0/TBD | Not started (lease-gated) | - |
 
-**Harness citation (not this table):** Active Milestone M011; `L_delivery=M011-S04-done`; Phase H4; Active Slice **S05**; freeze until explicit M002. See `.kutha/STATE.md`.
+**Harness citation (not this table):** Active Milestone M011; `L_delivery=M011-S05-done`; Phase H4; Active Slice **None**; freeze until explicit M002. See `.kutha/STATE.md`.

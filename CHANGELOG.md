@@ -16,10 +16,11 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Process
 
 - FSM `observe_cargo.required` plus `m011-quantum-outcome` / `B-m011-quantum-outcome` needles for named OUT-01 and OUT-02 tests (GATE-01).
+- Harness lease advanced: **S05** delivered (`L_delivery=M011-S05-done`); Active Slice cleared. S06–S08 remain unleased. Not ADR Accepted; not closed product delivery.
 
 ### Trajectory
 
-- Active Slice remains **S05** (leased); ADR-014 honeycomb evidence names the OUT-01/OUT-02 tests; map stays Proposed (not Accepted, not L_capability). Green governor is not ADR Accepted and not L_capability.
+- **S05 delivered** (`L_delivery=M011-S05-done`); Active Slice cleared until an explicit S06+ lease. ADR-014 honeycomb evidence names the OUT-01/OUT-02 tests; map stays Proposed (not Accepted, not L_capability). Green governor is not ADR Accepted and not L_capability.
 
 ### Product
 

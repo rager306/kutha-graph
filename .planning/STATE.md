@@ -2,19 +2,20 @@
 gsd_state_version: "1.0"
 milestone: v0.02
 milestone_name: Semantic core close
-current_phase: 5
-current_phase_name: Persisted quantum outcome
+current_phase: 6
+current_phase_name: Typed CSR lease
 status: planning
-stopped_at: Phase 5 plans created
-last_updated: "2026-09-29T16:07:44.281Z"
-last_activity: 2026-09-29
-last_activity_desc: Phase 5 PLAN.md files written (05-01 product, 05-02 GATE-01)
-state_head: 8b52bd3a5621d0a10ce360d2c9ac392c16dffaa1
+stopped_at: Phase 5 complete, ready to plan Phase 6
+last_updated: "2026-09-29T17:02:48.822Z"
+last_activity: 2026-09-30
+last_activity_desc: Phase 5 complete, transitioned to Phase 6
+state_head: ffaf370245e22789fd6091122a0004f9b8c89e8e
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 5
+  percent: 40
 ---
 
 # Project State
@@ -24,25 +25,25 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** Phase 5 — Persisted quantum outcome (M011 **S05** leased). S06–S08 unleased.
+**Current focus:** Phase 6 — Typed CSR lease (planning-only until harness leases **S06**). S05 delivered.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M011**; Active Slice **S05**; Phase **H4**; `L_map=honeycomb-proposed`; `L_delivery=M011-S04-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
+**Harness lease (cite only):** Active Milestone **M011**; Active Slice **None**; Phase **H4**; `L_map=honeycomb-proposed`; `L_delivery=M011-S05-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
 
 ## Current Position
 
-Phase: 5 (Persisted quantum outcome) — READY TO EXECUTE
-Plan: 01 of 02
-Status: Plans complete — ready to execute
-Last activity: 2026-09-29 — Phase 5 05-01/05-02 PLAN.md written
+Phase: 6 — Typed CSR lease
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-09-30 — Phase 5 complete, transitioned to Phase 6
 
-Progress: [██░░░░░░░░] 20%
+Progress: [████░░░░░░] 40%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3 (v0.01)
+- Total plans completed: 5 (v0.01)
 - Average duration: 2min
 - Total execution time: ~23min
 
@@ -55,6 +56,7 @@ Progress: [██░░░░░░░░] 20%
 | 3. Lease-gated next slice | 3/3 | 14min | 5min |
 | 4–8 (v0.02) | 0/TBD | — | — |
 | 4 | 3 | - | - |
+| 5 | 2 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 02-03 (1min), 03-01 (5min), 03-02 (5min), 03-03 (4min)
@@ -102,9 +104,9 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-29T16:10:00.000Z
-Stopped at: Phase 5 plans created
-Resume file: .planning/phases/05-persisted-quantum-outcome/05-01-PLAN.md
+Last session: 2026-09-29T16:52:27.735Z
+Stopped at: Phase 5 complete, ready to plan Phase 6
+Resume file: .planning/phases/05-persisted-quantum-outcome/05-01-SUMMARY.md
 Next: `/gsd-execute-phase 5` (S05 leased in `.kutha/STATE.md`)
 
 ## Operator Next Steps

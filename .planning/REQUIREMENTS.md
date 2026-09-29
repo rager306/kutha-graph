@@ -17,8 +17,8 @@ Each requirement maps to exactly one roadmap phase (one phase per harness slice)
 
 ### Quantum outcome (M011 S05 — blocked until leased)
 
-- [ ] **OUT-01**: Developer can tell zero, partial, and full progress apart for budgets 0/1/2 from persisted quantum outcome records
-- [ ] **OUT-02**: Developer can reopen a log after a crash following a committed prefix and see no terminal-success record; resume is an explicit record, never inferred
+- [x] **OUT-01**: Developer can tell zero, partial, and full progress apart for budgets 0/1/2 from persisted quantum outcome records
+- [x] **OUT-02**: Developer can reopen a log after a crash following a committed prefix and see no terminal-success record; resume is an explicit record, never inferred
 
 ### Typed CSR lease (M011 S06 — blocked until leased)
 
@@ -66,8 +66,8 @@ Primary owner is listed below. GATE-01/02/03 still apply to every slice's succes
 | CORR-01 | Phase 4 | Complete |
 | CORR-02 | Phase 4 | Complete |
 | GATE-01 | Phase 4 | Complete |
-| OUT-01 | Phase 5 | Pending |
-| OUT-02 | Phase 5 | Pending |
+| OUT-01 | Phase 5 | Complete |
+| OUT-02 | Phase 5 | Complete |
 | CSR-01 | Phase 6 | Pending |
 | CSR-02 | Phase 6 | Pending |
 | PROV-01 | Phase 7 | Pending |
