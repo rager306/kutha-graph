@@ -71,7 +71,10 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
+**Wave 1**
 - [ ] 05-01-PLAN.md — Persist quantum outcomes; budgets 0/1/2 Zero/Partial/Full + crash resume (OUT-01, OUT-02)
+
+**Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 05-02-PLAN.md — Governor GATE-01 registration, changelog Process, ci HIGH-free
 
 ### Phase 6: Typed CSR lease
