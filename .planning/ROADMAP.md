@@ -37,7 +37,7 @@ In-repo tests already witness most Phase 1–2 criteria; GSD plans for those pha
   4. Two supports for one claim remain distinguishable; unknown claim and dangling `caused_by` fail closed; derived Q loses eligibility when the last premise support is withdrawn (M011 S01–S03)
   5. H2 process-status AS OF cuts differ (including same-second emitted cut); H4 prior membership remains visible after a later edition drops it — without starting a legal pack
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans executed
 Plans:
 **Wave 1**
 - [x] 01-01-PLAN.md — Tracer: hard gate + VERIFICATION evidence skeleton
@@ -46,7 +46,7 @@ Plans:
 - [x] 01-02-PLAN.md — Complete twelve-row FIT pass/fail map + SUMMARY
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 01-03-PLAN.md — Batch REQUIREMENTS FIT checkboxes + GSD STATE (after VERIFICATION green)
+- [x] 01-03-PLAN.md — Batch REQUIREMENTS FIT checkboxes + GSD STATE (after VERIFICATION green)
 
 ### Phase 2: Honest harness and freeze
 
@@ -81,7 +81,7 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Legal PIT fitness | 2/3 | In Progress|  |
+| 1. Legal PIT fitness | 3/3 | Complete | 2026-09-29 |
 | 2. Honest harness and freeze | 0/TBD | Not started | - |
 | 3. Lease-gated next slice | 0/TBD | Not started | - |
 

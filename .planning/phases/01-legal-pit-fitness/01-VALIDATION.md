@@ -1,8 +1,8 @@
 ---
 phase: "01"
 slug: "legal-pit-fitness"
-status: draft
-nyquist_compliant: false
+status: complete
+nyquist_compliant: true
 wave_0_complete: true
 created: "2026-09-29"
 ---
@@ -39,14 +39,14 @@ created: "2026-09-29"
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 01-01-01 | 01-01 | 1 | FIT-01…05 | T-01-01 | Hard gate + evidence skeleton | integration | `cargo test --workspace --offline` | ✅ | ⬜ pending |
-| 01-01-02 | 01-01 | 1 | FIT-01…05 | T-01-02 | Twelve fns in `--list` + VALIDATION Task IDs | diagnostic | `cargo test --workspace --offline -- --list` | ✅ | ⬜ pending |
+| 01-01-01 | 01-01 | 1 | FIT-01…05 | T-01-01 | Hard gate + evidence skeleton | integration | `cargo test --workspace --offline` | ✅ | ✅ |
+| 01-01-02 | 01-01 | 1 | FIT-01…05 | T-01-02 | Twelve fns in `--list` + VALIDATION Task IDs | diagnostic | `cargo test --workspace --offline -- --list` | ✅ | ✅ |
 | 01-02-01 | 01-02 | 2 | FIT-01…05 | T-01-05 | Twelve-row pass/fail map | integration | hard gate + evidence cells | ✅ | ✅ |
 | 01-02-02 | 01-02 | 2 | FIT-01…05 | T-01-06 | SUMMARY + VALIDATION ✅ | docs | file presence + FIT cites | ✅ | ✅ |
-| 01-03-01 | 01-03 | 3 | FIT-01…05 | T-01-09 | REQUIREMENTS FIT [x] batch | docs | grep FIT [x] count == 5 | ✅ | ⬜ pending |
-| 01-03-02 | 01-03 | 3 | FIT-01…05 | T-01-11 | STATE/ROADMAP/SUMMARY closeout | docs | STATE Phase 1 + no `.kutha/STATE.md` diff | ✅ | ⬜ pending |
+| 01-03-01 | 01-03 | 3 | FIT-01…05 | T-01-09 | REQUIREMENTS FIT [x] batch | docs | grep FIT [x] count == 5 | ✅ | ✅ |
+| 01-03-02 | 01-03 | 3 | FIT-01…05 | T-01-11 | STATE/ROADMAP/SUMMARY closeout | docs | STATE Phase 1 + no `.kutha/STATE.md` diff | ✅ | ✅ |
 
-*Task IDs filled by plan 01-01 (`01-01-01`…`01-03-02`). Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky — leave pending until later plans paint.*
+*Task IDs filled by plan 01-01 (`01-01-01`…`01-03-02`). Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky.*
 
 ---
 
@@ -64,13 +64,13 @@ All phase behaviors have automated verification via cargo hard gate + evidence m
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency acceptable
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency acceptable
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending (Plan 01-03 hygiene — REQUIREMENTS FIT `[x]` batch + full sign-off; `nyquist_compliant` stays false until then)
+**Approval:** signed off (Plan 01-03) — REQUIREMENTS FIT `[x]` batch after VERIFICATION `status: passed`; hard gate `cargo test --workspace --offline`; `nyquist_compliant: true`
 
-*Plan 01-02 note:* cargo hard gate + twelve-row evidence sampling satisfied for wave 2; leave frontmatter `nyquist_compliant: false` until Plan 03 closes checkbox/sign-off hygiene.
+*Plan 01-03 note:* Wave 3 hygiene complete; evidence SoT remains `01-VERIFICATION.md`; harness `.kutha/STATE.md` untouched.
