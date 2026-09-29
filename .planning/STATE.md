@@ -2,18 +2,18 @@
 gsd_state_version: "1.0"
 current_phase: 2
 current_phase_name: Honest harness and freeze
-current_plan: 02-02
+current_plan: 3
 status: in_progress
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-09-29T08:12:37.100Z"
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-09-29T08:16:52.181Z"
 last_activity: 2026-09-29
-last_activity_desc: Phase 2 plan 02-01 tracer complete — VERIFICATION skeleton + D-10 Trajectory
-state_head: 30962ed5dfa59d58ba5719cb9dddb0510633a73f
+last_activity_desc: Phase 2 plan 02-02 probe paint complete — VERIFICATION status passed + D-10 Trajectory
+state_head: ea42688dda799ba0836481e967c670f49e3ca990
 progress:
   total_phases: 3
   completed_phases: 1
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 5
   percent: 33
 ---
 
@@ -33,30 +33,30 @@ See: `.planning/PROJECT.md` (updated 2026-09-29)
 ## Current Position
 
 Phase: 2 (Honest harness and freeze) — IN PROGRESS
-Current Plan: 2
+Current Plan: 3
 Total Plans in Phase: 3
-Status: 02-01 complete — next 02-02 probe paint
-Last activity: 2026-09-29 — Completed 02-01 tracer (ci + VERIFICATION skeleton + VALIDATION wave_0)
+Status: 02-02 complete — next 02-03 REQUIREMENTS batch
+Last activity: 2026-09-29 — Completed 02-02 probe paint (ci HIGH-free + VERIFICATION passed + VALIDATION ✅)
 
 Progress: [███░░░░░░░] 33%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
+- Total plans completed: 5
 - Average duration: 1min
-- Total execution time: 4min
+- Total execution time: 7min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Legal PIT fitness | 3/3 | 3min | 1min |
-| 2. Honest harness and freeze | 1/3 | 1min | 1min |
+| 2. Honest harness and freeze | 2/3 | 4min | 2min |
 | 3. Lease-gated next slice | 0 | TBD | - |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (1min), 01-02 (1min), 01-03 (1min), 02-01 (1min)
+- Last 5 plans: 01-02 (1min), 01-03 (1min), 02-01 (1min), 02-02 (3min)
 - Trend: steady
 
 **Per-Plan Metrics:**
@@ -67,6 +67,7 @@ Progress: [███░░░░░░░] 33%
 | Phase 01-legal-pit-fitness P02 | 1min | 2 tasks | 3 files |
 | Phase 01-legal-pit-fitness P03 | 1min | 2 tasks | 5 files |
 | Phase 02 P01 | 1min | 2 tasks | 3 files |
+| Phase 02 P02 | 3min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -82,6 +83,9 @@ Full table: `.planning/PROJECT.md`. Ingest (approved): ADR-002 STCA paradigm; st
 - [Phase 02]: Tracer leaves probe pass/fail as pending; records ci/explain/cargo exits without painting cells
 - [Phase 02]: wave_0_complete true — VERIFICATION skeleton + Task IDs; nyquist_compliant stays false
 - [Phase 02]: LOW=0 → empty WARN ledger; HIGH=0 LOW=0 on summary line suffices (D-11)
+- [Phase 02]: Evidence SoT remains 02-VERIFICATION.md; SUMMARY does not invent a parallel probe list
+- [Phase 02]: REQUIREMENTS GOV/PLANE/FREEZE/MAP checkboxes stay unchecked until Plan 02-03
+- [Phase 02]: LOW=0 empty WARN ledger; intermediate wave relies on ci observe_cargo (D-15)
 
 ### Pending Todos
 
@@ -100,7 +104,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-29T08:11:46.338Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-09-29T08:16:52.123Z
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None
-Next: `/gsd-execute-phase 2` — continue with 02-02 probe paint; do not thaw freeze
+Next: `/gsd-execute-phase 2` — continue with 02-03 REQUIREMENTS batch; do not thaw freeze

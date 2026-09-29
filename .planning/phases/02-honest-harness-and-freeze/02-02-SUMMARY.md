@@ -22,7 +22,7 @@ actuals:
   commits: 2
 
 plan_head_before: 138db321f37d156736c64e7d10b22cec63caed5b
-plan_head_after: PLACEHOLDER
+plan_head_after: ea42688dda799ba0836481e967c670f49e3ca990
 
 tech-stack:
   added: []
@@ -119,7 +119,7 @@ status: complete
 ## Task Commits
 
 1. **Task 1: Fill GOV/PLANE/FREEZE/MAP probe pass/fail from ci and catalog** - `427a784` (docs)
-2. **Task 2: Write 02-02-SUMMARY Trajectory and paint VALIDATION 02-02 statuses** - `(this commit)` (docs)
+2. **Task 2: Write 02-02-SUMMARY Trajectory and paint VALIDATION 02-02 statuses** - `ea42688` (docs)
 
 ## Trajectory
 
@@ -154,6 +154,12 @@ Plan 03 REQUIREMENTS checkbox batch after passed VERIFICATION — not freeze tha
 
 None - plan executed exactly as written.
 
-## Self-Check: PENDING
+## Self-Check: PASSED
 
-_Filled after task-2 commit and measured ledger._
+- FOUND: `.planning/phases/02-honest-harness-and-freeze/02-VERIFICATION.md` (`status: passed`, 21 `| pass |` cells)
+- FOUND: `.planning/phases/02-honest-harness-and-freeze/02-02-SUMMARY.md`
+- FOUND: `.planning/phases/02-honest-harness-and-freeze/02-VALIDATION.md` (✅ for `02-02-01` / `02-02-02`; `nyquist_compliant: false`)
+- FOUND: commit `427a784` (task 1)
+- FOUND: commit `ea42688` (task 2)
+- MEASURED: `commits: 2` from `138db321f37d156736c64e7d10b22cec63caed5b`..`ea42688dda799ba0836481e967c670f49e3ca990`
+- REQUIREMENTS Phase 2 checkboxes remain unchecked (deferred to 02-03)
