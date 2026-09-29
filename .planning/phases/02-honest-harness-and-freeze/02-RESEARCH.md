@@ -507,15 +507,13 @@ Use these exact commands; record exit + one-line result in the evidence table.
 
 **If empty rows needed:** Core FSM/CLI/probe claims are `[VERIFIED]` from Read + shell this session.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Should VERIFICATION require `kutha-gov json` on every wave even when LOW=0?**
-   - What we know: D-11 only mandates ledger when WARNs remain.
-   - Recommendation: Require `json` dump only when `LOW > 0`; otherwise summary line suffices.
+1. **Should VERIFICATION require `kutha-gov json` on every wave even when LOW=0?** (RESOLVED)
+   - **Adopted:** Require `kutha-gov json` (or equivalent LOW id list) **only when LOW > 0** for D-11 ledger; when LOW=0, SUMMARY line with HIGH=0 LOW=0 suffices.
 
-2. **Root hexagon absence — add a YAML check under D-G3?**
-   - What we know: No current check forbids repo-root `ports/` / `adapters/` / `domain/`; docs forbid it.
-   - Recommendation: Path probe is enough for Phase 2 evidence. Optional D-G3: append a `glob_none` / `file_absent` style check — only if planner wants automation; not required to pass MAP/PLANE if probe is documented.
+2. **Root hexagon absence — add a YAML check under D-G3?** (RESOLVED)
+   - **Adopted:** Path probe in VERIFICATION is enough for Phase 2 (PLANE-01). Optional YAML `file_absent`/`glob_none` check is D-G3 discretionary — not a must_have unless planner adds it for automation.
 
 ## Environment Availability
 
