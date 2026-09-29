@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 4
+open_count: 5
 waived_count: 0
 fixed_count: 0
-total_count: 4
-last_updated: 2026-09-29T08:23:38.090Z
+total_count: 5
+last_updated: 2026-09-29T11:06:24.445Z
 ---
 
 # Broken Windows Ledger
@@ -19,6 +19,7 @@ last_updated: 2026-09-29T08:23:38.090Z
 | 2 | 01 | deviation | .kutha/STATE.md |  | Plan grep Active Slice: None vs markdown **Active Slice:** None; lease still None | open |  | 2026-09-29T07:32:17.882Z |  |
 | 3 | 01 | deviation | .planning/STATE.md |  | SDK state.update-progress wrote 33%; restored 100% after Phase 1 plan closeout | open |  | 2026-09-29T07:32:18.201Z |  |
 | 4 | 02 | deviation | .kutha/STATE.md | 8 | Plan verify grep Active Slice: None misses markdown **Active Slice:** None; cite-only, no harness edit | open |  | 2026-09-29T08:23:38.090Z |  |
+| 5 | 03 | deviation | .planning/STATE.md |  | Relabeled Current Plan to numeric N so state.advance-plan can parse (Rule 3) | open |  | 2026-09-29T11:06:24.445Z |  |
 
 ````json
 [
@@ -71,6 +72,19 @@ last_updated: 2026-09-29T08:23:38.090Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-09-29T08:23:38.090Z",
+    "resolved_at": null,
+    "milestone": null
+  },
+  {
+    "id": 5,
+    "kind": "deviation",
+    "phase": "03",
+    "file": ".planning/STATE.md",
+    "line": null,
+    "description": "Relabeled Current Plan to numeric N so state.advance-plan can parse (Rule 3)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-09-29T11:06:24.445Z",
     "resolved_at": null,
     "milestone": null
   }
