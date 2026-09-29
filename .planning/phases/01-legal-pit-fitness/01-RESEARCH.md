@@ -349,17 +349,19 @@ Rename without updating `required` → `observe-missing` under `ci`, while cargo
 
 **If empty rows needed:** Core FIT↔fn mapping claims are `[VERIFIED]` from source Read this session — not assumed.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Should Phase 1 VERIFICATION also paste `cargo test -- --list` excerpts?**
+1. **Should Phase 1 VERIFICATION also paste `cargo test -- --list` excerpts?** (RESOLVED)
    - What we know: D-02 wants FIT→fn map with pass/fail.
    - What's unclear: Whether list output is required artifact or optional.
    - Recommendation: Require pass/fail column; optional `--list` snippet if any map name is disputed.
+   - **Adopted:** Pass/fail column is required on the twelve-row evidence map. `--list` confirmation is Plan 01-01 task 2 (diagnostic, not a substitute hard gate); optional one-line `--list` snippet/count in VERIFICATION notes only if a map name is disputed.
 
-2. **If hard gate is green but a bridge needle is already stale (pre-existing)?**
+2. **If hard gate is green but a bridge needle is already stale (pre-existing)?** (RESOLVED)
    - What we know: Phase 1 does not must_have precommit/`ci`.
    - What's unclear: Whether discoverable dictionary drift blocks Phase 1.
    - Recommendation: Note drift in VERIFICATION notes; do not expand Phase 1 into GOV-*; fix under Phase 2 unless it proves a FIT fn is truly missing.
+   - **Adopted:** Phase 1 does not must_have precommit/`ci`; bridge/GOV honesty is Phase 2. Do not block Phase 1 on stale bridge needles when the hard gate is green (note in VERIFICATION if discovered; expand only if a required FIT fn is truly missing).
 
 ## Environment Availability
 
