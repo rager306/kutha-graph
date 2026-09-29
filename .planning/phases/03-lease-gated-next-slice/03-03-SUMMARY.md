@@ -20,12 +20,12 @@ affects:
   - later GSD discuss/plan only if harness names an Active Slice
 
 actuals:
-  tokens: 7000
+  tokens: 7113
   tasks: 2
   commits: 2
 
 plan_head_before: e00234661f6fe46c7b8d64140ab68086e271b462
-plan_head_after: PENDING_TASK2
+plan_head_after: b9aedad30ddcd1341c47d49647f3f9436fd5f7d3
 
 tech-stack:
   added: []
@@ -137,7 +137,7 @@ A green governor is not ADR Accepted, is not L_capability, and is not a lease gr
 ## Task Commits
 
 1. **Task 1: Pre-verify ci+cargo then batch-check Phase 3 REQUIREMENTS** - `3741d39` (docs)
-2. **Task 2: Update GSD STATE, ROADMAP progress, VALIDATION sign-off, 03-03-SUMMARY** - `PENDING_TASK2` (docs)
+2. **Task 2: Update GSD STATE, ROADMAP progress, VALIDATION sign-off, 03-03-SUMMARY** - `b9aedad` (docs)
 
 ## Trajectory
 
@@ -203,6 +203,19 @@ None - no external service configuration required.
 ## Next Phase Readiness
 
 GSD overlay Phases 1–3 complete. Product slice delivery is **not** in this overlay. Do not thaw freeze. Do not assume M002.
+
+## Self-Check: PASSED
+
+- FOUND: `.planning/REQUIREMENTS.md` (`[x] **GOV-03`, NEXT-01, NEXT-02; FIT-01 and MAP-01 remain `[x]`)
+- FOUND: `.planning/phases/03-lease-gated-next-slice/03-VERIFICATION.md` (`status: passed`)
+- FOUND: `.planning/STATE.md` (`Phase 3 verification complete`)
+- FOUND: `.planning/ROADMAP.md` (`- [x] 03-01-PLAN.md`, `03-02-PLAN.md`, `03-03-PLAN.md`; Progress `3/3`)
+- FOUND: `.planning/phases/03-lease-gated-next-slice/03-VALIDATION.md` (`nyquist_compliant: true`)
+- FOUND: `.planning/phases/03-lease-gated-next-slice/03-03-SUMMARY.md`
+- FOUND: commit `3741d39` (task 1)
+- FOUND: commit `b9aedad` (task 2)
+- MEASURED: `commits: 2` from `e00234661f6fe46c7b8d64140ab68086e271b462`..`b9aedad30ddcd1341c47d49647f3f9436fd5f7d3`
+- `.kutha/STATE.md` porcelain empty; D-L4 `**Active Slice:** None`
 
 ---
 *Phase: 03-lease-gated-next-slice*

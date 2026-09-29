@@ -5,10 +5,10 @@ current_phase_name: Lease-gated next slice
 current_plan: 3
 status: phase_complete
 stopped_at: Completed 03-03-PLAN.md
-last_updated: "2026-09-29T11:13:00Z"
+last_updated: "2026-09-29T11:14:27.895Z"
 last_activity: 2026-09-29
 last_activity_desc: Phase 3 verification complete
-state_head: 3741d39
+state_head: b9aedad30ddcd1341c47d49647f3f9436fd5f7d3
 progress:
   total_phases: 3
   completed_phases: 3
@@ -73,6 +73,7 @@ Progress: [██████████] 100%
 | Phase 02 P03 | 2min | 2 tasks | 5 files |
 | Phase 03 P01 | 5min | 2 tasks | 3 files |
 | Phase 03 P02 | 5min | 2 tasks | 5 files |
+| Phase 03-lease-gated-next-slice P03 | 4min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -103,6 +104,9 @@ Full table: `.planning/PROJECT.md`. Ingest (approved): ADR-002 STCA paradigm; st
 - [Phase 03]: D-G3 Overview is verification-only negative proof under Active Slice None (D-L1)
 - [Phase 03]: GOV-03, NEXT-01, NEXT-02 batched to [x] only after VERIFICATION status passed + pre-verify ci/cargo (D-L1/D-L3)
 - [Phase 03]: Further crate work is a new discuss/plan only if STATE later names an Active Slice — not freeze thaw, not assumed M002, not legal pack
+- [Phase 03-lease-gated-next-slice]: GOV-03, NEXT-01, NEXT-02 batched to [x] only after VERIFICATION passed + pre-verify ci/cargo
+- [Phase 03-lease-gated-next-slice]: Further crate work is a new discuss/plan only if STATE later names an Active Slice — not freeze thaw, not assumed M002, not legal pack
+- [Phase 03-lease-gated-next-slice]: Governor green ≠ ADR Accepted ≠ L_capability ≠ lease grant; D-L4 still None
 
 ### Pending Todos
 
@@ -121,7 +125,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-29T11:13:00Z
+Last session: 2026-09-29T11:14:27.809Z
 Stopped at: Completed 03-03-PLAN.md
 Resume file: None
 Next: new GSD discuss/plan only if `.kutha/STATE.md` names an Active Slice — not freeze thaw / not assumed M002 / not legal pack
