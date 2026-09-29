@@ -26,6 +26,7 @@ In-repo tests already witness most Phase 1–2 criteria; GSD plans for those pha
 ## Phase Details
 
 ### Phase 1: Legal PIT fitness
+
 **Goal**: A developer can run the named product fitness suite and observe legal point-in-time, fail-closed relations, semantic recovery, claim/support identity, and H2/H4 tenant AS OF still hold
 **Depends on**: Nothing (first phase; brownfield spike already in crates)
 **Requirements**: FIT-01, FIT-02, FIT-03, FIT-04, FIT-05
@@ -35,13 +36,20 @@ In-repo tests already witness most Phase 1–2 criteria; GSD plans for those pha
   3. Discarding `snapshot.json` still restores intern meanings from retained history (M010)
   4. Two supports for one claim remain distinguishable; unknown claim and dangling `caused_by` fail closed; derived Q loses eligibility when the last premise support is withdrawn (M011 S01–S03)
   5. H2 process-status AS OF cuts differ (including same-second emitted cut); H4 prior membership remains visible after a later edition drops it — without starting a legal pack
+
 **Plans**: 3 plans
 Plans:
+**Wave 1**
 - [ ] 01-01-PLAN.md — Tracer: hard gate + VERIFICATION evidence skeleton
+
+**Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 01-02-PLAN.md — Complete twelve-row FIT pass/fail map + SUMMARY
+
+**Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 01-03-PLAN.md — Batch REQUIREMENTS FIT checkboxes + GSD STATE (after VERIFICATION green)
 
 ### Phase 2: Honest harness and freeze
+
 **Goal**: Process CI tells the truth about trajectory; product and harness stay on separate planes; frozen surfaces stay unstarted; honeycomb stays a map
 **Depends on**: Phase 1
 **Requirements**: GOV-01, GOV-02, PLANE-01, PLANE-02, PLANE-03, FREEZE-01, MAP-01
@@ -51,9 +59,11 @@ Plans:
   3. Product crates remain Rust; harness remains Python 3.13/uv; relation YAML schemas are not mixed; no repo-root `ports/` / `adapters/` / `domain/`
   4. Writes stay typed `Op`; stca-guide §5 JSON merge-patch is not the product write surface
   5. RocksDB, Cypher/GPML, HNSW, ADR-050 six dictionaries, ADR-080/081, and legal/science packs are absent unless `.kutha/STATE.md` has leased them; honeycomb ADRs remain Proposed
+
 **Plans**: TBD
 
 ### Phase 3: Lease-gated next slice
+
 **Goal**: New crate work happens only as the Active Slice STATE names; M011 does not sprawl into a legal pack; the following milestone is not implied
 **Depends on**: Phase 2
 **Requirements**: GOV-03, NEXT-01, NEXT-02
@@ -61,6 +71,7 @@ Plans:
   1. While Active Slice is None, no new M011 (or other) product-slice implementation starts
   2. When STATE names a slice, only that slice is implemented; a legal corpus/pack is not started in its place
   3. When M011 is closed in `.kutha/STATE.md`, the next product milestone is whatever STATE then names — not an assumed M002 and not “implement honeycomb”
+
 **Plans**: TBD
 
 ## Progress
