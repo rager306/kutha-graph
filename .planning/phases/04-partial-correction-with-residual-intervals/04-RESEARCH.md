@@ -489,21 +489,19 @@ Capture `log().len()`, emit a patch whose `[patch_from, patch_to)` does not inte
 
 A3–A5 are planner discretion under CONTEXT; they do **not** need a user checkpoint if the plan picks one and tests it.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Reject vs no-op for non-intersect (D-C7)**
+1. **Reject vs no-op for non-intersect (D-C7)** (RESOLVED)
    - What we know: emit-reject-without-append matches `UnknownClaim` / missing `fact_seq`. Fold no-op is required for replay of a bad logged event.
-   - What's unclear: nothing blocking — **recommend emit reject + fold no-op**.
-   - Recommendation: lock that in PLAN.md; test both missing seq (`UnknownFact`) and non-intersect (new error).
+   - **PLAN lock (04-01):** emit reject without append (`UnknownFact` for missing seq; `IntervalPatchRejected` for non-intersect, inverted, and not-live); fold empty-intersection no-op for replay. Fail-closed tests in 04-01 task 2.
 
-2. **Optional persist/open round-trip**
+2. **Optional persist/open round-trip** (RESOLVED)
    - What we know: WAL JSON must include the new variant; `recover_events` drops JSON errors.
-   - What's unclear: whether GATE-01 requires it.
-   - Recommendation: one `serde_json` round-trip in the CORR-01 test or a tiny `event` unit test; full `store::persist`/`open` is nice-to-have, not S05.
+   - **PLAN lock (04-01 tracer):** `serde_json` to_value / from_value of an `Event` whose op is `CorrectInterval` inside `interval_patch_leaves_vt_2012_and_2021_residuals`. Full `store::persist` / `open` stays out (not S05).
 
-3. **Honeycomb evidence vs ADR body**
+3. **Honeycomb evidence vs ADR body** (RESOLVED)
    - What we know: ADR edit implies `honeycomb.yaml` + CHANGELOG (`docs-coupling`).
-   - Recommendation: **do not** edit ADR-013 Status or narrative; optionally append test names to honeycomb `evidence` only.
+   - **PLAN lock (04-03):** do not edit `docs/ADR/ADR-013-bitemporal-facts-invalidation.md`; append the two test names to honeycomb ADR-013 `evidence` only; `map:` stays Proposed.
 
 ## Environment Availability
 

@@ -5,10 +5,10 @@ milestone_name: Semantic core close
 current_phase: 4
 current_phase_name: Partial correction with residual intervals
 status: planning
-stopped_at: Phase 4 plans written
-last_updated: "2026-09-29T13:10:00.000Z"
+stopped_at: Phase 4 plans revised after plan-checker
+last_updated: "2026-09-29T13:20:00.000Z"
 last_activity: 2026-09-29
-last_activity_desc: Phase 4 PLAN.md set written (04-01..04-03)
+last_activity_desc: Phase 4 plans revised (VALIDATION.md, D-C5 wave-close ci, Correct-arm awk)
 state_head: e5171c28db9a5e601e0e7bcc6b89909258aa72ee
 progress:
   total_phases: 5
@@ -35,7 +35,7 @@ See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 Phase: 4 of 5 (Partial correction with residual intervals)
 Plan: 0 of 3
 Status: Planned (ready to execute; S04 leased)
-Last activity: 2026-09-29 — Phase 4 plans 04-01..04-03 written
+Last activity: 2026-09-29 — Phase 4 plans 04-01..04-03 revised after plan-checker
 
 Progress: [░░░░░░░░░░] 0%
 
