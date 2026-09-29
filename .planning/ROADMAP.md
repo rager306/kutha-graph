@@ -19,7 +19,7 @@ In-repo tests already witness most Phase 1–2 criteria; GSD plans for those pha
 - Integer phases (1, 2, 3): Planned GSD work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Legal PIT fitness** - Named AS OF cuts, fail-closed relations, recovery, claims, H2/H4 dogfood stay falsifiable
+- [x] **Phase 1: Legal PIT fitness** - Named AS OF cuts, fail-closed relations, recovery, claims, H2/H4 dogfood stay falsifiable (completed 2026-09-29)
 - [ ] **Phase 2: Honest harness and freeze** - Governor CI, three lifecycles, planes, typed Op, freeze, honeycomb-as-map
 - [ ] **Phase 3: Lease-gated next slice** - One Active Slice; finish M011 only when leased; next milestone only if STATE names it
 
@@ -37,7 +37,7 @@ In-repo tests already witness most Phase 1–2 criteria; GSD plans for those pha
   4. Two supports for one claim remain distinguishable; unknown claim and dangling `caused_by` fail closed; derived Q loses eligibility when the last premise support is withdrawn (M011 S01–S03)
   5. H2 process-status AS OF cuts differ (including same-second emitted cut); H4 prior membership remains visible after a later edition drops it — without starting a legal pack
 
-**Plans**: 3/3 plans executed
+**Plans**: 3/3 plans complete
 Plans:
 **Wave 1**
 - [x] 01-01-PLAN.md — Tracer: hard gate + VERIFICATION evidence skeleton
@@ -81,7 +81,7 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Legal PIT fitness | 3/3 | Complete | 2026-09-29 |
+| 1. Legal PIT fitness | 3/3 | Complete    | 2026-09-29 |
 | 2. Honest harness and freeze | 0/TBD | Not started | - |
 | 3. Lease-gated next slice | 0/TBD | Not started | - |
 
