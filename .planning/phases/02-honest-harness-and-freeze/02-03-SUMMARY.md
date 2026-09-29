@@ -171,7 +171,16 @@ Phase 3 (lease-gated next slice) only under an explicit Active Slice lease — n
 
 ## Deviations from Plan
 
-None - plan executed exactly as written.
+### Auto-fixed Issues
+
+**1. [Rule 3 - Blocking] Plan verify grep vs markdown Active Slice cite**
+- **Found during:** Task 2 verify
+- **Issue:** Automated `grep -q 'Active Slice: None' .kutha/STATE.md` fails because harness uses `**Active Slice:** None` (bold markdown). Editing `.kutha/STATE.md` is forbidden.
+- **Fix:** Semantic confirmation retained — line present as `**Active Slice:** None`; porcelain on `.kutha/STATE.md` empty. No harness edit.
+- **Files modified:** none (cite-only)
+- **Commit:** n/a (documented in this SUMMARY)
+
+Otherwise plan executed as written.
 
 ## Self-Check: PASSED
 
