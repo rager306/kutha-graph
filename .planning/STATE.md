@@ -5,16 +5,16 @@ milestone_name: Semantic core close
 current_phase: 4
 current_phase_name: Partial correction with residual intervals
 status: planning
-stopped_at: Completed 04-02-PLAN.md
-last_updated: "2026-09-29T15:18:11.982Z"
+stopped_at: Completed 04-03-PLAN.md
+last_updated: "2026-09-29T15:28:25.169Z"
 last_activity: 2026-09-29
 last_activity_desc: Phase 4 plans revised (VALIDATION.md, D-C5 wave-close ci, Correct-arm awk)
-state_head: 6185c2e4f436a89bbf4eacf5fe9685ee43f58baf
+state_head: 9edb573b03715abd2ccb83f41820d306c67a6a07
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 3
-  completed_plans: 2
+  completed_plans: 3
 ---
 
 # Project State
@@ -34,8 +34,8 @@ See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 Phase: 4 of 5 (Partial correction with residual intervals)
 Plan: 3 of 3
-Status: In progress (04-02 complete; next 04-03 GATE-01)
-Last activity: 2026-09-29 — 04-02 whole-version Correct residual freeze (CORR-02)
+Status: Ready for verification (04-03 GATE-01 complete)
+Last activity: 2026-09-29 — 04-03 GATE-01 governor registration
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -65,6 +65,7 @@ Progress: [░░░░░░░░░░] 0%
 |------|----------|-------|-------|
 | Phase 04 P01 | 7min | 3 tasks | 5 files |
 | Phase 04 P02 | 6min | 2 tasks | 2 files |
+| Phase 04 P03 | 7min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,9 @@ Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constrain
 - [Phase 04]: Product changelog shipped with crate diff for docs-coupling; GATE-01 needles deferred to 04-03 (D-C6)
 - [Phase 04]: Whole-version Op::Correct fold arm left unchanged; leftover splitting stays on CorrectInterval (D-C1 / CORR-02)
 - [Phase 04]: CORR-02 Product changelog shipped with the crate test for docs-coupling; GATE-01 needles stay on 04-03 (D-C6)
+- [Phase 04]: Process changelog shipped with harness dictionary diffs (docs-coupling)
+- [Phase 04]: Optional CorrectInterval / IntervalPatchRejected file_contains needles included under m011-s04
+- [Phase 04]: Did not edit .kutha/STATE.md or check S04; GATE-01 is not a closed-delivery lease
 
 ### Pending Todos
 
@@ -97,11 +101,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-29T15:18:11.938Z
-Stopped at: Completed 04-02-PLAN.md
+Last session: 2026-09-29T15:28:09.986Z
+Stopped at: Completed 04-03-PLAN.md
 Resume file: None
-Next: `/gsd-execute-phase 4` (S04 is the Active Slice)
+Next: `/gsd-verify-work 4` (Phase 4 plans complete; S04 still leased)
 
 ## Operator Next Steps
 
-- Continue Phase 4 with `/gsd-execute-phase 4` (next: 04-03)
+- Phase 4 execute is done. Run `/gsd-verify-work 4`. Do not start S05. Do not edit `.kutha/STATE.md`.

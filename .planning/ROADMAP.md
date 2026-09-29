@@ -49,12 +49,12 @@ Full detail: [milestones/v0.01-ROADMAP.md](./milestones/v0.01-ROADMAP.md) · req
   4. This phase executes only while S04 is the Active Slice (GATE-02 applies; S04 is currently leased)
   5. Freeze items stay unstarted and honeycomb cells stay Proposed (GATE-03 applies)
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans executed
 
 Plans:
 - [x] 04-01-PLAN.md — Explicit interval-patch tracer: residuals at VT 2012/2021 (CORR-01)
 - [x] 04-02-PLAN.md — Whole-version Correct leaves no implicit residuals (CORR-02)
-- [ ] 04-03-PLAN.md — Governor GATE-01 registration, changelog Process, ci HIGH-free
+- [x] 04-03-PLAN.md — Governor GATE-01 registration, changelog Process, ci HIGH-free
 
 ### Phase 5: Persisted quantum outcome
 
@@ -120,7 +120,7 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8. Phases 5–8 remain 
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 4. Partial correction with residual intervals | 2/3 | In Progress|  |
+| 4. Partial correction with residual intervals | 3/3 | In Progress|  |
 | 5. Persisted quantum outcome | 0/TBD | Not started (lease-gated) | - |
 | 6. Typed CSR lease | 0/TBD | Not started (lease-gated) | - |
 | 7. Provenance and rule-version check | 0/TBD | Not started (lease-gated) | - |
