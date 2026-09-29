@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 current_phase: 1
 current_phase_name: Legal PIT fitness
 status: planning
-stopped_at: Phase 1 context gathered
-last_updated: "2026-09-29T06:58:36.986Z"
+stopped_at: Phase 1 research complete
+last_updated: "2026-09-29T07:04:00.000Z"
 last_activity: 2026-09-29
-last_activity_desc: onboarding complete (SUMMARY written); ready to plan Phase 1
+last_activity_desc: Phase 1 RESEARCH.md written (FIT→test evidence map; verification-first)
 state_head: 60773c1c0be1515cf2e13ab61c1a1eb9693fbd67
 progress:
   total_phases: 3
@@ -32,9 +32,9 @@ See: `.planning/PROJECT.md` (updated 2026-09-29)
 ## Current Position
 
 Phase: 1 of 3 (Legal PIT fitness)
-Plan: none (plans TBD)
-Status: Ready to plan
-Last activity: 2026-09-29 — onboarding complete (SUMMARY written); ready to plan Phase 1
+Plan: none (plans TBD; research done)
+Status: Ready to plan (research complete)
+Last activity: 2026-09-29 — Phase 1 RESEARCH.md written; ready for planner
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -81,6 +81,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-09-29T06:58:36.957Z
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-legal-pit-fitness/01-CONTEXT.md
-Next: `/gsd-plan-phase 1` (verification-first; do not thaw freeze) — or `/gsd-manager`
+Stopped at: Phase 1 research complete
+Resume file: .planning/phases/01-legal-pit-fitness/01-RESEARCH.md
+Next: planner creates PLAN.md from research (verification-first; do not thaw freeze) — or `/gsd-manager`
