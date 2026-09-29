@@ -1,6 +1,13 @@
 ---
-gsd_state_version: '1.0'
+gsd_state_version: "1.0"
+current_phase: 1
+current_phase_name: Legal PIT fitness
 status: planning
+stopped_at: Phase 1 context gathered
+last_updated: "2026-09-29T06:58:36.986Z"
+last_activity: 2026-09-29
+last_activity_desc: onboarding complete (SUMMARY written); ready to plan Phase 1
+state_head: 60773c1c0be1515cf2e13ab61c1a1eb9693fbd67
 progress:
   total_phases: 3
   completed_phases: 0
@@ -73,7 +80,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-29 13:42
-Stopped at: `/gsd-onboard` readiness check — SUMMARY present; scaffold complete
-Resume file: `.planning/onboarding/SUMMARY.md`
+Last session: 2026-09-29T06:58:36.957Z
+Stopped at: Phase 1 context gathered
+Resume file: .planning/phases/01-legal-pit-fitness/01-CONTEXT.md
 Next: `/gsd-plan-phase 1` (verification-first; do not thaw freeze) — or `/gsd-manager`
