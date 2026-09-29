@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-29 — Product: persisted quantum outcome sidecar
+
+### Product
+
+- Authoritative `quantum_outcomes.jsonl` sidecar beside the log (written by `store::persist` after events; loaded on every `store::open` path). Not a droppable lease — discarding `snapshot.json` keeps outcome history (D-O1 / ADR-010).
+- Dispositions `Zero` / `Partial` / `Full` from abort × `events_in_quantum`; `Runtime::record_resume` appends an explicit `Resume` row (open never auto-resumes). Call `Ok(QuantumOutcome)` remains not completion proof (ADR-014).
+- Named test `budgets_0_1_2_distinguish_zero_partial_full_after_persist_open` (OUT-01): budgets 0/1/2 via `Runtime::new(0|1|default)` survive persist→open as Zero/Partial/Full.
+- Named test `crash_after_prefix_has_no_terminal_success_until_explicit_resume` (OUT-02): after a committed prefix without a Full row, open invents no terminal success until `record_resume`.
+
+### Trajectory
+
+- Active Slice remains **S05** (leased); GATE-01 dictionary needles for these fn names stay on plan 05-02. Green governor is not ADR Accepted and not L_capability.
+
 ## 2026-09-29 — Product: interval-patch CorrectInterval residuals
 
 ### Product
