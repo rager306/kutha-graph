@@ -17,14 +17,14 @@ progress:
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-09-29 after v0.01)
+See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** Planning next milestone (`/gsd-new-milestone`) when `.kutha/STATE.md` names an Active Slice or closes M011; harness M011 still open
+**Current focus:** v0.02 Semantic core close — defining requirements; only M011 S04 is leased, S05–S08 unleased
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M011**; Active Slice **None**; Phase **H4**; `L_map=honeycomb-proposed`; `L_delivery=M011-S03-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
+**Harness lease (cite only):** Active Milestone **M011**; Active Slice **S04**; Phase **H4**; `L_map=honeycomb-proposed`; `L_delivery=M011-S03-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
 
 ## Current Position
 
