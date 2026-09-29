@@ -135,7 +135,16 @@ status: complete
 
 ## Deviations from Plan
 
-None - plan executed exactly as written.
+### Auto-fixed Issues
+
+**1. [Rule 1 - Bug] Corrected STATE progress after `state.update-progress` wrote 0%**
+- **Found during:** Plan closeout (after Task 2)
+- **Issue:** `gsd_run query state.update-progress` set `percent: 0` and a blank progress bar despite `completed_plans: 2`
+- **Fix:** Set percent/bar to 67%, refreshed Current focus / Next / velocity to Plan 03
+- **Files modified:** `.planning/STATE.md`
+- **Commit:** `35c53bf`
+
+Otherwise plan executed as written (no crates/REQUIREMENTS/kutha STATE edits).
 
 ## Auth Gates
 
