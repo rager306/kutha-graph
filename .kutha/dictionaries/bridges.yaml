@@ -45,3 +45,8 @@ bridges:
     claim: "Interval patch leaves VT 2012/2021 residuals; whole-version Correct does not invent them"
     cites: "crates/kutha-runtime/tests/m011_partial_correction.rs"
     check: m011-partial-correction
+
+  - id: B-m011-quantum-outcome
+    claim: "Budgets 0/1/2 distinguish Zero/Partial/Full after persist→open; crash after prefix has no terminal success until explicit resume"
+    cites: "crates/kutha-runtime/tests/m011_quantum_outcome.rs"
+    check: m011-quantum-outcome

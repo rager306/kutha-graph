@@ -312,6 +312,18 @@ checks:
         category: m011-s04
         message: "IntervalPatchRejected missing: {missing}"
 
+  - id: m011-quantum-outcome
+    description: M011 S05 — budgets 0/1/2 Zero/Partial/Full after persist; crash prefix needs explicit resume
+    steps:
+      - kind: file_contains
+        path: crates/kutha-runtime/tests/m011_quantum_outcome.rs
+        needles:
+          - "fn budgets_0_1_2_distinguish_zero_partial_full_after_persist_open"
+          - "fn crash_after_prefix_has_no_terminal_success_until_explicit_resume"
+        require: all
+        category: m011-s05
+        message: "M011 quantum-outcome tests missing {missing}"
+
   - id: h4-lease
     description: H4 delivery lease named without promoting ADR-090 L_map
     steps:

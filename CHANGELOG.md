@@ -13,9 +13,13 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - Named test `budgets_0_1_2_distinguish_zero_partial_full_after_persist_open` (OUT-01): budgets 0/1/2 via `Runtime::new(0|1|default)` survive persist→open as Zero/Partial/Full.
 - Named test `crash_after_prefix_has_no_terminal_success_until_explicit_resume` (OUT-02): after a committed prefix without a Full row, open invents no terminal success until `record_resume`.
 
+### Process
+
+- FSM `observe_cargo.required` plus `m011-quantum-outcome` / `B-m011-quantum-outcome` needles for named OUT-01 and OUT-02 tests (GATE-01).
+
 ### Trajectory
 
-- Active Slice remains **S05** (leased); GATE-01 dictionary needles for these fn names stay on plan 05-02. Green governor is not ADR Accepted and not L_capability.
+- Active Slice remains **S05** (leased); ADR-014 remains Proposed (not Accepted, not L_capability). Green governor is not ADR Accepted and not L_capability.
 
 ## 2026-09-29 — Product: interval-patch CorrectInterval residuals
 
