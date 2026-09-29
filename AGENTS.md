@@ -1,6 +1,6 @@
 # AGENTS.md — Kutha / kutha-graph
 
-Agent operating notes for this repository. Read this before honeycomb ADRs or the matrix. Chat with the human is **Russian**; this file and all other docs stay **English**.
+Agent operating notes for this repository. Read this before honeycomb ADRs or the applicability matrix. Chat with the human is **Russian**; this file and all other docs stay **English**.
 
 ## Language policy
 
@@ -13,7 +13,36 @@ Agent operating notes for this repository. Read this before honeycomb ADRs or th
 
 Do not mix languages inside a single artifact.
 
-Russian chat still has to hit **English** Compound Engineering skill descriptions. Route verbs via `.cursor/rules/ce-skills-ru.mdc` (always on): коммит → `ce-commit`, changelog → `kutha-changelog`, PR/запушь → `ce-commit-push-pr`. Do not patch plugin-cache skill files.
+## Primary workflow: GSD
+
+Delivery and session planning run through **GSD** (`.cursor/skills/gsd-*`, `.cursor/gsd-core/`). Do not invent a parallel planning tree.
+
+| Need | Command / location |
+|------|-------------------|
+| Read GSD position | `.planning/STATE.md` (GSD lease — not harness SoT) |
+| Requirements / roadmap | `.planning/REQUIREMENTS.md`, `.planning/ROADMAP.md` |
+| Project brief | `.planning/PROJECT.md` |
+| Codebase map | `.planning/codebase/` (`/gsd-map-codebase`) |
+| Ingested ADR intel | `.planning/intel/`, `.planning/INGEST-CONFLICTS.md` |
+| Configure agents | `/gsd-config` → `.planning/config.json` |
+| Plan a phase | `/gsd-plan-phase N` |
+| Execute plans | `/gsd-execute-phase` |
+| Onboard / re-bootstrap | `/gsd-onboard` → map → ingest → scaffold |
+| Manager / next step | `/gsd-manager` |
+
+**Three state files — do not collapse**
+
+| File | Owns | Must not replace |
+|------|------|------------------|
+| `.planning/STATE.md` | GSD phase/plan progress | Harness milestone lease |
+| `.kutha/STATE.md` | Harness Active Milestone / Slice / freeze / L_* | GSD roadmap |
+| `docs/ADR/*` | Architecture map (Proposed ≠ Accepted) | Delivery backlog or GSD phases |
+
+Governor green ≠ ADR Accepted ≠ capability ≠ GSD phase complete. Honeycomb **Proposed** ≠ GSD v1 requirements. Do not turn ADR-010–093 into sequential GSD phases.
+
+Current GSD overlay (steel thread): Phase 1 legal PIT fitness → Phase 2 honest harness/freeze → Phase 3 lease-gated next slice. Phases 1–2 are mostly **verification-first** against crates already in tree. Phase 3 stays blocked until `.kutha/STATE.md` names an Active Slice.
+
+Russian chat verbs for **commit / changelog / PR** still route via `.cursor/rules/ce-skills-ru.mdc` (`ce-commit`, `kutha-changelog`, `ce-commit-push-pr`). Prefer **GSD** for plan / execute / map / onboard / config. Do not patch plugin-cache skill `description` fields.
 
 ## Two planes (do not collapse)
 
@@ -22,7 +51,7 @@ Russian chat still has to hit **English** Compound Engineering skill description
 | **Product** (`crates/kutha-*`) | Temporal graph truth: event log = SoT | Roadmap ceremony |
 | **Harness** (`scripts/kutha_gov`, `.kutha/`) | Trajectory honesty, freeze, lifecycle non-collapse | Architecture decisions, legal/product readiness |
 
-Governor green ≠ ADR Accepted ≠ capability. Honeycomb **Proposed** ≠ delivery backlog. Literature cards ≠ shipping list.
+Literature cards ≠ shipping list. GSD `.planning/` is an agent planning overlay — not product SoT and not a second governor.
 
 ## Product snapshot
 
@@ -34,63 +63,48 @@ Governor green ≠ ADR Accepted ≠ capability. Honeycomb **Proposed** ≠ deliv
 
 ## Current execution position
 
-Read `.kutha/STATE.md` first (lease, not SoT). **M011 is active** (`L_delivery=M011-S03-done`): portable `claim_id`, unknown-claim fail-closed, replay lineage on `caused_by`, thin P→Q `derivation_eligible_at`. Harness **H4** remains on. Do not start a legal pack. Do not start M002 Rocks until STATE names it. Further M011 slices need an explicit Active Slice lease.
+1. Read **`.kutha/STATE.md`** first (harness lease, freeze, Active Slice).
+2. Read **`.planning/STATE.md`** for GSD phase focus.
+3. Honor both: a GSD plan does not authorize thawing freeze or starting an unleased slice.
 
-Until explicit M002: do not add RocksDB, Cypher/GPML parser, HNSW, ADR-050 six dictionaries, ADR-080/081, full ADR-090/093 packs, ADR-100+, or Consensus Query 103+.
+**Harness lease (cite):** M011 active (`L_delivery=M011-S03-done`); Active Slice **None**; Phase **H4**. Do not start a legal pack. Do not start M002 Rocks until STATE names it. Further M011 slices need an explicit Active Slice lease.
 
-Literature bound is **closed** (163 cards). Do not mint aggregator waves. Matrix: `.compound-engineering/artifacts/research/applicability/` (`cards/` = SoT; `matrix.md` = rollup; `architecture-gtm-readout.md` = GTM translation).
+**Freeze until explicit M002:** RocksDB crate, Cypher/GPML parser, HNSW, ADR-050 six dictionaries, ADR-080/081, full ADR-090/093 packs, ADR-100+, Consensus Query 103+.
 
-Compound Engineering `docs_root` is `.compound-engineering/artifacts` (set in `.compound-engineering/config.yaml`). Plans, research notes, ideation, and handoffs live there — not under `docs/`. Captured learnings, when a solved problem is written down, go in `.compound-engineering/artifacts/solutions/` (category folders, YAML frontmatter: `module`, `tags`, `problem_type`). That store is relevant when implementing or debugging in a documented area; it is not architecture SoT and not a delivery backlog. `ce-setup` owns config health; it does not author `README.md`.
-
-Durable CE outputs that must survive sessions stay under that `docs_root` (and in git when they are team knowledge). Do **not** write those to `/tmp`, `$TMPDIR`, or `.tmp`. In particular `ce-handoff` defaults to `/tmp/compound-engineering-<uid>/ce-handoff/` (OS-evictable): always create at `.compound-engineering/artifacts/handoffs/<topic>.md` instead. `ce-sweep` state, if used, is `sweep_state_path` under `docs_root` in tracked `config.yaml`, not a `/tmp` path. `docs_root` in `config.local.yaml` is ignored. One-shot scratch (elevation prompts, dogfood screenshots, pack cache, `ce-work` run roots) may use `mktemp`. `.context/compound-engineering/` is gitignored checkout scratch, not SoT.
+Literature bound is **closed** (163 cards). Do not mint aggregator waves. Matrix SoT: `.compound-engineering/artifacts/research/applicability/` (`cards/` = SoT; `matrix.md` = rollup).
 
 ## Repository layout
 
 ```text
 kutha-graph/
-├── README.md                          # human entry (status, commands, where to read)
-├── CLAUDE.md                          # shim → this file (Claude Code)
+├── README.md                          # human entry
+├── CLAUDE.md                          # shim → this file
 ├── AGENTS.md                          # this file
 ├── CHANGELOG.md                       # dated product/process history
-├── STRATEGY.md                        # product strategy (wedge, metrics, non-goals)
-├── Cargo.toml                         # Rust workspace (kutha-common, kutha-runtime)
-├── pyproject.toml                     # harness only: Python >=3.13, uv, kutha-gov
-├── uv.lock
-├── .python-version                    # 3.13
-├── .cursor/                           # Cursor MCP + rules + repo skills (CBM adapter)
+├── STRATEGY.md                        # wedge, metrics, non-goals
+├── Cargo.toml / pyproject.toml        # Rust product + uv harness
+├── .planning/                         # GSD overlay (primary agent planning)
+│   ├── STATE.md / PROJECT.md / REQUIREMENTS.md / ROADMAP.md
+│   ├── config.json                    # /gsd-config
+│   ├── codebase/                      # /gsd-map-codebase
+│   ├── intel/                         # /gsd-ingest-docs outputs
+│   └── INGEST-CONFLICTS.md
 ├── .kutha/                            # harness pyramid (process plane)
-│   ├── STATE.md                       # lease: active milestone / lifecycles
-│   ├── ROADMAP.md                     # M001 slices; honeycomb is a map
-│   ├── META.md                        # harness constitution (allowed kinds + FSM kinds)
-│   ├── dictionaries/checks.yaml       # governor checks (append a row to add one)
-│   ├── dictionaries/fsm.yaml          # CI quantum states/transitions
-│   ├── dictionaries/invariants.yaml   # control-loop ledger
-│   ├── dictionaries/bridges.yaml      # cite product freeze/tests
-│   ├── dictionaries/honeycomb.yaml    # L_map compact index (`kutha-gov map`)
-│   └── events.jsonl                   # process log (gitignored; H0 Time axis)
-├── crates/                            # product plane (Rust)
-│   ├── kutha-common/                  # Event, Op::{Assert,Retract,Correct,Behavior}, intern, UUID v7
-│   └── kutha-runtime/                 # log, fold, quantum, receipt, snapshot, WAL, CSR, LFTJ, allowlist
-├── docs/
-│   ├── ADR/                           # spine 000–002 + honeycomb 010–093 (all Proposed)
-│   ├── architecture/stca-guide.md     # STCA manifesto (do not copy §5 JSON tutorial into harness)
-│   ├── process/kutha-harness.md       # harness contract (not an ADR)
-│   └── process/governor-intake.md     # control loop / bridge / map → dictionaries
-├── scripts/
-│   ├── kutha-gov                      # uv wrapper
-│   ├── kutha_gov/                     # harness interpreter (kinds.py; checks are YAML)
-│   └── tests/                         # pytest for harness
-└── .compound-engineering/
-    ├── config.yaml                    # CE team defaults (docs_root)
-    └── artifacts/                    # CE docs_root (not product SoT)
-        ├── research/applicability/    # 163 cards, matrix, GTM readout
-        ├── plans/                     # CE plans (spine-without-sprawl, P0 spikes)
-        ├── ideation/                  # ADR crystallization HTML
-        ├── handoffs/                 # session continuity snapshots
-        └── solutions/                 # ce-compound learnings when captured
+│   ├── STATE.md                       # lease: milestone / slice / freeze / L_*
+│   ├── ROADMAP.md                     # harness milestones (not honeycomb backlog)
+│   ├── dictionaries/                  # checks, fsm, invariants, bridges, honeycomb
+│   └── events.jsonl                   # gitignored H0 observations
+├── .cursor/                           # GSD skills/core, MCP, CBM adapter rules
+├── crates/kutha-common|kutha-runtime  # product plane
+├── docs/ADR/                          # spine + honeycomb (Proposed)
+├── docs/process/                      # harness + governor intake + subagents
+├── scripts/kutha_gov/               # governor CLI interpreter
+└── .compound-engineering/artifacts/   # legacy CE docs_root (research/handoffs archive)
 ```
 
-Do **not** add repo-root `ports/` / `adapters/` / `domain/` (ADR-022: hexagon lives *inside* a slice). Do **not** put Python inside `kutha-runtime`.
+Do **not** add repo-root `ports/` / `adapters/` / `domain/` (ADR-022). Do **not** put Python inside `kutha-runtime`.
+
+Durable agent artifacts that must survive sessions: prefer **`.planning/`** (GSD) or, for literature/research already landed, `.compound-engineering/artifacts/`. Do **not** write team knowledge to `/tmp`. One-shot scratch may use `mktemp`.
 
 ## Commands
 
@@ -104,60 +118,67 @@ Harness (Python **3.13** via **uv** only — not system `python3`):
 
 ```text
 uv run kutha-gov ci          # FSM quantum: relations → checks → observe → emit → tenant → fold
-uv run kutha-gov precommit   # dictionary checks only (no cargo, no JSONL); optional --check ID
+uv run kutha-gov precommit   # dictionary checks only (no cargo, no JSONL)
 uv run kutha-gov fsm         # print the process machine
-uv run kutha-gov map         # compact L_map index (optional cell id; --format json)
-uv run kutha-gov py          # ruff + ty (Astral) + pyrefly (Meta)
-uv run kutha-gov fold        # fold .kutha/events.jsonl
-uv run kutha-gov list
-uv run kutha-gov explain trajectory
+uv run kutha-gov map         # compact L_map index
+uv run kutha-gov py          # ruff + ty + pyrefly
+uv run kutha-gov fold | list | explain …
 uv run pytest
 ```
 
-Pin: `.python-version`. Copy `.env.example` to `.env` for `KUTHA_GOV_BUDGET` / `KUTHA_GOV_FAIL_ON_WARN` (CLI flags win). Dev tools live in `pyproject.toml` dependency group `dev`. Add a governor check by appending `.kutha/dictionaries/invariants.yaml` (control loop) or `.kutha/dictionaries/bridges.yaml` (cite product), then `.kutha/dictionaries/checks.yaml`. Add or restage a honeycomb cell in `.kutha/dictionaries/honeycomb.yaml` (not a check). Add a CI phase by appending `.kutha/dictionaries/fsm.yaml`. Do not add a Python class. Commit hook: `uvx pre-commit install --overwrite` (`.pre-commit-config.yaml` calls `kutha-gov precommit`, not `ci`).
+Pin: `.python-version`. New governor check = YAML row in invariants/bridges then checks — not a new Python class. New CI phase = `fsm.yaml` row. Commit hook: `uvx pre-commit install --overwrite` (precommit, not full `ci`).
 
 ## Working conventions
 
 1. Honor locked ADR-000 **D1–D10**. Do not revive: pure Samyama product, pure ActiveGraph without hot projections, hard FSM as sole agent control, TypeScript as graph core, RVF as primary storage, Graphiti/Dify/Hindsight as SoT.
 2. STCA first. New product detail → honeycomb ADR-010+ (`docs/ADR/README.md`), never silent rewrites of 000/001/002. **Accepted** only when that cell is in the running engine.
-3. Honeycomb is a **map**. One steel thread at a time (H4 overlay dogfood is in; not M002). “Promote all” is forbidden.
+3. Honeycomb is a **map**. One steel thread at a time. “Promote all” is forbidden. GSD phases track fitness/freeze/lease — not cell enumeration.
 4. Prefer falsifiable spikes over generic “build a graph DB” advice.
 5. Core stays self-contained Rust (no mandatory external graph DB / Graphiti runtime / LLM for temporal truth).
-6. Harness is a **parallel STCA plane** that dogfoods with the engine (`docs/process/kutha-harness.md`). H0 = files + JSONL + **meta-prompt dictionaries + FSM**; H2 = same typed triples on the Kutha log via `kutha-tenant`. Do not clone law-nexus 171-milestone GSD or copy `stca-guide.md` §5 merge-patch runtime. Control loop → check: append `.kutha/dictionaries/invariants.yaml` first (`docs/process/governor-intake.md`). A fence that cites product is `.kutha/dictionaries/bridges.yaml`. Compact L_map index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov map`). New check = YAML row; new CI phase = FSM row; new kind = rare `kinds.py` / `fsm.py` change. Unknown kind → HIGH.
-7. Three lifecycles stay orthogonal: **L_map** (ADRs) · **L_delivery** (`.kutha` milestones) · **L_capability** (fitness tests). Bridges may cite; they may not copy state machines.
+6. Harness is a **parallel STCA plane** (`docs/process/kutha-harness.md`). H0 = files + JSONL + dictionaries + FSM; H2 = typed triples on the Kutha log via `kutha-tenant`. Do **not** copy `stca-guide.md` §5 JSON merge-patch as the product write surface (typed `Op` / ADR-010). Do not clone sprawling multi-hundred milestone GSD installs — this repo’s GSD overlay is a short steel thread. Control loop → check: `docs/process/governor-intake.md`.
+7. Three harness lifecycles stay orthogonal: **L_map** · **L_delivery** · **L_capability**. Bridges may cite; they may not copy state machines.
 8. Intern map (ADR-011) ≠ agent dictionaries (ADR-050). Do not collapse them.
-9. Humans start at `README.md`. Agents follow this file. Dated history goes in `CHANGELOG.md` (product vs process; do not collapse Trajectory into “the product shipped”). Author entries with `.cursor/skills/kutha-changelog/SKILL.md` (not baoyu `release-skills`). Commit with **ce-commit** (Russian: коммит / закоммить / зафиксируй); do not bump `0.0.0`, tag, or publish GitHub Releases. Git user-rule stays safety-only.
+9. Humans start at `README.md`. Agents follow this file, then `.kutha/STATE.md` + `.planning/STATE.md`. Dated history: `CHANGELOG.md` via `.cursor/skills/kutha-changelog/SKILL.md`. Commits: **ce-commit** (Russian: коммит / закоммить). Do not bump `0.0.0`, tag, or publish GitHub Releases unless STATE/process explicitly allows. Git user-rule stays safety-only.
 
-## Codex subagents
+## Code graph (CBM) + GSD
 
-Delegate bounded, independent work to subagents when it improves speed or confidence. The parent owns the current steel thread, scope decisions, integration, and the final Russian response. Small or tightly coupled tasks stay local. Use the workflow in `docs/process/codex-subagents.md`.
+**codebase-memory-mcp (CBM)** is the structural **code** evidence plane inside GSD and CE. It is not product SoT, not honeycomb, and not a substitute for `/gsd-plan-phase`. Tool matrix: `.cursor/skills/codebase-memory/SKILL.md`. Always-on: `.cursor/rules/code-graph-cbm.mdc`. MCP: `.cursor/mcp.json`.
 
-- Read `.kutha/STATE.md` and pass the relevant freeze and lifecycle constraints to every helper. Parallelism does not authorize another milestone or a new research wave.
-- Prefer `codebase-memory-scout` for provisional discovery, `codebase-memory` for verified questions, `codebase-memory-auditor` for bounded audits, `implementation-worker` for assigned edits, and `correctness-reviewer` for independent review. Use an available built-in role with the same brief if a custom role is missing.
-- Before code delegation, provide project/generation, relevant graph queries and pagination, paths/symbols, coverage gaps, source fallback, and unresolved questions. Do not assume a helper has MCP access. Configuration and documentation outside the code graph require exact source evidence and an explicit not-applicable scope.
-- Assign disjoint file ownership. Keep product and harness responsibilities explicit, including any cross-plane contract. Workers share the workspace and must preserve other edits. Only the designated integrator changes shared lockfiles, process events, tenant data, or graph indexes, and runs `uv run kutha-gov ci` when required by the task.
-- Use up to three helpers, subject to the runtime limit; reuse helpers for related follow-ups. Do not recursively delegate by default. Coordinate cargo/uv checks that share output directories.
-- Require changed paths or evidence locations, check results, and limitations in each handoff. The parent validates the combined result; graph coverage, review approval, and governor green retain their distinct meanings.
+| GSD moment | CBM |
+|------------|-----|
+| `/gsd-map-codebase`, plan research | Scout / Verify lookups |
+| `/gsd-plan-phase` | Verify symbols/paths in scope |
+| `/gsd-execute-phase` | Before edits: graph + inbound `trace_path` or `detect_changes`; after: coverage on touched paths |
+| Review / debug | `detect_changes` / `trace_path` |
 
-## Code graph (Cursor)
+Keep GSD **`intel.enabled`** / **`graphify.enabled`** Off unless you explicitly need GSD-native intel/graphify — do not dual-index with CBM. Do not put MCP choreography into ROADMAP or PLAN files (plans stay portable: symbols, paths, risks).
 
-CBM (`codebase-memory-mcp`) is the **structural code-graph evidence plane** for Cursor. It is harness/tooling, not product SoT and not a honeycomb ADR. Tool matrix and tiers: `.cursor/skills/codebase-memory/SKILL.md`. Always-on adapter: `.cursor/rules/code-graph-cbm.mdc`. Project MCP: `.cursor/mcp.json` (`command`: `codebase-memory-mcp` on `PATH`, not a machine-local absolute path). Approvals stay machine-local.
+Forbidden: `delete_project`, CBM `manage_adr` (`docs/ADR/` owns ADRs). Only parent/integrator runs `index_repository` when missing/stale or user-asked. Graph coverage ≠ governor green ≠ GSD verification.
 
-Do not dump the MCP catalog here. Do not call every CBM tool on every prompt. Do not replace Compound Engineering skills with a CBM protocol. `delete_project` and CBM `manage_adr` are forbidden (`docs/ADR/` owns ADRs). Only the parent/integrator runs `index_repository`. Graph coverage ≠ governor green.
+**GitNexus is secondary.** Do not dual-query with CBM. Reindex with `gitnexus analyze --index-only` or a local `.gitnexusrc` (`skipAgentsMd` + `skipSkills`) — never let analyze rewrite this file or `CLAUDE.md`.
 
-**GitNexus is secondary.** Do not dual-query GitNexus and CBM. `gitnexus analyze` must not rewrite `AGENTS.md` / `CLAUDE.md` or reinstall skills: local gitignored `.gitnexusrc` (`skipAgentsMd` + `skipSkills`) or `gitnexus analyze --index-only`.
+## Subagents
 
-Cursor has no Codex Task types named `codebase-memory-scout`. Map briefs:
+Parent owns the steel thread, freeze, integration, and the final Russian reply. Pass `.kutha/STATE.md` freeze/lifecycle into every helper. Parallelism does not lease a new milestone. Details: `docs/process/codex-subagents.md`.
 
-| Codex role (`docs/process/codex-subagents.md`) | Cursor `Task` |
-|------------------------------------------------|---------------|
-| `codebase-memory-scout` | `explore` (narrow, composer-class) |
-| `codebase-memory` (verify) | `generalPurpose` (heavier model when the graph span is large) |
-| `codebase-memory-auditor` | `generalPurpose` (bounded audit brief; heavier model) |
-| `implementation-worker` | `generalPurpose` or `implementation-worker` if present — owned files only |
-| `correctness-reviewer` | `code-reviewer` (stable diff; not a CBM auditor) |
+Every `Task` that needs structure must name **`codebase-memory-mcp`** (`list_projects` first; graph before Grep; `check_index_coverage` on cited paths). Children do not inherit Cursor rules. No MCP → read source; do not claim graph verification.
 
-Every `Task` prompt that needs the graph must name `codebase-memory-mcp`; children do not inherit Cursor rules. If a helper has no MCP, it reads source and must not claim graph verification.
+| Codex-style role | Cursor `Task` |
+|------------------|---------------|
+| codebase-memory-scout | `explore` (narrow) |
+| codebase-memory (verify) | `generalPurpose` (heavier when span is large) |
+| codebase-memory-auditor | `generalPurpose` (bounded audit) |
+| implementation-worker | owned files only |
+| correctness-reviewer | `code-reviewer` (diff review ≠ CBM auditor) |
+| gsd-* specialists | matching `gsd-*` subagent types when present |
+
+Disjoint file ownership across helpers. Only the integrator touches shared lockfiles, `.kutha/events.jsonl`, tenant data, or graph indexes, and runs `uv run kutha-gov ci` when the task requires it.
+
+## Legacy: Compound Engineering
+
+CE remains installed for **commit / PR / changelog / handoff** skills and for the closed literature store under `.compound-engineering/artifacts/`. It is **not** the primary planning SoT anymore — prefer `.planning/` and GSD commands above.
+
+If a CE plan/handoff is still useful, treat it as archive input to GSD intel or a one-shot read — do not grow a second living roadmap under `artifacts/plans/`. `ce-setup` does not author `README.md`.
 
 ## Research notes (agent memory)
 
@@ -165,9 +186,9 @@ Every `Task` prompt that needs the graph must name `codebase-memory-mcp`; childr
 
 - **Paper:** Todd L. Veldhuizen, *Leapfrog Triejoin: A Simple, Worst-Case Optimal Join Algorithm* (ICDT 2014 / LogicBlox).
 - **URL:** https://arxiv.org/html/1210.0481v5
-- **Result:** Full conjunctive queries in \(O(Q^*\log M)\) (AGM fractional edge cover bound \(Q^*\); \(M\) = largest relation). Hash-table variant (Ken Ross) reaches \(O(Q^*)\).
-- **Kutha:** baseline for the hot data-plane join path (CSR + Cypher-style multi-hop). Does not change event-log SoT (D1/D2). P0 has `leapfrog_intersect` on sorted rows, not full variable-ordered MATCH.
+- **Result:** Full conjunctive queries in \(O(Q^*\log M)\) (AGM bound \(Q^*\); \(M\) = largest relation). Hash-table variant reaches \(O(Q^*)\).
+- **Kutha:** baseline for hot data-plane join (CSR + Cypher-style multi-hop). Does not change event-log SoT (D1/D2). P0 has `leapfrog_intersect` on sorted rows, not full variable-ordered MATCH.
 
 ### Applicability matrix
 
-163 closed cards. Query/Data/Time dense; Security/Packaging thin as *kernels*. Trap cluster (demand high, optimality low — not core): Graphiti, Dify, Hindsight, Harvey-as-SoT, CRDT/Geo-Raft as SoT, empty Cypher, LegalSearch-R1-as-engine. GTM: legal over-mapped on purpose; science present; finance/clinical = receipts/vacuum riders.
+163 closed cards. Query/Data/Time dense; Security/Packaging thin as *kernels*. Trap cluster (not core): Graphiti, Dify, Hindsight, Harvey-as-SoT, CRDT/Geo-Raft as SoT, empty Cypher, LegalSearch-R1-as-engine. GTM: legal over-mapped on purpose; science present; finance/clinical = receipts/vacuum riders.

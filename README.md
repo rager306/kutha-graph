@@ -44,20 +44,22 @@ If this host sets `rustc-wrapper = "sccache"` and the wrapper cannot run, use `c
 |------|------|
 | `crates/kutha-common`, `crates/kutha-runtime` | Product: events, fold, quantum, CSR lease, allowlist, tenant ingest |
 | `.kutha/` | Process harness (STATE lease, dictionaries, JSONL) |
+| `.planning/` | GSD overlay (STATE/ROADMAP/REQUIREMENTS, codebase map, intel) |
 | `docs/ADR/` | Architecture decisions |
 | `STRATEGY.md` | Wedge, metrics, non-goals |
-| `AGENTS.md` | Agent operating contract (language, freeze, commands) |
+| `AGENTS.md` | Agent operating contract (GSD-first, language, freeze) |
 | `CHANGELOG.md` | Dated project history (product vs process) |
 | `docs/process/governor-intake.md` | Control loop / bridge / map → governor dictionaries |
-| `.compound-engineering/` | Compound Engineering config + `docs_root` artifacts |
+| `.compound-engineering/artifacts/` | Legacy research archive (applicability cards, old CE handoffs) |
 
 ## Where to read next
 
-1. [`.kutha/STATE.md`](.kutha/STATE.md) — what is allowed this week  
-2. [`STRATEGY.md`](STRATEGY.md) — why this shape  
-3. [`docs/ADR/README.md`](docs/ADR/README.md) — STCA → honeycomb  
-4. [`docs/process/kutha-harness.md`](docs/process/kutha-harness.md) — parallel process plane  
-5. [`.compound-engineering/artifacts/research/applicability/`](.compound-engineering/artifacts/research/applicability/) — 163 closed literature cards (`cards/` = SoT)
+1. [`.kutha/STATE.md`](.kutha/STATE.md) — what is allowed this week (harness lease)  
+2. [`.planning/STATE.md`](.planning/STATE.md) — GSD phase focus (does not replace `.kutha/`)  
+3. [`STRATEGY.md`](STRATEGY.md) — why this shape  
+4. [`docs/ADR/README.md`](docs/ADR/README.md) — STCA → honeycomb  
+5. [`docs/process/kutha-harness.md`](docs/process/kutha-harness.md) — parallel process plane  
+6. [`.compound-engineering/artifacts/research/applicability/`](.compound-engineering/artifacts/research/applicability/) — 163 closed literature cards (`cards/` = SoT)
 
 Agent instructions: [`AGENTS.md`](AGENTS.md). Claude Code also loads [`CLAUDE.md`](CLAUDE.md) (shim to the same file).
 
