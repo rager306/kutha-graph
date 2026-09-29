@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M011
-**Active Slice:** S04
+**Active Slice:** S05
 **Phase:** H4
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M011-S03-done
+L_delivery=M011-S04-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M011 S03 done (thin P→Q derivation eligibility); further slices need lease | Capability proven / Rocks started / M002 leased |
+| L_delivery | M011 S04 done (interval-patch residuals); Active Slice **S05** leased | Capability proven / Rocks started / M002 leased |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M011 S03 is in.** Active Slice **S04** (partial correction with residual intervals) is leased; S05–S08 are candidates and remain unleased. Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW.
+**M011 S04 is in.** Active Slice **S05** (persisted quantum outcome and continuation) is leased; S06–S08 are candidates and remain unleased. Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW.
 
 ## Freeze (until explicit M002 lease)
 

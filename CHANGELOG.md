@@ -16,11 +16,11 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Process
 
 - FSM `observe_cargo.required` plus `m011-partial-correction` / `B-m011-partial-correction` needles for named CORR-01 and CORR-02 tests (GATE-01).
-- Harness lease: Active Slice **S04** (partial correction with residual intervals). M011 tail candidates S05–S08 and a long-horizon later-milestones order are named in `.kutha/ROADMAP.md` without thawing freeze. Not ADR Accepted; not closed delivery.
+- Harness lease advanced: **S04** delivered (`L_delivery=M011-S04-done`); Active Slice **S05** (persisted quantum outcome and continuation). S06–S08 remain unleased. Not ADR Accepted; not closed delivery.
 
 ### Trajectory
 
-- Active Slice remains S04; ADR-013 remains Proposed (not Accepted, not L_capability). Honeycomb ADR-013 evidence lists `interval_patch_leaves_vt_2012_and_2021_residuals` and `whole_version_correct_does_not_invent_residuals`. Green governor is not ADR Accepted and not L_capability.
+- Active Slice is **S05**; ADR-013 remains Proposed (not Accepted, not L_capability). S04 residual tests stay registered. Green governor is not ADR Accepted and not L_capability.
 
 ## 2026-09-16 — Product + Process: M011 S03 thin P→Q eligibility
 
