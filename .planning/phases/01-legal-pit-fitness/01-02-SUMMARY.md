@@ -18,12 +18,12 @@ affects:
   - Phase 1 closeout
 
 actuals:
-  tokens: 0  # filled at final SUMMARY commit after measured diff
+  tokens: 3309
   tasks: 2
-  commits: 0  # measured from ledger at SUMMARY finalize
+  commits: 2
 
-plan_head_before: PLACEHOLDER
-plan_head_after: PLACEHOLDER
+plan_head_before: ef2818fa88c5952de5c0387a071a95649ec7a2f9
+plan_head_after: 974ee792fec46676193baf2adf2067490a947fe9
 
 tech-stack:
   added: []
@@ -126,7 +126,7 @@ status: complete
 ## Task Commits
 
 1. **Task 1: Fill twelve-row pass/fail from hard-gate output** - `b6ac8f0` (docs)
-2. **Task 2: Write 01-02-SUMMARY and paint VALIDATION statuses** - (this commit)
+2. **Task 2: Write 01-02-SUMMARY and paint VALIDATION statuses** - `974ee79` (docs)
 
 ## Decisions Made
 
@@ -153,6 +153,10 @@ None — docs-only GSD artifacts; no crates/ or harness changes.
 
 Plan **01-03**: batch REQUIREMENTS FIT-01…05 to `[x]` and close STATE/ROADMAP only because VERIFICATION is green (D-05). Do not thaw freeze; do not start Active Slice work.
 
-## Self-Check: PENDING
+## Self-Check: PASSED
 
-Filled after task-2 commit and ledger measure.
+- `01-VERIFICATION.md` present with `status: passed` and twelve `| pass |` rows
+- `01-02-SUMMARY.md` cites FIT-01, FIT-05, and `01-VERIFICATION.md`
+- `01-VALIDATION.md` has ✅ for `01-02-01` and `01-02-02`
+- Commits `b6ac8f0`, `974ee79` present on branch
+- REQUIREMENTS.md FIT lines still unchecked; no `crates/` edits; `.kutha/STATE.md` untouched
