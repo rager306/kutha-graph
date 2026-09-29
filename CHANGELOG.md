@@ -15,7 +15,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Trajectory
 
-- Active Slice remains S04; ADR-013 stays Proposed. GATE-01 needles for this test stay on plan 04-03. Green governor is not ADR Accepted and not L_capability.
+- Active Slice remains S04; ADR-013 stays Proposed. GATE-01 needles for CORR-01 and CORR-02 stay on plan 04-03. Green governor is not ADR Accepted and not L_capability.
 
 ## 2026-09-16 — Product + Process: M011 S03 thin P→Q eligibility
 
