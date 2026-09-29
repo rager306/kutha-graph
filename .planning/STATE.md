@@ -25,11 +25,11 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** Phase 4 complete (M011 S04). Next GSD phase is 5 (S05 quantum outcome) — **lease-gated** until `.kutha/STATE.md` names Active Slice S05.
+**Current focus:** Phase 5 — Persisted quantum outcome (M011 **S05** leased). S06–S08 unleased.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M011**; Active Slice **S04**; Phase **H4**; `L_map=honeycomb-proposed`; `L_delivery=M011-S03-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
+**Harness lease (cite only):** Active Milestone **M011**; Active Slice **S05**; Phase **H4**; `L_map=honeycomb-proposed`; `L_delivery=M011-S04-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
 
 ## Current Position
 
