@@ -2,18 +2,18 @@
 gsd_state_version: "1.0"
 current_phase: 3
 current_phase_name: Lease-gated next slice
-current_plan: 2
+current_plan: 3
 status: ready to execute
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-09-29T11:06:11.240Z"
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-09-29T11:10:08.455Z"
 last_activity: 2026-09-29
 last_activity_desc: Phase 3 Wave 2 probe paint; VERIFICATION passed; D-G3 Overview negative proof
-state_head: e813acac5b7f84e03d194e69b2b73ec7e0c9dbaf
+state_head: 375423090a27265c18466e8068326f781156f0f3
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 8
   percent: 67
 ---
 
@@ -33,10 +33,10 @@ See: `.planning/PROJECT.md` (updated 2026-09-29)
 ## Current Position
 
 Phase: 3 (Lease-gated next slice) — IN PROGRESS
-Current Plan: 2
+Current Plan: 3
 Total Plans in Phase: 3
-Status: Plan 03-02 probe paint in progress
-Last activity: 2026-09-29 — Wave 2 GOV-03/NEXT/D-L4 probes + D-G3 Overview
+Status: Plan 03-02 complete; next 03-03 REQUIREMENTS batch
+Last activity: 2026-09-29 — Wave 2 VERIFICATION passed + D-10 SUMMARY
 
 Progress: [███████░░░] 67%
 
@@ -72,6 +72,7 @@ Progress: [███████░░░] 67%
 | Phase 02 P03 | 1min | 2 tasks | 5 files |
 | Phase 02 P03 | 2min | 2 tasks | 5 files |
 | Phase 03 P01 | 5min | 2 tasks | 3 files |
+| Phase 03 P02 | 5min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -97,6 +98,9 @@ Full table: `.planning/PROJECT.md`. Ingest (approved): ADR-002 STCA paradigm; st
 - [Phase 03]: Tracer leaves probe pass/fail as pending; records ci/explain/cargo exits without painting cells
 - [Phase 03]: wave_0_complete true — VERIFICATION skeleton + Task IDs; nyquist_compliant stays false
 - [Phase 03]: LOW=0 → empty WARN ledger; HIGH=0 LOW=0 on summary line suffices (D-11)
+- [Phase 03]: Evidence SoT remains 03-VERIFICATION.md; SUMMARY does not invent a parallel probe list
+- [Phase 03]: REQUIREMENTS GOV-03/NEXT stay unchecked until Plan 03-03
+- [Phase 03]: D-G3 Overview is verification-only negative proof under Active Slice None (D-L1)
 
 ### Pending Todos
 
@@ -115,7 +119,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-29T11:05:57.949Z
-Stopped at: Completed 03-01-PLAN.md
+Last session: 2026-09-29T11:10:08.309Z
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 3` — verification-only GOV-03/NEXT under Active Slice None (D-L1); do not thaw freeze / assume M002

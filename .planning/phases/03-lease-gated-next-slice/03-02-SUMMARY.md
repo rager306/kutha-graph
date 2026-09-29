@@ -18,12 +18,12 @@ affects:
   - 03-03 REQUIREMENTS batch + STATE/ROADMAP closeout
 
 actuals:
-  tokens: 0
+  tokens: 5346
   tasks: 2
   commits: 2
 
 plan_head_before: 6319e0c70af2da9821cd6cd89ecf25abf5bc669c
-plan_head_after: PLACEHOLDER_AFTER
+plan_head_after: 375423090a27265c18466e8068326f781156f0f3
 
 tech-stack:
   added: []
@@ -95,7 +95,7 @@ coverage:
         status: pass
     human_judgment: false
 
-duration: 1min
+duration: 5min
 completed: 2026-09-29
 status: complete
 ---
@@ -106,9 +106,9 @@ status: complete
 
 ## Performance
 
-- **Duration:** 1min
+- **Duration:** 5min
 - **Started:** 2026-09-29T11:07:24Z
-- **Completed:** 2026-09-29T11:12:00Z
+- **Completed:** 2026-09-29T11:12:30Z
 - **Tasks:** 2
 - **Files modified:** 5
 
@@ -122,7 +122,7 @@ status: complete
 ## Task Commits
 
 1. **Task 1: Fill GOV-03/NEXT/D-L4 probes and D-G3 ROADMAP Overview** - `1bbd427` (docs)
-2. **Task 2: Write 03-02-SUMMARY Trajectory and paint VALIDATION 03-02 statuses** - `TASK2HASH` (docs)
+2. **Task 2: Write 03-02-SUMMARY Trajectory and paint VALIDATION 03-02 statuses** - `3754230` (docs)
 
 ## Trajectory
 
@@ -175,7 +175,16 @@ None - no external service configuration required.
 
 Wave 2 probe paint complete. REQUIREMENTS GOV-03 / NEXT-01 / NEXT-02 stay unchecked until 03-03. Do not implement a product slice; do not thaw freeze.
 
-## Self-Check: PENDING_HASHES
+## Self-Check: PASSED
+
+- FOUND: `.planning/phases/03-lease-gated-next-slice/03-VERIFICATION.md` (`status: passed`, catalog `| pass |` cells)
+- FOUND: `.planning/phases/03-lease-gated-next-slice/03-02-SUMMARY.md`
+- FOUND: `.planning/phases/03-lease-gated-next-slice/03-VALIDATION.md` (✅ for `03-02-01` / `03-02-02`; `nyquist_compliant: false`)
+- FOUND: `.planning/ROADMAP.md` (negative proof; `not assumed to be M002`; `Do not plan ADR-010`)
+- FOUND: commit `1bbd427` (task 1)
+- FOUND: commit `3754230` (task 2)
+- MEASURED: `commits: 2` from `6319e0c70af2da9821cd6cd89ecf25abf5bc669c`..`375423090a27265c18466e8068326f781156f0f3`
+- REQUIREMENTS Phase 3 checkboxes remain unchecked (deferred to 03-03)
 
 ---
 *Phase: 03-lease-gated-next-slice*

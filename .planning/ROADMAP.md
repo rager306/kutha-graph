@@ -81,13 +81,13 @@ Plans:
   2. When STATE names a slice, only that slice is implemented; a legal corpus/pack is not started in its place
   3. When M011 is closed in `.kutha/STATE.md`, the next product milestone is whatever STATE then names — not an assumed M002 and not “implement honeycomb”
 
-**Plans**: 1/3 plans executed
+**Plans**: 2/3 plans executed
 Plans:
 **Wave 1**
 - [x] 03-01-PLAN.md — Tracer: ci + cargo smoke + VERIFICATION skeleton + D-L4 snapshot
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 03-02-PLAN.md — Paint GOV-03/NEXT/D-L4 probes + D-G3 Overview captions + SUMMARY
+- [x] 03-02-PLAN.md — Paint GOV-03/NEXT/D-L4 probes + D-G3 Overview captions + SUMMARY
 
 **Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 03-03-PLAN.md — Batch REQUIREMENTS GOV-03/NEXT + GSD STATE/ROADMAP closeout
@@ -101,6 +101,6 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. Legal PIT fitness | 3/3 | Complete    | 2026-09-29 |
 | 2. Honest harness and freeze | 3/3 | Complete    | 2026-09-29 |
-| 3. Lease-gated next slice | 1/3 | In Progress|  |
+| 3. Lease-gated next slice | 2/3 | In Progress|  |
 
 **Harness citation (not this table):** Active Milestone M011; `L_delivery=M011-S03-done`; Phase H4; Active Slice None; freeze until explicit M002. See `.kutha/STATE.md`.
