@@ -60,7 +60,16 @@ Plans:
   4. Writes stay typed `Op`; stca-guide §5 JSON merge-patch is not the product write surface
   5. RocksDB, Cypher/GPML, HNSW, ADR-050 six dictionaries, ADR-080/081, and legal/science packs are absent unless `.kutha/STATE.md` has leased them; honeycomb ADRs remain Proposed
 
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+**Wave 1**
+- [ ] 02-01-PLAN.md — Tracer: ci + cargo smoke + VERIFICATION skeleton + VALIDATION wave_0
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 02-02-PLAN.md — Fill GOV/PLANE/FREEZE/MAP probe map + SUMMARY Trajectory
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 02-03-PLAN.md — Batch REQUIREMENTS Phase 2 IDs + GSD STATE/ROADMAP closeout
 
 ### Phase 3: Lease-gated next slice
 
@@ -82,7 +91,7 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Legal PIT fitness | 3/3 | Complete    | 2026-09-29 |
-| 2. Honest harness and freeze | 0/TBD | Not started | - |
+| 2. Honest harness and freeze | 0/3 | Planned | - |
 | 3. Lease-gated next slice | 0/TBD | Not started | - |
 
 **Harness citation (not this table):** Active Milestone M011; `L_delivery=M011-S03-done`; Phase H4; Active Slice None; freeze until explicit M002. See `.kutha/STATE.md`.
