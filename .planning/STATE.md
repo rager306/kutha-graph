@@ -2,18 +2,18 @@
 gsd_state_version: "1.0"
 current_phase: 3
 current_phase_name: Lease-gated next slice
-current_plan: 03-01
+current_plan: 2
 status: ready to execute
-stopped_at: Phase 3 plans written — ready to execute
-last_updated: "2026-09-29T11:03:08.489Z"
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-09-29T11:06:11.240Z"
 last_activity: 2026-09-29
 last_activity_desc: Phase 3 PLAN.md written (03-01…03-03); verification-only lease gate
-state_head: edbb5911f6aaaae8fb4e4e65f2e06a80f53157a4
+state_head: e813acac5b7f84e03d194e69b2b73ec7e0c9dbaf
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 9
-  completed_plans: 6
+  completed_plans: 7
   percent: 67
 ---
 
@@ -32,11 +32,11 @@ See: `.planning/PROJECT.md` (updated 2026-09-29)
 
 ## Current Position
 
-Phase: 3 (Lease-gated next slice) — READY TO EXECUTE
-Current Plan: 03-01 (not started)
+Phase: 3 (Lease-gated next slice) — IN PROGRESS
+Current Plan: 2
 Total Plans in Phase: 3
-Status: Ready to execute (PLAN.md written)
-Last activity: 2026-09-29 — Phase 3 plans 03-01…03-03 written
+Status: Plan 03-01 complete; next 03-02 probe paint
+Last activity: 2026-09-29 — Wave 1 tracer VERIFICATION skeleton (D-L4 None)
 
 Progress: [███████░░░] 67%
 
@@ -71,6 +71,7 @@ Progress: [███████░░░] 67%
 | Phase 02 P02 | 3min | 2 tasks | 3 files |
 | Phase 02 P03 | 1min | 2 tasks | 5 files |
 | Phase 02 P03 | 2min | 2 tasks | 5 files |
+| Phase 03 P01 | 5min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -93,6 +94,9 @@ Full table: `.planning/PROJECT.md`. Ingest (approved): ADR-002 STCA paradigm; st
 - [Phase 02]: Next is Phase 3 lease gate — not freeze thaw, not M002, not legal pack; green≠Accepted≠L_capability
 - [Phase 02]: GOV/PLANE/FREEZE/MAP batched to [x] only after VERIFICATION passed + pre-verify ci/cargo
 - [Phase 02]: Next is Phase 3 lease gate — not freeze thaw, not M002, not legal pack; green≠Accepted≠L_capability
+- [Phase 03]: Tracer leaves probe pass/fail as pending; records ci/explain/cargo exits without painting cells
+- [Phase 03]: wave_0_complete true — VERIFICATION skeleton + Task IDs; nyquist_compliant stays false
+- [Phase 03]: LOW=0 → empty WARN ledger; HIGH=0 LOW=0 on summary line suffices (D-11)
 
 ### Pending Todos
 
@@ -111,7 +115,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-29T08:21:55.560Z
-Stopped at: Phase 2 complete, ready to plan Phase 3
+Last session: 2026-09-29T11:05:57.949Z
+Stopped at: Completed 03-01-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 3` — verification-only GOV-03/NEXT under Active Slice None (D-L1); do not thaw freeze / assume M002

@@ -18,12 +18,12 @@ affects:
   - 03-03 REQUIREMENTS batch + STATE/ROADMAP closeout
 
 actuals:
-  tokens: 3800
+  tokens: 3901
   tasks: 2
   commits: 2
 
 plan_head_before: 08381553260024fc94c2c02a7b16360681e276bf
-plan_head_after: PLACEHOLDER_HEAD_AFTER
+plan_head_after: e813acac5b7f84e03d194e69b2b73ec7e0c9dbaf
 
 tech-stack:
   added: []
@@ -106,7 +106,7 @@ status: complete
 ## Task Commits
 
 1. **Task 1: End-to-end ci + cargo smoke + VERIFICATION evidence skeleton** - `54bb450` (docs)
-2. **Task 2: Fill VALIDATION Task IDs, wave_0 complete, and 03-01-SUMMARY Trajectory** - `TASK2HASH` (docs)
+2. **Task 2: Fill VALIDATION Task IDs, wave_0 complete, and 03-01-SUMMARY Trajectory** - `e813aca` (docs)
 
 ## Trajectory
 
@@ -141,7 +141,20 @@ Probes remain **pending** for Plan 03-02 paint plus optional ROADMAP Overview D-
 
 ## Deviations from Plan
 
-None - plan executed exactly as written.
+### Auto-fixed Issues
+
+**1. [Rule 3 - Blocking] GSD Current Position plan-number labels**
+- **Found during:** Task 2 closeout (`state.advance-plan`)
+- **Issue:** `state.advance-plan` could not parse `Current Plan: 03-01 (not started)` (expected `Current Plan: N` plus `Total Plans in Phase: M`).
+- **Fix:** Relabeled Current Position to numeric plan counters so the pointer can advance to plan 2.
+- **Files modified:** `.planning/STATE.md`
+- **Verification:** `state.advance-plan` returned `advanced: true`, `current_plan: 2`
+- **Committed in:** plan metadata commit (docs complete)
+
+---
+
+**Total deviations:** 1 auto-fixed (Rule 3 blocking)
+**Impact on plan:** No product/harness scope change; GSD pointer format only.
 
 ## Issues Encountered
 
@@ -154,3 +167,16 @@ None - no external service configuration required.
 ## Next Phase Readiness
 
 Wave 1 tracer complete. Plan 03-02 paints GOV-03 / NEXT-01 / NEXT-02 / D-L4. REQUIREMENTS stay unchecked until 03-03.
+
+## Self-Check: PASSED
+
+- FOUND: `.planning/phases/03-lease-gated-next-slice/03-VERIFICATION.md`
+- FOUND: `.planning/phases/03-lease-gated-next-slice/03-01-SUMMARY.md`
+- FOUND: `.planning/phases/03-lease-gated-next-slice/03-VALIDATION.md` (`wave_0_complete: true`, Task IDs `03-01-01`…`03-03-02`)
+- FOUND: commit `54bb450` (task 1)
+- FOUND: commit `e813aca` (task 2)
+- MEASURED: `commits: 2` from `08381553260024fc94c2c02a7b16360681e276bf`..`e813acac5b7f84e03d194e69b2b73ec7e0c9dbaf`
+
+---
+*Phase: 03-lease-gated-next-slice*
+*Completed: 2026-09-29*
