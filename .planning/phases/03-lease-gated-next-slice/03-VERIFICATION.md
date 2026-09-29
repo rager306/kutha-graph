@@ -1,6 +1,6 @@
 ---
 phase: 03-lease-gated-next-slice
-verified: 2026-09-29T11:07:47Z
+verified: 2026-09-29T11:11:40Z
 status: passed
 covered_files:
   - .kutha/STATE.md
@@ -22,8 +22,9 @@ covered_files:
 **Phase Goal:** Prove GOV-03 / NEXT-01 / NEXT-02 as verification-only negative proof while Active Slice is None (D-L1). Do not start a named slice, legal pack, or assumed M002.
 
 **Wave 2 probe paint:** 2026-09-29T11:07:47Z
-**Status:** passed — all GOV-03 / NEXT-01 / NEXT-02 / D-L4 catalog rows pass
-**Re-verification:** Yes — Wave 2 `kutha-gov ci` + RESEARCH catalog
+**Wave 3 pre-verify:** 2026-09-29T11:11:40Z
+**Status:** passed — all GOV-03 / NEXT-01 / NEXT-02 / D-L4 catalog rows pass; REQUIREMENTS batched after this green report
+**Re-verification:** Yes — Wave 3 pre-verify `kutha-gov ci` + `explain trajectory` + `cargo test --workspace --offline`
 
 ## Goal Achievement
 
@@ -41,7 +42,7 @@ covered_files:
 |-------|-------|
 | **Command** | `uv run kutha-gov ci` |
 | **Exit code** | `0` |
-| **Timestamp (UTC)** | `2026-09-29T11:07:44Z` |
+| **Timestamp (UTC)** | `2026-09-29T11:11:39Z` |
 | **Summary** | `harness: 0 HIGH, 0 LOW, 27 checks  (H4 dogfood)` |
 | **Terminal** | `ok` (fsm → decide → ok) |
 | **Harness cite** | Active Milestone M011; Active Slice None; Phase H4; freeze until explicit M002 (`.kutha/STATE.md` — not edited) |
@@ -52,9 +53,9 @@ A green governor is not ADR Accepted, not L_capability, and not a lease grant.
 
 ## Trajectory (D-10)
 
-**Commands:**
-- `uv run kutha-gov ci` → exit 0; harness: 0 HIGH, 0 LOW, 27 checks @ 2026-09-29T11:07:44Z
-- `uv run kutha-gov explain trajectory` → exit 0 @ 2026-09-29T11:07:47Z
+**Commands (Wave 3 pre-verify):**
+- `uv run kutha-gov ci` → exit 0; harness: 0 HIGH, 0 LOW, 27 checks @ 2026-09-29T11:11:39Z
+- `uv run kutha-gov explain trajectory` → exit 0 @ 2026-09-29T11:11:39Z
 
 **Excerpt (≤8 lines):**
 
@@ -76,14 +77,14 @@ steps:
 | Field | Value |
 |-------|-------|
 | **Command** | `cargo test --workspace --offline` |
-| **Exit code** | `0` (Wave 1 tracer; not re-run this intermediate wave) |
-| **Timestamp (UTC)** | `2026-09-29T11:03:57Z` (tracer) |
-| **This wave observe** | `observe: cargo=ok, tenant=ok` inside `uv run kutha-gov ci` @ 2026-09-29T11:07:44Z |
-| **Intermediate rule** | Wave 2 did not edit `crates/`; no second standalone cargo (D-15) |
+| **Exit code** | `0` (Wave 3 pre-verify standalone; D-15) |
+| **Timestamp (UTC)** | `2026-09-29T11:11:40Z` |
+| **This wave observe** | `observe: cargo=ok, tenant=ok` inside `uv run kutha-gov ci` @ 2026-09-29T11:11:39Z |
+| **Prior tracer** | exit 0 @ 2026-09-29T11:03:57Z (Wave 1) |
 
 ## WARN (LOW) ledger (D-11)
 
-LOW = 0 on Wave 2 `ci` summary (`HIGH=0 LOW=0`). Empty WARN ledger; `uv run kutha-gov json` not required.
+LOW = 0 on Wave 3 pre-verify `ci` summary (`HIGH=0 LOW=0`). Empty WARN ledger; `uv run kutha-gov json` not required.
 
 | check_id | category | note |
 |----------|----------|------|
@@ -95,14 +96,14 @@ Wave-open and wave-close both used `rg -n '^\*\*Active Slice:\*\*\s*' .kutha/STA
 
 | Moment | Value | Timestamp (UTC) |
 |--------|-------|-----------------|
-| Wave open | `**Active Slice:** None` (`.kutha/STATE.md` line 8) | 2026-09-29T11:07:44Z |
-| Wave close | `**Active Slice:** None` (`.kutha/STATE.md` line 8) | 2026-09-29T11:07:47Z |
+| Wave open | `**Active Slice:** None` (`.kutha/STATE.md` line 8) | 2026-09-29T11:11:37Z |
+| Wave close | `**Active Slice:** None` (`.kutha/STATE.md` line 8) | 2026-09-29T11:11:40Z |
 
 Named `S##` was not observed. No HARD STOP. Do not implement a product slice under 03-* plans.
 
 ## Probe evidence table
 
-Painted from `03-RESEARCH.md` Concrete probe catalog. Wave 2 `ci` is HIGH-free.
+Painted from `03-RESEARCH.md` Concrete probe catalog. Wave 3 pre-verify `ci` is HIGH-free.
 
 No named Active Slice delivery landed in this phase: GSD/docs/harness-only diffs are OK (D-L2). `crates/` porcelain is empty; `git log` after M011 S03 tip `e77132d9275bd36ea766b8bef9cff28128dfc636` has zero crate commits.
 
@@ -129,10 +130,14 @@ Next product milestone is whatever `.kutha/STATE.md` names after M011 close — 
 | NEXT-02 | `uv run kutha-gov precommit --check honeycomb-map` | 0 | `OK honeycomb-map high=0` | pass |
 | NEXT-02 | next milestone = whatever STATE names after M011 close — not assumed M002 / not implement honeycomb | — | sentence in this file (D-L5); M011 not required closed | pass |
 | D-L4 | Wave-open + wave-close Active Slice rg | 0 | both None (see Lease snapshot) | pass |
-| D-L3 / GOV-01 inherit | `uv run kutha-gov ci` | 0 | harness: 0 HIGH, 0 LOW, 27 checks @ 2026-09-29T11:07:44Z | pass |
+| D-L3 / GOV-01 inherit | `uv run kutha-gov ci` | 0 | harness: 0 HIGH, 0 LOW, 27 checks @ 2026-09-29T11:11:39Z | pass |
 | D-10 | `uv run kutha-gov explain trajectory` | 0 | contains `authority: none` | pass |
-| D-15 | `cargo test --workspace --offline` | 0 | tracer exit 0 @ 2026-09-29T11:03:57Z; Wave 2 used `ci` observe_cargo only | pass |
+| D-15 | `cargo test --workspace --offline` | 0 | Wave 3 pre-verify exit 0 @ 2026-09-29T11:11:40Z | pass |
 
-## Closeout (not this wave)
+## Closeout (Plan 03-03)
 
-Do not flip REQUIREMENTS GOV-03 / NEXT-01 / NEXT-02 in Plan 03-02. Do not edit `.kutha/STATE.md`. Next: Plan 03-03 REQUIREMENTS batch after this passed VERIFICATION.
+| Check | Status | Evidence |
+|-------|--------|----------|
+| REQUIREMENTS GOV-03, NEXT-01, NEXT-02 `[x]` | ✓ | batched after `status: passed`; FIT/Phase 2 IDs remain `[x]` |
+| NEXT-02 text unchanged | ✓ | still “After M011 is closed…”; Phase 3 proof is negative while M011 open (D-L5) |
+| `.kutha/STATE.md` untouched | ✓ | cite-only; Active Slice None; `L_delivery=M011-S03-done` |

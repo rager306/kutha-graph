@@ -21,7 +21,7 @@ Requirements for this GSD overlay. Each maps to exactly one roadmap phase.
 
 - [x] **GOV-01**: `uv run kutha-gov ci` is fail-closed on HIGH findings; a green run is not treated as ADR Accepted or as L_capability
 - [x] **GOV-02**: `.kutha/STATE.md` keeps `L_map`, `L_delivery`, and `L_capability` named separately (no collapse into one “green = shipped” status)
-- [ ] **GOV-03**: New product-crate slice work starts only when `.kutha/STATE.md` names that Active Slice (today: None)
+- [x] **GOV-03**: New product-crate slice work starts only when `.kutha/STATE.md` names that Active Slice (today: None)
 
 ### Planes and write surface
 
@@ -35,8 +35,8 @@ Requirements for this GSD overlay. Each maps to exactly one roadmap phase.
 
 ### Delivery next
 
-- [ ] **NEXT-01**: Further M011 product slices beyond S03 land only under an explicit Active Slice lease; a legal pack is not started as a substitute
-- [ ] **NEXT-02**: After M011 is closed in `.kutha/STATE.md`, the next product milestone is the one STATE names — not an assumed M002 and not “implement honeycomb”
+- [x] **NEXT-01**: Further M011 product slices beyond S03 land only under an explicit Active Slice lease; a legal pack is not started as a substitute
+- [x] **NEXT-02**: After M011 is closed in `.kutha/STATE.md`, the next product milestone is the one STATE names — not an assumed M002 and not “implement honeycomb”
 
 ### Map discipline
 
@@ -101,9 +101,9 @@ Which phases cover which requirements. Populated at roadmap creation.
 | PLANE-03 | Phase 2 | Complete |
 | FREEZE-01 | Phase 2 | Complete |
 | MAP-01 | Phase 2 | Complete |
-| GOV-03 | Phase 3 | Pending |
-| NEXT-01 | Phase 3 | Pending |
-| NEXT-02 | Phase 3 | Pending |
+| GOV-03 | Phase 3 | Complete |
+| NEXT-01 | Phase 3 | Complete |
+| NEXT-02 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 15 total
