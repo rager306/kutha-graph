@@ -111,6 +111,10 @@ Standing control loop for every GSD execute cycle starting Phase 2 (see `.planni
 
 Claude-decided companions (same CONTEXT): **D-10** SUMMARY template (≤8-line trajectory excerpt); **D-11** WARN ledgered ≠ block (HIGH blocks); **D-12…D-14** PLANE/FREEZE/MAP path probes; **D-15** cargo smoke at tracer + pre-verify only.
 
+## GSD Phase 3 — Lease gate (locked 2026-09-29)
+
+See `.planning/phases/03-lease-gated-next-slice/03-CONTEXT.md`. While Active Slice is None, Phase 3 is **verification-only** (D-L1…D-L6): no new product slice, no legal-pack substitute, no assumed M002/honeycomb next; inherit Phase 2 governor cycle (D-L3). A mid-phase lease → hard stop and replan (D-L4).
+
 ### Claude's Discretion
 
 Slice internals, test split vs `quantum.rs` size, and verification-plan shape — as long as freeze, planes, and typed Op hold. Do **not** discretionary-start M002, Cypher, HNSW, legal pack, or ADR-050.

@@ -4,10 +4,10 @@ current_phase: 3
 current_phase_name: Lease-gated next slice
 current_plan: Not started
 status: planning
-stopped_at: Phase 2 complete, ready to plan Phase 3
-last_updated: "2026-09-29T08:29:29.129Z"
+stopped_at: Phase 3 CONTEXT ready for planning (D-L1…D-L6)
+last_updated: "2026-09-29T10:46:00.000Z"
 last_activity: 2026-09-29
-last_activity_desc: Phase 2 complete, transitioned to Phase 3
+last_activity_desc: Phase 3 discuss complete — D-L1…D-L6 Claude-decided; ready to plan
 state_head: 532a42dbd7511c2f1bd134778627914fbc95e62d
 progress:
   total_phases: 3
@@ -24,7 +24,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-29)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** Phase 2 verification complete — next is Phase 3 (lease-gated next slice); not freeze thaw
+**Current focus:** Phase 3 — Lease-gated next slice; D-L1…D-L6 locked (verification-only while Active Slice None); not freeze thaw
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
