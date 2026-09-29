@@ -32,6 +32,12 @@ Capabilities already in the P0 spike (not honeycomb Accepted; not a legal corpus
 - ✓ Harness H0–H4 in; H2/H4 tenant AS OF dogfood (not ADR-090 ontology) — existing
 - ✓ Rust 2021 product crates + Python 3.13 harness via **uv** — existing
 
+GSD overlay v0.01 (Phases 1–3 verification-first):
+
+- ✓ FIT-01…05 fitness suite falsifiable and green — v0.01
+- ✓ GOV-01/02, PLANE-01…03, FREEZE-01, MAP-01 governor honesty + planes + freeze + map — v0.01
+- ✓ GOV-03, NEXT-01, NEXT-02 lease-gate negative proof under Active Slice None — v0.01
+
 ### Active
 
 - [ ] Keep FF5/FF6/H2/H4/M010/M011 named fitness **green** (L_capability)
@@ -128,6 +134,14 @@ Cells ADR-010–014, 020–022, 030–031, 040–043, 050–052, 060–062, 070�
 Harness compact index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov map`).
 </map>
 
+## Current State
+
+Shipped **GSD v0.01 — GSD foundation** (2026-09-29): verification overlay Phases 1–3 (9 plans). Fitness FIT-01…05, governor honesty, planes/freeze/map, and lease-gate negative proof are archived under `.planning/milestones/`. Product crates unchanged by Phase 3; harness M011 remains open.
+
+## Next Milestone Goals
+
+Defined by `/gsd-new-milestone` after a named Active Slice (or M011 close) appears in `.kutha/STATE.md`. Do not assume M002 or honeycomb promotion.
+
 ## Context
 
 Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `STACK.md`, `CONCERNS.md`.
@@ -165,6 +179,8 @@ Literature bound is closed (163 cards). Do not mint aggregator waves.
 | Legal PIT fixture before legal pack | Wedge + freeze | ✓ Good (FF5) |
 | Honeycomb is a map | Three lifecycles; H4 | ✓ Good |
 | GSD STATE ≠ harness STATE | Plane split | ✓ Good |
+| Phase 3 verification-only under Active Slice None | D-L1…D-L6; no crate delivery without lease | ✓ Good (v0.01) |
+| GSD v0.01 annotated tag (explicit override) | Milestone archival; not product SemVer / GitHub Release | ⚠️ Revisit (repo Out of Scope prefers no tags) |
 | M002/Rocks/Cypher/HNSW frozen | `.kutha/STATE.md` | — Pending (lease) |
 | License / rename (ADR-092) | Undecided | — Pending |
 
@@ -186,4 +202,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-29 after ingest → GSD new-project-from-ingest*
+*Last updated: 2026-09-29 after v0.01 GSD foundation milestone*
