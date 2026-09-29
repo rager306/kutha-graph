@@ -4,11 +4,11 @@ current_phase: 3
 current_phase_name: Lease-gated next slice
 current_plan: Not started
 status: planning
-stopped_at: Phase 3 CONTEXT ready for planning (D-L1…D-L6)
-last_updated: "2026-09-29T10:46:00.000Z"
+stopped_at: Phase 3 RESEARCH complete — ready to plan
+last_updated: "2026-09-29T11:00:00.000Z"
 last_activity: 2026-09-29
-last_activity_desc: Phase 3 discuss complete — D-L1…D-L6 Claude-decided; ready to plan
-state_head: 532a42dbd7511c2f1bd134778627914fbc95e62d
+last_activity_desc: Phase 3 research complete — GOV-03/NEXT negative-proof probes; ready to plan
+state_head: b15f514
 progress:
   total_phases: 3
   completed_phases: 2
@@ -35,8 +35,8 @@ See: `.planning/PROJECT.md` (updated 2026-09-29)
 Phase: 3 — Lease-gated next slice
 Current Plan: Not started
 Total Plans in Phase: 3
-Status: Ready to plan
-Last activity: 2026-09-29 — Phase 2 complete, transitioned to Phase 3
+Status: Ready to plan (RESEARCH done)
+Last activity: 2026-09-29 — Phase 3 RESEARCH complete (03-RESEARCH.md)
 
 Progress: [███████░░░] 67%
 
