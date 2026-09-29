@@ -5,7 +5,7 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M011
-**Active Slice:** None
+**Active Slice:** S04
 **Phase:** H4
 
 ## Lifecycles (do not collapse)
@@ -24,7 +24,7 @@ L_capability=ff5-green
 
 ## Next action
 
-**M011 S03 is in.** Further M011 slices need an explicit Active Slice lease. Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW.
+**M011 S03 is in.** Active Slice **S04** (partial correction with residual intervals) is leased; S05–S08 are candidates and remain unleased. Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW.
 
 ## Freeze (until explicit M002 lease)
 

@@ -41,6 +41,21 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 - [x] **S03: Thin P→Q derivation eligibility** `risk:medium` `depends:[S02]`
   > After this: Behavior-derived `Q` is eligible at a cut iff its premise claim still has a live support; retracting one of two supports leaves `Q` eligible; retracting the last drops eligibility without erasing historical `Q`; named test green.
 
+### M011 tail — candidate slices (NOT leased)
+
+Proposed close-out of the semantic core (source: `docs/architecture/semantic-contract-validation.md` "Remaining decisions"). Each slice needs an explicit Active Slice lease in `.kutha/STATE.md` before any code. Order is by risk; stop when one fixture separates preserved history, current evidence, and allowed action.
+
+- [ ] **S04: Partial correction with residual intervals** `risk:high` `depends:[S03]`
+  > After this: an explicit interval-patch correction leaves residual versions on both sides of the corrected VT range while whole-version `Correct` is unchanged; named test on the fixture's VT 2012 / 2021 residuals.
+- [ ] **S05: Persisted quantum outcome and continuation** `risk:medium` `depends:[S03]`
+  > After this: budgets 0/1/2 and a crash after a committed prefix are distinguishable; missing terminal evidence is never read as success; resume is an explicit record; named test green.
+- [ ] **S06: Typed CSR lease keeps labels and support multiplicity** `risk:medium` `depends:[S03]`
+  > After this: same endpoints with different relations or supports survive the lease; the untyped neighbor-set path stays available; named test green.
+- [ ] **S07: Provenance and rule-version check apart from state replay** `risk:high` `depends:[S04]`
+  > After this: changing only a causal reference or a pinned rule version is detected even when the state fingerprint still matches; execution replay stays out of scope.
+- [ ] **S08: End-to-end candidate fixture** `risk:medium` `depends:[S04,S05,S06,S07]`
+  > After this: observations 1–5 of the semantic-contract fixture hold at named cuts; incremental maintenance and clean reconstruction agree; discarded leases change no answer.
+
 ## Boundary map (M001)
 
 ### M001 S01 → S02
@@ -95,10 +110,20 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 
 Do not start until STATE names them. M011 is active (S03 done; further slices need lease); M002+ stay frozen until leased.
 
-- **M002** — Rocks adapter behind the same events (persistence, not a second SoT).
-- **M003** — Cypher skin over the already-correct AS OF cut.
-- **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
-- **M005** — HNSW fence as retrieve-not-truth.
+Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
+
+1. **M011 tail** — S04–S08 above (GSD overlay v0.02).
+2. **M012** — Dictionaries as facts: a thin ADR-050 subset (versioned allowlist entries as bi-temporal facts; admission validated at a cut; LLM output is only a proposal; typed non-success). Its lease must name the subset it thaws.
+3. **M002** — Rocks adapter behind the same events (persistence, not a second SoT); vacuum policy and litigation hold; replay parity across stores.
+4. **M003** — Cypher skin over the already-correct AS OF cut (may swap with M002 if an external surface is needed first).
+5. *(unnumbered)* Legal pack MVP — thin ADR-090 slice, golden PIT set where cosine/RAG must fail the same fixture.
+6. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
+7. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
+8. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
+9. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
+10. *(unnumbered)* Packaging, benchmarks vs Samyama/Falkor-class projections, naming and license decision (ADR-092) before any publish.
+
+P4 (Raft/multi-node, learned indexes) is not planned until single-node hybrid evidence exists.
 
 ## Freeze until explicit M002 lease
 
