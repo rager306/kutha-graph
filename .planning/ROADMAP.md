@@ -28,7 +28,7 @@ Full detail: [milestones/v0.01-ROADMAP.md](./milestones/v0.01-ROADMAP.md) · req
 - Integer phases continue from v0.01: Phase 4 follows Phase 3
 - Decimal phases (4.1, 4.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 4: Partial correction with residual intervals** - Explicit interval-patch leaves VT 2012/2021 residuals; whole-version Correct unchanged (S04 leased)
+- [x] **Phase 4: Partial correction with residual intervals** - Explicit interval-patch leaves VT 2012/2021 residuals; whole-version Correct unchanged (S04 leased) (completed 2026-09-29)
 - [ ] **Phase 5: Persisted quantum outcome** - Budgets 0/1/2 and crash-after-prefix are distinguishable; resume is an explicit record (lease-gated)
 - [ ] **Phase 6: Typed CSR lease** - Same endpoints keep relation labels and support multiplicity; untyped neighbor-set path remains (lease-gated)
 - [ ] **Phase 7: Provenance and rule-version check** - Causal-ref or rule-version change is detected without execution replay (lease-gated)
@@ -49,7 +49,7 @@ Full detail: [milestones/v0.01-ROADMAP.md](./milestones/v0.01-ROADMAP.md) · req
   4. This phase executes only while S04 is the Active Slice (GATE-02 applies; S04 is currently leased)
   5. Freeze items stay unstarted and honeycomb cells stay Proposed (GATE-03 applies)
 
-**Plans**: 3/3 plans executed
+**Plans**: 3/3 plans complete
 
 Plans:
 - [x] 04-01-PLAN.md — Explicit interval-patch tracer: residuals at VT 2012/2021 (CORR-01)
@@ -120,7 +120,7 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8. Phases 5–8 remain 
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 4. Partial correction with residual intervals | 3/3 | In Progress|  |
+| 4. Partial correction with residual intervals | 3/3 | Complete   | 2026-09-29 |
 | 5. Persisted quantum outcome | 0/TBD | Not started (lease-gated) | - |
 | 6. Typed CSR lease | 0/TBD | Not started (lease-gated) | - |
 | 7. Provenance and rule-version check | 0/TBD | Not started (lease-gated) | - |
