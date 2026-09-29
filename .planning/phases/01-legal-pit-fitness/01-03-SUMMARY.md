@@ -21,10 +21,10 @@ affects:
 actuals:
   tokens: 4439
   tasks: 2
-  commits: 2
+  commits: 3
 
 plan_head_before: d01f08e5ac54e45c43a6709e78f4c852cc81704c
-plan_head_after: 8cd6f082629327852587525dc772add7c787bab5
+plan_head_after: c6c73963810f18fea3c3ab35c762fbe52a30bb18
 
 tech-stack:
   added: []
@@ -121,6 +121,8 @@ status: complete
 1. **Task 1: Batch-check FIT-01…05 in REQUIREMENTS.md** - `50dead7` (docs)
 2. **Task 2: Update GSD STATE, ROADMAP progress, VALIDATION sign-off, 01-03-SUMMARY** - `8cd6f08` (docs)
 
+**Plan metadata:** `c6c7396` (docs: complete plan)
+
 ## Decisions Made
 
 - Checkbox flip is the D-05 signal; Traceability Status column left Pending for SDK `requirements.mark-complete` / Phase tooling.
@@ -142,7 +144,7 @@ status: complete
 - **Issue:** SDK set `percent: 33` and Progress bar 33%, and ROADMAP Status back to `In Progress` despite `completed_plans: 3` / Plans `3/3`
 - **Fix:** Restore percent/bar to 100%; ROADMAP Progress row Status `Complete` dated 2026-09-29
 - **Files modified:** `.planning/STATE.md`, `.planning/ROADMAP.md`
-- **Commit:** (final docs commit)
+- **Commit:** `c6c7396`
 
 Otherwise plan executed as written.
 
@@ -168,4 +170,4 @@ None — docs-only GSD overlay; no crates/ or harness STATE edits; no new trust-
 - REQUIREMENTS: exactly five `- [x] **FIT-0`; zero unchecked FIT; GOV-01 and FREEZE-01 still `[ ]`
 - STATE: `completed_plans: 3` and `Phase 1 verification complete`
 - ROADMAP: `- [x] 01-01-PLAN.md`, `01-02-PLAN.md`, `01-03-PLAN.md`; Progress `| 1. Legal PIT fitness | 3/3 |`
-- Commits `50dead7`, `8cd6f08` present; `.kutha/STATE.md` clean (`**Active Slice:** None`)
+- Commits `50dead7`, `8cd6f08`, `c6c7396` present; `.kutha/STATE.md` clean (`**Active Slice:** None`)
