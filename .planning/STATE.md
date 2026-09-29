@@ -5,10 +5,10 @@ milestone_name: Semantic core close
 current_phase: 5
 current_phase_name: Persisted quantum outcome
 status: planning
-stopped_at: Phase 5 context gathered
-last_updated: "2026-09-29T15:48:49.020Z"
+stopped_at: Phase 5 research complete
+last_updated: "2026-09-29T15:55:00.000Z"
 last_activity: 2026-09-29
-last_activity_desc: Phase 4 complete, transitioned to Phase 5
+last_activity_desc: Phase 5 RESEARCH.md written (persisted quantum outcome)
 state_head: f6e0828ab3f99fc18347bf29cccb566d6770e106
 progress:
   total_phases: 5
@@ -34,8 +34,8 @@ See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 Phase: 5 of 5 (Persisted quantum outcome)
 Plan: Not started
-Status: Ready to plan
-Last activity: 2026-09-29 — Phase 4 complete, transitioned to Phase 5
+Status: Research complete — ready to plan
+Last activity: 2026-09-29 — Phase 5 RESEARCH.md complete
 
 Progress: [██░░░░░░░░] 20%
 
@@ -91,7 +91,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phases 5–8 are lease-gated until `.kutha/STATE.md` names S05, S06, S07, or S08 as Active Slice. Do not execute those phases under the S04 lease.
+- Phases 6–8 remain lease-gated until `.kutha/STATE.md` names S06–S08 as Active Slice. Phase 5 (S05) is leased and executable.
 - Do not start M002, legal pack, Cypher, HNSW, or ADR-050 because a GSD phase is planned — freeze holds until STATE names otherwise.
 
 ## Deferred Items
@@ -102,11 +102,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-29T15:48:48.963Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-persisted-quantum-outcome/05-CONTEXT.md
-Next: `/gsd-verify-work 4` (Phase 4 plans complete; S04 still leased)
+Last session: 2026-09-29T15:55:00.000Z
+Stopped at: Phase 5 research complete
+Resume file: .planning/phases/05-persisted-quantum-outcome/05-RESEARCH.md
+Next: `/gsd-plan-phase 5` planner consumes 05-RESEARCH.md (S05 leased in `.kutha/STATE.md`)
 
 ## Operator Next Steps
 
-- Phase 4 execute is done. Run `/gsd-verify-work 4`. Do not start S05. Do not edit `.kutha/STATE.md`.
+- Phase 5 research is done. Plan next (`gsd-planner`). Active Slice is **S05** — do not edit `.kutha/STATE.md` during delivery. Freeze holds.
