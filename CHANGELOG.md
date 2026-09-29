@@ -10,6 +10,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `Op::CorrectInterval { fact_seq, object, patch_from, patch_to }`: explicit interval patch on a live fact. Fold invalidates the original row (VT bounds unchanged) and pushes prefix residual, clipped replacement, and suffix residual sharing `claim_id`.
 - Named test `interval_patch_leaves_vt_2012_and_2021_residuals` (CORR-01): after patch `[2015, 2020)` on `[2010, ∞)`, `as_of(2012)` and `as_of(2021)` keep source `a` as `P`; interior `as_of(2017)` is `P-prime`.
+- Named test `whole_version_correct_does_not_invent_residuals` (CORR-02): whole-version `Op::Correct` with narrower VT `[2015, 2020)` on `[2010, ∞)` invents no live residual of `P` at VT 2012 or 2021; interior `as_of(2017)` is the replacement only.
 - Fail-closed interval-patch writes: unknown `fact_seq` (`UnknownFact`); non-intersecting (including half-open touching endpoints), inverted, and not-live targets (`IntervalPatchRejected`) do not append.
 
 ### Trajectory

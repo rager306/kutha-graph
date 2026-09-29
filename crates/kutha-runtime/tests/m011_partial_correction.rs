@@ -1,4 +1,5 @@
 //! M011 S04: explicit interval patch leaves residual VT versions of source `a`.
+//! Whole-version `Op::Correct` still invalidates the entire live fact (CORR-02).
 
 use kutha_common::{Event, EventId, Op};
 use kutha_runtime::{Runtime, RuntimeError};
@@ -107,6 +108,103 @@ fn interval_patch_leaves_vt_2012_and_2021_residuals() {
     let value = serde_json::to_value(&round_trip).unwrap();
     let back: Event = serde_json::from_value(value).unwrap();
     assert_eq!(round_trip.op, back.op);
+
+    rt.replay_check().unwrap();
+}
+
+#[test]
+fn whole_version_correct_does_not_invent_residuals() {
+    let mut rt = Runtime::default();
+    let related = rt.intern("relatedTo");
+    let a = rt.intern("a");
+    let p = rt.intern("P");
+    let p_prime = rt.intern("P-prime");
+
+    rt.emit(Op::Assert {
+        subject: a,
+        relation: related,
+        object: p,
+        valid_from: VF_WIDE,
+        valid_to: None,
+        claim: None,
+    })
+    .unwrap();
+
+    let original = rt
+        .fold()
+        .facts()
+        .iter()
+        .find(|f| f.object() == p && f.invalidated_at.is_none())
+        .expect("live Assert fact for P")
+        .clone();
+    let fact_seq = original.seq;
+    let claim_id: EventId = original.claim_id;
+
+    rt.emit(Op::Correct {
+        fact_seq,
+        object: p_prime,
+        valid_from: PATCH_FROM,
+        valid_to: Some(PATCH_TO),
+    })
+    .unwrap();
+
+    let as_left = rt.fold().as_of(VT_LEFT);
+    let as_right = rt.fold().as_of(VT_RIGHT);
+    let as_mid = rt.fold().as_of(VT_INTERIOR);
+    assert!(
+        !as_left.contains(&(a, related, p)),
+        "whole-version Correct must not leave live P at VT 2012"
+    );
+    assert!(
+        !as_right.contains(&(a, related, p)),
+        "whole-version Correct must not leave live P at VT 2021"
+    );
+    assert_eq!(
+        rt.fold().live_support_count(claim_id, u64::MAX, VT_LEFT),
+        0,
+        "no live support for the claim at VT 2012"
+    );
+    assert_eq!(
+        rt.fold().live_support_count(claim_id, u64::MAX, VT_RIGHT),
+        0,
+        "no live support for the claim at VT 2021"
+    );
+    assert!(
+        as_mid.contains(&(a, related, p_prime)),
+        "interior VT 2017 must see the replacement"
+    );
+    assert!(
+        !as_mid.contains(&(a, related, p)),
+        "interior VT 2017 must not keep the original object"
+    );
+    assert_eq!(
+        rt.fold()
+            .live_support_count(claim_id, u64::MAX, VT_INTERIOR),
+        1
+    );
+
+    let loser = rt
+        .fold()
+        .facts()
+        .iter()
+        .find(|f| f.seq == fact_seq)
+        .expect("original row remains");
+    assert!(loser.invalidated_at.is_some());
+
+    let live_for_claim: Vec<_> = rt
+        .fold()
+        .facts()
+        .iter()
+        .filter(|f| f.claim_id == claim_id && f.invalidated_at.is_none())
+        .collect();
+    assert_eq!(
+        live_for_claim.len(),
+        1,
+        "Correct must push one replacement, not leftover prefix/suffix rows"
+    );
+    assert_eq!(live_for_claim[0].object(), p_prime);
+    assert_eq!(live_for_claim[0].valid_from, PATCH_FROM);
+    assert_eq!(live_for_claim[0].valid_to, Some(PATCH_TO));
 
     rt.replay_check().unwrap();
 }
