@@ -39,11 +39,12 @@ created: "2026-09-29"
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 01-*-* | TBD | TBD | FIT-01 | T-01-01 / — | PIT AS OF truth | integration | `cargo test --workspace --offline` (+ evidence `ff5_as_of_t1_differs_from_as_of_t2_on_statute_log`) | ✅ | ⬜ pending |
-| 01-*-* | TBD | TBD | FIT-02 | T-01-02 / — | Unknown relation rejected | integration | hard gate + `ff6_unknown_relation_does_not_append` | ✅ | ⬜ pending |
-| 01-*-* | TBD | TBD | FIT-03 | — | Semantic open / Define | integration | hard gate + m010 fns | ✅ | ⬜ pending |
-| 01-*-* | TBD | TBD | FIT-04 | — | Claim/support + P→Q | integration | hard gate + m011 fns | ✅ | ⬜ pending |
-| 01-*-* | TBD | TBD | FIT-05 | — | H2/H4 AS OF dogfood | integration | hard gate + h2/h4 fns | ✅ | ⬜ pending |
+| 01-01-01 | 01-01 | 1 | FIT-01…05 | T-01-01 | Hard gate + evidence skeleton | integration | `cargo test --workspace --offline` | ✅ | ⬜ pending |
+| 01-01-02 | 01-01 | 1 | FIT-01…05 | T-01-02 | Twelve fns in `--list` + VALIDATION Task IDs | diagnostic | `cargo test --workspace --offline -- --list` | ✅ | ⬜ pending |
+| 01-02-01 | 01-02 | 2 | FIT-01…05 | T-01-05 | Twelve-row pass/fail map | integration | hard gate + evidence cells | ✅ | ⬜ pending |
+| 01-02-02 | 01-02 | 2 | FIT-01…05 | T-01-06 | SUMMARY + VALIDATION ✅ | docs | file presence + FIT cites | ✅ | ⬜ pending |
+| 01-03-01 | 01-03 | 3 | FIT-01…05 | T-01-09 | REQUIREMENTS FIT [x] batch | docs | grep FIT [x] count == 5 | ✅ | ⬜ pending |
+| 01-03-02 | 01-03 | 3 | FIT-01…05 | T-01-11 | STATE/ROADMAP/SUMMARY closeout | docs | STATE Phase 1 + no `.kutha/STATE.md` diff | ✅ | ⬜ pending |
 
 *Planner fills concrete Task IDs. Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 

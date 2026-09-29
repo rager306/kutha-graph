@@ -2,16 +2,16 @@
 gsd_state_version: "1.0"
 current_phase: 1
 current_phase_name: Legal PIT fitness
-status: planning
-stopped_at: Phase 1 research complete
-last_updated: "2026-09-29T07:04:00.000Z"
+status: planned
+stopped_at: Phase 1 plans written
+last_updated: "2026-09-29T07:15:00.000Z"
 last_activity: 2026-09-29
-last_activity_desc: Phase 1 RESEARCH.md written (FIT→test evidence map; verification-first)
+last_activity_desc: Phase 1 PLAN.md set written (01-01 tracer, 01-02 evidence, 01-03 checkbox batch)
 state_head: 60773c1c0be1515cf2e13ab61c1a1eb9693fbd67
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 0
+  total_plans: 3
   completed_plans: 0
   percent: 0
 ---
@@ -23,7 +23,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-29)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** Phase 1 — Legal PIT fitness (GSD plan not yet written)
+**Current focus:** Phase 1 — Legal PIT fitness (plans ready; execute next)
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -32,9 +32,9 @@ See: `.planning/PROJECT.md` (updated 2026-09-29)
 ## Current Position
 
 Phase: 1 of 3 (Legal PIT fitness)
-Plan: none (plans TBD; research done)
-Status: Ready to plan (research complete)
-Last activity: 2026-09-29 — Phase 1 RESEARCH.md written; ready for planner
+Plan: 01-01 / 01-02 / 01-03 (planned; not executed)
+Status: Ready to execute (`/gsd-execute-phase 1`)
+Last activity: 2026-09-29 — Phase 1 PLAN.md set written (verification-first)
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -49,7 +49,7 @@ Progress: [░░░░░░░░░░] 0%
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Legal PIT fitness | 0 | TBD | - |
+| 1. Legal PIT fitness | 0/3 | TBD | - |
 | 2. Honest harness and freeze | 0 | TBD | - |
 | 3. Lease-gated next slice | 0 | TBD | - |
 
@@ -81,6 +81,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-09-29T06:58:36.957Z
-Stopped at: Phase 1 research complete
-Resume file: .planning/phases/01-legal-pit-fitness/01-RESEARCH.md
-Next: planner creates PLAN.md from research (verification-first; do not thaw freeze) — or `/gsd-manager`
+Stopped at: Phase 1 plans written
+Resume file: .planning/phases/01-legal-pit-fitness/01-01-PLAN.md
+Next: `/gsd-execute-phase 1` (verification-first; do not thaw freeze) — or `/gsd-manager`
