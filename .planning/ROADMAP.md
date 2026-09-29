@@ -20,7 +20,7 @@ In-repo tests already witness most Phase 1–2 criteria; GSD plans for those pha
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Legal PIT fitness** - Named AS OF cuts, fail-closed relations, recovery, claims, H2/H4 dogfood stay falsifiable (completed 2026-09-29)
-- [ ] **Phase 2: Honest harness and freeze** - Governor CI, three lifecycles, planes, typed Op, freeze, honeycomb-as-map
+- [x] **Phase 2: Honest harness and freeze** - Governor CI, three lifecycles, planes, typed Op, freeze, honeycomb-as-map (completed 2026-09-29)
 - [ ] **Phase 3: Lease-gated next slice** - One Active Slice; finish M011 only when leased; next milestone only if STATE names it
 
 ## Phase Details
@@ -60,7 +60,7 @@ Plans:
   4. Writes stay typed `Op`; stca-guide §5 JSON merge-patch is not the product write surface
   5. RocksDB, Cypher/GPML, HNSW, ADR-050 six dictionaries, ADR-080/081, and legal/science packs are absent unless `.kutha/STATE.md` has leased them; honeycomb ADRs remain Proposed
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans complete
 Plans:
 **Wave 1**
 - [x] 02-01-PLAN.md — Tracer: ci + cargo smoke + VERIFICATION skeleton + VALIDATION wave_0
@@ -69,7 +69,7 @@ Plans:
 - [x] 02-02-PLAN.md — Fill GOV/PLANE/FREEZE/MAP probe map + SUMMARY Trajectory
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 02-03-PLAN.md — Batch REQUIREMENTS Phase 2 IDs + GSD STATE/ROADMAP closeout
+- [x] 02-03-PLAN.md — Batch REQUIREMENTS Phase 2 IDs + GSD STATE/ROADMAP closeout
 
 ### Phase 3: Lease-gated next slice
 
@@ -91,7 +91,7 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Legal PIT fitness | 3/3 | Complete    | 2026-09-29 |
-| 2. Honest harness and freeze | 2/3 | In Progress|  |
+| 2. Honest harness and freeze | 3/3 | Complete    | 2026-09-29 |
 | 3. Lease-gated next slice | 0/TBD | Not started | - |
 
 **Harness citation (not this table):** Active Milestone M011; `L_delivery=M011-S03-done`; Phase H4; Active Slice None; freeze until explicit M002. See `.kutha/STATE.md`.

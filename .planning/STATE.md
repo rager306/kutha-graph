@@ -3,18 +3,18 @@ gsd_state_version: "1.0"
 current_phase: 2
 current_phase_name: Honest harness and freeze
 current_plan: 3
-status: in_progress
-stopped_at: Completed 02-02-PLAN.md
-last_updated: "2026-09-29T08:16:52.181Z"
+status: phase_complete
+stopped_at: Completed 02-03-PLAN.md
+last_updated: "2026-09-29T08:22:00Z"
 last_activity: 2026-09-29
-last_activity_desc: Phase 2 plan 02-02 probe paint complete — VERIFICATION status passed + D-10 Trajectory
-state_head: ea42688dda799ba0836481e967c670f49e3ca990
+last_activity_desc: Phase 2 verification complete — REQUIREMENTS GOV/PLANE/FREEZE/MAP batched after VERIFICATION passed
+state_head: aaffcd2
 progress:
   total_phases: 3
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 6
-  completed_plans: 5
-  percent: 33
+  completed_plans: 6
+  percent: 67
 ---
 
 # Project State
@@ -24,7 +24,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-29)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** Phase 2 — Honest harness and freeze; D-G1…D-G3 locked (governor cycle each wave); not product thaw
+**Current focus:** Phase 2 verification complete — next is Phase 3 (lease-gated next slice); not freeze thaw
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -32,31 +32,31 @@ See: `.planning/PROJECT.md` (updated 2026-09-29)
 
 ## Current Position
 
-Phase: 2 (Honest harness and freeze) — IN PROGRESS
-Current Plan: 3
+Phase: 2 (Honest harness and freeze) — COMPLETE (Phase 2 verification complete)
+Current Plan: 3/3 complete
 Total Plans in Phase: 3
-Status: 02-02 complete — next 02-03 REQUIREMENTS batch
-Last activity: 2026-09-29 — Completed 02-02 probe paint (ci HIGH-free + VERIFICATION passed + VALIDATION ✅)
+Status: Phase 2 VERIFICATION green; GOV-01/02, PLANE-01…03, FREEZE-01, MAP-01 batched `[x]`
+Last activity: 2026-09-29 — Phase 2 verification complete (ci HIGH-free + cargo smoke + REQUIREMENTS batch)
 
-Progress: [███░░░░░░░] 33%
+Progress: [██████░░░░] 67%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
+- Total plans completed: 6
 - Average duration: 1min
-- Total execution time: 7min
+- Total execution time: 8min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Legal PIT fitness | 3/3 | 3min | 1min |
-| 2. Honest harness and freeze | 2/3 | 4min | 2min |
+| 2. Honest harness and freeze | 3/3 | 5min | 2min |
 | 3. Lease-gated next slice | 0 | TBD | - |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (1min), 01-03 (1min), 02-01 (1min), 02-02 (3min)
+- Last 5 plans: 01-03 (1min), 02-01 (1min), 02-02 (3min), 02-03 (1min)
 - Trend: steady
 
 **Per-Plan Metrics:**
@@ -68,6 +68,7 @@ Progress: [███░░░░░░░] 33%
 | Phase 01-legal-pit-fitness P03 | 1min | 2 tasks | 5 files |
 | Phase 02 P01 | 1min | 2 tasks | 3 files |
 | Phase 02 P02 | 3min | 2 tasks | 3 files |
+| Phase 02 P03 | 1min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -86,6 +87,8 @@ Full table: `.planning/PROJECT.md`. Ingest (approved): ADR-002 STCA paradigm; st
 - [Phase 02]: Evidence SoT remains 02-VERIFICATION.md; SUMMARY does not invent a parallel probe list
 - [Phase 02]: REQUIREMENTS GOV/PLANE/FREEZE/MAP checkboxes stay unchecked until Plan 02-03
 - [Phase 02]: LOW=0 empty WARN ledger; intermediate wave relies on ci observe_cargo (D-15)
+- [Phase 02]: GOV-01/02, PLANE-01…03, FREEZE-01, MAP-01 batched to [x] only after VERIFICATION status passed + pre-verify ci/cargo (D-G1/D-10/D-15)
+- [Phase 02]: Next is Phase 3 lease gate — not freeze thaw, not M002, not legal pack; green≠Accepted≠L_capability
 
 ### Pending Todos
 
@@ -94,7 +97,7 @@ None yet.
 ### Blockers/Concerns
 
 - Phase 3: Active Slice is None — do not implement a further M011 slice until `.kutha/STATE.md` leases one.
-- Do not start M002, legal pack, Cypher, HNSW, or ADR-050 because GSD Phase 1 completed verification — FIT [x] is not a freeze thaw.
+- Do not start M002, legal pack, Cypher, HNSW, or ADR-050 because GSD Phase 2 completed verification — GOV/PLANE/FREEZE/MAP [x] is not a freeze thaw.
 
 ## Deferred Items
 
@@ -104,7 +107,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-29T08:16:52.123Z
-Stopped at: Completed 02-02-PLAN.md
+Last session: 2026-09-29T08:22:00Z
+Stopped at: Completed 02-03-PLAN.md
 Resume file: None
-Next: `/gsd-execute-phase 2` — continue with 02-03 REQUIREMENTS batch; do not thaw freeze
+Next: Phase 3 (lease-gated next slice) only under Active Slice lease — do not thaw freeze / assume M002

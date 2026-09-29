@@ -1,8 +1,8 @@
 ---
 phase: "02"
 slug: "honest-harness-and-freeze"
-status: draft
-nyquist_compliant: false
+status: complete
+nyquist_compliant: true
 wave_0_complete: true
 created: "2026-09-29"
 ---
@@ -39,14 +39,14 @@ created: "2026-09-29"
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 02-01-01 | 02-01 | 1 | GOV-01 | T-02-01, T-02-02 | ci fail-closed HIGH; green≠Accepted; VERIFICATION skeleton | smoke | `uv run kutha-gov ci` + D-15 cargo | ✅ VERIFICATION | ⬜ pending |
-| 02-01-02 | 02-01 | 1 | GOV-01 | T-02-01 | VALIDATION Task IDs + wave_0 + SUMMARY § Trajectory D-10 | docs | grep Task IDs / Trajectory | ✅ | ⬜ pending |
+| 02-01-01 | 02-01 | 1 | GOV-01 | T-02-01, T-02-02 | ci fail-closed HIGH; green≠Accepted; VERIFICATION skeleton | smoke | `uv run kutha-gov ci` + D-15 cargo | ✅ VERIFICATION | ✅ |
+| 02-01-02 | 02-01 | 1 | GOV-01 | T-02-01 | VALIDATION Task IDs + wave_0 + SUMMARY § Trajectory D-10 | docs | grep Task IDs / Trajectory | ✅ | ✅ |
 | 02-02-01 | 02-02 | 2 | GOV-02, PLANE-01, PLANE-02, PLANE-03, FREEZE-01, MAP-01 | T-02-03, T-02-04 | Probe paint GOV/PLANE/FREEZE/MAP | path+check | RESEARCH catalog probes | ✅ sources | ✅ |
 | 02-02-02 | 02-02 | 2 | GOV-01…MAP-01 | T-02-01 | Wave-2 SUMMARY + Trajectory D-10 | docs | SUMMARY § Trajectory | ✅ SUMMARY | ✅ |
-| 02-03-01 | 02-03 | 3 | GOV-01…MAP-01 | T-02-01 | REQUIREMENTS GOV/PLANE/FREEZE/MAP [x] batch | docs | REQUIREMENTS checkboxes | ✅ REQUIREMENTS | ⬜ pending |
-| 02-03-02 | 02-03 | 3 | GOV-01…MAP-01 | T-02-02 | STATE/ROADMAP/VALIDATION closeout | docs | STATE/ROADMAP; no `.kutha/STATE.md` edit | ✅ | ⬜ pending |
+| 02-03-01 | 02-03 | 3 | GOV-01…MAP-01 | T-02-09 | REQUIREMENTS GOV/PLANE/FREEZE/MAP [x] batch | docs | REQUIREMENTS checkboxes | ✅ REQUIREMENTS | ✅ |
+| 02-03-02 | 02-03 | 3 | GOV-01…MAP-01 | T-02-10, T-02-11 | STATE/ROADMAP/VALIDATION closeout | docs | STATE/ROADMAP; no `.kutha/STATE.md` edit | ✅ | ✅ |
 
-*Task IDs filled by plan 02-01 (`02-01-01`…`02-03-02`). Status ✅ for `02-02-01`/`02-02-02` after Wave 2; 02-01 and 02-03 rows still pending paint. Do not set `nyquist_compliant: true` yet (Plan 02-03).*
+*Task IDs filled by plan 02-01 (`02-01-01`…`02-03-02`). Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky. All Task IDs ✅ after Plan 02-03.*
 
 ---
 
@@ -67,10 +67,13 @@ None required if automated probes + `ci` cover GOV/PLANE/FREEZE/MAP. D-10 trajec
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers MISSING VERIFICATION artifact
-- [ ] No watch-mode flags
-- [ ] `nyquist_compliant: true` set when sign-off complete
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers MISSING VERIFICATION artifact
+- [x] No watch-mode flags
+- [x] Feedback latency acceptable
+- [x] `nyquist_compliant: true` set when sign-off complete
 
-**Approval:** pending
+**Approval:** signed off (Plan 02-03) — REQUIREMENTS GOV/PLANE/FREEZE/MAP `[x]` batch after VERIFICATION `status: passed`; pre-verify `uv run kutha-gov ci` + `explain trajectory` + `cargo test --workspace --offline`; `nyquist_compliant: true`
+
+*Plan 02-03 note:* Wave 3 hygiene complete; evidence SoT remains `02-VERIFICATION.md`; harness `.kutha/STATE.md` untouched (Active Slice None; freeze until M002).
