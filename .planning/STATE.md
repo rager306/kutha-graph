@@ -5,10 +5,10 @@ milestone_name: Semantic core close
 current_phase: 4
 current_phase_name: Partial correction with residual intervals
 status: planning
-stopped_at: Phase 4 context gathered
-last_updated: "2026-09-29T12:39:33.962Z"
+stopped_at: Phase 4 research complete
+last_updated: "2026-09-29T12:50:21.000Z"
 last_activity: 2026-09-29
-last_activity_desc: v0.02 roadmap written (Phases 4–8)
+last_activity_desc: Phase 4 RESEARCH.md written (interval-patch residuals)
 state_head: e5171c28db9a5e601e0e7bcc6b89909258aa72ee
 progress:
   total_phases: 5
@@ -34,8 +34,8 @@ See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 Phase: 4 of 5 (Partial correction with residual intervals)
 Plan: 0 of TBD
-Status: Not started (ready to plan; S04 leased)
-Last activity: 2026-09-29 — v0.02 roadmap written (Phases 4–8)
+Status: Not started (research complete; ready to plan; S04 leased)
+Last activity: 2026-09-29 — Phase 4 RESEARCH.md written
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -86,10 +86,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-29T12:39:33.911Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-partial-correction-with-residual-intervals/04-CONTEXT.md
-Next: `/gsd-plan-phase 4` (S04 is the Active Slice)
+Last session: 2026-09-29T12:50:21.000Z
+Stopped at: Phase 4 research complete
+Resume file: .planning/phases/04-partial-correction-with-residual-intervals/04-RESEARCH.md
+Next: planner consumes 04-RESEARCH.md (S04 is the Active Slice)
 
 ## Operator Next Steps
 
