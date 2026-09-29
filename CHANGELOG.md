@@ -13,6 +13,10 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - Named test `whole_version_correct_does_not_invent_residuals` (CORR-02): whole-version `Op::Correct` with narrower VT `[2015, 2020)` on `[2010, ∞)` invents no live residual of `P` at VT 2012 or 2021; interior `as_of(2017)` is the replacement only.
 - Fail-closed interval-patch writes: unknown `fact_seq` (`UnknownFact`); non-intersecting (including half-open touching endpoints), inverted, and not-live targets (`IntervalPatchRejected`) do not append.
 
+### Process
+
+- FSM `observe_cargo.required` plus `m011-partial-correction` / `B-m011-partial-correction` needles for named CORR-01 and CORR-02 tests (GATE-01).
+
 ### Trajectory
 
 - Active Slice remains S04; ADR-013 stays Proposed. GATE-01 needles for CORR-01 and CORR-02 stay on plan 04-03. Green governor is not ADR Accepted and not L_capability.

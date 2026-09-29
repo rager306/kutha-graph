@@ -40,3 +40,8 @@ bridges:
     claim: "Independent supports share claim_id; unknown claim and dangling caused_by fail closed; thin P→Q eligibility tracks premise supports"
     cites: "crates/kutha-runtime/tests/m011_claim_supports.rs"
     check: m011-claim-supports
+
+  - id: B-m011-partial-correction
+    claim: "Interval patch leaves VT 2012/2021 residuals; whole-version Correct does not invent them"
+    cites: "crates/kutha-runtime/tests/m011_partial_correction.rs"
+    check: m011-partial-correction
