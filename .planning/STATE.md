@@ -7,7 +7,7 @@ status: ready to execute
 stopped_at: Completed 03-01-PLAN.md
 last_updated: "2026-09-29T11:06:11.240Z"
 last_activity: 2026-09-29
-last_activity_desc: Phase 3 PLAN.md written (03-01…03-03); verification-only lease gate
+last_activity_desc: Phase 3 Wave 2 probe paint; VERIFICATION passed; D-G3 Overview negative proof
 state_head: e813acac5b7f84e03d194e69b2b73ec7e0c9dbaf
 progress:
   total_phases: 3
@@ -35,8 +35,8 @@ See: `.planning/PROJECT.md` (updated 2026-09-29)
 Phase: 3 (Lease-gated next slice) — IN PROGRESS
 Current Plan: 2
 Total Plans in Phase: 3
-Status: Plan 03-01 complete; next 03-02 probe paint
-Last activity: 2026-09-29 — Wave 1 tracer VERIFICATION skeleton (D-L4 None)
+Status: Plan 03-02 probe paint in progress
+Last activity: 2026-09-29 — Wave 2 GOV-03/NEXT/D-L4 probes + D-G3 Overview
 
 Progress: [███████░░░] 67%
 

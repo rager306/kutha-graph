@@ -2,11 +2,11 @@
 
 ## Overview
 
-This GSD overlay tracks the **steel thread already in crates**, not a honeycomb waterfall. Phase 1 holds legal PIT and related fitness (FF5/FF6, M010, M011 S01–S03, H2/H4). Phase 2 holds governor honesty, two-plane isolation, typed Op, freeze, and map discipline. Phase 3 is the only *new* product work: continue M011 only under an explicit Active Slice lease, then start only the milestone `.kutha/STATE.md` names.
+This GSD overlay tracks the **steel thread already in crates**, not a honeycomb waterfall. Phase 1 holds legal PIT and related fitness (FF5/FF6, M010, M011 S01–S03, H2/H4). Phase 2 holds governor honesty, two-plane isolation, typed Op, freeze, and map discipline. Phase 3 is **verification-only negative proof** under Active Slice **None**: falsify GOV-03 / NEXT-01 / NEXT-02 without starting a named slice. Crate and product-slice delivery wait for a named Active Slice lease in a **later** GSD phase — not this overlay’s Phase 3 plans.
 
 Harness delivery (`M001`/`M010` closed, `M011` S03 done, Active Slice **None**, Phase **H4**) stays in `.kutha/STATE.md` and `.kutha/ROADMAP.md`. This file does not replace them. Do not plan ADR-010–093 as sequential GSD phases.
 
-In-repo tests already witness most Phase 1–2 criteria; GSD plans for those phases are verification-first (do not regress, do not thaw freeze). Phase 3 is blocked until STATE names a slice.
+In-repo tests already witness most Phase 1–2 criteria; GSD plans for those phases are verification-first (do not regress, do not thaw freeze). Phase 3 closes on that negative proof; it does not hold open until a future lease appears.
 
 ## Milestones
 
