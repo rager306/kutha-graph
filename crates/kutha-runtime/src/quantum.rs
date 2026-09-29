@@ -26,6 +26,9 @@ pub enum RuntimeError {
     BrokenLineage {
         caused_by: EventId,
     },
+    IntervalPatchRejected {
+        fact_seq: u64,
+    },
 }
 
 impl fmt::Display for RuntimeError {
@@ -40,6 +43,9 @@ impl fmt::Display for RuntimeError {
             RuntimeError::BrokenLineage { caused_by } => {
                 write!(f, "broken lineage caused_by={caused_by}")
             }
+            RuntimeError::IntervalPatchRejected { fact_seq } => {
+                write!(f, "interval patch rejected for fact {fact_seq}")
+            }
         }
     }
 }
@@ -47,7 +53,10 @@ impl fmt::Display for RuntimeError {
 fn op_relation(op: &Op) -> Option<TermId> {
     match op {
         Op::Assert { relation, .. } | Op::Behavior { relation, .. } => Some(*relation),
-        Op::Retract { .. } | Op::Correct { .. } | Op::Define { .. } => None,
+        Op::Retract { .. }
+        | Op::Correct { .. }
+        | Op::CorrectInterval { .. }
+        | Op::Define { .. } => None,
     }
 }
 
@@ -110,7 +119,12 @@ impl Runtime {
             return id;
         }
         let id = self.dict.intern(s);
-        let event = Event::new(Op::Define { name: s.to_string() }, self.next_tt());
+        let event = Event::new(
+            Op::Define {
+                name: s.to_string(),
+            },
+            self.next_tt(),
+        );
         self.fold.apply(&event);
         self.log.append(event);
         id
@@ -182,9 +196,11 @@ impl Runtime {
         max_cascade: usize,
     ) -> Result<Self, RuntimeError> {
         let dict = TermDictionary::from_strings(dict_strings);
-        let knows = dict.id("knows").ok_or_else(|| RuntimeError::UnknownRelation {
-            name: "knows".into(),
-        })?;
+        let knows = dict
+            .id("knows")
+            .ok_or_else(|| RuntimeError::UnknownRelation {
+                name: "knows".into(),
+            })?;
         let known_by = dict
             .id("knownBy")
             .ok_or_else(|| RuntimeError::UnknownRelation {
@@ -272,9 +288,35 @@ impl Runtime {
 
     /// Admit a user op, append, fold, cascade inverse-`knows` until idle or budget.
     pub fn emit(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
-        if let Op::Retract { fact_seq } | Op::Correct { fact_seq, .. } = &op {
+        if let Op::Retract { fact_seq }
+        | Op::Correct { fact_seq, .. }
+        | Op::CorrectInterval { fact_seq, .. } = &op
+        {
             if !self.fold.facts().iter().any(|f| f.seq == *fact_seq) {
                 return Err(RuntimeError::UnknownFact {
+                    fact_seq: *fact_seq,
+                });
+            }
+        }
+        if let Op::CorrectInterval {
+            fact_seq,
+            patch_from,
+            patch_to,
+            ..
+        } = &op
+        {
+            let fact = self
+                .fold
+                .facts()
+                .iter()
+                .find(|f| f.seq == *fact_seq)
+                .expect("UnknownFact gate already ran");
+            if fact.invalidated_at.is_some()
+                || patch_to.is_some_and(|t| *patch_from >= t)
+                || crate::fold::vt_intersect(fact.valid_from, fact.valid_to, *patch_from, *patch_to)
+                    .is_none()
+            {
+                return Err(RuntimeError::IntervalPatchRejected {
                     fact_seq: *fact_seq,
                 });
             }
@@ -375,12 +417,7 @@ impl Runtime {
     /// iff the derived fact is still live and its premise claim still has a live support.
     /// `caused_by` may name any prior Assert/Behavior event; eligibility keys on that
     /// event's claim identity, so withdrawing one of several supports does not drop Q.
-    pub fn derivation_eligible_at(
-        &self,
-        derived: EventId,
-        tt: u64,
-        vt: u64,
-    ) -> bool {
+    pub fn derivation_eligible_at(&self, derived: EventId, tt: u64, vt: u64) -> bool {
         if !self.fold.claim_supported_at(derived, tt, vt) {
             return false;
         }
@@ -396,7 +433,10 @@ impl Runtime {
         let premise = match &cause.op {
             Op::Assert { claim, .. } => claim.unwrap_or(cause.id),
             Op::Behavior { .. } => cause.id,
-            Op::Retract { .. } | Op::Correct { .. } | Op::Define { .. } => return false,
+            Op::Retract { .. }
+            | Op::Correct { .. }
+            | Op::CorrectInterval { .. }
+            | Op::Define { .. } => return false,
         };
         self.fold.claim_supported_at(premise, tt, vt)
     }

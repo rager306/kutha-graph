@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-29 — Product: interval-patch CorrectInterval residuals
+
+### Product
+
+- `Op::CorrectInterval { fact_seq, object, patch_from, patch_to }`: explicit interval patch on a live fact. Fold invalidates the original row (VT bounds unchanged) and pushes prefix residual, clipped replacement, and suffix residual sharing `claim_id`.
+- Named test `interval_patch_leaves_vt_2012_and_2021_residuals` (CORR-01): after patch `[2015, 2020)` on `[2010, ∞)`, `as_of(2012)` and `as_of(2021)` keep source `a` as `P`; interior `as_of(2017)` is `P-prime`.
+
+### Trajectory
+
+- Active Slice remains S04; ADR-013 stays Proposed. GATE-01 needles for this test stay on plan 04-03. Green governor is not ADR Accepted and not L_capability.
+
 ## 2026-09-16 — Product + Process: M011 S03 thin P→Q eligibility
 
 ### Product

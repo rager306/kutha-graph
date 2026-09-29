@@ -5,6 +5,58 @@ fn nil_claim() -> EventId {
     EventId::nil()
 }
 
+/// Half-open intersection of `[a_from, a_to)` and `[b_from, b_to)`. `None` end is +∞.
+/// Empty when `from` is not strictly less than `to` after substituting infinity (D-C7).
+pub(crate) fn vt_intersect(
+    a_from: ValidTime,
+    a_to: Option<ValidTime>,
+    b_from: ValidTime,
+    b_to: Option<ValidTime>,
+) -> Option<(ValidTime, Option<ValidTime>)> {
+    let from = a_from.max(b_from);
+    let a_end = a_to.unwrap_or(u64::MAX);
+    let b_end = b_to.unwrap_or(u64::MAX);
+    let to_raw = a_end.min(b_end);
+    if from >= to_raw {
+        return None;
+    }
+    let to = if to_raw == u64::MAX {
+        None
+    } else {
+        Some(to_raw)
+    };
+    Some((from, to))
+}
+
+/// Leftover halves of fact VT minus a non-empty intersection (prefix, suffix). Skip empty halves.
+fn leftover_halves(
+    fact_from: ValidTime,
+    fact_to: Option<ValidTime>,
+    inter_from: ValidTime,
+    inter_to: Option<ValidTime>,
+) -> (
+    Option<(ValidTime, Option<ValidTime>)>,
+    Option<(ValidTime, Option<ValidTime>)>,
+) {
+    let prefix = if fact_from < inter_from {
+        Some((fact_from, Some(inter_from)))
+    } else {
+        None
+    };
+    let suffix = match inter_to {
+        None => None,
+        Some(i_to) => {
+            let fact_end = fact_to.unwrap_or(u64::MAX);
+            if i_to < fact_end {
+                Some((i_to, fact_to))
+            } else {
+                None
+            }
+        }
+    };
+    (prefix, suffix)
+}
+
 /// One asserted (or behavior-asserted) fact in the fold. Losers stay on retract (ADR-013).
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct Fact {
@@ -186,6 +238,55 @@ impl GraphFold {
                             claim_id,
                         });
                     }
+                }
+            }
+            Op::CorrectInterval {
+                fact_seq,
+                object,
+                patch_from,
+                patch_to,
+            } => {
+                let Some(idx) = self.facts.iter().position(|f| f.seq == *fact_seq) else {
+                    return;
+                };
+                if self.facts[idx].invalidated_at.is_some() {
+                    return;
+                }
+                let old = &self.facts[idx];
+                let Some((inter_from, inter_to)) =
+                    vt_intersect(old.valid_from, old.valid_to, *patch_from, *patch_to)
+                else {
+                    return;
+                };
+                let (prefix, suffix) =
+                    leftover_halves(old.valid_from, old.valid_to, inter_from, inter_to);
+                let s = old.subject;
+                let r = old.relation;
+                let claim_id = old.claim_id;
+                let old_object = old.object();
+                self.facts[idx].invalidated_at = Some(event.ingested_at);
+
+                let mut push_row = |obj: TermId, vf: ValidTime, vt: Option<ValidTime>| {
+                    let seq = self.next_seq;
+                    self.next_seq += 1;
+                    self.facts.push(Fact {
+                        seq,
+                        subject: s,
+                        relation: r,
+                        object: obj,
+                        valid_from: vf,
+                        valid_to: vt,
+                        ingested_at: event.ingested_at,
+                        invalidated_at: None,
+                        claim_id,
+                    });
+                };
+                if let Some((vf, vt)) = prefix {
+                    push_row(old_object, vf, vt);
+                }
+                push_row(*object, inter_from, inter_to);
+                if let Some((vf, vt)) = suffix {
+                    push_row(old_object, vf, vt);
                 }
             }
             Op::Define { .. } => {}

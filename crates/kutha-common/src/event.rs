@@ -37,6 +37,13 @@ pub enum Op {
         valid_from: ValidTime,
         valid_to: Option<ValidTime>,
     },
+    /// Explicit interval patch (M011 S04). Does not change whole-version `Correct`.
+    CorrectInterval {
+        fact_seq: u64,
+        object: TermId,
+        patch_from: ValidTime,
+        patch_to: Option<ValidTime>,
+    },
     /// Behavior-emitted follow-on (still a log event; never LLM narrative).
     Behavior {
         name: String,
@@ -77,7 +84,7 @@ impl Event {
                 ..
             } => vec![*subject, *relation, *object],
             Op::Retract { .. } | Op::Define { .. } => vec![],
-            Op::Correct { object, .. } => vec![*object],
+            Op::Correct { object, .. } | Op::CorrectInterval { object, .. } => vec![*object],
         };
         Self {
             id: Uuid::now_v7(),
@@ -126,6 +133,18 @@ impl Event {
                 h.update(object.to_le_bytes());
                 h.update(valid_from.to_le_bytes());
                 h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
+            }
+            Op::CorrectInterval {
+                fact_seq,
+                object,
+                patch_from,
+                patch_to,
+            } => {
+                h.update(b"correct-interval");
+                h.update(fact_seq.to_le_bytes());
+                h.update(object.to_le_bytes());
+                h.update(patch_from.to_le_bytes());
+                h.update(patch_to.unwrap_or(u64::MAX).to_le_bytes());
             }
             Op::Behavior {
                 name,
