@@ -409,21 +409,16 @@ pub struct PersistedQuantumOutcome {
 
 **If wrong:** Prefer A1–A3 as discussable encoding; A4–A5 must be verified by Wave 0 / first implement wave tests.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Should `open` return outcomes only via `Runtime` getters, or also a side channel?**
-   - What we know: `open` returns `Runtime` today.
-   - What's unclear: whether tests need `store::load_outcomes(dir)` for crash fixtures that skip Runtime buffer.
-   - Recommendation: Prefer `Runtime::outcome_records()` after open; optional `store` helper only if tests need to inspect file without full Runtime rebuild.
+   - RESOLVED: Prefer `Runtime::outcome_records()` (and `attach_outcomes` / equivalent on open). No separate public `store::load_outcomes` side channel required for OUT-01/OUT-02; crash fixtures go through persist→open→`outcome_records()`. Locked in `05-01-PLAN.md`.
 
 2. **Incomplete as explicit enum variant vs absence of Full?**
-   - What we know: D-O3 says report incomplete/unknown; never invent success.
-   - What's unclear: whether to write an `Incomplete` row or only absences.
-   - Recommendation: **Absence / non-Full** is enough for OUT-02; do not require an Incomplete row. Resume is the only new positive row kind beyond Zero/Partial/Full.
+   - RESOLVED: **Absence / non-Full** is enough for OUT-02; do not add an `Incomplete` disposition. `OutcomeDisposition` is `{ Zero, Partial, Full, Resume }` only. Resume is the only new positive row kind beyond Zero/Partial/Full. Locked in `05-01-PLAN.md`.
 
 3. **Honeycomb ADR-014 evidence timing**
-   - What we know: `evidence: []` today; Phase 4 appended ADR-013 evidence at GATE wave.
-   - Recommendation: Append named test names to ADR-014 evidence in the GATE-01 wave; keep `map: Proposed`.
+   - RESOLVED: Append both named test fn names to ADR-014 `evidence` in the GATE-01 wave (`05-02-PLAN.md`); keep `map: Proposed`; do not edit ADR-014 markdown body.
 
 ## Environment Availability
 
