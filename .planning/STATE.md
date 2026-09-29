@@ -27,7 +27,7 @@ See: `.planning/PROJECT.md` (updated 2026-09-29)
 Phase: 1 of 3 (Legal PIT fitness)
 Plan: none (plans TBD)
 Status: Ready to plan
-Last activity: 2026-09-29 — GSD ingest → PROJECT/REQUIREMENTS/ROADMAP/STATE
+Last activity: 2026-09-29 — onboarding complete (SUMMARY written); ready to plan Phase 1
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -73,7 +73,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-29 12:45
-Stopped at: Wrote GSD PROJECT.md, REQUIREMENTS.md, ROADMAP.md, STATE.md from ingest
-Resume file: None
-Next: `/gsd-plan-phase 1` (verification-first; do not thaw freeze)
+Last session: 2026-09-29 13:42
+Stopped at: `/gsd-onboard` readiness check — SUMMARY present; scaffold complete
+Resume file: `.planning/onboarding/SUMMARY.md`
+Next: `/gsd-plan-phase 1` (verification-first; do not thaw freeze) — or `/gsd-manager`
