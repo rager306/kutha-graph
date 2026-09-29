@@ -41,12 +41,12 @@ created: "2026-09-29"
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
 | 02-01-01 | 02-01 | 1 | GOV-01 | T-02-01, T-02-02 | ci fail-closed HIGH; green≠Accepted; VERIFICATION skeleton | smoke | `uv run kutha-gov ci` + D-15 cargo | ✅ VERIFICATION | ⬜ pending |
 | 02-01-02 | 02-01 | 1 | GOV-01 | T-02-01 | VALIDATION Task IDs + wave_0 + SUMMARY § Trajectory D-10 | docs | grep Task IDs / Trajectory | ✅ | ⬜ pending |
-| 02-02-01 | 02-02 | 2 | GOV-02, PLANE-01, PLANE-02, PLANE-03, FREEZE-01, MAP-01 | T-02-03, T-02-04 | Probe paint GOV/PLANE/FREEZE/MAP | path+check | RESEARCH catalog probes | ✅ sources | ⬜ pending |
-| 02-02-02 | 02-02 | 2 | GOV-01…MAP-01 | T-02-01 | Wave-2 SUMMARY + Trajectory D-10 | docs | SUMMARY § Trajectory | ❌ until 02-02 | ⬜ pending |
+| 02-02-01 | 02-02 | 2 | GOV-02, PLANE-01, PLANE-02, PLANE-03, FREEZE-01, MAP-01 | T-02-03, T-02-04 | Probe paint GOV/PLANE/FREEZE/MAP | path+check | RESEARCH catalog probes | ✅ sources | ✅ |
+| 02-02-02 | 02-02 | 2 | GOV-01…MAP-01 | T-02-01 | Wave-2 SUMMARY + Trajectory D-10 | docs | SUMMARY § Trajectory | ✅ SUMMARY | ✅ |
 | 02-03-01 | 02-03 | 3 | GOV-01…MAP-01 | T-02-01 | REQUIREMENTS GOV/PLANE/FREEZE/MAP [x] batch | docs | REQUIREMENTS checkboxes | ✅ REQUIREMENTS | ⬜ pending |
 | 02-03-02 | 02-03 | 3 | GOV-01…MAP-01 | T-02-02 | STATE/ROADMAP/VALIDATION closeout | docs | STATE/ROADMAP; no `.kutha/STATE.md` edit | ✅ | ⬜ pending |
 
-*Task IDs filled by plan 02-01 (`02-01-01`…`02-03-02`). Status: ⬜ pending until later plans paint. Do not set `nyquist_compliant: true` yet.*
+*Task IDs filled by plan 02-01 (`02-01-01`…`02-03-02`). Status ✅ for `02-02-01`/`02-02-02` after Wave 2; 02-01 and 02-03 rows still pending paint. Do not set `nyquist_compliant: true` yet (Plan 02-03).*
 
 ---
 
