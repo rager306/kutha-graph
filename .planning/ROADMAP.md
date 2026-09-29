@@ -120,7 +120,7 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8. Phases 5–8 remain 
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 4. Partial correction with residual intervals | 3/3 | Complete   | 2026-09-29 |
+| 4. Partial correction with residual intervals | 3/3 | Complete    | 2026-09-29 |
 | 5. Persisted quantum outcome | 0/TBD | Not started (lease-gated) | - |
 | 6. Typed CSR lease | 0/TBD | Not started (lease-gated) | - |
 | 7. Provenance and rule-version check | 0/TBD | Not started (lease-gated) | - |

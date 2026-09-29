@@ -2,19 +2,20 @@
 gsd_state_version: "1.0"
 milestone: v0.02
 milestone_name: Semantic core close
-current_phase: 4
-current_phase_name: Partial correction with residual intervals
+current_phase: 5
+current_phase_name: Persisted quantum outcome
 status: planning
-stopped_at: Completed 04-03-PLAN.md
-last_updated: "2026-09-29T15:28:25.169Z"
+stopped_at: Phase 4 complete, ready to plan Phase 5
+last_updated: "2026-09-29T15:34:47.207Z"
 last_activity: 2026-09-29
-last_activity_desc: Phase 4 plans revised (VALIDATION.md, D-C5 wave-close ci, Correct-arm awk)
-state_head: 9edb573b03715abd2ccb83f41820d306c67a6a07
+last_activity_desc: Phase 4 complete, transitioned to Phase 5
+state_head: 8442c3c8397c7343b15dccb388d2074d297185db
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
   completed_plans: 3
+  percent: 20
 ---
 
 # Project State
@@ -24,7 +25,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** Phase 4 — Partial correction with residual intervals (M011 S04)
+**Current focus:** Phase 4 complete (M011 S04). Next GSD phase is 5 (S05 quantum outcome) — **lease-gated** until `.kutha/STATE.md` names Active Slice S05.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -32,17 +33,17 @@ See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 ## Current Position
 
-Phase: 4 of 5 (Partial correction with residual intervals)
-Plan: 3 of 3
-Status: Ready for verification (04-03 GATE-01 complete)
-Last activity: 2026-09-29 — 04-03 GATE-01 governor registration
+Phase: 5 of 5 (Persisted quantum outcome)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-09-29 — Phase 4 complete, transitioned to Phase 5
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██░░░░░░░░] 20%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9 (v0.01)
+- Total plans completed: 3 (v0.01)
 - Average duration: 2min
 - Total execution time: ~23min
 
@@ -54,6 +55,7 @@ Progress: [░░░░░░░░░░] 0%
 | 2. Honest harness and freeze | 3/3 | 5min | 2min |
 | 3. Lease-gated next slice | 3/3 | 14min | 5min |
 | 4–8 (v0.02) | 0/TBD | — | — |
+| 4 | 3 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 02-03 (1min), 03-01 (5min), 03-02 (5min), 03-03 (4min)
@@ -102,7 +104,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-09-29T15:28:09.986Z
-Stopped at: Completed 04-03-PLAN.md
+Stopped at: Phase 4 complete, ready to plan Phase 5
 Resume file: None
 Next: `/gsd-verify-work 4` (Phase 4 plans complete; S04 still leased)
 
