@@ -10,7 +10,7 @@ In-repo tests already witness most Phase 1–2 criteria; GSD plans for those pha
 
 ## Milestones
 
-- 🚧 **Research spike (harness M011)** — GSD Phases 1–3 (in progress on the harness plane; GSD plans not yet written)
+- 🚧 **Research spike (harness M011)** — GSD Phases 1–3 overlay complete (verification-only); harness M011 still open on `.kutha/STATE.md`
 - 📋 **Next STATE-named milestone** — not assumed to be M002; not honeycomb promotion
 
 ## Phases
@@ -21,7 +21,7 @@ In-repo tests already witness most Phase 1–2 criteria; GSD plans for those pha
 
 - [x] **Phase 1: Legal PIT fitness** - Named AS OF cuts, fail-closed relations, recovery, claims, H2/H4 dogfood stay falsifiable (completed 2026-09-29)
 - [x] **Phase 2: Honest harness and freeze** - Governor CI, three lifecycles, planes, typed Op, freeze, honeycomb-as-map (completed 2026-09-29)
-- [ ] **Phase 3: Lease-gated next slice** - One Active Slice; finish M011 only when leased; next milestone only if STATE names it
+- [x] **Phase 3: Lease-gated next slice** - One Active Slice; finish M011 only when leased; next milestone only if STATE names it (completed 2026-09-29)
 
 ## Phase Details
 
@@ -81,7 +81,7 @@ Plans:
   2. When STATE names a slice, only that slice is implemented; a legal corpus/pack is not started in its place
   3. When M011 is closed in `.kutha/STATE.md`, the next product milestone is whatever STATE then names — not an assumed M002 and not “implement honeycomb”
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans complete
 Plans:
 **Wave 1**
 - [x] 03-01-PLAN.md — Tracer: ci + cargo smoke + VERIFICATION skeleton + D-L4 snapshot
@@ -90,7 +90,7 @@ Plans:
 - [x] 03-02-PLAN.md — Paint GOV-03/NEXT/D-L4 probes + D-G3 Overview captions + SUMMARY
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 03-03-PLAN.md — Batch REQUIREMENTS GOV-03/NEXT + GSD STATE/ROADMAP closeout
+- [x] 03-03-PLAN.md — Batch REQUIREMENTS GOV-03/NEXT + GSD STATE/ROADMAP closeout
 
 ## Progress
 
@@ -101,6 +101,6 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. Legal PIT fitness | 3/3 | Complete    | 2026-09-29 |
 | 2. Honest harness and freeze | 3/3 | Complete    | 2026-09-29 |
-| 3. Lease-gated next slice | 2/3 | In Progress|  |
+| 3. Lease-gated next slice | 3/3 | Complete    | 2026-09-29 |
 
 **Harness citation (not this table):** Active Milestone M011; `L_delivery=M011-S03-done`; Phase H4; Active Slice None; freeze until explicit M002. See `.kutha/STATE.md`.

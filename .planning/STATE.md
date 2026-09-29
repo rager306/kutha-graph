@@ -3,18 +3,18 @@ gsd_state_version: "1.0"
 current_phase: 3
 current_phase_name: Lease-gated next slice
 current_plan: 3
-status: ready to execute
-stopped_at: Completed 03-02-PLAN.md
-last_updated: "2026-09-29T11:10:08.455Z"
+status: phase_complete
+stopped_at: Completed 03-03-PLAN.md
+last_updated: "2026-09-29T11:13:00Z"
 last_activity: 2026-09-29
-last_activity_desc: Phase 3 Wave 2 probe paint; VERIFICATION passed; D-G3 Overview negative proof
-state_head: 375423090a27265c18466e8068326f781156f0f3
+last_activity_desc: Phase 3 verification complete
+state_head: 3741d39
 progress:
   total_phases: 3
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 9
-  completed_plans: 8
-  percent: 67
+  completed_plans: 9
+  percent: 100
 ---
 
 # Project State
@@ -24,7 +24,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-29)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** Phase 3 — Lease-gated next slice; D-L1…D-L6 locked (verification-only while Active Slice None); not freeze thaw
+**Current focus:** Phase 3 verification complete — GOV-03/NEXT negative proof under Active Slice None; not freeze thaw
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -32,20 +32,20 @@ See: `.planning/PROJECT.md` (updated 2026-09-29)
 
 ## Current Position
 
-Phase: 3 (Lease-gated next slice) — IN PROGRESS
-Current Plan: 3
+Phase: 3 (Lease-gated next slice) — COMPLETE
+Current Plan: 3 of 3
 Total Plans in Phase: 3
-Status: Plan 03-02 complete; next 03-03 REQUIREMENTS batch
-Last activity: 2026-09-29 — Wave 2 VERIFICATION passed + D-10 SUMMARY
+Status: Phase 3 verification complete; GOV-03 / NEXT-01 / NEXT-02 batched
+Last activity: 2026-09-29 — Wave 3 REQUIREMENTS batch after VERIFICATION passed
 
-Progress: [███████░░░] 67%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
+- Total plans completed: 9
 - Average duration: 1min
-- Total execution time: 8min
+- Total execution time: 10min
 
 **By Phase:**
 
@@ -53,11 +53,11 @@ Progress: [███████░░░] 67%
 |-------|-------|-------|----------|
 | 1. Legal PIT fitness | 3/3 | 3min | 1min |
 | 2. Honest harness and freeze | 3/3 | 5min | 2min |
-| 3. Lease-gated next slice | 0 | TBD | - |
+| 3. Lease-gated next slice | 3/3 | 7min | 2min |
 | 2 | 3 | - | - |
 
 **Recent Trend:**
-- Last 5 plans: 01-03 (1min), 02-01 (1min), 02-02 (3min), 02-03 (1min)
+- Last 5 plans: 02-02 (3min), 02-03 (1min), 03-01 (5min), 03-02 (5min), 03-03 (in progress)
 - Trend: steady
 
 **Per-Plan Metrics:**
@@ -101,6 +101,8 @@ Full table: `.planning/PROJECT.md`. Ingest (approved): ADR-002 STCA paradigm; st
 - [Phase 03]: Evidence SoT remains 03-VERIFICATION.md; SUMMARY does not invent a parallel probe list
 - [Phase 03]: REQUIREMENTS GOV-03/NEXT stay unchecked until Plan 03-03
 - [Phase 03]: D-G3 Overview is verification-only negative proof under Active Slice None (D-L1)
+- [Phase 03]: GOV-03, NEXT-01, NEXT-02 batched to [x] only after VERIFICATION status passed + pre-verify ci/cargo (D-L1/D-L3)
+- [Phase 03]: Further crate work is a new discuss/plan only if STATE later names an Active Slice — not freeze thaw, not assumed M002, not legal pack
 
 ### Pending Todos
 
@@ -108,8 +110,8 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 3: Active Slice is None — do not implement a further M011 slice until `.kutha/STATE.md` leases one.
-- Do not start M002, legal pack, Cypher, HNSW, or ADR-050 because GSD Phase 2 completed verification — GOV/PLANE/FREEZE/MAP [x] is not a freeze thaw.
+- Further product-crate work waits for a named Active Slice in `.kutha/STATE.md` (still **None**). Do not implement under closed Phase 3 plans (D-L4).
+- Do not start M002, legal pack, Cypher, HNSW, or ADR-050 because GSD Phase 3 completed verification — GOV-03/NEXT [x] is not a freeze thaw and not a lease grant.
 
 ## Deferred Items
 
@@ -119,7 +121,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-29T11:10:08.309Z
-Stopped at: Completed 03-02-PLAN.md
+Last session: 2026-09-29T11:13:00Z
+Stopped at: Completed 03-03-PLAN.md
 Resume file: None
-Next: `/gsd-execute-phase 3` — verification-only GOV-03/NEXT under Active Slice None (D-L1); do not thaw freeze / assume M002
+Next: new GSD discuss/plan only if `.kutha/STATE.md` names an Active Slice — not freeze thaw / not assumed M002 / not legal pack
