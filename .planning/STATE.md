@@ -1,14 +1,14 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 2
-current_phase_name: Honest harness and freeze
-current_plan: 3
-status: phase_complete
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-09-29T08:25:40Z"
+current_phase: 3
+current_phase_name: Lease-gated next slice
+current_plan: Not started
+status: planning
+stopped_at: Phase 2 complete, ready to plan Phase 3
+last_updated: "2026-09-29T08:29:29.129Z"
 last_activity: 2026-09-29
-last_activity_desc: Phase 2 gsd-verifier confirmed — ci HIGH-free, probes 21/21, REQUIREMENTS batch correct, harness lease untouched
-state_head: 5cf7fd3f402753988e2c73e26b9906280e3ee628
+last_activity_desc: Phase 2 complete, transitioned to Phase 3
+state_head: 532a42dbd7511c2f1bd134778627914fbc95e62d
 progress:
   total_phases: 3
   completed_phases: 2
@@ -32,18 +32,18 @@ See: `.planning/PROJECT.md` (updated 2026-09-29)
 
 ## Current Position
 
-Phase: 2 (Honest harness and freeze) — COMPLETE (Phase 2 verification complete)
-Current Plan: 3
+Phase: 3 — Lease-gated next slice
+Current Plan: Not started
 Total Plans in Phase: 3
-Status: Phase 2 VERIFICATION green; GOV-01/02, PLANE-01…03, FREEZE-01, MAP-01 batched `[x]`
-Last activity: 2026-09-29 — Phase 2 verification complete (ci HIGH-free + cargo smoke + REQUIREMENTS batch)
+Status: Ready to plan
+Last activity: 2026-09-29 — Phase 2 complete, transitioned to Phase 3
 
 Progress: [███████░░░] 67%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 3
 - Average duration: 1min
 - Total execution time: 8min
 
@@ -54,6 +54,7 @@ Progress: [███████░░░] 67%
 | 1. Legal PIT fitness | 3/3 | 3min | 1min |
 | 2. Honest harness and freeze | 3/3 | 5min | 2min |
 | 3. Lease-gated next slice | 0 | TBD | - |
+| 2 | 3 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 01-03 (1min), 02-01 (1min), 02-02 (3min), 02-03 (1min)
@@ -111,6 +112,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-09-29T08:21:55.560Z
-Stopped at: Completed 02-03-PLAN.md
+Stopped at: Phase 2 complete, ready to plan Phase 3
 Resume file: None
 Next: Phase 3 (lease-gated next slice) only under Active Slice lease — do not thaw freeze / assume M002
