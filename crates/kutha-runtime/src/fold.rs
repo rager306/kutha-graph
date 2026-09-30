@@ -289,9 +289,9 @@ impl GraphFold {
                     push_row(old_object, vf, vt);
                 }
             }
-            Op::Define { .. } => {}
-        }
-    }
+              Op::Define { .. } | Op::QuantumOutcome { .. } => {}
+          }
+      }
 
     pub fn replay(events: &[Event]) -> Self {
         let mut fold = Self::default();

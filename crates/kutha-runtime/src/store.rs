@@ -7,7 +7,7 @@ use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
 
 const TERMS_REL: &str = "terms.jsonl";
-/// Authoritative quantum outcome sidecar (not a droppable lease — D-O1 / ADR-010).
+/// Outcomes sidecar lease. SoT is `Op::QuantumOutcome` on the event log (LOG-01 / D-02).
 pub const OUTCOMES_REL: &str = "quantum_outcomes.jsonl";
 /// Authoritative justification sidecar (not a droppable lease — D-F2).
 pub const JUSTIFICATIONS_REL: &str = "justifications.jsonl";
@@ -64,37 +64,42 @@ pub fn open(dir: &Path) -> std::io::Result<Runtime> {
             .into_iter()
             .filter(|e| !matches!(e.op, Op::Define { .. }))
             .collect();
-        let mut rt = Runtime::from_snapshot(snap, graph);
-        rt.attach_outcomes(outcomes);
-        rt.attach_justifications(justifications);
-        return Ok(rt);
+        let rt = Runtime::from_snapshot(snap, graph);
+        return Ok(finish_open(rt, outcomes, justifications));
     }
     let defined = defined_names(&events);
     if !defined.is_empty() {
-        let mut rt =
+        let rt =
             Runtime::from_dict_and_events(defined, events, cascade_limit()).map_err(runtime_err)?;
-        rt.attach_outcomes(outcomes);
-        rt.attach_justifications(justifications);
-        return Ok(rt);
+        return Ok(finish_open(rt, outcomes, justifications));
     }
     if terms_path.exists() {
         let strings = read_terms(&terms_path)?;
-        let mut rt =
+        let rt =
             Runtime::from_dict_and_events(strings, events, cascade_limit()).map_err(runtime_err)?;
-        rt.attach_outcomes(outcomes);
-        rt.attach_justifications(justifications);
-        return Ok(rt);
+        return Ok(finish_open(rt, outcomes, justifications));
     }
     if events.is_empty() {
-        let mut rt = Runtime::default();
-        rt.attach_outcomes(outcomes);
-        rt.attach_justifications(justifications);
-        return Ok(rt);
+        let rt = Runtime::default();
+        return Ok(finish_open(rt, outcomes, justifications));
     }
     Err(std::io::Error::new(
         std::io::ErrorKind::InvalidData,
         "missing snapshot.json, terms.jsonl, and Op::Define events (cannot restore intern meanings)",
     ))
+}
+
+fn finish_open(
+    mut rt: Runtime,
+    outcomes: Vec<PersistedQuantumOutcome>,
+    justifications: Vec<Justification>,
+) -> Runtime {
+    rt.hydrate_from_log();
+    if !rt.log_has_quantum_outcome() {
+        rt.attach_outcomes(outcomes);
+    }
+    rt.attach_justifications(justifications);
+    rt
 }
 
 fn encoded_log(runtime: &Runtime) -> Vec<Event> {

@@ -13,6 +13,16 @@ pub type ValidTime = u64;
 /// Transaction-time as log sequence (system).
 pub type TransactionTime = u64;
 
+/// Durable progress encoding for a quantum (OUT-01 / D-O2). Call `Ok` is not completion.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum OutcomeDisposition {
+    Zero,
+    Partial,
+    Full,
+    Resume,
+}
+
 /// Lean write operators (TGMS-shaped; ADR-010 D010-3).
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum Op {
@@ -62,6 +72,16 @@ pub enum Op {
     Define {
         name: String,
     },
+    /// Logged quantum outcome (M012a S01 / LOG-01). Fold no-op; not a graph fact.
+    QuantumOutcome {
+        quantum_id: String,
+        disposition: OutcomeDisposition,
+        aborted_on_budget: bool,
+        events_in_quantum: usize,
+        event_ids: Vec<EventId>,
+        receipt_digest_hex: String,
+        resume_of: Option<String>,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -87,7 +107,7 @@ impl Event {
                 object,
                 ..
             } => vec![*subject, *relation, *object],
-            Op::Retract { .. } | Op::Define { .. } => vec![],
+            Op::Retract { .. } | Op::Define { .. } | Op::QuantumOutcome { .. } => vec![],
             Op::Correct { object, .. } | Op::CorrectInterval { object, .. } => vec![*object],
         };
         Self {
@@ -174,7 +194,43 @@ impl Event {
                 h.update(b"define");
                 h.update(name.as_bytes());
             }
+            Op::QuantumOutcome {
+                quantum_id,
+                disposition,
+                aborted_on_budget,
+                events_in_quantum,
+                event_ids,
+                receipt_digest_hex,
+                resume_of,
+            } => {
+                h.update(b"quantum-outcome");
+                h.update(quantum_id.as_bytes());
+                h.update(disposition_tag(*disposition));
+                h.update([u8::from(*aborted_on_budget)]);
+                h.update((*events_in_quantum as u64).to_le_bytes());
+                h.update((event_ids.len() as u64).to_le_bytes());
+                for id in event_ids {
+                    h.update(id.as_bytes());
+                }
+                h.update(receipt_digest_hex.as_bytes());
+                match resume_of {
+                    Some(s) => {
+                        h.update(b"resume");
+                        h.update(s.as_bytes());
+                    }
+                    None => h.update(b"no-resume"),
+                }
+            }
         }
         h.finalize().into()
+    }
+}
+
+fn disposition_tag(d: OutcomeDisposition) -> &'static [u8] {
+    match d {
+        OutcomeDisposition::Zero => b"zero",
+        OutcomeDisposition::Partial => b"partial",
+        OutcomeDisposition::Full => b"full",
+        OutcomeDisposition::Resume => b"resume",
     }
 }

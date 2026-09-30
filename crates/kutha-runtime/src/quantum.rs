@@ -41,6 +41,8 @@ pub enum RuntimeError {
         justification_id: String,
         reason: &'static str,
     },
+    /// Public `emit` of fold-noop meta ops is fail-closed (LOG-01 / T-12-02).
+    MetaOpRejected,
 }
 
 impl fmt::Display for RuntimeError {
@@ -63,19 +65,12 @@ impl fmt::Display for RuntimeError {
                 write!(f, "duplicate resume for quantum {resume_of}")
             }
             RuntimeError::AdmissionDenied { .. } => write!(f, "AdmissionDeniedError"),
+            RuntimeError::MetaOpRejected => write!(f, "MetaOpRejectedError"),
         }
     }
 }
 
-/// Durable progress encoding for a quantum (OUT-01 / D-O2). Call `Ok` is not completion.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum OutcomeDisposition {
-    Zero,
-    Partial,
-    Full,
-    Resume,
-}
+pub use kutha_common::OutcomeDisposition;
 
 /// Authoritative justification / admission cite (D-F2). Not a droppable lease.
 /// SoT is `justifications.jsonl`; do not mix these bytes into [`Runtime::provenance_fingerprint`].
@@ -125,7 +120,8 @@ fn op_relation(op: &Op) -> Option<TermId> {
         Op::Retract { .. }
         | Op::Correct { .. }
         | Op::CorrectInterval { .. }
-        | Op::Define { .. } => None,
+        | Op::Define { .. }
+        | Op::QuantumOutcome { .. } => None,
     }
 }
 
@@ -156,7 +152,8 @@ pub struct Runtime {
     knows: TermId,
     known_by: TermId,
     allowed: HashSet<String>,
-    /// In-memory buffer of durable quantum outcomes (SoT is `quantum_outcomes.jsonl`).
+    /// In-memory buffer of quantum outcomes. SoT is `Op::QuantumOutcome` on the log;
+    /// `quantum_outcomes.jsonl` is a droppable lease after those Events exist (LOG-01 / D-02).
     outcomes: Vec<PersistedQuantumOutcome>,
     /// In-memory buffer of durable justification cites (SoT is `justifications.jsonl`).
     /// Open never infers cites from the log. `fork_at` starts empty (like outcomes).
@@ -232,9 +229,61 @@ impl Runtime {
         &self.outcomes
     }
 
-    /// Attach rows loaded from `quantum_outcomes.jsonl` (store open paths).
+    /// Attach rows loaded from the outcomes sidecar when the log has no `QuantumOutcome` Events.
     pub fn attach_outcomes(&mut self, rows: Vec<PersistedQuantumOutcome>) {
         self.outcomes = rows;
+    }
+
+    /// Rebuild outcome rows from log Events (D-01). Sidecar is not consulted.
+    pub(crate) fn hydrate_from_log(&mut self) {
+        self.outcomes = self
+            .log
+            .iter()
+            .filter_map(|e| match &e.op {
+                Op::QuantumOutcome {
+                    quantum_id,
+                    disposition,
+                    aborted_on_budget,
+                    events_in_quantum,
+                    event_ids,
+                    receipt_digest_hex,
+                    resume_of,
+                } => Some(PersistedQuantumOutcome {
+                    quantum_id: quantum_id.clone(),
+                    disposition: *disposition,
+                    aborted_on_budget: *aborted_on_budget,
+                    events_in_quantum: *events_in_quantum,
+                    event_ids: event_ids.clone(),
+                    receipt_digest_hex: receipt_digest_hex.clone(),
+                    resume_of: resume_of.clone(),
+                }),
+                _ => None,
+            })
+            .collect();
+    }
+
+    pub(crate) fn log_has_quantum_outcome(&self) -> bool {
+        self.log
+            .iter()
+            .any(|e| matches!(e.op, Op::QuantumOutcome { .. }))
+    }
+
+    fn append_meta(&mut self, op: Op) {
+        let event = Event::new(op, self.next_tt());
+        self.fold.apply(&event);
+        self.log.append(event);
+    }
+
+    fn outcome_op(row: &PersistedQuantumOutcome) -> Op {
+        Op::QuantumOutcome {
+            quantum_id: row.quantum_id.clone(),
+            disposition: row.disposition,
+            aborted_on_budget: row.aborted_on_budget,
+            events_in_quantum: row.events_in_quantum,
+            event_ids: row.event_ids.clone(),
+            receipt_digest_hex: row.receipt_digest_hex.clone(),
+            resume_of: row.resume_of.clone(),
+        }
     }
 
     /// Persisted justification rows buffered for `store::persist` (D-F2).
@@ -405,7 +454,7 @@ impl Runtime {
             fold.apply(e);
             next_tt = next_tt.max(e.ingested_at.saturating_add(1));
         }
-        Self {
+        let mut rt = Self {
             log: EventLog::from_events(graph),
             fold,
             dict,
@@ -416,7 +465,9 @@ impl Runtime {
             allowed: load_allowed_names(),
             outcomes: Vec::new(),
             justifications: Vec::new(),
-        }
+        };
+        rt.hydrate_from_log();
+        rt
     }
 
     /// Rebuild from authoritative term strings + full event replay (no snapshot lease).
@@ -442,7 +493,7 @@ impl Runtime {
             fold.apply(e);
             next_tt = next_tt.max(e.ingested_at.saturating_add(1));
         }
-        Ok(Self {
+        let mut rt = Self {
             log: EventLog::from_events(all_events),
             fold,
             dict,
@@ -453,7 +504,9 @@ impl Runtime {
             allowed: load_allowed_names(),
             outcomes: Vec::new(),
             justifications: Vec::new(),
-        })
+        };
+        rt.hydrate_from_log();
+        Ok(rt)
     }
 
     /// Named overlay: replay a log prefix (ADR-061 P0). Does not share tentatives.
@@ -465,7 +518,7 @@ impl Runtime {
             fold.apply(e);
             next_tt = next_tt.max(e.ingested_at.saturating_add(1));
         }
-        Self {
+        let mut rt = Self {
             log: prefix,
             fold,
             dict: self.dict.clone(),
@@ -476,7 +529,9 @@ impl Runtime {
             allowed: self.allowed.clone(),
             outcomes: Vec::new(),
             justifications: Vec::new(),
-        }
+        };
+        rt.hydrate_from_log();
+        rt
     }
 
     /// CSR lease at an explicit cut. Callers must name valid-time (no silent “now”).
@@ -527,6 +582,9 @@ impl Runtime {
 
     /// Admit a user op, append, fold, cascade inverse-`knows` until idle or budget.
     pub fn emit(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
+        if matches!(op, Op::QuantumOutcome { .. }) {
+            return Err(RuntimeError::MetaOpRejected);
+        }
         if let Op::Retract { fact_seq }
         | Op::Correct { fact_seq, .. }
         | Op::CorrectInterval { fact_seq, .. } = &op
@@ -601,6 +659,8 @@ impl Runtime {
             receipt_digest_hex,
             resume_of: None,
         });
+        let row = self.outcomes.last().expect("just pushed").clone();
+        self.append_meta(Self::outcome_op(&row));
 
         Ok(QuantumOutcome {
             receipt,
@@ -724,7 +784,8 @@ impl Runtime {
             Op::Retract { .. }
             | Op::Correct { .. }
             | Op::CorrectInterval { .. }
-            | Op::Define { .. } => return false,
+            | Op::Define { .. }
+            | Op::QuantumOutcome { .. } => return false,
         };
         self.fold.claim_supported_at(premise, tt, vt)
     }
