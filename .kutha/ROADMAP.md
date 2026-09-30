@@ -41,7 +41,7 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 - [x] **S03: Thin P→Q derivation eligibility** `risk:medium` `depends:[S02]`
   > After this: Behavior-derived `Q` is eligible at a cut iff its premise claim still has a live support; retracting one of two supports leaves `Q` eligible; retracting the last drops eligibility without erasing historical `Q`; named test green.
 
-### M011 tail — S07 done; Active Slice S08
+### M011 tail — S04–S08 done
 
 Proposed close-out of the semantic core (source: `docs/architecture/semantic-contract-validation.md` "Remaining decisions"). Each slice needs an explicit Active Slice lease in `.kutha/STATE.md` before any code. Order is by risk; stop when one fixture separates preserved history, current evidence, and allowed action.
 
@@ -53,7 +53,7 @@ Proposed close-out of the semantic core (source: `docs/architecture/semantic-con
   > After this: same endpoints with different relations or supports survive the lease; the untyped neighbor-set path stays available; named test green.
 - [x] **S07: Provenance and rule-version check apart from state replay** `risk:high` `depends:[S04]`
   > After this: changing only a causal reference or a pinned rule version is detected even when the state fingerprint still matches; execution replay stays out of scope.
-- [ ] **S08: End-to-end candidate fixture** `risk:medium` `depends:[S04,S05,S06,S07]`
+- [x] **S08: End-to-end candidate fixture** `risk:medium` `depends:[S04,S05,S06,S07]`
   > After this: observations 1–5 of the semantic-contract fixture hold at named cuts; incremental maintenance and clean reconstruction agree; discarded leases change no answer.
 
 ## Boundary map (M001)

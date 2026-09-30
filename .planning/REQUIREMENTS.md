@@ -30,7 +30,7 @@ Each requirement maps to exactly one roadmap phase (one phase per harness slice)
 - [x] **PROV-01**: Verification detects a change to only a Behavior `caused_by` reference even when the state fingerprint still matches
 - [x] **PROV-02**: Verification detects a change to only a pinned rule version the same way; execution replay is not required
 
-### End-to-end fixture (M011 S08 — leased)
+### End-to-end fixture (M011 S08 — delivered)
 
 - [x] **FIX-01**: Independent supports and last-support withdrawal hold at named (TT,VT) cuts on the candidate fixture; the conflict variant preserves both sides and reports conflict instead of superseding
 - [x] **FIX-02**: Summary and action records cite exact source revisions and rule version; a changed dependency forces re-evaluation, and a stale cached output cannot renew its own admission
@@ -85,4 +85,4 @@ Primary owner is listed below. GATE-01/02/03 still apply to every slice's succes
 
 ---
 *Requirements defined: 2026-09-29*
-*Last updated: 2026-09-29 after v0.02 roadmap*
+*Last updated: 2026-09-30 — Phase 8 / S08 delivered; all v0.02 requirements Complete*

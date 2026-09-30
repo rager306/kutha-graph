@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M011
-**Active Slice:** S08
+**Active Slice:** None
 **Phase:** H4
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M011-S07-done
+L_delivery=M011-S08-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M011 S07 done (provenance / rule-version check); Active Slice **S08** leased | Capability proven / Rocks started / M002 leased |
+| L_delivery | M011 S08 done (end-to-end candidate fixture); M011 tail closed | Capability proven / Rocks started / M002 leased |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M011 S07 is in.** Active Slice **S08** (end-to-end candidate fixture — semantic-contract observations 1–5 at named cuts) is leased. Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW.
+**M011 S08 is in.** One end-to-end fixture separates preserved history, current evidence, and allowed action at named cuts (FIX-01…03). Active Slice cleared. Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW. Honeycomb stays Proposed (GATE-03).
 
 ## Freeze (until explicit M002 lease)
 

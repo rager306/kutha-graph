@@ -4,12 +4,12 @@
 
 GSD overlay tracks the steel thread already in crates — not honeycomb waterfall. Harness delivery stays in `.kutha/STATE.md` / `.kutha/ROADMAP.md`. Do not plan ADR-010–093 as sequential GSD phases.
 
-v0.02 closes the M011 semantic core with one GSD phase per remaining harness slice (S04–S08). Phases 4–7 are complete. Phase 8 (S08) is leased and executable. Stop when one fixture separates preserved history, current evidence, and allowed action. Frozen surfaces (RocksDB, Cypher/GPML, HNSW, ADR-050 six dictionaries, legal/science packs) stay unstarted.
+v0.02 closes the M011 semantic core with one GSD phase per remaining harness slice (S04–S08). Phases 4–8 are complete. Stop condition met: one fixture separates preserved history, current evidence, and allowed action. Frozen surfaces (RocksDB, Cypher/GPML, HNSW, ADR-050 six dictionaries, legal/science packs) stay unstarted until STATE names M002+.
 
 ## Milestones
 
 - ✅ **v0.01 GSD foundation** — Phases 1–3 (shipped 2026-09-29) — [archive](./milestones/v0.01-ROADMAP.md)
-- 🚧 **v0.02 Semantic core close** — Phases 4–8 (Phases 4–7 complete; Phase 8 leased)
+- ✅ **v0.02 Semantic core close** — Phases 4–8 (shipped 2026-09-30)
 
 ## Phases
 
@@ -32,7 +32,7 @@ Full detail: [milestones/v0.01-ROADMAP.md](./milestones/v0.01-ROADMAP.md) · req
 - [x] **Phase 5: Persisted quantum outcome** - Budgets 0/1/2 and crash-after-prefix are distinguishable; resume is an explicit record (S05 delivered) (completed 2026-09-30)
 - [x] **Phase 6: Typed CSR lease** - Same endpoints keep relation labels and support multiplicity; untyped neighbor-set path remains (S06 delivered) (completed 2026-09-30)
 - [x] **Phase 7: Provenance and rule-version check** - Causal-ref or rule-version change is detected without execution replay (S07 delivered) (completed 2026-09-30)
-- [ ] **Phase 8: End-to-end candidate fixture** - Semantic-contract observations 1–5 hold; incremental and reconstructed answers agree (S08 leased)
+- [x] **Phase 8: End-to-end candidate fixture** - Semantic-contract observations 1–5 hold; incremental and reconstructed answers agree (S08 delivered) (completed 2026-09-30)
 
 ## Phase Details
 
@@ -123,13 +123,13 @@ Plans:
 
 **Goal**: A developer can run one end-to-end fixture that distinguishes preserved history, current evidence, and allowed action at named cuts, with incremental maintenance and clean reconstruction agreeing
 **Depends on**: Phase 4, Phase 5, Phase 6, Phase 7 (harness S08 `depends:[S04,S05,S06,S07]`)
-**Lease**: executable — Active Slice S08 in `.kutha/STATE.md`
+**Lease**: delivered — Active Slice was S08; now None (`L_delivery=M011-S08-done`)
 **Requirements**: FIX-01, FIX-02, FIX-03, GATE-02, GATE-03
 **Success Criteria** (what must be TRUE):
   1. Independent supports and last-support withdrawal hold at named (TT, VT) cuts on the candidate fixture; the conflict variant preserves both sides and reports conflict instead of superseding (FIX-01)
   2. Summary and action records cite exact source revisions and rule version; a changed dependency forces re-evaluation, and a stale cached output cannot renew its own admission (FIX-02)
   3. Incremental maintenance and clean reconstruction agree on values, active supports, and completeness; discarding CSR and snapshots changes no answer (FIX-03)
-  4. This phase executes only while S08 is the Active Slice (GATE-02 applies; S08 is currently leased). Named cargo tests and `uv run kutha-gov ci` at 0 HIGH still apply (GATE-01 applies)
+  4. This phase executed only while S08 was the Active Slice (GATE-02). Named cargo tests and `uv run kutha-gov ci` at 0 HIGH still apply (GATE-01)
   5. Freeze items stay unstarted and honeycomb cells stay Proposed; any ADR Accepted decision is a separate review at milestone close (GATE-03)
 
 **Plans**: 2/2 plans executed
@@ -144,7 +144,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 4 → 5 → 6 → 7 → 8. Phase 8 (S08) is leased. Harness slice dependencies: S05 and S06 depend on S03 (not S04); S07 depends on S04; S08 depends on S04–S07.
+Phases execute in numeric order: 4 → 5 → 6 → 7 → 8. Phase 8 (S08) delivered. M011 tail (S04–S08) closed. Harness slice dependencies: S05 and S06 depend on S03 (not S04); S07 depends on S04; S08 depends on S04–S07.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -152,6 +152,6 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8. Phase 8 (S08) is lea
 | 5. Persisted quantum outcome | 2/2 | Complete    | 2026-09-30 |
 | 6. Typed CSR lease | 2/2 | Complete    | 2026-09-30 |
 | 7. Provenance and rule-version check | 2/2 | Complete    | 2026-09-30 |
-| 8. End-to-end candidate fixture | 2/2 | In Progress|  |
+| 8. End-to-end candidate fixture | 2/2 | Complete    | 2026-09-30 |
 
-**Harness citation (not this table):** Active Milestone M011; `L_delivery=M011-S07-done`; Phase H4; Active Slice **S08**; freeze until explicit M002. See `.kutha/STATE.md`.
+**Harness citation (not this table):** Active Milestone M011; `L_delivery=M011-S08-done`; Phase H4; Active Slice **None**; freeze until explicit M002. See `.kutha/STATE.md`.

@@ -16,11 +16,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Process
 
-- FSM `observe_cargo.required` plus `m011-e2e` / `B-m011-e2e` needles for the three named FIX tests (GATE-01). Not a closed S08 delivery lease.
+- FSM `observe_cargo.required` plus `m011-e2e` / `B-m011-e2e` needles for the three named FIX tests (GATE-01).
+- Harness lease advanced: **S08** delivered (`L_delivery=M011-S08-done`); Active Slice **None**. M011 tail (S04–S08) closed. Not ADR Accepted; not closed product delivery.
 
 ### Trajectory
 
-- Active Slice remains **S08**; ADR-013, ADR-011, ADR-012, and ADR-040 remain Proposed (not Accepted, not L_capability). Evidence names the FIX oracles `e2e_fixture_supports_and_conflict_at_named_cuts`, `e2e_justification_cites_sources_and_rejects_stale_admission`, and `e2e_incremental_matches_reconstruct_after_discarding_leases`. Green governor is not ADR Accepted and not L_capability. Conflict report is not four-valued logic.
+- **S08 delivered** (`L_delivery=M011-S08-done`); Active Slice cleared. ADR-013, ADR-011, ADR-012, and ADR-040 remain Proposed (not Accepted, not L_capability). Evidence names the FIX oracles `e2e_fixture_supports_and_conflict_at_named_cuts`, `e2e_justification_cites_sources_and_rejects_stale_admission`, and `e2e_incremental_matches_reconstruct_after_discarding_leases`. Green governor is not ADR Accepted and not L_capability. Conflict report is not four-valued logic.
 
 ## 2026-09-30 — Process: lease Active Slice S08 after S07 delivery
 
