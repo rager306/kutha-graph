@@ -4,12 +4,12 @@ milestone: v0.04
 milestone_name: Single-log SoT + stable references
 current_phase: 15
 current_phase_name: Verify, persist, and time scale
-current_plan: Not started
+current_plan: 01
 status: planning
-stopped_at: Phase 14 complete, ready to plan Phase 15
-last_updated: "2026-09-30T18:43:07.915Z"
+stopped_at: Phase 15 plans written (15-01..15-03), ready to execute
+last_updated: "2026-10-01T01:44:00.000Z"
 last_activity: 2026-10-01
-last_activity_desc: Phase 14 complete, transitioned to Phase 15
+last_activity_desc: Phase 15 plans 15-01..15-03 written
 state_head: 66f360eb0d2ba67bfb22addaefd26a034035f2cc
 progress:
   total_phases: 5
@@ -26,7 +26,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.04 Phase 15 — Verify, persist, and time scale (M012a S03). Plans 14-01..14-03 written; execute next. Freeze holds for M002.
+**Current focus:** v0.04 Phase 15 — Verify, persist, and time scale (M012a S04 + S05). Plans 15-01..15-03 written; execute next. Freeze holds for M002. Do not clear harness S04.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -34,12 +34,12 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 
 ## Current Position
 
-Current Plan: Not started
+Current Plan: 15-01 (ready to execute)
 Total Plans in Phase: 3
 Phase: 15 of 16 (Verify, persist, and time scale)
-Plan: 3 of 3
-Status: Ready to plan
-Last activity: 2026-10-01 — Phase 14 complete, transitioned to Phase 15
+Plan: 1 of 3
+Status: Plans written
+Last activity: 2026-10-01 — Phase 15 plans 15-01..15-03 written
 
 Progress: [█████████░] 88% (v0.04 plans executed)
 
