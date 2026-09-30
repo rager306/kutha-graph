@@ -13,6 +13,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - Later-milestones proposed order: M012a before M012; M002 is log durability first. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
 - One-cell Proposed honeycomb amendment (first amend row: ADR-012) plus ADR README pointer to the semantic-gap review. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
 - Remaining Proposed honeycomb clarifications (ADR-013, ADR-014, ADR-050, ADR-060) and an ADR-000 D4 time-scale pointer. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
+- Dated open questions on remaining verdict rows (ADR-010, ADR-011, ADR-013, ADR-040, ADR-041, ADR-050, ADR-051, ADR-061). Narrative remains Phase 11 SEM-08. Not ADR Accepted.
 
 ### Trajectory
 

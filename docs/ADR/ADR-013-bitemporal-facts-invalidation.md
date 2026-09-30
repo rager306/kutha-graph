@@ -116,3 +116,7 @@ P0 now has named `GraphFold::live_at` / `as_of` (no silent “now”) and FF5 on
 ### Clarification (2026-09-30; Proposed)
 
 Target contract, from docs/architecture/semantic-gap-review.md (F3): a proposition has an identity distinct from any one support slot. Independent supports for the same proposition remain distinguishable (D013-3). Conflict is a generic operator over those supports; polarity is not supplied by the caller as the truth of the proposition. The 2026-09-13 `(positive_supports, negative_supports)` view remains a proposed evidence summary, not four-valued logic. This subsection does not rewrite D013-1…D013-4 and does not mark this cell Accepted.
+
+### Open question (2026-09-30)
+
+Open, from docs/architecture/semantic-gap-review.md (F2, F7): retract and correct targeting is typed invalidation (D013-2) without a required stable id for the target. D013-1 names valid-time × transaction-time fields; it does not declare a time scale or a mapping from transaction-time to wall time. This question does not rewrite D013-1…D013-4 and does not mark this cell Accepted.

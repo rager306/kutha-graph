@@ -45,6 +45,10 @@ Portable references must bind stable event/claim identity and branch ancestry, n
 
 A fork changes recorded state, not the external world. Reusing an old tool response after changing its inputs is scenario playback, not evidence of a real counterfactual outcome; obtain or model new dependent observations and label that distinction. Fork, replay, and compensation must never silently reexecute external effects (ADR-062). P0 `fork_at` is a prefix experiment, not a merge or effect-isolation implementation.
 
+### Open question (2026-09-30)
+
+Open, from docs/architecture/semantic-gap-review.md (F8): D061-3 says diff is GED-class, not cosine. Fork-at-offset is present; a diff surface is not shown in this cell. The unexercised diff half is an evidence gap, not a Decision rewrite. This question does not mark this cell Accepted.
+
 **Hard separations:**
 
 ```text

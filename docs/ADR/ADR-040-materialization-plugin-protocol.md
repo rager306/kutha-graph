@@ -52,6 +52,10 @@ For each supported **exact** query contract, require `answer(rebuild(history, cu
 
 Current `CsrLease::from_fold` is an **untyped neighbor set**: it discards relation labels and deduplicates neighbors. It is not a typed MATCH/provenance view. `CsrMaterializer::build` records a supplied offset without verifying cut consistency. These are declared spike limits, not claims that typed projection or generic IVM is implemented.
 
+### Open question (2026-09-30)
+
+Open, from docs/architecture/semantic-gap-review.md (F8): the 2026-09-13 clarification already declares spike limits on untyped neighbor sets and offset recording without cut verification. Whether the hot path must invoke the materializer protocol, versus building a lease beside the trait, is not a new Decision. This question does not rewrite D040-1…D040-4 and does not mark this cell Accepted.
+
 **Hard separations:**
 
 ```text

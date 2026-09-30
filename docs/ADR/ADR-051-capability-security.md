@@ -42,6 +42,10 @@ An allow-list of tools is necessary and insufficient. PACT-grain: untrusted cont
 
 Capability grant/revoke records on the log (VT×TT like 013) describe authority history; recording a grant does not make an arbitrary event reference an unforgeable bearer capability. Token representation and custody remain open. Skip membranes-as-manual-wrappers and CHERI until a hardware spike.
 
+### Open question (2026-09-30)
+
+Open, from docs/architecture/semantic-gap-review.md (F5): the 2026-09-13 clarification names an action record that binds arguments, provenance, admission, and policy version, without a log schema for that record. D051-3 remains: P0 is an operator allow-list; honeycomb is grant events. This question does not rewrite D051-1…D051-3 and does not mark this cell Accepted.
+
 **Hard separations:**
 
 ```text

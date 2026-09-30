@@ -61,6 +61,10 @@ These are **Proposed** requirements, not additional P0 capabilities:
 
 For positive derivations, `+` represents alternatives and `*` joint premises: `a*b+c` remains supported by `c` after withdrawing `b`. This use of [provenance semirings](https://www.cs.ucdavis.edu/~green/papers/pods07.pdf) does not supply subtraction in `N[X]`. Retractions need separate change semantics (e.g. signed deltas or delete/rederive; ADR-040). Do not interpret ordinary polynomial evaluation as probabilities: repeated/shared premises are correlated. Finite fact saturation also does not imply finitely many recursive derivations; recursive provenance needs an explicit representation and termination contract.
 
+### Open question (2026-09-30)
+
+Open, from docs/architecture/semantic-gap-review.md (F4): D011-3 names how-provenance as a semiring polynomial and notes the spike has neither a MATCH compiler nor that evaluator. N-ary derivation, transitive eligibility, and a rule registry whose rule version equals the definition hash are not decided in this cell. This question does not rewrite D011-1…D011-4 and does not mark this cell Accepted.
+
 **Hard separations:**
 
 ```text

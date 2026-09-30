@@ -96,6 +96,10 @@ Hindsight / Graphiti   ≠  Agent memory SoT
 
 Target contract, from docs/architecture/semantic-gap-review.md (F5): admission status is a bi-temporal fact (ADR-013 stamps). The policy version that admitted or refused is pinned in the log, not only in a dropped receipt. D050-2 remains fail-closed propose→validate→log; this subsection names the recorded status and version, not a new dictionary kind. This subsection does not rewrite D050-1…D050-6 and does not mark this cell Accepted.
 
+### Open question (2026-09-30)
+
+Open, from docs/architecture/semantic-gap-review.md (F4): D050-1 already names a Relation kind. A rule registry whose rule version equals the definition hash is not a Decision in this cell. This question does not rewrite D050-1…D050-6 and does not mark this cell Accepted.
+
 ## Consequences
 
 ### Positive

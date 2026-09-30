@@ -57,6 +57,10 @@ GraphBLAS API          ≠  Required Falkor runtime
 TypeScript core        ≠  Allowed (D6)
 ```
 
+### Open question (2026-09-30)
+
+Open, from docs/architecture/semantic-gap-review.md (F8): D041-1 names the hot hop picture as CSR over interned ids. This cell does not yet say that temporal cuts (AS OF / supported-at) must use that picture rather than scanning the fold's fact table. This question does not rewrite D041-1…D041-4 and does not mark this cell Accepted.
+
 ## Consequences
 
 ### Positive

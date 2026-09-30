@@ -45,6 +45,10 @@ For deterministic positive rules over a finite fact domain, saturation uses `X[n
 
 Budget exhaustion is incomplete evaluation, not saturation or proof of absence. This is a **Proposed** contract: the P0 inverse-`knows` behavior is not a general rule engine. See ADR-014 for partial-quantum outcomes.
 
+### Open question (2026-09-30)
+
+Open, from docs/architecture/semantic-gap-review.md (F1, F6): D010-1 already requires that authoritative inputs survive dropping leases. Which record kinds (outcomes, justifications, resume) are log events versus retained objects is not decided here. D010-4 (WAL as crash cousin) is unchanged. This question does not rewrite D010-1…D010-4 and does not mark this cell Accepted.
+
 ### D010-3. Typed writes, not free MERGE-as-truth
 
 Write surface is a closed operator family in the TGMS direction: **assert / retract / correct** (plus later schema/dict events). Invalidation is a behavior, not silent overwrite (deepened in ADR-013). Query-over-log uses Yankin mechanism groups; AS OF / replay / reconstruction are named cuts with cost envelopes, not marketing synonyms.
