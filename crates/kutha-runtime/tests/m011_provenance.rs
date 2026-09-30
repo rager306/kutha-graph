@@ -87,3 +87,59 @@ fn provenance_detects_caused_by_swap_when_state_fingerprint_matches() {
     rt2.replay_check()
         .expect("swapped valid prior must still replay_check Ok");
 }
+
+#[test]
+fn provenance_detects_rule_version_change_when_state_fingerprint_matches() {
+    let (rt, _a1, _a2) = baseline_derive_pq_r1();
+    let mut pinned = rt.log().as_slice().to_vec();
+    for e in &mut pinned {
+        if let Op::Behavior { rule_version, .. } = &mut e.op {
+            *rule_version = "r2".into();
+        }
+    }
+    let rt2 = rebuild_cloned(&rt, pinned);
+
+    assert_eq!(
+        rt.fold().fingerprint(),
+        rt2.fold().fingerprint(),
+        "rule_version-only change must not move the state fingerprint"
+    );
+    assert_ne!(
+        rt.provenance_fingerprint(),
+        rt2.provenance_fingerprint(),
+        "lineage digest must move when rule_version changes"
+    );
+    rt.replay_check()
+        .expect("baseline replay_check must stay Ok");
+    rt2.replay_check()
+        .expect("r2 clone must still replay_check Ok");
+}
+
+/// Not a GATE observe name (RESEARCH Q6). Legacy WAL/JSONL rows omit the field.
+#[test]
+fn behavior_without_rule_version_field_deserializes() {
+    use kutha_common::Event;
+    let json = r#"{
+        "id": "00000000-0000-0000-0000-000000000001",
+        "op": {
+            "Behavior": {
+                "name": "derive_pq",
+                "caused_by": "00000000-0000-0000-0000-000000000002",
+                "subject": 0,
+                "relation": 1,
+                "object": 2,
+                "valid_from": 0,
+                "valid_to": null
+            }
+        },
+        "ingested_at": 0,
+        "object_ids": [0, 1, 2]
+    }"#;
+    let e: Event = serde_json::from_str(json).expect("missing rule_version must decode");
+    match e.op {
+        Op::Behavior { rule_version, .. } => {
+            assert_eq!(rule_version, "", "serde default must be empty string")
+        }
+        other => panic!("expected Behavior, got {other:?}"),
+    }
+}
