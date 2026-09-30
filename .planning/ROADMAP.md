@@ -46,7 +46,7 @@ Full detail: [milestones/v0.02-ROADMAP.md](./milestones/v0.02-ROADMAP.md) · req
 
 **Phase numbering:** Integer phases continue from v0.02 (Phase 9 follows Phase 8). Execute 9 → 10 → 11.
 
-- [ ] **Phase 9: H5 lease + lean agent context** - Name H5 consistently; slim `AGENTS.md` to durable rules with volatile content relocated; governor CI stays 0 HIGH
+- [x] **Phase 9: H5 lease + lean agent context** - Name H5 consistently; slim `AGENTS.md` to durable rules with volatile content relocated; governor CI stays 0 HIGH (completed 2026-09-30)
 - [ ] **Phase 10: ADR and roadmap correction** - F1–F8 review artifact; dated ADR amendments (Proposed); `.kutha/ROADMAP.md` later-milestone reorder; honeycomb map consistency
 - [ ] **Phase 11: Semantic governor** - Selftest, non-vacuous tests, cited-state equality, evidence resolution, ADR xref, AGENTS budget, deferred F1–F8 invariants, drift guards
 
@@ -65,7 +65,7 @@ Full detail: [milestones/v0.02-ROADMAP.md](./milestones/v0.02-ROADMAP.md) · req
   4. After the diet, language policy, two planes, D1–D10 guard, CE routing, commands, freeze, CBM/subagent rules, and working conventions still mean the same as before (CTX-03)
   5. Stale `L_delivery=M011-S03-done` (or equivalent) claims are removed or corrected in `AGENTS.md` and `docs/architecture/semantic-contract-validation.md` (CTX-04)
 
-**Plans:** 2/2 plans executed
+**Plans:** 2/2 plans complete
 - [x] 09-01-PLAN.md — Operator H5 lease, dogfood ladder, in-place governor needles; ci HIGH 0
 - [x] 09-02-PLAN.md — AGENTS.md diet, relocations, stale citation fixes; diet ledger
 
@@ -107,7 +107,7 @@ Full detail: [milestones/v0.02-ROADMAP.md](./milestones/v0.02-ROADMAP.md) · req
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 9. H5 lease + lean agent context | v0.03 | 2/2 | In Progress|  |
+| 9. H5 lease + lean agent context | v0.03 | 2/2 | Complete    | 2026-09-30 |
 | 10. ADR and roadmap correction | v0.03 | 0/TBD | Not started | - |
 | 11. Semantic governor | v0.03 | 0/TBD | Not started | - |
 
