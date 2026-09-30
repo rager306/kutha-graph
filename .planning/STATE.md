@@ -3,12 +3,12 @@ gsd_state_version: "1.0"
 milestone: v0.04
 milestone_name: Single-log SoT + stable references
 status: planning
-last_updated: "2026-09-30T17:05:00.000Z"
-last_activity: 2026-09-30
+last_updated: "2026-10-01T00:00:00.000Z"
+last_activity: 2026-10-01
 progress:
   total_phases: 5
   completed_phases: 0
-  total_plans: 0
+  total_plans: 3
   completed_plans: 0
   percent: 0
 ---
@@ -20,7 +20,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.04 Phase 12 — Log-native SoT (M012a S01). Roadmap ready; freeze holds for M002.
+**Current focus:** v0.04 Phase 12 — Log-native SoT (M012a S01). Three PLAN.md files written; ready to execute. Freeze holds for M002.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -29,11 +29,11 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 ## Current Position
 
 Phase: 12 of 16 (Log-native SoT) — first of five v0.04 phases
-Plan: —
-Status: Ready to plan
-Last activity: 2026-09-30 — v0.04 roadmap written (Phases 12–16)
+Plan: 12-01 of 12-03
+Status: Ready to execute
+Last activity: 2026-10-01 — Phase 12 plans written (12-01..12-03)
 
-Progress: [░░░░░░░░░░] 0% (v0.04 plans)
+Progress: [░░░░░░░░░░] 0% (v0.04 plans executed)
 
 ## Performance Metrics
 
@@ -55,11 +55,11 @@ Progress: [░░░░░░░░░░] 0% (v0.04 plans)
 | 9 | 2 | - | - |
 | 10 | 2 | - | - |
 | 11 | 4 | - | - |
-| 12–16 (v0.04) | 0 | - | - |
+| 12–16 (v0.04) | 0/3 planned | - | - |
 
 **Recent Trend:**
 - Last 5 plans: Phase 11 P01–P04, Phase 10 P02
-- Trend: v0.03 harness/docs complete; v0.04 product crates not started
+- Trend: v0.03 harness/docs complete; Phase 12 plans ready; v0.04 crates not started
 
 ## Accumulated Context
 
@@ -79,7 +79,7 @@ None.
 
 ### Blockers/Concerns
 
-- Execute Phase 12 only after `.kutha/STATE.md` names Active Slice **S01** (GATE-02). Roadmap planning does not lease the slice.
+- Harness Active Slice is **S01** (GATE-02). Execute Phase 12 under that lease. Do not clear S01 until Phase 12 SUMMARY + verification pass.
 - Do not start M012 dictionaries-as-facts, M002 Rocks, legal pack, Cypher, HNSW, or ADR-050 because a GSD phase completed — honeycomb stays Proposed (GATE-03).
 
 ## Deferred Items
@@ -94,13 +94,12 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30
-Stopped at: v0.04 roadmap created — Phases 12–16 mapped; coverage 17/17
-Resume file: `.planning/ROADMAP.md` (v0.04 section)
-Next: `/gsd-plan-phase 12` after roadmap approval. Lease S01 in `.kutha/STATE.md` before execute. Freeze holds. Do not lease M002 without explicit operator intent.
+Last session: 2026-10-01
+Stopped at: Phase 12 plans written (12-01 tracer LOG-01, 12-02 LOG-02, 12-03 LOG-03 + governor)
+Resume file: `.planning/phases/12-log-native-sot/12-01-PLAN.md`
+Next: `/gsd-execute-phase 12`. Harness lease is already S01. Freeze holds. Do not lease M002 without explicit operator intent.
 
 ## Operator Next Steps
 
-- Review `.planning/ROADMAP.md` v0.04 phases
-- After approval: `/gsd-plan-phase 12`
-- Before execute: lease Active Slice **S01** in `.kutha/STATE.md` (do not confuse with this file)
+- Execute: `/gsd-execute-phase 12`
+- Do not overwrite `.kutha/STATE.md` from GSD memory; do not clear S01 until verification pass

@@ -74,14 +74,18 @@ Full detail: [milestones/v0.03-ROADMAP.md](./milestones/v0.03-ROADMAP.md) · req
 **Depends on**: Phase 11 (v0.03 shipped); harness S01 `depends:[]`
 **Harness slice**: M012a S01
 **Plane**: product crates (`kutha-common`, `kutha-runtime`) + governor registration
-**Lease**: execute only while Active Slice is **S01** in `.kutha/STATE.md` (currently None — planning until leased)
+**Lease**: execute only while Active Slice is **S01** in `.kutha/STATE.md` (harness lease is S01)
 **Requirements**: LOG-01, LOG-02, LOG-03
 **Success Criteria** (what must be TRUE):
   1. Quantum outcomes are appendable log records (or equivalent `Op`); discarding `quantum_outcomes.jsonl` after persist does not change reconstructible outcome meaning (LOG-01)
   2. Justifications and resume/continuation evidence are log records; `justifications.jsonl` / outcome sidecar files are droppable leases, not a second SoT (LOG-02)
   3. `provenance_fingerprint` (or successor) mixes those log-native outcome/justification bytes, not only in-log Behavior rows (LOG-03)
   4. Named cargo tests for the three LOG oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; FF5/FF6 stay green; honeycomb stays Proposed; M012 dictionaries-as-facts and M002 Rocks stay unstarted
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 12-01-PLAN.md — LOG-01 tracer: quantum outcomes as log records; discard outcomes sidecar reconstructs disposition
+- [ ] 12-02-PLAN.md — LOG-02: justifications and resume as log records; sidecars are leases
+- [ ] 12-03-PLAN.md — LOG-03: provenance mixes log-native bytes; governor observes the three LOG oracles
 
 ### Phase 13: Stable references
 
@@ -161,13 +165,13 @@ Full detail: [milestones/v0.03-ROADMAP.md](./milestones/v0.03-ROADMAP.md) · req
 | 9. H5 lease + lean agent context | v0.03 | 2/2 | Complete | 2026-09-30 |
 | 10. ADR and roadmap correction | v0.03 | 2/2 | Complete | 2026-09-30 |
 | 11. Semantic governor | v0.03 | 4/4 | Complete | 2026-09-30 |
-| 12. Log-native SoT | v0.04 | 0/? | Not started | - |
+| 12. Log-native SoT | v0.04 | 0/3 | Not started | - |
 | 13. Stable references | v0.04 | 0/? | Not started | - |
 | 14. Idempotent ingest | v0.04 | 0/? | Not started | - |
 | 15. Verify, persist, and time scale | v0.04 | 0/? | Not started | - |
 | 16. Fold-internal hot indexes | v0.04 | 0/? | Not started | - |
 
-**Harness citation (not this table):** Active Milestone **M012a**; Active Slice **None**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012a-leased`; `L_capability=ff5-green`; freeze until explicit **M002**. See `.kutha/STATE.md`. Do not overwrite that file.
+**Harness citation (not this table):** Active Milestone **M012a**; Active Slice **S01**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012a-leased`; `L_capability=ff5-green`; freeze until explicit **M002**. See `.kutha/STATE.md`. Do not overwrite that file.
 
 ---
-*Roadmap updated: 2026-09-30 — v0.04 phases 12–16 added (M012a)*
+*Roadmap updated: 2026-10-01 — Phase 12 plans (12-01..12-03)*
