@@ -260,47 +260,14 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
     return derived
 
 
-def _re_replacement(text: str) -> str:
-    return text.replace("\\", "\\\\")
-
-
-def _unique_assert_rewrite(src: str, start: int, end: int) -> tuple[str, str] | None:
-    for width in range(0, 96, 8):
-        needle = src[max(0, start - width) : end]
-        if needle and src.count(needle) == 1:
-            rewritten = src[max(0, start - width) : start] + "("
-            return needle, rewritten
-    return None
-
-
 def _derive_rust_test_asserts(step: Step, work: Path) -> list[list[Mutation]]:
     from kutha_gov.kinds import rust_test_mutation_targets
-    from kutha_gov.rust_source import assert_macro_spans_in_test
 
     units: list[list[Mutation]] = []
     for rel, name in rust_test_mutation_targets(step, work):
         path = work / rel
         if not path.is_file():
             continue
-        src = path.read_text(encoding="utf-8")
-        spans = assert_macro_spans_in_test(src, name)
-        ops: list[Mutation] = []
-        for start, end in reversed(spans):
-            rewrite = _unique_assert_rewrite(src, start, end)
-            if rewrite is None:
-                continue
-            needle, rewritten = rewrite
-            ops.append(
-                {
-                    "op": "replace_regex",
-                    "path": rel,
-                    "pattern": re.escape(needle),
-                    "with": _re_replacement(rewritten),
-                }
-            )
-        if ops:
-            units.append(ops)
-            break
         units.append(
             [
                 {
