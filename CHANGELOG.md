@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-30 — Product: provenance check apart from state replay
+
+### Product
+
+### Added
+
+- `Op::Behavior.rule_version` (`#[serde(default)]`); fold still ignores lineage (`name` / `caused_by` / `rule_version`). `Runtime::provenance_fingerprint` / `provenance_check` sit beside unchanged `replay_check` (ADR-060 obligation 2; state replay stays obligation 1).
+- Named test `provenance_detects_caused_by_swap_when_state_fingerprint_matches` (PROV-01): swap `caused_by` among valid priors; state fingerprint matches; provenance digest moves; both `replay_check` Ok.
+- Named test `provenance_detects_rule_version_change_when_state_fingerprint_matches` (PROV-02): change only `rule_version` (`r1` → `r2`); state fingerprint matches; provenance digest moves; no execution replay.
+
+### Trajectory
+
+- Active Slice remains **S07**; GATE-01 dictionary needles stay on plan 07-02. Honeycomb map unchanged (Proposed). Green governor is not ADR Accepted and not L_capability.
+
 ## 2026-09-30 — Process: lease Active Slice S07 after S06 delivery
 
 ### Process
