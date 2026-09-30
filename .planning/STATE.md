@@ -4,12 +4,12 @@ milestone: v0.04
 milestone_name: Single-log SoT + stable references
 current_phase: 16
 current_phase_name: Fold-internal hot indexes
-current_plan: Not started
+current_plan: 01
 status: planning
-stopped_at: Phase 15 complete, ready to plan Phase 16
-last_updated: "2026-09-30T19:07:30.359Z"
+stopped_at: Phase 16 plans written (16-01..16-03), ready to execute
+last_updated: "2026-10-01T00:00:00.000Z"
 last_activity: 2026-10-01
-last_activity_desc: Phase 15 complete, transitioned to Phase 16
+last_activity_desc: Phase 16 plans 16-01..16-03 written; execute next under harness S06
 state_head: b7e995cbaabedbb41238a31ef91fdbd5a4850216
 progress:
   total_phases: 5
@@ -26,7 +26,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.04 Phase 16 — Fold-internal hot indexes (M012a S04 + S05). Plans 15-01..15-03 written; execute next. Freeze holds for M002. Do not clear harness S04.
+**Current focus:** v0.04 Phase 16 — Fold-internal hot indexes (M012a S06). Plans 16-01..16-03 written; execute next. Freeze holds for M002. Do not clear harness S06.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -34,12 +34,12 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 
 ## Current Position
 
-Current Plan: Not started
+Current Plan: 16-01
 Total Plans in Phase: 3
 Phase: 16 of 16 (Fold-internal hot indexes)
-Plan: 3 of 3
-Status: Ready to plan
-Last activity: 2026-10-01 — Phase 15 complete, transitioned to Phase 16
+Plan: 1 of 3
+Status: Ready to execute
+Last activity: 2026-10-01 — Phase 16 plans 16-01..16-03 written
 
 Progress: [█████████░] 94% (v0.04 plans executed)
 
@@ -129,6 +129,10 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 15]: Governor checks live on bridges.yaml, not invariants.yaml
 - [Phase 15]: ADR-012 and ADR-013 evidence append only; map stays Proposed
 - [Phase 15]: Harness Active Slice stays S04 until parent verification closes S04/S05
+- [Phase 16]: Fold-internal VT/claim maps are skip-serialized leases; as_of/claim_supported_at must match brute-force liveness (HOT-01)
+- [Phase 16]: csr_lease_at builds through CsrMaterializer then unloads; typed_csr_lease_at stays from_fold as a named spike limit (HOT-03)
+- [Phase 16]: Governor check lives on bridges.yaml, not invariants.yaml
+- [Phase 16]: ADR-040 and ADR-041 evidence append only; map stays Proposed; GED-class fork-diff stays out of M012a
 
 ### Pending Todos
 
@@ -136,7 +140,7 @@ None.
 
 ### Blockers/Concerns
 
-- Harness Active Slice is **S02** (GATE-02). Execute Phase 13 under that lease. Do not clear S02 until Phase 13 SUMMARY + verification pass.
+- Harness Active Slice is **S06** (GATE-02). Execute Phase 16 under that lease. Do not clear S06 until Phase 16 SUMMARY + verification pass.
 - Do not start M012 dictionaries-as-facts, M002 Rocks, legal pack, Cypher, HNSW, or ADR-050 because a GSD phase completed — honeycomb stays Proposed (GATE-03).
 
 ## Deferred Items
@@ -152,11 +156,11 @@ None.
 ## Session Continuity
 
 Last session: 2026-09-30T19:06:15.121Z
-Stopped at: Phase 15 complete, ready to plan Phase 16
+Stopped at: Phase 16 plans written (16-01..16-03), ready to execute
 Resume file: None
-Next: `/gsd-execute-phase 13`. Harness lease is already S02. Freeze holds. Do not lease M002 without explicit operator intent.
+Next: `/gsd-execute-phase 16`. Harness lease is already S06. Freeze holds. Do not lease M002 without explicit operator intent.
 
 ## Operator Next Steps
 
-- Execute: `/gsd-execute-phase 13`
-- Do not overwrite `.kutha/STATE.md` from GSD memory; do not clear S02 until verification pass
+- Execute: `/gsd-execute-phase 16`
+- Do not overwrite `.kutha/STATE.md` from GSD memory; do not clear S06 until verification pass
