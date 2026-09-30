@@ -20,7 +20,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Trajectory
 
-- Active Slice remains **S07**; ADR-060 and ADR-011 remain Proposed (not Accepted, not L_capability). GATE-01 needles registered. Green governor is not ADR Accepted and not L_capability. `replay_check` Ok is not execution replay.
+- Active Slice remains **S07**; ADR-060 and ADR-011 honeycomb evidence names `provenance_detects_caused_by_swap_when_state_fingerprint_matches` and `provenance_detects_rule_version_change_when_state_fingerprint_matches`; map stays Proposed on both (not Accepted, not L_capability). Green governor is not ADR Accepted and not L_capability. `replay_check` Ok is not execution replay.
 
 ## 2026-09-30 — Process: lease Active Slice S07 after S06 delivery
 
