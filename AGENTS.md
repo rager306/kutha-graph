@@ -59,7 +59,8 @@ Literature cards ≠ shipping list. GSD `.planning/` is an agent planning overla
 - **Idea stack (top → down):** **STCA** (ADR-002) → vision (ADR-001) → locks D1–D10 (ADR-000) → honeycomb cells (ADR-010–093, all **Proposed**).
 - **Formula:** event log = SoT; graph = deterministic fold; CSR/HNSW/views = droppable leases; LLM proposes; dictionaries + log own audited truth.
 - **Wedge:** legal / normative temporal agents (norm **AS OF** a date). Science next; finance/clinical are receipt/hold riders until a pack exists.
-- **P0 spike (in crates, not Accepted product):** log, fold, quantum emit→idle, receipt, snapshot, WAL-cousin, CSR lease, leapfrog intersect, `Materializer` trait, `fork_at`, named `as_of`/`live_at`, FF6 relation allowlist. **Not in spike:** RocksDB crate, Cypher, HNSW, ABAC, legal corpus, ADR-050 six dictionaries.
+
+P0 crate spike (not Accepted product): `docs/architecture/p0-spike-inventory.md`.
 
 ## Current execution position
 
