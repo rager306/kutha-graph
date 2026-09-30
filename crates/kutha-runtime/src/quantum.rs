@@ -429,22 +429,16 @@ impl Runtime {
         Ok(())
     }
 
-    /// Partition live supports of `claim` by interned positive vs negative object (D-F3).
-    pub fn conflict_report_at(
-        &self,
-        claim: EventId,
-        tt: u64,
-        vt: u64,
-        positive: TermId,
-        negative: TermId,
-    ) -> ConflictReport {
+    /// Partition live supports of `claim` by stored `Fact.polarity` (ING-03 / D-03).
+    /// `None` polarity is in neither bucket. Caller TermIds are not the polarity source.
+    pub fn conflict_report_at(&self, claim: EventId, tt: u64, vt: u64) -> ConflictReport {
         let mut positive_supports = Vec::new();
         let mut negative_supports = Vec::new();
         for f in self.fold.live_supports(claim, tt, vt) {
-            if f.object() == positive {
-                positive_supports.push(f.seq);
-            } else if f.object() == negative {
-                negative_supports.push(f.seq);
+            match f.polarity {
+                Some(kutha_common::SupportPolarity::Positive) => positive_supports.push(f.seq),
+                Some(kutha_common::SupportPolarity::Negative) => negative_supports.push(f.seq),
+                None => {}
             }
         }
         ConflictReport {

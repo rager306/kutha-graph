@@ -57,6 +57,26 @@ fn leftover_halves(
     (prefix, suffix)
 }
 
+fn flipped_polarity(p: SupportPolarity) -> SupportPolarity {
+    match p {
+        SupportPolarity::Positive => SupportPolarity::Negative,
+        SupportPolarity::Negative => SupportPolarity::Positive,
+    }
+}
+
+/// Residuals copy polarity. An object-changing replacement row flips when old polarity is Some.
+fn polarity_for_row(
+    old: Option<SupportPolarity>,
+    old_object: TermId,
+    new_object: TermId,
+) -> Option<SupportPolarity> {
+    if new_object == old_object {
+        old
+    } else {
+        old.map(flipped_polarity)
+    }
+}
+
 /// One asserted (or behavior-asserted) fact in the fold. Losers stay on retract (ADR-013).
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct Fact {
@@ -264,6 +284,8 @@ impl GraphFold {
                         let s = self.facts[idx].subject;
                         let r = self.facts[idx].relation;
                         let claim_id = self.facts[idx].claim_id;
+                        let old_object = self.facts[idx].object();
+                        let old_polarity = self.facts[idx].polarity;
                         let seq = self.next_seq;
                         self.next_seq += 1;
                         self.facts.push(Fact {
@@ -278,7 +300,7 @@ impl GraphFold {
                             claim_id,
                             event_id: event.id,
                             delivery_key: None,
-                            polarity: None,
+                            polarity: polarity_for_row(old_polarity, old_object, *object),
                         });
                     }
                 }
@@ -307,6 +329,7 @@ impl GraphFold {
                 let r = old.relation;
                 let claim_id = old.claim_id;
                 let old_object = old.object();
+                let old_polarity = old.polarity;
                 self.facts[idx].invalidated_at = Some(event.ingested_at);
 
                 let mut push_row = |obj: TermId, vf: ValidTime, vt: Option<ValidTime>| {
@@ -324,7 +347,7 @@ impl GraphFold {
                         claim_id,
                         event_id: event.id,
                         delivery_key: None,
-                        polarity: None,
+                        polarity: polarity_for_row(old_polarity, old_object, obj),
                     });
                 };
                 if let Some((vf, vt)) = prefix {

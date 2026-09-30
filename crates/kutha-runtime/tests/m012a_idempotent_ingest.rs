@@ -1,6 +1,6 @@
 //! M012a S03 / ING-01: identical Assert retry under one delivery key does not mint a second support.
 
-use kutha_common::Op;
+use kutha_common::{Op, SupportPolarity};
 use kutha_runtime::{store, Runtime, RuntimeError};
 
 #[test]
@@ -182,7 +182,10 @@ fn keyed_assert_retry_after_persist_open_does_not_mint() {
         .unwrap();
     assert_eq!(n_open, opened.log().len(), "open retry must not append");
     assert_eq!(retry.receipt.event_ids[0], original);
-    assert_eq!(1, opened.fold().live_support_count(claim_id, u64::MAX, 2017));
+    assert_eq!(
+        1,
+        opened.fold().live_support_count(claim_id, u64::MAX, 2017)
+    );
     opened.replay_check().unwrap();
     let _ = std::fs::remove_dir_all(&dir);
 }
@@ -235,7 +238,10 @@ fn claim_id_distinct_from_support_slot() {
         .find(|f| f.event_id == id_b)
         .expect("second support");
     assert_eq!(fa.claim_id, fb.claim_id);
-    assert_eq!(fa.claim_id, id_a, "opening support claim_id equals its EventId");
+    assert_eq!(
+        fa.claim_id, id_a,
+        "opening support claim_id equals its EventId"
+    );
     assert_ne!(
         fb.claim_id, id_b,
         "later support claim_id is not its minting EventId"
@@ -247,4 +253,39 @@ fn claim_id_distinct_from_support_slot() {
     rt.replay_check().unwrap();
 }
 
+#[test]
+fn conflict_report_at_partitions_by_stored_polarity() {
+    let mut rt = Runtime::default();
+    let s = rt.intern("S");
+    let rel = rt.intern("relatedTo");
+    let o = rt.intern("O");
 
+    let first = rt
+        .emit(Op::Assert {
+            subject: s,
+            relation: rel,
+            object: o,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: Some("pol-pos".into()),
+            polarity: Some(SupportPolarity::Positive),
+        })
+        .unwrap();
+    let claim = first.receipt.event_ids[0];
+    rt.emit(Op::Assert {
+        subject: s,
+        relation: rel,
+        object: o,
+        valid_from: 2010,
+        valid_to: None,
+        claim: Some(claim),
+        delivery_key: Some("pol-neg".into()),
+        polarity: Some(SupportPolarity::Negative),
+    })
+    .unwrap();
+    let report = rt.conflict_report_at(claim, u64::MAX, 2017);
+    assert!(!report.positive_supports.is_empty());
+    assert!(!report.negative_supports.is_empty());
+    rt.replay_check().unwrap();
+}

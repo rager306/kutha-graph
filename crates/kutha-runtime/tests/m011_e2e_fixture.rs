@@ -1,6 +1,6 @@
 //! M011 S08 candidate fixture; semantic-contract observations at named cuts.
 
-use kutha_common::{EventId, Op, TermId};
+use kutha_common::{EventId, Op, SupportPolarity, TermId};
 use kutha_runtime::{store, GraphFold, Runtime, RuntimeError};
 
 /// Year-like valid-time instants (same as S04).
@@ -60,7 +60,7 @@ fn build_through_t1() -> Fixture {
             valid_to: None,
             claim: None,
             delivery_key: None,
-            polarity: None,
+            polarity: Some(SupportPolarity::Positive),
         })
         .unwrap();
     let event_a = first.receipt.event_ids[0];
@@ -80,7 +80,7 @@ fn build_through_t1() -> Fixture {
             valid_to: None,
             claim: Some(claim_p),
             delivery_key: None,
-            polarity: None,
+            polarity: Some(SupportPolarity::Positive),
         })
         .unwrap();
     let event_b = second.receipt.event_ids[0];
@@ -189,9 +189,7 @@ fn e2e_fixture_supports_and_conflict_at_named_cuts() {
             .live_support_count(fx.claim_p, fx.t1, VT_INTERIOR)
     );
     assert!(fx.rt.derivation_eligible_at(fx.claim_q, fx.t1, VT_INTERIOR));
-    let t1_report = fx
-        .rt
-        .conflict_report_at(fx.claim_p, fx.t1, VT_INTERIOR, fx.p, fx.not_p);
+    let t1_report = fx.rt.conflict_report_at(fx.claim_p, fx.t1, VT_INTERIOR);
     assert!(!t1_report.positive_supports.is_empty());
     assert!(t1_report.negative_supports.is_empty());
 
@@ -218,9 +216,7 @@ fn e2e_fixture_supports_and_conflict_at_named_cuts() {
         .fold()
         .live_at(t2, VT_INTERIOR)
         .contains(&(fx.a, fx.related, fx.not_p)));
-    let t2_report = fx
-        .rt
-        .conflict_report_at(fx.claim_p, t2, VT_INTERIOR, fx.p, fx.not_p);
+    let t2_report = fx.rt.conflict_report_at(fx.claim_p, t2, VT_INTERIOR);
     assert!(!t2_report.positive_supports.is_empty());
     assert!(!t2_report.negative_supports.is_empty());
     assert!(
@@ -240,9 +236,7 @@ fn e2e_fixture_supports_and_conflict_at_named_cuts() {
 
     fx.apply_t3_withdraw_b();
     let t3 = fx.t3.expect("t3");
-    let t3_report = fx
-        .rt
-        .conflict_report_at(fx.claim_p, t3, VT_INTERIOR, fx.p, fx.not_p);
+    let t3_report = fx.rt.conflict_report_at(fx.claim_p, t3, VT_INTERIOR);
     assert!(
         t3_report.positive_supports.is_empty(),
         "last positive-P support withdrawn"
@@ -285,14 +279,14 @@ fn assert_cut_agrees(rt: &Runtime, replayed: &GraphFold, fx: &Fixture, tt: u64, 
         rt.fold().live_support_count(fx.claim_q, tt, vt),
         replayed.live_support_count(fx.claim_q, tt, vt)
     );
-    let report = rt.conflict_report_at(fx.claim_p, tt, vt, fx.p, fx.not_p);
+    let report = rt.conflict_report_at(fx.claim_p, tt, vt);
     let mut pos = Vec::new();
     let mut neg = Vec::new();
     for f in replayed.live_supports(fx.claim_p, tt, vt) {
-        if f.object() == fx.p {
-            pos.push(f.seq);
-        } else if f.object() == fx.not_p {
-            neg.push(f.seq);
+        match f.polarity {
+            Some(SupportPolarity::Positive) => pos.push(f.seq),
+            Some(SupportPolarity::Negative) => neg.push(f.seq),
+            None => {}
         }
     }
     assert_eq!(report.positive_supports, pos);
@@ -404,8 +398,8 @@ fn e2e_incremental_matches_reconstruct_after_discarding_leases() {
     assert_stale(&opened, &jid2);
     for (tt, vt) in [(fx.t1, VT_INTERIOR), (t2, VT_INTERIOR), (t3, VT_INTERIOR)] {
         assert_eq!(
-            opened.conflict_report_at(fx.claim_p, tt, vt, fx.p, fx.not_p),
-            fx.rt.conflict_report_at(fx.claim_p, tt, vt, fx.p, fx.not_p)
+            opened.conflict_report_at(fx.claim_p, tt, vt),
+            fx.rt.conflict_report_at(fx.claim_p, tt, vt)
         );
         assert_eq!(
             opened.derivation_eligible_at(fx.claim_q, tt, vt),

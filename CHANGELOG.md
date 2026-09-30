@@ -12,6 +12,10 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Named ING-02 oracle `claim_id_distinct_from_support_slot`. `Op::Assert` and `Fact` rustdoc name claim (proposition), minting EventId (support slot), and `delivery_key` (retry) as three identities.
 
+### Changed
+
+- `conflict_report_at` takes claim, transaction-time, and valid-time only and partitions live supports by stored `Fact.polarity`. Correct/CorrectInterval residuals copy polarity; an object-changing patch row flips Positive/Negative. Leased e2e fixture Asserts store Positive.
+
 ### Trajectory
 
 - Honeycomb stays **Proposed**. Active Slice remains **S03**. Freeze until M002 unchanged.
