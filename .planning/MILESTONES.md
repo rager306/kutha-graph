@@ -1,5 +1,21 @@
 # Milestones
 
+## v0.03 Lean context + semantic governor (Shipped: 2026-09-30)
+
+**Phases completed:** 3 phases, 8 plans, 24 tasks
+
+**Key accomplishments:**
+- Operator Phase H5 named on STATE, README, ROADMAP dogfood, and existing h4-lease/dogfood needles without thawing freeze or leasing a product slice
+- AGENTS.md slimed to 96 durable operating-rule lines; volatile P0/literature/Leapfrog/layout/lease captions relocated with a grep-backed diet ledger
+- Proposed semantic-gap review maps F1–F8 to honeycomb verdicts from ADR prose; Later milestones list M012a before M012 with M002 as log durability first
+- Dated Proposed clarifications and open questions on verdict-selected honeycomb cells; ADR README points at the semantic-gap review; map stays Proposed
+- `kutha-gov selftest` copies the tree once, proves 27 checks by mutation and skip-reasons the other 5, and `ci` labels H5 from `h5_selftest=32/32`
+- `rust_test_asserts` proves named `#[test]` bodies assert after stripping comments/strings/chars; every former `fn` needle now uses that kind; honeycomb `capability: named` empty evidence is HIGH
+- `cite_equals` / `refs_resolve` / `agents-lean` fail closed on stale lease tokens, dangling ADR/lock ids, and AGENTS.md budget or token regression; ci V=48 runs all 35 checks
+- Eight F-gaps ledgered as deferred control-loop claims; Phases 9–11 CHANGELOG is real Process/Trajectory; H5 dogfood is checked without touching crates or `.kutha/STATE.md`
+
+---
+
 ## v0.02 Semantic core close (Shipped: 2026-09-30)
 
 **Phases completed:** 5 phases, 11 plans, 32 tasks

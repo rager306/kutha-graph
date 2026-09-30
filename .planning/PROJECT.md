@@ -10,16 +10,9 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.03 Lean context + semantic governor
+## Current Milestone: None
 
-**Goal:** Make the harness say what is true, not what is present: slim `AGENTS.md` to durable rules only, correct ADRs and the proposed roadmap order for the verified semantic gaps, and teach the governor to check meaning (vacuity, assertions, cited state, evidence links) instead of needle presence.
-
-**Target features:**
-- H5 harness lease (process plane only) and a lean `AGENTS.md` with no volatile lease/inventory data
-- ADR and proposed-roadmap corrections: single-log SoT, stable references, derivation model, admission-as-facts, time scale, log durability, index/benchmark ordering (all cells stay Proposed)
-- Semantic governor kinds: check vacuity self-test, test-body assertion proof, cited-state equality, evidence and cross-reference resolution
-
-**Boundary:** harness + docs only. No `crates/` edits; product fixes (single-log SoT, stable refs, `open`→`replay_check`, atomic persist, stable `Define` ids) are deferred to a separately leased M012a. Freeze holds.
+v0.03 shipped 2026-09-30 (see Current State). The next GSD milestone starts only after an explicit lease in `.kutha/STATE.md`.
 
 ## Business Context
 
@@ -157,11 +150,11 @@ Harness compact index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov m
 
 ## Current State
 
-Shipped **GSD v0.01 — GSD foundation** (2026-09-29) and **GSD v0.02 — Semantic core close** (2026-09-30). M011 tail S04–S08 is in crates and harness GATE needles; one e2e fixture separates preserved history, current evidence, and allowed action. Honeycomb cells stay Proposed. Product stays `0.0.0`.
+Shipped **GSD v0.01 — GSD foundation** (2026-09-29), **GSD v0.02 — Semantic core close** and **GSD v0.03 — Lean context + semantic governor** (2026-09-30). M011 tail S04–S08 is in crates and harness GATE needles; one e2e fixture separates preserved history, current evidence, and allowed action. v0.03 (harness/docs only) delivered H5: lean `AGENTS.md`, Proposed-only ADR corrections for F1–F8 (`docs/architecture/semantic-gap-review.md`), and a semantic governor (`kutha-gov selftest`, assertion-proving kinds, cited-lease and reference checks). Honeycomb cells stay Proposed. Product stays `0.0.0`.
 
 ## Next Milestone Goals
 
-v0.03 (harness/docs plane) is defined above. Product delivery (M012a single-log SoT + stable refs, then M012, then M002 as log durability) starts only when `.kutha/STATE.md` names it — freeze holds (no Rocks/Cypher/HNSW/ADR-050/legal pack by default).
+F1–F8 product gaps are ledgered as deferred invariants. Product delivery (M012a single-log SoT + stable refs, then M012, then M002 as log durability) starts only when `.kutha/STATE.md` names it — freeze holds (no Rocks/Cypher/HNSW/ADR-050/legal pack by default).
 
 ## Context
 
@@ -171,7 +164,7 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 
 - Active Milestone: **M011**
 - Active Slice: **None**
-- Phase: **H4**
+- Phase: **H5**
 - Lifecycles: `L_map=honeycomb-proposed` · `L_delivery=M011-S08-done` · `L_capability=ff5-green`
 - Next: Freeze until STATE names M002+ (or another explicit lease). Do not start a legal pack. Green governor ≠ ADR Accepted ≠ L_capability.
 
@@ -225,4 +218,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-30 after v0.02 Semantic core close*
+*Last updated: 2026-09-30 after v0.03 Lean context + semantic governor*
