@@ -4,16 +4,17 @@ milestone: v0.03
 milestone_name: Lean context + semantic governor
 current_phase: 9
 current_phase_name: H5 lease + lean agent context
-status: planning
-stopped_at: Milestone v0.02 archived (override_closeout)
-last_updated: "2026-09-30T05:24:57.624Z"
+current_plan: 2
+status: executing
+stopped_at: Completed 09-01-PLAN.md
+last_updated: "2026-09-30T05:56:19.470Z"
 last_activity: 2026-09-30
-state_head: f0681dc205fd97e41ca53636deae3694601f05f8
+state_head: d2d15ed3ae5cf585bf1b2afbb9880550cf948995
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 2
+  completed_plans: 1
   percent: 0
 ---
 
@@ -33,9 +34,13 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after v0.02)
 ## Current Position
 
 Phase: 9 of 11 (H5 lease + lean agent context)
-Plan: —
-Status: Ready to plan
+Current Plan: 2
+Total Plans in Phase: 2
+Plan: 2 of 2
+Status: Ready to execute
 Last activity: 2026-09-30
+
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
@@ -72,6 +77,7 @@ Last activity: 2026-09-30
 | Phase 07 P02 | 4min | 3 tasks | 6 files |
 | Phase 08 P01 | 7min | 3 tasks | 5 files |
 | Phase 08 P02 | 3min | 3 tasks | 6 files |
+| Phase 09 P01 | 7min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -89,6 +95,10 @@ Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constrain
 - [Phase 08]: D-F5: Process/Trajectory changelog; no closed-delivery lease sentence during delivery; harness STATE closed after verify
 - [Phase 08]: docs-coupling: Process CHANGELOG committed with dictionary registration
 - [Phase 08]: RESEARCH Q4: ADR-013/011/012/040 evidence lists get assigned FIX names; map stays Proposed
+- [Phase 09]: D-H1: operator lease commit names Phase H5; M011 / Active Slice None / lifecycles / freeze unchanged; product fixes wait for M012a
+- [Phase 09]: D-H2: unchecked H5 dogfood checkbox; h4-lease and dogfood needles edited in place; I-dogfood H0–H5
+- [Phase 09]: D-G2 as green-ci: CHANGELOG Process pointer only; SEM-08 narrative reserved for Phase 11
+- [Phase 09]: D-G3: freeze and three lifecycle assignment lines byte-stable
 
 ### Pending Todos
 
@@ -109,8 +119,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T04:55:00.000Z
-Stopped at: Milestone v0.02 archived (override_closeout)
+Last session: 2026-09-30T05:55:25.377Z
+Stopped at: Completed 09-01-PLAN.md
 Resume file: None
 Next: `/gsd-new-milestone` when ready. Freeze holds. Do not lease M002 without explicit operator intent.
 

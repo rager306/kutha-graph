@@ -27,7 +27,7 @@ Each requirement maps to exactly one roadmap phase.
 
 ### Harness lease
 
-- [ ] **LEASE-01**: `.kutha/STATE.md`, `.kutha/ROADMAP.md`, `README.md`, and `docs/process/kutha-harness.md` name the **H5** rung (semantic governor + lean context) consistently; Active Milestone, lifecycles, and freeze are unchanged and `uv run kutha-gov ci` stays at 0 HIGH
+- [x] **LEASE-01**: `.kutha/STATE.md`, `.kutha/ROADMAP.md`, `README.md`, and `docs/process/kutha-harness.md` name the **H5** rung (semantic governor + lean context) consistently; Active Milestone, lifecycles, and freeze are unchanged and `uv run kutha-gov ci` stays at 0 HIGH
 
 ### Lean agent context
 
@@ -77,7 +77,7 @@ Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LEASE-01 | Phase 9 | Pending |
+| LEASE-01 | Phase 9 | Complete |
 | CTX-01 | Phase 9 | Pending |
 | CTX-02 | Phase 9 | Pending |
 | CTX-03 | Phase 9 | Pending |
