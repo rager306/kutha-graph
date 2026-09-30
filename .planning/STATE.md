@@ -6,10 +6,10 @@ current_phase: 14
 current_phase_name: Idempotent ingest
 current_plan: Not started
 status: planning
-stopped_at: Phase 13 complete, ready to plan Phase 14
-last_updated: "2026-09-30T18:17:42.123Z"
+stopped_at: Phase 14 plans written (14-01..14-03), ready to execute
+last_updated: "2026-10-01T01:18:00Z"
 last_activity: 2026-10-01
-last_activity_desc: Phase 13 complete, transitioned to Phase 14
+last_activity_desc: Phase 14 plans 14-01..14-03 written
 state_head: 449dd3bc6d9487565aafe38d643de4a11d705cef
 progress:
   total_phases: 5
@@ -26,7 +26,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.04 Phase 14 — Idempotent ingest (M012a S02). Plans 13-01..13-03 written; execute next. Freeze holds for M002.
+**Current focus:** v0.04 Phase 14 — Idempotent ingest (M012a S03). Plans 14-01..14-03 written; execute next. Freeze holds for M002.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -38,8 +38,8 @@ Current Plan: Not started
 Total Plans in Phase: 3
 Phase: 14 of 16 (Idempotent ingest)
 Plan: 3 of 3
-Status: Ready to plan
-Last activity: 2026-10-01 — Phase 13 complete, transitioned to Phase 14
+Status: Ready to execute
+Last activity: 2026-10-01 — Phase 14 plans 14-01..14-03 written
 
 Progress: [████████░░] 81% (v0.04 plans executed)
 
