@@ -1,0 +1,8 @@
+{
+  "command": "cargo test -p kutha-runtime --offline --test m012a_hot_indexes as_of_and_claim_supported_at_skip_non_overlapping_facts -- --exact --nocapture",
+  "exitCode": 101,
+  "targetTest": "as_of_and_claim_supported_at_skip_non_overlapping_facts",
+  "expected": "as_of(2017) examine count strictly less than facts().len() on a decoy-heavy log",
+  "actual": "examined 131, facts 131 (linear facts walk)",
+  "output": "running 1 test\n\nthread 'as_of_and_claim_supported_at_skip_non_overlapping_facts' panicked at crates/kutha-runtime/tests/m012a_hot_indexes.rs:90:5:\nas_of must not examine every fact (examined 131, facts 131)\ntest as_of_and_claim_supported_at_skip_non_overlapping_facts ... FAILED\n\nfailures:\n    as_of_and_claim_supported_at_skip_non_overlapping_facts\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out\n\n# tests 1\n# pass 0\n# fail 1\nnot ok 1 - as_of_and_claim_supported_at_skip_non_overlapping_facts\n"
+}
