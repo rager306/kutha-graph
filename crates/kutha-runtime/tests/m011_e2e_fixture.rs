@@ -310,6 +310,7 @@ fn e2e_justification_cites_sources_and_rejects_stale_admission() {
     let dir = temp_dir();
     store::persist(&fx.rt, &dir).unwrap();
     std::fs::remove_file(dir.join("snapshot.json")).unwrap();
+    std::fs::remove_file(dir.join(store::JUSTIFICATIONS_REL)).unwrap();
     let opened = store::open(&dir).unwrap();
     opened.check_admission(&jid).unwrap();
     assert!(!opened.justification_records().is_empty());

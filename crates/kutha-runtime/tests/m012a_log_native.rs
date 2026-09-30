@@ -70,6 +70,38 @@ fn discard_justifications_sidecar_keeps_admission_and_resume() {
     );
     assert_eq!(opened.fold().fingerprint(), fp);
     let _ = std::fs::remove_dir_all(&dir);
+
+    let partial = run_knows_budget(Runtime::new(1));
+    let qid = partial
+        .outcome_records()
+        .last()
+        .expect("Partial row")
+        .quantum_id
+        .clone();
+    let pdir = std::env::temp_dir().join(format!("kutha-m012a-s01-r-{}", uuid_like()));
+    store::persist(&partial, &pdir).unwrap();
+    std::fs::remove_file(pdir.join(store::OUTCOMES_REL)).unwrap();
+    let mut opened_p = store::open(&pdir).unwrap();
+    assert_eq!(
+        opened_p.outcome_records().last().map(|r| r.disposition),
+        Some(OutcomeDisposition::Partial)
+    );
+    opened_p.record_resume(&qid).unwrap();
+    store::persist(&opened_p, &pdir).unwrap();
+    std::fs::remove_file(pdir.join(store::OUTCOMES_REL)).unwrap();
+    let _ = std::fs::remove_file(pdir.join(store::JUSTIFICATIONS_REL));
+    let mut opened_r = store::open(&pdir).unwrap();
+    assert!(
+        opened_r.outcome_records().iter().any(|row| {
+            row.disposition == OutcomeDisposition::Resume && row.resume_of.as_deref() == Some(qid.as_str())
+        }),
+        "Resume reconstructs after discarding both sidecars"
+    );
+    assert!(
+        opened_r.record_resume(&qid).is_err(),
+        "duplicate resume_of is fail-closed"
+    );
+    let _ = std::fs::remove_dir_all(&pdir);
 }
 
 fn derive_pq_with_justification() -> (Runtime, String) {

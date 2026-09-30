@@ -79,15 +79,18 @@ fn crash_after_prefix_has_no_terminal_success_until_explicit_resume() {
     );
 
     opened.record_resume(&quantum_id).unwrap();
+    store::persist(&opened, &dir).unwrap();
+    std::fs::remove_file(dir.join(store::OUTCOMES_REL)).unwrap();
+    let mut reopened = store::open(&dir).unwrap();
     assert!(
-        opened.outcome_records().iter().any(|row| {
+        reopened.outcome_records().iter().any(|row| {
             row.disposition == OutcomeDisposition::Resume
                 && row.resume_of.as_deref() == Some(quantum_id.as_str())
         }),
-        "Resume visible only after explicit record_resume"
+        "Resume reconstructs from the log after discarding the outcomes lease"
     );
     assert!(
-        opened.record_resume(&quantum_id).is_err(),
+        reopened.record_resume(&quantum_id).is_err(),
         "duplicate resume_of is fail-closed"
     );
 

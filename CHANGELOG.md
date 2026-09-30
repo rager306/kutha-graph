@@ -11,10 +11,11 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Added
 
 - `Op::QuantumOutcome` fold-noop events on the product log. After persist, deleting `quantum_outcomes.jsonl` still reconstructs Zero / Partial / Full (`discard_outcomes_sidecar_keeps_reconstructible_disposition`).
+- `Op::JustificationCite` fold-noop events. After persist, deleting `justifications.jsonl` still reconstructs cites and `check_admission` (`discard_justifications_sidecar_keeps_admission_and_resume`). Resume is a log-native `Op::QuantumOutcome` with `disposition: resume`.
 
 ### Changed
 
-- Quantum outcome SoT is the event log. `quantum_outcomes.jsonl` remains a written lease; open hydrates from log Events when they exist and does not let an empty sidecar wipe them.
+- Quantum outcome and justification SoT is the event log. Sidecar JSONL files remain written leases; open hydrates from log Events when they exist and does not let an empty sidecar wipe them.
 
 ### Trajectory
 

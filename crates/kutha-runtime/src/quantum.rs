@@ -472,6 +472,8 @@ impl Runtime {
             receipt_digest_hex: String::new(),
             resume_of: Some(quantum_id.to_string()),
         });
+        let row = self.outcomes.last().expect("just pushed").clone();
+        self.append_meta(Self::outcome_op(&row));
         Ok(())
     }
 
