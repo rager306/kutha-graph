@@ -19,13 +19,13 @@ estimate:
   tasks: 3
 
 actuals:
-  tokens: 2476
+  tokens: 2884
   tasks: 3
-  commits: 2
+  commits: 3
 
 plan_head_before: 56ced5e84acb64db93efc1edfffc6a5b6cbfe9d8
-plan_head_after: 8504ab19PLACEHOLDER
-commits: 2
+plan_head_after: b8dfd1207ce419e6cb557c6a7386c332e6169ed2
+commits: 3
 
 tech-stack:
   added: []
@@ -120,7 +120,9 @@ status: complete
 
 1. **Task 1: Register GATE-01 FSM names, check, and bridge** - `cfde6ba` (chore)
 2. **Task 2: Changelog Process/Trajectory and ADR-060/011 evidence only** - `8504ab1` (docs)
-3. **Task 3: Governor ci, cargo smoke, freeze and lease cite** - pending SUMMARY commit
+3. **Task 3: Governor ci, cargo smoke, freeze and lease cite** - `b8dfd12` (docs)
+
+**Plan metadata:** `docs(07-02): complete GATE-01 provenance plan` (STATE/ROADMAP/REQUIREMENTS + SUMMARY hash update)
 
 ## Files Created/Modified
 
@@ -177,6 +179,18 @@ None.
 ## Next Phase Readiness
 
 Phase 7 execute waves are done. Ready for `/gsd-verify-work` on Phase 7. Do not check harness ROADMAP S07; do not edit `.kutha/STATE.md`; do not start S08 or a legal pack until the harness lease names it. Execution replay (ADR-060 obligation 3) stays unimplemented.
+
+## Self-Check: PASSED
+
+- FOUND: .kutha/dictionaries/fsm.yaml (both provenance_detects names)
+- FOUND: .kutha/dictionaries/checks.yaml (m011-provenance)
+- FOUND: .kutha/dictionaries/bridges.yaml (B-m011-provenance)
+- FOUND: .kutha/dictionaries/honeycomb.yaml (ADR-060 and ADR-011 Proposed + evidence)
+- FOUND: CHANGELOG.md (m011-provenance / B-m011-provenance)
+- FOUND: commits cfde6ba, 8504ab1, b8dfd12
+- FOUND: .kutha/STATE.md Active Slice S07 (unchanged)
+- FOUND: .kutha/ROADMAP.md S07 unchecked
+- FOUND: uv run kutha-gov ci HIGH 0 LOW 0; cargo test --workspace --offline exit 0
 
 ---
 *Phase: 07-provenance-and-rule-version-check*

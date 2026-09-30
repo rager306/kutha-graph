@@ -4,17 +4,18 @@ milestone: v0.02
 milestone_name: Semantic core close
 current_phase: 7
 current_phase_name: Provenance and rule-version check
-status: executing
-stopped_at: Completed 07-01-PLAN.md
-last_updated: "2026-09-30T02:46:53.670Z"
+current_plan: 2
+status: ready_for_verification
+stopped_at: Completed 07-02-PLAN.md
+last_updated: "2026-09-30T02:53:50.363Z"
 last_activity: 2026-09-30
-last_activity_desc: Completed 07-01-PLAN.md (provenance digest + PROV oracles)
-state_head: 11aeda748a3ec4cccfcaf856a3d7eb57b585b501
+last_activity_desc: Completed 07-02-PLAN.md (GATE-01 provenance observe names)
+state_head: b8dfd1207ce419e6cb557c6a7386c332e6169ed2
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 9
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
@@ -36,8 +37,8 @@ Phase: 7 — Provenance and rule-version check
 Current Plan: 2
 Total Plans in Phase: 2
 Plan: 07-02 (Wave 2 GATE-01)
-Status: 07-01 complete; ready to execute 07-02
-Last activity: 2026-09-30 — Completed 07-01-PLAN.md (provenance digest + PROV oracles)
+Status: 07-02 complete; ready for `/gsd-verify-work`
+Last activity: 2026-09-30 — Completed 07-02-PLAN.md (GATE-01 provenance observe names)
 
 Progress: [███████░░░] 70%
 
@@ -72,6 +73,7 @@ Progress: [███████░░░] 70%
 | Phase 04 P02 | 6min | 2 tasks | 2 files |
 | Phase 04 P03 | 7min | 3 tasks | 5 files |
 | Phase 07 P01 | 4min | 3 tasks | 5 files |
+| Phase 07 P02 | 4min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -91,6 +93,9 @@ Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constrain
 - [Phase 04]: Did not edit .kutha/STATE.md or check S04; GATE-01 is not a closed-delivery lease
 - [Phase 07]: D-P3: provenance_fingerprint / provenance_check beside unchanged replay_check
 - [Phase 07]: D-P6: GATE-01 fsm/check/bridge needles deferred to 07-02
+- [Phase 07]: D-P6 GATE-01: identical fn/required/needle strings for provenance oracles
+- [Phase 07]: docs-coupling: Process CHANGELOG committed with dictionary registration
+- [Phase 07]: RESEARCH Q3: ADR-060 and ADR-011 evidence both get both oracle names; map stays Proposed
 
 ### Pending Todos
 
@@ -109,11 +114,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-30T02:46:53.505Z
-Stopped at: Completed 07-01-PLAN.md
+Last session: 2026-09-30T02:53:50.286Z
+Stopped at: Completed 07-02-PLAN.md
 Resume file: None
-Next: `/gsd-execute-phase 7` (Wave 1 = 07-01, Wave 2 = 07-02). S07 leased in `.kutha/STATE.md`.
+Next: `/gsd-verify-work 7`. Both 07-01 and 07-02 SUMMARYs exist. Harness Active Slice remains S07; do not check `.kutha/ROADMAP.md` S07.
 
 ## Operator Next Steps
 
-- Phase 7: 07-01 complete (provenance digest + PROV-01/PROV-02 oracles). Execute 07-02 GATE-01. Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
+- Phase 7: 07-02 GATE-01 complete (`m011-provenance` / `B-m011-provenance`; ci HIGH 0). Next `/gsd-verify-work 7`. Do not edit `.kutha/STATE.md`. Do not check harness ROADMAP S07. Freeze holds.

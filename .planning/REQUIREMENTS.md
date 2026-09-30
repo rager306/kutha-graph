@@ -27,8 +27,8 @@ Each requirement maps to exactly one roadmap phase (one phase per harness slice)
 
 ### Provenance (M011 S07 — leased)
 
-- [ ] **PROV-01**: Verification detects a change to only a Behavior `caused_by` reference even when the state fingerprint still matches
-- [ ] **PROV-02**: Verification detects a change to only a pinned rule version the same way; execution replay is not required
+- [x] **PROV-01**: Verification detects a change to only a Behavior `caused_by` reference even when the state fingerprint still matches
+- [x] **PROV-02**: Verification detects a change to only a pinned rule version the same way; execution replay is not required
 
 ### End-to-end fixture (M011 S08 — blocked until leased)
 
@@ -70,8 +70,8 @@ Primary owner is listed below. GATE-01/02/03 still apply to every slice's succes
 | OUT-02 | Phase 5 | Complete |
 | CSR-01 | Phase 6 | Complete |
 | CSR-02 | Phase 6 | Complete |
-| PROV-01 | Phase 7 | Pending |
-| PROV-02 | Phase 7 | Pending |
+| PROV-01 | Phase 7 | Complete |
+| PROV-02 | Phase 7 | Complete |
 | FIX-01 | Phase 8 | Pending |
 | FIX-02 | Phase 8 | Pending |
 | FIX-03 | Phase 8 | Pending |
