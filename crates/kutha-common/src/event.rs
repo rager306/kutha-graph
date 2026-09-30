@@ -82,6 +82,17 @@ pub enum Op {
         receipt_digest_hex: String,
         resume_of: Option<String>,
     },
+    /// Logged justification cite (M012a S01 / LOG-02). Fold no-op; not a graph fact.
+    JustificationCite {
+        justification_id: String,
+        target_claim: EventId,
+        source_claim_ids: Vec<EventId>,
+        source_event_ids: Vec<EventId>,
+        source_fact_seqs: Vec<u64>,
+        rule_version: String,
+        tt: u64,
+        vt: u64,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -107,7 +118,10 @@ impl Event {
                 object,
                 ..
             } => vec![*subject, *relation, *object],
-            Op::Retract { .. } | Op::Define { .. } | Op::QuantumOutcome { .. } => vec![],
+            Op::Retract { .. }
+            | Op::Define { .. }
+            | Op::QuantumOutcome { .. }
+            | Op::JustificationCite { .. } => vec![],
             Op::Correct { object, .. } | Op::CorrectInterval { object, .. } => vec![*object],
         };
         Self {
@@ -220,6 +234,35 @@ impl Event {
                     }
                     None => h.update(b"no-resume"),
                 }
+            }
+            Op::JustificationCite {
+                justification_id,
+                target_claim,
+                source_claim_ids,
+                source_event_ids,
+                source_fact_seqs,
+                rule_version,
+                tt,
+                vt,
+            } => {
+                h.update(b"justification-cite");
+                h.update(justification_id.as_bytes());
+                h.update(target_claim.as_bytes());
+                h.update((source_claim_ids.len() as u64).to_le_bytes());
+                for id in source_claim_ids {
+                    h.update(id.as_bytes());
+                }
+                h.update((source_event_ids.len() as u64).to_le_bytes());
+                for id in source_event_ids {
+                    h.update(id.as_bytes());
+                }
+                h.update((source_fact_seqs.len() as u64).to_le_bytes());
+                for seq in source_fact_seqs {
+                    h.update(seq.to_le_bytes());
+                }
+                h.update(rule_version.as_bytes());
+                h.update(tt.to_le_bytes());
+                h.update(vt.to_le_bytes());
             }
         }
         h.finalize().into()

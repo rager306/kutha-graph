@@ -289,7 +289,7 @@ impl GraphFold {
                     push_row(old_object, vf, vt);
                 }
             }
-              Op::Define { .. } | Op::QuantumOutcome { .. } => {}
+              Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
           }
       }
 

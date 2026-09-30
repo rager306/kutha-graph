@@ -72,8 +72,8 @@ impl fmt::Display for RuntimeError {
 
 pub use kutha_common::OutcomeDisposition;
 
-/// Authoritative justification / admission cite (D-F2). Not a droppable lease.
-/// SoT is `justifications.jsonl`; do not mix these bytes into [`Runtime::provenance_fingerprint`].
+    /// Authoritative justification / admission cite (D-F2).
+    /// SoT is `Op::JustificationCite` on the log; `justifications.jsonl` is a lease (LOG-02 / D-02).
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct Justification {
     pub justification_id: String,
@@ -121,13 +121,17 @@ fn op_relation(op: &Op) -> Option<TermId> {
         | Op::Correct { .. }
         | Op::CorrectInterval { .. }
         | Op::Define { .. }
-        | Op::QuantumOutcome { .. } => None,
+        | Op::QuantumOutcome { .. }
+        | Op::JustificationCite { .. } => None,
     }
 }
 
 /// Fold-affecting ops only. `Define` and `QuantumOutcome` stay on the log as meta (LOG-01).
 fn op_affects_fold(op: &Op) -> bool {
-    !matches!(op, Op::Define { .. } | Op::QuantumOutcome { .. })
+    !matches!(
+        op,
+        Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. }
+    )
 }
 
 impl std::error::Error for RuntimeError {}
@@ -160,8 +164,8 @@ pub struct Runtime {
     /// In-memory buffer of quantum outcomes. SoT is `Op::QuantumOutcome` on the log;
     /// `quantum_outcomes.jsonl` is a droppable lease after those Events exist (LOG-01 / D-02).
     outcomes: Vec<PersistedQuantumOutcome>,
-    /// In-memory buffer of durable justification cites (SoT is `justifications.jsonl`).
-    /// Open never infers cites from the log. `fork_at` starts empty (like outcomes).
+    /// In-memory buffer of justification cites. SoT is `Op::JustificationCite` on the log.
+    /// Open hydrates from those Events; it never infers cites from Assert/Behavior triples.
     justifications: Vec<Justification>,
 }
 
@@ -236,12 +240,12 @@ impl Runtime {
         self.outcomes = rows;
     }
 
-    /// Rebuild outcome rows from log Events (D-01). Sidecar is not consulted.
+    /// Rebuild outcome and justification rows from log Events (D-01). Sidecars are not consulted.
     pub(crate) fn hydrate_from_log(&mut self) {
-        self.outcomes = self
-            .log
-            .iter()
-            .filter_map(|e| match &e.op {
+        let mut outcomes = Vec::new();
+        let mut justifications = Vec::new();
+        for e in self.log.iter() {
+            match &e.op {
                 Op::QuantumOutcome {
                     quantum_id,
                     disposition,
@@ -250,7 +254,7 @@ impl Runtime {
                     event_ids,
                     receipt_digest_hex,
                     resume_of,
-                } => Some(PersistedQuantumOutcome {
+                } => outcomes.push(PersistedQuantumOutcome {
                     quantum_id: quantum_id.clone(),
                     disposition: *disposition,
                     aborted_on_budget: *aborted_on_budget,
@@ -259,15 +263,42 @@ impl Runtime {
                     receipt_digest_hex: receipt_digest_hex.clone(),
                     resume_of: resume_of.clone(),
                 }),
-                _ => None,
-            })
-            .collect();
+                Op::JustificationCite {
+                    justification_id,
+                    target_claim,
+                    source_claim_ids,
+                    source_event_ids,
+                    source_fact_seqs,
+                    rule_version,
+                    tt,
+                    vt,
+                } => justifications.push(Justification {
+                    justification_id: justification_id.clone(),
+                    target_claim: *target_claim,
+                    source_claim_ids: source_claim_ids.clone(),
+                    source_event_ids: source_event_ids.clone(),
+                    source_fact_seqs: source_fact_seqs.clone(),
+                    rule_version: rule_version.clone(),
+                    tt: *tt,
+                    vt: *vt,
+                }),
+                _ => {}
+            }
+        }
+        self.outcomes = outcomes;
+        self.justifications = justifications;
     }
 
     pub(crate) fn log_has_quantum_outcome(&self) -> bool {
         self.log
             .iter()
             .any(|e| matches!(e.op, Op::QuantumOutcome { .. }))
+    }
+
+    pub(crate) fn log_has_justification_cite(&self) -> bool {
+        self.log
+            .iter()
+            .any(|e| matches!(e.op, Op::JustificationCite { .. }))
     }
 
     fn append_meta(&mut self, op: Op) {
@@ -288,13 +319,25 @@ impl Runtime {
         }
     }
 
+    fn justification_op(row: &Justification) -> Op {
+        Op::JustificationCite {
+            justification_id: row.justification_id.clone(),
+            target_claim: row.target_claim,
+            source_claim_ids: row.source_claim_ids.clone(),
+            source_event_ids: row.source_event_ids.clone(),
+            source_fact_seqs: row.source_fact_seqs.clone(),
+            rule_version: row.rule_version.clone(),
+            tt: row.tt,
+            vt: row.vt,
+        }
+    }
+
     /// Persisted justification rows buffered for `store::persist` (D-F2).
     pub fn justification_records(&self) -> &[Justification] {
         &self.justifications
     }
 
-    /// Attach rows loaded from `justifications.jsonl`. Open never infers cites from the log.
-    /// `fork_at` starts empty (like outcomes); record cites again on the fork if needed.
+    /// Attach rows loaded from the justifications sidecar when the log has no `JustificationCite` Events.
     pub fn attach_justifications(&mut self, rows: Vec<Justification>) {
         self.justifications = rows;
     }
@@ -331,6 +374,8 @@ impl Runtime {
             tt,
             vt,
         });
+        let row = self.justifications.last().expect("just pushed").clone();
+        self.append_meta(Self::justification_op(&row));
         justification_id
     }
 
@@ -595,7 +640,10 @@ impl Runtime {
 
     /// Admit a user op, append, fold, cascade inverse-`knows` until idle or budget.
     pub fn emit(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
-        if matches!(op, Op::QuantumOutcome { .. }) {
+        if matches!(
+            op,
+            Op::QuantumOutcome { .. } | Op::JustificationCite { .. }
+        ) {
             return Err(RuntimeError::MetaOpRejected);
         }
         if let Op::Retract { fact_seq }
@@ -798,7 +846,8 @@ impl Runtime {
             | Op::Correct { .. }
             | Op::CorrectInterval { .. }
             | Op::Define { .. }
-            | Op::QuantumOutcome { .. } => return false,
+            | Op::QuantumOutcome { .. }
+            | Op::JustificationCite { .. } => return false,
         };
         self.fold.claim_supported_at(premise, tt, vt)
     }

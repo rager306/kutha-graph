@@ -9,7 +9,7 @@ use std::path::Path;
 const TERMS_REL: &str = "terms.jsonl";
 /// Outcomes sidecar lease. SoT is `Op::QuantumOutcome` on the event log (LOG-01 / D-02).
 pub const OUTCOMES_REL: &str = "quantum_outcomes.jsonl";
-/// Authoritative justification sidecar (not a droppable lease — D-F2).
+/// Justifications sidecar lease. SoT is `Op::JustificationCite` on the event log (LOG-02 / D-02).
 pub const JUSTIFICATIONS_REL: &str = "justifications.jsonl";
 
 /// File-backed semantic log + snapshot lease. WAL file is durability cousin, not Rocks-as-SoT.
@@ -98,7 +98,9 @@ fn finish_open(
     if !rt.log_has_quantum_outcome() {
         rt.attach_outcomes(outcomes);
     }
-    rt.attach_justifications(justifications);
+    if !rt.log_has_justification_cite() {
+        rt.attach_justifications(justifications);
+    }
     rt
 }
 

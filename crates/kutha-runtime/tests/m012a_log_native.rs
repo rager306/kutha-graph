@@ -43,6 +43,100 @@ fn discard_outcomes_sidecar_keeps_reconstructible_disposition() {
     );
 }
 
+#[test]
+fn discard_justifications_sidecar_keeps_admission_and_resume() {
+    let (rt, jid) = derive_pq_with_justification();
+    let fp = rt.fold().fingerprint();
+    let dir = std::env::temp_dir().join(format!("kutha-m012a-s01-j-{}", uuid_like()));
+    store::persist(&rt, &dir).unwrap();
+    std::fs::remove_file(dir.join(store::JUSTIFICATIONS_REL)).unwrap();
+    let opened = store::open(&dir).unwrap();
+    opened
+        .check_admission(&jid)
+        .expect("admission stays Ok after discarding justifications.jsonl");
+    assert!(
+        opened
+            .justification_records()
+            .iter()
+            .any(|j| j.justification_id == jid),
+        "justification_id present after open"
+    );
+    assert!(
+        opened
+            .log()
+            .iter()
+            .any(|e| matches!(e.op, Op::JustificationCite { .. })),
+        "open log must contain Op::JustificationCite"
+    );
+    assert_eq!(opened.fold().fingerprint(), fp);
+    let _ = std::fs::remove_dir_all(&dir);
+}
+
+fn derive_pq_with_justification() -> (Runtime, String) {
+    let mut rt = Runtime::default();
+    let a = rt.intern("a");
+    let b = rt.intern("b");
+    let p = rt.intern("P");
+    let q = rt.intern("Q");
+    let related = rt.intern("relatedTo");
+    let true_ = rt.intern("true");
+    let first = rt
+        .emit(Op::Assert {
+            subject: a,
+            relation: related,
+            object: p,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+        })
+        .unwrap();
+    let event_a = first.receipt.event_ids[0];
+    let seq_a = rt.fold().facts().last().unwrap().seq;
+    let claim_p = rt.fold().facts().last().unwrap().claim_id;
+    let second = rt
+        .emit(Op::Assert {
+            subject: b,
+            relation: related,
+            object: p,
+            valid_from: 2010,
+            valid_to: None,
+            claim: Some(claim_p),
+        })
+        .unwrap();
+    let event_b = second.receipt.event_ids[0];
+    let seq_b = rt.fold().facts().last().unwrap().seq;
+    let derived = rt
+        .emit(Op::Behavior {
+            name: "derive_pq".into(),
+            caused_by: claim_p,
+            rule_version: "r1".into(),
+            subject: q,
+            relation: related,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+        })
+        .unwrap();
+    let claim_q = derived.receipt.event_ids[0];
+    let t1 = rt
+        .fold()
+        .facts()
+        .iter()
+        .find(|f| f.claim_id == claim_q)
+        .unwrap()
+        .ingested_at;
+    let jid = rt.record_justification(
+        claim_q,
+        vec![claim_p],
+        vec![event_a, event_b],
+        vec![seq_a, seq_b],
+        "r1",
+        t1,
+        2017,
+    );
+    (rt, jid)
+}
+
 fn run_knows_budget(mut rt: Runtime) -> Runtime {
     let a = rt.intern("A");
     let b = rt.intern("B");
