@@ -64,7 +64,10 @@ Full detail: [milestones/v0.02-ROADMAP.md](./milestones/v0.02-ROADMAP.md) · req
   3. Content moved out of `AGENTS.md` (P0 inventory, literature/matrix detail, research notes, long subagent workflow, full tree) remains findable via one-line pointers in owning docs — no facts dropped (CTX-02)
   4. After the diet, language policy, two planes, D1–D10 guard, CE routing, commands, freeze, CBM/subagent rules, and working conventions still mean the same as before (CTX-03)
   5. Stale `L_delivery=M011-S03-done` (or equivalent) claims are removed or corrected in `AGENTS.md` and `docs/architecture/semantic-contract-validation.md` (CTX-04)
-**Plans**: TBD
+
+**Plans:** 2 plans
+- [ ] 09-01-PLAN.md — Operator H5 lease, dogfood ladder, in-place governor needles; ci HIGH 0
+- [ ] 09-02-PLAN.md — AGENTS.md diet, relocations, stale citation fixes; diet ledger
 
 ### Phase 10: ADR and roadmap correction
 
@@ -77,6 +80,7 @@ Full detail: [milestones/v0.02-ROADMAP.md](./milestones/v0.02-ROADMAP.md) · req
   2. Cells with `amend` carry a dated amendment or Open Question in the ADR body; every affected cell remains **Proposed**; ADR-000 D1–D10 lock wording is not silently rewritten (ADR-02)
   3. `.kutha/ROADMAP.md` “Later milestones” lists **M012a** (single-log SoT + stable references) before **M012**; M012 names the admission/rule-registry subset it thaws; **M002** is described as log durability first (Rocks for indexes only); benchmarks and a thin legal golden fixture appear earlier in the narrative — no new milestone is leased (ADR-03)
   4. `.kutha/dictionaries/honeycomb.yaml` and `docs/ADR/README.md` stay consistent with those amendments; map/delivery/capability stay orthogonal; no cell is promoted to Accepted (ADR-04)
+
 **Plans**: TBD
 
 ### Phase 11: Semantic governor
@@ -94,6 +98,7 @@ Full detail: [milestones/v0.02-ROADMAP.md](./milestones/v0.02-ROADMAP.md) · req
   6. `AGENTS.md` has an enforced size budget and forbids lease tokens so CTX-01/02 cannot regress without a HIGH (SEM-06)
   7. Product gaps F1–F8 appear as `disposition: deferred` invariants with `until` naming target milestones; they are recorded, not enforced as product fixes (SEM-07)
   8. Each new kind has a red-path pytest; `.kutha/META.md` and `docs/process/governor-intake.md` document intake; **Process** CHANGELOG records the change; `uv run kutha-gov ci` stays **0 HIGH** (SEM-08)
+
 **Plans**: TBD
 
 ## Progress
@@ -102,7 +107,7 @@ Full detail: [milestones/v0.02-ROADMAP.md](./milestones/v0.02-ROADMAP.md) · req
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 9. H5 lease + lean agent context | v0.03 | 0/TBD | Not started | - |
+| 9. H5 lease + lean agent context | v0.03 | 0/2 | Planned    |  |
 | 10. ADR and roadmap correction | v0.03 | 0/TBD | Not started | - |
 | 11. Semantic governor | v0.03 | 0/TBD | Not started | - |
 
