@@ -5,17 +5,17 @@ milestone_name: Lean context + semantic governor
 current_phase: 11
 current_phase_name: Semantic governor
 current_plan: Not started
-status: planning
-stopped_at: Completed 11-03-PLAN.md
-last_updated: "2026-09-30T10:25:58.750Z"
+status: verifying
+stopped_at: Completed 11-04-PLAN.md
+last_updated: "2026-09-30T11:05:42.289Z"
 last_activity: 2026-09-30
 last_activity_desc: Phase 10 complete, transitioned to Phase 11
-state_head: 84cd5ad1d37ca19cda0c81973a028eeed0d9e8fe
+state_head: 76942f226c4199366f89265db40870a74a9e6ce2
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 8
-  completed_plans: 7
+  completed_plans: 8
   percent: 67
 ---
 
@@ -38,7 +38,7 @@ Phase: 11 of 11 (Semantic governor)
 Current Plan: Not started
 Total Plans in Phase: 4
 Plan: 4 of 4
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-09-30 — Phase 10 complete, transitioned to Phase 11
 
 Progress: [███████░░░] 67%
@@ -87,6 +87,7 @@ Progress: [███████░░░] 67%
 | Phase 11-semantic-governor P01 | 16min | 3 tasks | 10 files |
 | Phase 11-semantic-governor P02 | 93min | 3 tasks | 8 files |
 | Phase 11 P03 | 42min | 3 tasks | 9 files |
+| Phase 11 P04 | 34min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -129,6 +130,10 @@ Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constrain
 - [Phase 11]: D-X1: process-scope ADR/lock refs resolve; ranges are endpoints; ADR-100 may dangle; D010-1/D050-2 are not locks
 - [Phase 11]: D-B1: agents-lean is AGENTS.md wc -l <= 110 plus file_absent of four lease needles
 - [Phase 11]: D-G1: fsm/.env.example budget 48; no local .env; ci skipped==0 for 35 checks
+- [Phase 11]: I-F4 until is STATE names M012 (rule registry / n-ary derivation), not M012a
+- [Phase 11]: I-F6 until names M012a; durability protocol waits until STATE names M002
+- [Phase 11]: h4-lease id kept; ROADMAP needle is the checked H5 checkbox only
+- [Phase 11]: green governor is not product correctness and not ADR Accepted
 
 ### Pending Todos
 
@@ -149,8 +154,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T10:25:58.666Z
-Stopped at: Completed 11-03-PLAN.md
+Last session: 2026-09-30T11:05:42.217Z
+Stopped at: Completed 11-04-PLAN.md
 Resume file: None
 Next: `/gsd-new-milestone` when ready. Freeze holds. Do not lease M002 without explicit operator intent.
 
