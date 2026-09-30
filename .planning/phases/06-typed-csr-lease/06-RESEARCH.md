@@ -414,27 +414,22 @@ impl TypedCsrLease {
 
 **If `fact_seq` is accepted by planner:** A2 becomes a locked implementation decision rather than an assumption.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Q1 — Must `TypedEdge` include `fact_seq` beyond D-T1’s `{relation, object, claim_id}`?**
-   - What we know: D-T1 requires at least those three fields. D-T2 says distinct edges when `claim_id` differs. M011 S01 independent supports **share** one `claim_id` across multiple Facts (`fold.rs` comment: “Multiple Facts may share one claim_id”). [VERIFIED: crates/kutha-runtime/src/fold.rs:71-73]
-   - What's unclear: Whether the CSR-01 fixture will only use different `claim_id`s (literal D-T2) or also exercise shared-`claim_id` supports.
-   - **Recommendation (planner lock):** Include `pub fact_seq: u64` on every typed edge; project **one edge per live Fact**; never dedup. Fixture may still use two `claim: None` Asserts (different claim ids) for D-T2 wording, but the type stays correct for S01. Sort key `(relation, object, claim_id, fact_seq)`.
+   - RESOLVED: Include `pub fact_seq: u64` on every typed edge; one edge per live Fact; sort key `(relation, object, claim_id, fact_seq)`. Locked for planner.
 
 2. **Q2 — Module file: extend `csr.rs` or add `typed_csr.rs`?**
-   - What we know: `csr.rs` is 51 lines; `lib.rs` already `pub use csr::CsrLease`.
-   - **Recommendation:** Keep in `csr.rs` and export `TypedCsrLease` / `TypedEdge` from `lib.rs`. Splitting is optional if the planner wants clearer file ownership — not required.
+   - RESOLVED: Keep in `csr.rs`; export from `lib.rs`. Split optional only if file ownership needs it.
 
 3. **Q3 — Honeycomb evidence: ADR-040, ADR-041, or both?**
-   - What we know: Both cells have `map: Proposed` and empty `evidence: []` today. [VERIFIED: .kutha/dictionaries/honeycomb.yaml ADR-040/041 blocks]
-   - **Recommendation:** Append both oracle fn names to **ADR-040** and **ADR-041** evidence lists; leave `map: Proposed`. Do not Accept cells.
+   - RESOLVED: Append both oracle fn names to **ADR-040** and **ADR-041** evidence; `map: Proposed` unchanged.
 
 4. **Q4 — Does CSR-02 oracle re-assert FF5 statute numbers or only thin untyped regression?**
-   - What we know: D-T4 allows reuse of FF5 / `csr_drop_rebuild_and_seek` behavior plus a thin regression in the new file. `ff5_as_of_t1_differs_from_as_of_t2_on_statute_log` already stays in `observe_cargo.required`.
-   - **Recommendation:** Implement `untyped_csr_neighbor_set_and_ff5_still_hold` as a **thin** test: emit two relations to same object, assert untyped `neighbors` is a single object id, rebuild lease after drop, and optionally call `csr_lease_at` cut agreement on a tiny statute-shaped pair — do **not** duplicate the full FF5 statute fixture unless cheap. Keep existing FF5 test untouched and still observed.
+   - RESOLVED: Thin `untyped_csr_neighbor_set_and_ff5_still_hold`; do not duplicate full FF5 statute fixture; existing FF5 test stays observed.
 
 5. **Q5 — Changelog / wave split?**
-   - **Recommendation:** Wave 1 = crate API + `m011_typed_csr.rs` + Product changelog. Wave 2 = fsm/checks/bridges/honeycomb + Process/Trajectory changelog + `kutha-gov ci`. Matches Phase 5.
+   - RESOLVED: Wave 1 = crate+oracles+Product changelog; Wave 2 = GATE YAML+Process/Trajectory+ci (Phase 5 pattern).
 
 ## Environment Availability
 
