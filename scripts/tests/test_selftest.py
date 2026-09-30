@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import atexit
 import hashlib
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -29,6 +31,7 @@ from kutha_gov.selftest import (  # noqa: E402
 
 def _write_mini(checks: list[dict[str, object]], files: dict[str, str] | None = None) -> Path:
     raw = tempfile.mkdtemp(prefix="kutha-selftest-mini-")
+    atexit.register(shutil.rmtree, raw, ignore_errors=True)
     root = Path(raw)
     (root / ".kutha" / "dictionaries").mkdir(parents=True)
     (root / "docs" / "ADR").mkdir(parents=True)

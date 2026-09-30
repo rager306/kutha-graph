@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import atexit
+import shutil
 import sys
 import tempfile
 import unittest
@@ -534,6 +536,7 @@ class HarnessTests(unittest.TestCase):
 
 def _rust_tree(files: dict[str, str]) -> Path:
     raw = tempfile.mkdtemp(prefix="kutha-rust-test-")
+    atexit.register(shutil.rmtree, raw, ignore_errors=True)
     root = Path(raw)
     for rel, text in files.items():
         path = root / rel

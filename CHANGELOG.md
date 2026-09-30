@@ -23,6 +23,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Fixed
 
 - Live-repo selftest found no vacuous named test and no vacuous YAML row (`docs-coupling` skips: depends on the live git diff).
+- Harness tests no longer leak `/tmp/kutha-selftest-mini-*` and `/tmp/kutha-rust-test-*` directories (cleanup registered with `atexit`).
 
 ### Trajectory
 
