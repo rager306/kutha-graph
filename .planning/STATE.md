@@ -4,19 +4,19 @@ milestone: v0.04
 milestone_name: Single-log SoT + stable references
 current_phase: 14
 current_phase_name: Idempotent ingest
-current_plan: 2
+current_plan: 3
 status: executing
-stopped_at: Completed 14-01-PLAN.md
-last_updated: "2026-09-30T18:35:12.699Z"
+stopped_at: Completed 14-02-PLAN.md
+last_updated: "2026-09-30T18:38:51.033Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 14 plans 14-01..14-03 written
-state_head: 3a2f45d804dbec6598a83134e641936e72a26726
+state_head: b6f6fd89f01fb5126008dd463329eb23f1411d41
 progress:
   total_phases: 5
   completed_phases: 13
   total_plans: 9
-  completed_plans: 7
-  percent: 78
+  completed_plans: 8
+  percent: 89
 ---
 
 # Project State
@@ -34,14 +34,14 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 
 ## Current Position
 
-Current Plan: 2
+Current Plan: 3
 Total Plans in Phase: 3
 Phase: 14 of 16 (Idempotent ingest)
 Plan: 3 of 3
 Status: executing
 Last activity: 2026-10-01 — Phase 14 plans 14-01..14-03 written
 
-Progress: [████████░░] 78% (v0.04 plans executed)
+Progress: [█████████░] 89% (v0.04 plans executed)
 
 ## Performance Metrics
 
@@ -82,6 +82,7 @@ Progress: [████████░░] 78% (v0.04 plans executed)
 | Phase 13 P02 | 4 | 2 tasks | 6 files |
 | Phase 13 P03 | 5 | 2 tasks | 6 files |
 | Phase 14 P01 | 8 | 2 tasks | 20 files |
+| Phase 14 P02 | 4 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -110,6 +111,8 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 14]: Identity for the delivery-key gate is subject, relation, object, valid_from, valid_to, claim, polarity, and delivery_key
 - [Phase 14]: Retracted original still returns that EventId; do not mint a replacement support
 - [Phase 14]: SupportPolarity lands with default None so Plan 14-02 does not reshape Assert again
+- [Phase 14]: Residuals copy polarity; object-changing Correct/CorrectInterval rows flip when old polarity is Some
+- [Phase 14]: e2e t1 Asserts store Positive so t2 interior not-P is Negative without an opposite-of dictionary
 
 ### Pending Todos
 
@@ -132,8 +135,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T18:34:46.143Z
-Stopped at: Completed 14-01-PLAN.md
+Last session: 2026-09-30T18:38:49.667Z
+Stopped at: Completed 14-02-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 13`. Harness lease is already S02. Freeze holds. Do not lease M002 without explicit operator intent.
 
