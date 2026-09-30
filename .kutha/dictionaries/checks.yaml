@@ -52,7 +52,17 @@ checks:
   - id: adr-status
     description: every docs/ADR/ADR-*.md has a known Status tag
     selftest:
-      skip: "markdown_heading_tag has no derived mutation"
+      mutations:
+        # A honeycomb ADR claiming Accepted must trip forbid_accepted_prefix.
+        - op: replace_regex
+          path: docs/ADR/ADR-013-bitemporal-facts-invalidation.md
+          pattern: '(?m)^\*\*Proposed\*\*'
+          with: "**Accepted**"
+        # An unknown Status tag must trip the allowed-tag set.
+        - op: replace_regex
+          path: docs/ADR/ADR-013-bitemporal-facts-invalidation.md
+          pattern: '(?m)^\*\*Proposed\*\*'
+          with: "**Maybe**"
     steps:
       - kind: markdown_heading_tag
         glob: docs/ADR/ADR-*.md
@@ -80,7 +90,12 @@ checks:
   - id: idle-delivery-closed
     description: Active Milestone None requires L_delivery token ending in -closed
     selftest:
-      skip: "when_match_then_match has no derived mutation"
+      mutations:
+        # Idle STATE (Active Milestone None) while L_delivery is not *-closed.
+        - op: replace_regex
+          path: .kutha/STATE.md
+          pattern: '(?m)^\*\*Active Milestone:\*\*\s*\S+\s*$'
+          with: "**Active Milestone:** None"
     steps:
       - kind: when_match_then_match
         path: .kutha/STATE.md
@@ -144,7 +159,12 @@ checks:
   - id: observe-required-fn
     description: FSM observe_cargo required names exist as Rust tests (static, not SoT)
     selftest:
-      skip: "yaml_needles_in_glob has no derived mutation"
+      mutations:
+        # A required observe name that no Rust test defines must trip the check.
+        - op: replace_regex
+          path: .kutha/dictionaries/fsm.yaml
+          pattern: '- ff6_unknown_relation_does_not_append'
+          with: "- selftest_no_such_rust_test"
     steps:
       - kind: yaml_needles_in_glob
         path: .kutha/dictionaries/fsm.yaml
@@ -546,7 +566,17 @@ checks:
   - id: state-readme
     description: README shows the same Active Milestone and Phase as STATE
     selftest:
-      skip: "pointer_in_other_file has no derived mutation"
+      mutations:
+        # README must show STATE's Active Milestone.
+        - op: replace_regex
+          path: README.md
+          pattern: 'M011'
+          with: "M999"
+        # README must show STATE's Phase.
+        - op: replace_regex
+          path: README.md
+          pattern: 'H5'
+          with: "H9"
     steps:
       - kind: pointer_in_other_file
         path: .kutha/STATE.md

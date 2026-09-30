@@ -10,6 +10,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `kutha-gov selftest` copies the tree once, mutates only that copy, and records FSM evidence `h5_selftest`. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
 - Every live `checks.yaml` row is mutation-proved or skip-reasoned. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
+- Tracer skip placeholders replaced by explicit mutations for `adr-status`, `idle-delivery-closed`, `observe-required-fn`, and `state-readme`; only `docs-coupling` still skips (live git diff). Narrative remains Phase 11 SEM-08.
 
 ### Trajectory
 
