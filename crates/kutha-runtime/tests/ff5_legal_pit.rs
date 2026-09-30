@@ -4,7 +4,7 @@
 use kutha_common::Op;
 use kutha_runtime::Runtime;
 
-/// Year-like valid-time instants for a statute-shaped fixture (not wall-clock).
+/// YearCe valid-time instants (`VALID_TIME_SCALE` = `TimeScale::YearCe`); not Unix epoch.
 const T_OLD: u64 = 2015;
 const T_NEW: u64 = 2021;
 const VF_FIRST: u64 = 2010;

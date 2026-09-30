@@ -7,10 +7,33 @@ pub type EventId = Uuid;
 /// Interned term (hot-path integer; strings live in the dictionary lease).
 pub type TermId = u32;
 
-/// Valid-time instant as an opaque integer clock (world).
+/// Declared scale for fixture clocks (TIME-01 / F7). Not a wall calendar.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TimeScale {
+    /// One integer unit is one Gregorian year CE. Fixture 2017 means year 2017 CE, not Unix seconds.
+    YearCe,
+    /// Log sequence assigned at ingest (`Runtime` next_tt), not wall-clock.
+    LogSequence,
+}
+
+/// Valid-time scale used by fixtures: Gregorian year CE, not Unix epoch.
+pub const VALID_TIME_SCALE: TimeScale = TimeScale::YearCe;
+
+/// Transaction-time scale used by fixtures: log sequence, not wall-clock.
+/// TT-to-wall mapping is out of M012a S05.
+pub const TRANSACTION_TIME_SCALE: TimeScale = TimeScale::LogSequence;
+
+/// Valid-time instant.
+///
+/// Fixtures use [`VALID_TIME_SCALE`] (`TimeScale::YearCe`): one integer unit is
+/// one Gregorian year CE. `2017` means year 2017 CE, not Unix seconds.
 pub type ValidTime = u64;
 
-/// Transaction-time as log sequence (system).
+/// Transaction-time.
+///
+/// Fixtures use [`TRANSACTION_TIME_SCALE`] (`TimeScale::LogSequence`): assigned
+/// at ingest (`Runtime` next_tt), not wall-clock. A TT-to-wall calendar map is
+/// out of M012a S05.
 pub type TransactionTime = u64;
 
 /// Durable progress encoding for a quantum (OUT-01 / D-O2). Call `Ok` is not completion.
