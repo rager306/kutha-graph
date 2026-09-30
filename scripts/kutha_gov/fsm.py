@@ -26,6 +26,7 @@ ALLOWED_STATE_KINDS: frozenset[str] = frozenset(
         "noop",
         "require_file",
         "run_checks",
+        "run_selftest",
         "observe_cargo",
         "emit_log",
         "emit_tenant",
@@ -223,6 +224,26 @@ def _execute(
         selected = ordered[:budget]
         outcome.skipped = len(ordered) - len(selected)
         outcome.results = [_run_one(chk, ctx) for _, chk in selected]
+        return "done"
+    if kind == "run_selftest":
+        from kutha_gov.selftest import SUCCESS, run_selftest
+
+        rows, _code = run_selftest(ctx.root)
+        proved = sum(1 for row in rows if row.status in SUCCESS)
+        total = len(rows)
+        outcome.evidence.append(("h5_selftest", f"{proved}/{total}"))
+        for row in rows:
+            if row.status in SUCCESS:
+                continue
+            extra = f" ({row.reason})" if row.reason else ""
+            outcome.findings.append(
+                Finding(
+                    "selftest",
+                    Severity.HIGH,
+                    "selftest",
+                    f"{row.check_id} is {row.status}{extra}",
+                )
+            )
         return "done"
     if kind == "observe_cargo":
         from kutha_gov.observe import run_cargo_observation

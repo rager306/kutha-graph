@@ -52,6 +52,7 @@ class FsmTests(unittest.TestCase):
                 "load_bridges",
                 "load_honeycomb",
                 "run_checks",
+                "run_selftest",
                 "observe_cargo",
                 "emit",
                 "emit_tenant",
@@ -65,6 +66,10 @@ class FsmTests(unittest.TestCase):
         self.assertIn(("cargo", "ok"), outcome.observations)
         self.assertIn(("tenant", "ok"), outcome.observations)
         self.assertIn(("ff5_as_of_t1_differs_from_as_of_t2_on_statute_log", "ok"), outcome.evidence)
+        self.assertTrue(
+            any(rel == "h5_selftest" for rel, _obj in outcome.evidence),
+            msg=outcome.evidence,
+        )
 
     def test_fsm_transition_keys_are_not_yaml_booleans(self) -> None:
         machine = load_machine(ROOT)

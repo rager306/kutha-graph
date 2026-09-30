@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-30 — Process: vacuity selftest runner
+
+### Process
+
+- `kutha-gov selftest` copies the tree once, mutates only that copy, and records FSM evidence `h5_selftest`. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
+
+### Trajectory
+
+- Honeycomb stays Proposed. Green governor is not ADR Accepted and not L_capability.
+
 ## 2026-09-30 — Process: semantic-gap review artifact and M012a order
 
 ### Process

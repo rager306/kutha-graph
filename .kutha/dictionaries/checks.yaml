@@ -49,6 +49,8 @@ checks:
 
   - id: adr-status
     description: every docs/ADR/ADR-*.md has a known Status tag
+    selftest:
+      skip: "markdown_heading_tag has no derived mutation"
     steps:
       - kind: markdown_heading_tag
         glob: docs/ADR/ADR-*.md
@@ -75,6 +77,8 @@ checks:
 
   - id: idle-delivery-closed
     description: Active Milestone None requires L_delivery token ending in -closed
+    selftest:
+      skip: "when_match_then_match has no derived mutation"
     steps:
       - kind: when_match_then_match
         path: .kutha/STATE.md
@@ -137,6 +141,8 @@ checks:
 
   - id: observe-required-fn
     description: FSM observe_cargo required names exist as Rust tests (static, not SoT)
+    selftest:
+      skip: "yaml_needles_in_glob has no derived mutation"
     steps:
       - kind: yaml_needles_in_glob
         path: .kutha/dictionaries/fsm.yaml
@@ -537,6 +543,8 @@ checks:
 
   - id: state-readme
     description: README shows the same Active Milestone and Phase as STATE
+    selftest:
+      skip: "pointer_in_other_file has no derived mutation"
     steps:
       - kind: pointer_in_other_file
         path: .kutha/STATE.md
@@ -589,6 +597,8 @@ checks:
 
   - id: docs-coupling
     description: plane-bearing git diffs must include the owning docs (pre-commit / auto worktree)
+    selftest:
+      skip: "depends on the live git diff"
     steps:
       - kind: git_path_implies
         when_any: ["crates/**/*.rs"]

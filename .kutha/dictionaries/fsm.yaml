@@ -20,6 +20,7 @@ states:
   load_bridges: { kind: require_file, path: .kutha/dictionaries/bridges.yaml }
   load_honeycomb: { kind: require_file, path: .kutha/dictionaries/honeycomb.yaml }
   run_checks: { kind: run_checks }
+  run_selftest: { kind: run_selftest }
   observe_cargo:
     kind: observe_cargo
     bin: cargo
@@ -78,7 +79,8 @@ transitions:
   - { from: load_bridges, event: fail, to: fail }
   - { from: load_honeycomb, event: ok, to: run_checks }
   - { from: load_honeycomb, event: fail, to: fail }
-  - { from: run_checks, event: done, to: observe_cargo }
+  - { from: run_checks, event: done, to: run_selftest }
+  - { from: run_selftest, event: done, to: observe_cargo }
   - { from: observe_cargo, event: done, to: emit }
   - { from: emit, event: ok, to: emit_tenant }
   - { from: emit, event: fail, to: fail }

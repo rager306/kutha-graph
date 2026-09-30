@@ -1,4 +1,4 @@
-"""CLI: uv run kutha-gov [list|ci|explain NAME|fsm|precommit|map]. Python >=3.13."""
+"""CLI: uv run kutha-gov [list|ci|explain NAME|fsm|precommit|map|selftest]. Python >=3.13."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ from kutha_gov.dictionary import DICT_REL, DictCheck
 from kutha_gov.fsm import FSM_REL, load_machine, run_quantum
 from kutha_gov.honeycomb import MAP_REL, format_map, load_map, neighborhood, resolve_cell_id
 from kutha_gov.protocol import CheckResult, Context, Finding, Severity
+from kutha_gov.selftest import format_row, run_selftest
 from kutha_gov.time_log import LOG_REL, fold_log
 
 
@@ -171,6 +172,8 @@ def cmd_ci(ctx: Context, *, budget: int) -> int:
         rung = "H3"
     if any(rel.startswith("h4_") for rel, _obj in outcome.evidence):
         rung = "H4"
+    if any(rel == "h5_selftest" for rel, _obj in outcome.evidence):
+        rung = "H5"
     print(
         f"\nharness: {outcome.high} HIGH, {outcome.low} LOW, "
         f"{len(outcome.results)} checks  ({rung} dogfood)"
@@ -236,6 +239,18 @@ def cmd_precommit(ctx: Context, *, check_id: str | None) -> int:
         ctx,
         header="precommit: checks only (no cargo quantum, no JSONL)",
     )
+
+
+def cmd_selftest(root: Path, *, check_id: str | None) -> int:
+    if check_id:
+        checks = get_checks(root)
+        if check_id not in checks:
+            print(f"unknown check: {check_id}", file=sys.stderr)
+            return 2
+    rows, code = run_selftest(root, check_id=check_id)
+    for row in rows:
+        print(format_row(row))
+    return code
 
 
 def cmd_fsm(root: Path) -> int:
@@ -305,7 +320,7 @@ def main(argv: list[str] | None = None) -> int:
         "--check",
         default=None,
         metavar="ID",
-        help="Run one check id (json/precommit; law-nexus --check)",
+        help="Run one check id (json/precommit/selftest; law-nexus --check)",
     )
     parser.add_argument(
         "--format",
@@ -317,7 +332,18 @@ def main(argv: list[str] | None = None) -> int:
         "command",
         nargs="?",
         default="ci",
-        choices=("list", "ci", "explain", "json", "fold", "py", "fsm", "precommit", "map"),
+        choices=(
+            "list",
+            "ci",
+            "explain",
+            "json",
+            "fold",
+            "py",
+            "fsm",
+            "precommit",
+            "map",
+            "selftest",
+        ),
     )
     parser.add_argument("name", nargs="?", help="check name for explain, or cell id for map")
     args = parser.parse_args(argv)
@@ -325,8 +351,8 @@ def main(argv: list[str] | None = None) -> int:
     load_dotenv(root)
     fail_on_warn = args.fail_on_warn or env_flag(ENV_FAIL_ON_WARN)
     ctx = Context(root=root, fail_on_warn=fail_on_warn)
-    if args.check and args.command not in {"json", "precommit"}:
-        print("--check is only valid with json or precommit", file=sys.stderr)
+    if args.check and args.command not in {"json", "precommit", "selftest"}:
+        print("--check is only valid with json, precommit, or selftest", file=sys.stderr)
         return 2
     if args.command == "list":
         return cmd_list(root)
@@ -346,6 +372,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_fsm(root)
     if args.command == "map":
         return cmd_map(root, args.name, as_json=args.format == "json")
+    if args.command == "selftest":
+        return cmd_selftest(root, check_id=args.check)
     if args.command == "fold":
         picture = fold_log(root / LOG_REL)
         print(
