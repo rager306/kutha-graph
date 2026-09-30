@@ -11,10 +11,7 @@ pub struct CsrLease {
 impl CsrLease {
     pub fn from_fold(fold: &GraphFold, tt: u64, vt: u64, vertex_count: usize) -> Self {
         let mut buckets: Vec<Vec<TermId>> = vec![Vec::new(); vertex_count];
-        for f in fold.facts() {
-            if !f.is_live_at(tt, vt) {
-                continue;
-            }
+        for f in fold.live_facts_at(tt, vt) {
             let s = f.subject as usize;
             if s < buckets.len() {
                 buckets[s].push(f.object());
@@ -72,10 +69,7 @@ impl TypedCsrLease {
     /// Keeps every live Fact as its own edge (no object-only dedup).
     pub fn from_fold(fold: &GraphFold, tt: u64, vt: u64, vertex_count: usize) -> Self {
         let mut buckets: Vec<Vec<TypedEdge>> = vec![Vec::new(); vertex_count];
-        for f in fold.facts() {
-            if !f.is_live_at(tt, vt) {
-                continue;
-            }
+        for f in fold.live_facts_at(tt, vt) {
             let s = f.subject as usize;
             if s < buckets.len() {
                 buckets[s].push(TypedEdge {

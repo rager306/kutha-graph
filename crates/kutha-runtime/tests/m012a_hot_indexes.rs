@@ -228,3 +228,66 @@ fn snapshot_fold_rebuilds_hot_maps_from_facts() {
 
     let _ = fs::remove_dir_all(&dir);
 }
+
+fn decoy_heavy_runtime(decoys: u32) -> (Runtime, EventId, TermId, TermId, TermId) {
+    let mut rt = Runtime::default();
+    let rel = rt.intern("relatedTo");
+    for i in 0..decoys {
+        let s = rt.intern(&format!("csr-decoy-s-{i}"));
+        let o = rt.intern(&format!("csr-decoy-o-{i}"));
+        emit_related_to(&mut rt, s, rel, o, 3000);
+    }
+    let a = rt.intern("Alice");
+    let b = rt.intern("Bob");
+    let live = emit_related_to(&mut rt, a, rel, b, 2017);
+    (rt, live, a, rel, b)
+}
+
+#[test]
+fn discard_csr_lease_and_snapshot_rebuild_keeps_as_of() {
+    let (rt, live_claim, a, rel, b) = decoy_heavy_runtime(32);
+    let mut before = rt.fold().as_of(2017);
+    before.sort_unstable();
+    let fp = rt.fold().fingerprint();
+    assert!(rt.fold().claim_supported_at(live_claim, u64::MAX, 2017));
+    assert!(before.contains(&(a, rel, b)));
+
+    {
+        let _csr = rt.csr_lease_at(u64::MAX, 2017);
+        let _typed = rt.typed_csr_lease_at(u64::MAX, 2017);
+    }
+
+    let mut after_drop = rt.fold().as_of(2017);
+    after_drop.sort_unstable();
+    assert_eq!(after_drop, before);
+    assert_eq!(rt.fold().fingerprint(), fp);
+    assert!(rt.fold().claim_supported_at(live_claim, u64::MAX, 2017));
+
+    let dir = temp_dir("discard-csr");
+    store::persist(&rt, &dir).unwrap();
+    let snap: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(dir.join("snapshot.json")).unwrap()).unwrap();
+    let fold = snap.get("fold").expect("snapshot fold object");
+    assert!(fold.get("facts").is_some());
+    assert!(fold.get("next_seq").is_some());
+    let entries: Vec<_> = fs::read_dir(&dir)
+        .unwrap()
+        .map(|e| e.unwrap().file_name())
+        .collect();
+    assert!(
+        entries.iter().all(|n| {
+            let s = n.to_string_lossy();
+            s != "csr" && !s.starts_with("csr.")
+        }),
+        "CSR must not be a persist sidecar SoT: {entries:?}"
+    );
+
+    let opened = store::open(&dir).expect("persist then open");
+    let mut opened_as_of = opened.fold().as_of(2017);
+    opened_as_of.sort_unstable();
+    assert_eq!(opened_as_of, before);
+    assert_eq!(opened.fold().fingerprint(), fp);
+    opened.replay_check().unwrap();
+
+    let _ = fs::remove_dir_all(&dir);
+}
