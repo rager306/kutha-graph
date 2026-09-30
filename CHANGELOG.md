@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Process: governor observes DUR-01..03 and TIME-01..02
+
+### Process
+
+### Added
+
+- Governor bridges `B-m012a-s04` / `m012a-s04-verify-persist` and `B-m012a-s05` / `m012a-s05-time-scale`, plus five `observe_cargo.required` names for the DUR and TIME oracles. LOG, REF, and ING names stay required.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. ADR-012 and ADR-013 evidence lists include the new names. Active Slice remains **S04**. Freeze until M002 unchanged.
+
 ## 2026-10-01 — Product: declared YearCe valid-time and log-sequence transaction-time
 
 ### Product

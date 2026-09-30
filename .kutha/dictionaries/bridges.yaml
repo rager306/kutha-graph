@@ -80,3 +80,13 @@ bridges:
     claim: "Identical keyed Assert retry does not mint a second support; claim identity is distinct from the support EventId; conflict_report_at partitions by stored polarity"
     cites: "crates/kutha-runtime/tests/m012a_idempotent_ingest.rs"
     check: m012a-s03-idempotent-ingest
+
+  - id: B-m012a-s04
+    claim: "open rejects a tampered snapshot via replay_check; persist replaces events.jsonl by same-directory rename; Define ids stay name-stable across persist/open"
+    cites: "crates/kutha-runtime/tests/m012a_verify_persist.rs"
+    check: m012a-s04-verify-persist
+
+  - id: B-m012a-s05
+    claim: "Fixtures treat 2015/2017/2021 as YearCe valid-time; Event.ingested_at is log sequence, not wall-clock"
+    cites: "crates/kutha-runtime/tests/m012a_time_scale.rs"
+    check: m012a-s05-time-scale

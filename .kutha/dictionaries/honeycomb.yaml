@@ -106,7 +106,7 @@ cells:
     capability: none
     depends_on: [ADR-000, ADR-010]
     locks: [D1, D5]
-    evidence: [e2e_incremental_matches_reconstruct_after_discarding_leases]
+    evidence: [e2e_incremental_matches_reconstruct_after_discarding_leases, open_rejects_tampered_snapshot, persist_replaces_events_jsonl_atomically, define_ids_stable_across_persist_open]
 
   - id: ADR-013
     axis: Time
@@ -125,6 +125,8 @@ cells:
       - identical_assert_same_delivery_key_does_not_mint_second_support
       - claim_id_distinct_from_support_slot
       - conflict_report_at_partitions_by_stored_polarity
+      - fixture_years_map_to_year_ce_scale
+      - transaction_time_is_log_sequence
 
   - id: ADR-014
     axis: Time

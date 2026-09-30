@@ -430,6 +430,29 @@ checks:
         category: m012a-s03
         message: "M012a S03 idempotent-ingest tests missing {missing}"
 
+  - id: m012a-s04-verify-persist
+    description: M012a S04 — verify-on-open, atomic events.jsonl persist, stable Define ids
+    steps:
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m012a_verify_persist.rs
+        tests:
+          - open_rejects_tampered_snapshot
+          - persist_replaces_events_jsonl_atomically
+          - define_ids_stable_across_persist_open
+        category: m012a-s04
+        message: "M012a S04 verify-persist tests missing {missing}"
+
+  - id: m012a-s05-time-scale
+    description: M012a S05 — YearCe valid-time and log-sequence transaction-time
+    steps:
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m012a_time_scale.rs
+        tests:
+          - fixture_years_map_to_year_ce_scale
+          - transaction_time_is_log_sequence
+        category: m012a-s05
+        message: "M012a S05 time-scale tests missing {missing}"
+
   - id: h4-lease
     description: H5 dogfood is closed without promoting ADR-090
     steps:
