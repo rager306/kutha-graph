@@ -221,3 +221,8 @@ None beyond the plan register (T-11-05…T-11-07, T-11-SC). No new packages, end
 ---
 *Phase: 11-semantic-governor*
 *Completed: 2026-09-30*
+
+## Self-Check: PASSED
+
+- `scripts/kutha_gov/rust_source.py` and `11-02-SUMMARY.md` exist
+- Commits `08162ee`, `c878c05`, `a59d555` exist on `main`
