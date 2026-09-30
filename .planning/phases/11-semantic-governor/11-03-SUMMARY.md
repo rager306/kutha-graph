@@ -151,7 +151,7 @@ status: complete
 2. **Task 2: Complete cite-lease steps and add refs_resolve** - `53e03cb` (feat)
 3. **Task 3: agents-lean budget, ci budget 48, wave-close** - `84cd5ad` (feat)
 
-**Plan metadata:** pending `docs(11-03): complete semantic citation checks plan`
+**Plan metadata:** `docs(11-03): complete semantic citation checks plan`
 
 _Note: `workflow.tdd_mode` is false; plan type is `execute`. RED/GREEN were not split into `test(11-03)` / `feat(11-03)` commits._
 
