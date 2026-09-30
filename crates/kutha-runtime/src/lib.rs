@@ -13,7 +13,7 @@ pub mod store;
 mod tenant;
 mod wal;
 
-pub use csr::CsrLease;
+pub use csr::{CsrLease, TypedCsrLease, TypedEdge};
 pub use fold::{Fact, GraphFold};
 pub use leapfrog::{leapfrog_intersect, AdjacencyIter};
 pub use log::EventLog;

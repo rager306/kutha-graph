@@ -1,5 +1,5 @@
 use crate::allow::load_allowed_names;
-use crate::csr::CsrLease;
+use crate::csr::{CsrLease, TypedCsrLease};
 use crate::fold::GraphFold;
 use crate::log::EventLog;
 use crate::receipt::{digest_to_hex, QuantumReceipt};
@@ -324,6 +324,11 @@ impl Runtime {
     /// CSR lease at an explicit cut. Callers must name valid-time (no silent “now”).
     pub fn csr_lease_at(&self, tt: u64, vt: u64) -> CsrLease {
         CsrLease::from_fold(&self.fold, tt, vt, self.dict.len())
+    }
+
+    /// Typed CSR lease at an explicit cut (labels + support multiplicity). Droppable; not SoT.
+    pub fn typed_csr_lease_at(&self, tt: u64, vt: u64) -> TypedCsrLease {
+        TypedCsrLease::from_fold(&self.fold, tt, vt, self.dict.len())
     }
 
     fn next_tt(&mut self) -> u64 {
