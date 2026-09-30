@@ -103,11 +103,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-30T01:35:00.000Z
-Stopped at: Phase 6 research complete
-Resume file: .planning/phases/06-typed-csr-lease/06-RESEARCH.md
-Next: `/gsd-plan-phase 6` (CONTEXT + RESEARCH ready; S06 leased)
+Last session: 2026-09-30T01:45:00.000Z
+Stopped at: Phase 6 plans complete
+Resume file: .planning/phases/06-typed-csr-lease/06-01-PLAN.md
+Next: `/gsd-execute-phase 6` (S06 leased)
 
 ## Operator Next Steps
 
-- Phase 6 is executable under Active Slice **S06**. Plan next (`/gsd-plan-phase 6`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
+- Phase 6 plans ready under Active Slice **S06**. Execute next (`/gsd-execute-phase 6`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
