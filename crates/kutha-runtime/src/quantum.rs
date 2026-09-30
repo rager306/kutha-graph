@@ -790,26 +790,32 @@ impl Runtime {
         Ok(rebuilt)
     }
 
-    /// Lineage digest over Behavior rows in log order (ADR-060 obligation 2).
-    /// Mix is `(event.id, caused_by, name, rule_version)` with length-prefixed strings.
+    /// Lineage digest over Behavior plus log-native outcome/cite Events (ADR-060 obligation 2, LOG-03).
+    /// Behavior mix is `(event.id, caused_by, name, rule_version)` with length-prefixed strings.
+    /// QuantumOutcome and JustificationCite mix `Event::digest_bytes` in the same log walk.
     /// Does not include Fact triples and is not called from [`Self::replay_check`].
     pub fn provenance_fingerprint(&self) -> [u8; 32] {
         let mut h = Sha256::new();
-        h.update(b"kutha-prov-v1");
+        h.update(b"kutha-prov-log-native");
         for e in self.log.iter() {
-            if let Op::Behavior {
-                name,
-                caused_by,
-                rule_version,
-                ..
-            } = &e.op
-            {
-                h.update(e.id.as_bytes());
-                h.update(caused_by.as_bytes());
-                h.update((name.len() as u64).to_le_bytes());
-                h.update(name.as_bytes());
-                h.update((rule_version.len() as u64).to_le_bytes());
-                h.update(rule_version.as_bytes());
+            match &e.op {
+                Op::Behavior {
+                    name,
+                    caused_by,
+                    rule_version,
+                    ..
+                } => {
+                    h.update(e.id.as_bytes());
+                    h.update(caused_by.as_bytes());
+                    h.update((name.len() as u64).to_le_bytes());
+                    h.update(name.as_bytes());
+                    h.update((rule_version.len() as u64).to_le_bytes());
+                    h.update(rule_version.as_bytes());
+                }
+                Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {
+                    h.update(e.digest_bytes());
+                }
+                _ => {}
             }
         }
         h.finalize().into()

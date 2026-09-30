@@ -104,6 +104,46 @@ fn discard_justifications_sidecar_keeps_admission_and_resume() {
     let _ = std::fs::remove_dir_all(&pdir);
 }
 
+#[test]
+fn provenance_fingerprint_moves_when_log_native_record_bytes_change() {
+    let rt = run_knows_budget(Runtime::default());
+    let mut cloned = rt.log().as_slice().to_vec();
+    let mut flipped = false;
+    for e in &mut cloned {
+        if let Op::QuantumOutcome {
+            receipt_digest_hex, ..
+        } = &mut e.op
+        {
+            if receipt_digest_hex.is_empty() {
+                continue;
+            }
+            let last = receipt_digest_hex.pop().expect("hex char");
+            receipt_digest_hex.push(if last == '0' { '1' } else { '0' });
+            flipped = true;
+            break;
+        }
+    }
+    assert!(flipped, "clone must contain a QuantumOutcome with receipt bytes");
+    let rt2 = Runtime::from_dict_and_events(
+        rt.dictionary().strings().to_vec(),
+        cloned,
+        rt.max_cascade,
+    )
+    .unwrap();
+    assert_eq!(
+        rt.fold().fingerprint(),
+        rt2.fold().fingerprint(),
+        "log-native field flip must not move the fold fingerprint"
+    );
+    assert_ne!(
+        rt.provenance_fingerprint(),
+        rt2.provenance_fingerprint(),
+        "provenance mix must move when QuantumOutcome bytes change"
+    );
+    rt.replay_check().unwrap();
+    rt2.replay_check().unwrap();
+}
+
 fn derive_pq_with_justification() -> (Runtime, String) {
     let mut rt = Runtime::default();
     let a = rt.intern("a");
