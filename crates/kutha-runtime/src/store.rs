@@ -1,4 +1,6 @@
-use crate::quantum::{cascade_limit, Justification, PersistedQuantumOutcome, Runtime, RuntimeError};
+use crate::quantum::{
+    cascade_limit, Justification, PersistedQuantumOutcome, Runtime, RuntimeError,
+};
 use crate::snapshot::Snapshot;
 use crate::wal;
 use kutha_common::{Event, Op};
@@ -18,11 +20,7 @@ pub fn persist(runtime: &Runtime, dir: &Path) -> std::io::Result<()> {
     fs::create_dir_all(dir)?;
     let events = encoded_log(runtime);
     wal::append_events(&dir.join("events.wal"), &events)?;
-    let mut events_file = File::create(dir.join("events.jsonl"))?;
-    for e in &events {
-        serde_json::to_writer(&mut events_file, e).map_err(json_err)?;
-        events_file.write_all(b"\n")?;
-    }
+    replace_events_jsonl(dir, &events)?;
     write_terms(dir, runtime.dictionary().strings())?;
     let snap = runtime.snapshot();
     let mut sf = File::create(dir.join("snapshot.json"))?;
@@ -35,13 +33,41 @@ pub fn persist(runtime: &Runtime, dir: &Path) -> std::io::Result<()> {
     Ok(())
 }
 
-/// Test seam (DUR-02): write a same-directory temp sibling, then return Err before rename.
-/// RED stub: does not fail, so `persist_replaces_events_jsonl_atomically` stays red until GREEN.
+const EVENTS_JSONL: &str = "events.jsonl";
+const EVENTS_JSONL_TMP: &str = "events.jsonl.tmp";
+
+/// Replace `events.jsonl` by writing a same-directory temp file, syncing, then rename.
+/// `persist` returns Ok only after this rename (DUR-02).
+fn replace_events_jsonl(dir: &Path, events: &[Event]) -> std::io::Result<()> {
+    write_events_jsonl_temp(dir, events, true)
+}
+
+/// Test seam (DUR-02): write the temp sibling then return Err without renaming dest.
 pub fn abort_events_jsonl_replace_before_rename(
     dir: &Path,
     events: &[Event],
 ) -> std::io::Result<()> {
-    let _ = (dir, events);
+    write_events_jsonl_temp(dir, events, false)
+}
+
+fn write_events_jsonl_temp(dir: &Path, events: &[Event], commit: bool) -> std::io::Result<()> {
+    let dest = dir.join(EVENTS_JSONL);
+    let tmp = dir.join(EVENTS_JSONL_TMP);
+    {
+        let mut f = File::create(&tmp)?;
+        for e in events {
+            serde_json::to_writer(&mut f, e).map_err(json_err)?;
+            f.write_all(b"\n")?;
+        }
+        f.sync_all()?;
+    }
+    if !commit {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            "injected fault: abort before rename",
+        ));
+    }
+    fs::rename(&tmp, &dest)?;
     Ok(())
 }
 
@@ -75,6 +101,7 @@ pub fn open(dir: &Path) -> std::io::Result<Runtime> {
             .filter(|e| !matches!(e.op, Op::Define { .. }))
             .collect();
         let rt = Runtime::from_snapshot(snap, graph);
+        rt.replay_check().map_err(runtime_err)?;
         return Ok(finish_open(rt, outcomes, justifications));
     }
     let defined = defined_names(&events);
