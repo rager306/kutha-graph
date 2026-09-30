@@ -4,6 +4,23 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: verify-on-open, atomic jsonl persist, stable Define ids
+
+### Product
+
+### Added
+
+- `open` verifies snapshot identity against the log (`replay_check`) and rejects a tampered snapshot as `InvalidData` / `ReplayDivergenceError`.
+- Dictionary `Op::Define` ids are name-stable (SHA-256 of the ASCII prefix `kutha-define-id` plus the term bytes) across persist/open/persist. Live `intern()` still mints UUID v7.
+
+### Changed
+
+- `persist` replaces `events.jsonl` by writing a same-directory temp file, syncing, then renaming. A failed temp write leaves the previous complete jsonl in place.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. Active Slice remains **S04**. Freeze until M002 unchanged. Not M012 dictionaries-as-facts.
+
 ## 2026-10-01 — Process: lease M012a S04 for Phase 15
 
 ### Process

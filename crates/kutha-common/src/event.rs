@@ -146,6 +146,26 @@ impl Event {
         }
     }
 
+    /// Name-stable `Op::Define` for persist encoding (DUR-03).
+    ///
+    /// Id is the first 16 bytes of SHA-256(`kutha-define-id` || term bytes).
+    /// Live [`Event::new`] intern still mints UUID v7.
+    pub fn stable_define(name: impl Into<String>, ingested_at: TransactionTime) -> Self {
+        let name = name.into();
+        let mut h = Sha256::new();
+        h.update(b"kutha-define-id");
+        h.update(name.as_bytes());
+        let digest = h.finalize();
+        let mut id_bytes = [0u8; 16];
+        id_bytes.copy_from_slice(&digest[..16]);
+        Self {
+            id: Uuid::from_bytes(id_bytes),
+            op: Op::Define { name },
+            ingested_at,
+            object_ids: vec![],
+        }
+    }
+
     pub fn digest_bytes(&self) -> [u8; 32] {
         let mut h = Sha256::new();
         h.update(self.id.as_bytes());

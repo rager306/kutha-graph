@@ -146,7 +146,7 @@ fn encoded_log(runtime: &Runtime) -> Vec<Event> {
         .dictionary()
         .strings()
         .iter()
-        .map(|name| Event::new(Op::Define { name: name.clone() }, 0))
+        .map(|name| Event::stable_define(name.clone(), 0))
         .collect();
     for e in runtime.log().iter() {
         if !matches!(e.op, Op::Define { .. }) {
