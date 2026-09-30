@@ -1,5 +1,6 @@
 use kutha_common::{Event, EventId, Op, SupportPolarity, TermId, TransactionTime, ValidTime};
 use sha2::{Digest, Sha256};
+use std::collections::{BTreeMap, HashMap};
 use std::sync::atomic::{AtomicU64, Ordering};
 
 /// Integration-test examine counter (not fingerprint / JSON). `cfg(test)` is off for `tests/*.rs`.
@@ -151,13 +152,40 @@ impl Fact {
 }
 
 /// Deterministic fold of the log. Droppable picture, not SoT.
-#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
+/// Hot maps are leases: skip-serialized and rebuilt from `facts` (D-02).
+#[derive(Clone, Debug, Default, serde::Serialize)]
 pub struct GraphFold {
     facts: Vec<Fact>,
     next_seq: u64,
     /// Hot-path examine count. Not SoT; skipped in snapshot JSON.
     #[serde(skip)]
     hot_examine: ExamineCounter,
+    /// Fact indices grouped by `valid_from` so a cut can skip future-start decoys.
+    #[serde(skip)]
+    vt_by_from: BTreeMap<ValidTime, Vec<usize>>,
+    /// Fact indices grouped by portable `claim_id`.
+    #[serde(skip)]
+    claim_facts: HashMap<EventId, Vec<usize>>,
+}
+
+impl<'de> serde::Deserialize<'de> for GraphFold {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        #[derive(serde::Deserialize)]
+        struct GraphFoldDe {
+            facts: Vec<Fact>,
+            next_seq: u64,
+        }
+        let de = GraphFoldDe::deserialize(deserializer)?;
+        let mut fold = GraphFold {
+            facts: de.facts,
+            next_seq: de.next_seq,
+            hot_examine: ExamineCounter::default(),
+            vt_by_from: BTreeMap::new(),
+            claim_facts: HashMap::new(),
+        };
+        fold.rebuild_hot_maps();
+        Ok(fold)
+    }
 }
 
 impl GraphFold {
@@ -175,6 +203,45 @@ impl GraphFold {
         self.hot_examine.get()
     }
 
+    fn index_slot(&mut self, idx: usize) {
+        let fact = &self.facts[idx];
+        self.vt_by_from.entry(fact.valid_from).or_default().push(idx);
+        self.claim_facts.entry(fact.claim_id).or_default().push(idx);
+    }
+
+    fn rebuild_hot_maps(&mut self) {
+        self.vt_by_from.clear();
+        self.claim_facts.clear();
+        for idx in 0..self.facts.len() {
+            self.index_slot(idx);
+        }
+    }
+
+    fn ensure_hot_maps(&mut self) {
+        if self.vt_by_from.is_empty() && !self.facts.is_empty() {
+            self.rebuild_hot_maps();
+        }
+    }
+
+    fn push_fact(&mut self, fact: Fact) {
+        let idx = self.facts.len();
+        self.facts.push(fact);
+        self.index_slot(idx);
+    }
+
+    /// Live facts at an explicit cut, walking the VT index rather than every fact.
+    pub(crate) fn live_facts_at(&self, tt: TransactionTime, vt: ValidTime) -> Vec<&Fact> {
+        self.vt_by_from
+            .range(..=vt)
+            .flat_map(|(_, idxs)| idxs.iter().copied())
+            .filter_map(|idx| {
+                self.hot_examine.bump();
+                let fact = &self.facts[idx];
+                fact.is_live_at(tt, vt).then_some(fact)
+            })
+            .collect()
+    }
+
     pub fn live_count(&self, tt: TransactionTime, vt: ValidTime) -> usize {
         self.live_at(tt, vt).len()
     }
@@ -182,12 +249,8 @@ impl GraphFold {
     /// Live interned triples at an explicit transaction-time × valid-time cut.
     /// There is no “now” default (FF5 / MemStrata).
     pub fn live_at(&self, tt: TransactionTime, vt: ValidTime) -> Vec<(TermId, TermId, TermId)> {
-        self.facts
-            .iter()
-            .filter(|f| {
-                self.hot_examine.bump();
-                f.is_live_at(tt, vt)
-            })
+        self.live_facts_at(tt, vt)
+            .into_iter()
             .map(|f| (f.subject, f.relation, f.object()))
             .collect()
     }
@@ -237,11 +300,14 @@ impl GraphFold {
 
     /// Live Facts that support `claim` at an explicit cut.
     pub fn live_supports(&self, claim: EventId, tt: TransactionTime, vt: ValidTime) -> Vec<&Fact> {
-        self.facts
-            .iter()
-            .filter(|f| {
+        let Some(idxs) = self.claim_facts.get(&claim) else {
+            return Vec::new();
+        };
+        idxs.iter()
+            .filter_map(|&idx| {
                 self.hot_examine.bump();
-                f.claim_id == claim && f.is_live_at(tt, vt)
+                let fact = &self.facts[idx];
+                fact.is_live_at(tt, vt).then_some(fact)
             })
             .collect()
     }
@@ -255,6 +321,7 @@ impl GraphFold {
     }
 
     pub fn apply(&mut self, event: &Event) {
+        self.ensure_hot_maps();
         match &event.op {
             Op::Assert {
                 subject,
@@ -269,7 +336,7 @@ impl GraphFold {
                 let seq = self.next_seq;
                 self.next_seq += 1;
                 let claim_id = claim.unwrap_or(event.id);
-                self.facts.push(Fact {
+                self.push_fact(Fact {
                     seq,
                     subject: *subject,
                     relation: *relation,
@@ -294,7 +361,7 @@ impl GraphFold {
             } => {
                 let seq = self.next_seq;
                 self.next_seq += 1;
-                self.facts.push(Fact {
+                self.push_fact(Fact {
                     seq,
                     subject: *subject,
                     relation: *relation,
@@ -332,7 +399,7 @@ impl GraphFold {
                         let old_polarity = self.facts[idx].polarity;
                         let seq = self.next_seq;
                         self.next_seq += 1;
-                        self.facts.push(Fact {
+                        self.push_fact(Fact {
                             seq,
                             subject: s,
                             relation: r,
@@ -379,7 +446,7 @@ impl GraphFold {
                 let mut push_row = |obj: TermId, vf: ValidTime, vt: Option<ValidTime>| {
                     let seq = self.next_seq;
                     self.next_seq += 1;
-                    self.facts.push(Fact {
+                    self.push_fact(Fact {
                         seq,
                         subject: s,
                         relation: r,
