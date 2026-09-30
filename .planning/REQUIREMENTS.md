@@ -30,7 +30,7 @@ Each requirement maps to exactly one roadmap phase (one phase per harness slice)
 - [x] **PROV-01**: Verification detects a change to only a Behavior `caused_by` reference even when the state fingerprint still matches
 - [x] **PROV-02**: Verification detects a change to only a pinned rule version the same way; execution replay is not required
 
-### End-to-end fixture (M011 S08 — blocked until leased)
+### End-to-end fixture (M011 S08 — leased)
 
 - [ ] **FIX-01**: Independent supports and last-support withdrawal hold at named (TT,VT) cuts on the candidate fixture; the conflict variant preserves both sides and reports conflict instead of superseding
 - [ ] **FIX-02**: Summary and action records cite exact source revisions and rule version; a changed dependency forces re-evaluation, and a stale cached output cannot renew its own admission

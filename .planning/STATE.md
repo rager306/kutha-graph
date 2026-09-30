@@ -5,11 +5,11 @@ milestone_name: Semantic core close
 current_phase: 8
 current_phase_name: End-to-end candidate fixture
 status: planning
-stopped_at: Phase 7 complete — provenance / rule-version delivered; Active Slice None
-last_updated: "2026-09-30T10:00:00.000Z"
+stopped_at: S08 leased; Phase 8 ready to discuss/plan
+last_updated: "2026-09-30T10:25:00.000Z"
 last_activity: 2026-09-30
-last_activity_desc: Phase 7 delivered (S07); lease cleared until S08
-state_head: c685b72
+last_activity_desc: Leased Active Slice S08 after S07 delivery
+state_head: ca03132
 progress:
   total_phases: 5
   completed_phases: 4
@@ -25,18 +25,18 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** Phase 8 — End-to-end candidate fixture (planning-only until harness leases **S08**). S07 delivered.
+**Current focus:** Phase 8 — End-to-end candidate fixture (M011 **S08** leased). S07 delivered.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M011**; Active Slice **None**; Phase **H4**; `L_map=honeycomb-proposed`; `L_delivery=M011-S07-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
+**Harness lease (cite only):** Active Milestone **M011**; Active Slice **S08**; Phase **H4**; `L_map=honeycomb-proposed`; `L_delivery=M011-S07-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
 
 ## Current Position
 
 Phase: 8 — End-to-end candidate fixture
 Plan: Not started
-Status: Ready to plan (lease-gated)
-Last activity: 2026-09-30 — Phase 7 delivered (S07); Active Slice None
+Status: Ready to discuss/plan
+Last activity: 2026-09-30 — S08 leased after S07 delivery
 
 Progress: [████████░░] 80%
 
@@ -90,7 +90,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 8 remains lease-gated until `.kutha/STATE.md` names S08 as Active Slice. Phase 7 (S07) is delivered (`L_delivery=M011-S07-done`; Active Slice None).
+- Phase 8 (S08) is leased and executable. Do not auto-start M002 after S08.
 - Do not start M002, legal pack, Cypher, HNSW, or ADR-050 because a GSD phase is planned — freeze holds until STATE names otherwise.
 
 ## Deferred Items
@@ -101,11 +101,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-30T10:00:00.000Z
-Stopped at: Phase 7 complete — provenance / rule-version delivered; Active Slice None
-Resume file: .planning/phases/07-provenance-and-rule-version-check/07-VERIFICATION.md
-Next: lease S08 in `.kutha/STATE.md`, then `/gsd-discuss-phase 8`
+Last session: 2026-09-30T10:25:00.000Z
+Stopped at: S08 leased; Phase 8 ready to discuss/plan
+Resume file: .planning/ROADMAP.md
+Next: `/gsd-discuss-phase 8` (S08 leased in `.kutha/STATE.md`)
 
 ## Operator Next Steps
 
-- Phase 7 delivered. Next: lease S08 (Active Slice S08), then discuss Phase 8. Do not auto-lease. Freeze holds until STATE names M002+.
+- Phase 8 is executable under Active Slice **S08**. Discuss/plan next (`/gsd-discuss-phase 8`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
