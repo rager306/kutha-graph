@@ -12,6 +12,14 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - Named test `typed_csr_preserves_relation_labels_and_support_multiplicity` (CSR-01): ≥2 relations and ≥2 supports visible on typed edges; untyped neighbors stay a singleton object.
 - Named test `untyped_csr_neighbor_set_and_ff5_still_hold` (CSR-02): untyped neighbor-set + FF3-style drop/rebuild; existing FF5 statute observe stays green.
 
+### Process
+
+- FSM `observe_cargo.required` plus `m011-typed-csr` / `B-m011-typed-csr` needles for named CSR-01 and CSR-02 tests (GATE-01).
+
+### Trajectory
+
+- ADR-040 and ADR-041 remain Proposed (not Accepted, not L_capability). Honeycomb evidence names the CSR-01/CSR-02 tests; map stays Proposed. Green governor is not ADR Accepted and not L_capability.
+
 ## 2026-09-30 — Process: lease Active Slice S06 after S05 delivery
 
 ### Process

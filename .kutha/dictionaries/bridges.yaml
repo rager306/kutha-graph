@@ -50,3 +50,8 @@ bridges:
     claim: "Budgets 0/1/2 distinguish Zero/Partial/Full after persist→open; crash after prefix has no terminal success until explicit resume"
     cites: "crates/kutha-runtime/tests/m011_quantum_outcome.rs"
     check: m011-quantum-outcome
+
+  - id: B-m011-typed-csr
+    claim: "Typed CSR lease preserves relation labels and support multiplicity; untyped neighbor-set and FF5 path still hold"
+    cites: "crates/kutha-runtime/tests/m011_typed_csr.rs"
+    check: m011-typed-csr

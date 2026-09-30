@@ -324,6 +324,30 @@ checks:
         category: m011-s05
         message: "M011 quantum-outcome tests missing {missing}"
 
+  - id: m011-typed-csr
+    description: M011 S06 — typed CSR lease preserves relation labels and support multiplicity; untyped neighbor-set and FF5 still hold
+    steps:
+      - kind: file_contains
+        path: crates/kutha-runtime/tests/m011_typed_csr.rs
+        needles:
+          - "fn typed_csr_preserves_relation_labels_and_support_multiplicity"
+          - "fn untyped_csr_neighbor_set_and_ff5_still_hold"
+        require: all
+        category: m011-s06
+        message: "M011 typed-csr tests missing {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/csr.rs
+        needles: ["TypedCsrLease"]
+        require: all
+        category: m011-s06
+        message: "TypedCsrLease missing: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/quantum.rs
+        needles: ["typed_csr_lease_at"]
+        require: all
+        category: m011-s06
+        message: "typed_csr_lease_at missing: {missing}"
+
   - id: h4-lease
     description: H4 delivery lease named without promoting ADR-090 L_map
     steps:
