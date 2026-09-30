@@ -1,21 +1,16 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.03
-milestone_name: Lean context + semantic governor
-status: Awaiting next milestone
-stopped_at: Phase 11 complete — all phases complete
-last_updated: "2026-09-30T11:32:22.687Z"
+milestone: v0.04
+milestone_name: Single-log SoT + stable references
+status: planning
+last_updated: "2026-09-30T16:58:09.865Z"
 last_activity: 2026-09-30
-last_activity_desc: Milestone v0.03 completed and archived
-state_head: 77664b178542eea53e969272c05dbdafe5d1d782
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
-  percent: 100
-current_phase: 11
-current_phase_name: Semantic governor
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -25,18 +20,19 @@ current_phase_name: Semantic governor
 See: `.planning/PROJECT.md` (updated 2026-09-30 after v0.02)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.03 roadmap defined (Phases 9–11); ready to plan Phase 9. Harness Active Slice None; freeze holds.
+**Current focus:** v0.04 M012a single-log SoT + stable refs (leased). Defining requirements; freeze holds for M002.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M011**; Active Slice **None**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M011-S08-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start). Do not overwrite `.kutha/STATE.md`.
+**Harness lease (cite only):** Active Milestone **M012a**; Active Slice **None**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012a-leased`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start). Do not overwrite `.kutha/STATE.md`.
 
 ## Current Position
 
-Phase: Milestone v0.03 complete
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-09-30 — Milestone v0.03 completed and archived
+Status: Defining requirements
+Last activity: 2026-09-30 — Milestone v0.04 started
+
 
 ## Performance Metrics
 

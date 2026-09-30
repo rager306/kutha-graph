@@ -10,9 +10,19 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: None
+## Current Milestone: v0.04 Single-log SoT + stable references
 
-v0.03 shipped 2026-09-30 (see Current State). The next GSD milestone starts only after an explicit lease in `.kutha/STATE.md`.
+**Goal:** Close the leased M012a product gaps so the event log is the only durable SoT for outcomes/justifications/resume, references and ingest are stable/idempotent, open verifies, persist is atomic, time scale is declared, and hot reads use fold indexes — without thawing M012 dictionaries-as-facts or M002 Rocks.
+
+**Target features:**
+- Log-native quantum outcomes, justifications, and resume (F1); sidecars become droppable leases
+- Stable EventId / proposition ids for Retract, Correct, and justification cites (F2)
+- Idempotent ingest / delivery keys so identical Assert does not mint a second support (F3)
+- Verify-on-open, atomic persist, and stable `Define` ids (F6 subset; durability protocol stays M002)
+- Declared VT/TT scale (F7)
+- Fold-internal indexes for hot `as_of` / `claim_supported_at` (F8)
+
+**Boundary:** Product crates allowed under M012a lease. No M012 admission/rule-registry work. No Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack. Honeycomb stays Proposed. Freeze until explicit M002.
 
 ## Business Context
 
@@ -154,7 +164,7 @@ Shipped **GSD v0.01 — GSD foundation** (2026-09-29), **GSD v0.02 — Semantic 
 
 ## Next Milestone Goals
 
-F1–F8 product gaps are ledgered as deferred invariants. Product delivery (M012a single-log SoT + stable refs, then M012, then M002 as log durability) starts only when `.kutha/STATE.md` names it — freeze holds (no Rocks/Cypher/HNSW/ADR-050/legal pack by default).
+M012a is leased. After this milestone: M012 (dictionaries as facts: allowlist entries, rule registry, admission meta-facts) then M002 (log durability protocol first; Rocks for indexes only). Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.
 
 ## Context
 
@@ -218,4 +228,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-30 after v0.03 Lean context + semantic governor*
+*Last updated: 2026-09-30 after leasing M012a / starting GSD v0.04*
