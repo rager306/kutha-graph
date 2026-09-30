@@ -42,15 +42,21 @@ If this host sets `rustc-wrapper = "sccache"` and the wrapper cannot run, use `c
 
 | Path | Role |
 |------|------|
-| `crates/kutha-common`, `crates/kutha-runtime` | Product: events, fold, quantum, CSR lease, allowlist, tenant ingest |
-| `.kutha/` | Process harness (STATE lease, dictionaries, JSONL) |
-| `.planning/` | GSD overlay (STATE/ROADMAP/REQUIREMENTS, codebase map, intel) |
-| `docs/ADR/` | Architecture decisions |
-| `STRATEGY.md` | Wedge, metrics, non-goals |
-| `AGENTS.md` | Agent operating contract (GSD-first, language, freeze) |
+| `README.md` | Human entry (status, commands, where to read) |
+| `CLAUDE.md` | Shim → `AGENTS.md` |
+| `AGENTS.md` | Agent operating contract (language, planes, freeze pointer) |
 | `CHANGELOG.md` | Dated project history (product vs process) |
+| `STRATEGY.md` | Wedge, metrics, non-goals |
+| `Cargo.toml`, `pyproject.toml` | Rust workspace + uv harness (Python 3.13) |
+| `.planning/` | GSD overlay: STATE, PROJECT, REQUIREMENTS, ROADMAP, `config.json`, `codebase/`, `intel/`, `INGEST-CONFLICTS.md` |
+| `.kutha/` | Harness pyramid: STATE, ROADMAP, dictionaries, gitignored `events.jsonl` |
+| `.cursor/` | Cursor rules, MCP, CBM adapter, GSD skills/core |
+| `crates/kutha-common`, `crates/kutha-runtime` | Product: events, fold, quantum, CSR lease, allowlist, tenant ingest |
+| `docs/ADR/` | Spine + honeycomb (Proposed) |
+| `docs/process/` | Harness contract, governor intake, Codex subagents |
 | `docs/process/governor-intake.md` | Control loop / bridge / map → governor dictionaries |
-| `.compound-engineering/artifacts/` | Legacy research archive (applicability cards, old CE handoffs) |
+| `scripts/kutha_gov/` | Governor CLI interpreter |
+| `.compound-engineering/artifacts/` | CE `docs_root` (applicability cards, research notes, handoffs archive) |
 
 ## Where to read next
 

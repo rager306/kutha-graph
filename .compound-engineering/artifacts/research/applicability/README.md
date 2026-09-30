@@ -13,3 +13,11 @@ This is **not** a roadmap and **not** a copy-from-RuVector backlog. Product = fi
 - **Architecture + GTM translation of the matrix:** `architecture-gtm-readout.md` (planes, domains, metrics, competitive advantages)
 
 Do not drop stub/marketing facades at intake (`claim` / `intent` / `code` on a facade). Do not score closed-source kernels as `code`.
+
+## Agent notes
+
+Literature bound is **closed**. Do not mint aggregator waves. Matrix paths: `cards/` is SoT; `matrix.md` is the rollup; `architecture-gtm-readout.md` is GTM translation.
+
+Query/Data/Time are dense; Security/Packaging are thin as *kernels*. Trap cluster (demand high, optimality low — not core): Graphiti, Dify, Hindsight, Harvey-as-SoT, CRDT/Geo-Raft as SoT, empty Cypher, LegalSearch-R1-as-engine.
+
+GTM: legal over-mapped on purpose; science present; finance/clinical = receipts/vacuum riders.
