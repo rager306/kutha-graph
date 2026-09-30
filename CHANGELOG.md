@@ -14,9 +14,13 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - `conflict_report_at` reports `positive_supports` and `negative_supports` without picking a winner.
 - Named tests `e2e_fixture_supports_and_conflict_at_named_cuts`, `e2e_justification_cites_sources_and_rejects_stale_admission`, `e2e_incremental_matches_reconstruct_after_discarding_leases` (FIX-01, FIX-02, FIX-03).
 
+### Process
+
+- FSM `observe_cargo.required` plus `m011-e2e` / `B-m011-e2e` needles for the three named FIX tests (GATE-01). Not a closed S08 delivery lease.
+
 ### Trajectory
 
-- Active Slice remains **S08**; honeycomb stays Proposed (not Accepted, not L_capability). Green governor is not ADR Accepted and not L_capability. GATE-01 dictionary needles for these fn names stay on the next wave.
+- Active Slice remains **S08**; honeycomb stays Proposed (not Accepted, not L_capability). Green governor is not ADR Accepted and not L_capability. Conflict report is not four-valued logic. GATE-01 needles are registered; honeycomb evidence names for ADR-013/011/012/040 follow on this wave without promoting `map`.
 
 ## 2026-09-30 — Process: lease Active Slice S08 after S07 delivery
 

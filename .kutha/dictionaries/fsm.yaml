@@ -49,6 +49,9 @@ states:
       - untyped_csr_neighbor_set_and_ff5_still_hold
       - provenance_detects_caused_by_swap_when_state_fingerprint_matches
       - provenance_detects_rule_version_change_when_state_fingerprint_matches
+      - e2e_fixture_supports_and_conflict_at_named_cuts
+      - e2e_justification_cites_sources_and_rejects_stale_admission
+      - e2e_incremental_matches_reconstruct_after_discarding_leases
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant

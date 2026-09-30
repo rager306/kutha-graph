@@ -60,3 +60,8 @@ bridges:
     claim: "Provenance digest detects caused_by swap and rule_version change while state fold fingerprint still matches; replay_check stays Ok on valid priors"
     cites: "crates/kutha-runtime/tests/m011_provenance.rs"
     check: m011-provenance
+
+  - id: B-m011-e2e
+    claim: "Candidate fixture distinguishes independent supports and conflict report at named cuts; justifications cannot renew stale admission; incremental matches reconstruct after discarding snapshot and CSR"
+    cites: "crates/kutha-runtime/tests/m011_e2e_fixture.rs"
+    check: m011-e2e

@@ -372,6 +372,31 @@ checks:
         category: m011-s07
         message: "provenance_fingerprint missing: {missing}"
 
+  - id: m011-e2e
+    description: M011 S08 — candidate fixture distinguishes history, evidence, and stale admission at named cuts
+    steps:
+      - kind: file_contains
+        path: crates/kutha-runtime/tests/m011_e2e_fixture.rs
+        needles:
+          - "fn e2e_fixture_supports_and_conflict_at_named_cuts"
+          - "fn e2e_justification_cites_sources_and_rejects_stale_admission"
+          - "fn e2e_incremental_matches_reconstruct_after_discarding_leases"
+        require: all
+        category: m011-s08
+        message: "M011 e2e fixture tests missing {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/store.rs
+        needles: ["JUSTIFICATIONS_REL"]
+        require: all
+        category: m011-s08
+        message: "JUSTIFICATIONS_REL missing: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/quantum.rs
+        needles: ["conflict_report_at", "check_admission"]
+        require: all
+        category: m011-s08
+        message: "e2e APIs missing: {missing}"
+
   - id: h4-lease
     description: H4 delivery lease named without promoting ADR-090 L_map
     steps:
