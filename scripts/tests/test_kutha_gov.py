@@ -771,5 +771,97 @@ class RustTestAssertsTests(unittest.TestCase):
         self.assertIn("rust-test-missing", _rust_highs(result))
 
 
+_CITE_TOKEN = r"L_delivery=([A-Za-z0-9][A-Za-z0-9._-]*)"
+_CITE_SOURCE = r"(?m)^L_delivery=([A-Za-z0-9][A-Za-z0-9._-]*)\s*$"
+
+
+def _cite_step(
+    source_text: str,
+    cite_text: str,
+    *,
+    source_pattern: str = _CITE_SOURCE,
+    cite_pattern: str = _CITE_TOKEN,
+) -> tuple[Path, dict[str, object]]:
+    root = _rust_tree({".kutha/STATE.md": source_text, "docs/note.md": cite_text})
+    step: dict[str, object] = {
+        "kind": "cite_equals",
+        "source": {"path": ".kutha/STATE.md", "pattern": source_pattern},
+        "cites": [{"path": "docs/note.md", "pattern": cite_pattern}],
+    }
+    return root, step
+
+
+class CiteEqualsTests(unittest.TestCase):
+    def test_cite_equals_high_when_capture_mismatches(self) -> None:
+        root, step = _cite_step("L_delivery=FOO\n", "L_delivery=BAR\n")
+        result = _rust_run(root, step)
+        self.assertEqual(["cite-mismatch"], _rust_highs(result))
+
+    def test_cite_equals_zero_cites_passes(self) -> None:
+        root, step = _cite_step(
+            "L_delivery=FOO\n",
+            "Read `.kutha/STATE.md` first. No assignment token here.\n",
+        )
+        result = _rust_run(root, step)
+        self.assertEqual([], _rust_highs(result))
+
+    def test_cite_equals_multi_capture_one_stale_is_high(self) -> None:
+        root, step = _cite_step(
+            "L_delivery=M011-S08-done\n",
+            "L_delivery=M011-S08-done\nAlso L_delivery=M011-S03-done in the same file.\n",
+        )
+        result = _rust_run(root, step)
+        self.assertEqual(["cite-mismatch"], _rust_highs(result))
+        self.assertTrue(any("M011-S03-done" in f.message for f in result.findings))
+
+    def test_cite_equals_source_with_no_match_is_high(self) -> None:
+        root, step = _cite_step(
+            "lease lives here but the assignment line is missing\n",
+            "L_delivery=FOO\n",
+        )
+        result = _rust_run(root, step)
+        self.assertEqual(["cite-source"], _rust_highs(result))
+
+    def test_cite_equals_stale_s03_token_even_in_backticks_is_high(self) -> None:
+        root, step = _cite_step(
+            "L_delivery=M011-S08-done\n",
+            "The live lease is `L_delivery=M011-S03-done`.\n",
+        )
+        result = _rust_run(root, step)
+        self.assertEqual(["cite-mismatch"], _rust_highs(result))
+
+    def test_cite_equals_placeholder_and_empty_assignment_are_not_cites(self) -> None:
+        root, step = _cite_step(
+            "L_delivery=M011-S08-done\n",
+            "Format is `L_delivery=<lease>` or a bare `L_delivery=` key. Read STATE.md.\n",
+        )
+        result = _rust_run(root, step)
+        self.assertEqual([], _rust_highs(result))
+
+    def test_cite_equals_pattern_must_have_one_group(self) -> None:
+        root, step = _cite_step(
+            "L_delivery=FOO\n",
+            "L_delivery=FOO\n",
+            source_pattern=r"L_delivery=\S+",
+        )
+        result = _rust_run(root, step)
+        self.assertEqual(["cite-pattern"], _rust_highs(result))
+
+    def test_cite_equals_live_check_excludes_changelog_and_planning(self) -> None:
+        import yaml
+
+        raw = yaml.safe_load(
+            (ROOT / ".kutha" / "dictionaries" / "checks.yaml").read_text(encoding="utf-8")
+        )
+        rows = raw.get("checks") if isinstance(raw, dict) else []
+        cite = next(row for row in rows if isinstance(row, dict) and row.get("id") == "cite-lease")
+        blob = yaml.safe_dump(cite.get("steps"))
+        self.assertNotIn("CHANGELOG.md", blob)
+        self.assertNotIn(".planning", blob)
+
+    def test_cite_equals_live_precommit_is_green(self) -> None:
+        self.assertEqual(0, main(["--root", str(ROOT), "precommit", "--check", "cite-lease"]))
+
+
 if __name__ == "__main__":
     unittest.main()

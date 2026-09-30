@@ -136,3 +136,9 @@ invariants:
     source: "docs/process/kutha-harness.md"
     disposition: deferred
     until: "STATE names a legal pack"
+
+  - id: I-cite-lease
+    claim: "Docs that cite a delivery token must match the STATE assignment"
+    source: ".kutha/STATE.md"
+    disposition: check
+    check: cite-lease

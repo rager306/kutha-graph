@@ -5,7 +5,7 @@ meta_prompt: .kutha/META.md
 # Use `event:` not `on:` — YAML 1.1 treats unquoted `on` as boolean true.
 
 defaults:
-  budget: 32
+  budget: 48
 
 initial: idle
 terminal: [ok, fail]

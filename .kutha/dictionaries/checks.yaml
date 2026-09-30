@@ -935,3 +935,31 @@ checks:
         prefix: "  - id: "
         message: "lock ids missing from honeycomb locks: {missing}"
 
+  - id: cite-lease
+    description: >-
+      Docs that write a concrete L_delivery= token must match the STATE assignment.
+      Capture is L_delivery= plus an alphanumeric lease token
+      ([A-Za-z0-9][A-Za-z0-9._-]*). Empty `L_delivery=` and placeholders such as
+      `L_delivery=<lease>` are not cites (token-format prose and AGENTS.md
+      "Read STATE.md" stay silent). A concrete token, including one inside
+      backticks, is a cite — stale L_delivery=M011-S03-done is HIGH.
+      CHANGELOG.md and .planning/ are out of scope on purpose.
+    steps:
+      - kind: cite_equals
+        source:
+          path: .kutha/STATE.md
+          pattern: '(?m)^L_delivery=([A-Za-z0-9][A-Za-z0-9._-]*)\s*$'
+        cites:
+          - path: AGENTS.md
+            pattern: 'L_delivery=([A-Za-z0-9][A-Za-z0-9._-]*)'
+          - path: README.md
+            pattern: 'L_delivery=([A-Za-z0-9][A-Za-z0-9._-]*)'
+          - path: STRATEGY.md
+            pattern: 'L_delivery=([A-Za-z0-9][A-Za-z0-9._-]*)'
+          - glob: docs/process/*.md
+            pattern: 'L_delivery=([A-Za-z0-9][A-Za-z0-9._-]*)'
+          - glob: docs/architecture/*.md
+            pattern: 'L_delivery=([A-Za-z0-9][A-Za-z0-9._-]*)'
+          - path: docs/ADR/README.md
+            pattern: 'L_delivery=([A-Za-z0-9][A-Za-z0-9._-]*)'
+

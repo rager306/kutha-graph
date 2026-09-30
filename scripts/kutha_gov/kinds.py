@@ -37,6 +37,7 @@ ALLOWED_KINDS: frozenset[str] = frozenset(
         "yaml_map_list",
         "glob_paths_in_file",
         "rust_test_asserts",
+        "cite_equals",
     }
 )
 
@@ -1306,6 +1307,185 @@ def rust_test_mutation_targets(step: Step, root: Path) -> list[tuple[str, str]]:
     return out
 
 
+def _as_map(value: object) -> dict[str, object]:
+    return value if isinstance(value, dict) else {}
+
+
+def _as_maps(value: object) -> list[dict[str, object]]:
+    if not isinstance(value, list):
+        return []
+    return [item for item in value if isinstance(item, dict)]
+
+
+def _relpath(path: Path, ctx: Context) -> str:
+    return str(path.relative_to(ctx.root)).replace("\\", "/")
+
+
+def _compile_one_group(
+    check: str,
+    pattern: str,
+    flags: int,
+    result: CheckResult,
+    loc: str | None,
+) -> re.Pattern[str] | None:
+    if not pattern.strip():
+        result.findings.append(
+            Finding(check, Severity.HIGH, "cite-pattern", "pattern is required", loc)
+        )
+        return None
+    try:
+        compiled = re.compile(pattern, flags)
+    except re.error as exc:
+        result.findings.append(
+            Finding(check, Severity.HIGH, "cite-pattern", f"invalid pattern: {exc}", loc)
+        )
+        return None
+    if compiled.groups != 1:
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "cite-pattern",
+                f"pattern must have exactly one capturing group, has {compiled.groups}",
+                loc,
+            )
+        )
+        return None
+    return compiled
+
+
+def _spec_flags(spec: Mapping[str, object], step: Step) -> int:
+    if "flags" in spec:
+        return _re_flags(spec)
+    return _re_flags(step)
+
+
+def _cite_files(item: Mapping[str, object], ctx: Context) -> list[Path]:
+    path = item.get("path")
+    if isinstance(path, str) and path.strip():
+        hit = ctx.root / path
+        return [hit] if hit.is_file() else []
+    glob = item.get("glob")
+    if not isinstance(glob, str) or not glob.strip():
+        return []
+    return [hit for hit in sorted(ctx.root.glob(glob)) if hit.is_file()]
+
+
+def cite_equals_mutation_target(step: Step, root: Path) -> tuple[str, str] | None:
+    """First existing cite file plus a concrete wrong token line (D-C1)."""
+    ctx = Context(root=root)
+    for item in _as_maps(step.get("cites")):
+        files = _cite_files(item, ctx)
+        if not files:
+            continue
+        pattern = item.get("pattern")
+        text = _wrong_cite_line(pattern if isinstance(pattern, str) else "")
+        return _relpath(files[0], ctx), text
+    return None
+
+
+def _wrong_cite_line(pattern: str) -> str:
+    if "L_delivery=" in pattern:
+        return "\nL_delivery=WRONG\n"
+    if "L_map=" in pattern:
+        return "\nL_map=WRONG\n"
+    if "L_capability=" in pattern:
+        return "\nL_capability=WRONG\n"
+    if "Active Milestone" in pattern or r"M\d" in pattern:
+        return "\nActive Milestone: M999\n"
+    return "\nL_delivery=WRONG\n"
+
+
+def _kind_cite_equals(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
+    source = _as_map(step.get("source"))
+    src_path = source.get("path")
+    src_rel = src_path if isinstance(src_path, str) else ""
+    result.scanned += 1
+    if not src_rel:
+        result.findings.append(
+            Finding(check, Severity.HIGH, "cite-source", "source.path is required")
+        )
+        return
+    src_text = ctx.read(src_rel)
+    if src_text is None:
+        _high_missing(check, src_rel, result)
+        return
+    src_pattern = source.get("pattern")
+    compiled = _compile_one_group(
+        check,
+        src_pattern if isinstance(src_pattern, str) else "",
+        _spec_flags(source, step),
+        result,
+        src_rel,
+    )
+    if compiled is None:
+        return
+    found = [match.group(1) for match in compiled.finditer(src_text)]
+    if not found:
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "cite-source",
+                f"{src_rel} matched no source capture — fail-closed",
+                src_rel,
+            )
+        )
+        return
+    if len(set(found)) != 1:
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "cite-source",
+                f"{src_rel} source captures disagree: {found}",
+                src_rel,
+            )
+        )
+        return
+    expected = found[0]
+    cites = _as_maps(step.get("cites"))
+    for item in cites:
+        cite_pattern = item.get("pattern")
+        cite_re = _compile_one_group(
+            check,
+            cite_pattern if isinstance(cite_pattern, str) else "",
+            _spec_flags(item, step),
+            result,
+            src_rel,
+        )
+        if cite_re is None:
+            return
+        for path in _cite_files(item, ctx):
+            rel = _relpath(path, ctx)
+            result.scanned += 1
+            text = path.read_text(encoding="utf-8")
+            for match in cite_re.finditer(text):
+                got = match.group(1)
+                if got == expected:
+                    continue
+                message = _fmt(
+                    _str(
+                        step,
+                        "message",
+                        "{path} cites {got!r} but {source} is {expected!r}",
+                    ),
+                    path=rel,
+                    got=got,
+                    source=src_rel,
+                    expected=expected,
+                )
+                result.findings.append(
+                    Finding(
+                        check,
+                        _severity(step),
+                        _category(step, "cite-mismatch"),
+                        message,
+                        rel,
+                    )
+                )
+
+
 RUNNERS: dict[str, Runner] = {
     "file_exists": _kind_file_exists,
     "file_equals": _kind_file_equals,
@@ -1323,4 +1503,5 @@ RUNNERS: dict[str, Runner] = {
     "yaml_map_list": _kind_yaml_map_list,
     "glob_paths_in_file": _kind_glob_paths_in_file,
     "rust_test_asserts": _kind_rust_test_asserts,
+    "cite_equals": _kind_cite_equals,
 }

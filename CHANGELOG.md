@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-30 — Process: semantic citation checks
+
+### Process
+
+- Governor kind `cite_equals` proves a concrete `L_delivery=` token in the D-C1 doc set equals the STATE assignment. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
+
+### Trajectory
+
+- Honeycomb stays Proposed. Green governor is not ADR Accepted and not L_capability.
+
 ## 2026-09-30 — Process: rust_test_asserts named tests
 
 ### Process
