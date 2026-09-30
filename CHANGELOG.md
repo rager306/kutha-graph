@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Process: lease M012a S04 for Phase 15
+
+### Process
+
+- Active Slice **S04** (verify-on-open, atomic persist, stable Define). Phase 15 GSD wave also covers S05 declared time scale. Active Milestone stays **M012a**; `L_delivery=M012a-S03-done` until Phase 15 closes.
+
+### Trajectory
+
+- GSD Phase 15 may edit product crates for DUR-01..03 and TIME-01..02. Freeze until M002 unchanged. Honeycomb Proposed.
+
 ## 2026-10-01 — Product: M012a S03 idempotent ingest
 
 ### Product
