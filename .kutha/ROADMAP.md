@@ -62,7 +62,7 @@ Proposed close-out of the semantic core (source: `docs/architecture/semantic-con
 
 **Leased:** Active Milestone M012a; Active Slice None until a GSD phase leases one. Closing F1–F3, F6 (verify/atomic/stable Define), F7, F8 from `docs/architecture/semantic-gap-review.md`. F4/F5 wait for M012. Durability protocol waits for M002.
 
-- [ ] **S01: Log-native outcomes and justifications** `risk:high` `depends:[]`
+- [x] **S01: Log-native outcomes and justifications** `risk:high` `depends:[]`
   > After this: quantum outcomes / justifications / resume are appendable log records; sidecars are droppable leases; provenance includes those records.
 - [ ] **S02: Stable references for retract and cites** `risk:high` `depends:[S01]`
   > After this: Retract/Correct/justification target EventId (or proposition id), not fold-local fact_seq.

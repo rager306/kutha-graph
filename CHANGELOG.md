@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-30 — Product: M012a S01 log-native SoT
+
+### Product
+
+- Quantum outcomes, justification cites, and resume persist as log records (`Op::QuantumOutcome`, `Op::JustificationCite`); sidecars are droppable leases.
+- `provenance_fingerprint` mixes those log-native bytes (`kutha-prov-log-native`). Named oracles in `m012a_log_native`.
+
+### Process
+
+- Governor check `m012a-s01-log-native` + FSM observe names for the three LOG tests. GSD Phase 12 closed.
+
+### Trajectory
+
+- `L_delivery=M012a-S01-done`; Active Slice **None** until S02 leased. Active Milestone stays M012a. Freeze until M002 unchanged. Honeycomb Proposed.
+
 ## 2026-10-01 — Log-native SoT
 
 ### Product
