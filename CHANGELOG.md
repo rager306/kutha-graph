@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: fold-internal hot as_of and claim_supported_at
+
+### Product
+
+### Added
+
+- Fold-internal VT and claim maps so `as_of` / `claim_supported_at` skip non-overlapping facts. Answers match a brute-force `is_live_at` filter of `facts()`. Maps skip-serialize, rebuild from facts after snapshot open, and are not fingerprint input.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. Active Slice remains **S06**. Freeze until M002 unchanged. Not M012 dictionaries-as-facts.
+
 ## 2026-10-01 — Process: lease M012a S06 for Phase 16
 
 ### Process

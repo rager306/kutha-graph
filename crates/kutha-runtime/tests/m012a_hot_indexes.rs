@@ -1,7 +1,9 @@
 //! M012a S06 / HOT-01: fold-internal as_of and claim_supported_at skip non-overlapping facts.
 
 use kutha_common::{EventId, Op, TermId};
-use kutha_runtime::Runtime;
+use kutha_runtime::{store, Runtime};
+use std::fs;
+use std::path::PathBuf;
 
 /// Brute-force live triples at `as_of(vt)` using `facts()` + `is_live_at` only (test oracle).
 fn brute_force_as_of(rt: &Runtime, vt: u64) -> Vec<(TermId, TermId, TermId)> {
@@ -123,4 +125,106 @@ fn as_of_and_claim_supported_at_skip_non_overlapping_facts() {
         claim_examined < fact_len as u64,
         "claim_supported_at must not walk all facts (examined {claim_examined}, facts {fact_len})"
     );
+}
+
+fn brute_force_claim_supported(rt: &Runtime, claim: EventId, tt: u64, vt: u64) -> bool {
+    rt.fold()
+        .facts()
+        .iter()
+        .any(|f| f.claim_id == claim && f.is_live_at(tt, vt))
+}
+
+fn uuid_like() -> String {
+    format!(
+        "{:x}",
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    )
+}
+
+fn temp_dir(label: &str) -> PathBuf {
+    std::env::temp_dir().join(format!("kutha-m012a-s06-{label}-{}", uuid_like()))
+}
+
+#[test]
+fn hot_as_of_matches_brute_force_after_retract() {
+    let mut rt = Runtime::default();
+    let a = rt.intern("Alice");
+    let b = rt.intern("Bob");
+    let rel = rt.intern("relatedTo");
+    let event_id = emit_related_to(&mut rt, a, rel, b, 2017);
+    let triple = (a, rel, b);
+
+    let mut live = rt.fold().as_of(2017);
+    live.sort_unstable();
+    assert!(live.contains(&triple));
+    assert!(rt.fold().claim_supported_at(event_id, u64::MAX, 2017));
+    assert_eq!(live, brute_force_as_of(&rt, 2017));
+    assert_eq!(
+        rt.fold().claim_supported_at(event_id, u64::MAX, 2017),
+        brute_force_claim_supported(&rt, event_id, u64::MAX, 2017)
+    );
+
+    rt.emit(Op::Retract { event_id }).unwrap();
+
+    let mut after = rt.fold().as_of(2017);
+    after.sort_unstable();
+    assert!(
+        !after.contains(&triple),
+        "retracted 2017 triple must leave as_of(2017)"
+    );
+    assert!(!rt.fold().claim_supported_at(event_id, u64::MAX, 2017));
+    assert_eq!(after, brute_force_as_of(&rt, 2017));
+    assert_eq!(
+        rt.fold().claim_supported_at(event_id, u64::MAX, 2017),
+        brute_force_claim_supported(&rt, event_id, u64::MAX, 2017)
+    );
+}
+
+#[test]
+fn snapshot_fold_rebuilds_hot_maps_from_facts() {
+    let (rt, _live_claim, a, rel, b) = tracer_runtime();
+    let before = {
+        let mut triples = rt.fold().as_of(2017);
+        triples.sort_unstable();
+        triples
+    };
+    let fp = rt.fold().fingerprint();
+    assert!(before.contains(&(a, rel, b)));
+
+    let dir = temp_dir("snap-rebuild");
+    store::persist(&rt, &dir).unwrap();
+
+    let snap: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(dir.join("snapshot.json")).unwrap()).unwrap();
+    let fold = snap.get("fold").expect("snapshot fold object");
+    assert!(fold.get("facts").is_some(), "fold JSON must include facts");
+    assert!(
+        fold.get("next_seq").is_some(),
+        "fold JSON must include next_seq"
+    );
+    assert!(
+        fold.get("vt_by_from").is_none() && fold.get("claim_facts").is_none(),
+        "hot maps must not be required snapshot keys"
+    );
+
+    let opened = store::open(&dir).expect("persist then open");
+    let mut opened_as_of = opened.fold().as_of(2017);
+    opened_as_of.sort_unstable();
+    assert_eq!(opened_as_of, before);
+    assert_eq!(opened.fold().fingerprint(), fp);
+    opened.replay_check().unwrap();
+
+    let fact_len = opened.fold().facts().len();
+    opened.fold().reset_hot_examine_count();
+    let _ = opened.fold().as_of(2017);
+    let examined = opened.fold().hot_examine_count();
+    assert!(
+        examined < fact_len as u64,
+        "opened as_of must still skip decoys (examined {examined}, facts {fact_len})"
+    );
+
+    let _ = fs::remove_dir_all(&dir);
 }
