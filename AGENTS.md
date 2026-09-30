@@ -31,11 +31,15 @@ Governor green ≠ ADR Accepted ≠ capability. Honeycomb **Proposed** ≠ deliv
 
 P0 crate spike (not Accepted product): `docs/architecture/p0-spike-inventory.md`. Agents do not mint aggregator waves.
 
-## Current execution position
+## Where to start
 
-Read `.kutha/STATE.md` first; do not start work it does not name. Freeze is that file's Freeze section. GSD focus is `.planning/STATE.md` (does not thaw freeze or lease a slice).
+Read `.kutha/STATE.md` first; do not start work it does not name. Freeze is that file's Freeze section. GSD focus is `.planning/STATE.md` (does not thaw freeze or lease a slice). Repo layout: `README.md` § Layout.
 
-Compound Engineering `docs_root` is `.compound-engineering/artifacts` (`.compound-engineering/config.yaml`). Durable CE outputs and handoffs live under `artifacts/handoffs/` — never `/tmp` (`ce-handoff` default is OS-evictable). Prefer `.planning/` for surviving session plans. One-shot scratch may use `mktemp`. Do **not** add repo-root `ports/` / `adapters/` / `domain/` (ADR-022). Do **not** put Python inside `kutha-runtime`.
+## Artifacts and layout rules
+
+- Compound Engineering `docs_root` is `.compound-engineering/artifacts` (`.compound-engineering/config.yaml`; `docs_root` in `config.local.yaml` is ignored). Plans, research, ideation, and handoffs live there, not under `docs/`. Captured learnings: `artifacts/solutions/<category>/` (YAML frontmatter `module`, `tags`, `problem_type`) — relevant context, not architecture SoT or a backlog.
+- Durable CE outputs stay under `docs_root`, never `/tmp`, `$TMPDIR`, or `.tmp`. `ce-handoff` defaults to OS-evictable `/tmp`: write `artifacts/handoffs/<topic>.md` instead. One-shot scratch may use `mktemp`; `.context/compound-engineering/` is gitignored scratch. Prefer `.planning/` for surviving session plans.
+- Do **not** add repo-root `ports/` / `adapters/` / `domain/` (ADR-022). Do **not** put Python inside `kutha-runtime`.
 
 ## Commands
 
