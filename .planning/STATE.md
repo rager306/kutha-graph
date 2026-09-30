@@ -4,11 +4,11 @@ milestone: v0.02
 milestone_name: Semantic core close
 current_phase: 7
 current_phase_name: Provenance and rule-version check
-status: planning
-stopped_at: Phase 7 research complete
-last_updated: "2026-09-30T02:16:00.000Z"
+status: ready
+stopped_at: Phase 7 plans written
+last_updated: "2026-09-30T02:40:00.000Z"
 last_activity: 2026-09-30
-last_activity_desc: Phase 7 RESEARCH.md written (S07 leased)
+last_activity_desc: Phase 7 PLAN.md files written (S07 leased)
 state_head: fe13ce96af99471142c245a2aa4e6140ee80baa5
 progress:
   total_phases: 5
@@ -33,9 +33,9 @@ See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 ## Current Position
 
 Phase: 7 — Provenance and rule-version check
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-09-30 — Phase 7 research complete (S07 leased)
+Plan: 07-01 (Wave 1 tracer) — not started
+Status: Ready to execute
+Last activity: 2026-09-30 — Phase 7 plans written (S07 leased)
 
 Progress: [██████░░░░] 60%
 
@@ -104,11 +104,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-30T02:16:00.000Z
-Stopped at: Phase 7 research complete
-Resume file: .planning/phases/07-provenance-and-rule-version-check/07-RESEARCH.md
-Next: planner consumes `07-RESEARCH.md` (`/gsd-plan-phase 7` continues). S07 leased in `.kutha/STATE.md`.
+Last session: 2026-09-30T02:40:00.000Z
+Stopped at: Phase 7 plans written
+Resume file: .planning/phases/07-provenance-and-rule-version-check/07-01-PLAN.md
+Next: `/gsd-execute-phase 7` (Wave 1 = 07-01, Wave 2 = 07-02). S07 leased in `.kutha/STATE.md`.
 
 ## Operator Next Steps
 
-- Phase 7 research written under Active Slice **S07**. Plan next from `07-RESEARCH.md`. Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
+- Phase 7 plans written under Active Slice **S07**. Execute 07-01 then 07-02. Do not edit `.kutha/STATE.md` during delivery. Freeze holds.

@@ -110,7 +110,14 @@ Plans:
   3. A named cargo test is registered in the governor and `uv run kutha-gov ci` stays at 0 HIGH (GATE-01 applies)
   4. This phase executes only while S07 is the Active Slice (GATE-02 applies; S07 is currently leased). Freeze items stay unstarted and honeycomb cells stay Proposed (GATE-03 applies)
 
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+**Wave 1**
+- [ ] 07-01-PLAN.md — Rule version + provenance digest + two named oracles (PROV-01, PROV-02)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 07-02-PLAN.md — Governor GATE-01 registration, changelog Process, ci HIGH-free
 
 ### Phase 8: End-to-end candidate fixture
 
@@ -137,7 +144,7 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8. Phase 8 remains plan
 | 4. Partial correction with residual intervals | 3/3 | Complete    | 2026-09-29 |
 | 5. Persisted quantum outcome | 2/2 | Complete    | 2026-09-30 |
 | 6. Typed CSR lease | 2/2 | Complete    | 2026-09-30 |
-| 7. Provenance and rule-version check | 0/TBD | Not started (S07 leased) | - |
+| 7. Provenance and rule-version check | 0/2 | Planned (S07 leased) | - |
 | 8. End-to-end candidate fixture | 0/TBD | Not started (lease-gated) | - |
 
 **Harness citation (not this table):** Active Milestone M011; `L_delivery=M011-S06-done`; Phase H4; Active Slice **S07**; freeze until explicit M002. See `.kutha/STATE.md`.
