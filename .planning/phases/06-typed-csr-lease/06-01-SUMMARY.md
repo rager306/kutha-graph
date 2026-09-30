@@ -13,9 +13,9 @@ provides:
 affects: [06-02 GATE-01 needle registration]
 
 actuals:
-  tokens: 2800
+  tokens: 3919
   tasks: 3
-  commits: 3
+  commits: 4
 
 tech-stack:
   added: []
@@ -72,7 +72,7 @@ coverage:
     human_judgment: false
 
 plan_head_before: f3bce629c39d4cd87931170df6fbee7c48c373df
-plan_head_after: PLACEHOLDER
+plan_head_after: c86345a49c35bd0895588dbc9d7e2eb97d1604c2
 duration: 4min
 completed: 2026-09-30
 status: complete
@@ -101,7 +101,7 @@ status: complete
 
 1. **Task 1: End-to-end typed CSR preserves labels and support multiplicity** - `9a4d866` (feat)
 2. **Task 2: Untyped neighbor-set and FF5 path still hold** - `f408082` (test)
-3. **Task 3: Product changelog, cargo, and D-T5 wave-close trajectory** - (docs; this commit)
+3. **Task 3: Product changelog, cargo, and D-T5 wave-close trajectory** - `e644b4c` (docs)
 
 ## Files Created/Modified
 
@@ -138,6 +138,12 @@ None beyond the plan register (T-06-01…T-06-05 mitigated by one-edge-per-Fact 
 
 None.
 
-## Self-Check
+## Self-Check: PASSED
 
-PENDING
+- FOUND: crates/kutha-runtime/src/csr.rs (TypedEdge, TypedCsrLease)
+- FOUND: crates/kutha-runtime/src/quantum.rs (typed_csr_lease_at)
+- FOUND: crates/kutha-runtime/tests/m011_typed_csr.rs (both named tests)
+- FOUND: CHANGELOG.md (2026-09-30 TypedCsrLease + both fn names)
+- FOUND: commits 9a4d866, f408082, e644b4c
+- FOUND: .kutha/STATE.md Active Slice S06 (unchanged)
+- SKIPPED: .planning/STATE.md / ROADMAP.md updates (dispatch forbid)
