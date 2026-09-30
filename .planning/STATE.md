@@ -4,19 +4,19 @@ milestone: v0.04
 milestone_name: Single-log SoT + stable references
 current_phase: 13
 current_phase_name: Stable references
-current_plan: 2
+current_plan: 3
 status: planning
-stopped_at: Completed 13-01-PLAN.md
-last_updated: "2026-09-30T18:07:56.375Z"
+stopped_at: Completed 13-02-PLAN.md
+last_updated: "2026-09-30T18:11:23.325Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 13 plans 13-01..13-03 written
-state_head: 4a5d361d621e71ca238e4af1126f0824665ca653
+state_head: d4a8e76b2c7ee80855da1c39a06882502535566c
 progress:
   total_phases: 5
   completed_phases: 12
   total_plans: 6
-  completed_plans: 4
-  percent: 67
+  completed_plans: 5
+  percent: 83
 ---
 
 # Project State
@@ -34,14 +34,14 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 
 ## Current Position
 
-Current Plan: 2
+Current Plan: 3
 Total Plans in Phase: 3
 Phase: 13 of 16 (Stable references)
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-10-01 — Phase 13-01 EventId retract/correct landed
 
-Progress: [███████░░░] 67% (v0.04 plans executed)
+Progress: [████████░░] 83% (v0.04 plans executed)
 
 ## Performance Metrics
 
@@ -78,6 +78,7 @@ Progress: [███████░░░] 67% (v0.04 plans executed)
 | Phase 12 P02 | 12min | 2 tasks | 8 files |
 | Phase 12 P03 | 15min | 2 tasks | 7 files |
 | Phase 13 P01 | 7 | 2 tasks | 9 files |
+| Phase 13 P02 | 4 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -98,6 +99,8 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 13]: Retract/Correct/CorrectInterval share EventId because UnknownFact and IntervalPatchRejected are one type
 - [Phase 13]: Lookup prefers the live Fact when several residuals share one CorrectInterval Event.id
 - [Phase 13]: CSR TypedEdge.fact_seq and ConflictReport seqs stay lease indexes (ING-03 is Phase 14)
+- [Phase 13]: Dropped source_fact_seqs from the durable cite Op so a leaked payload cannot be replayed against a renumbered fold
+- [Phase 13]: check_admission still uses tt=MAX and row.vt (FIX-02); unknown EventId is stale_support
 
 ### Pending Todos
 
@@ -120,8 +123,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T18:07:38.222Z
-Stopped at: Completed 13-01-PLAN.md
+Last session: 2026-09-30T18:11:23.165Z
+Stopped at: Completed 13-02-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 13`. Harness lease is already S02. Freeze holds. Do not lease M002 without explicit operator intent.
 
