@@ -1,5 +1,30 @@
 use kutha_common::{Event, EventId, Op, SupportPolarity, TermId, TransactionTime, ValidTime};
 use sha2::{Digest, Sha256};
+use std::sync::atomic::{AtomicU64, Ordering};
+
+/// Integration-test examine counter (not fingerprint / JSON). `cfg(test)` is off for `tests/*.rs`.
+#[derive(Debug, Default)]
+struct ExamineCounter(AtomicU64);
+
+impl Clone for ExamineCounter {
+    fn clone(&self) -> Self {
+        Self(AtomicU64::new(self.0.load(Ordering::Relaxed)))
+    }
+}
+
+impl ExamineCounter {
+    fn reset(&self) {
+        self.0.store(0, Ordering::Relaxed);
+    }
+
+    fn get(&self) -> u64 {
+        self.0.load(Ordering::Relaxed)
+    }
+
+    fn bump(&self) {
+        self.0.fetch_add(1, Ordering::Relaxed);
+    }
+}
 
 fn nil_claim() -> EventId {
     EventId::nil()
@@ -130,11 +155,24 @@ impl Fact {
 pub struct GraphFold {
     facts: Vec<Fact>,
     next_seq: u64,
+    /// Hot-path examine count. Not SoT; skipped in snapshot JSON.
+    #[serde(skip)]
+    hot_examine: ExamineCounter,
 }
 
 impl GraphFold {
     pub fn facts(&self) -> &[Fact] {
         &self.facts
+    }
+
+    /// Reset the hot-path examine counter (integration tests; not fingerprint input).
+    pub fn reset_hot_examine_count(&self) {
+        self.hot_examine.reset();
+    }
+
+    /// Facts (or index slots) considered for liveness on the last hot reads since reset.
+    pub fn hot_examine_count(&self) -> u64 {
+        self.hot_examine.get()
     }
 
     pub fn live_count(&self, tt: TransactionTime, vt: ValidTime) -> usize {
@@ -146,7 +184,10 @@ impl GraphFold {
     pub fn live_at(&self, tt: TransactionTime, vt: ValidTime) -> Vec<(TermId, TermId, TermId)> {
         self.facts
             .iter()
-            .filter(|f| f.is_live_at(tt, vt))
+            .filter(|f| {
+                self.hot_examine.bump();
+                f.is_live_at(tt, vt)
+            })
             .map(|f| (f.subject, f.relation, f.object()))
             .collect()
     }
@@ -198,7 +239,10 @@ impl GraphFold {
     pub fn live_supports(&self, claim: EventId, tt: TransactionTime, vt: ValidTime) -> Vec<&Fact> {
         self.facts
             .iter()
-            .filter(|f| f.claim_id == claim && f.is_live_at(tt, vt))
+            .filter(|f| {
+                self.hot_examine.bump();
+                f.claim_id == claim && f.is_live_at(tt, vt)
+            })
             .collect()
     }
 
