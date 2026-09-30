@@ -9,6 +9,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Process
 
 - Harness phase named **H5** on the operator lease. The Process history for H5 plus the AGENTS diet is Phase 11 SEM-08. Not ADR Accepted.
+- Dogfood ladder and `h4-lease` / `dogfood` needles now name H5 (existing check ids). Narrative remains Phase 11 SEM-08.
 
 ### Trajectory
 

@@ -32,7 +32,7 @@ invariants:
     check: honeycomb-map
 
   - id: I-dogfood
-    claim: "Harness doc names H0–H4 and is not an ADR"
+    claim: "Harness doc names H0–H5 and is not an ADR"
     source: "docs/process/kutha-harness.md"
     disposition: check
     check: dogfood

@@ -48,7 +48,10 @@ Each rung is a harness capability that **uses a newly real product surface**. Do
 | **H1** | Evidence: `cargo test` / named FF tests as observations (not SoT) | **Now** (FF5/FF6 in crates) |
 | **H2** | Assert harness events onto the **Kutha log** (delivery facts, not product norms); query **AS OF** the process | **Now** (FF5 green + `kutha-tenant`) |
 | **H3** | Fail-closed writes through a **relation allowlist** (stub of ADR-050) | **Now** (process JSONL + `.kutha/dictionaries/relations.yaml`) |
-| **H4** | Process dictionaries version like norms via ADR-090 overlay dogfood | **Now** (live tip→JSONL membership sync on `emit_log` + AS OF tenant) |
+| **H4** | Process dictionaries version like norms via ADR-090 overlay dogfood | Done (overlay dogfood in; not a legal pack) |
+| **H5** | Semantic governor + lean agent context (harness/docs only; no crate delivery) | **Now** |
+
+**H5** is the current harness rung: semantic governor and lean agent context live on the docs/process plane. It does not lease product-crate delivery.
 
 H2 is the Kutha-specific dogfood the neighbors cannot do with markdown alone: the control plane becomes a **tenant of the engine**, still not architecture authority.
 
@@ -138,7 +141,7 @@ Windows: successive status rows close `valid_to` at the next monotonic valid-fro
 
 Intern map (ADR-011) ≠ process dictionaries (ADR-050). Process allowlist at H3: `.kutha/dictionaries/relations.yaml`. Product allowlist remains `crates/kutha-runtime/dictionaries/relations.yaml`. Mixing the two schemas is a HIGH `plane-mix` finding.
 
-## CLI (H0–H4)
+## CLI (H0–H5)
 
 ```text
 uv run kutha-gov list
@@ -172,4 +175,4 @@ Adding a check: control loop → `.kutha/dictionaries/invariants.yaml`; a fence 
 - System `python3` / 3.12 as the harness interpreter (must be uv + 3.13).
 - Harness as a workflow engine (Cui remains pack composition, not GSD).
 - Implementing the STCA-guide §5 tutorial runtime as a second graph (JSON merge-patch objects). That skeleton is **pedagogical**; Kutha events are typed `Op`.
-- Legal / science **product** packs (ADR-090/093) as the next crate — M001 is closed; do not start Rocks until STATE names M002. Harness H4 is in (process overlay dogfood); do not start a legal pack.
+- Legal / science **product** packs (ADR-090/093) as the next crate — M001 is closed; do not start Rocks until STATE names M002. Harness **H5** is the current Now rung (harness/docs only). H4 overlay dogfood remains delivered; do not start a legal pack.

@@ -107,14 +107,14 @@ checks:
         message: "ROADMAP should say honeycomb is a map, not the delivery list"
 
   - id: dogfood
-    description: docs/process/kutha-harness.md names H0-H4 and non-authority
+    description: docs/process/kutha-harness.md names H0-H5 and non-authority
     steps:
       - kind: file_exists
         path: docs/process/kutha-harness.md
         stop_on_fail: true
       - kind: file_contains
         path: docs/process/kutha-harness.md
-        needles: ["**H0**", "**H1**", "**H2**", "**H3**", "**H4**"]
+        needles: ["**H0**", "**H1**", "**H2**", "**H3**", "**H4**", "**H5**"]
         require: all
         category: ladder
         message: "dogfood ladder missing rungs: {missing}"
@@ -398,20 +398,26 @@ checks:
         message: "e2e APIs missing: {missing}"
 
   - id: h4-lease
-    description: H4 delivery lease named without promoting ADR-090 L_map
+    description: H5 phase token named without promoting ADR-090 L_map
     steps:
       - kind: file_contains
         path: .kutha/STATE.md
-        needles: ["**Phase:** H4"]
+        needles: ["**Phase:** H5"]
         require: all
         category: h4-lease
-        message: "STATE missing H4 phase: {missing}"
+        message: "STATE missing H5 phase: {missing}"
       - kind: file_contains
         path: .kutha/ROADMAP.md
         needles: ["- [x] **H4**"]
         require: all
         category: h4-lease
         message: "ROADMAP H4 checkbox not marked: {missing}"
+      - kind: file_contains
+        path: .kutha/ROADMAP.md
+        needles: ["- [ ] **H5**", "- [x] **H5**"]
+        require: any
+        category: h4-lease
+        message: "ROADMAP missing H5 checkbox (open or done): {missing}"
       - kind: file_contains
         path: .kutha/dictionaries/honeycomb.yaml
         needles: ["delivery: frozen", "full ADR-090 ontology"]
