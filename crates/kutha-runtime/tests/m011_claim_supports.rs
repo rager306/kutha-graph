@@ -86,6 +86,7 @@ fn replay_rejects_behavior_without_prior_cause() {
         Op::Behavior {
             name: "inverse_knows".into(),
             caused_by: ghost,
+            rule_version: String::new(),
             subject: 2,
             relation: 1,
             object: 0,
@@ -147,6 +148,7 @@ fn derived_q_loses_eligibility_when_last_premise_support_withdrawn() {
         .emit(Op::Behavior {
             name: "derive_pq".into(),
             caused_by: claim_p,
+            rule_version: String::new(),
             subject: q,
             relation: rel,
             object: true_,

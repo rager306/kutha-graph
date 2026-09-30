@@ -48,6 +48,10 @@ pub enum Op {
     Behavior {
         name: String,
         caused_by: EventId,
+        /// Pinned rule identity for provenance (ADR-060 obligation 2). Fold ignores this.
+        /// Missing JSON decodes to empty so legacy WAL/JSONL rows stay readable.
+        #[serde(default)]
+        rule_version: String,
         subject: TermId,
         relation: TermId,
         object: TermId,
@@ -149,6 +153,7 @@ impl Event {
             Op::Behavior {
                 name,
                 caused_by,
+                rule_version,
                 subject,
                 relation,
                 object,
@@ -158,6 +163,7 @@ impl Event {
                 h.update(b"behavior");
                 h.update(name.as_bytes());
                 h.update(caused_by.as_bytes());
+                h.update(rule_version.as_bytes());
                 h.update(subject.to_le_bytes());
                 h.update(relation.to_le_bytes());
                 h.update(object.to_le_bytes());

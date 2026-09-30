@@ -5,12 +5,17 @@ use crate::log::EventLog;
 use crate::receipt::{digest_to_hex, QuantumReceipt};
 use crate::snapshot::Snapshot;
 use kutha_common::{Event, EventId, Op, TermDictionary, TermId};
+use sha2::{Digest, Sha256};
 use std::collections::HashSet;
 use std::fmt;
 
 #[derive(Debug)]
 pub enum RuntimeError {
     ReplayDivergence {
+        expected: [u8; 32],
+        actual: [u8; 32],
+    },
+    ProvenanceMismatch {
         expected: [u8; 32],
         actual: [u8; 32],
     },
@@ -38,6 +43,7 @@ impl fmt::Display for RuntimeError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             RuntimeError::ReplayDivergence { .. } => write!(f, "ReplayDivergenceError"),
+            RuntimeError::ProvenanceMismatch { .. } => write!(f, "ProvenanceMismatchError"),
             RuntimeError::UnknownFact { fact_seq } => write!(f, "unknown fact {fact_seq}"),
             RuntimeError::UnknownRelation { name } => {
                 write!(f, "unknown relation {name} (not in allowlist)")
@@ -473,6 +479,7 @@ impl Runtime {
                     Op::Behavior {
                         name: "inverse_knows".into(),
                         caused_by: event.id,
+                        rule_version: String::new(),
                         subject: *object,
                         relation: self.known_by,
                         object: *subject,
@@ -506,6 +513,40 @@ impl Runtime {
             seen.insert(e.id);
         }
         Ok(rebuilt)
+    }
+
+    /// Lineage digest over Behavior rows in log order (ADR-060 obligation 2).
+    /// Mix is `(event.id, caused_by, name, rule_version)` with length-prefixed strings.
+    /// Does not include Fact triples and is not called from [`Self::replay_check`].
+    pub fn provenance_fingerprint(&self) -> [u8; 32] {
+        let mut h = Sha256::new();
+        h.update(b"kutha-prov-v1");
+        for e in self.log.iter() {
+            if let Op::Behavior {
+                name,
+                caused_by,
+                rule_version,
+                ..
+            } = &e.op
+            {
+                h.update(e.id.as_bytes());
+                h.update(caused_by.as_bytes());
+                h.update((name.len() as u64).to_le_bytes());
+                h.update(name.as_bytes());
+                h.update((rule_version.len() as u64).to_le_bytes());
+                h.update(rule_version.as_bytes());
+            }
+        }
+        h.finalize().into()
+    }
+
+    /// Compare a previously captured lineage digest. State replay stays [`Self::replay_check`].
+    pub fn provenance_check(&self, expected: [u8; 32]) -> Result<(), RuntimeError> {
+        let actual = self.provenance_fingerprint();
+        if expected != actual {
+            return Err(RuntimeError::ProvenanceMismatch { expected, actual });
+        }
+        Ok(())
     }
 
     /// Thin P→Q oracle (M011 S03): a Behavior-derived claim is eligible at a cut
