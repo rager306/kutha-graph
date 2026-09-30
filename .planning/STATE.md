@@ -6,17 +6,17 @@ current_phase: 15
 current_phase_name: Verify, persist, and time scale
 current_plan: 01
 status: planning
-stopped_at: Phase 15 plans written (15-01..15-03), ready to execute
-last_updated: "2026-10-01T01:44:00.000Z"
+stopped_at: Completed 15-01-PLAN.md
+last_updated: "2026-09-30T19:00:57.561Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 15 plans 15-01..15-03 written
-state_head: 66f360eb0d2ba67bfb22addaefd26a034035f2cc
+state_head: da17806c0041655372d92eb04e951cab715a10a3
 progress:
   total_phases: 5
   completed_phases: 14
-  total_plans: 9
-  completed_plans: 9
-  percent: 88
+  total_plans: 12
+  completed_plans: 10
+  percent: 83
 ---
 
 # Project State
@@ -37,11 +37,11 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 Current Plan: 15-01 (ready to execute)
 Total Plans in Phase: 3
 Phase: 15 of 16 (Verify, persist, and time scale)
-Plan: 1 of 3
+Plan: 2 of 3
 Status: Plans written
 Last activity: 2026-10-01 — Phase 15 plans 15-01..15-03 written
 
-Progress: [█████████░] 88% (v0.04 plans executed)
+Progress: [████████░░] 83% (v0.04 plans executed)
 
 ## Performance Metrics
 
@@ -85,6 +85,7 @@ Progress: [█████████░] 88% (v0.04 plans executed)
 | Phase 14 P01 | 8 | 2 tasks | 20 files |
 | Phase 14 P02 | 4 | 2 tasks | 6 files |
 | Phase 14 P03 | 3 | 2 tasks | 5 files |
+| Phase 15 P01 | 6min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -117,6 +118,9 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 14]: e2e t1 Asserts store Positive so t2 interior not-P is Negative without an opposite-of dictionary
 - [Phase 14]: Governor check lives on bridges.yaml, not invariants.yaml
 - [Phase 14]: ADR-011 and ADR-013 evidence append only; map stays Proposed
+- [Phase 15]: open maps ReplayDivergence through runtime_err (InvalidData) and does not return Ok Runtime
+- [Phase 15]: persist jsonl is same-directory temp, sync_all, rename; abort-before-rename is a pub test seam
+- [Phase 15]: Define persist ids are SHA-256 prefix kutha-define-id; intern() still Event::new
 
 ### Pending Todos
 
@@ -139,8 +143,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T18:41:58.964Z
-Stopped at: Phase 14 complete, ready to plan Phase 15
+Last session: 2026-09-30T19:00:57.137Z
+Stopped at: Completed 15-01-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 13`. Harness lease is already S02. Freeze holds. Do not lease M002 without explicit operator intent.
 
