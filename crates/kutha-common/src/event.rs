@@ -35,10 +35,11 @@ pub enum SupportPolarity {
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum Op {
     /// N-ary objects: subject, relation, object (interned).
-    /// `claim`: when set, this Assert is another support for that claim id;
-    /// when absent, the new event id becomes the claim id (ADR-011 / M011 S01).
-    /// `delivery_key`: non-empty retry identity (ING-01 / D-01). `None` or empty always mints.
-    /// `polarity`: stored support polarity; default `None` (ING-03 wiring is Plan 14-02).
+    /// Three identities (ING-02 / D-02): `claim` is proposition identity (`Fact.claim_id`);
+    /// the minting `Event.id` / `Fact.event_id` is the support slot; `delivery_key` is retry
+    /// identity only (ING-01) and is not a claim id.
+    /// When `claim` is absent, the new event id becomes the claim id (ADR-011 / M011 S01).
+    /// `polarity`: stored support polarity; default `None` (ING-03).
     Assert {
         subject: TermId,
         relation: TermId,

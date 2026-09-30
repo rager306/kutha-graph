@@ -68,16 +68,17 @@ pub struct Fact {
     pub valid_to: Option<ValidTime>,
     pub ingested_at: TransactionTime,
     pub invalidated_at: Option<TransactionTime>,
-    /// Portable claim identity (ADR-011). Multiple Facts may share one claim_id (supports).
+    /// Portable claim / proposition identity (ADR-011, ING-02). Multiple Facts may share one
+    /// `claim_id` as independent supports. Not the support slot and not `delivery_key`.
     #[serde(default = "nil_claim")]
     pub claim_id: EventId,
-    /// Minting Event.id (REF-01). Retract/Correct look up this field, not fold-local seq.
+    /// Minting Event.id — the support slot (REF-01, ING-02). Retract/Correct look up this field, not fold-local seq.
     #[serde(default = "nil_claim")]
     pub event_id: EventId,
-    /// Durable retry key copied from `Op::Assert` (ING-01 / D-01).
+    /// Durable retry key copied from `Op::Assert` (ING-01 / D-01). Not claim identity.
     #[serde(default)]
     pub delivery_key: Option<String>,
-    /// Stored support polarity copied from `Op::Assert` (ING-03 field; partitioning is Plan 14-02).
+    /// Stored support polarity copied from `Op::Assert` (ING-03). `None` is in neither conflict bucket.
     #[serde(default)]
     pub polarity: Option<SupportPolarity>,
 }

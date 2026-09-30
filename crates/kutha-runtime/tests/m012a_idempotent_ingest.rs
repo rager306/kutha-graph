@@ -187,3 +187,64 @@ fn keyed_assert_retry_after_persist_open_does_not_mint() {
     let _ = std::fs::remove_dir_all(&dir);
 }
 
+#[test]
+fn claim_id_distinct_from_support_slot() {
+    let mut rt = Runtime::default();
+    let s = rt.intern("S");
+    let rel = rt.intern("relatedTo");
+    let o = rt.intern("O");
+
+    let first = rt
+        .emit(Op::Assert {
+            subject: s,
+            relation: rel,
+            object: o,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: Some("key-a".into()),
+            polarity: None,
+        })
+        .unwrap();
+    let id_a = first.receipt.event_ids[0];
+    let second = rt
+        .emit(Op::Assert {
+            subject: s,
+            relation: rel,
+            object: o,
+            valid_from: 2010,
+            valid_to: None,
+            claim: Some(id_a),
+            delivery_key: Some("key-b".into()),
+            polarity: None,
+        })
+        .unwrap();
+    let id_b = second.receipt.event_ids[0];
+    assert_ne!(id_a, id_b);
+
+    let fa = rt
+        .fold()
+        .facts()
+        .iter()
+        .find(|f| f.event_id == id_a)
+        .expect("first support");
+    let fb = rt
+        .fold()
+        .facts()
+        .iter()
+        .find(|f| f.event_id == id_b)
+        .expect("second support");
+    assert_eq!(fa.claim_id, fb.claim_id);
+    assert_eq!(fa.claim_id, id_a, "opening support claim_id equals its EventId");
+    assert_ne!(
+        fb.claim_id, id_b,
+        "later support claim_id is not its minting EventId"
+    );
+    let claim_s = fa.claim_id.to_string();
+    assert_ne!(fa.delivery_key.as_deref(), Some(claim_s.as_str()));
+    assert_ne!(fb.delivery_key.as_deref(), Some(claim_s.as_str()));
+    assert_eq!(2, rt.fold().live_support_count(fa.claim_id, u64::MAX, 2017));
+    rt.replay_check().unwrap();
+}
+
+

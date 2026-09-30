@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: claim vs support identities
+
+### Product
+
+### Added
+
+- Named ING-02 oracle `claim_id_distinct_from_support_slot`. `Op::Assert` and `Fact` rustdoc name claim (proposition), minting EventId (support slot), and `delivery_key` (retry) as three identities.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. Active Slice remains **S03**. Freeze until M002 unchanged.
+
 ## 2026-10-01 — Product: delivery-key Assert ingest
 
 ### Product
