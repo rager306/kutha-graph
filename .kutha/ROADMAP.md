@@ -109,20 +109,21 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M011 is active (S03 done; further slices need lease); M002+ stay frozen until leased.
+Do not start until STATE names them. M011 is active (S04–S08 done record; further product work needs a lease); M002+ stay frozen until leased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
-1. **M011 tail** — S04–S08 above (GSD overlay v0.02).
-2. **M012** — Dictionaries as facts: a thin ADR-050 subset (versioned allowlist entries as bi-temporal facts; admission validated at a cut; LLM output is only a proposal; typed non-success). Its lease must name the subset it thaws.
-3. **M002** — Rocks adapter behind the same events (persistence, not a second SoT); vacuum policy and litigation hold; replay parity across stores.
-4. **M003** — Cypher skin over the already-correct AS OF cut (may swap with M002 if an external surface is needed first).
-5. *(unnumbered)* Legal pack MVP — thin ADR-090 slice, golden PIT set where cosine/RAG must fail the same fixture.
-6. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
-7. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
-8. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
-9. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
-10. *(unnumbered)* Packaging, benchmarks vs Samyama/Falkor-class projections, naming and license decision (ADR-092) before any publish.
+1. **M011 tail** — S04–S08 above (GSD overlay v0.02). Done record; not a new lease.
+2. **M012a** — Single-log SoT and stable references: outcomes, justifications, and resume as log records; EventId / proposition ids; idempotent ingest; `open` then verify; atomic persist; stable `Define` ids; declared time scale; fold-internal indexes.
+3. **M012** — Dictionaries as facts: a thin ADR-050 subset (versioned allowlist entries as bi-temporal facts; admission validated at a cut; LLM output is only a proposal; typed non-success). Its lease must name the subset it thaws.
+4. **M002** — Rocks adapter behind the same events (persistence, not a second SoT); vacuum policy and litigation hold; replay parity across stores.
+5. **M003** — Cypher skin over the already-correct AS OF cut (may swap with M002 if an external surface is needed first).
+6. *(unnumbered)* Legal pack MVP — thin ADR-090 slice, golden PIT set where cosine/RAG must fail the same fixture.
+7. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
+8. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
+9. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
+10. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
+11. *(unnumbered)* Packaging, benchmarks vs Samyama/Falkor-class projections, naming and license decision (ADR-092) before any publish.
 
 P4 (Raft/multi-node, learned indexes) is not planned until single-node hybrid evidence exists.
 

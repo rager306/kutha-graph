@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-30 — Process: semantic-gap review artifact and M012a order
+
+### Process
+
+- Architecture gap review artifact (`docs/architecture/semantic-gap-review.md`) plus M012a proposed before M012 on the non-authoritative later-milestones list. Narrative is Phase 11 SEM-08. Not ADR Accepted.
+
+### Trajectory
+
+- Honeycomb stays Proposed. No cell promoted. Green governor is not ADR Accepted and not L_capability.
+
 ## 2026-09-30 — Process: name harness phase H5 on the operator lease
 
 ### Process
