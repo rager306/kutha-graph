@@ -20,7 +20,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Trajectory
 
-- Active Slice remains **S08**; honeycomb stays Proposed (not Accepted, not L_capability). Green governor is not ADR Accepted and not L_capability. Conflict report is not four-valued logic. GATE-01 needles are registered; honeycomb evidence names for ADR-013/011/012/040 follow on this wave without promoting `map`.
+- Active Slice remains **S08**; ADR-013, ADR-011, ADR-012, and ADR-040 remain Proposed (not Accepted, not L_capability). Evidence names the FIX oracles `e2e_fixture_supports_and_conflict_at_named_cuts`, `e2e_justification_cites_sources_and_rejects_stale_admission`, and `e2e_incremental_matches_reconstruct_after_discarding_leases`. Green governor is not ADR Accepted and not L_capability. Conflict report is not four-valued logic.
 
 ## 2026-09-30 — Process: lease Active Slice S08 after S07 delivery
 
