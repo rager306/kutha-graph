@@ -71,6 +71,9 @@ pub struct Fact {
     /// Portable claim identity (ADR-011). Multiple Facts may share one claim_id (supports).
     #[serde(default = "nil_claim")]
     pub claim_id: EventId,
+    /// Minting Event.id (REF-01). Retract/Correct look up this field, not fold-local seq.
+    #[serde(default = "nil_claim")]
+    pub event_id: EventId,
 }
 
 impl Fact {
@@ -138,8 +141,17 @@ impl GraphFold {
             h.update(f.ingested_at.to_le_bytes());
             h.update(f.invalidated_at.unwrap_or(u64::MAX).to_le_bytes());
             h.update(f.claim_id.as_bytes());
+            h.update(f.event_id.as_bytes());
         }
         h.finalize().into()
+    }
+
+    /// First Fact minted (or residual-replaced) by `event_id`. Prefer a live row.
+    fn fact_index_by_event_id(&self, event_id: EventId) -> Option<usize> {
+        self.facts
+            .iter()
+            .position(|f| f.event_id == event_id && f.invalidated_at.is_none())
+            .or_else(|| self.facts.iter().position(|f| f.event_id == event_id))
     }
 
     /// Live Facts that support `claim` at an explicit cut.
@@ -181,6 +193,7 @@ impl GraphFold {
                     ingested_at: event.ingested_at,
                     invalidated_at: None,
                     claim_id,
+                    event_id: event.id,
                 });
             }
             Op::Behavior {
@@ -203,27 +216,28 @@ impl GraphFold {
                     ingested_at: event.ingested_at,
                     invalidated_at: None,
                     claim_id: event.id,
+                    event_id: event.id,
                 });
             }
-            Op::Retract { fact_seq } => {
-                if let Some(f) = self.facts.iter_mut().find(|f| f.seq == *fact_seq) {
-                    if f.invalidated_at.is_none() {
-                        f.invalidated_at = Some(event.ingested_at);
+            Op::Retract { event_id } => {
+                if let Some(idx) = self.fact_index_by_event_id(*event_id) {
+                    if self.facts[idx].invalidated_at.is_none() {
+                        self.facts[idx].invalidated_at = Some(event.ingested_at);
                     }
                 }
             }
             Op::Correct {
-                fact_seq,
+                event_id,
                 object,
                 valid_from,
                 valid_to,
             } => {
-                if let Some(old) = self.facts.iter_mut().find(|f| f.seq == *fact_seq) {
-                    if old.invalidated_at.is_none() {
-                        old.invalidated_at = Some(event.ingested_at);
-                        let s = old.subject;
-                        let r = old.relation;
-                        let claim_id = old.claim_id;
+                if let Some(idx) = self.fact_index_by_event_id(*event_id) {
+                    if self.facts[idx].invalidated_at.is_none() {
+                        self.facts[idx].invalidated_at = Some(event.ingested_at);
+                        let s = self.facts[idx].subject;
+                        let r = self.facts[idx].relation;
+                        let claim_id = self.facts[idx].claim_id;
                         let seq = self.next_seq;
                         self.next_seq += 1;
                         self.facts.push(Fact {
@@ -236,17 +250,18 @@ impl GraphFold {
                             ingested_at: event.ingested_at,
                             invalidated_at: None,
                             claim_id,
+                            event_id: event.id,
                         });
                     }
                 }
             }
             Op::CorrectInterval {
-                fact_seq,
+                event_id,
                 object,
                 patch_from,
                 patch_to,
             } => {
-                let Some(idx) = self.facts.iter().position(|f| f.seq == *fact_seq) else {
+                let Some(idx) = self.fact_index_by_event_id(*event_id) else {
                     return;
                 };
                 if self.facts[idx].invalidated_at.is_some() {
@@ -279,6 +294,7 @@ impl GraphFold {
                         ingested_at: event.ingested_at,
                         invalidated_at: None,
                         claim_id,
+                        event_id: event.id,
                     });
                 };
                 if let Some((vf, vt)) = prefix {
@@ -289,9 +305,9 @@ impl GraphFold {
                     push_row(old_object, vf, vt);
                 }
             }
-              Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
-          }
-      }
+            Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
+        }
+    }
 
     pub fn replay(events: &[Event]) -> Self {
         let mut fold = Self::default();

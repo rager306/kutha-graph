@@ -39,17 +39,17 @@ pub enum Op {
         claim: Option<EventId>,
     },
     Retract {
-        fact_seq: u64,
+        event_id: EventId,
     },
     Correct {
-        fact_seq: u64,
+        event_id: EventId,
         object: TermId,
         valid_from: ValidTime,
         valid_to: Option<ValidTime>,
     },
     /// Explicit interval patch (M011 S04). Does not change whole-version `Correct`.
     CorrectInterval {
-        fact_seq: u64,
+        event_id: EventId,
         object: TermId,
         patch_from: ValidTime,
         patch_to: Option<ValidTime>,
@@ -156,30 +156,30 @@ impl Event {
                     h.update(c.as_bytes());
                 }
             }
-            Op::Retract { fact_seq } => {
+            Op::Retract { event_id } => {
                 h.update(b"retract");
-                h.update(fact_seq.to_le_bytes());
+                h.update(event_id.as_bytes());
             }
             Op::Correct {
-                fact_seq,
+                event_id,
                 object,
                 valid_from,
                 valid_to,
             } => {
                 h.update(b"correct");
-                h.update(fact_seq.to_le_bytes());
+                h.update(event_id.as_bytes());
                 h.update(object.to_le_bytes());
                 h.update(valid_from.to_le_bytes());
                 h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
             }
             Op::CorrectInterval {
-                fact_seq,
+                event_id,
                 object,
                 patch_from,
                 patch_to,
             } => {
                 h.update(b"correct-interval");
-                h.update(fact_seq.to_le_bytes());
+                h.update(event_id.as_bytes());
                 h.update(object.to_le_bytes());
                 h.update(patch_from.to_le_bytes());
                 h.update(patch_to.unwrap_or(u64::MAX).to_le_bytes());

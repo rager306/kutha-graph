@@ -20,7 +20,7 @@ pub enum RuntimeError {
         actual: [u8; 32],
     },
     UnknownFact {
-        fact_seq: u64,
+        event_id: EventId,
     },
     UnknownRelation {
         name: String,
@@ -32,7 +32,7 @@ pub enum RuntimeError {
         caused_by: EventId,
     },
     IntervalPatchRejected {
-        fact_seq: u64,
+        event_id: EventId,
     },
     DuplicateResume {
         resume_of: String,
@@ -50,7 +50,7 @@ impl fmt::Display for RuntimeError {
         match self {
             RuntimeError::ReplayDivergence { .. } => write!(f, "ReplayDivergenceError"),
             RuntimeError::ProvenanceMismatch { .. } => write!(f, "ProvenanceMismatchError"),
-            RuntimeError::UnknownFact { fact_seq } => write!(f, "unknown fact {fact_seq}"),
+            RuntimeError::UnknownFact { event_id } => write!(f, "unknown fact {event_id}"),
             RuntimeError::UnknownRelation { name } => {
                 write!(f, "unknown relation {name} (not in allowlist)")
             }
@@ -58,8 +58,8 @@ impl fmt::Display for RuntimeError {
             RuntimeError::BrokenLineage { caused_by } => {
                 write!(f, "broken lineage caused_by={caused_by}")
             }
-            RuntimeError::IntervalPatchRejected { fact_seq } => {
-                write!(f, "interval patch rejected for fact {fact_seq}")
+            RuntimeError::IntervalPatchRejected { event_id } => {
+                write!(f, "interval patch rejected for fact {event_id}")
             }
             RuntimeError::DuplicateResume { resume_of } => {
                 write!(f, "duplicate resume for quantum {resume_of}")
@@ -72,8 +72,8 @@ impl fmt::Display for RuntimeError {
 
 pub use kutha_common::OutcomeDisposition;
 
-    /// Authoritative justification / admission cite (D-F2).
-    /// SoT is `Op::JustificationCite` on the log; `justifications.jsonl` is a lease (LOG-02 / D-02).
+/// Authoritative justification / admission cite (D-F2).
+/// SoT is `Op::JustificationCite` on the log; `justifications.jsonl` is a lease (LOG-02 / D-02).
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct Justification {
     pub justification_id: String,
@@ -642,24 +642,21 @@ impl Runtime {
 
     /// Admit a user op, append, fold, cascade inverse-`knows` until idle or budget.
     pub fn emit(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
-        if matches!(
-            op,
-            Op::QuantumOutcome { .. } | Op::JustificationCite { .. }
-        ) {
+        if matches!(op, Op::QuantumOutcome { .. } | Op::JustificationCite { .. }) {
             return Err(RuntimeError::MetaOpRejected);
         }
-        if let Op::Retract { fact_seq }
-        | Op::Correct { fact_seq, .. }
-        | Op::CorrectInterval { fact_seq, .. } = &op
+        if let Op::Retract { event_id }
+        | Op::Correct { event_id, .. }
+        | Op::CorrectInterval { event_id, .. } = &op
         {
-            if !self.fold.facts().iter().any(|f| f.seq == *fact_seq) {
+            if !self.fold.facts().iter().any(|f| f.event_id == *event_id) {
                 return Err(RuntimeError::UnknownFact {
-                    fact_seq: *fact_seq,
+                    event_id: *event_id,
                 });
             }
         }
         if let Op::CorrectInterval {
-            fact_seq,
+            event_id,
             patch_from,
             patch_to,
             ..
@@ -669,7 +666,8 @@ impl Runtime {
                 .fold
                 .facts()
                 .iter()
-                .find(|f| f.seq == *fact_seq)
+                .find(|f| f.event_id == *event_id && f.invalidated_at.is_none())
+                .or_else(|| self.fold.facts().iter().find(|f| f.event_id == *event_id))
                 .expect("UnknownFact gate already ran");
             if fact.invalidated_at.is_some()
                 || patch_to.is_some_and(|t| *patch_from >= t)
@@ -677,7 +675,7 @@ impl Runtime {
                     .is_none()
             {
                 return Err(RuntimeError::IntervalPatchRejected {
-                    fact_seq: *fact_seq,
+                    event_id: *event_id,
                 });
             }
         }
@@ -908,8 +906,8 @@ mod tests {
             claim: None,
         })
         .unwrap();
-        let seq = rt.fold().facts()[0].seq;
-        rt.emit(Op::Retract { fact_seq: seq }).unwrap();
+        let minting = rt.fold().facts()[0].event_id;
+        rt.emit(Op::Retract { event_id: minting }).unwrap();
         assert_eq!(rt.fold().facts().len(), 2); // knows retracted, inverse still live
         assert!(!rt.fold().facts()[0].is_live_at(u64::MAX, 0));
         assert!(rt.fold().facts().iter().any(|f| f.invalidated_at.is_some()));

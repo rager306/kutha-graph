@@ -87,7 +87,7 @@ pub fn recover_events(path: &Path) -> std::io::Result<Vec<Event>> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use kutha_common::{Event, Op};
+    use kutha_common::{Event, EventId, Op};
 
     #[test]
     fn recover_drops_truncated_tail() {
@@ -99,8 +99,18 @@ mod tests {
         }));
         std::fs::create_dir_all(&dir).unwrap();
         let path = dir.join("events.wal");
-        let e0 = Event::new(Op::Retract { fact_seq: 0 }, 0);
-        let e1 = Event::new(Op::Retract { fact_seq: 1 }, 1);
+        let e0 = Event::new(
+            Op::Retract {
+                event_id: EventId::nil(),
+            },
+            0,
+        );
+        let e1 = Event::new(
+            Op::Retract {
+                event_id: EventId::from_u128(1),
+            },
+            1,
+        );
         append_events(&path, &[e0.clone(), e1.clone()]).unwrap();
         let mut bytes = std::fs::read(&path).unwrap();
         bytes.truncate(bytes.len().saturating_sub(3));

@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: minting EventId retract and correct
+
+### Product
+
+### Changed
+
+- `Op::Retract`, `Op::Correct`, and `Op::CorrectInterval` target the minting `EventId` stored on `Fact.event_id`. Fold-local `seq` remains a lease index (CSR / conflict report), not the operator key.
+- `Runtime::emit` returns `UnknownFact { event_id }` and does not append when no Fact was minted by that id. Interval patches that do not intersect still fail closed as `IntervalPatchRejected { event_id }`.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. Active Slice remains **S02**. Freeze until M002 unchanged. Not ADR-011 Accepted.
+
 ## 2026-10-01 — Process: lease M012a S02
 
 ### Process

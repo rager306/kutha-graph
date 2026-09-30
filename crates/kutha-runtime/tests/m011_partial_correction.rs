@@ -38,11 +38,12 @@ fn interval_patch_leaves_vt_2012_and_2021_residuals() {
         .expect("live Assert fact for P")
         .clone();
     let fact_seq = original.seq;
+    let minting = original.event_id;
     let claim_id: EventId = original.claim_id;
     let orig_ingested = original.ingested_at;
 
     rt.emit(Op::CorrectInterval {
-        fact_seq,
+        event_id: minting,
         object: p_prime,
         patch_from: PATCH_FROM,
         patch_to: Some(PATCH_TO),
@@ -98,7 +99,7 @@ fn interval_patch_leaves_vt_2012_and_2021_residuals() {
 
     let round_trip = Event::new(
         Op::CorrectInterval {
-            fact_seq,
+            event_id: minting,
             object: p_prime,
             patch_from: PATCH_FROM,
             patch_to: Some(PATCH_TO),
@@ -138,10 +139,11 @@ fn whole_version_correct_does_not_invent_residuals() {
         .expect("live Assert fact for P")
         .clone();
     let fact_seq = original.seq;
+    let minting = original.event_id;
     let claim_id: EventId = original.claim_id;
 
     rt.emit(Op::Correct {
-        fact_seq,
+        event_id: minting,
         object: p_prime,
         valid_from: PATCH_FROM,
         valid_to: Some(PATCH_TO),
@@ -216,20 +218,20 @@ fn interval_patch_unknown_fact_does_not_append() {
     let n = rt.log().len();
     let err = rt
         .emit(Op::CorrectInterval {
-            fact_seq: 99,
+            event_id: EventId::nil(),
             object: p_prime,
             patch_from: PATCH_FROM,
             patch_to: Some(PATCH_TO),
         })
         .unwrap_err();
     assert!(
-        matches!(err, RuntimeError::UnknownFact { fact_seq: 99 }),
+        matches!(err, RuntimeError::UnknownFact { event_id } if event_id == EventId::nil()),
         "{err:?}"
     );
     assert_eq!(
         n,
         rt.log().len(),
-        "fail-closed: unknown fact_seq must not append"
+        "fail-closed: unknown EventId must not append"
     );
 }
 
@@ -249,24 +251,24 @@ fn interval_patch_non_intersect_does_not_append() {
         claim: None,
     })
     .unwrap();
-    let fact_seq = rt
+    let minting = rt
         .fold()
         .facts()
         .iter()
         .find(|f| f.object() == p && f.invalidated_at.is_none())
         .expect("live Assert")
-        .seq;
+        .event_id;
     let n = rt.log().len();
     let err = rt
         .emit(Op::CorrectInterval {
-            fact_seq,
+            event_id: minting,
             object: p_prime,
             patch_from: PATCH_FROM,
             patch_to: Some(PATCH_TO),
         })
         .unwrap_err();
     assert!(
-        matches!(err, RuntimeError::IntervalPatchRejected { fact_seq: seq } if seq == fact_seq),
+        matches!(err, RuntimeError::IntervalPatchRejected { event_id } if event_id == minting),
         "{err:?}"
     );
     assert_eq!(
@@ -292,24 +294,24 @@ fn interval_patch_inverted_does_not_append() {
         claim: None,
     })
     .unwrap();
-    let fact_seq = rt
+    let minting = rt
         .fold()
         .facts()
         .iter()
         .find(|f| f.object() == p && f.invalidated_at.is_none())
         .expect("live Assert")
-        .seq;
+        .event_id;
     let n = rt.log().len();
     let err = rt
         .emit(Op::CorrectInterval {
-            fact_seq,
+            event_id: minting,
             object: p_prime,
             patch_from: PATCH_TO,
             patch_to: Some(PATCH_FROM),
         })
         .unwrap_err();
     assert!(
-        matches!(err, RuntimeError::IntervalPatchRejected { fact_seq: seq } if seq == fact_seq),
+        matches!(err, RuntimeError::IntervalPatchRejected { event_id } if event_id == minting),
         "{err:?}"
     );
     assert_eq!(
@@ -335,25 +337,25 @@ fn interval_patch_not_live_does_not_append() {
         claim: None,
     })
     .unwrap();
-    let fact_seq = rt
+    let minting = rt
         .fold()
         .facts()
         .iter()
         .find(|f| f.object() == p && f.invalidated_at.is_none())
         .expect("live Assert")
-        .seq;
-    rt.emit(Op::Retract { fact_seq }).unwrap();
+        .event_id;
+    rt.emit(Op::Retract { event_id: minting }).unwrap();
     let n = rt.log().len();
     let err = rt
         .emit(Op::CorrectInterval {
-            fact_seq,
+            event_id: minting,
             object: p_prime,
             patch_from: PATCH_FROM,
             patch_to: Some(PATCH_TO),
         })
         .unwrap_err();
     assert!(
-        matches!(err, RuntimeError::IntervalPatchRejected { fact_seq: seq } if seq == fact_seq),
+        matches!(err, RuntimeError::IntervalPatchRejected { event_id } if event_id == minting),
         "{err:?}"
     );
     assert_eq!(

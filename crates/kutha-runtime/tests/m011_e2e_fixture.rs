@@ -128,7 +128,7 @@ impl Fixture {
     fn apply_t2_conflict(&mut self) {
         self.rt
             .emit(Op::CorrectInterval {
-                fact_seq: self.seq_a,
+                event_id: self.event_a,
                 object: self.not_p,
                 patch_from: PATCH_FROM,
                 patch_to: Some(PATCH_TO),
@@ -138,7 +138,11 @@ impl Fixture {
     }
 
     fn apply_t3_withdraw_b(&mut self) {
-        self.rt.emit(Op::Retract { fact_seq: self.seq_b }).unwrap();
+        self.rt
+            .emit(Op::Retract {
+                event_id: self.event_b,
+            })
+            .unwrap();
         self.t3 = Some(self.rt.log().iter().last().unwrap().ingested_at);
     }
 
@@ -239,18 +243,16 @@ fn e2e_fixture_supports_and_conflict_at_named_cuts() {
         "last positive-P support withdrawn"
     );
     assert!(fx.rt.fold().claim_supported_at(fx.claim_q, t3, VT_INTERIOR));
-    assert!(
-        fx.rt
-            .fold()
-            .live_at(t3, VT_LEFT)
-            .contains(&(fx.a, fx.related, fx.p))
-    );
-    assert!(
-        fx.rt
-            .fold()
-            .live_at(t3, VT_RIGHT)
-            .contains(&(fx.a, fx.related, fx.p))
-    );
+    assert!(fx
+        .rt
+        .fold()
+        .live_at(t3, VT_LEFT)
+        .contains(&(fx.a, fx.related, fx.p)));
+    assert!(fx
+        .rt
+        .fold()
+        .live_at(t3, VT_RIGHT)
+        .contains(&(fx.a, fx.related, fx.p)));
     fx.rt.replay_check().unwrap();
 }
 
@@ -391,7 +393,10 @@ fn e2e_incremental_matches_reconstruct_after_discarding_leases() {
     std::fs::remove_file(dir.join("snapshot.json")).unwrap();
     let opened = store::open(&dir).unwrap();
     assert_eq!(opened.fold().fingerprint(), fx.rt.fold().fingerprint());
-    assert_eq!(opened.justification_records(), fx.rt.justification_records());
+    assert_eq!(
+        opened.justification_records(),
+        fx.rt.justification_records()
+    );
     assert_stale(&opened, &jid);
     assert_stale(&opened, &jid2);
     for (tt, vt) in [(fx.t1, VT_INTERIOR), (t2, VT_INTERIOR), (t3, VT_INTERIOR)] {
@@ -415,8 +420,14 @@ fn e2e_incremental_matches_reconstruct_after_discarding_leases() {
     }
     let untyped_after = fx.rt.csr_lease_at(t3, VT_INTERIOR);
     let typed_after = fx.rt.typed_csr_lease_at(t3, VT_INTERIOR);
-    assert_eq!(untyped_before.neighbors(fx.a), untyped_after.neighbors(fx.a));
-    assert_eq!(untyped_before.neighbors(fx.b), untyped_after.neighbors(fx.b));
+    assert_eq!(
+        untyped_before.neighbors(fx.a),
+        untyped_after.neighbors(fx.a)
+    );
+    assert_eq!(
+        untyped_before.neighbors(fx.b),
+        untyped_after.neighbors(fx.b)
+    );
     assert_eq!(typed_before.edges_out(fx.a), typed_after.edges_out(fx.a));
     assert_eq!(typed_before.edges_out(fx.b), typed_after.edges_out(fx.b));
     assert_eq!(fp_before, fx.rt.fold().fingerprint());

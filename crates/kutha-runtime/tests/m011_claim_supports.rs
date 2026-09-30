@@ -21,7 +21,7 @@ fn retracting_one_support_leaves_claim_supported() {
         })
         .unwrap();
     let claim: EventId = first.receipt.event_ids[0];
-    let seq_a = rt.fold().facts()[0].seq;
+    let event_a = rt.fold().facts()[0].event_id;
     assert_eq!(rt.fold().facts()[0].claim_id, claim);
     assert_eq!(1, rt.fold().live_support_count(claim, u64::MAX, 2017));
 
@@ -37,7 +37,7 @@ fn retracting_one_support_leaves_claim_supported() {
     assert_eq!(2, rt.fold().live_support_count(claim, u64::MAX, 2017));
     assert!(rt.fold().claim_supported_at(claim, u64::MAX, 2017));
 
-    rt.emit(Op::Retract { fact_seq: seq_a }).unwrap();
+    rt.emit(Op::Retract { event_id: event_a }).unwrap();
     assert_eq!(1, rt.fold().live_support_count(claim, u64::MAX, 2017));
     assert!(
         rt.fold().claim_supported_at(claim, u64::MAX, 2017),
@@ -68,19 +68,18 @@ fn unknown_claim_does_not_append() {
         matches!(err, kutha_runtime::RuntimeError::UnknownClaim { claim } if claim == ghost),
         "{err:?}"
     );
-    assert_eq!(n, rt.log().len(), "fail-closed: unknown claim must not append");
+    assert_eq!(
+        n,
+        rt.log().len(),
+        "fail-closed: unknown claim must not append"
+    );
 }
 
 #[test]
 fn replay_rejects_behavior_without_prior_cause() {
     use kutha_common::{Event, Op};
 
-    let dict = vec![
-        "knows".into(),
-        "knownBy".into(),
-        "A".into(),
-        "B".into(),
-    ];
+    let dict = vec!["knows".into(), "knownBy".into(), "A".into(), "B".into()];
     let ghost = EventId::nil();
     let events = vec![Event::new(
         Op::Behavior {
@@ -123,7 +122,7 @@ fn derived_q_loses_eligibility_when_last_premise_support_withdrawn() {
         })
         .unwrap();
     let claim_p: EventId = first.receipt.event_ids[0];
-    let seq_a = rt.fold().facts()[0].seq;
+    let event_a = rt.fold().facts()[0].event_id;
 
     let second = rt
         .emit(Op::Assert {
@@ -136,13 +135,13 @@ fn derived_q_loses_eligibility_when_last_premise_support_withdrawn() {
         })
         .unwrap();
     assert!(!second.receipt.event_ids.is_empty());
-    let seq_b = rt
+    let event_b = rt
         .fold()
         .facts()
         .iter()
-        .find(|f| f.claim_id == claim_p && f.seq != seq_a)
+        .find(|f| f.claim_id == claim_p && f.event_id != event_a)
         .unwrap()
-        .seq;
+        .event_id;
 
     let derived = rt
         .emit(Op::Behavior {
@@ -157,15 +156,24 @@ fn derived_q_loses_eligibility_when_last_premise_support_withdrawn() {
         })
         .unwrap();
     let claim_q: EventId = derived.receipt.event_ids[0];
-    let tt_after_derive = rt.fold().facts().iter().find(|f| f.claim_id == claim_q).unwrap().ingested_at;
+    let tt_after_derive = rt
+        .fold()
+        .facts()
+        .iter()
+        .find(|f| f.claim_id == claim_q)
+        .unwrap()
+        .ingested_at;
 
     assert!(
         rt.derivation_eligible_at(claim_q, tt_after_derive, 2017),
         "Q must be eligible while P still has live supports"
     );
-    assert_eq!(2, rt.fold().live_support_count(claim_p, tt_after_derive, 2017));
+    assert_eq!(
+        2,
+        rt.fold().live_support_count(claim_p, tt_after_derive, 2017)
+    );
 
-    rt.emit(Op::Retract { fact_seq: seq_a }).unwrap();
+    rt.emit(Op::Retract { event_id: event_a }).unwrap();
     let tt_one_left = u64::MAX;
     assert!(
         rt.derivation_eligible_at(claim_q, tt_one_left, 2017),
@@ -173,7 +181,7 @@ fn derived_q_loses_eligibility_when_last_premise_support_withdrawn() {
     );
     assert!(rt.fold().claim_supported_at(claim_p, tt_one_left, 2017));
 
-    rt.emit(Op::Retract { fact_seq: seq_b }).unwrap();
+    rt.emit(Op::Retract { event_id: event_b }).unwrap();
     assert!(
         !rt.derivation_eligible_at(claim_q, u64::MAX, 2017),
         "last positive support gone: Q loses eligibility through this derivation"
