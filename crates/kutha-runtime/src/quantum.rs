@@ -37,6 +37,10 @@ pub enum RuntimeError {
     DuplicateResume {
         resume_of: String,
     },
+    AdmissionDenied {
+        justification_id: String,
+        reason: &'static str,
+    },
 }
 
 impl fmt::Display for RuntimeError {
@@ -58,6 +62,7 @@ impl fmt::Display for RuntimeError {
             RuntimeError::DuplicateResume { resume_of } => {
                 write!(f, "duplicate resume for quantum {resume_of}")
             }
+            RuntimeError::AdmissionDenied { .. } => write!(f, "AdmissionDeniedError"),
         }
     }
 }
@@ -70,6 +75,27 @@ pub enum OutcomeDisposition {
     Partial,
     Full,
     Resume,
+}
+
+/// Authoritative justification / admission cite (D-F2). Not a droppable lease.
+/// SoT is `justifications.jsonl`; do not mix these bytes into [`Runtime::provenance_fingerprint`].
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct Justification {
+    pub justification_id: String,
+    pub target_claim: EventId,
+    pub source_claim_ids: Vec<EventId>,
+    pub source_event_ids: Vec<EventId>,
+    pub source_fact_seqs: Vec<u64>,
+    pub rule_version: String,
+    pub tt: u64,
+    pub vt: u64,
+}
+
+/// Thin conflict evidence at a cut (D-F3). Report only — no winner.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ConflictReport {
+    pub positive_supports: Vec<u64>,
+    pub negative_supports: Vec<u64>,
 }
 
 /// Authoritative row for `quantum_outcomes.jsonl` (D-O1). Not a droppable lease.
@@ -132,6 +158,9 @@ pub struct Runtime {
     allowed: HashSet<String>,
     /// In-memory buffer of durable quantum outcomes (SoT is `quantum_outcomes.jsonl`).
     outcomes: Vec<PersistedQuantumOutcome>,
+    /// In-memory buffer of durable justification cites (SoT is `justifications.jsonl`).
+    /// Open never infers cites from the log. `fork_at` starts empty (like outcomes).
+    justifications: Vec<Justification>,
 }
 
 impl Default for Runtime {
@@ -155,6 +184,7 @@ impl Runtime {
             known_by,
             allowed: load_allowed_names(),
             outcomes: Vec::new(),
+            justifications: Vec::new(),
         }
     }
 
@@ -205,6 +235,125 @@ impl Runtime {
     /// Attach rows loaded from `quantum_outcomes.jsonl` (store open paths).
     pub fn attach_outcomes(&mut self, rows: Vec<PersistedQuantumOutcome>) {
         self.outcomes = rows;
+    }
+
+    /// Persisted justification rows buffered for `store::persist` (D-F2).
+    pub fn justification_records(&self) -> &[Justification] {
+        &self.justifications
+    }
+
+    /// Attach rows loaded from `justifications.jsonl`. Open never infers cites from the log.
+    /// `fork_at` starts empty (like outcomes); record cites again on the fork if needed.
+    pub fn attach_justifications(&mut self, rows: Vec<Justification>) {
+        self.justifications = rows;
+    }
+
+    /// Append one justification cite. Does not run from `emit`. Returns the minted id.
+    pub fn record_justification(
+        &mut self,
+        target_claim: EventId,
+        source_claim_ids: Vec<EventId>,
+        source_event_ids: Vec<EventId>,
+        source_fact_seqs: Vec<u64>,
+        rule_version: impl Into<String>,
+        tt: u64,
+        vt: u64,
+    ) -> String {
+        let rule_version = rule_version.into();
+        let mut justification_id = format!("j:{target_claim}:{tt}:{vt}");
+        let mut n = 0u32;
+        while self
+            .justifications
+            .iter()
+            .any(|j| j.justification_id == justification_id)
+        {
+            n += 1;
+            justification_id = format!("j:{target_claim}:{tt}:{vt}:{n}");
+        }
+        self.justifications.push(Justification {
+            justification_id: justification_id.clone(),
+            target_claim,
+            source_claim_ids,
+            source_event_ids,
+            source_fact_seqs,
+            rule_version,
+            tt,
+            vt,
+        });
+        justification_id
+    }
+
+    /// Fail-closed admission for a persisted cite. Locked reasons: unknown_justification,
+    /// stale_support, ineligible, rule_version.
+    pub fn check_admission(&self, justification_id: &str) -> Result<(), RuntimeError> {
+        let row = self
+            .justifications
+            .iter()
+            .find(|j| j.justification_id == justification_id)
+            .ok_or(RuntimeError::AdmissionDenied {
+                justification_id: justification_id.into(),
+                reason: "unknown_justification",
+            })?;
+        // Cited seqs must still be live on the current picture at the row's VT.
+        // Historical row.tt records the claimed cut; using it alone would never
+        // stale a cite after CorrectInterval/Retract (FIX-02).
+        for seq in &row.source_fact_seqs {
+            let live = self
+                .fold
+                .facts()
+                .iter()
+                .any(|f| f.seq == *seq && f.is_live_at(u64::MAX, row.vt));
+            if !live {
+                return Err(RuntimeError::AdmissionDenied {
+                    justification_id: row.justification_id.clone(),
+                    reason: "stale_support",
+                });
+            }
+        }
+        if !self.derivation_eligible_at(row.target_claim, row.tt, row.vt) {
+            return Err(RuntimeError::AdmissionDenied {
+                justification_id: row.justification_id.clone(),
+                reason: "ineligible",
+            });
+        }
+        let pin = match self.log.iter().find(|e| e.id == row.target_claim) {
+            Some(e) => match &e.op {
+                Op::Behavior { rule_version, .. } => rule_version.as_str(),
+                _ => "",
+            },
+            None => "",
+        };
+        if pin != row.rule_version.as_str() {
+            return Err(RuntimeError::AdmissionDenied {
+                justification_id: row.justification_id.clone(),
+                reason: "rule_version",
+            });
+        }
+        Ok(())
+    }
+
+    /// Partition live supports of `claim` by interned positive vs negative object (D-F3).
+    pub fn conflict_report_at(
+        &self,
+        claim: EventId,
+        tt: u64,
+        vt: u64,
+        positive: TermId,
+        negative: TermId,
+    ) -> ConflictReport {
+        let mut positive_supports = Vec::new();
+        let mut negative_supports = Vec::new();
+        for f in self.fold.live_supports(claim, tt, vt) {
+            if f.object() == positive {
+                positive_supports.push(f.seq);
+            } else if f.object() == negative {
+                negative_supports.push(f.seq);
+            }
+        }
+        ConflictReport {
+            positive_supports,
+            negative_supports,
+        }
     }
 
     /// Explicit resume citation for a prior quantum (D-O3). Open never calls this.
@@ -266,6 +415,7 @@ impl Runtime {
             known_by: snap.known_by,
             allowed: load_allowed_names(),
             outcomes: Vec::new(),
+            justifications: Vec::new(),
         }
     }
 
@@ -302,6 +452,7 @@ impl Runtime {
             known_by,
             allowed: load_allowed_names(),
             outcomes: Vec::new(),
+            justifications: Vec::new(),
         })
     }
 
@@ -324,6 +475,7 @@ impl Runtime {
             known_by: self.known_by,
             allowed: self.allowed.clone(),
             outcomes: Vec::new(),
+            justifications: Vec::new(),
         }
     }
 
