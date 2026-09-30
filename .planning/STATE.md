@@ -5,17 +5,16 @@ milestone_name: Semantic core close
 current_phase: 8
 current_phase_name: End-to-end candidate fixture
 status: planning
-stopped_at: S08 leased; Phase 8 ready to discuss/plan
-last_updated: "2026-09-30T10:25:00.000Z"
+stopped_at: Phase 8 context gathered
+last_updated: "2026-09-30T03:31:02.365Z"
 last_activity: 2026-09-30
 last_activity_desc: Leased Active Slice S08 after S07 delivery
-state_head: ca03132
+state_head: f1f69282297287fba5b165b9cecd6ffe553730ce
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 9
   completed_plans: 9
-  percent: 80
 ---
 
 # Project State
@@ -101,11 +100,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-30T10:25:00.000Z
-Stopped at: S08 leased; Phase 8 ready to discuss/plan
-Resume file: .planning/ROADMAP.md
-Next: `/gsd-discuss-phase 8` (S08 leased in `.kutha/STATE.md`)
+Last session: 2026-09-30T03:31:02.097Z
+Stopped at: Phase 8 context gathered
+Resume file: .planning/phases/08-end-to-end-candidate-fixture/08-CONTEXT.md
+Next: `/gsd-plan-phase 8` (S08 leased in `.kutha/STATE.md`)
 
 ## Operator Next Steps
 
-- Phase 8 is executable under Active Slice **S08**. Discuss/plan next (`/gsd-discuss-phase 8`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
+- Phase 8 is executable under Active Slice **S08**. Plan next (`/gsd-plan-phase 8`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
