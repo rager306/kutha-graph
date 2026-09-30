@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: M012a S03 idempotent ingest
+
+### Product
+
+- Assert carries optional `delivery_key` and `polarity`; identical keyed Assert does not mint a second support.
+- `conflict_report_at` partitions by stored polarity. Named oracles in `m012a_idempotent_ingest`.
+
+### Process
+
+- Governor `m012a-s03-idempotent-ingest` + FSM observe for three ING tests. GSD Phase 14 closed.
+
+### Trajectory
+
+- `L_delivery=M012a-S03-done`; Active Slice **None** until S04 leased. Active Milestone stays M012a. Freeze until M002 unchanged.
+
 ## 2026-10-01 — Process: governor observes ING-01..03
 
 ### Process

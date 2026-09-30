@@ -180,7 +180,7 @@ Plans:
 | 11. Semantic governor | v0.03 | 4/4 | Complete | 2026-09-30 |
 | 12. Log-native SoT | v0.04 | 3/3 | Complete    | 2026-10-01 |
 | 13. Stable references | v0.04 | 3/3 | Complete    | 2026-10-01 |
-| 14. Idempotent ingest | v0.04 | 3/3 | Complete   | 2026-10-01 |
+| 14. Idempotent ingest | v0.04 | 3/3 | Complete    | 2026-10-01 |
 | 15. Verify, persist, and time scale | v0.04 | 0/? | Not started | - |
 | 16. Fold-internal hot indexes | v0.04 | 0/? | Not started | - |
 

@@ -5,14 +5,14 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M012a
-**Active Slice:** S03
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M012a-S02-done
+L_delivery=M012a-S03-done
 L_capability=ff5-green
 ```
 
@@ -24,7 +24,7 @@ L_capability=ff5-green
 
 ## Next action
 
-**M012a / S03 is leased** (idempotent ingest / Phase 14). `L_delivery` stays `M012a-S02-done` until S03 delivers. Remaining after S03: F6 open→verify/atomic persist/stable Define, F7, F8. Do **not** start M012 dictionaries-as-facts, a legal pack, or M002 (Rocks) until STATE names them. Do not open ADR-100. Do not implement Cypher/HNSW. Honeycomb stays Proposed (GATE-03). H5 dogfood remains the current harness rung.
+**M012a S03 delivered** (`L_delivery=M012a-S03-done`). Active Slice cleared. Next product wave needs an explicit S04 lease (verify/persist/time scale / Phase 15). Remaining: F6 open→verify/atomic persist/stable Define, F7, F8. Do **not** start M012 dictionaries-as-facts, a legal pack, or M002 (Rocks) until STATE names them. Do not open ADR-100. Do not implement Cypher/HNSW. Honeycomb stays Proposed (GATE-03). H5 dogfood remains the current harness rung.
 
 ## Freeze (until explicit M002 lease)
 

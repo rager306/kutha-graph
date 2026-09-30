@@ -66,7 +66,7 @@ Proposed close-out of the semantic core (source: `docs/architecture/semantic-con
   > After this: quantum outcomes / justifications / resume are appendable log records; sidecars are droppable leases; provenance includes those records.
 - [x] **S02: Stable references for retract and cites** `risk:high` `depends:[S01]`
   > After this: Retract/Correct/justification target EventId (or proposition id), not fold-local fact_seq.
-- [ ] **S03: Idempotent ingest and proposition polarity** `risk:medium` `depends:[S02]`
+- [x] **S03: Idempotent ingest and proposition polarity** `risk:medium` `depends:[S02]`
   > After this: re-emitting an identical Assert is a no-op or keyed delivery; conflict polarity is not caller-only free strings.
 - [ ] **S04: Verify-on-open, atomic persist, stable Define** `risk:high` `depends:[S01]`
   > After this: `open` runs replay_check (or equivalent) against snapshot identity; persist is rename-into-place; Define ids survive re-persist.
