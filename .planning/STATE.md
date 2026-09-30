@@ -2,21 +2,21 @@
 gsd_state_version: "1.0"
 milestone: v0.04
 milestone_name: Single-log SoT + stable references
-current_phase: 13
-current_phase_name: Stable references
-current_plan: 3
-status: verifying
-stopped_at: Completed 13-03-PLAN.md
-last_updated: "2026-09-30T18:16:46.905Z"
+current_phase: 14
+current_phase_name: Idempotent ingest
+current_plan: Not started
+status: planning
+stopped_at: Phase 13 complete, ready to plan Phase 14
+last_updated: "2026-09-30T18:17:42.123Z"
 last_activity: 2026-10-01
-last_activity_desc: Phase 13 plans 13-01..13-03 written
-state_head: d2d98122e861da20257e53e35e420f5e4472b1f4
+last_activity_desc: Phase 13 complete, transitioned to Phase 14
+state_head: 449dd3bc6d9487565aafe38d643de4a11d705cef
 progress:
   total_phases: 5
-  completed_phases: 12
+  completed_phases: 13
   total_plans: 6
   completed_plans: 6
-  percent: 100
+  percent: 81
 ---
 
 # Project State
@@ -30,23 +30,23 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M012a**; Active Slice **S02**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012a-S01-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start). Do not overwrite `.kutha/STATE.md`.
+**Harness lease (cite only):** Active Milestone **M012a**; Active Slice **None**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012a-S02-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start). Do not overwrite `.kutha/STATE.md`.
 
 ## Current Position
 
-Current Plan: 3
+Current Plan: Not started
 Total Plans in Phase: 3
-Phase: 13 of 16 (Stable references)
+Phase: 14 of 16 (Idempotent ingest)
 Plan: 3 of 3
-Status: Phase complete — ready for verification
-Last activity: 2026-10-01 — Phase 13-01 EventId retract/correct landed
+Status: Ready to plan
+Last activity: 2026-10-01 — Phase 13 complete, transitioned to Phase 14
 
-Progress: [██████████] 100% (v0.04 plans executed)
+Progress: [████████░░] 81% (v0.04 plans executed)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 22 (v0.01–v0.03; v0.04 none yet)
+- Total plans completed: 25 (v0.01–v0.03; v0.04 none yet)
 - Average duration: ~2–5min typical; Phase 11 outliers 16–93min
 - Total execution time: v0.01 ~26min + v0.02/v0.03 as recorded below
 
@@ -65,6 +65,7 @@ Progress: [██████████] 100% (v0.04 plans executed)
 | 11 | 4 | - | - |
 | 12–16 (v0.04) | 0/3 planned | - | - |
 | 12 | 3 | - | - |
+| 13 | 3 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: Phase 11 P01–P04, Phase 10 P02
@@ -128,7 +129,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-09-30T18:16:46.690Z
-Stopped at: Completed 13-03-PLAN.md
+Stopped at: Phase 13 complete, ready to plan Phase 14
 Resume file: None
 Next: `/gsd-execute-phase 13`. Harness lease is already S02. Freeze holds. Do not lease M002 without explicit operator intent.
 

@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: M012a S02 stable references
+
+### Product
+
+- Retract, Correct, and CorrectInterval target minting `EventId` (`Fact.event_id`); fold-local `seq` stays a lease.
+- Justification cites and admission key on EventId across fork/rebuild. Named oracles in `m012a_stable_refs`.
+
+### Process
+
+- Governor `m012a-s02-stable-refs` + FSM observe for three REF tests. GSD Phase 13 closed.
+
+### Trajectory
+
+- `L_delivery=M012a-S02-done`; Active Slice **None** until S03 leased. Active Milestone stays M012a. Freeze until M002 unchanged.
+
 ## 2026-10-01 — Product + Process: rebuilt-fold EventId oracle
 
 ### Product
