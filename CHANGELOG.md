@@ -8,7 +8,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Process
 
-- Harness lease: Active Milestone **M012a**; Active Slice **None**; `L_delivery=M012a-leased`. Phase stays **H5**. Freeze until explicit M002 unchanged.
+- Harness lease: Active Milestone **M012a**; Active Slice **S01** (log-native outcomes/justifications); `L_delivery=M012a-leased`. Phase stays **H5**. Freeze until explicit M002 unchanged.
 - Governor Active Milestone patterns accept letter-suffix ids (`M012a`). `.kutha/ROADMAP.md` marks M011 CLOSED and M012a ACTIVE with S01–S06 checkboxes.
 
 ### Trajectory
