@@ -4,17 +4,18 @@ milestone: v0.02
 milestone_name: Semantic core close
 current_phase: 8
 current_phase_name: End-to-end candidate fixture
+current_plan: 2
 status: planning
-stopped_at: Completed 08-01-PLAN.md
-last_updated: "2026-09-30T04:17:29.698Z"
+stopped_at: Completed 08-02-PLAN.md
+last_updated: "2026-09-30T04:25:08.323Z"
 last_activity: 2026-09-30
-last_activity_desc: Wrote 08-01-PLAN.md and 08-02-PLAN.md (Wave 1 fixture oracles; Wave 2 GATE)
-state_head: 6ebf2128bec3ed08f812958b851d84c3d37a0b05
+last_activity_desc: Completed 08-02 GATE-01 (m011-e2e / B-m011-e2e; honeycomb Proposed)
+state_head: 2e6253de317034ed5316b7bc07d8838fb6c3b9b2
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 11
-  completed_plans: 10
+  completed_plans: 11
 ---
 
 # Project State
@@ -35,18 +36,18 @@ See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 Phase: 8 — End-to-end candidate fixture
 Current Plan: 2
 Total Plans in Phase: 2
-Plan: 08-02 (next)
-Status: 08-01 complete — ready for 08-02 GATE-01
-Last activity: 2026-09-30 — 08-01 justifications sidecar, conflict report, three named FIX oracles
+Plan: 08-02 (complete)
+Status: 08-02 complete — ready for `/gsd-verify-work` (phase 8)
+Last activity: 2026-09-30 — 08-02 GATE-01 m011-e2e / honeycomb Proposed; harness STATE still S08
 
-Progress: [████████░░] 80%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10 (v0.01 + v0.02 through Phase 8 plan 01)
+- Total plans completed: 11 (v0.01 + v0.02 through Phase 8 plan 02)
 - Average duration: 2min
-- Total execution time: ~23min
+- Total execution time: ~26min
 
 **By Phase:**
 
@@ -61,7 +62,7 @@ Progress: [████████░░] 80%
 | 7 | 2 | ~8min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: Phase 07 P01–P02, Phase 06 close
+- Last 5 plans: Phase 08 P01–P02, Phase 07 P02
 - Trend: steady
 
 **Per-Plan Metrics:**
@@ -74,6 +75,7 @@ Progress: [████████░░] 80%
 | Phase 07 P01 | 4min | 3 tasks | 5 files |
 | Phase 07 P02 | 4min | 3 tasks | 6 files |
 | Phase 08 P01 | 7min | 3 tasks | 5 files |
+| Phase 08 P02 | 3min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -87,6 +89,10 @@ Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constrain
 - [Phase 07]: D-P1…D-P7 — swap-valid-prior oracle; rule_version on Behavior; separate provenance_fingerprint; two named tests; GATE inheritance; no STATE edit during delivery
 - [Phase 08 research]: D-F1…D-F7 — shared e2e builder + three oracles; justifications.jsonl clone of outcomes; conflict_report polarity not winner; compose don’t rewrite fold/CSR/provenance; GATE-02/03 close owners
 - [Phase 08]: D-F1…D-F4, D-F7: justifications.jsonl sidecar, conflict_report_at without a winner, three named FIX oracles; GATE-01 deferred to 08-02; check_admission uses current-picture fact_seq liveness
+- [Phase 08]: D-F6: identical fn / required / needle strings for the three FIX oracles
+- [Phase 08]: D-F5: Process/Trajectory changelog; no closed-delivery lease sentence; harness STATE unedited
+- [Phase 08]: docs-coupling: Process CHANGELOG committed with dictionary registration
+- [Phase 08]: RESEARCH Q4: ADR-013/011/012/040 evidence lists get assigned FIX names; map stays Proposed
 
 ### Pending Todos
 
@@ -105,11 +111,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-30T04:17:29.582Z
-Stopped at: Completed 08-01-PLAN.md
+Last session: 2026-09-30T04:24:33.324Z
+Stopped at: Completed 08-02-PLAN.md
 Resume file: None
-Next: Execute 08-02 (`/gsd-execute-phase 8`). Active Slice remains S08. Do not edit `.kutha/STATE.md`.
+Next: `/gsd-verify-work` on Phase 8. Active Slice remains S08. Do not edit `.kutha/STATE.md`.
 
 ## Operator Next Steps
 
-- Wave 1 (08-01) shipped justifications sidecar + three FIX oracles. Next is 08-02 GATE-01 YAML. Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
+- Wave 2 (08-02) registered GATE-01 `m011-e2e` / `B-m011-e2e` and honeycomb evidence on ADR-013/011/012/040 (`map: Proposed`). Ready for `/gsd-verify-work`. Do not check harness ROADMAP S08. Do not edit `.kutha/STATE.md`. Freeze holds.

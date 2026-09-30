@@ -132,14 +132,14 @@ Plans:
   4. This phase executes only while S08 is the Active Slice (GATE-02 applies; S08 is currently leased). Named cargo tests and `uv run kutha-gov ci` at 0 HIGH still apply (GATE-01 applies)
   5. Freeze items stay unstarted and honeycomb cells stay Proposed; any ADR Accepted decision is a separate review at milestone close (GATE-03)
 
-**Plans**: 1/2 plans executed
+**Plans**: 2/2 plans executed
 
 Plans:
 **Wave 1**
 - [x] 08-01-PLAN.md — Justifications sidecar, conflict report, shared builder, three named FIX oracles, Product changelog
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 08-02-PLAN.md — Governor GATE-01 m011-e2e / B-m011-e2e, honeycomb evidence append (Proposed), Process/Trajectory, ci HIGH-free; GATE-02/03 cites
+- [x] 08-02-PLAN.md — Governor GATE-01 m011-e2e / B-m011-e2e, honeycomb evidence append (Proposed), Process/Trajectory, ci HIGH-free; GATE-02/03 cites
 
 ## Progress
 
@@ -152,6 +152,6 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8. Phase 8 (S08) is lea
 | 5. Persisted quantum outcome | 2/2 | Complete    | 2026-09-30 |
 | 6. Typed CSR lease | 2/2 | Complete    | 2026-09-30 |
 | 7. Provenance and rule-version check | 2/2 | Complete    | 2026-09-30 |
-| 8. End-to-end candidate fixture | 1/2 | In Progress|  |
+| 8. End-to-end candidate fixture | 2/2 | In Progress|  |
 
 **Harness citation (not this table):** Active Milestone M011; `L_delivery=M011-S07-done`; Phase H4; Active Slice **S08**; freeze until explicit M002. See `.kutha/STATE.md`.

@@ -39,8 +39,8 @@ Each requirement maps to exactly one roadmap phase (one phase per harness slice)
 ### Gates (every slice)
 
 - [x] **GATE-01**: Each slice ships a named cargo test registered in the governor (FSM observe + check needle), and `uv run kutha-gov ci` stays at 0 HIGH
-- [ ] **GATE-02**: A slice's GSD phase executes only while that slice is the Active Slice in `.kutha/STATE.md`; otherwise it is planning-only
-- [ ] **GATE-03**: Freeze items stay unstarted and honeycomb cells stay Proposed; any ADR Accepted decision is a separate review at milestone close
+- [x] **GATE-02**: A slice's GSD phase executes only while that slice is the Active Slice in `.kutha/STATE.md`; otherwise it is planning-only
+- [x] **GATE-03**: Freeze items stay unstarted and honeycomb cells stay Proposed; any ADR Accepted decision is a separate review at milestone close
 
 ## Future Requirements
 
@@ -75,8 +75,8 @@ Primary owner is listed below. GATE-01/02/03 still apply to every slice's succes
 | FIX-01 | Phase 8 | Complete |
 | FIX-02 | Phase 8 | Complete |
 | FIX-03 | Phase 8 | Complete |
-| GATE-02 | Phase 8 | Pending |
-| GATE-03 | Phase 8 | Pending |
+| GATE-02 | Phase 8 | Complete |
+| GATE-03 | Phase 8 | Complete |
 
 **Coverage:**
 - v0.02 requirements: 14 total

@@ -21,11 +21,11 @@ estimate:
 actuals:
   tokens: 3751
   tasks: 3
-  commits: 2
+  commits: 3
 
 plan_head_before: b886cbf0fe75cb9bf6bfe36b3d8d6bae43bcda0a
-plan_head_after: 7ca81cdd80500a987fe3a6ad49cba9f11f19d80a
-commits: 2
+plan_head_after: 2e6253de317034ed5316b7bc07d8838fb6c3b9b2
+commits: 3
 
 tech-stack:
   added: []
@@ -131,9 +131,9 @@ status: complete
 
 1. **Task 1: Register GATE-01 FSM names, check, and bridge** - `0941b6a` (feat)
 2. **Task 2: Changelog Process/Trajectory and honeycomb evidence only** - `7ca81cd` (docs)
-3. **Task 3: Governor ci, cargo smoke, freeze and lease cite** - (this SUMMARY)
+3. **Task 3: Governor ci, cargo smoke, freeze and lease cite** - `2e6253d` (docs)
 
-**Plan metadata:** follows (STATE/ROADMAP/REQUIREMENTS + SUMMARY)
+**Plan metadata:** `docs(08-02): complete GATE-01 e2e fixture plan` (STATE/ROADMAP/REQUIREMENTS + SUMMARY hash update)
 
 ## Files Created/Modified
 
@@ -200,7 +200,7 @@ Phase 8 execute waves are done. Ready for `/gsd-verify-work` on Phase 8. Do not 
 - FOUND: .kutha/dictionaries/bridges.yaml (B-m011-e2e)
 - FOUND: .kutha/dictionaries/honeycomb.yaml (ADR-013/011/012/040 Proposed + evidence)
 - FOUND: CHANGELOG.md (m011-e2e / B-m011-e2e)
-- FOUND: commits 0941b6a, 7ca81cd
+- FOUND: commits 0941b6a, 7ca81cd, 2e6253d
 - FOUND: .kutha/STATE.md Active Slice S08 (unchanged)
 - FOUND: .kutha/ROADMAP.md S08 unchecked
 - FOUND: uv run kutha-gov ci HIGH 0 LOW 0; cargo test --workspace --offline exit 0
