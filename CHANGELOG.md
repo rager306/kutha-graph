@@ -12,6 +12,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - Dogfood ladder and `h4-lease` / `dogfood` needles now name H5 (existing check ids). Narrative remains Phase 11 SEM-08.
 - P0 spike inventory relocated to `docs/architecture/p0-spike-inventory.md`. Full diet narrative is Phase 11 SEM-08.
 - AGENTS.md diet: volatile notes relocated (Leapfrog, applicability Agent notes, README Layout); narrative remains Phase 11 SEM-08.
+- Stale S03 live-lease caption on `docs/architecture/semantic-contract-validation.md` replaced with a STATE pointer; Codex subagent Cursor rules recorded. Narrative remains Phase 11 SEM-08.
 
 ### Trajectory
 

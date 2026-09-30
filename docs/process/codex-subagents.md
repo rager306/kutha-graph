@@ -27,9 +27,11 @@ Keep ambiguous architecture, temporal truth changes, and difficult correctness r
 
 Cursor `Task` types do not use these Codex role names. Map briefs in `AGENTS.md` § Code graph (Cursor). Structural graph there is CBM; GitNexus stays secondary.
 
+The parent owns the steel thread, freeze, integration, and the final Russian reply. Pass `.kutha/STATE.md` freeze and lifecycle constraints into every helper. Parallelism does not lease a new milestone. Every Cursor `Task` that needs the graph must name **`codebase-memory-mcp`** (`list_projects` first; graph before Grep; `check_index_coverage` on cited paths). Children do not inherit Cursor always-on rules. A child without MCP must read source and must not claim graph verification.
+
 ## Delegation contract
 
-Use parallel agents when the work is independently useful. One or two helpers are usually enough. Keep the critical path with the parent, avoid duplicate investigation, and reuse an existing helper for related follow-ups. Do not start additional work merely to occupy slots.
+Use parallel agents when the work is independently useful. One or two helpers are usually enough. Keep the critical path with the parent, avoid duplicate investigation, and reuse an existing helper for related follow-ups. Do not start additional work merely to occupy slots. Parallelism does not authorize another milestone or a new research wave.
 
 Give each helper this compact brief:
 
@@ -46,7 +48,7 @@ You share this workspace; preserve other edits. Do not spawn more agents.
 
 For work outside the code graph, explicitly mark graph analysis not applicable and give the exact source evidence. If a helper lacks MCP access, it must disclose the limitation and use source reads without claiming graph verification.
 
-Assign one writer per file and shared artifact. The integrator owns shared lockfiles, `.kutha/events.jsonl`, `.kutha/tenant`, and graph-index mutations. Coordinate test commands sharing `target` or uv environments. Use an isolated worktree when concurrent work would otherwise overlap, and define how its changes will be integrated.
+Assign one writer per file and shared artifact (disjoint file ownership). The integrator owns shared lockfiles, `.kutha/events.jsonl`, `.kutha/tenant`, and graph-index mutations, and runs `uv run kutha-gov ci` when the task requires it. Coordinate test commands sharing `target` or uv environments. Use an isolated worktree when concurrent work would otherwise overlap, and define how its changes will be integrated.
 
 Reviewers inspect source and supplied test evidence. Checks that write caches or build outputs belong to the integrator or an assigned worker. Read-only intent remains binding even when live runtime permissions override a role's sandbox defaults.
 
