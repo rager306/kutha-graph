@@ -5,10 +5,10 @@ milestone_name: Semantic core close
 current_phase: 8
 current_phase_name: End-to-end candidate fixture
 status: planning
-stopped_at: Phase 8 context gathered
-last_updated: "2026-09-30T03:31:02.365Z"
+stopped_at: Phase 8 research complete
+last_updated: "2026-09-30T03:50:00.000Z"
 last_activity: 2026-09-30
-last_activity_desc: Leased Active Slice S08 after S07 delivery
+last_activity_desc: Wrote 08-RESEARCH.md (FIX-01/02/03 composition, D-O1 sidecar clone)
 state_head: f1f69282297287fba5b165b9cecd6ffe553730ce
 progress:
   total_phases: 5
@@ -34,8 +34,8 @@ See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 Phase: 8 — End-to-end candidate fixture
 Plan: Not started
-Status: Ready to discuss/plan
-Last activity: 2026-09-30 — S08 leased after S07 delivery
+Status: Research complete — ready to plan
+Last activity: 2026-09-30 — 08-RESEARCH.md written; S08 still leased
 
 Progress: [████████░░] 80%
 
@@ -82,6 +82,7 @@ Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constrain
 - [v0.02]: GATE-01 primary owner Phase 4; GATE-02 and GATE-03 primary owner Phase 8; all three gates apply to every slice
 - [v0.02]: Harness deps preserved — S05/S06 depend on S03; S07 on S04; S08 on S04–S07
 - [Phase 07]: D-P1…D-P7 — swap-valid-prior oracle; rule_version on Behavior; separate provenance_fingerprint; two named tests; GATE inheritance; no STATE edit during delivery
+- [Phase 08 research]: D-F1…D-F7 — shared e2e builder + three oracles; justifications.jsonl clone of outcomes; conflict_report polarity not winner; compose don’t rewrite fold/CSR/provenance; GATE-02/03 close owners
 
 ### Pending Todos
 
@@ -100,11 +101,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-30T03:31:02.097Z
-Stopped at: Phase 8 context gathered
-Resume file: .planning/phases/08-end-to-end-candidate-fixture/08-CONTEXT.md
-Next: `/gsd-plan-phase 8` (S08 leased in `.kutha/STATE.md`)
+Last session: 2026-09-30T03:50:00.000Z
+Stopped at: Phase 8 research complete
+Resume file: .planning/phases/08-end-to-end-candidate-fixture/08-RESEARCH.md
+Next: `/gsd-plan-phase 8` consumes RESEARCH.md (S08 leased in `.kutha/STATE.md`)
 
 ## Operator Next Steps
 
-- Phase 8 is executable under Active Slice **S08**. Plan next (`/gsd-plan-phase 8`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
+- Phase 8 research is on disk (`08-RESEARCH.md`). Plan next (`/gsd-plan-phase 8`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
