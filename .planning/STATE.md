@@ -1,30 +1,31 @@
 ---
 gsd_state_version: "1.0"
 milestone: v0.02
-milestone_name: Semantic core close
-status: milestone_complete
-current_phase: 8
-current_phase_name: End-to-end candidate fixture
-current_plan: 2
+status: Awaiting next milestone
 stopped_at: Phase 8 complete — M011 S08 delivered; Active Slice None
-last_updated: "2026-09-30T04:45:00.000Z"
+last_updated: "2026-09-30T04:55:37.743Z"
 last_activity: 2026-09-30
-last_activity_desc: Closed S08 lease; L_delivery=M011-S08-done; v0.02 phases 4–8 complete
+last_activity_desc: Milestone v0.02 completed and archived
+state_head: e5b4737cbd1f2aaf43a10e5f3b2cf8c9e393d665
 progress:
   total_phases: 5
   completed_phases: 5
   total_plans: 11
   completed_plans: 11
+milestone_name: Semantic core close
+current_phase: 8
+current_phase_name: End-to-end candidate fixture
+current_plan: 2
 ---
 
 # Project State
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
+See: `.planning/PROJECT.md` (updated 2026-09-30 after v0.02)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.02 complete — Phase 8 delivered; M011 tail (S04–S08) closed. No Active Slice.
+**Current focus:** Planning next milestone — v0.02 archived; Active Slice None; freeze holds.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -32,12 +33,10 @@ See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 ## Current Position
 
-Phase: 8 — End-to-end candidate fixture (complete)
-Plan: 08-01 / 08-02 complete; verified
-Status: Phase 8 complete — S08 delivered; Active Slice cleared
-Last activity: 2026-09-30 — lease close `L_delivery=M011-S08-done`; FIX oracles + GATE-01 registered
-
-Progress: [██████████] 100%
+Phase: Milestone v0.02 complete (archived)
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-09-30 — Archive ceremony; closeout_type=override_closeout (stale verification digests; no formal milestone audit)
 
 ## Performance Metrics
 
@@ -106,14 +105,16 @@ None.
 | Category | Item | Status | Deferred At | Milestone |
 |----------|------|--------|-------------|-----------|
 | later | Rocks / Cypher / HNSW / ADR-050 / packs | Frozen | 2026-09-29 | until STATE names M002+ |
+| verification | Phases 4–8 verification digests marked stale by manager (reports still passed) | Acknowledged override | 2026-09-30 | v0.02 closeout |
+| audit | Formal `/gsd-audit-milestone` for v0.02 not run before archive | Acknowledged gap | 2026-09-30 | v0.02 closeout |
 
 ## Session Continuity
 
-Last session: 2026-09-30T04:45:00.000Z
-Stopped at: Phase 8 complete — M011 S08 delivered; Active Slice None
+Last session: 2026-09-30T04:55:00.000Z
+Stopped at: Milestone v0.02 archived (override_closeout)
 Resume file: None
-Next: Freeze holds. No Active Slice. Do not lease M002 without explicit operator intent. Optional: `/gsd-complete-milestone` archive ceremony if desired.
+Next: `/gsd-new-milestone` when ready. Freeze holds. Do not lease M002 without explicit operator intent.
 
 ## Operator Next Steps
 
-- S08 delivered; Active Slice **None**; `L_delivery=M011-S08-done`. v0.02 phases 4–8 complete. Freeze until explicit M002. Honeycomb Proposed. Green governor ≠ ADR Accepted ≠ L_capability.
+- Start the next milestone with /gsd-new-milestone

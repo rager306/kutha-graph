@@ -38,13 +38,21 @@ GSD overlay v0.01 (Phases 1–3 verification-first):
 - ✓ GOV-01/02, PLANE-01…03, FREEZE-01, MAP-01 governor honesty + planes + freeze + map — v0.01
 - ✓ GOV-03, NEXT-01, NEXT-02 lease-gate negative proof under Active Slice None — v0.01
 
+GSD overlay v0.02 (Phases 4–8 — M011 semantic core close):
+
+- ✓ CORR-01/02 partial correction with residual intervals; whole-version Correct unchanged — v0.02
+- ✓ OUT-01/02 persisted quantum outcomes Zero/Partial/Full; crash needs explicit Resume — v0.02
+- ✓ CSR-01/02 typed CSR lease preserves labels + multiplicity; untyped neighbor-set + FF5 green — v0.02
+- ✓ PROV-01/02 provenance digest detects caused_by / rule_version without state-fingerprint change — v0.02
+- ✓ FIX-01…03 end-to-end fixture: supports/conflict, justification admission, incremental≡reconstruct — v0.02
+- ✓ GATE-01/02/03 named cargo + governor; lease-gated execute; freeze + honeycomb Proposed — v0.02
+
 ### Active
 
 - [ ] Keep FF5/FF6/H2/H4/M010/M011 named fitness **green** (L_capability)
 - [ ] Keep governor CI honest; three lifecycles uncollapsed; freeze until STATE names otherwise
-- [ ] Further M011 product work **only** under an explicit Active Slice lease (currently **S04**; S05–S08 unleased)
-- [ ] Deliver M011 tail S04–S08 to a single fixture that distinguishes history, evidence, and allowed action (v0.02)
-- [ ] After M011 closes, start only the milestone `.kutha/STATE.md` names — do not assume M002
+- [ ] Start only the next delivery `.kutha/STATE.md` names — do **not** assume M002, legal pack, or honeycomb Accepted
+- [ ] Optional formal `/gsd-audit-milestone` for v0.02 (closeout used override for stale verification digests)
 
 ### Out of Scope
 
@@ -55,7 +63,7 @@ GSD overlay v0.01 (Phases 1–3 verification-first):
 - STCA-guide §5 JSON merge-patch / `object.created` as the product write surface
 - Mandatory Neo4j / FalkorDB / Graphiti / cloud LLM for assert → invalidate → AS OF
 - Promoting ADR cells to Accepted because governor is green
-- SemVer bump, git tags, GitHub Releases (repo policy)
+- Product SemVer bump (`0.0.0`), crates.io publish, GitHub Releases (repo policy; GSD overlay tags `v0.0x` are process-only)
 
 <decisions>
 ## Foundation locks (ADR-000 D1–D10)
@@ -137,20 +145,11 @@ Harness compact index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov m
 
 ## Current State
 
-Shipped **GSD v0.01 — GSD foundation** (2026-09-29): verification overlay Phases 1–3 (9 plans). Fitness FIT-01…05, governor honesty, planes/freeze/map, and lease-gate negative proof are archived under `.planning/milestones/`. Product crates unchanged by Phase 3; harness M011 remains open.
+Shipped **GSD v0.01 — GSD foundation** (2026-09-29) and **GSD v0.02 — Semantic core close** (2026-09-30). M011 tail S04–S08 is in crates and harness GATE needles; one e2e fixture separates preserved history, current evidence, and allowed action. Honeycomb cells stay Proposed. Product stays `0.0.0`.
 
-## Current Milestone: v0.02 Semantic core close
+## Next Milestone Goals
 
-**Goal:** Close the M011 semantic core with one end-to-end fixture that separates preserved history, current evidence, and allowed action — without thawing Rocks, Cypher, HNSW, ADR-050 six dictionaries, or a legal pack.
-
-**Target features** (harness M011 tail; long-horizon order in `.kutha/ROADMAP.md` "Later milestones"):
-- S04 partial correction with residual intervals (**leased** in `.kutha/STATE.md`)
-- S05 persisted quantum outcome and continuation
-- S06 typed CSR lease keeps relation labels and support multiplicity
-- S07 provenance and rule-version check apart from state replay
-- S08 end-to-end candidate fixture (semantic-contract observations 1–5)
-
-**Lease rule:** one GSD phase per slice; a phase executes only while its slice is the Active Slice. S05–S08 are planned but blocked until leased. GSD versions here are overlay versions; they do not bump product `0.0.0`.
+Planning-only until `/gsd-new-milestone` defines requirements. Delivery starts only when `.kutha/STATE.md` names the next Active Slice or milestone — freeze holds (no Rocks/Cypher/HNSW/ADR-050/legal pack by default).
 
 ## Context
 
@@ -159,10 +158,10 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 **Harness lease** (process intent, not GSD memory, not product SoT): `.kutha/STATE.md`
 
 - Active Milestone: **M011**
-- Active Slice: **S04**
+- Active Slice: **None**
 - Phase: **H4**
-- Lifecycles: `L_map=honeycomb-proposed` · `L_delivery=M011-S03-done` · `L_capability=ff5-green`
-- Next: S05–S08 need their own Active Slice lease. Do not start a legal pack. Do not start M002 until STATE names it.
+- Lifecycles: `L_map=honeycomb-proposed` · `L_delivery=M011-S08-done` · `L_capability=ff5-green`
+- Next: Freeze until STATE names M002+ (or another explicit lease). Do not start a legal pack. Green governor ≠ ADR Accepted ≠ L_capability.
 
 GSD files live under `.planning/`. **Never overwrite** `.kutha/STATE.md` with GSD STATE.
 
@@ -190,7 +189,9 @@ Literature bound is closed (163 cards). Do not mint aggregator waves.
 | Honeycomb is a map | Three lifecycles; H4 | ✓ Good |
 | GSD STATE ≠ harness STATE | Plane split | ✓ Good |
 | Phase 3 verification-only under Active Slice None | D-L1…D-L6; no crate delivery without lease | ✓ Good (v0.01) |
-| GSD v0.01 annotated tag (explicit override) | Milestone archival; not product SemVer / GitHub Release | ⚠️ Revisit (repo Out of Scope prefers no tags) |
+| One GSD phase per M011 slice; GATE-02 lease discipline | v0.02 steel thread | ✓ Good (v0.02) |
+| Compose S08 (justifications + conflict_report) without rewriting fold/CSR/provenance | D-F1…D-F7 | ✓ Good (v0.02) |
+| GSD overlay annotated tags (`v0.01`, `v0.02`) | Milestone archival; not product SemVer / GitHub Release | ⚠️ Revisit (process tags only) |
 | M002/Rocks/Cypher/HNSW frozen | `.kutha/STATE.md` | — Pending (lease) |
 | License / rename (ADR-092) | Undecided | — Pending |
 
@@ -212,4 +213,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-29 after starting v0.02 Semantic core close*
+*Last updated: 2026-09-30 after v0.02 Semantic core close*
