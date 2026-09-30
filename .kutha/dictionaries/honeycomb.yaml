@@ -212,6 +212,9 @@ cells:
       - typed_csr_preserves_relation_labels_and_support_multiplicity
       - untyped_csr_neighbor_set_and_ff5_still_hold
       - e2e_incremental_matches_reconstruct_after_discarding_leases
+      - as_of_and_claim_supported_at_skip_non_overlapping_facts
+      - discard_csr_lease_and_snapshot_rebuild_keeps_as_of
+      - csr_lease_at_builds_via_materializer
 
   - id: ADR-041
     axis: Data
@@ -225,6 +228,9 @@ cells:
     evidence:
       - typed_csr_preserves_relation_labels_and_support_multiplicity
       - untyped_csr_neighbor_set_and_ff5_still_hold
+      - as_of_and_claim_supported_at_skip_non_overlapping_facts
+      - discard_csr_lease_and_snapshot_rebuild_keeps_as_of
+      - csr_lease_at_builds_via_materializer
 
   - id: ADR-042
     axis: Data

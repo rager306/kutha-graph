@@ -67,6 +67,9 @@ states:
       - define_ids_stable_across_persist_open
       - fixture_years_map_to_year_ce_scale
       - transaction_time_is_log_sequence
+      - as_of_and_claim_supported_at_skip_non_overlapping_facts
+      - discard_csr_lease_and_snapshot_rebuild_keeps_as_of
+      - csr_lease_at_builds_via_materializer
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant

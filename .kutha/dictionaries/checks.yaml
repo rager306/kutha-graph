@@ -453,6 +453,18 @@ checks:
         category: m012a-s05
         message: "M012a S05 time-scale tests missing {missing}"
 
+  - id: m012a-s06-hot-indexes
+    description: M012a S06 — fold-internal hot as_of / claim_supported_at, droppable CSR, Materializer-wired csr_lease_at
+    steps:
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m012a_hot_indexes.rs
+        tests:
+          - as_of_and_claim_supported_at_skip_non_overlapping_facts
+          - discard_csr_lease_and_snapshot_rebuild_keeps_as_of
+          - csr_lease_at_builds_via_materializer
+        category: m012a-s06
+        message: "M012a S06 hot-index tests missing {missing}"
+
   - id: h4-lease
     description: H5 dogfood is closed without promoting ADR-090
     steps:

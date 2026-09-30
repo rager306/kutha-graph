@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Process: governor observes HOT-01..03
+
+### Process
+
+### Added
+
+- Governor bridge `B-m012a-s06` / `m012a-s06-hot-indexes` and three `observe_cargo.required` names for HOT-01..03 (`as_of_and_claim_supported_at_skip_non_overlapping_facts`, `discard_csr_lease_and_snapshot_rebuild_keeps_as_of`, `csr_lease_at_builds_via_materializer`). LOG, REF, ING, DUR, and TIME names stay required.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. ADR-040 and ADR-041 evidence lists include the HOT names. Active Slice remains **S06**. Freeze until M002 unchanged. Not a GED-class fork-diff API.
+
 ## 2026-10-01 — Product: droppable CSR via Materializer
 
 ### Product

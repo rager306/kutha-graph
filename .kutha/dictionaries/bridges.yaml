@@ -90,3 +90,8 @@ bridges:
     claim: "Fixtures treat 2015/2017/2021 as YearCe valid-time; Event.ingested_at is log sequence, not wall-clock"
     cites: "crates/kutha-runtime/tests/m012a_time_scale.rs"
     check: m012a-s05-time-scale
+
+  - id: B-m012a-s06
+    claim: "as_of and claim_supported_at use fold-internal maps; CSR and indexes are droppable leases; untyped csr_lease_at builds through CsrMaterializer"
+    cites: "crates/kutha-runtime/tests/m012a_hot_indexes.rs"
+    check: m012a-s06-hot-indexes
