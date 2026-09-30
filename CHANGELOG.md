@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: declared YearCe valid-time and log-sequence transaction-time
+
+### Product
+
+### Added
+
+- `TimeScale::{YearCe, LogSequence}` with `VALID_TIME_SCALE` and `TRANSACTION_TIME_SCALE`. Fixture integers 2015/2017/2021 are Gregorian years CE; `Event.ingested_at` is log sequence, not wall-clock. Named tests in `m012a_time_scale`. No TT-to-wall calendar map.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. Active Slice remains **S04**. Freeze until M002 unchanged.
+
 ## 2026-10-01 — Product: verify-on-open, atomic jsonl persist, stable Define ids
 
 ### Product
