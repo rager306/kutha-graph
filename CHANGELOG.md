@@ -11,6 +11,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Added
 
 - `Op::Assert` carries an optional `delivery_key` and `SupportPolarity` (default none). Re-emitting an identical Assert with the same non-empty key returns the original `EventId` and does not append a second support.
+- Same delivery key with a different Assert payload fails closed (`DeliveryKeyConflict`) and does not append. Persist/open still honors the durable key.
 
 ### Changed
 
