@@ -196,7 +196,9 @@ cells:
     capability: none
     depends_on: [ADR-000, ADR-010, ADR-014]
     locks: [D5]
-    evidence: []
+    evidence:
+      - typed_csr_preserves_relation_labels_and_support_multiplicity
+      - untyped_csr_neighbor_set_and_ff5_still_hold
 
   - id: ADR-041
     axis: Data
@@ -207,7 +209,9 @@ cells:
     capability: none
     depends_on: [ADR-000, ADR-011, ADR-040]
     locks: [D5, D6]
-    evidence: []
+    evidence:
+      - typed_csr_preserves_relation_labels_and_support_multiplicity
+      - untyped_csr_neighbor_set_and_ff5_still_hold
 
   - id: ADR-042
     axis: Data

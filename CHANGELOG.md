@@ -18,7 +18,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Trajectory
 
-- ADR-040 and ADR-041 remain Proposed (not Accepted, not L_capability). Honeycomb evidence names the CSR-01/CSR-02 tests; map stays Proposed. Green governor is not ADR Accepted and not L_capability.
+- ADR-040 and ADR-041 honeycomb evidence names `typed_csr_preserves_relation_labels_and_support_multiplicity` and `untyped_csr_neighbor_set_and_ff5_still_hold`; map stays Proposed on both (not Accepted, not L_capability). Green governor is not ADR Accepted and not L_capability.
 
 ## 2026-09-30 — Process: lease Active Slice S06 after S05 delivery
 
