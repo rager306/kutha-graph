@@ -60,7 +60,7 @@ Full detail: [milestones/v0.03-ROADMAP.md](./milestones/v0.03-ROADMAP.md) · req
 
 **Phase numbering:** Integer phases continue from v0.03 (Phase 12 follows Phase 11).
 
-- [ ] **Phase 12: Log-native SoT** - Outcomes, justifications, and resume are log records; sidecars are droppable leases (M012a S01)
+- [x] **Phase 12: Log-native SoT** - Outcomes, justifications, and resume are log records; sidecars are droppable leases (M012a S01) (completed 2026-10-01)
 - [ ] **Phase 13: Stable references** - Retract, Correct, and justification cites target EventId / proposition id, not fold-local `fact_seq` (M012a S02)
 - [ ] **Phase 14: Idempotent ingest** - Same delivery key does not mint a second support; claim ≠ support slot (M012a S03)
 - [ ] **Phase 15: Verify, persist, and time scale** - Verify-on-open, atomic log persist, stable Define ids, declared VT/TT scale (M012a S04 + S05)
@@ -82,11 +82,11 @@ Full detail: [milestones/v0.03-ROADMAP.md](./milestones/v0.03-ROADMAP.md) · req
   3. `provenance_fingerprint` (or successor) mixes those log-native outcome/justification bytes, not only in-log Behavior rows (LOG-03)
   4. Named cargo tests for the three LOG oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; FF5/FF6 stay green; honeycomb stays Proposed; M012 dictionaries-as-facts and M002 Rocks stay unstarted
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans complete
 Plans:
 - [x] 12-01-PLAN.md — LOG-01 tracer: quantum outcomes as log records; discard outcomes sidecar reconstructs disposition
 - [x] 12-02-PLAN.md — LOG-02: justifications and resume as log records; sidecars are leases
-- [ ] 12-03-PLAN.md — LOG-03: provenance mixes log-native bytes; governor observes the three LOG oracles
+- [x] 12-03-PLAN.md — LOG-03: provenance mixes log-native bytes; governor observes the three LOG oracles
 
 ### Phase 13: Stable references
 
@@ -170,7 +170,7 @@ Plans:
 | 9. H5 lease + lean agent context | v0.03 | 2/2 | Complete | 2026-09-30 |
 | 10. ADR and roadmap correction | v0.03 | 2/2 | Complete | 2026-09-30 |
 | 11. Semantic governor | v0.03 | 4/4 | Complete | 2026-09-30 |
-| 12. Log-native SoT | v0.04 | 2/3 | In Progress|  |
+| 12. Log-native SoT | v0.04 | 3/3 | Complete   | 2026-10-01 |
 | 13. Stable references | v0.04 | 0/? | Not started | - |
 | 14. Idempotent ingest | v0.04 | 0/? | Not started | - |
 | 15. Verify, persist, and time scale | v0.04 | 0/? | Not started | - |

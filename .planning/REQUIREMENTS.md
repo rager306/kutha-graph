@@ -12,7 +12,7 @@ Closing leased product gaps F1–F3, F6 (verify/atomic/Define), F7, F8 from `doc
 
 - [x] **LOG-01**: Quantum outcomes are appendable log records (or equivalent Op); discarding outcome sidecars does not change reconstructible meaning
 - [x] **LOG-02**: Justifications and resume/continuation evidence are log records; `justifications.jsonl` / outcome files are leases only
-- [ ] **LOG-03**: `provenance_fingerprint` (or successor) mixes those log-native outcome/justification bytes, not only Behavior rows
+- [x] **LOG-03**: `provenance_fingerprint` (or successor) mixes those log-native outcome/justification bytes, not only Behavior rows
 
 ### Stable references (F2)
 
@@ -72,7 +72,7 @@ Closing leased product gaps F1–F3, F6 (verify/atomic/Define), F7, F8 from `doc
 |-------------|-------|--------|
 | LOG-01 | Phase 12 | Complete |
 | LOG-02 | Phase 12 | Complete |
-| LOG-03 | Phase 12 | Pending |
+| LOG-03 | Phase 12 | Complete |
 | REF-01 | Phase 13 | Pending |
 | REF-02 | Phase 13 | Pending |
 | REF-03 | Phase 13 | Pending |
