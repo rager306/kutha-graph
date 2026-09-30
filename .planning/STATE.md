@@ -25,11 +25,11 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** Phase 6 — Typed CSR lease (planning-only until harness leases **S06**). S05 delivered.
+**Current focus:** Phase 6 — Typed CSR lease (M011 **S06** leased). S05 delivered; S07–S08 unleased.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M011**; Active Slice **None**; Phase **H4**; `L_map=honeycomb-proposed`; `L_delivery=M011-S05-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
+**Harness lease (cite only):** Active Milestone **M011**; Active Slice **S06**; Phase **H4**; `L_map=honeycomb-proposed`; `L_delivery=M011-S05-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
 
 ## Current Position
 
@@ -93,7 +93,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phases 6–8 remain lease-gated until `.kutha/STATE.md` names S06–S08 as Active Slice. Phase 5 (S05) is leased and executable.
+- Phases 7–8 remain lease-gated until `.kutha/STATE.md` names S07–S08 as Active Slice. Phase 6 (S06) is leased and executable.
 - Do not start M002, legal pack, Cypher, HNSW, or ADR-050 because a GSD phase is planned — freeze holds until STATE names otherwise.
 
 ## Deferred Items
@@ -104,11 +104,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-29T16:52:27.735Z
-Stopped at: Phase 5 complete, ready to plan Phase 6
-Resume file: .planning/phases/05-persisted-quantum-outcome/05-01-SUMMARY.md
-Next: `/gsd-execute-phase 5` (S05 leased in `.kutha/STATE.md`)
+Last session: 2026-09-30
+Stopped at: S06 leased; Phase 6 ready to discuss/plan
+Resume file: .planning/ROADMAP.md
+Next: `/gsd-discuss-phase 6` (S06 leased in `.kutha/STATE.md`)
 
 ## Operator Next Steps
 
-- Phase 5 plans are ready. Execute next (`/gsd-execute-phase 5`). Active Slice is **S05** — do not edit `.kutha/STATE.md` during delivery. Freeze holds.
+- Phase 6 is executable under Active Slice **S06**. Discuss/plan next (`/gsd-discuss-phase 6`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.

@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-30 — Process: lease Active Slice S06 after S05 delivery
+
+### Process
+
+- Harness lease advanced: **S05** remains delivered (`L_delivery=M011-S05-done`); Active Slice **S06** (typed CSR lease keeps labels and support multiplicity). S07–S08 remain unleased. Not ADR Accepted; not closed product delivery.
+
+### Trajectory
+
+- Active Slice is **S06**; ADR-014 remains Proposed (not Accepted, not L_capability). S05 outcome tests stay registered. Green governor is not ADR Accepted and not L_capability.
+
 ## 2026-09-29 — Product: persisted quantum outcome sidecar
 
 ### Product
