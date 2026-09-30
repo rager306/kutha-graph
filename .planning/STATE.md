@@ -5,15 +5,15 @@ milestone_name: Semantic core close
 current_phase: 8
 current_phase_name: End-to-end candidate fixture
 status: planning
-stopped_at: Phase 8 research complete
-last_updated: "2026-09-30T03:50:00.000Z"
+stopped_at: Phase 8 plans created
+last_updated: "2026-09-30T04:20:00.000Z"
 last_activity: 2026-09-30
-last_activity_desc: Wrote 08-RESEARCH.md (FIX-01/02/03 composition, D-O1 sidecar clone)
+last_activity_desc: Wrote 08-01-PLAN.md and 08-02-PLAN.md (Wave 1 fixture oracles; Wave 2 GATE)
 state_head: f1f69282297287fba5b165b9cecd6ffe553730ce
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 9
+  total_plans: 11
   completed_plans: 9
 ---
 
@@ -33,9 +33,9 @@ See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 ## Current Position
 
 Phase: 8 — End-to-end candidate fixture
-Plan: Not started
-Status: Research complete — ready to plan
-Last activity: 2026-09-30 — 08-RESEARCH.md written; S08 still leased
+Plan: 08-01 (not started)
+Status: Plans ready — 08-01 then 08-02
+Last activity: 2026-09-30 — 08-01-PLAN.md and 08-02-PLAN.md written; S08 still leased
 
 Progress: [████████░░] 80%
 
@@ -101,11 +101,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-30T03:50:00.000Z
-Stopped at: Phase 8 research complete
-Resume file: .planning/phases/08-end-to-end-candidate-fixture/08-RESEARCH.md
-Next: `/gsd-plan-phase 8` consumes RESEARCH.md (S08 leased in `.kutha/STATE.md`)
+Last session: 2026-09-30T04:20:00.000Z
+Stopped at: Phase 8 plans created
+Resume file: .planning/phases/08-end-to-end-candidate-fixture/08-01-PLAN.md
+Next: `/gsd-execute-phase 8` (S08 leased in `.kutha/STATE.md`)
 
 ## Operator Next Steps
 
-- Phase 8 research is on disk (`08-RESEARCH.md`). Plan next (`/gsd-plan-phase 8`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
+- Phase 8 plans are on disk (`08-01-PLAN.md`, `08-02-PLAN.md`). Execute next (`/gsd-execute-phase 8`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
