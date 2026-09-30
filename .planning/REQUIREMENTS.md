@@ -22,7 +22,7 @@ Closing leased product gaps F1–F3, F6 (verify/atomic/Define), F7, F8 from `doc
 
 ### Idempotent ingest (F3)
 
-- [ ] **ING-01**: Re-delivering an identical Assert with the same delivery key does not mint a second independent support
+- [x] **ING-01**: Re-delivering an identical Assert with the same delivery key does not mint a second independent support
 - [ ] **ING-02**: Claim/proposition identity is distinct from a support slot (documented + exercised by named tests)
 - [ ] **ING-03**: Conflict reporting does not require caller-only free polarity strings for the leased fixture path (or documents the remaining gap explicitly as out of M012a)
 
@@ -76,7 +76,7 @@ Closing leased product gaps F1–F3, F6 (verify/atomic/Define), F7, F8 from `doc
 | REF-01 | Phase 13 | Complete |
 | REF-02 | Phase 13 | Complete |
 | REF-03 | Phase 13 | Complete |
-| ING-01 | Phase 14 | Pending |
+| ING-01 | Phase 14 | Complete |
 | ING-02 | Phase 14 | Pending |
 | ING-03 | Phase 14 | Pending |
 | DUR-01 | Phase 15 | Pending |

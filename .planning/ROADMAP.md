@@ -122,9 +122,9 @@ Plans:
   3. Conflict reporting on the leased fixture path does not require caller-only free polarity strings, **or** the remaining gap is documented explicitly as out of M012a (ING-03)
   4. Named cargo tests for the ING oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; freeze and Proposed map hold
 
-**Plans**: 3 plans
+**Plans**: 1/3 plans executed
 Plans:
-- [ ] 14-01-PLAN.md — ING-01 tracer: keyed identical Assert retry does not mint a second support
+- [x] 14-01-PLAN.md — ING-01 tracer: keyed identical Assert retry does not mint a second support
 - [ ] 14-02-PLAN.md — ING-02 claim vs support slot; ING-03 stored polarity on conflict_report_at
 - [ ] 14-03-PLAN.md — Governor observes ING-01..03; freeze and Proposed map hold
 
@@ -180,7 +180,7 @@ Plans:
 | 11. Semantic governor | v0.03 | 4/4 | Complete | 2026-09-30 |
 | 12. Log-native SoT | v0.04 | 3/3 | Complete    | 2026-10-01 |
 | 13. Stable references | v0.04 | 3/3 | Complete    | 2026-10-01 |
-| 14. Idempotent ingest | v0.04 | 0/3 | Not started | - |
+| 14. Idempotent ingest | v0.04 | 1/3 | In Progress|  |
 | 15. Verify, persist, and time scale | v0.04 | 0/? | Not started | - |
 | 16. Fold-internal hot indexes | v0.04 | 0/? | Not started | - |
 
