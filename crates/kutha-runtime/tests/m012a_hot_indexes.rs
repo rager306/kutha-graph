@@ -1,7 +1,7 @@
 //! M012a S06 / HOT-01: fold-internal as_of and claim_supported_at skip non-overlapping facts.
 
 use kutha_common::{EventId, Op, TermId};
-use kutha_runtime::{store, Runtime};
+use kutha_runtime::{store, CsrLease, CsrMaterializer, Materializer, Runtime, TypedCsrLease};
 use std::fs;
 use std::path::PathBuf;
 
@@ -290,4 +290,54 @@ fn discard_csr_lease_and_snapshot_rebuild_keeps_as_of() {
     opened.replay_check().unwrap();
 
     let _ = fs::remove_dir_all(&dir);
+}
+
+/// HOT-03 named spike limit: `typed_csr_lease_at` still uses `TypedCsrLease::from_fold`.
+/// Untyped `csr_lease_at` is built through `CsrMaterializer` and unloaded before return.
+#[test]
+fn csr_lease_at_builds_via_materializer() {
+    let mut rt = Runtime::default();
+    let a = rt.intern("Alice");
+    let b = rt.intern("Bob");
+    let rel = rt.intern("relatedTo");
+    emit_related_to(&mut rt, a, rel, b, 2017);
+
+    let mut built = CsrMaterializer::default();
+    built.build(
+        rt.fold(),
+        rt.dictionary().len(),
+        u64::MAX,
+        2017,
+        rt.log().len(),
+    );
+    let via_runtime = rt.csr_lease_at(u64::MAX, 2017);
+    let via_from_fold = CsrLease::from_fold(rt.fold(), u64::MAX, 2017, rt.dictionary().len());
+    assert_eq!(
+        via_runtime.neighbors(a),
+        built.lease().unwrap().neighbors(a)
+    );
+    assert_eq!(via_runtime.neighbors(a), via_from_fold.neighbors(a));
+    assert_eq!(via_runtime.neighbors(a), &[b]);
+
+    let fresh = CsrMaterializer::default();
+    assert!(
+        !fresh.is_mounted(),
+        "Runtime must not retain a mounted CSR after csr_lease_at returns"
+    );
+
+    let typed = rt.typed_csr_lease_at(u64::MAX, 2017);
+    let typed_from_fold =
+        TypedCsrLease::from_fold(rt.fold(), u64::MAX, 2017, rt.dictionary().len());
+    assert_eq!(
+        typed.edges_out(a),
+        typed_from_fold.edges_out(a),
+        "typed_csr_lease_at remains TypedCsrLease::from_fold (named spike limit)"
+    );
+    assert!(
+        typed
+            .edges_out(a)
+            .iter()
+            .any(|e| e.relation == rel && e.object == b),
+        "typed edges_out must list the live relatedTo edge"
+    );
 }

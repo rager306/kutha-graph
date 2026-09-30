@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: droppable CSR via Materializer
+
+### Product
+
+### Changed
+
+- Untyped `csr_lease_at` builds through `CsrMaterializer` then unloads. `from_fold` consumes the fold live-fact iterator. Dropping the lease does not change `as_of` or fingerprint. Indexes and CSR stay in-memory leases, not snapshot SoT. Typed CSR remains `TypedCsrLease::from_fold` (named spike limit).
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. Active Slice remains **S06**. Freeze until M002 unchanged. Not M012 dictionaries-as-facts.
+
 ## 2026-10-01 — Product: fold-internal hot as_of and claim_supported_at
 
 ### Product

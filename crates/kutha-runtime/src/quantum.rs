@@ -1,6 +1,7 @@
 use crate::allow::load_allowed_names;
 use crate::csr::{CsrLease, TypedCsrLease};
 use crate::fold::GraphFold;
+use crate::materializer::{CsrMaterializer, Materializer};
 use crate::log::EventLog;
 use crate::receipt::{digest_to_hex, QuantumReceipt};
 use crate::snapshot::Snapshot;
@@ -590,8 +591,16 @@ impl Runtime {
     }
 
     /// CSR lease at an explicit cut. Callers must name valid-time (no silent “now”).
+    /// Built through [`CsrMaterializer`] then unloaded so Runtime does not keep a mounted view.
     pub fn csr_lease_at(&self, tt: u64, vt: u64) -> CsrLease {
-        CsrLease::from_fold(&self.fold, tt, vt, self.dict.len())
+        let mut materializer = CsrMaterializer::default();
+        materializer.build(&self.fold, self.dict.len(), tt, vt, self.log.len());
+        let lease = materializer
+            .lease()
+            .expect("CsrMaterializer mounts a lease on build")
+            .clone();
+        materializer.unload();
+        lease
     }
 
     /// Typed CSR lease at an explicit cut (labels + support multiplicity). Droppable; not SoT.
