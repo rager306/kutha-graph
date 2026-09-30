@@ -83,3 +83,24 @@ None of D1–D10 is rewritten. Honeycomb stays Proposed. This is a question list
 | D10 positioning | Holds | Untouched. |
 
 ADR-000 Open Research Questions may gain a one-line pointer to this review under time-scale (R3), written in 10-02. This plan does not edit ADR-000.
+
+## Phase 8 D-F2 sidecar (superseded in intent)
+
+Phase 8 **D-F2** chose justifications as a **durable sidecar** beside the log (`justifications.jsonl` / `JUSTIFICATIONS_REL`), mirroring Phase 5 **D-O1** quantum outcomes (`quantum_outcomes.jsonl` / `OUTCOMES_REL`): write on `store::persist`, load on `store::open`, not a droppable lease. That was a P0 shortcut so FIX-02 could fail-closed without minting new `Op` kinds.
+
+**F1 supersedes that intent.** Authoritative records are log records; sidecars are leases. Outcomes, justifications, and resume belong on the event log (same vocabulary as ADR-010/014). The spike files remain until a lease names that encoding work; this review does not implement it and does not treat D-F2 as the target contract.
+
+## Measured baselines (2026-09-30)
+
+Copied from the Phase 10 context (D-R1). This wave did **not** re-run the bench. Class: **measured**.
+
+- Host: `/tmp` bench. Log size **N≈121k** events for **≈40k** asserts.
+- `claim_supported_at`: **15→32→65 µs** per query for N×1 / N×2 / N×4.
+- `as_of`: **28→68→144 µs** per query for N×1 / N×2 / N×4.
+- Ingest ≈ **O(1)** per emit.
+- Late `Retract` ≈ **134 µs**.
+- `persist` **19.5 s** and `open` **8.2 s** at that size. Persist and open were measured at **one N** only — **no growth-shape claim**.
+- Tampered snapshot: `open` accepted live **40199** vs truth **40200**; caught only by `replay_check`.
+- `Define` ids differed across persists.
+
+Linear growth of the two read probes with N is a read-scan observation at three sizes. Persist/open must not be extrapolated from the single N. “No non-transitive eligibility” and “no action entity” remain **not verified by a failing test** (source reading; see F4 and F5).

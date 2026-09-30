@@ -115,15 +115,16 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 
 1. **M011 tail** — S04–S08 above (GSD overlay v0.02). Done record; not a new lease.
 2. **M012a** — Single-log SoT and stable references: outcomes, justifications, and resume as log records; EventId / proposition ids; idempotent ingest; `open` then verify; atomic persist; stable `Define` ids; declared time scale; fold-internal indexes.
-3. **M012** — Dictionaries as facts: a thin ADR-050 subset (versioned allowlist entries as bi-temporal facts; admission validated at a cut; LLM output is only a proposal; typed non-success). Its lease must name the subset it thaws.
-4. **M002** — Rocks adapter behind the same events (persistence, not a second SoT); vacuum policy and litigation hold; replay parity across stores.
-5. **M003** — Cypher skin over the already-correct AS OF cut (may swap with M002 if an external surface is needed first).
-6. *(unnumbered)* Legal pack MVP — thin ADR-090 slice, golden PIT set where cosine/RAG must fail the same fixture.
-7. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
-8. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
-9. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
-10. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
-11. *(unnumbered)* Packaging, benchmarks vs Samyama/Falkor-class projections, naming and license decision (ADR-092) before any publish.
+3. *(unnumbered)* Benchmark baseline — immediately after M012a indexes; not a new three-digit id.
+4. **M012** — Dictionaries as facts. The thawed subset this milestone names: versioned relation-allowlist entries, a rule registry (`rule_version` equal to the definition hash), admission status as meta-facts, and the policy version pinned in the log. LLM output remains a proposal; typed non-success. Its lease must name that subset.
+5. **M002** — Log durability protocol first: segmented append-only log, hash chain, atomic manifest, lease identity verified on open, replay parity across stores. Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity.
+6. *(unnumbered)* Thin real-text legal golden fixture — test-only, under a lease, before Cypher.
+7. **M003** — Cypher skin over the already-correct AS OF cut.
+8. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
+9. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
+10. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
+11. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
+12. *(unnumbered)* Packaging, naming and license decision (ADR-092) before any publish.
 
 P4 (Raft/multi-node, learned indexes) is not planned until single-node hybrid evidence exists.
 

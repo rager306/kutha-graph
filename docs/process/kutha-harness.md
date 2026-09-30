@@ -175,4 +175,4 @@ Adding a check: control loop → `.kutha/dictionaries/invariants.yaml`; a fence 
 - System `python3` / 3.12 as the harness interpreter (must be uv + 3.13).
 - Harness as a workflow engine (Cui remains pack composition, not GSD).
 - Implementing the STCA-guide §5 tutorial runtime as a second graph (JSON merge-patch objects). That skeleton is **pedagogical**; Kutha events are typed `Op`.
-- Legal / science **product** packs (ADR-090/093) as the next crate — M001 is closed; do not start Rocks until STATE names M002. Harness **H5** is the current Now rung (harness/docs only). H4 overlay dogfood remains delivered; do not start a legal pack.
+- Legal / science **product** packs (ADR-090/093) as the next crate — M001 is closed; do not start Rocks until STATE names M002 (M002 is log durability first; Rocks is for indexes only). Harness **H5** is the current Now rung (harness/docs only). H4 overlay dogfood remains delivered; do not start a legal pack.
