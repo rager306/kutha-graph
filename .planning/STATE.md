@@ -111,4 +111,4 @@ Next: `/gsd-discuss-phase 7` (S07 leased in `.kutha/STATE.md`)
 
 ## Operator Next Steps
 
-- Phase 7 is executable under Active Slice **S07**. Discuss/plan next (`/gsd-discuss-phase 7`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
+- Phase 7 context gathered under Active Slice **S07**. Plan next (`/gsd-plan-phase 7`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
