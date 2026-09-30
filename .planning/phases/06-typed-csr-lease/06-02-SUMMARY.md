@@ -19,13 +19,13 @@ estimate:
   tasks: 3
 
 actuals:
-  tokens: 1850
+  tokens: 2692
   tasks: 3
-  commits: 3
+  commits: 4
 
 plan_head_before: ca19445eed0cd77a90c73756ebb3232bda5ad099
-plan_head_after: PLACEHOLDER
-commits: 3
+plan_head_after: 2263a26711d22ebc5c40ee734c910c5b400baec3
+commits: 4
 
 tech-stack:
   added: []
@@ -79,7 +79,7 @@ coverage:
         status: pass
     human_judgment: false
 
-duration: 5min
+duration: 2min
 completed: 2026-09-30
 status: complete
 ---
@@ -90,9 +90,9 @@ status: complete
 
 ## Performance
 
-- **Duration:** ~5 min
+- **Duration:** ~2 min
 - **Started:** 2026-09-30T01:49:22Z
-- **Completed:** 2026-09-30T01:54:00Z
+- **Completed:** 2026-09-30T01:51:30Z
 - **Tasks:** 3/3
 - **Files modified:** 5 (+ SUMMARY)
 
@@ -107,7 +107,9 @@ status: complete
 
 1. **Task 1: Register GATE-01 FSM names, check, and bridge** - `ebf2f83` (chore)
 2. **Task 2: Changelog Process/Trajectory and ADR-040/041 evidence only** - `058810c` (docs)
-3. **Task 3: Governor ci, cargo smoke, freeze and lease cite** - (this SUMMARY commit)
+3. **Task 3: Governor ci, cargo smoke, freeze and lease cite** - `2ee2de7` (docs)
+
+**Plan metadata:** `2263a26` (docs: complete plan) (docs: complete plan) (docs: complete plan)
 
 ## Trajectory (D-10 / D-T5)
 
@@ -138,7 +140,7 @@ None.
 ## Self-Check: PASSED
 
 - Dictionary files FOUND (fsm, checks, bridges, honeycomb)
-- Commits `ebf2f83`, `058810c` FOUND
+- Commits `ebf2f83`, `058810c`, `2ee2de7` FOUND
 - Both CSR-01/CSR-02 fn names in fsm.yaml FOUND
 - `m011-typed-csr` / `B-m011-typed-csr` FOUND
 - ADR-040 and ADR-041 `map: Proposed` + evidence names FOUND
