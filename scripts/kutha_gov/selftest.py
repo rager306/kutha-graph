@@ -35,6 +35,7 @@ DERIVABLE_KINDS = frozenset(
         "rust_test_asserts",
         "cite_equals",
         "refs_resolve",
+        "file_max_lines",
     }
 )
 SKIP_DIR_NAMES = frozenset(
@@ -267,7 +268,21 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
             unit = _derive_refs_resolve(step, work)
             if unit:
                 derived.append(unit)
+        elif kind == "file_max_lines":
+            unit = _derive_file_max_lines(step, work)
+            if unit:
+                derived.append(unit)
     return derived
+
+
+def _derive_file_max_lines(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import file_max_lines_mutation_target
+
+    target = file_max_lines_mutation_target(step, work)
+    if target is None:
+        return []
+    path, text = target
+    return [{"op": "append_text", "path": path, "text": text}]
 
 
 def _derive_refs_resolve(step: Step, work: Path) -> list[Mutation]:

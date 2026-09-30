@@ -854,6 +854,8 @@ class CiteEqualsTests(unittest.TestCase):
             (ROOT / ".kutha" / "dictionaries" / "checks.yaml").read_text(encoding="utf-8")
         )
         rows = raw.get("checks") if isinstance(raw, dict) else []
+        if not isinstance(rows, list):
+            rows = []
         cite = next(row for row in rows if isinstance(row, dict) and row.get("id") == "cite-lease")
         blob = yaml.safe_dump(cite.get("steps"))
         self.assertNotIn("CHANGELOG.md", blob)
@@ -974,7 +976,7 @@ class RefsResolveTests(unittest.TestCase):
     def test_refs_resolve_range_endpoints_only(self) -> None:
         root = _rust_tree(
             {
-                "docs/note.md": "Honeycomb cells (ADR-010–093, all Proposed).\n",
+                "docs/note.md": "Honeycomb cells (ADR-010\u2013093, all Proposed).\n",
                 "docs/ADR/ADR-010-event.md": "# ten\n",
                 "docs/ADR/ADR-093-science.md": "# ninety-three\n",
                 ".kutha/dictionaries/honeycomb.yaml": "locks:\n  - id: D1\n",
@@ -1017,6 +1019,42 @@ class RefsResolveTests(unittest.TestCase):
 
     def test_refs_resolve_live_precommit_is_green(self) -> None:
         self.assertEqual(0, main(["--root", str(ROOT), "precommit", "--check", "refs-resolve"]))
+
+
+class FileMaxLinesTests(unittest.TestCase):
+    def test_file_max_lines_high_when_tempfile_exceeds_max(self) -> None:
+        root = _rust_tree({"AGENTS.md": "a\nb\nc\n"})
+        result = _rust_run(root, {"kind": "file_max_lines", "path": "AGENTS.md", "max": 2})
+        self.assertEqual(["max-lines"], _rust_highs(result))
+
+    def test_file_max_lines_at_budget_passes(self) -> None:
+        root = _rust_tree({"AGENTS.md": "a\nb\n"})
+        result = _rust_run(root, {"kind": "file_max_lines", "path": "AGENTS.md", "max": 2})
+        self.assertEqual([], _rust_highs(result))
+
+    def test_agents_lean_append_lines_over_budget_is_high(self) -> None:
+        text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        root = _rust_tree({"AGENTS.md": text + ("\n" * 20)})
+        result = _rust_run(root, {"kind": "file_max_lines", "path": "AGENTS.md", "max": 110})
+        self.assertEqual(["max-lines"], _rust_highs(result))
+
+    def test_agents_lean_append_delivery_token_is_high(self) -> None:
+        text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        root = _rust_tree({"AGENTS.md": text + "\nL_delivery=WRONG\n"})
+        result = _rust_run(
+            root,
+            {
+                "kind": "file_absent",
+                "path": "AGENTS.md",
+                "needles": ["L_delivery=", "L_map=", "L_capability=", "M011 is active"],
+            },
+        )
+        self.assertEqual(["absent"], _rust_highs(result))
+
+    def test_agents_lean_live_precommit_is_green(self) -> None:
+        self.assertEqual(0, main(["--root", str(ROOT), "precommit", "--check", "agents-lean"]))
+        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertLessEqual(agents.count("\n"), 110)
 
 
 if __name__ == "__main__":

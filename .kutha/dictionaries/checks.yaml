@@ -1036,3 +1036,20 @@ checks:
         allow_dangling:
           - ADR-100
 
+  - id: agents-lean
+    description: >-
+      AGENTS.md line count is wc -l and must stay at or under 110 (Phase 9
+      result was 100). file_absent forbids lease assignment tokens
+      L_delivery=, L_map=, L_capability=, and the sentence M011 is active.
+    steps:
+      - kind: file_max_lines
+        path: AGENTS.md
+        max: 110
+      - kind: file_absent
+        path: AGENTS.md
+        needles:
+          - "L_delivery="
+          - "L_map="
+          - "L_capability="
+          - "M011 is active"
+

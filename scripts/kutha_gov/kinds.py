@@ -39,6 +39,7 @@ ALLOWED_KINDS: frozenset[str] = frozenset(
         "rust_test_asserts",
         "cite_equals",
         "refs_resolve",
+        "file_max_lines",
     }
 )
 
@@ -1487,7 +1488,8 @@ def _kind_cite_equals(check: str, step: Step, ctx: Context, result: CheckResult)
                 )
 
 
-ADR_RANGE_RE = re.compile(r"ADR-(\d{3})\s*[–-]\s*(\d{3})(?!\d)")
+_EN_DASH = "\u2013"
+ADR_RANGE_RE = re.compile(rf"ADR-(\d{{3}})\s*[{_EN_DASH}-]\s*(\d{{3}})(?!\d)")
 ADR_ONE_RE = re.compile(r"ADR-(\d{3})(?!\d)")
 LOCK_RE = re.compile(r"\bD([1-9]|10)\b")
 HONEYCOMB_LOCKS = ".kutha/dictionaries/honeycomb.yaml"
@@ -1619,6 +1621,50 @@ def _kind_refs_resolve(check: str, step: Step, ctx: Context, result: CheckResult
             )
 
 
+def file_max_lines_mutation_target(step: Step, root: Path) -> tuple[str, str] | None:
+    path = _str(step, "path")
+    maximum = _int(step, "max", -1)
+    if not path or maximum < 0:
+        return None
+    if not (root / path).is_file():
+        return None
+    return path, "\n" * (maximum + 1)
+
+
+def _wc_lines(text: str) -> int:
+    return text.count("\n")
+
+
+def _kind_file_max_lines(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
+    path = _str(step, "path")
+    maximum = _int(step, "max", -1)
+    result.scanned += 1
+    if not path:
+        result.findings.append(Finding(check, Severity.HIGH, "max-lines", "path is required"))
+        return
+    if maximum < 0:
+        result.findings.append(
+            Finding(check, Severity.HIGH, "max-lines", "max must be a non-negative integer")
+        )
+        return
+    text = ctx.read(path)
+    if text is None:
+        _high_missing(check, path, result)
+        return
+    n = _wc_lines(text)
+    if n <= maximum:
+        return
+    message = _fmt(
+        _str(step, "message", "{path} has {n} lines (wc -l), max {max}"),
+        path=path,
+        n=n,
+        max=maximum,
+    )
+    result.findings.append(
+        Finding(check, _severity(step), _category(step, "max-lines"), message, path)
+    )
+
+
 RUNNERS: dict[str, Runner] = {
     "file_exists": _kind_file_exists,
     "file_equals": _kind_file_equals,
@@ -1638,4 +1684,5 @@ RUNNERS: dict[str, Runner] = {
     "rust_test_asserts": _kind_rust_test_asserts,
     "cite_equals": _kind_cite_equals,
     "refs_resolve": _kind_refs_resolve,
+    "file_max_lines": _kind_file_max_lines,
 }

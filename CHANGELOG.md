@@ -11,6 +11,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - Governor kind `cite_equals` proves a concrete `L_delivery=` token in the D-C1 doc set equals the STATE assignment. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
 - `cite-lease` also compares `L_map=`, `L_capability=`, and Active Milestone M### status phrasing to STATE. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
 - Governor kind `refs_resolve` fails closed on dangling ADR-NNN / D1-D10 citations in the process scope; ADR-100 may dangle. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
+- Check `agents-lean` keeps `AGENTS.md` at or under 110 lines (`wc -l`) and forbids lease assignment tokens. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
 
 ### Trajectory
 

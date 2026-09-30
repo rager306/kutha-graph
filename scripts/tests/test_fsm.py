@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 
+from kutha_gov.checks import get_checks  # noqa: E402
 from kutha_gov.config import resolve_budget  # noqa: E402
 from kutha_gov.fsm import load_machine, run_quantum, step_kind  # noqa: E402
 from kutha_gov.protocol import Context, Severity  # noqa: E402
@@ -39,7 +40,10 @@ class FsmTests(unittest.TestCase):
 
     def test_ci_quantum_reaches_ok_on_this_tree(self) -> None:
         ctx = Context(root=ROOT)
-        outcome = run_quantum(ctx, budget=32, start_event="start")
+        machine = load_machine(ROOT)
+        budget = machine.budget_default
+        self.assertGreaterEqual(budget, 48)
+        outcome = run_quantum(ctx, budget=budget, start_event="start")
         self.assertEqual("ok", outcome.terminal)
         self.assertEqual(
             [
@@ -70,6 +74,20 @@ class FsmTests(unittest.TestCase):
             any(rel == "h5_selftest" for rel, _obj in outcome.evidence),
             msg=outcome.evidence,
         )
+        self.assertEqual(0, outcome.skipped)
+        self.assertEqual(len(get_checks(ROOT)), len(outcome.results))
+
+    def test_cui_budget_truncates_tail_checks_when_v_is_short(self) -> None:
+        checks = get_checks(ROOT)
+        n = len(checks)
+        self.assertGreater(n, 1)
+        budget = n - 1
+        ordered = sorted(checks.items())
+        selected = ordered[:budget]
+        skipped = len(ordered) - len(selected)
+        self.assertEqual(1, skipped)
+        self.assertEqual(budget, len(selected))
+        self.assertGreaterEqual(load_machine(ROOT).budget_default, n)
 
     def test_fsm_transition_keys_are_not_yaml_booleans(self) -> None:
         machine = load_machine(ROOT)
