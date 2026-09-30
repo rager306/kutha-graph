@@ -6,17 +6,17 @@ current_phase: 11
 current_phase_name: Semantic governor
 current_plan: Not started
 status: planning
-stopped_at: Phase 10 complete, ready to plan Phase 11
-last_updated: "2026-09-30T07:02:25.307Z"
+stopped_at: Completed 11-01-PLAN.md
+last_updated: "2026-09-30T07:44:53.796Z"
 last_activity: 2026-09-30
 last_activity_desc: Phase 10 complete, transitioned to Phase 11
-state_head: 8cb2b45db9563c349289b35c0af4d0225700084e
+state_head: 69192ea162ad30dbc349dcb4f4ad6739c94c8021
 progress:
   total_phases: 3
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
-  percent: 67
+  total_plans: 8
+  completed_plans: 5
+  percent: 63
 ---
 
 # Project State
@@ -37,11 +37,11 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after v0.02)
 Phase: 11 of 11 (Semantic governor)
 Current Plan: Not started
 Total Plans in Phase: 4
-Plan: 1 of 4
+Plan: 2 of 4
 Status: Ready to execute
 Last activity: 2026-09-30 — Phase 10 complete, transitioned to Phase 11
 
-Progress: [███████░░░] 67%
+Progress: [██████░░░░] 63%
 
 ## Performance Metrics
 
@@ -84,6 +84,7 @@ Progress: [███████░░░] 67%
 | Phase 09 P02 | 7min | 3 tasks | 9 files |
 | Phase 10 P01 | 12min | 3 tasks | 5 files |
 | Phase 10 P02 | 9min | 3 tasks | 15 files |
+| Phase 11-semantic-governor P01 | 16min | 3 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -116,6 +117,9 @@ Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constrain
 - [Phase 10]: Worklist SoT is the 10-01 verdict table; first amend row is ADR-012 (not D-R2 ADR-014)
 - [Phase 10]: Honeycomb restage is header comments only; map/delivery/capability unchanged
 - [Phase 10]: ADR-000: English D4 time-scale pointer only; D1-D10 Decision text byte-stable
+- [Phase 11-semantic-governor]: D-V1: one tempfile copy per selftest run; mutations never write the working tree
+- [Phase 11-semantic-governor]: D-V3: ci evidence h5_selftest labels the harness rung H5; META run_selftest row is 11-04
+- [Phase 11-semantic-governor]: require: any is one atomic mutation unit so mixed needles cannot false-VACUOUS
 
 ### Pending Todos
 
@@ -136,8 +140,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T06:58:53.152Z
-Stopped at: Phase 10 complete, ready to plan Phase 11
+Last session: 2026-09-30T07:44:53.716Z
+Stopped at: Completed 11-01-PLAN.md
 Resume file: None
 Next: `/gsd-new-milestone` when ready. Freeze holds. Do not lease M002 without explicit operator intent.
 

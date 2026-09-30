@@ -45,7 +45,7 @@ Each requirement maps to exactly one roadmap phase.
 
 ### Semantic governor
 
-- [ ] **SEM-01**: `kutha-gov selftest` proves each mutable YAML check can fail: it applies a declared mutation to a temporary copy of the tree and requires a HIGH; checks that cannot be mutated are listed with a reason
+- [x] **SEM-01**: `kutha-gov selftest` proves each mutable YAML check can fail: it applies a declared mutation to a temporary copy of the tree and requires a HIGH; checks that cannot be mutated are listed with a reason
 - [ ] **SEM-02**: A new check kind proves a named Rust test is non-vacuous (function exists, not `#[ignore]`, body contains an assertion, optionally references required symbols); all existing `fn …` needle checks use it
 - [ ] **SEM-03**: A new check kind proves every citation of a lease value in docs (`L_delivery`, Active Milestone/Slice, Phase) equals `.kutha/STATE.md`; a wrong citation fails
 - [ ] **SEM-04**: `honeycomb.yaml` `evidence` and `capability: named` are resolved: each named evidence item points to an existing test or path, and a cell claiming a named capability has at least one resolving evidence item
@@ -86,7 +86,7 @@ Updated during roadmap creation.
 | ADR-02 | Phase 10 | Complete |
 | ADR-03 | Phase 10 | Complete |
 | ADR-04 | Phase 10 | Complete |
-| SEM-01 | Phase 11 | Pending |
+| SEM-01 | Phase 11 | Complete |
 | SEM-02 | Phase 11 | Pending |
 | SEM-03 | Phase 11 | Pending |
 | SEM-04 | Phase 11 | Pending |
