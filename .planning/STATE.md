@@ -5,10 +5,10 @@ milestone_name: Semantic core close
 current_phase: 6
 current_phase_name: Typed CSR lease
 status: planning
-stopped_at: Phase 6 context gathered
-last_updated: "2026-09-30T01:29:26.108Z"
+stopped_at: Phase 6 research complete
+last_updated: "2026-09-30T01:35:00.000Z"
 last_activity: 2026-09-30
-last_activity_desc: Phase 5 complete, transitioned to Phase 6
+last_activity_desc: Phase 6 RESEARCH.md written (typed CSR lease)
 state_head: 0f69e28961931427025771384e9e8bbfd8de5747
 progress:
   total_phases: 5
@@ -34,8 +34,8 @@ See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 Phase: 6 — Typed CSR lease
 Plan: Not started
-Status: Ready to plan
-Last activity: 2026-09-30 — Phase 5 complete, transitioned to Phase 6
+Status: Ready to plan (research done)
+Last activity: 2026-09-30 — Phase 6 RESEARCH.md complete
 
 Progress: [████░░░░░░] 40%
 
@@ -103,11 +103,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-30T01:29:26.032Z
-Stopped at: Phase 6 context gathered
-Resume file: .planning/phases/06-typed-csr-lease/06-CONTEXT.md
-Next: `/gsd-discuss-phase 6` (S06 leased in `.kutha/STATE.md`)
+Last session: 2026-09-30T01:35:00.000Z
+Stopped at: Phase 6 research complete
+Resume file: .planning/phases/06-typed-csr-lease/06-RESEARCH.md
+Next: `/gsd-plan-phase 6` (CONTEXT + RESEARCH ready; S06 leased)
 
 ## Operator Next Steps
 
-- Phase 6 is executable under Active Slice **S06**. Discuss/plan next (`/gsd-discuss-phase 6`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
+- Phase 6 is executable under Active Slice **S06**. Plan next (`/gsd-plan-phase 6`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
