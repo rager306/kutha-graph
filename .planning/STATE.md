@@ -4,19 +4,19 @@ milestone: v0.04
 milestone_name: Single-log SoT + stable references
 current_phase: 13
 current_phase_name: Stable references
-current_plan: 13-01
+current_plan: 2
 status: planning
-stopped_at: Phase 13 plans written, ready to execute
-last_updated: "2026-10-01T00:00:00.000Z"
+stopped_at: Completed 13-01-PLAN.md
+last_updated: "2026-09-30T18:07:56.375Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 13 plans 13-01..13-03 written
-state_head: 64ce9ffb8be4b99cbde397d2b4cf86bda36332d9
+state_head: 4a5d361d621e71ca238e4af1126f0824665ca653
 progress:
   total_phases: 5
   completed_phases: 12
-  total_plans: 3
-  completed_plans: 3
-  percent: 75
+  total_plans: 6
+  completed_plans: 4
+  percent: 67
 ---
 
 # Project State
@@ -34,14 +34,14 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 
 ## Current Position
 
-Current Plan: 13-01 of 13-03
+Current Plan: 2
 Total Plans in Phase: 3
 Phase: 13 of 16 (Stable references)
-Plan: 13-01 of 13-03
+Plan: 2 of 3
 Status: Ready to execute
-Last activity: 2026-10-01 — Phase 13 plans written
+Last activity: 2026-10-01 — Phase 13-01 EventId retract/correct landed
 
-Progress: [████████░░] 75% (v0.04 plans executed)
+Progress: [███████░░░] 67% (v0.04 plans executed)
 
 ## Performance Metrics
 
@@ -77,6 +77,7 @@ Progress: [████████░░] 75% (v0.04 plans executed)
 | Phase 12 P01 | 8min | 3 tasks | 8 files |
 | Phase 12 P02 | 12min | 2 tasks | 8 files |
 | Phase 12 P03 | 15min | 2 tasks | 7 files |
+| Phase 13 P01 | 7 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -94,6 +95,9 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 12]: Resume persist/open after sidecar discard stays Plan 12-02
 - [Phase 12]: JustificationCite is a distinct fold-noop Op; Resume reuses QuantumOutcome
 - [Phase 12]: Provenance domain tag kutha-prov-log-native; I-F1-outcomes stays deferred
+- [Phase 13]: Retract/Correct/CorrectInterval share EventId because UnknownFact and IntervalPatchRejected are one type
+- [Phase 13]: Lookup prefers the live Fact when several residuals share one CorrectInterval Event.id
+- [Phase 13]: CSR TypedEdge.fact_seq and ConflictReport seqs stay lease indexes (ING-03 is Phase 14)
 
 ### Pending Todos
 
@@ -116,8 +120,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T17:33:37.242Z
-Stopped at: Phase 13 plans written, ready to execute
+Last session: 2026-09-30T18:07:38.222Z
+Stopped at: Completed 13-01-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 13`. Harness lease is already S02. Freeze holds. Do not lease M002 without explicit operator intent.
 

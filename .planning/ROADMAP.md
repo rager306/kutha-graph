@@ -102,9 +102,9 @@ Plans:
   3. A rebuilt fold that renumbers local seqs still applies the same retract/cite payloads (REF-03)
   4. Named cargo tests for the three REF oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; freeze and Proposed map hold
 
-**Plans**: 3 plans
+**Plans**: 1/3 plans executed
 Plans:
-- [ ] 13-01-PLAN.md — REF-01 tracer: Retract/Correct/CorrectInterval target minting EventId
+- [x] 13-01-PLAN.md — REF-01 tracer: Retract/Correct/CorrectInterval target minting EventId
 - [ ] 13-02-PLAN.md — REF-02: justification cites and admission use EventId across fork
 - [ ] 13-03-PLAN.md — REF-03 rebuilt-fold payloads; governor observes REF-01..03
 
@@ -175,7 +175,7 @@ Plans:
 | 10. ADR and roadmap correction | v0.03 | 2/2 | Complete | 2026-09-30 |
 | 11. Semantic governor | v0.03 | 4/4 | Complete | 2026-09-30 |
 | 12. Log-native SoT | v0.04 | 3/3 | Complete    | 2026-10-01 |
-| 13. Stable references | v0.04 | 0/3 | Not started | - |
+| 13. Stable references | v0.04 | 1/3 | In Progress|  |
 | 14. Idempotent ingest | v0.04 | 0/? | Not started | - |
 | 15. Verify, persist, and time scale | v0.04 | 0/? | Not started | - |
 | 16. Fold-internal hot indexes | v0.04 | 0/? | Not started | - |

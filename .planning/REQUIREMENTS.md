@@ -16,7 +16,7 @@ Closing leased product gaps F1–F3, F6 (verify/atomic/Define), F7, F8 from `doc
 
 ### Stable references (F2)
 
-- [ ] **REF-01**: Retract and Correct target a stable EventId (or proposition id), not fold-local `fact_seq`
+- [x] **REF-01**: Retract and Correct target a stable EventId (or proposition id), not fold-local `fact_seq`
 - [ ] **REF-02**: Justification cites use the same stable identity across fork / rebuild
 - [ ] **REF-03**: A rebuilt fold that renumbers local seqs can still apply the same retract/cite payloads
 
@@ -73,7 +73,7 @@ Closing leased product gaps F1–F3, F6 (verify/atomic/Define), F7, F8 from `doc
 | LOG-01 | Phase 12 | Complete |
 | LOG-02 | Phase 12 | Complete |
 | LOG-03 | Phase 12 | Complete |
-| REF-01 | Phase 13 | Pending |
+| REF-01 | Phase 13 | Complete |
 | REF-02 | Phase 13 | Pending |
 | REF-03 | Phase 13 | Pending |
 | ING-01 | Phase 14 | Pending |
