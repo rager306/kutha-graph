@@ -223,10 +223,10 @@ checks:
   - id: h4-membership-as-of
     description: H4 historical AE1 — membership snapshot AS OF a prior process cut
     steps:
-      - kind: file_contains
+      - kind: rust_test_asserts
         path: crates/kutha-runtime/tests/h4_process_allows.rs
-        needles: ["fn h4_prior_cut_keeps_status_membership_after_later_edition_drops_it"]
-        require: all
+        tests:
+          - h4_prior_cut_keeps_status_membership_after_later_edition_drops_it
         category: h4-overlay
         message: "H4 membership AS OF test missing {missing}"
 

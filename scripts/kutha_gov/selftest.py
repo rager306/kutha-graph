@@ -32,6 +32,7 @@ DERIVABLE_KINDS = frozenset(
         "glob_absent",
         "file_equals",
         "concat_contains_any",
+        "rust_test_asserts",
     }
 )
 SKIP_DIR_NAMES = frozenset(
@@ -253,7 +254,91 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
             unit = _derive_concat_contains_any(step)
             if unit:
                 derived.append(unit)
+        elif kind == "rust_test_asserts":
+            for unit in _derive_rust_test_asserts(step, work):
+                derived.append(unit)
     return derived
+
+
+def _re_replacement(text: str) -> str:
+    return text.replace("\\", "\\\\")
+
+
+def _unique_assert_rewrite(src: str, start: int, end: int) -> tuple[str, str] | None:
+    for width in range(0, 96, 8):
+        needle = src[max(0, start - width) : end]
+        if needle and src.count(needle) == 1:
+            rewritten = src[max(0, start - width) : start] + "("
+            return needle, rewritten
+    return None
+
+
+def _derive_rust_test_asserts(step: Step, work: Path) -> list[list[Mutation]]:
+    from kutha_gov.kinds import rust_test_mutation_targets
+    from kutha_gov.rust_source import assert_macro_spans_in_test
+
+    units: list[list[Mutation]] = []
+    for rel, name in rust_test_mutation_targets(step, work):
+        path = work / rel
+        if not path.is_file():
+            continue
+        src = path.read_text(encoding="utf-8")
+        spans = assert_macro_spans_in_test(src, name)
+        ops: list[Mutation] = []
+        for start, end in reversed(spans):
+            rewrite = _unique_assert_rewrite(src, start, end)
+            if rewrite is None:
+                continue
+            needle, rewritten = rewrite
+            ops.append(
+                {
+                    "op": "replace_regex",
+                    "path": rel,
+                    "pattern": re.escape(needle),
+                    "with": _re_replacement(rewritten),
+                }
+            )
+        if ops:
+            units.append(ops)
+            break
+        units.append(
+            [
+                {
+                    "op": "replace_regex",
+                    "path": rel,
+                    "pattern": r"(fn\s+" + re.escape(name) + r"\b)",
+                    "with": r"#[ignore]\n\1",
+                }
+            ]
+        )
+        break
+    nfy = step.get("names_from_yaml")
+    when = step.get("require_evidence_when")
+    if isinstance(nfy, dict) and isinstance(when, dict):
+        yaml_path = nfy.get("path")
+        field = when.get("field")
+        equals = when.get("equals")
+        if (
+            isinstance(yaml_path, str)
+            and yaml_path.strip()
+            and isinstance(field, str)
+            and isinstance(equals, str)
+        ):
+            units.append(
+                [
+                    {
+                        "op": "replace_regex",
+                        "path": yaml_path,
+                        "pattern": (
+                            r"(?s)("
+                            + re.escape(f"{field}: {equals}")
+                            + r"\n(?:    .+\n)*?    evidence: )(\[[^\]]*\])"
+                        ),
+                        "with": r"\1[]",
+                    }
+                ]
+            )
+    return units
 
 
 def _derive_file_contains(step: Step) -> list[Mutation]:

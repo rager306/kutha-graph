@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -11,6 +12,7 @@ from kutha_gov.__main__ import main  # noqa: E402
 from kutha_gov.checks import get_checks  # noqa: E402
 from kutha_gov.kinds import run_step  # noqa: E402
 from kutha_gov.protocol import CheckResult, Context, Severity  # noqa: E402
+from kutha_gov.rust_source import first_assert_macro_span, parse_fns, strip_noise  # noqa: E402
 
 
 class HarnessTests(unittest.TestCase):
@@ -528,6 +530,197 @@ class HarnessTests(unittest.TestCase):
         yaml_text = (ROOT / ".kutha" / "dictionaries" / "checks.yaml").read_text(encoding="utf-8")
         self.assertNotIn("before M001 L_capability is green", yaml_text)
         self.assertIn("until Active Milestone names M002", yaml_text)
+
+
+def _rust_tree(files: dict[str, str]) -> Path:
+    raw = tempfile.mkdtemp(prefix="kutha-rust-test-")
+    root = Path(raw)
+    for rel, text in files.items():
+        path = root / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+    return root
+
+
+def _rust_run(root: Path, step: dict[str, object]) -> CheckResult:
+    result = CheckResult(check="probe")
+    run_step("probe", step, Context(root=root), result)
+    return result
+
+
+def _rust_highs(result: CheckResult) -> list[str]:
+    return [f.category for f in result.findings if f.severity is Severity.HIGH]
+
+
+class RustTestAssertsTests(unittest.TestCase):
+    def test_rust_test_asserts_high_when_fn_missing(self) -> None:
+        root = _rust_tree({"crates/k/tests/t.rs": "fn other() { assert!(true); }\n"})
+        result = _rust_run(
+            root,
+            {
+                "kind": "rust_test_asserts",
+                "path": "crates/k/tests/t.rs",
+                "tests": ["the_named_test"],
+            },
+        )
+        self.assertEqual(["rust-test-missing"], _rust_highs(result))
+
+    def test_rust_test_asserts_high_when_ignored(self) -> None:
+        root = _rust_tree(
+            {
+                "crates/k/tests/t.rs": (
+                    "#[cfg(test)]\n#[ignore]\n#[test]\nfn ignored_one() { assert!(true); }\n"
+                )
+            }
+        )
+        result = _rust_run(
+            root,
+            {
+                "kind": "rust_test_asserts",
+                "path": "crates/k/tests/t.rs",
+                "tests": ["ignored_one"],
+            },
+        )
+        self.assertEqual(["rust-test-ignored"], _rust_highs(result))
+
+    def test_rust_test_asserts_high_when_no_assert_in_body(self) -> None:
+        root = _rust_tree({"crates/k/tests/t.rs": "#[test]\nfn empty_body() { let _x = 1; }\n"})
+        result = _rust_run(
+            root,
+            {
+                "kind": "rust_test_asserts",
+                "path": "crates/k/tests/t.rs",
+                "tests": ["empty_body"],
+            },
+        )
+        self.assertEqual(["rust-test-vacuous"], _rust_highs(result))
+
+    def test_rust_test_asserts_high_when_assert_only_in_comment_or_string(self) -> None:
+        src = (
+            "#[test]\n"
+            "fn commented() {\n"
+            "    // assert!(true);\n"
+            '    let _s = "assert_eq!(1, 1)";\n'
+            '    let _r = r#"assert_ne!(1, 2)"#;\n'
+            "}\n"
+        )
+        root = _rust_tree({"crates/k/tests/t.rs": src})
+        result = _rust_run(
+            root,
+            {
+                "kind": "rust_test_asserts",
+                "path": "crates/k/tests/t.rs",
+                "tests": ["commented"],
+            },
+        )
+        self.assertEqual(["rust-test-vacuous"], _rust_highs(result))
+
+    def test_rust_test_asserts_brace_inside_string_does_not_break_body(self) -> None:
+        src = (
+            "#[cfg(test)]\n"
+            "#[test]\n"
+            "fn braces() {\n"
+            '    let _s = r#"{ not the body assert!(false); }"#;\n'
+            "    let _c = '{';\n"
+            "    let _q = '\"';\n"
+            "    let _u = '\\u{7b}';\n"
+            "    assert!(true);\n"
+            "}\n"
+        )
+        root = _rust_tree({"crates/k/tests/t.rs": src})
+        result = _rust_run(
+            root,
+            {
+                "kind": "rust_test_asserts",
+                "path": "crates/k/tests/t.rs",
+                "tests": ["braces"],
+            },
+        )
+        self.assertEqual([], _rust_highs(result))
+
+    def test_rust_test_asserts_helper_prefix_counts(self) -> None:
+        src = (
+            "fn assert_graph_ok(ok: bool) { let _ = ok; }\n"
+            "#[test]\n"
+            "fn uses_helper() { assert_graph_ok(true); }\n"
+        )
+        root = _rust_tree({"crates/k/tests/t.rs": src})
+        result = _rust_run(
+            root,
+            {
+                "kind": "rust_test_asserts",
+                "path": "crates/k/tests/t.rs",
+                "tests": ["uses_helper"],
+            },
+        )
+        self.assertEqual([], _rust_highs(result))
+
+    def test_rust_test_asserts_high_when_required_symbol_missing(self) -> None:
+        root = _rust_tree({"crates/k/tests/t.rs": "#[test]\nfn has_assert() { assert!(true); }\n"})
+        result = _rust_run(
+            root,
+            {
+                "kind": "rust_test_asserts",
+                "path": "crates/k/tests/t.rs",
+                "tests": ["has_assert"],
+                "require_symbols": {"has_assert": ["DoesNotExist"]},
+            },
+        )
+        self.assertEqual(["rust-test-symbol"], _rust_highs(result))
+
+    def test_rust_test_asserts_high_on_async_and_nested(self) -> None:
+        src = (
+            "#[test]\n"
+            "async fn async_one() { assert!(true); }\n"
+            "#[test]\n"
+            "fn outer() {\n"
+            "    fn nested_one() { assert!(true); }\n"
+            "    assert!(true);\n"
+            "}\n"
+        )
+        root = _rust_tree({"crates/k/tests/t.rs": src})
+        async_result = _rust_run(
+            root,
+            {
+                "kind": "rust_test_asserts",
+                "path": "crates/k/tests/t.rs",
+                "tests": ["async_one"],
+            },
+        )
+        nested_result = _rust_run(
+            root,
+            {
+                "kind": "rust_test_asserts",
+                "path": "crates/k/tests/t.rs",
+                "tests": ["nested_one"],
+            },
+        )
+        self.assertEqual(["rust-test-async"], _rust_highs(async_result))
+        self.assertEqual(["rust-test-nested"], _rust_highs(nested_result))
+
+    def test_rust_test_strip_noise_blanks_unicode_char_braces(self) -> None:
+        stripped = strip_noise("let c = '\\u{7b}'; { assert!(true); }")
+        self.assertNotIn("{7b}", stripped.replace(" ", ""))
+        self.assertIn("assert!(true)", stripped)
+
+    def test_rust_test_first_assert_macro_span_skips_string_noise(self) -> None:
+        src = '#[test]\nfn t() {\n    let _s = "assert!(false)";\n    assert_eq!(1, 1);\n}\n'
+        span = first_assert_macro_span(src, "t")
+        self.assertIsNotNone(span)
+        assert span is not None
+        self.assertEqual("assert_eq!(", src[span[0] : span[1]])
+
+    def test_rust_test_parse_fns_reads_attribute_block(self) -> None:
+        src = "#[cfg(test)]\n#[test]\nfn named() { assert!(true); }\n"
+        items = parse_fns(src)
+        self.assertEqual(1, len(items))
+        self.assertTrue(items[0].has_test)
+        self.assertFalse(items[0].has_ignore)
+
+    def test_h4_membership_as_of_is_non_vacuous(self) -> None:
+        self.assertEqual(
+            0, main(["--root", str(ROOT), "precommit", "--check", "h4-membership-as-of"])
+        )
 
 
 if __name__ == "__main__":

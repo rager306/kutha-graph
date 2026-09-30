@@ -27,7 +27,7 @@ bridges:
     check: relation-allowlist
 
   - id: B-h4-membership-as-of
-    claim: "Process-relations membership editions are queryable AS OF a prior tenant cut"
+    claim: "Process-relations membership editions are queryable AS OF a prior tenant cut; the named test is a non-vacuous #[test] (not an fn substring)"
     cites: "crates/kutha-runtime/tests/h4_process_allows.rs"
     check: h4-membership-as-of
 

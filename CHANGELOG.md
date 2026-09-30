@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-30 — Process: rust_test_asserts named tests
+
+### Process
+
+- Governor kind `rust_test_asserts` proves a named `#[test]` exists without `#[ignore]`, brace-matches the body after stripping comments/strings/chars, and requires an allowed assert or `assert_*` helper. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
+- `h4-membership-as-of` uses that kind instead of an `fn` substring needle. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
+
+### Trajectory
+
+- Honeycomb stays Proposed. Green governor is not ADR Accepted and not L_capability.
+
 ## 2026-09-30 — Process: vacuity selftest runner
 
 ### Process

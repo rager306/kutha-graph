@@ -9,6 +9,15 @@ from pathlib import Path
 import yaml
 
 from kutha_gov.protocol import CheckResult, Context, Finding, Severity
+from kutha_gov.rust_source import (
+    DEFAULT_ASSERT_PREFIXES,
+    FnItem,
+    assert_hits,
+    body_text,
+    missing_symbols,
+    parse_fns,
+    strip_noise,
+)
 
 ALLOWED_KINDS: frozenset[str] = frozenset(
     {
@@ -27,6 +36,7 @@ ALLOWED_KINDS: frozenset[str] = frozenset(
         "git_path_implies",
         "yaml_map_list",
         "glob_paths_in_file",
+        "rust_test_asserts",
     }
 )
 
@@ -898,6 +908,404 @@ def _kind_glob_paths_in_file(check: str, step: Step, ctx: Context, result: Check
         )
 
 
+def _as_str_list_map(value: object) -> dict[str, list[str]]:
+    if not isinstance(value, dict):
+        return {}
+    out: dict[str, list[str]] = {}
+    for key, item in value.items():
+        if not isinstance(key, str):
+            continue
+        if isinstance(item, list):
+            out[key] = [entry for entry in item if isinstance(entry, str) and entry.strip()]
+        elif isinstance(item, str) and item.strip():
+            out[key] = [item]
+    return out
+
+
+def _as_require_when(value: object) -> tuple[str, str] | None:
+    if not isinstance(value, dict):
+        return None
+    field = value.get("field")
+    equals = value.get("equals")
+    if isinstance(field, str) and field.strip() and isinstance(equals, str) and equals.strip():
+        return field.strip(), equals.strip()
+    return None
+
+
+def _unique_names(names: list[str]) -> list[str]:
+    seen: set[str] = set()
+    out: list[str] = []
+    for name in names:
+        if name in seen:
+            continue
+        seen.add(name)
+        out.append(name)
+    return out
+
+
+def _names_from_yaml_rows(
+    check: str,
+    step: Step,
+    ctx: Context,
+    result: CheckResult,
+) -> list[str] | None:
+    spec = step.get("names_from_yaml")
+    if not isinstance(spec, dict):
+        return _str_list(step, "tests")
+    path = spec.get("path")
+    select = spec.get("select")
+    if not isinstance(path, str) or not path.strip() or not isinstance(select, str) or not select:
+        result.findings.append(
+            Finding(
+                check,
+                _severity(step),
+                _category(step, "yaml-select"),
+                "names_from_yaml requires path and select",
+            )
+        )
+        return None
+    loaded, ok = _yaml_document(check, path, ctx, result)
+    if not ok:
+        return None
+    selected = _yaml_select(loaded, select)
+    if not isinstance(selected, list) or not selected:
+        result.findings.append(
+            Finding(
+                check,
+                _severity(step),
+                _category(step, "yaml-select"),
+                f"{path} select {select!r} is not a non-empty list",
+                path,
+            )
+        )
+        return None
+    field = spec.get("field")
+    field_name = field.strip() if isinstance(field, str) and field.strip() else ""
+    require_when = _as_require_when(step.get("require_evidence_when"))
+    names: list[str] = []
+    empty_named: list[str] = []
+    string_rows = [item for item in selected if isinstance(item, str) and item.strip()]
+    maps = [item for item in selected if isinstance(item, dict)]
+    if field_name:
+        evidence_key = field_name
+        for row in maps:
+            values = row.get(evidence_key)
+            entries: list[str] = []
+            if isinstance(values, list):
+                entries = [item for item in values if isinstance(item, str) and item.strip()]
+            elif isinstance(values, str) and values.strip():
+                entries = [values.strip()]
+            names.extend(entries)
+            if require_when is not None:
+                when_field, equals = require_when
+                if str(row.get(when_field, "")) == equals and not entries:
+                    empty_named.append(str(row.get("id", "?")))
+    else:
+        if string_rows and not maps:
+            names.extend(string_rows)
+        else:
+            result.findings.append(
+                Finding(
+                    check,
+                    _severity(step),
+                    _category(step, "yaml-select"),
+                    f"{path} select {select!r} needs field: for map rows",
+                    path,
+                )
+            )
+            return None
+        if require_when is not None:
+            result.findings.append(
+                Finding(
+                    check,
+                    _severity(step),
+                    _category(step, "yaml-select"),
+                    "require_evidence_when needs names_from_yaml field on map rows",
+                    path,
+                )
+            )
+            return None
+    if empty_named:
+        message = _fmt(
+            _str(
+                step,
+                "message",
+                "capability named cells missing evidence tests: {missing}",
+            ),
+            missing=", ".join(empty_named),
+        )
+        result.findings.append(
+            Finding(
+                check,
+                _severity(step),
+                _category(step, "rust-test-evidence"),
+                message,
+                path,
+            )
+        )
+    return _unique_names(names)
+
+
+def _rust_search_files(
+    check: str, step: Step, ctx: Context, result: CheckResult
+) -> list[Path] | None:
+    spec = step.get("names_from_yaml")
+    glob = _str(step, "glob")
+    path = _str(step, "path")
+    if isinstance(spec, dict):
+        mapped = spec.get("glob")
+        if isinstance(mapped, str) and mapped.strip():
+            glob = mapped.strip()
+        mapped_path = spec.get("files")
+        if isinstance(mapped_path, str) and mapped_path.strip() and not glob:
+            path = mapped_path.strip()
+    if path:
+        hit = ctx.root / path
+        if not hit.is_file():
+            _high_missing(check, path, result)
+            return None
+        return [hit]
+    if not glob:
+        result.findings.append(
+            Finding(
+                check,
+                _severity(step),
+                _category(step, "rust-test-glob"),
+                "rust_test_asserts requires path or glob",
+            )
+        )
+        return None
+    hits = [hit for hit in sorted(ctx.root.glob(glob)) if hit.is_file()]
+    if not hits:
+        result.findings.append(
+            Finding(
+                check,
+                _severity(step),
+                _category(step, "rust-test-glob"),
+                _fmt(
+                    _str(step, "message", "{glob} matched no rust files"),
+                    glob=glob,
+                ),
+                glob,
+            )
+        )
+        return None
+    return hits
+
+
+def _prefixes(step: Step) -> tuple[str, ...]:
+    raw = step.get("assert_prefixes")
+    if isinstance(raw, list):
+        values = tuple(item for item in raw if isinstance(item, str) and item)
+        if values:
+            return values
+    if isinstance(raw, str) and raw:
+        return (raw,)
+    return DEFAULT_ASSERT_PREFIXES
+
+
+def _rel_of(ctx: Context, path: Path) -> str:
+    try:
+        return str(path.relative_to(ctx.root)).replace("\\", "/")
+    except ValueError:
+        return str(path)
+
+
+def _kind_rust_test_asserts(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
+    names = _names_from_yaml_rows(check, step, ctx, result)
+    if names is None:
+        return
+    files = _rust_search_files(check, step, ctx, result)
+    if files is None:
+        return
+    if not names:
+        result.findings.append(
+            Finding(
+                check,
+                _severity(step),
+                _category(step, "rust-test-names"),
+                _str(step, "message", "no test names to prove"),
+            )
+        )
+        return
+    prefixes = _prefixes(step)
+    require_symbols = _as_str_list_map(step.get("require_symbols"))
+    parsed: list[tuple[Path, str, str]] = []
+    for path in files:
+        src = path.read_text(encoding="utf-8")
+        parsed.append((path, src, strip_noise(src)))
+        result.scanned += 1
+    for name in names:
+        _prove_named_test(
+            check,
+            step,
+            ctx,
+            result,
+            name,
+            parsed,
+            prefixes,
+            require_symbols.get(name, []),
+        )
+
+
+def _prove_named_test(
+    check: str,
+    step: Step,
+    ctx: Context,
+    result: CheckResult,
+    name: str,
+    parsed: list[tuple[Path, str, str]],
+    prefixes: tuple[str, ...],
+    symbols: list[str],
+) -> None:
+    matching: list[tuple[Path, str, FnItem, str]] = []
+    for path, src, stripped in parsed:
+        for item in parse_fns(src):
+            if item.name != name:
+                continue
+            matching.append((path, src, item, body_text(stripped, item)))
+    if not matching:
+        result.findings.append(
+            Finding(
+                check,
+                _severity(step),
+                _category(step, "rust-test-missing"),
+                _fmt(
+                    _str(step, "message", "{name} is not a fn in the rust glob"),
+                    name=name,
+                    missing=name,
+                ),
+            )
+        )
+        return
+    ignored = [row for row in matching if row[2].has_ignore]
+    async_tests = [row for row in matching if row[2].async_fn]
+    nested = [row for row in matching if row[2].nested]
+    qualifying = [
+        row
+        for row in matching
+        if row[2].has_test and not row[2].has_ignore and not row[2].async_fn and not row[2].nested
+    ]
+    if not qualifying:
+        if ignored:
+            path, src, item, _body = ignored[0]
+            result.findings.append(
+                Finding(
+                    check,
+                    _severity(step),
+                    _category(step, "rust-test-ignored"),
+                    _fmt(_str(step, "message", "{name} is #[ignore]"), name=name, missing=name),
+                    _rel_of(ctx, path),
+                    item.line(src),
+                )
+            )
+            return
+        if async_tests:
+            path, src, item, _body = async_tests[0]
+            result.findings.append(
+                Finding(
+                    check,
+                    _severity(step),
+                    _category(step, "rust-test-async"),
+                    _fmt(_str(step, "message", "{name} is async fn"), name=name, missing=name),
+                    _rel_of(ctx, path),
+                    item.line(src),
+                )
+            )
+            return
+        if nested:
+            path, src, item, _body = nested[0]
+            result.findings.append(
+                Finding(
+                    check,
+                    _severity(step),
+                    _category(step, "rust-test-nested"),
+                    _fmt(_str(step, "message", "{name} is a nested fn"), name=name, missing=name),
+                    _rel_of(ctx, path),
+                    item.line(src),
+                )
+            )
+            return
+        path, src, item, _body = matching[0]
+        result.findings.append(
+            Finding(
+                check,
+                _severity(step),
+                _category(step, "rust-test-not-test"),
+                _fmt(
+                    _str(step, "message", "{name} is not marked #[test]"),
+                    name=name,
+                    missing=name,
+                ),
+                _rel_of(ctx, path),
+                item.line(src),
+            )
+        )
+        return
+    for path, src, item, body in qualifying:
+        if not assert_hits(body, prefixes):
+            result.findings.append(
+                Finding(
+                    check,
+                    _severity(step),
+                    _category(step, "rust-test-vacuous"),
+                    _fmt(
+                        _str(step, "message", "{name} has no allowed assert in body"),
+                        name=name,
+                        missing=name,
+                    ),
+                    _rel_of(ctx, path),
+                    item.line(src),
+                )
+            )
+            return
+        absent = missing_symbols(body, symbols)
+        if absent:
+            result.findings.append(
+                Finding(
+                    check,
+                    _severity(step),
+                    _category(step, "rust-test-symbol"),
+                    _fmt(
+                        _str(step, "message", "{name} missing symbols: {missing}"),
+                        name=name,
+                        missing=", ".join(absent),
+                    ),
+                    _rel_of(ctx, path),
+                    item.line(src),
+                )
+            )
+            return
+
+
+def rust_test_mutation_targets(step: Step, root: Path) -> list[tuple[str, str]]:
+    """(relpath, test_name) pairs for derived selftest mutations. Read-only on `root`."""
+    ctx = Context(root=root)
+    probe = CheckResult(check="_selftest")
+    names = _names_from_yaml_rows("_selftest", step, ctx, probe)
+    files = _rust_search_files("_selftest", step, ctx, probe)
+    if not names or not files:
+        return []
+    wanted = set(names)
+    out: list[tuple[str, str]] = []
+    for path in files:
+        rel = str(path.relative_to(root)).replace("\\", "/")
+        src = path.read_text(encoding="utf-8")
+        seen: set[str] = set()
+        for item in parse_fns(src):
+            if (
+                item.name in wanted
+                and item.name not in seen
+                and item.has_test
+                and not item.has_ignore
+                and not item.async_fn
+                and not item.nested
+            ):
+                seen.add(item.name)
+                out.append((rel, item.name))
+    return out
+
+
 RUNNERS: dict[str, Runner] = {
     "file_exists": _kind_file_exists,
     "file_equals": _kind_file_equals,
@@ -914,4 +1322,5 @@ RUNNERS: dict[str, Runner] = {
     "git_path_implies": _kind_git_path_implies,
     "yaml_map_list": _kind_yaml_map_list,
     "glob_paths_in_file": _kind_glob_paths_in_file,
+    "rust_test_asserts": _kind_rust_test_asserts,
 }

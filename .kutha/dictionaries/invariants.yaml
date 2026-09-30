@@ -5,6 +5,7 @@ process: docs/process/governor-intake.md
 # Vacuity selftest (SEM-01) is declared on checks.yaml rows, not as dispositions here.
 # Skip reasons name the live git diff; every non-derivable kind (pointer_in_other_file, when_match_then_match,
 # markdown_heading_tag, yaml_needles_in_glob) declares explicit mutations instead of skipping.
+# rust_test_asserts (SEM-02) proves named #[test] bodies assert; it does not Accept honeycomb cells.
 # Not Kutha product requirements. Honeycomb cells stay in docs/ADR/.
 # Silence is not a disposition. New control-loop check = row here first, then checks.yaml.
 # Bridges that cite product live in bridges.yaml, not here.
