@@ -9,6 +9,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Process
 
 - Architecture gap review artifact (`docs/architecture/semantic-gap-review.md`) plus M012a proposed before M012 on the non-authoritative later-milestones list. Narrative is Phase 11 SEM-08. Not ADR Accepted.
+- The same review now carries per-cell verdicts (`no change` / `amend` / `open question`) and a D1–D10 lock assessment. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
 
 ### Trajectory
 
