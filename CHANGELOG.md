@@ -17,10 +17,11 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Process
 
 - FSM `observe_cargo.required` plus `m011-provenance` / `B-m011-provenance` needles for named PROV-01 and PROV-02 tests (GATE-01).
+- Harness lease advanced: **S07** delivered (`L_delivery=M011-S07-done`); Active Slice **None**. S08 remains unleased. Not ADR Accepted; not closed product delivery.
 
 ### Trajectory
 
-- Active Slice remains **S07**; ADR-060 and ADR-011 honeycomb evidence names `provenance_detects_caused_by_swap_when_state_fingerprint_matches` and `provenance_detects_rule_version_change_when_state_fingerprint_matches`; map stays Proposed on both (not Accepted, not L_capability). Green governor is not ADR Accepted and not L_capability. `replay_check` Ok is not execution replay.
+- **S07 delivered** (`L_delivery=M011-S07-done`); Active Slice cleared until an explicit S08 lease. ADR-060 and ADR-011 honeycomb evidence names `provenance_detects_caused_by_swap_when_state_fingerprint_matches` and `provenance_detects_rule_version_change_when_state_fingerprint_matches`; map stays Proposed on both (not Accepted, not L_capability). Green governor is not ADR Accepted and not L_capability. `replay_check` Ok is not execution replay.
 
 ## 2026-09-30 — Process: lease Active Slice S07 after S06 delivery
 

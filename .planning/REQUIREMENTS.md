@@ -25,7 +25,7 @@ Each requirement maps to exactly one roadmap phase (one phase per harness slice)
 - [x] **CSR-01**: Developer can query a CSR lease where the same endpoints carry different relations or supports and see labels and support multiplicity preserved
 - [x] **CSR-02**: Developer still gets the untyped neighbor-set path, and the FF5 lease-agrees-with-fold check stays green
 
-### Provenance (M011 S07 — leased)
+### Provenance (M011 S07 — delivered)
 
 - [x] **PROV-01**: Verification detects a change to only a Behavior `caused_by` reference even when the state fingerprint still matches
 - [x] **PROV-02**: Verification detects a change to only a pinned rule version the same way; execution replay is not required

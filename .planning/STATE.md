@@ -2,20 +2,20 @@
 gsd_state_version: "1.0"
 milestone: v0.02
 milestone_name: Semantic core close
-current_phase: 7
-current_phase_name: Provenance and rule-version check
-current_plan: 2
-status: ready_for_verification
-stopped_at: Completed 07-02-PLAN.md
-last_updated: "2026-09-30T02:53:50.363Z"
+current_phase: 8
+current_phase_name: End-to-end candidate fixture
+status: planning
+stopped_at: Phase 7 complete — provenance / rule-version delivered; Active Slice None
+last_updated: "2026-09-30T10:00:00.000Z"
 last_activity: 2026-09-30
-last_activity_desc: Completed 07-02-PLAN.md (GATE-01 provenance observe names)
-state_head: b8dfd1207ce419e6cb557c6a7386c332e6169ed2
+last_activity_desc: Phase 7 delivered (S07); lease cleared until S08
+state_head: c685b72
 progress:
   total_phases: 5
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 9
   completed_plans: 9
+  percent: 80
 ---
 
 # Project State
@@ -25,27 +25,25 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** Phase 7 — Provenance and rule-version check (M011 **S07** leased). S06 delivered; S08 unleased.
+**Current focus:** Phase 8 — End-to-end candidate fixture (planning-only until harness leases **S08**). S07 delivered.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M011**; Active Slice **S07**; Phase **H4**; `L_map=honeycomb-proposed`; `L_delivery=M011-S06-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
+**Harness lease (cite only):** Active Milestone **M011**; Active Slice **None**; Phase **H4**; `L_map=honeycomb-proposed`; `L_delivery=M011-S07-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
 
 ## Current Position
 
-Phase: 7 — Provenance and rule-version check
-Current Plan: 2
-Total Plans in Phase: 2
-Plan: 07-02 (Wave 2 GATE-01)
-Status: 07-02 complete; ready for `/gsd-verify-work`
-Last activity: 2026-09-30 — Completed 07-02-PLAN.md (GATE-01 provenance observe names)
+Phase: 8 — End-to-end candidate fixture
+Plan: Not started
+Status: Ready to plan (lease-gated)
+Last activity: 2026-09-30 — Phase 7 delivered (S07); Active Slice None
 
-Progress: [███████░░░] 70%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7 (v0.01)
+- Total plans completed: 9 (v0.01 + v0.02 through Phase 7)
 - Average duration: 2min
 - Total execution time: ~23min
 
@@ -56,13 +54,13 @@ Progress: [███████░░░] 70%
 | 1. Legal PIT fitness | 3/3 | 3min | 1min |
 | 2. Honest harness and freeze | 3/3 | 5min | 2min |
 | 3. Lease-gated next slice | 3/3 | 14min | 5min |
-| 4–8 (v0.02) | 0/TBD | — | — |
 | 4 | 3 | - | - |
 | 5 | 2 | - | - |
 | 6 | 2 | - | - |
+| 7 | 2 | ~8min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 02-03 (1min), 03-01 (5min), 03-02 (5min), 03-03 (4min)
+- Last 5 plans: Phase 07 P01–P02, Phase 06 close
 - Trend: steady
 
 **Per-Plan Metrics:**
@@ -81,21 +79,10 @@ Progress: [███████░░░] 70%
 
 Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constraints; typed Op; honeycomb = map.
 - [v0.01]: Phases 1–3 verification overlay shipped; green ≠ Accepted ≠ L_capability ≠ lease grant
-- [v0.02]: One GSD phase per remaining M011 slice; Phase 4 executable (S04 leased); Phases 5–8 planning-only until leased
+- [v0.02]: One GSD phase per remaining M011 slice; Phases 4–7 delivered; Phase 8 lease-gated
 - [v0.02]: GATE-01 primary owner Phase 4; GATE-02 and GATE-03 primary owner Phase 8; all three gates apply to every slice
 - [v0.02]: Harness deps preserved — S05/S06 depend on S03; S07 on S04; S08 on S04–S07
-- [Phase 04]: CorrectInterval match arm immediately after Correct and before Define; Correct arm unchanged (D-C1)
-- [Phase 04]: Product changelog shipped with crate diff for docs-coupling; GATE-01 needles deferred to 04-03 (D-C6)
-- [Phase 04]: Whole-version Op::Correct fold arm left unchanged; leftover splitting stays on CorrectInterval (D-C1 / CORR-02)
-- [Phase 04]: CORR-02 Product changelog shipped with the crate test for docs-coupling; GATE-01 needles stay on 04-03 (D-C6)
-- [Phase 04]: Process changelog shipped with harness dictionary diffs (docs-coupling)
-- [Phase 04]: Optional CorrectInterval / IntervalPatchRejected file_contains needles included under m011-s04
-- [Phase 04]: Did not edit .kutha/STATE.md or check S04; GATE-01 is not a closed-delivery lease
-- [Phase 07]: D-P3: provenance_fingerprint / provenance_check beside unchanged replay_check
-- [Phase 07]: D-P6: GATE-01 fsm/check/bridge needles deferred to 07-02
-- [Phase 07]: D-P6 GATE-01: identical fn/required/needle strings for provenance oracles
-- [Phase 07]: docs-coupling: Process CHANGELOG committed with dictionary registration
-- [Phase 07]: RESEARCH Q3: ADR-060 and ADR-011 evidence both get both oracle names; map stays Proposed
+- [Phase 07]: D-P1…D-P7 — swap-valid-prior oracle; rule_version on Behavior; separate provenance_fingerprint; two named tests; GATE inheritance; no STATE edit during delivery
 
 ### Pending Todos
 
@@ -103,7 +90,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 8 remains lease-gated until `.kutha/STATE.md` names S08 as Active Slice. Phase 7 (S07) is leased and executable.
+- Phase 8 remains lease-gated until `.kutha/STATE.md` names S08 as Active Slice. Phase 7 (S07) is delivered (`L_delivery=M011-S07-done`; Active Slice None).
 - Do not start M002, legal pack, Cypher, HNSW, or ADR-050 because a GSD phase is planned — freeze holds until STATE names otherwise.
 
 ## Deferred Items
@@ -114,11 +101,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-30T02:53:50.286Z
-Stopped at: Completed 07-02-PLAN.md
-Resume file: None
-Next: `/gsd-verify-work 7`. Both 07-01 and 07-02 SUMMARYs exist. Harness Active Slice remains S07; do not check `.kutha/ROADMAP.md` S07.
+Last session: 2026-09-30T10:00:00.000Z
+Stopped at: Phase 7 complete — provenance / rule-version delivered; Active Slice None
+Resume file: .planning/phases/07-provenance-and-rule-version-check/07-VERIFICATION.md
+Next: lease S08 in `.kutha/STATE.md`, then `/gsd-discuss-phase 8`
 
 ## Operator Next Steps
 
-- Phase 7: 07-02 GATE-01 complete (`m011-provenance` / `B-m011-provenance`; ci HIGH 0). Next `/gsd-verify-work 7`. Do not edit `.kutha/STATE.md`. Do not check harness ROADMAP S07. Freeze holds.
+- Phase 7 delivered. Next: lease S08 (Active Slice S08), then discuss Phase 8. Do not auto-lease. Freeze holds until STATE names M002+.

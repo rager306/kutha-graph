@@ -4,12 +4,12 @@
 
 GSD overlay tracks the steel thread already in crates — not honeycomb waterfall. Harness delivery stays in `.kutha/STATE.md` / `.kutha/ROADMAP.md`. Do not plan ADR-010–093 as sequential GSD phases.
 
-v0.02 closes the M011 semantic core with one GSD phase per remaining harness slice (S04–S08). Phases 4–6 are complete. Phase 7 (S07) is leased and executable. Phase 8 is planned but blocked until `.kutha/STATE.md` names S08 as Active Slice. Stop when one fixture separates preserved history, current evidence, and allowed action. Frozen surfaces (RocksDB, Cypher/GPML, HNSW, ADR-050 six dictionaries, legal/science packs) stay unstarted.
+v0.02 closes the M011 semantic core with one GSD phase per remaining harness slice (S04–S08). Phases 4–7 are complete. Phase 8 is planned but blocked until `.kutha/STATE.md` names S08 as Active Slice. Stop when one fixture separates preserved history, current evidence, and allowed action. Frozen surfaces (RocksDB, Cypher/GPML, HNSW, ADR-050 six dictionaries, legal/science packs) stay unstarted.
 
 ## Milestones
 
 - ✅ **v0.01 GSD foundation** — Phases 1–3 (shipped 2026-09-29) — [archive](./milestones/v0.01-ROADMAP.md)
-- 🚧 **v0.02 Semantic core close** — Phases 4–8 (Phases 4–6 complete; Phase 7 leased; Phase 8 lease-gated)
+- 🚧 **v0.02 Semantic core close** — Phases 4–8 (Phases 4–7 complete; Phase 8 lease-gated)
 
 ## Phases
 
@@ -31,7 +31,7 @@ Full detail: [milestones/v0.01-ROADMAP.md](./milestones/v0.01-ROADMAP.md) · req
 - [x] **Phase 4: Partial correction with residual intervals** - Explicit interval-patch leaves VT 2012/2021 residuals; whole-version Correct unchanged (S04 leased) (completed 2026-09-29)
 - [x] **Phase 5: Persisted quantum outcome** - Budgets 0/1/2 and crash-after-prefix are distinguishable; resume is an explicit record (S05 delivered) (completed 2026-09-30)
 - [x] **Phase 6: Typed CSR lease** - Same endpoints keep relation labels and support multiplicity; untyped neighbor-set path remains (S06 delivered) (completed 2026-09-30)
-- [ ] **Phase 7: Provenance and rule-version check** - Causal-ref or rule-version change is detected without execution replay (S07 leased)
+- [x] **Phase 7: Provenance and rule-version check** - Causal-ref or rule-version change is detected without execution replay (S07 delivered) (completed 2026-09-30)
 - [ ] **Phase 8: End-to-end candidate fixture** - Semantic-contract observations 1–5 hold; incremental and reconstructed answers agree (lease-gated)
 
 ## Phase Details
@@ -102,7 +102,7 @@ Plans:
 
 **Goal**: A developer can detect a change to only a causal reference or a pinned rule version even when the state fingerprint still matches, without execution replay
 **Depends on**: Phase 4 (harness S07 `depends:[S04]`)
-**Lease**: executable — Active Slice S07 in `.kutha/STATE.md`
+**Lease**: delivered — Active Slice was S07; now None until S08+ lease in `.kutha/STATE.md`
 **Requirements**: PROV-01, PROV-02
 **Success Criteria** (what must be TRUE):
   1. Verification detects a change to only a Behavior `caused_by` reference even when the state fingerprint still matches (PROV-01)
@@ -137,14 +137,14 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 4 → 5 → 6 → 7 → 8. Phase 8 remains planning-only until `.kutha/STATE.md` names S08 as Active Slice. Phase 7 (S07) is leased. Harness slice dependencies: S05 and S06 depend on S03 (not S04); S07 depends on S04; S08 depends on S04–S07.
+Phases execute in numeric order: 4 → 5 → 6 → 7 → 8. Phase 8 remains planning-only until `.kutha/STATE.md` names S08 as Active Slice. Phase 7 (S07) is delivered (`L_delivery=M011-S07-done`; Active Slice None). Harness slice dependencies: S05 and S06 depend on S03 (not S04); S07 depends on S04; S08 depends on S04–S07.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 4. Partial correction with residual intervals | 3/3 | Complete    | 2026-09-29 |
 | 5. Persisted quantum outcome | 2/2 | Complete    | 2026-09-30 |
 | 6. Typed CSR lease | 2/2 | Complete    | 2026-09-30 |
-| 7. Provenance and rule-version check | 2/2 | In Progress|  |
+| 7. Provenance and rule-version check | 2/2 | Complete    | 2026-09-30 |
 | 8. End-to-end candidate fixture | 0/TBD | Not started (lease-gated) | - |
 
-**Harness citation (not this table):** Active Milestone M011; `L_delivery=M011-S06-done`; Phase H4; Active Slice **S07**; freeze until explicit M002. See `.kutha/STATE.md`.
+**Harness citation (not this table):** Active Milestone M011; `L_delivery=M011-S07-done`; Phase H4; Active Slice **None**; freeze until explicit M002. See `.kutha/STATE.md`.

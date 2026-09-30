@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M011
-**Active Slice:** S07
+**Active Slice:** None
 **Phase:** H4
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M011-S06-done
+L_delivery=M011-S07-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M011 S06 done (typed CSR lease); Active Slice **S07** leased | Capability proven / Rocks started / M002 leased |
+| L_delivery | M011 S07 done (provenance / rule-version check); S08 unleased | Capability proven / Rocks started / M002 leased |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M011 S06 is in.** Active Slice **S07** (provenance and rule-version check apart from state replay) is leased; S08 remains a candidate and unleased. Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW.
+**M011 S07 is in.** Provenance detects `caused_by` swap and `rule_version` change while state fingerprint matches; `replay_check` stays state-only. S08 stays a candidate until an Active Slice lease names it. Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW.
 
 ## Freeze (until explicit M002 lease)
 
