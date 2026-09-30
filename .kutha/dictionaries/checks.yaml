@@ -17,11 +17,11 @@ checks:
         stop_on_fail: true
       - kind: pointer_in_other_file
         path: .kutha/STATE.md
-        pattern: '^\*\*Active Milestone:\*\*\s*(?P<id>M\d+|None)\s*$'
+        pattern: '^\*\*Active Milestone:\*\*\s*(?P<id>M\d+[a-z]?|None)\s*$'
         flags: [multiline]
         other: .kutha/ROADMAP.md
         skip_values: ["None"]
-        inflation_pattern: '\bM\d{3}\b'
+        inflation_pattern: '\bM\d{3}[a-z]?\b'
         inflation_max: 12
       - kind: pointer_in_other_file
         path: .kutha/STATE.md
@@ -544,7 +544,7 @@ checks:
         # README must show STATE's Active Milestone.
         - op: replace_regex
           path: README.md
-          pattern: 'M011'
+          pattern: 'M012a'
           with: "M999"
         # README must show STATE's Phase.
         - op: replace_regex
@@ -554,7 +554,7 @@ checks:
     steps:
       - kind: pointer_in_other_file
         path: .kutha/STATE.md
-        pattern: '^\*\*Active Milestone:\*\*\s*(?P<id>M\d+|None)\s*$'
+        pattern: '^\*\*Active Milestone:\*\*\s*(?P<id>M\d+[a-z]?|None)\s*$'
         flags: [multiline]
         other: README.md
         skip_values: ["None"]
@@ -1006,20 +1006,20 @@ checks:
       - kind: cite_equals
         source:
           path: .kutha/STATE.md
-          pattern: '(?m)^\*\*Active Milestone:\*\*\s*(M\d{3}|None)\s*$'
+          pattern: '(?m)^\*\*Active Milestone:\*\*\s*(M\d{3}[a-z]?|None)\s*$'
         cites:
           - path: AGENTS.md
-            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3})\b'
+            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3}[a-z]?)\b'
           - path: README.md
-            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3})\b'
+            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3}[a-z]?)\b'
           - path: STRATEGY.md
-            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3})\b'
+            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3}[a-z]?)\b'
           - glob: docs/process/*.md
-            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3})\b'
+            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3}[a-z]?)\b'
           - glob: docs/architecture/*.md
-            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3})\b'
+            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3}[a-z]?)\b'
           - path: docs/ADR/README.md
-            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3})\b'
+            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3}[a-z]?)\b'
 
   - id: refs-resolve
     description: >-

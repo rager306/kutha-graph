@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-30 — Process: lease M012a
+
+### Process
+
+- Harness lease: Active Milestone **M012a**; Active Slice **None**; `L_delivery=M012a-leased`. Phase stays **H5**. Freeze until explicit M002 unchanged.
+- Governor Active Milestone patterns accept letter-suffix ids (`M012a`). `.kutha/ROADMAP.md` marks M011 CLOSED and M012a ACTIVE with S01–S06 checkboxes.
+
+### Trajectory
+
+- Product plane may land single-log SoT + stable-reference work (F1–F3, F6 verify/atomic/Define, F7, F8). F4/F5 wait for M012. Rocks / Cypher / HNSW / legal pack stay frozen. Honeycomb stays Proposed.
+
 ## 2026-09-30 — Process: semantic governor
 
 ### Process

@@ -30,7 +30,7 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 - [x] **S03: Live intern appends Define** `risk:medium` `depends:[S02]`
   > After this: `Runtime::intern` logs `Op::Define` for new terms; bootstrap stays silent; graph-oriented snapshot offset; named test green.
 
-## M011: Claim / support identity — ACTIVE
+## M011: Claim / support identity — CLOSED
 
 **Success:** two independent supports for one claim remain distinguishable; withdrawing one support does not erase the other at the same cut. Thin P→Q: a Behavior-derived claim stays eligible while its premise claim has a live support. Not full provenance polynomials; not M002; not ADR Accepted.
 
@@ -56,7 +56,27 @@ Proposed close-out of the semantic core (source: `docs/architecture/semantic-con
 - [x] **S08: End-to-end candidate fixture** `risk:medium` `depends:[S04,S05,S06,S07]`
   > After this: observations 1–5 of the semantic-contract fixture hold at named cuts; incremental maintenance and clean reconstruction agree; discarded leases change no answer.
 
+## M012a: Single-log SoT and stable references — ACTIVE
+
+**Success:** Outcomes, justifications, and resume survive as log records (sidecars are leases); Retract/Correct/justification cites use stable EventId / proposition ids; identical re-delivery does not mint a second support; `open` verifies snapshot identity against the log; persist is atomic for the log file; `Define` ids are stable across persist; VT/TT carry a declared scale; fold-hot reads use fold-internal indexes. Not M012 dictionaries-as-facts; not M002 Rocks; not ADR Accepted.
+
+**Leased:** Active Milestone M012a; Active Slice None until a GSD phase leases one. Closing F1–F3, F6 (verify/atomic/stable Define), F7, F8 from `docs/architecture/semantic-gap-review.md`. F4/F5 wait for M012. Durability protocol waits for M002.
+
+- [ ] **S01: Log-native outcomes and justifications** `risk:high` `depends:[]`
+  > After this: quantum outcomes / justifications / resume are appendable log records; sidecars are droppable leases; provenance includes those records.
+- [ ] **S02: Stable references for retract and cites** `risk:high` `depends:[S01]`
+  > After this: Retract/Correct/justification target EventId (or proposition id), not fold-local fact_seq.
+- [ ] **S03: Idempotent ingest and proposition polarity** `risk:medium` `depends:[S02]`
+  > After this: re-emitting an identical Assert is a no-op or keyed delivery; conflict polarity is not caller-only free strings.
+- [ ] **S04: Verify-on-open, atomic persist, stable Define** `risk:high` `depends:[S01]`
+  > After this: `open` runs replay_check (or equivalent) against snapshot identity; persist is rename-into-place; Define ids survive re-persist.
+- [ ] **S05: Declared time scale** `risk:low` `depends:[]`
+  > After this: VT/TT document a scale (and optional TT↔wall map); fixtures use that scale explicitly.
+- [ ] **S06: Fold-internal indexes for hot reads** `risk:medium` `depends:[S02]`
+  > After this: `as_of` / `claim_supported_at` do not scan the full fact vector at the leased N; CSR path stays a lease.
+
 ## Boundary map (M001)
+
 
 ### M001 S01 → S02
 
@@ -109,12 +129,12 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M011 is active (S04–S08 done record; further product work needs a lease); M002+ stay frozen until leased.
+Do not start until STATE names them. **M012a is active** (leased; Active Slice None until a phase leases one). M011 is CLOSED. M012 / M002+ stay frozen until leased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
-1. **M011 tail** — S04–S08 above (GSD overlay v0.02). Done record; not a new lease.
-2. **M012a** — Single-log SoT and stable references: outcomes, justifications, and resume as log records; EventId / proposition ids; idempotent ingest; `open` then verify; atomic persist; stable `Define` ids; declared time scale; fold-internal indexes.
+1. **M011** — CLOSED (S01–S08). Historical record above.
+2. **M012a** — ACTIVE (this milestone). Detail above.
 3. *(unnumbered)* Benchmark baseline — immediately after M012a indexes; not a new three-digit id.
 4. **M012** — Dictionaries as facts. The thawed subset this milestone names: versioned relation-allowlist entries, a rule registry (`rule_version` equal to the definition hash), admission status as meta-facts, and the policy version pinned in the log. LLM output remains a proposal; typed non-success. Its lease must name that subset.
 5. **M002** — Log durability protocol first: segmented append-only log, hash chain, atomic manifest, lease identity verified on open, replay parity across stores. Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity.

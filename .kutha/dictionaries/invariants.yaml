@@ -1,4 +1,5 @@
 schema: kutha-harness-invariants/v1
+# 2026-09-30: Active Milestone ids may use letter suffix (M012a).
 meta_prompt: .kutha/META.md
 process: docs/process/governor-intake.md
 # Control-loop claims the governor may enforce.
