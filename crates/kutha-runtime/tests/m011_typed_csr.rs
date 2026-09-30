@@ -83,3 +83,51 @@ fn typed_csr_preserves_relation_labels_and_support_multiplicity() {
     assert!(typed.edges_out(empty_s).is_empty());
     assert!(untyped.neighbors(empty_s).is_empty());
 }
+
+#[test]
+fn untyped_csr_neighbor_set_and_ff5_still_hold() {
+    let mut rt = Runtime::default();
+    let s = rt.intern("S");
+    let o = rt.intern("O");
+    let knows = rt.intern("knows");
+    let empty_s = rt.intern("EmptySubject");
+
+    rt.emit(Op::Assert {
+        subject: s,
+        relation: knows,
+        object: o,
+        valid_from: 0,
+        valid_to: None,
+        claim: None,
+    })
+    .unwrap();
+
+    let log_len = rt.log().len();
+    let fact_count = rt.fold().facts().len();
+
+    {
+        let lease = rt.csr_lease_at(u64::MAX, 0);
+        assert_eq!(
+            lease.neighbors(s),
+            &[o],
+            "untyped neighbors must match live fold objects at the cut"
+        );
+        assert!(
+            lease.neighbors(empty_s).is_empty(),
+            "empty live-fact subject → empty neighbors"
+        );
+    }
+
+    // FF3-style: drop/rebuild must not change log or fold.
+    assert_eq!(log_len, rt.log().len());
+    assert_eq!(fact_count, rt.fold().facts().len());
+
+    let rebuilt = rt.csr_lease_at(u64::MAX, 0);
+    assert_eq!(rebuilt.neighbors(s), &[o]);
+
+    // Independent typed rebuild on the same cut must not panic.
+    let typed = rt.typed_csr_lease_at(u64::MAX, 0);
+    assert_eq!(typed.edges_out(s).len(), 1);
+    assert_eq!(typed.edges_out(s)[0].object, o);
+    assert_eq!(typed.edges_out(s)[0].relation, knows);
+}
