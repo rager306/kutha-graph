@@ -6,16 +6,16 @@ current_phase: 11
 current_phase_name: Semantic governor
 current_plan: Not started
 status: planning
-stopped_at: Completed 11-02-PLAN.md
-last_updated: "2026-09-30T09:33:08.575Z"
+stopped_at: Completed 11-03-PLAN.md
+last_updated: "2026-09-30T10:25:58.750Z"
 last_activity: 2026-09-30
 last_activity_desc: Phase 10 complete, transitioned to Phase 11
-state_head: a59d55578b9352032e33c8a155d2ff984fb52e4a
+state_head: 84cd5ad1d37ca19cda0c81973a028eeed0d9e8fe
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 8
-  completed_plans: 6
+  completed_plans: 7
   percent: 67
 ---
 
@@ -37,7 +37,7 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after v0.02)
 Phase: 11 of 11 (Semantic governor)
 Current Plan: Not started
 Total Plans in Phase: 4
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-09-30 — Phase 10 complete, transitioned to Phase 11
 
@@ -86,6 +86,7 @@ Progress: [███████░░░] 67%
 | Phase 10 P02 | 9min | 3 tasks | 15 files |
 | Phase 11-semantic-governor P01 | 16min | 3 tasks | 10 files |
 | Phase 11-semantic-governor P02 | 93min | 3 tasks | 8 files |
+| Phase 11 P03 | 42min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -124,6 +125,10 @@ Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constrain
 - [Phase 11-semantic-governor]: D-T1: rust_test_asserts proves named #[test] bodies assert after noise strip
 - [Phase 11-semantic-governor]: D-T2: all former fn-needle checks converted; crates/ untouched
 - [Phase 11-semantic-governor]: D-E1: require_evidence_when on capability named; live evidence names already resolved
+- [Phase 11]: D-C1: capture alphanumeric KEY= tokens; empty and <placeholder> are not cites; backticks do not exempt a concrete token
+- [Phase 11]: D-X1: process-scope ADR/lock refs resolve; ranges are endpoints; ADR-100 may dangle; D010-1/D050-2 are not locks
+- [Phase 11]: D-B1: agents-lean is AGENTS.md wc -l <= 110 plus file_absent of four lease needles
+- [Phase 11]: D-G1: fsm/.env.example budget 48; no local .env; ci skipped==0 for 35 checks
 
 ### Pending Todos
 
@@ -144,8 +149,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T09:33:08.485Z
-Stopped at: Completed 11-02-PLAN.md
+Last session: 2026-09-30T10:25:58.666Z
+Stopped at: Completed 11-03-PLAN.md
 Resume file: None
 Next: `/gsd-new-milestone` when ready. Freeze holds. Do not lease M002 without explicit operator intent.
 

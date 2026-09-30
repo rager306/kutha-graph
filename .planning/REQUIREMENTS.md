@@ -47,10 +47,10 @@ Each requirement maps to exactly one roadmap phase.
 
 - [x] **SEM-01**: `kutha-gov selftest` proves each mutable YAML check can fail: it applies a declared mutation to a temporary copy of the tree and requires a HIGH; checks that cannot be mutated are listed with a reason
 - [x] **SEM-02**: A new check kind proves a named Rust test is non-vacuous (function exists, not `#[ignore]`, body contains an assertion, optionally references required symbols); all existing `fn …` needle checks use it
-- [ ] **SEM-03**: A new check kind proves every citation of a lease value in docs (`L_delivery`, Active Milestone/Slice, Phase) equals `.kutha/STATE.md`; a wrong citation fails
+- [x] **SEM-03**: A new check kind proves every citation of a lease value in docs (`L_delivery`, Active Milestone/Slice, Phase) equals `.kutha/STATE.md`; a wrong citation fails
 - [x] **SEM-04**: `honeycomb.yaml` `evidence` and `capability: named` are resolved: each named evidence item points to an existing test or path, and a cell claiming a named capability has at least one resolving evidence item
-- [ ] **SEM-05**: Every `ADR-NNN` and `D1`–`D10` reference in `AGENTS.md`, `README.md`, `.kutha/`, and `docs/process/` resolves to an existing ADR or lock; a dangling reference fails
-- [ ] **SEM-06**: `AGENTS.md` has an enforced size budget and forbids lease tokens, so CTX-01/02 cannot regress silently
+- [x] **SEM-05**: Every `ADR-NNN` and `D1`–`D10` reference in `AGENTS.md`, `README.md`, `.kutha/`, and `docs/process/` resolves to an existing ADR or lock; a dangling reference fails
+- [x] **SEM-06**: `AGENTS.md` has an enforced size budget and forbids lease tokens, so CTX-01/02 cannot regress silently
 - [ ] **SEM-07**: Product gaps F1–F8 are recorded as `disposition: deferred` invariants with `until` naming their target milestone; they are not enforced and not implemented
 - [ ] **SEM-08**: Each new kind has a red-path pytest, META.md and `docs/process/governor-intake.md` document it, and CHANGELOG records the process change under **Process**
 
@@ -88,10 +88,10 @@ Updated during roadmap creation.
 | ADR-04 | Phase 10 | Complete |
 | SEM-01 | Phase 11 | Complete |
 | SEM-02 | Phase 11 | Complete |
-| SEM-03 | Phase 11 | Pending |
+| SEM-03 | Phase 11 | Complete |
 | SEM-04 | Phase 11 | Complete |
-| SEM-05 | Phase 11 | Pending |
-| SEM-06 | Phase 11 | Pending |
+| SEM-05 | Phase 11 | Complete |
+| SEM-06 | Phase 11 | Complete |
 | SEM-07 | Phase 11 | Pending |
 | SEM-08 | Phase 11 | Pending |
 

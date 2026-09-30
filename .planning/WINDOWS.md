@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 7
+open_count: 8
 waived_count: 0
 fixed_count: 0
-total_count: 7
-last_updated: 2026-09-29T15:18:13.481Z
+total_count: 8
+last_updated: 2026-09-30T10:25:59.675Z
 ---
 
 # Broken Windows Ledger
@@ -22,6 +22,7 @@ last_updated: 2026-09-29T15:18:13.481Z
 | 5 | 03 | deviation | .planning/STATE.md |  | Relabeled Current Plan to numeric N so state.advance-plan can parse (Rule 3) | open |  | 2026-09-29T11:06:24.445Z |  |
 | 6 | 04 | deviation | crates/kutha-runtime/tests/m011_partial_correction.rs |  | Task 2 tdd=true had no RED: tracer already shipped IntervalPatchRejected; tests committed green | open |  | 2026-09-29T15:07:11.391Z |  |
 | 7 | 04 | deviation | CHANGELOG.md |  | Wave-close ci auto-mode includes uncommitted .kutha/STATE.md; CHANGELOG kept in worktree set for docs-coupling | open |  | 2026-09-29T15:18:13.481Z |  |
+| 8 | 11 | deviation | scripts/kutha_gov/kinds.py |  | Derived cite mutation token changed from __cite_selftest__ to WRONG so the alphanumeric capture actually HIGH | open |  | 2026-09-30T10:25:59.675Z |  |
 
 ````json
 [
@@ -115,6 +116,19 @@ last_updated: 2026-09-29T15:18:13.481Z
     "recorded_at": "2026-09-29T15:18:13.481Z",
     "resolved_at": null,
     "milestone": "v0.02"
+  },
+  {
+    "id": 8,
+    "kind": "deviation",
+    "phase": "11",
+    "file": "scripts/kutha_gov/kinds.py",
+    "line": null,
+    "description": "Derived cite mutation token changed from __cite_selftest__ to WRONG so the alphanumeric capture actually HIGH",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-09-30T10:25:59.675Z",
+    "resolved_at": null,
+    "milestone": "v0.03"
   }
 ]
 ````
