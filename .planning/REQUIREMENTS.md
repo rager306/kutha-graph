@@ -39,9 +39,9 @@ Each requirement maps to exactly one roadmap phase.
 ### ADR and roadmap correction
 
 - [x] **ADR-01**: A review artifact maps every finding F1–F8 to the affected ADR-000/001/002 and honeycomb cells with a verdict per cell (`no change` | `amend` | `open question`), each with evidence (file + symbol or measurement)
-- [ ] **ADR-02**: Cells with an `amend` verdict carry an explicit, dated amendment or Open Question in the ADR body; Status stays **Proposed**; ADR-000 D1–D10 wording is not rewritten (a needed lock change is raised as a question, not applied silently)
+- [x] **ADR-02**: Cells with an `amend` verdict carry an explicit, dated amendment or Open Question in the ADR body; Status stays **Proposed**; ADR-000 D1–D10 wording is not rewritten (a needed lock change is raised as a question, not applied silently)
 - [x] **ADR-03**: `.kutha/ROADMAP.md` "Later milestones" is re-ordered and labelled non-authoritative: M012a (single-log SoT + stable references) precedes M012; M012 names the admission/rule-registry subset it thaws; M002 is described as log durability first (Rocks only for indexes); benchmarks and a thin real-text legal golden fixture move earlier; no new milestone is leased
-- [ ] **ADR-04**: `honeycomb.yaml` rows and `docs/ADR/README.md` stay consistent with the amendments (map/delivery/capability orthogonal, no cell promoted to Accepted)
+- [x] **ADR-04**: `honeycomb.yaml` rows and `docs/ADR/README.md` stay consistent with the amendments (map/delivery/capability orthogonal, no cell promoted to Accepted)
 
 ### Semantic governor
 
@@ -83,9 +83,9 @@ Updated during roadmap creation.
 | CTX-03 | Phase 9 | Complete |
 | CTX-04 | Phase 9 | Complete |
 | ADR-01 | Phase 10 | Complete |
-| ADR-02 | Phase 10 | Pending |
+| ADR-02 | Phase 10 | Complete |
 | ADR-03 | Phase 10 | Complete |
-| ADR-04 | Phase 10 | Pending |
+| ADR-04 | Phase 10 | Complete |
 | SEM-01 | Phase 11 | Pending |
 | SEM-02 | Phase 11 | Pending |
 | SEM-03 | Phase 11 | Pending |

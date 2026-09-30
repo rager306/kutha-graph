@@ -6,16 +6,16 @@ current_phase: 10
 current_phase_name: ADR and roadmap correction
 current_plan: 02
 status: Executing 10-02
-stopped_at: Completed 10-01-PLAN.md
-last_updated: "2026-09-30T06:47:21.514Z"
+stopped_at: Completed 10-02-PLAN.md
+last_updated: "2026-09-30T06:58:53.218Z"
 last_activity: 2026-09-30
 last_activity_desc: Phase 9 complete, transitioned to Phase 10
-state_head: 9275ab52138a9cb7bd9ce3a0c9caf9b5701268f8
+state_head: 71d174f067d93c350a864bc92f89a1a51683311c
 progress:
   total_phases: 3
   completed_phases: 1
   total_plans: 4
-  completed_plans: 3
+  completed_plans: 4
   percent: 33
 ---
 
@@ -82,6 +82,7 @@ Progress: [███░░░░░░░] 33%
 | Phase 09 P01 | 7min | 3 tasks | 8 files |
 | Phase 09 P02 | 7min | 3 tasks | 9 files |
 | Phase 10 P01 | 12min | 3 tasks | 5 files |
+| Phase 10 P02 | 9min | 3 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -111,6 +112,9 @@ Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constrain
 - [Phase 10]: D-R2: four hypothesis changes vs scout map (ADR-011/061 F2, ADR-060 F4, ADR-081)
 - [Phase 10]: D-O1: M012a before M012; M002 log durability first; unique M### = 8
 - [Phase 10]: D-O2: harness M002 parenthetical; STRATEGY.md no-hit
+- [Phase 10]: Worklist SoT is the 10-01 verdict table; first amend row is ADR-012 (not D-R2 ADR-014)
+- [Phase 10]: Honeycomb restage is header comments only; map/delivery/capability unchanged
+- [Phase 10]: ADR-000: English D4 time-scale pointer only; D1-D10 Decision text byte-stable
 
 ### Pending Todos
 
@@ -131,8 +135,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T06:46:14.215Z
-Stopped at: Completed 10-01-PLAN.md
+Last session: 2026-09-30T06:58:53.152Z
+Stopped at: Completed 10-02-PLAN.md
 Resume file: None
 Next: `/gsd-new-milestone` when ready. Freeze holds. Do not lease M002 without explicit operator intent.
 
