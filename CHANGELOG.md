@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-30 — Process: deferred F-gaps and constitution kinds
+
+### Process
+
+- Control-loop rows `I-F1-outcomes` … `I-F8-hot-reads` record F1–F8 as deferred (`until` names M012a / M012 / M002). Narrative remains Phase 11 SEM-08. Not ADR Accepted.
+- META Allowed kinds lists `rust_test_asserts`, `cite_equals`, `refs_resolve`, `file_max_lines`; Allowed FSM kinds lists `run_selftest`. Narrative remains Phase 11 SEM-08.
+- `AGENTS.md` Commands includes `uv run kutha-gov selftest` (mutates a copy). Narrative remains Phase 11 SEM-08.
+
+### Trajectory
+
+- Honeycomb stays Proposed. F1–F8 are recorded, not enforced. Green governor is not ADR Accepted and not L_capability.
+
 ## 2026-09-30 — Process: deferred F1 and green-check meaning
 
 ### Process

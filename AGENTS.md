@@ -53,6 +53,7 @@ Harness (Python **3.13** via **uv** only — not system `python3`):
 
 ```text
 uv run kutha-gov ci          # FSM quantum: relations → checks → observe → emit → tenant → fold
+uv run kutha-gov selftest    # mutate a copy; unproven fails
 uv run kutha-gov precommit   # dictionary checks only (no cargo, no JSONL)
 uv run kutha-gov fsm         # print the process machine
 uv run kutha-gov map         # compact L_map index

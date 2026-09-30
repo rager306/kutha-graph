@@ -32,8 +32,9 @@ A control-loop “must” is not a governor requirement until it has a row in `.
 3. Bridge: append a **bridges** row (`id`, `claim`, `cites`, `check`). No `disposition`.
 4. Map: append a **cells** row (`id`, `axis`, `must`, `path`, `map`, `delivery`, `capability`, `depends_on`, `locks`, `evidence`). `map` stays orthogonal to `delivery` and `capability`. Dump: `uv run kutha-gov map`.
 5. Append `.kutha/dictionaries/checks.yaml` using an **allowed kind** only for control-loop or bridge checks. The check id lives in exactly one ledger (`invariants-ledger` / `bridges-ledger`).
-6. Run `uv run kutha-gov precommit --check honeycomb-ledger` (map) or `--check invariants-ledger`. Full `ci` still owns cargo quantum.
-7. Do not add `scripts/kutha_gov/checks/*.py`.
+6. Optional `selftest:` on that row: `mutations:` (ops applied to a tempfile copy) **or** `skip: "<reason>"`. Kinds that cannot be derived from steps need an explicit declaration. Unproven (neither derivable nor declared) fails `kutha-gov selftest` and `ci`'s `run_selftest`.
+7. Run `uv run kutha-gov precommit --check honeycomb-ledger` (map) or `--check invariants-ledger`. Full `ci` still owns cargo quantum.
+8. Do not add `scripts/kutha_gov/checks/*.py`.
 
 ## How to add a kind (last responsible moment)
 
@@ -62,6 +63,10 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 | `git_path_implies` | if the git diff matches `when_any`, it must also match `then_any` (empty/no-git skips) |
 | `yaml_map_list` | YAML list of maps: required fields, unique ids, closed vocab, list refs, path exists, embed-in-file, glob haystack, or `absent_other` partition |
 | `glob_paths_in_file` | every globbed relative path appears in a file with an optional prefix |
+| `rust_test_asserts` | named `#[test]` exists, is not ignored, and the body asserts (optional symbols / YAML names) |
+| `cite_equals` | one capture from a source file must equal each cite capture; mismatch is HIGH |
+| `refs_resolve` | ADR-NNN and D1–D10 citations resolve to files or honeycomb locks |
+| `file_max_lines` | file line count (`wc -l`) is at most `max` |
 
 ## Allowed FSM kinds
 
@@ -70,6 +75,7 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 | `noop` | no work; emit `ok` |
 | `require_file` | path must exist |
 | `run_checks` | interpret the checks dictionary (budget from env / FSM defaults) |
+| `run_selftest` | run `kutha-gov selftest` on a tempfile copy; unproven/vacuous fail closed; evidence `h5_selftest` |
 | `observe_cargo` | run `cargo test` as evidence (not SoT); required test names must appear `... ok`; optional `build:` compiles `kutha-tenant` once |
 | `emit_log` | append `harness.run` triples (fail-closed on `kutha-harness-relations/v1`) |
 | `emit_tenant` | ingest process JSONL through the **built** `kutha-tenant` binary (`runStatus` / `observed`); AS OF last *emitted* cut must match last status |

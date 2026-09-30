@@ -145,6 +145,48 @@ invariants:
     disposition: deferred
     until: "STATE names M012a"
 
+  - id: I-F2-stable-refs
+    claim: "Invalidation and citation targets are stable identifiers, not fold-local sequence numbers"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M012a"
+
+  - id: I-F3-propositions
+    claim: "A claim is a proposition identity with idempotent ingest and generic conflict, not only a support slot with caller-supplied polarity"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M012a"
+
+  - id: I-F4-derivation
+    claim: "Derivation eligibility is n-ary and transitive under a pinned rule registry, not a single parent or one hop"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M012"
+
+  - id: I-F5-admission
+    claim: "Admission status is an enforced bi-temporal fact, the policy version is pinned in the log, and an action is an entity"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M012"
+
+  - id: I-F6-persist-open
+    claim: "Open verifies snapshot identity against the log; persist is atomic and append-only; Define identifiers stay stable across persist"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M012a (durability protocol waits until STATE names M002)"
+
+  - id: I-F7-time-scale
+    claim: "Valid time has a declared scale and transaction time has a wall-clock mapping"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M012a"
+
+  - id: I-F8-hot-reads
+    claim: "Hot reads use fold-internal indexes and a materializer lease on the CSR path, with a benchmark baseline and a fork-diff half, not an undeclared linear scan of the fact vector"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M012a"
+
   - id: I-cite-lease
     claim: "Docs that cite a delivery token must match the STATE assignment"
     source: ".kutha/STATE.md"
