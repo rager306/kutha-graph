@@ -35,6 +35,16 @@ pub fn persist(runtime: &Runtime, dir: &Path) -> std::io::Result<()> {
     Ok(())
 }
 
+/// Test seam (DUR-02): write a same-directory temp sibling, then return Err before rename.
+/// RED stub: does not fail, so `persist_replaces_events_jsonl_atomically` stays red until GREEN.
+pub fn abort_events_jsonl_replace_before_rename(
+    dir: &Path,
+    events: &[Event],
+) -> std::io::Result<()> {
+    let _ = (dir, events);
+    Ok(())
+}
+
 pub fn open(dir: &Path) -> std::io::Result<Runtime> {
     let wal_path = dir.join("events.wal");
     let events_path = dir.join("events.jsonl");
