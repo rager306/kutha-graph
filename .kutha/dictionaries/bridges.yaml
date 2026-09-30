@@ -75,3 +75,8 @@ bridges:
     claim: "Retract, Correct, and justification cites bind minting EventId; a rebuilt fold that renumbers local seqs still applies the same retract and cite Events"
     cites: "crates/kutha-runtime/tests/m012a_stable_refs.rs"
     check: m012a-s02-stable-refs
+
+  - id: B-m012a-s03
+    claim: "Identical keyed Assert retry does not mint a second support; claim identity is distinct from the support EventId; conflict_report_at partitions by stored polarity"
+    cites: "crates/kutha-runtime/tests/m012a_idempotent_ingest.rs"
+    check: m012a-s03-idempotent-ingest

@@ -418,6 +418,18 @@ checks:
         category: m012a-s02
         message: "M012a S02 stable-ref tests missing {missing}"
 
+  - id: m012a-s03-idempotent-ingest
+    description: M012a S03 — keyed Assert retry, claim vs support slot, stored-polarity conflict
+    steps:
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m012a_idempotent_ingest.rs
+        tests:
+          - identical_assert_same_delivery_key_does_not_mint_second_support
+          - claim_id_distinct_from_support_slot
+          - conflict_report_at_partitions_by_stored_polarity
+        category: m012a-s03
+        message: "M012a S03 idempotent-ingest tests missing {missing}"
+
   - id: h4-lease
     description: H5 dogfood is closed without promoting ADR-090
     steps:

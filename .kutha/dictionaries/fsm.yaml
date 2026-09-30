@@ -59,6 +59,9 @@ states:
       - retract_by_event_id_invalidates_support
       - justification_cites_source_event_ids_survive_fork
       - rebuilt_fold_renumbered_seqs_apply_same_retract_and_cite_payloads
+      - identical_assert_same_delivery_key_does_not_mint_second_support
+      - claim_id_distinct_from_support_slot
+      - conflict_report_at_partitions_by_stored_polarity
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant
