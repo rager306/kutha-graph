@@ -77,25 +77,25 @@ Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LEASE-01 | TBD | Pending |
-| CTX-01 | TBD | Pending |
-| CTX-02 | TBD | Pending |
-| CTX-03 | TBD | Pending |
-| CTX-04 | TBD | Pending |
-| ADR-01 | TBD | Pending |
-| ADR-02 | TBD | Pending |
-| ADR-03 | TBD | Pending |
-| ADR-04 | TBD | Pending |
-| SEM-01 | TBD | Pending |
-| SEM-02 | TBD | Pending |
-| SEM-03 | TBD | Pending |
-| SEM-04 | TBD | Pending |
-| SEM-05 | TBD | Pending |
-| SEM-06 | TBD | Pending |
-| SEM-07 | TBD | Pending |
-| SEM-08 | TBD | Pending |
+| LEASE-01 | Phase 9 | Pending |
+| CTX-01 | Phase 9 | Pending |
+| CTX-02 | Phase 9 | Pending |
+| CTX-03 | Phase 9 | Pending |
+| CTX-04 | Phase 9 | Pending |
+| ADR-01 | Phase 10 | Pending |
+| ADR-02 | Phase 10 | Pending |
+| ADR-03 | Phase 10 | Pending |
+| ADR-04 | Phase 10 | Pending |
+| SEM-01 | Phase 11 | Pending |
+| SEM-02 | Phase 11 | Pending |
+| SEM-03 | Phase 11 | Pending |
+| SEM-04 | Phase 11 | Pending |
+| SEM-05 | Phase 11 | Pending |
+| SEM-06 | Phase 11 | Pending |
+| SEM-07 | Phase 11 | Pending |
+| SEM-08 | Phase 11 | Pending |
 
-**Coverage:** 17 requirements, 0 mapped (pending roadmap).
+**Coverage:** 17/17 v0.03 requirements mapped ✓
 
 ---
 *Requirements defined: 2026-09-30*
