@@ -18,13 +18,13 @@ estimate:
   tasks: 3
 
 actuals:
-  tokens: 0
+  tokens: 8310
   tasks: 3
-  commits: 0
+  commits: 3
 
 plan_head_before: d11edf987a4601a348ce547bb746580d8b56e3c0
-plan_head_after: TBD
-commits: 0
+plan_head_after: 9275ab52138a9cb7bd9ce3a0c9caf9b5701268f8
+commits: 3
 
 tech-stack:
   added: []
@@ -108,7 +108,7 @@ status: complete
 
 1. **Task 1: End-to-end F1–F8 evidence path plus M012a before M012** - `b4445ab` (docs)
 2. **Task 2: Read candidate ADRs and settle cell verdicts** - `58d6eb2` (docs)
-3. **Task 3: Finish baselines, Later-milestones text, D-O2, wave-close ci** - this SUMMARY (docs)
+3. **Task 3: Finish baselines, Later-milestones text, D-O2, wave-close ci** - `9275ab5` (docs)
 
 ## Files Created/Modified
 
@@ -198,6 +198,15 @@ None - no external service configuration required.
 ## Next Phase Readiness
 
 Ready for 10-02: dated Proposed ADR clarifications/open questions from the amend and open-question rows; `docs/ADR/README.md` pointer; honeycomb.yaml only if an edge changes. Do not edit `crates/`. Do not edit `.kutha/STATE.md`. Do not flip H5. Do not author SEM-08. Do not lease M012a or M002.
+
+## Self-Check: PASSED
+
+- FOUND: docs/architecture/semantic-gap-review.md (register, F1–F8, verdicts, D-F2, one-N baselines)
+- FOUND: .kutha/ROADMAP.md M012a before M012; unique M### = 8; H5 unchecked
+- FOUND: docs/process/kutha-harness.md M002 durability parenthetical; STRATEGY.md unstaged
+- FOUND: commits b4445ab, 58d6eb2, 9275ab5
+- FOUND: 10-01-SUMMARY.md D-10 Trajectory; ci HIGH 0 LOW 0
+- FOUND: crates/ and .kutha/STATE.md clean vs this plan
 
 ---
 *Phase: 10-adr-and-roadmap-correction*

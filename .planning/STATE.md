@@ -4,18 +4,18 @@ milestone: v0.03
 milestone_name: Lean context + semantic governor
 current_phase: 10
 current_phase_name: ADR and roadmap correction
-current_plan: Not started
-status: planning
-stopped_at: Phase 9 complete, ready to plan Phase 10
-last_updated: "2026-09-30T06:14:27.579Z"
+current_plan: 02
+status: Executing 10-02
+stopped_at: Completed 10-01-PLAN.md
+last_updated: "2026-09-30T06:47:21.514Z"
 last_activity: 2026-09-30
 last_activity_desc: Phase 9 complete, transitioned to Phase 10
-state_head: f698c14f6ffeb33fcc5539ed67d6cab35d98e729
+state_head: 9275ab52138a9cb7bd9ce3a0c9caf9b5701268f8
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 4
+  completed_plans: 3
   percent: 33
 ---
 
@@ -35,10 +35,10 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after v0.02)
 ## Current Position
 
 Phase: 10 of 11 (ADR and roadmap correction)
-Current Plan: Not started
+Current Plan: 02
 Total Plans in Phase: 2
 Plan: 2 of 2
-Status: Ready to plan
+Status: Executing 10-02
 Last activity: 2026-09-30 — Phase 9 complete, transitioned to Phase 10
 
 Progress: [███░░░░░░░] 33%
@@ -81,6 +81,7 @@ Progress: [███░░░░░░░] 33%
 | Phase 08 P02 | 3min | 3 tasks | 6 files |
 | Phase 09 P01 | 7min | 3 tasks | 8 files |
 | Phase 09 P02 | 7min | 3 tasks | 9 files |
+| Phase 10 P01 | 12min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -106,6 +107,10 @@ Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constrain
 - [Phase 09]: D-A3: diet ledger maps every removed block to a home with grep evidence
 - [Phase 09]: D-A4: language, planes, D1–D10, CE routing, commands, conventions 1–9, CBM forbids, Task map retained
 - [Phase 09]: D-S1: semantic-contract header is a 2026-09-13 M011 S03 snapshot; live lease is STATE
+- [Phase 10]: D-R1: one Proposed review artifact; lease only as a pointer to .kutha/STATE.md
+- [Phase 10]: D-R2: four hypothesis changes vs scout map (ADR-011/061 F2, ADR-060 F4, ADR-081)
+- [Phase 10]: D-O1: M012a before M012; M002 log durability first; unique M### = 8
+- [Phase 10]: D-O2: harness M002 parenthetical; STRATEGY.md no-hit
 
 ### Pending Todos
 
@@ -126,8 +131,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T06:09:39.485Z
-Stopped at: Phase 9 complete, ready to plan Phase 10
+Last session: 2026-09-30T06:46:14.215Z
+Stopped at: Completed 10-01-PLAN.md
 Resume file: None
 Next: `/gsd-new-milestone` when ready. Freeze holds. Do not lease M002 without explicit operator intent.
 

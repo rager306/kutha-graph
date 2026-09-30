@@ -81,8 +81,8 @@ Full detail: [milestones/v0.02-ROADMAP.md](./milestones/v0.02-ROADMAP.md) · req
   3. `.kutha/ROADMAP.md` “Later milestones” lists **M012a** (single-log SoT + stable references) before **M012**; M012 names the admission/rule-registry subset it thaws; **M002** is described as log durability first (Rocks for indexes only); benchmarks and a thin legal golden fixture appear earlier in the narrative — no new milestone is leased (ADR-03)
   4. `.kutha/dictionaries/honeycomb.yaml` and `docs/ADR/README.md` stay consistent with those amendments; map/delivery/capability stay orthogonal; no cell is promoted to Accepted (ADR-04)
 
-**Plans:** 2 plans
-- [ ] 10-01-PLAN.md — F1–F8 review artifact plus Later-milestones reorder (M012a before M012; M002 log durability first)
+**Plans:** 1/2 plans executed
+- [x] 10-01-PLAN.md — F1–F8 review artifact plus Later-milestones reorder (M012a before M012; M002 log durability first)
 - [ ] 10-02-PLAN.md — Dated Proposed ADR amendments/open questions, README pointer, honeycomb consistency
 
 ### Phase 11: Semantic governor
@@ -110,7 +110,7 @@ Full detail: [milestones/v0.02-ROADMAP.md](./milestones/v0.02-ROADMAP.md) · req
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 9. H5 lease + lean agent context | v0.03 | 2/2 | Complete    | 2026-09-30 |
-| 10. ADR and roadmap correction | v0.03 | 0/2 | Not started | - |
+| 10. ADR and roadmap correction | v0.03 | 1/2 | In Progress|  |
 | 11. Semantic governor | v0.03 | 0/TBD | Not started | - |
 
 **Harness citation (not this table):** Active Milestone M011; `L_delivery=M011-S08-done`; Phase H4; Active Slice **None**; freeze until explicit M002. See `.kutha/STATE.md`.
