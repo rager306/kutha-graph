@@ -28,14 +28,14 @@ Closing leased product gaps F1–F3, F6 (verify/atomic/Define), F7, F8 from `doc
 
 ### Verify and persist (F6 subset)
 
-- [ ] **DUR-01**: `open` verifies snapshot identity against the log (replay_check or equivalent) and rejects a tampered snapshot
-- [ ] **DUR-02**: `persist` writes the log file atomically (rename-into-place or equivalent); crash mid-persist does not leave a truncated SoT as success
-- [ ] **DUR-03**: `Define` event ids are stable across persist/open cycles for the same term set
+- [x] **DUR-01**: `open` verifies snapshot identity against the log (replay_check or equivalent) and rejects a tampered snapshot
+- [x] **DUR-02**: `persist` writes the log file atomically (rename-into-place or equivalent); crash mid-persist does not leave a truncated SoT as success
+- [x] **DUR-03**: `Define` event ids are stable across persist/open cycles for the same term set
 
 ### Time scale (F7)
 
-- [ ] **TIME-01**: VT and TT declare an explicit scale (type, constant, or documented contract) used by fixtures
-- [ ] **TIME-02**: Named tests document how fixture years/cuts map to that scale (TT↔wall optional; full calendar map not required)
+- [x] **TIME-01**: VT and TT declare an explicit scale (type, constant, or documented contract) used by fixtures
+- [x] **TIME-02**: Named tests document how fixture years/cuts map to that scale (TT↔wall optional; full calendar map not required)
 
 ### Hot reads (F8)
 
@@ -79,11 +79,11 @@ Closing leased product gaps F1–F3, F6 (verify/atomic/Define), F7, F8 from `doc
 | ING-01 | Phase 14 | Complete |
 | ING-02 | Phase 14 | Complete |
 | ING-03 | Phase 14 | Complete |
-| DUR-01 | Phase 15 | Pending |
-| DUR-02 | Phase 15 | Pending |
-| DUR-03 | Phase 15 | Pending |
-| TIME-01 | Phase 15 | Pending |
-| TIME-02 | Phase 15 | Pending |
+| DUR-01 | Phase 15 | Complete |
+| DUR-02 | Phase 15 | Complete |
+| DUR-03 | Phase 15 | Complete |
+| TIME-01 | Phase 15 | Complete |
+| TIME-02 | Phase 15 | Complete |
 | HOT-01 | Phase 16 | Pending |
 | HOT-02 | Phase 16 | Pending |
 | HOT-03 | Phase 16 | Pending |

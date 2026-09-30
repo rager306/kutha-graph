@@ -6,17 +6,17 @@ current_phase: 15
 current_phase_name: Verify, persist, and time scale
 current_plan: 01
 status: planning
-stopped_at: Completed 15-02-PLAN.md
-last_updated: "2026-09-30T19:03:12.341Z"
+stopped_at: Completed 15-03-PLAN.md
+last_updated: "2026-09-30T19:06:15.428Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 15 plans 15-01..15-03 written
-state_head: 60f046da0d1938e7321239b0bdd988525ec1f603
+state_head: f3ef2436fd8b8c699e6e67561d3401719816a3bd
 progress:
   total_phases: 5
   completed_phases: 14
   total_plans: 12
-  completed_plans: 11
-  percent: 92
+  completed_plans: 12
+  percent: 100
 ---
 
 # Project State
@@ -41,7 +41,7 @@ Plan: 3 of 3
 Status: Plans written
 Last activity: 2026-10-01 — Phase 15 plans 15-01..15-03 written
 
-Progress: [█████████░] 92% (v0.04 plans executed)
+Progress: [██████████] 100% (v0.04 plans executed)
 
 ## Performance Metrics
 
@@ -87,6 +87,7 @@ Progress: [█████████░] 92% (v0.04 plans executed)
 | Phase 14 P03 | 3 | 2 tasks | 5 files |
 | Phase 15 P01 | 6min | 2 tasks | 4 files |
 | Phase 15 P02 | 1min | 2 tasks | 5 files |
+| Phase 15 P03 | 2min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -124,6 +125,9 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 15]: Define persist ids are SHA-256 prefix kutha-define-id; intern() still Event::new
 - [Phase 15]: ValidTime stays a u64 alias; fixtures treat 2017 as YearCe, not Unix epoch
 - [Phase 15]: TransactionTime is log sequence; TT-to-wall mapping is out of M012a S05
+- [Phase 15]: Governor checks live on bridges.yaml, not invariants.yaml
+- [Phase 15]: ADR-012 and ADR-013 evidence append only; map stays Proposed
+- [Phase 15]: Harness Active Slice stays S04 until parent verification closes S04/S05
 
 ### Pending Todos
 
@@ -146,8 +150,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T19:03:11.895Z
-Stopped at: Completed 15-02-PLAN.md
+Last session: 2026-09-30T19:06:15.121Z
+Stopped at: Completed 15-03-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 13`. Harness lease is already S02. Freeze holds. Do not lease M002 without explicit operator intent.
 
