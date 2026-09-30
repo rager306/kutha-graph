@@ -65,9 +65,9 @@ Full detail: [milestones/v0.02-ROADMAP.md](./milestones/v0.02-ROADMAP.md) · req
   4. After the diet, language policy, two planes, D1–D10 guard, CE routing, commands, freeze, CBM/subagent rules, and working conventions still mean the same as before (CTX-03)
   5. Stale `L_delivery=M011-S03-done` (or equivalent) claims are removed or corrected in `AGENTS.md` and `docs/architecture/semantic-contract-validation.md` (CTX-04)
 
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans executed
 - [x] 09-01-PLAN.md — Operator H5 lease, dogfood ladder, in-place governor needles; ci HIGH 0
-- [ ] 09-02-PLAN.md — AGENTS.md diet, relocations, stale citation fixes; diet ledger
+- [x] 09-02-PLAN.md — AGENTS.md diet, relocations, stale citation fixes; diet ledger
 
 ### Phase 10: ADR and roadmap correction
 
@@ -107,7 +107,7 @@ Full detail: [milestones/v0.02-ROADMAP.md](./milestones/v0.02-ROADMAP.md) · req
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 9. H5 lease + lean agent context | v0.03 | 1/2 | In Progress|  |
+| 9. H5 lease + lean agent context | v0.03 | 2/2 | In Progress|  |
 | 10. ADR and roadmap correction | v0.03 | 0/TBD | Not started | - |
 | 11. Semantic governor | v0.03 | 0/TBD | Not started | - |
 

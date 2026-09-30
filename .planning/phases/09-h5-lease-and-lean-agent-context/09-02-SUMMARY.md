@@ -19,12 +19,12 @@ estimate:
   tasks: 3
 
 actuals:
-  tokens: 6856
+  tokens: 10000
   tasks: 3
   commits: 3
 
 plan_head_before: 7193347de576654426a817f548a9988161edd35e
-plan_head_after: PENDING_TASK3
+plan_head_after: b70bd4a7ae107c753e0b7d30cc8d2f7b424130c8
 commits: 3
 
 tech-stack:
@@ -136,9 +136,9 @@ status: complete
 
 1. **Task 1: End-to-end P0 inventory relocation with README pointer** - `a3bb326` (docs)
 2. **Task 2: Relocate remaining volatile blocks and diet AGENTS.md** - `6f4b046` (docs)
-3. **Task 3: Fix stale lease citations, diet ledger, and wave-close ci** - this SUMMARY (docs)
+3. **Task 3: Fix stale lease citations, diet ledger, and wave-close ci** - `b70bd4a` (docs)
 
-**Plan metadata:** recorded after state updates.
+**Plan metadata:** `docs(09-02): complete AGENTS diet plan` (STATE/ROADMAP/REQUIREMENTS + this SUMMARY patch)
 
 ## Files Created/Modified
 
@@ -223,4 +223,15 @@ None - no external service configuration required.
 
 Ready for Phase 10 (ADR/roadmap later-milestones) or Phase 11 SEM-08 narrative. Do not flip the H5 ROADMAP checkbox (Phase 11). Do not author SEM-08 here. Do not edit `crates/`. Do not lease M012a.
 
-## Self-Check: PENDING_COMMIT
+## Self-Check: PASSED
+
+- FOUND: docs/architecture/p0-spike-inventory.md (Materializer, leapfrog intersect, ADR-050, RocksDB)
+- FOUND: AGENTS.md (96 lines; four forbidden strings count 0; heading Code graph (Cursor))
+- FOUND: leapfrog-triejoin.md (1210.0481)
+- FOUND: applicability README Agent notes (Graphiti, traps, GTM)
+- FOUND: README Layout (CLAUDE.md, .cursor/, scripts/kutha_gov)
+- FOUND: semantic-contract header D-S1 snapshot; L_delivery=M011-S03-done count 0
+- FOUND: commits a3bb326, 6f4b046, b70bd4a
+- FOUND: 09-02-SUMMARY.md Diet ledger + D-10 Trajectory
+- FOUND: crates/ clean vs this plan
+- FOUND: uv run kutha-gov ci HIGH 0 LOW 0; pytest 48 passed

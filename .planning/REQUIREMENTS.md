@@ -31,10 +31,10 @@ Each requirement maps to exactly one roadmap phase.
 
 ### Lean agent context
 
-- [ ] **CTX-01**: `AGENTS.md` contains no lease or trajectory values (no `L_delivery=` tokens, no "current slice/milestone is …" narrative); it points to `.kutha/STATE.md` instead
-- [ ] **CTX-02**: Content an agent does not need on every turn (P0 spike inventory, literature/matrix counts and card lists, research notes such as Leapfrog, long subagent workflow, full repo tree) is moved to its owning doc and referenced by one-line pointers; no fact is lost, only relocated
-- [ ] **CTX-03**: Durable rules survive the diet unchanged in meaning: language policy, two planes, D1–D10 guard, CE skill routing, commands, freeze, CBM/subagent rules, working conventions
-- [ ] **CTX-04**: The stale `L_delivery=M011-S03-done` claims are removed or corrected in `AGENTS.md` and `docs/architecture/semantic-contract-validation.md`
+- [x] **CTX-01**: `AGENTS.md` contains no lease or trajectory values (no `L_delivery=` tokens, no "current slice/milestone is …" narrative); it points to `.kutha/STATE.md` instead
+- [x] **CTX-02**: Content an agent does not need on every turn (P0 spike inventory, literature/matrix counts and card lists, research notes such as Leapfrog, long subagent workflow, full repo tree) is moved to its owning doc and referenced by one-line pointers; no fact is lost, only relocated
+- [x] **CTX-03**: Durable rules survive the diet unchanged in meaning: language policy, two planes, D1–D10 guard, CE skill routing, commands, freeze, CBM/subagent rules, working conventions
+- [x] **CTX-04**: The stale `L_delivery=M011-S03-done` claims are removed or corrected in `AGENTS.md` and `docs/architecture/semantic-contract-validation.md`
 
 ### ADR and roadmap correction
 
@@ -78,10 +78,10 @@ Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | LEASE-01 | Phase 9 | Complete |
-| CTX-01 | Phase 9 | Pending |
-| CTX-02 | Phase 9 | Pending |
-| CTX-03 | Phase 9 | Pending |
-| CTX-04 | Phase 9 | Pending |
+| CTX-01 | Phase 9 | Complete |
+| CTX-02 | Phase 9 | Complete |
+| CTX-03 | Phase 9 | Complete |
+| CTX-04 | Phase 9 | Complete |
 | ADR-01 | Phase 10 | Pending |
 | ADR-02 | Phase 10 | Pending |
 | ADR-03 | Phase 10 | Pending |

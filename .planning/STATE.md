@@ -5,16 +5,16 @@ milestone_name: Lean context + semantic governor
 current_phase: 9
 current_phase_name: H5 lease + lean agent context
 current_plan: 2
-status: executing
-stopped_at: Completed 09-01-PLAN.md
-last_updated: "2026-09-30T05:56:19.470Z"
+status: verifying
+stopped_at: Completed 09-02-PLAN.md
+last_updated: "2026-09-30T06:09:39.539Z"
 last_activity: 2026-09-30
-state_head: d2d15ed3ae5cf585bf1b2afbb9880550cf948995
+state_head: b70bd4a7ae107c753e0b7d30cc8d2f7b424130c8
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -37,7 +37,7 @@ Phase: 9 of 11 (H5 lease + lean agent context)
 Current Plan: 2
 Total Plans in Phase: 2
 Plan: 2 of 2
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-09-30
 
 Progress: [░░░░░░░░░░] 0%
@@ -78,6 +78,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 08 P01 | 7min | 3 tasks | 5 files |
 | Phase 08 P02 | 3min | 3 tasks | 6 files |
 | Phase 09 P01 | 7min | 3 tasks | 8 files |
+| Phase 09 P02 | 7min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -99,6 +100,10 @@ Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constrain
 - [Phase 09]: D-H2: unchecked H5 dogfood checkbox; h4-lease and dogfood needles edited in place; I-dogfood H0–H5
 - [Phase 09]: D-G2 as green-ci: CHANGELOG Process pointer only; SEM-08 narrative reserved for Phase 11
 - [Phase 09]: D-G3: freeze and three lifecycle assignment lines byte-stable
+- [Phase 09]: D-A1/D-A2: AGENTS.md is 96 lines; live lease tokens removed; STATE-first freeze pointer
+- [Phase 09]: D-A3: diet ledger maps every removed block to a home with grep evidence
+- [Phase 09]: D-A4: language, planes, D1–D10, CE routing, commands, conventions 1–9, CBM forbids, Task map retained
+- [Phase 09]: D-S1: semantic-contract header is a 2026-09-13 M011 S03 snapshot; live lease is STATE
 
 ### Pending Todos
 
@@ -119,8 +124,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T05:55:25.377Z
-Stopped at: Completed 09-01-PLAN.md
+Last session: 2026-09-30T06:09:39.485Z
+Stopped at: Completed 09-02-PLAN.md
 Resume file: None
 Next: `/gsd-new-milestone` when ready. Freeze holds. Do not lease M002 without explicit operator intent.
 
