@@ -137,6 +137,14 @@ invariants:
     disposition: deferred
     until: "STATE names a legal pack"
 
+  # I-F1…I-F8 record product gaps from the semantic-gap review. They are not
+  # enforced. No crate symbols as commitments. until names the unleased target.
+  - id: I-F1-outcomes
+    claim: "Product outcomes, justifications, and resume are log records, not authoritative sidecars beside the log"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M012a"
+
   - id: I-cite-lease
     claim: "Docs that cite a delivery token must match the STATE assignment"
     source: ".kutha/STATE.md"

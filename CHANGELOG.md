@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-30 — Process: deferred F1 and green-check meaning
+
+### Process
+
+- Control-loop row `I-F1-outcomes` records that outcomes, justifications, and resume are log records, not sidecars (`disposition: deferred`, until STATE names M012a). Narrative remains Phase 11 SEM-08. Not ADR Accepted.
+- `docs/process/governor-intake.md` names what a green check proves: presence vs meaning; mutation-provable or skip-with-reason; green is not Accepted. Narrative remains Phase 11 SEM-08.
+
+### Trajectory
+
+- Honeycomb stays Proposed. F1 is recorded, not enforced. Green governor is not ADR Accepted and not L_capability.
+
 ## 2026-09-30 — Process: semantic citation checks
 
 ### Process

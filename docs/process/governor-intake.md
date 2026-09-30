@@ -63,6 +63,12 @@ A check id appears in **exactly one** ledger: invariants (`disposition: check`) 
 7. Run `uv run kutha-gov explain <check-id>` and `uv run kutha-gov precommit --check invariants-ledger` (or `--check honeycomb-ledger`).
 8. Record the process change under CHANGELOG **Process** (not as a GitHub Release).
 
+## What a green check proves
+
+Presence is not meaning. A needle that still matches after the claimed property is gone is a vacuous pass. `kutha-gov selftest` (and `ci`'s `run_selftest`) proves meaning by mutating a **copy** of the tree: each check must go HIGH under a declared or derived mutation, or carry a specific `selftest.skip` reason. Unproven (neither mutation nor skip reason) fails closed. Skip is not a silent pass.
+
+A green governor is **not** ADR **Accepted**, not L_capability, and not product correctness. Checks keep the harness honest about its own dictionaries, citations, and named-test evidence. They do not close F1–F8, accept honeycomb cells, or lease M012a.
+
 ## What these ledgers are not
 
 - Not a clone of law-nexus ADR frontmatter, D098 tags, or `document-freshness-triggers.json` catalogs.
