@@ -70,3 +70,8 @@ bridges:
     claim: "Quantum outcomes, justifications, and resume reconstruct from the event log after discarding sidecar leases; provenance_fingerprint mixes those log-native bytes"
     cites: "crates/kutha-runtime/tests/m012a_log_native.rs"
     check: m012a-s01-log-native
+
+  - id: B-m012a-s02
+    claim: "Retract, Correct, and justification cites bind minting EventId; a rebuilt fold that renumbers local seqs still applies the same retract and cite Events"
+    cites: "crates/kutha-runtime/tests/m012a_stable_refs.rs"
+    check: m012a-s02-stable-refs

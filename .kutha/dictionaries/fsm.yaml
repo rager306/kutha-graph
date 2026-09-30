@@ -56,6 +56,9 @@ states:
       - discard_outcomes_sidecar_keeps_reconstructible_disposition
       - discard_justifications_sidecar_keeps_admission_and_resume
       - provenance_fingerprint_moves_when_log_native_record_bytes_change
+      - retract_by_event_id_invalidates_support
+      - justification_cites_source_event_ids_survive_fork
+      - rebuilt_fold_renumbered_seqs_apply_same_retract_and_cite_payloads
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant

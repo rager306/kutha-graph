@@ -4,6 +4,24 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product + Process: rebuilt-fold EventId oracle
+
+### Product
+
+### Added
+
+- Named REF-03 oracle `rebuilt_fold_renumbered_seqs_apply_same_retract_and_cite_payloads`: dropping a filler Assert renumbers fold-local seqs; the same Retract and JustificationCite Events still bind.
+
+### Process
+
+### Added
+
+- Governor bridge `B-m012a-s02` / check `m012a-s02-stable-refs` and three `observe_cargo.required` names for the REF-01..03 oracles. LOG names stay required.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. ADR-011 and ADR-061 evidence lists include the new names. Active Slice remains **S02**. Freeze until M002 unchanged.
+
 ## 2026-10-01 — Product: EventId justification cites
 
 ### Product
