@@ -1,7 +1,7 @@
 //! M011 S08 candidate fixture; semantic-contract observations at named cuts.
 
 use kutha_common::{EventId, Op, TermId};
-use kutha_runtime::{store, Runtime};
+use kutha_runtime::{store, GraphFold, Runtime, RuntimeError};
 
 /// Year-like valid-time instants (same as S04).
 const VF_WIDE: u64 = 2010;
@@ -251,5 +251,173 @@ fn e2e_fixture_supports_and_conflict_at_named_cuts() {
             .live_at(t3, VT_RIGHT)
             .contains(&(fx.a, fx.related, fx.p))
     );
+    fx.rt.replay_check().unwrap();
+}
+
+fn assert_stale(rt: &Runtime, jid: &str) {
+    let err = rt.check_admission(jid).unwrap_err();
+    assert!(
+        matches!(
+            err,
+            RuntimeError::AdmissionDenied {
+                reason: "stale_support",
+                ..
+            }
+        ),
+        "{err:?}"
+    );
+}
+
+fn assert_cut_agrees(rt: &Runtime, replayed: &GraphFold, fx: &Fixture, tt: u64, vt: u64) {
+    assert_eq!(rt.fold().live_at(tt, vt), replayed.live_at(tt, vt));
+    assert_eq!(
+        rt.fold().live_support_count(fx.claim_p, tt, vt),
+        replayed.live_support_count(fx.claim_p, tt, vt)
+    );
+    assert_eq!(
+        rt.fold().live_support_count(fx.claim_q, tt, vt),
+        replayed.live_support_count(fx.claim_q, tt, vt)
+    );
+    let report = rt.conflict_report_at(fx.claim_p, tt, vt, fx.p, fx.not_p);
+    let mut pos = Vec::new();
+    let mut neg = Vec::new();
+    for f in replayed.live_supports(fx.claim_p, tt, vt) {
+        if f.object() == fx.p {
+            pos.push(f.seq);
+        } else if f.object() == fx.not_p {
+            neg.push(f.seq);
+        }
+    }
+    assert_eq!(report.positive_supports, pos);
+    assert_eq!(report.negative_supports, neg);
+}
+
+#[test]
+fn e2e_justification_cites_sources_and_rejects_stale_admission() {
+    let mut fx = build_through_t1();
+    let jid = fx.record_t1_justification();
+    let row = fx
+        .rt
+        .justification_records()
+        .iter()
+        .find(|j| j.justification_id == jid)
+        .expect("t1 row");
+    assert_eq!(row.source_fact_seqs, vec![fx.seq_a, fx.seq_b]);
+    assert_eq!(row.rule_version, "r1");
+    assert_eq!(row.target_claim, fx.claim_q);
+    fx.rt.check_admission(&jid).unwrap();
+
+    let dir = temp_dir();
+    store::persist(&fx.rt, &dir).unwrap();
+    std::fs::remove_file(dir.join("snapshot.json")).unwrap();
+    let opened = store::open(&dir).unwrap();
+    opened.check_admission(&jid).unwrap();
+    assert!(!opened.justification_records().is_empty());
+    let _ = std::fs::remove_dir_all(&dir);
+
+    fx.apply_t2_conflict();
+    assert_stale(&fx.rt, &jid);
+
+    let t2 = fx.t2.expect("t2");
+    let jid2 = fx.rt.record_justification(
+        fx.claim_q,
+        vec![fx.claim_p],
+        vec![fx.event_b],
+        vec![fx.seq_b],
+        "r1",
+        t2,
+        VT_INTERIOR,
+    );
+    fx.rt.check_admission(&jid2).unwrap();
+
+    fx.apply_t3_withdraw_b();
+    assert_stale(&fx.rt, &jid);
+    assert_stale(&fx.rt, &jid2);
+
+    let unknown = fx.rt.check_admission("no-such-justification").unwrap_err();
+    assert!(
+        matches!(
+            unknown,
+            RuntimeError::AdmissionDenied {
+                reason: "unknown_justification",
+                ..
+            }
+        ),
+        "{unknown:?}"
+    );
+}
+
+#[test]
+fn e2e_incremental_matches_reconstruct_after_discarding_leases() {
+    let mut fx = build_through_t1();
+    let jid = fx.record_t1_justification();
+    fx.apply_t2_conflict();
+    let t2 = fx.t2.expect("t2");
+    let jid2 = fx.rt.record_justification(
+        fx.claim_q,
+        vec![fx.claim_p],
+        vec![fx.event_b],
+        vec![fx.seq_b],
+        "r1",
+        t2,
+        VT_INTERIOR,
+    );
+    fx.apply_t3_withdraw_b();
+    let t3 = fx.t3.expect("t3");
+
+    let replayed = GraphFold::replay(fx.rt.log().as_slice());
+    assert_eq!(replayed.fingerprint(), fx.rt.fold().fingerprint());
+    for (tt, vt) in [
+        (fx.t1, VT_INTERIOR),
+        (t2, VT_INTERIOR),
+        (t3, VT_INTERIOR),
+        (t2, VT_LEFT),
+        (t3, VT_LEFT),
+        (t2, VT_RIGHT),
+        (t3, VT_RIGHT),
+    ] {
+        assert_cut_agrees(&fx.rt, &replayed, &fx, tt, vt);
+        let eligible = fx.rt.derivation_eligible_at(fx.claim_q, tt, vt);
+        assert_eq!(
+            eligible,
+            replayed.claim_supported_at(fx.claim_q, tt, vt)
+                && replayed.claim_supported_at(fx.claim_p, tt, vt)
+        );
+    }
+
+    let dir = temp_dir();
+    store::persist(&fx.rt, &dir).unwrap();
+    std::fs::remove_file(dir.join("snapshot.json")).unwrap();
+    let opened = store::open(&dir).unwrap();
+    assert_eq!(opened.fold().fingerprint(), fx.rt.fold().fingerprint());
+    assert_eq!(opened.justification_records(), fx.rt.justification_records());
+    assert_stale(&opened, &jid);
+    assert_stale(&opened, &jid2);
+    for (tt, vt) in [(fx.t1, VT_INTERIOR), (t2, VT_INTERIOR), (t3, VT_INTERIOR)] {
+        assert_eq!(
+            opened.conflict_report_at(fx.claim_p, tt, vt, fx.p, fx.not_p),
+            fx.rt.conflict_report_at(fx.claim_p, tt, vt, fx.p, fx.not_p)
+        );
+        assert_eq!(
+            opened.derivation_eligible_at(fx.claim_q, tt, vt),
+            fx.rt.derivation_eligible_at(fx.claim_q, tt, vt)
+        );
+    }
+    let _ = std::fs::remove_dir_all(&dir);
+
+    let untyped_before = fx.rt.csr_lease_at(t3, VT_INTERIOR);
+    let typed_before = fx.rt.typed_csr_lease_at(t3, VT_INTERIOR);
+    let fp_before = fx.rt.fold().fingerprint();
+    {
+        let _drop_u = fx.rt.csr_lease_at(t3, VT_INTERIOR);
+        let _drop_t = fx.rt.typed_csr_lease_at(t3, VT_INTERIOR);
+    }
+    let untyped_after = fx.rt.csr_lease_at(t3, VT_INTERIOR);
+    let typed_after = fx.rt.typed_csr_lease_at(t3, VT_INTERIOR);
+    assert_eq!(untyped_before.neighbors(fx.a), untyped_after.neighbors(fx.a));
+    assert_eq!(untyped_before.neighbors(fx.b), untyped_after.neighbors(fx.b));
+    assert_eq!(typed_before.edges_out(fx.a), typed_after.edges_out(fx.a));
+    assert_eq!(typed_before.edges_out(fx.b), typed_after.edges_out(fx.b));
+    assert_eq!(fp_before, fx.rt.fold().fingerprint());
     fx.rt.replay_check().unwrap();
 }
