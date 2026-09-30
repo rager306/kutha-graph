@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: log-native quantum outcomes
+
+### Product
+
+### Added
+
+- `Op::QuantumOutcome` fold-noop events on the product log. After persist, deleting `quantum_outcomes.jsonl` still reconstructs Zero / Partial / Full (`discard_outcomes_sidecar_keeps_reconstructible_disposition`).
+
+### Changed
+
+- Quantum outcome SoT is the event log. `quantum_outcomes.jsonl` remains a written lease; open hydrates from log Events when they exist and does not let an empty sidecar wipe them.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. Harness lease remains M012a / S01. Freeze until explicit M002 is unchanged. Not ADR-014 Accepted.
+
 ## 2026-09-30 — Process: lease M012a
 
 ### Process

@@ -58,9 +58,10 @@ fn crash_after_prefix_has_no_terminal_success_until_explicit_resume() {
     std::fs::remove_file(dir.join(store::OUTCOMES_REL)).unwrap();
 
     let mut opened = store::open(&dir).unwrap();
-    assert!(
-        opened.outcome_records().is_empty(),
-        "missing outcomes file must not invent rows"
+    assert_eq!(
+        opened.outcome_records().last().map(|r| r.disposition),
+        Some(OutcomeDisposition::Partial),
+        "missing outcomes file must reconstruct Partial from the log"
     );
     assert!(
         !opened
@@ -69,19 +70,24 @@ fn crash_after_prefix_has_no_terminal_success_until_explicit_resume() {
             .any(|row| row.disposition == OutcomeDisposition::Full),
         "open must not invent terminal Full from the event prefix"
     );
+    assert!(
+        !opened
+            .outcome_records()
+            .iter()
+            .any(|row| row.disposition == OutcomeDisposition::Resume),
+        "open must not invent Resume"
+    );
 
     opened.record_resume(&quantum_id).unwrap();
-    store::persist(&opened, &dir).unwrap();
-    let mut reopened = store::open(&dir).unwrap();
     assert!(
-        reopened.outcome_records().iter().any(|row| {
+        opened.outcome_records().iter().any(|row| {
             row.disposition == OutcomeDisposition::Resume
                 && row.resume_of.as_deref() == Some(quantum_id.as_str())
         }),
         "Resume visible only after explicit record_resume"
     );
     assert!(
-        reopened.record_resume(&quantum_id).is_err(),
+        opened.record_resume(&quantum_id).is_err(),
         "duplicate resume_of is fail-closed"
     );
 
