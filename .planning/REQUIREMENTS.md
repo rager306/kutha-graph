@@ -32,9 +32,9 @@ Each requirement maps to exactly one roadmap phase (one phase per harness slice)
 
 ### End-to-end fixture (M011 S08 — leased)
 
-- [ ] **FIX-01**: Independent supports and last-support withdrawal hold at named (TT,VT) cuts on the candidate fixture; the conflict variant preserves both sides and reports conflict instead of superseding
-- [ ] **FIX-02**: Summary and action records cite exact source revisions and rule version; a changed dependency forces re-evaluation, and a stale cached output cannot renew its own admission
-- [ ] **FIX-03**: Incremental maintenance and clean reconstruction agree on values, active supports, and completeness; discarding CSR and snapshots changes no answer
+- [x] **FIX-01**: Independent supports and last-support withdrawal hold at named (TT,VT) cuts on the candidate fixture; the conflict variant preserves both sides and reports conflict instead of superseding
+- [x] **FIX-02**: Summary and action records cite exact source revisions and rule version; a changed dependency forces re-evaluation, and a stale cached output cannot renew its own admission
+- [x] **FIX-03**: Incremental maintenance and clean reconstruction agree on values, active supports, and completeness; discarding CSR and snapshots changes no answer
 
 ### Gates (every slice)
 
@@ -72,9 +72,9 @@ Primary owner is listed below. GATE-01/02/03 still apply to every slice's succes
 | CSR-02 | Phase 6 | Complete |
 | PROV-01 | Phase 7 | Complete |
 | PROV-02 | Phase 7 | Complete |
-| FIX-01 | Phase 8 | Pending |
-| FIX-02 | Phase 8 | Pending |
-| FIX-03 | Phase 8 | Pending |
+| FIX-01 | Phase 8 | Complete |
+| FIX-02 | Phase 8 | Complete |
+| FIX-03 | Phase 8 | Complete |
 | GATE-02 | Phase 8 | Pending |
 | GATE-03 | Phase 8 | Pending |
 

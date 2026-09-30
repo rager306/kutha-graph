@@ -5,16 +5,16 @@ milestone_name: Semantic core close
 current_phase: 8
 current_phase_name: End-to-end candidate fixture
 status: planning
-stopped_at: Phase 8 plans created
-last_updated: "2026-09-30T04:20:00.000Z"
+stopped_at: Completed 08-01-PLAN.md
+last_updated: "2026-09-30T04:17:29.698Z"
 last_activity: 2026-09-30
 last_activity_desc: Wrote 08-01-PLAN.md and 08-02-PLAN.md (Wave 1 fixture oracles; Wave 2 GATE)
-state_head: f1f69282297287fba5b165b9cecd6ffe553730ce
+state_head: 6ebf2128bec3ed08f812958b851d84c3d37a0b05
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 11
-  completed_plans: 9
+  completed_plans: 10
 ---
 
 # Project State
@@ -33,16 +33,18 @@ See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 ## Current Position
 
 Phase: 8 — End-to-end candidate fixture
-Plan: 08-01 (not started)
-Status: Plans ready — 08-01 then 08-02
-Last activity: 2026-09-30 — 08-01-PLAN.md and 08-02-PLAN.md written; S08 still leased
+Current Plan: 2
+Total Plans in Phase: 2
+Plan: 08-02 (next)
+Status: 08-01 complete — ready for 08-02 GATE-01
+Last activity: 2026-09-30 — 08-01 justifications sidecar, conflict report, three named FIX oracles
 
 Progress: [████████░░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9 (v0.01 + v0.02 through Phase 7)
+- Total plans completed: 10 (v0.01 + v0.02 through Phase 8 plan 01)
 - Average duration: 2min
 - Total execution time: ~23min
 
@@ -71,6 +73,7 @@ Progress: [████████░░] 80%
 | Phase 04 P03 | 7min | 3 tasks | 5 files |
 | Phase 07 P01 | 4min | 3 tasks | 5 files |
 | Phase 07 P02 | 4min | 3 tasks | 6 files |
+| Phase 08 P01 | 7min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -83,6 +86,7 @@ Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constrain
 - [v0.02]: Harness deps preserved — S05/S06 depend on S03; S07 on S04; S08 on S04–S07
 - [Phase 07]: D-P1…D-P7 — swap-valid-prior oracle; rule_version on Behavior; separate provenance_fingerprint; two named tests; GATE inheritance; no STATE edit during delivery
 - [Phase 08 research]: D-F1…D-F7 — shared e2e builder + three oracles; justifications.jsonl clone of outcomes; conflict_report polarity not winner; compose don’t rewrite fold/CSR/provenance; GATE-02/03 close owners
+- [Phase 08]: D-F1…D-F4, D-F7: justifications.jsonl sidecar, conflict_report_at without a winner, three named FIX oracles; GATE-01 deferred to 08-02; check_admission uses current-picture fact_seq liveness
 
 ### Pending Todos
 
@@ -101,11 +105,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-30T04:20:00.000Z
-Stopped at: Phase 8 plans created
-Resume file: .planning/phases/08-end-to-end-candidate-fixture/08-01-PLAN.md
-Next: `/gsd-execute-phase 8` (S08 leased in `.kutha/STATE.md`)
+Last session: 2026-09-30T04:17:29.582Z
+Stopped at: Completed 08-01-PLAN.md
+Resume file: None
+Next: Execute 08-02 (`/gsd-execute-phase 8`). Active Slice remains S08. Do not edit `.kutha/STATE.md`.
 
 ## Operator Next Steps
 
-- Phase 8 plans are on disk (`08-01-PLAN.md`, `08-02-PLAN.md`). Execute next (`/gsd-execute-phase 8`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
+- Wave 1 (08-01) shipped justifications sidecar + three FIX oracles. Next is 08-02 GATE-01 YAML. Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
