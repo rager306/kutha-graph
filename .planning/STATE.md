@@ -2,15 +2,21 @@
 gsd_state_version: "1.0"
 milestone: v0.04
 milestone_name: Single-log SoT + stable references
-status: planning
-last_updated: "2026-10-01T00:00:00.000Z"
+current_phase: 12
+current_phase_name: first of five v0.04 phases
+current_plan: 2
+status: executing
+stopped_at: Completed 12-01-PLAN.md
+last_updated: "2026-09-30T17:24:16.842Z"
 last_activity: 2026-10-01
+last_activity_desc: Phase 12 plans written (12-01..12-03)
+state_head: 99688eec30999f8682b0cfb3aa835b3da74b01da
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 11
   total_plans: 3
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
+  percent: 33
 ---
 
 # Project State
@@ -28,12 +34,14 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 
 ## Current Position
 
+Current Plan: 2
+Total Plans in Phase: 3
 Phase: 12 of 16 (Log-native SoT) — first of five v0.04 phases
 Plan: 12-01 of 12-03
 Status: Ready to execute
-Last activity: 2026-10-01 — Phase 12 plans written (12-01..12-03)
+Last activity: 2026-10-01 — 12-01 LOG-01 complete
 
-Progress: [░░░░░░░░░░] 0% (v0.04 plans executed)
+Progress: [███░░░░░░░] 33% (v0.04 plans executed)
 
 ## Performance Metrics
 
@@ -61,6 +69,12 @@ Progress: [░░░░░░░░░░] 0% (v0.04 plans executed)
 - Last 5 plans: Phase 11 P01–P04, Phase 10 P02
 - Trend: v0.03 harness/docs complete; Phase 12 plans ready; v0.04 crates not started
 
+**Per-Plan Metrics:**
+
+| Plan | Duration | Tasks | Files |
+|------|----------|-------|-------|
+| Phase 12 P01 | 8min | 3 tasks | 8 files |
+
 ## Accumulated Context
 
 ### Decisions
@@ -72,6 +86,9 @@ Full table: `.planning/PROJECT.md`.
 - [v0.03]: H5 semantic governor + lean AGENTS.md shipped; crates untouched
 - [v0.02]: One GSD phase per M011 slice; GATE-01/02/03; M011 S04–S08 closed
 - [v0.01]: Phases 1–3 verification overlay; green ≠ Accepted ≠ L_capability ≠ lease grant
+- [Phase 12]: OutcomeDisposition lives in kutha-common so Op::QuantumOutcome can carry it
+- [Phase 12]: Public emit of Op::QuantumOutcome is MetaOpRejected (T-12-02)
+- [Phase 12]: Resume persist/open after sidecar discard stays Plan 12-02
 
 ### Pending Todos
 
@@ -94,9 +111,9 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-10-01
-Stopped at: Phase 12 plans written (12-01 tracer LOG-01, 12-02 LOG-02, 12-03 LOG-03 + governor)
-Resume file: `.planning/phases/12-log-native-sot/12-01-PLAN.md`
+Last session: 2026-09-30T17:23:52.140Z
+Stopped at: Completed 12-01-PLAN.md
+Resume file: None
 Next: `/gsd-execute-phase 12`. Harness lease is already S01. Freeze holds. Do not lease M002 without explicit operator intent.
 
 ## Operator Next Steps

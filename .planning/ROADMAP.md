@@ -81,9 +81,10 @@ Full detail: [milestones/v0.03-ROADMAP.md](./milestones/v0.03-ROADMAP.md) · req
   2. Justifications and resume/continuation evidence are log records; `justifications.jsonl` / outcome sidecar files are droppable leases, not a second SoT (LOG-02)
   3. `provenance_fingerprint` (or successor) mixes those log-native outcome/justification bytes, not only in-log Behavior rows (LOG-03)
   4. Named cargo tests for the three LOG oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; FF5/FF6 stay green; honeycomb stays Proposed; M012 dictionaries-as-facts and M002 Rocks stay unstarted
-**Plans**: 3 plans
+
+**Plans**: 1/3 plans executed
 Plans:
-- [ ] 12-01-PLAN.md — LOG-01 tracer: quantum outcomes as log records; discard outcomes sidecar reconstructs disposition
+- [x] 12-01-PLAN.md — LOG-01 tracer: quantum outcomes as log records; discard outcomes sidecar reconstructs disposition
 - [ ] 12-02-PLAN.md — LOG-02: justifications and resume as log records; sidecars are leases
 - [ ] 12-03-PLAN.md — LOG-03: provenance mixes log-native bytes; governor observes the three LOG oracles
 
@@ -100,6 +101,7 @@ Plans:
   2. Justification cites use that same stable identity across fork / rebuild (REF-02)
   3. A rebuilt fold that renumbers local seqs still applies the same retract/cite payloads (REF-03)
   4. Named cargo tests for the three REF oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; freeze and Proposed map hold
+
 **Plans**: TBD
 
 ### Phase 14: Idempotent ingest
@@ -115,6 +117,7 @@ Plans:
   2. Claim/proposition identity is distinct from a support slot — documented and exercised by named tests (ING-02)
   3. Conflict reporting on the leased fixture path does not require caller-only free polarity strings, **or** the remaining gap is documented explicitly as out of M012a (ING-03)
   4. Named cargo tests for the ING oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; freeze and Proposed map hold
+
 **Plans**: TBD
 
 ### Phase 15: Verify, persist, and time scale
@@ -131,6 +134,7 @@ Plans:
   3. `Define` event ids are stable across persist/open cycles for the same term set (DUR-03)
   4. VT and TT declare an explicit scale (type, constant, or documented contract) used by fixtures (TIME-01)
   5. Named tests document how fixture years/cuts map to that scale (TT↔wall optional; full calendar map not required) (TIME-02); governor observes the DUR and TIME tests; `uv run kutha-gov ci` stays 0 HIGH; durability *protocol* (segmented WAL / Rocks) stays unstarted
+
 **Plans**: TBD
 
 ### Phase 16: Fold-internal hot indexes
@@ -146,6 +150,7 @@ Plans:
   2. The CSR lease path remains droppable; indexes are not a second SoT (HOT-02)
   3. Materializer vs `from_fold` is either wired on the hot path or explicitly deferred with a named test/guard documenting the spike limit (HOT-03)
   4. Named cargo tests for the HOT oracles are observed by the governor; FF5 stays green; `uv run kutha-gov ci` stays 0 HIGH; ADR-061 full GED-class diff stays out of M012a
+
 **Plans**: TBD
 
 ## Progress
@@ -165,7 +170,7 @@ Plans:
 | 9. H5 lease + lean agent context | v0.03 | 2/2 | Complete | 2026-09-30 |
 | 10. ADR and roadmap correction | v0.03 | 2/2 | Complete | 2026-09-30 |
 | 11. Semantic governor | v0.03 | 4/4 | Complete | 2026-09-30 |
-| 12. Log-native SoT | v0.04 | 0/3 | Not started | - |
+| 12. Log-native SoT | v0.04 | 1/3 | In Progress|  |
 | 13. Stable references | v0.04 | 0/? | Not started | - |
 | 14. Idempotent ingest | v0.04 | 0/? | Not started | - |
 | 15. Verify, persist, and time scale | v0.04 | 0/? | Not started | - |
