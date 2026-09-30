@@ -10,19 +10,10 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.04 Single-log SoT + stable references
+## Current Milestone: None
 
-**Goal:** Close the leased M012a product gaps so the event log is the only durable SoT for outcomes/justifications/resume, references and ingest are stable/idempotent, open verifies, persist is atomic, time scale is declared, and hot reads use fold indexes — without thawing M012 dictionaries-as-facts or M002 Rocks.
+v0.04 shipped 2026-10-01 (M012a S01–S06). Next GSD milestone starts only after an explicit lease in `.kutha/STATE.md` (candidate: M012).
 
-**Target features:**
-- Log-native quantum outcomes, justifications, and resume (F1); sidecars become droppable leases
-- Stable EventId / proposition ids for Retract, Correct, and justification cites (F2)
-- Idempotent ingest / delivery keys so identical Assert does not mint a second support (F3)
-- Verify-on-open, atomic persist, and stable `Define` ids (F6 subset; durability protocol stays M002)
-- Declared VT/TT scale (F7)
-- Fold-internal indexes for hot `as_of` / `claim_supported_at` (F8)
-
-**Boundary:** Product crates allowed under M012a lease. No M012 admission/rule-registry work. No Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack. Honeycomb stays Proposed. Freeze until explicit M002.
 
 ## Business Context
 
@@ -160,11 +151,11 @@ Harness compact index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov m
 
 ## Current State
 
-Shipped **GSD v0.01 — GSD foundation** (2026-09-29), **GSD v0.02 — Semantic core close** and **GSD v0.03 — Lean context + semantic governor** (2026-09-30). M011 tail S04–S08 is in crates and harness GATE needles; one e2e fixture separates preserved history, current evidence, and allowed action. v0.03 (harness/docs only) delivered H5: lean `AGENTS.md`, Proposed-only ADR corrections for F1–F8 (`docs/architecture/semantic-gap-review.md`), and a semantic governor (`kutha-gov selftest`, assertion-proving kinds, cited-lease and reference checks). Honeycomb cells stay Proposed. Product stays `0.0.0`.
+Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), and **v0.04 — Single-log SoT + stable references** (2026-10-01, M012a S01–S06). M011 tail S04–S08 is in crates and harness GATE needles; one e2e fixture separates preserved history, current evidence, and allowed action. v0.03 (harness/docs only) delivered H5: lean `AGENTS.md`, Proposed-only ADR corrections for F1–F8 (`docs/architecture/semantic-gap-review.md`), and a semantic governor (`kutha-gov selftest`, assertion-proving kinds, cited-lease and reference checks). Honeycomb cells stay Proposed. Product stays `0.0.0`.
 
 ## Next Milestone Goals
 
-M012a is leased. After this milestone: M012 (dictionaries as facts: allowlist entries, rule registry, admission meta-facts) then M002 (log durability protocol first; Rocks for indexes only). Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.
+Next candidate: M012 (dictionaries as facts: allowlist entries, rule registry, admission meta-facts), then M002 (log durability protocol first; Rocks for indexes only). Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.
 
 ## Context
 
@@ -172,10 +163,10 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 
 **Harness lease** (process intent, not GSD memory, not product SoT): `.kutha/STATE.md`
 
-- Active Milestone: **M012a**
+- Active Milestone: **M012a** (CLOSED on ROADMAP; Active Slice None)
 - Active Slice: **None**
 - Phase: **H5**
-- Lifecycles: `L_map=honeycomb-proposed` · `L_delivery=M012a-leased` · `L_capability=ff5-green`
+- Lifecycles: `L_map=honeycomb-proposed` · `L_delivery=M012a-S06-done` · `L_capability=ff5-green`
 - Next: Freeze until STATE names M002+ (or another explicit lease). Do not start a legal pack. Green governor ≠ ADR Accepted ≠ L_capability.
 
 GSD files live under `.planning/`. **Never overwrite** `.kutha/STATE.md` with GSD STATE.
@@ -228,4 +219,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-30 after leasing M012a / starting GSD v0.04*
+*Last updated: 2026-10-01 after shipping v0.04 / M012a CLOSED*

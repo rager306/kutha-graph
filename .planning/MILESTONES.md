@@ -1,5 +1,28 @@
 # Milestones
 
+## v0.04 Single-log SoT + stable references (Shipped: 2026-10-01)
+
+**Phases completed:** 5 phases, 15 plans, 31 tasks
+
+**Key accomplishments:**
+- Op::QuantumOutcome fold-noop log records; discarding quantum_outcomes.jsonl still reconstructs Zero/Partial/Full
+- Op::JustificationCite and Resume QuantumOutcome Events; justifications.jsonl and quantum_outcomes.jsonl are droppable leases
+- provenance_fingerprint mixes log-native outcome and justification Event bytes; governor observes LOG-01..03 with ci HIGH 0
+- Retract, Correct, and CorrectInterval target Fact.event_id (minting Event.id); fold-local seq is no longer the operator key
+- Justification cites and check_admission key on minting EventId; a fork prefix still admits after the parent retracts that support
+- A rebuilt fold that renumbers local seqs still applies the same Retract and JustificationCite Events; governor observes REF-01..03 with ci HIGH 0
+- Identical Assert retry under a non-empty delivery key returns the original EventId and does not append; mismatch fails closed as DeliveryKeyConflict
+- Claim identity stays distinct from the support EventId; e2e conflict reports partition by stored Fact.polarity without caller TermIds
+- Governor observes ING-01..03 named tests; `uv run kutha-gov ci` is 0 HIGH; honeycomb stays Proposed
+- open rejects a tampered snapshot via replay_check; persist replaces events.jsonl by same-directory rename; Define ids are name-stable across persist/open
+- Fixtures treat 2015/2017/2021 as Gregorian YearCe valid-time; ingested_at is log sequence, not wall-clock
+- Governor requires the five DUR/TIME cargo oracles; ci is 0 HIGH; honeycomb stays Proposed
+- Fold-internal VT and claim maps so as_of and claim_supported_at skip non-overlapping facts, matching a brute-force live filter
+- Untyped CSR lease is built through CsrMaterializer and dropped; from_fold reads the fold live iterator; typed from_fold stays the named spike limit
+- Governor observes the three HOT oracles; honeycomb stays Proposed; S06 lease is not cleared
+
+---
+
 ## v0.03 Lean context + semantic governor (Shipped: 2026-09-30)
 
 **Phases completed:** 3 phases, 8 plans, 24 tasks

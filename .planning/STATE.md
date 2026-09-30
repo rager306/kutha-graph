@@ -2,21 +2,20 @@
 gsd_state_version: "1.0"
 milestone: v0.04
 milestone_name: Single-log SoT + stable references
-current_phase: 16
-current_phase_name: Fold-internal hot indexes
-current_plan: Not started
-status: completed
+status: Awaiting next milestone
 stopped_at: Phase 16 complete — all phases complete
-last_updated: "2026-09-30T19:37:31.315Z"
+last_updated: "2026-09-30T19:37:55.070Z"
 last_activity: 2026-10-01
-last_activity_desc: Phase 16 complete
-state_head: b31f0e425e7154089dd6d4ec949dfb7fd83df28b
+last_activity_desc: Milestone v0.04 completed and archived
+state_head: 7009739d1877b5fcf8b3b744bcebfd62b41692d7
 progress:
   total_phases: 5
   completed_phases: 16
   total_plans: 15
   completed_plans: 15
   percent: 100
+current_phase: 16
+current_phase_name: Fold-internal hot indexes
 ---
 
 # Project State
@@ -34,14 +33,10 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 
 ## Current Position
 
-Current Plan: Not started
-Total Plans in Phase: 3
-Phase: 16 of 16 (Fold-internal hot indexes)
-Plan: 3 of 3
-Status: All phases complete
-Last activity: 2026-10-01 — Phase 16 complete
-
-Progress: [██████████] 100% (v0.04 plans executed)
+Phase: Milestone v0.04 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-10-01 — Milestone v0.04 completed and archived
 
 ## Performance Metrics
 
@@ -175,5 +170,4 @@ Next: `/gsd-execute-phase 16`. Harness lease is already S06. Freeze holds. Do no
 
 ## Operator Next Steps
 
-- Execute: `/gsd-execute-phase 16`
-- Do not overwrite `.kutha/STATE.md` from GSD memory; do not clear S06 until verification pass
+- Start the next milestone with /gsd-new-milestone
