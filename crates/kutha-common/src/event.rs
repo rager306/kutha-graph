@@ -23,12 +23,22 @@ pub enum OutcomeDisposition {
     Resume,
 }
 
+/// Stored support polarity for conflict views (ING-03). `None` on Assert is unbucketed.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SupportPolarity {
+    Positive,
+    Negative,
+}
+
 /// Lean write operators (TGMS-shaped; ADR-010 D010-3).
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum Op {
     /// N-ary objects: subject, relation, object (interned).
     /// `claim`: when set, this Assert is another support for that claim id;
     /// when absent, the new event id becomes the claim id (ADR-011 / M011 S01).
+    /// `delivery_key`: non-empty retry identity (ING-01 / D-01). `None` or empty always mints.
+    /// `polarity`: stored support polarity; default `None` (ING-03 wiring is Plan 14-02).
     Assert {
         subject: TermId,
         relation: TermId,
@@ -37,6 +47,10 @@ pub enum Op {
         valid_to: Option<ValidTime>,
         #[serde(default)]
         claim: Option<EventId>,
+        #[serde(default)]
+        delivery_key: Option<String>,
+        #[serde(default)]
+        polarity: Option<SupportPolarity>,
     },
     Retract {
         event_id: EventId,
@@ -143,6 +157,8 @@ impl Event {
                 valid_from,
                 valid_to,
                 claim,
+                delivery_key,
+                polarity,
             } => {
                 h.update(b"assert");
                 h.update(subject.to_le_bytes());
@@ -154,6 +170,15 @@ impl Event {
                     h.update(b"claim");
                     h.update(c.as_bytes());
                 }
+                match delivery_key {
+                    Some(k) => {
+                        h.update(b"dkey");
+                        h.update((k.len() as u64).to_le_bytes());
+                        h.update(k.as_bytes());
+                    }
+                    None => h.update(b"no-dkey"),
+                }
+                h.update(polarity_tag(*polarity));
             }
             Op::Retract { event_id } => {
                 h.update(b"retract");
@@ -260,6 +285,14 @@ impl Event {
             }
         }
         h.finalize().into()
+    }
+}
+
+fn polarity_tag(p: Option<SupportPolarity>) -> &'static [u8] {
+    match p {
+        None => b"pol-none",
+        Some(SupportPolarity::Positive) => b"pol-pos",
+        Some(SupportPolarity::Negative) => b"pol-neg",
     }
 }
 

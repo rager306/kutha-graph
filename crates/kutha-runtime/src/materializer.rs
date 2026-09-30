@@ -72,6 +72,8 @@ mod tests {
             valid_to: None,
 
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
         let mut m = CsrMaterializer::default();

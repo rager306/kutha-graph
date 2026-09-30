@@ -26,6 +26,8 @@ fn ff5_as_of_t1_differs_from_as_of_t2_on_statute_log() {
         valid_to: Some(VF_SECOND),
 
         claim: None,
+        delivery_key: None,
+        polarity: None,
     })
     .unwrap();
     rt.emit(Op::Assert {
@@ -36,6 +38,8 @@ fn ff5_as_of_t1_differs_from_as_of_t2_on_statute_log() {
         valid_to: None,
 
         claim: None,
+        delivery_key: None,
+        polarity: None,
     })
     .unwrap();
 
@@ -78,6 +82,8 @@ fn ff3_csr_lease_drop_does_not_change_log_or_fold() {
         valid_to: None,
 
         claim: None,
+        delivery_key: None,
+        polarity: None,
     })
     .unwrap();
     let fp = rt.fold().fingerprint();

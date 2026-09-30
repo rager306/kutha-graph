@@ -20,6 +20,8 @@ fn baseline_derive_pq_r1() -> (Runtime, EventId, EventId) {
             valid_from: 2010,
             valid_to: None,
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
     let a1_id = a1.receipt.event_ids[0];
@@ -32,6 +34,8 @@ fn baseline_derive_pq_r1() -> (Runtime, EventId, EventId) {
             valid_from: 2010,
             valid_to: None,
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
     let a2_id = a2.receipt.event_ids[0];

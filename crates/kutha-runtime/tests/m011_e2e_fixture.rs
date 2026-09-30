@@ -59,6 +59,8 @@ fn build_through_t1() -> Fixture {
             valid_from: VF_WIDE,
             valid_to: None,
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
     let event_a = first.receipt.event_ids[0];
@@ -77,6 +79,8 @@ fn build_through_t1() -> Fixture {
             valid_from: VF_WIDE,
             valid_to: None,
             claim: Some(claim_p),
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
     let event_b = second.receipt.event_ids[0];

@@ -17,6 +17,8 @@ fn retract_by_event_id_invalidates_support() {
             valid_from: 0,
             valid_to: None,
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
     let minting = minted.receipt.event_ids[0];
@@ -82,6 +84,8 @@ fn justification_cites_source_event_ids_survive_fork() {
             valid_from: 0,
             valid_to: None,
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
     let minting = minted.receipt.event_ids[0];
@@ -148,6 +152,8 @@ fn rebuilt_fold_renumbered_seqs_apply_same_retract_and_cite_payloads() {
         valid_from: 0,
         valid_to: None,
         claim: None,
+        delivery_key: None,
+        polarity: None,
     })
     .unwrap();
     let minted = rt
@@ -158,6 +164,8 @@ fn rebuilt_fold_renumbered_seqs_apply_same_retract_and_cite_payloads() {
             valid_from: 0,
             valid_to: None,
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
     let minting = minted.receipt.event_ids[0];

@@ -18,6 +18,8 @@ fn retracting_one_support_leaves_claim_supported() {
             valid_from: 2010,
             valid_to: None,
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
     let claim: EventId = first.receipt.event_ids[0];
@@ -32,6 +34,8 @@ fn retracting_one_support_leaves_claim_supported() {
         valid_from: 2010,
         valid_to: None,
         claim: Some(claim),
+        delivery_key: None,
+        polarity: None,
     })
     .unwrap();
     assert_eq!(2, rt.fold().live_support_count(claim, u64::MAX, 2017));
@@ -62,6 +66,8 @@ fn unknown_claim_does_not_append() {
             valid_from: 2010,
             valid_to: None,
             claim: Some(ghost),
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap_err();
     assert!(
@@ -119,6 +125,8 @@ fn derived_q_loses_eligibility_when_last_premise_support_withdrawn() {
             valid_from: 2010,
             valid_to: None,
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
     let claim_p: EventId = first.receipt.event_ids[0];
@@ -132,6 +140,8 @@ fn derived_q_loses_eligibility_when_last_premise_support_withdrawn() {
             valid_from: 2010,
             valid_to: None,
             claim: Some(claim_p),
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
     assert!(!second.receipt.event_ids.is_empty());

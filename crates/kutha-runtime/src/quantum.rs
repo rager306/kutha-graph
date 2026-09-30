@@ -43,6 +43,10 @@ pub enum RuntimeError {
     },
     /// Public `emit` of fold-noop meta ops is fail-closed (LOG-01 / T-12-02).
     MetaOpRejected,
+    /// Same non-empty delivery key with a different Assert payload (ING-01 / T-14-02).
+    DeliveryKeyConflict {
+        key: String,
+    },
 }
 
 impl fmt::Display for RuntimeError {
@@ -66,6 +70,9 @@ impl fmt::Display for RuntimeError {
             }
             RuntimeError::AdmissionDenied { .. } => write!(f, "AdmissionDeniedError"),
             RuntimeError::MetaOpRejected => write!(f, "MetaOpRejectedError"),
+            RuntimeError::DeliveryKeyConflict { key } => {
+                write!(f, "delivery key conflict {key}")
+            }
         }
     }
 }
@@ -634,6 +641,86 @@ impl Runtime {
         Err(RuntimeError::UnknownClaim { claim: *claim })
     }
 
+    fn delivery_key_active(key: &Option<String>) -> Option<&str> {
+        match key {
+            Some(s) if !s.is_empty() => Some(s.as_str()),
+            _ => None,
+        }
+    }
+
+    fn assert_payload_matches(left: &Op, right: &Op) -> bool {
+        match (left, right) {
+            (
+                Op::Assert {
+                    subject: s1,
+                    relation: r1,
+                    object: o1,
+                    valid_from: vf1,
+                    valid_to: vt1,
+                    claim: c1,
+                    polarity: p1,
+                    delivery_key: d1,
+                },
+                Op::Assert {
+                    subject: s2,
+                    relation: r2,
+                    object: o2,
+                    valid_from: vf2,
+                    valid_to: vt2,
+                    claim: c2,
+                    polarity: p2,
+                    delivery_key: d2,
+                },
+            ) => {
+                s1 == s2
+                    && r1 == r2
+                    && o1 == o2
+                    && vf1 == vf2
+                    && vt1 == vt2
+                    && c1 == c2
+                    && p1 == p2
+                    && d1 == d2
+            }
+            _ => false,
+        }
+    }
+
+    /// Identical keyed Assert returns the original EventId without appending (ING-01 / D-01).
+    fn delivery_key_retry(&self, op: &Op) -> Result<Option<QuantumOutcome>, RuntimeError> {
+        let Op::Assert { delivery_key, .. } = op else {
+            return Ok(None);
+        };
+        let Some(key) = Self::delivery_key_active(delivery_key) else {
+            return Ok(None);
+        };
+        for e in self.log.iter() {
+            let Op::Assert {
+                delivery_key: existing,
+                ..
+            } = &e.op
+            else {
+                continue;
+            };
+            let Some(found) = Self::delivery_key_active(existing) else {
+                continue;
+            };
+            if found != key {
+                continue;
+            }
+            if Self::assert_payload_matches(&e.op, op) {
+                let receipt = QuantumReceipt::from_events(vec![e.id], &[e.digest_bytes()], false);
+                return Ok(Some(QuantumOutcome {
+                    receipt,
+                    events_in_quantum: 0,
+                }));
+            }
+            return Err(RuntimeError::DeliveryKeyConflict {
+                key: key.to_string(),
+            });
+        }
+        Ok(None)
+    }
+
     /// Admit a user op, append, fold, cascade inverse-`knows` until idle or budget.
     pub fn emit(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
         if matches!(op, Op::QuantumOutcome { .. } | Op::JustificationCite { .. }) {
@@ -675,6 +762,9 @@ impl Runtime {
         }
         self.admit(&op)?;
         self.admit_claim(&op)?;
+        if let Some(retry) = self.delivery_key_retry(&op)? {
+            return Ok(retry);
+        }
         let first = Event::new(op, self.next_tt());
         for follow in self.follow_ons(&first) {
             self.admit(&follow.op)?;
@@ -731,7 +821,7 @@ impl Runtime {
                 object,
                 valid_from,
                 valid_to,
-                claim: _,
+                ..
             } if *relation == self.knows => {
                 let exists = self.fold.facts().iter().any(|f| {
                     f.subject == *object
@@ -878,6 +968,8 @@ mod tests {
             valid_to: None,
 
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
         assert_eq!(rt.fold().live_count(u64::MAX, 0), 2); // knows + inverse
@@ -898,6 +990,8 @@ mod tests {
             valid_to: None,
 
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
         let minting = rt.fold().facts()[0].event_id;
@@ -923,6 +1017,8 @@ mod tests {
                 valid_to: None,
 
                 claim: None,
+                delivery_key: None,
+                polarity: None,
             })
             .unwrap();
         assert_eq!(q.events_in_quantum, 2);
@@ -945,6 +1041,8 @@ mod tests {
                 valid_to: None,
 
                 claim: None,
+                delivery_key: None,
+                polarity: None,
             })
             .unwrap();
         assert!(q.receipt.aborted_on_budget);
@@ -965,6 +1063,8 @@ mod tests {
             valid_to: None,
 
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
         rt.tamper_fold();
@@ -987,6 +1087,8 @@ mod tests {
                 valid_to: None,
 
                 claim: None,
+                delivery_key: None,
+                polarity: None,
             })
             .unwrap();
         }
@@ -1017,6 +1119,8 @@ mod tests {
                 valid_to: None,
 
                 claim: None,
+                delivery_key: None,
+                polarity: None,
             })
             .unwrap();
         }
@@ -1041,6 +1145,8 @@ mod tests {
             valid_to: None,
 
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
         let dir = std::env::temp_dir().join(format!("kutha-p0-{}", uuid_like()));
@@ -1066,6 +1172,8 @@ mod tests {
             valid_to: None,
 
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
         // Fixture facts use valid_from=0; name that cut (no silent “now”).
@@ -1093,6 +1201,8 @@ mod tests {
             valid_to: None,
 
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
         let cut = rt.log().len();
@@ -1104,6 +1214,8 @@ mod tests {
             valid_to: None,
 
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
         let fork = rt.fork_at(cut);

@@ -21,6 +21,8 @@ fn ff6_unknown_relation_does_not_append() {
             valid_to: None,
 
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap_err();
 
@@ -46,6 +48,8 @@ fn ff6_allowlisted_relation_still_appends() {
         valid_to: None,
 
         claim: None,
+        delivery_key: None,
+        polarity: None,
     })
     .unwrap();
     assert_eq!(1, rt.graph_len(), "one Assert; Define ops are not graph facts");

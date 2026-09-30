@@ -20,6 +20,8 @@ fn typed_csr_preserves_relation_labels_and_support_multiplicity() {
         valid_from: 0,
         valid_to: None,
         claim: None,
+        delivery_key: None,
+        polarity: None,
     })
     .unwrap();
     rt.emit(Op::Assert {
@@ -29,6 +31,8 @@ fn typed_csr_preserves_relation_labels_and_support_multiplicity() {
         valid_from: 0,
         valid_to: None,
         claim: None,
+        delivery_key: None,
+        polarity: None,
     })
     .unwrap();
     // Same endpoints, different relation.
@@ -39,6 +43,8 @@ fn typed_csr_preserves_relation_labels_and_support_multiplicity() {
         valid_from: 0,
         valid_to: None,
         claim: None,
+        delivery_key: None,
+        polarity: None,
     })
     .unwrap();
 
@@ -99,6 +105,8 @@ fn untyped_csr_neighbor_set_and_ff5_still_hold() {
         valid_from: 0,
         valid_to: None,
         claim: None,
+        delivery_key: None,
+        polarity: None,
     })
     .unwrap();
 

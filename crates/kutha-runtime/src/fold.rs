@@ -1,4 +1,4 @@
-use kutha_common::{Event, EventId, Op, TermId, TransactionTime, ValidTime};
+use kutha_common::{Event, EventId, Op, SupportPolarity, TermId, TransactionTime, ValidTime};
 use sha2::{Digest, Sha256};
 
 fn nil_claim() -> EventId {
@@ -74,6 +74,12 @@ pub struct Fact {
     /// Minting Event.id (REF-01). Retract/Correct look up this field, not fold-local seq.
     #[serde(default = "nil_claim")]
     pub event_id: EventId,
+    /// Durable retry key copied from `Op::Assert` (ING-01 / D-01).
+    #[serde(default)]
+    pub delivery_key: Option<String>,
+    /// Stored support polarity copied from `Op::Assert` (ING-03 field; partitioning is Plan 14-02).
+    #[serde(default)]
+    pub polarity: Option<SupportPolarity>,
 }
 
 impl Fact {
@@ -142,6 +148,19 @@ impl GraphFold {
             h.update(f.invalidated_at.unwrap_or(u64::MAX).to_le_bytes());
             h.update(f.claim_id.as_bytes());
             h.update(f.event_id.as_bytes());
+            match &f.delivery_key {
+                Some(k) => {
+                    h.update(b"dkey");
+                    h.update((k.len() as u64).to_le_bytes());
+                    h.update(k.as_bytes());
+                }
+                None => h.update(b"no-dkey"),
+            }
+            h.update(match f.polarity {
+                None => b"pol-none".as_slice(),
+                Some(SupportPolarity::Positive) => b"pol-pos",
+                Some(SupportPolarity::Negative) => b"pol-neg",
+            });
         }
         h.finalize().into()
     }
@@ -179,6 +198,8 @@ impl GraphFold {
                 valid_from,
                 valid_to,
                 claim,
+                delivery_key,
+                polarity,
             } => {
                 let seq = self.next_seq;
                 self.next_seq += 1;
@@ -194,6 +215,8 @@ impl GraphFold {
                     invalidated_at: None,
                     claim_id,
                     event_id: event.id,
+                    delivery_key: delivery_key.clone(),
+                    polarity: *polarity,
                 });
             }
             Op::Behavior {
@@ -217,6 +240,8 @@ impl GraphFold {
                     invalidated_at: None,
                     claim_id: event.id,
                     event_id: event.id,
+                    delivery_key: None,
+                    polarity: None,
                 });
             }
             Op::Retract { event_id } => {
@@ -251,6 +276,8 @@ impl GraphFold {
                             invalidated_at: None,
                             claim_id,
                             event_id: event.id,
+                            delivery_key: None,
+                            polarity: None,
                         });
                     }
                 }
@@ -295,6 +322,8 @@ impl GraphFold {
                         invalidated_at: None,
                         claim_id,
                         event_id: event.id,
+                        delivery_key: None,
+                        polarity: None,
                     });
                 };
                 if let Some((vf, vt)) = prefix {

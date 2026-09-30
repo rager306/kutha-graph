@@ -161,6 +161,8 @@ fn derive_pq_with_justification() -> (Runtime, String) {
             valid_from: 2010,
             valid_to: None,
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
     let event_a = first.receipt.event_ids[0];
@@ -173,6 +175,8 @@ fn derive_pq_with_justification() -> (Runtime, String) {
             valid_from: 2010,
             valid_to: None,
             claim: Some(claim_p),
+            delivery_key: None,
+            polarity: None,
         })
         .unwrap();
     let event_b = second.receipt.event_ids[0];
@@ -219,6 +223,8 @@ fn run_knows_budget(mut rt: Runtime) -> Runtime {
             valid_from: 0,
             valid_to: None,
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .expect("emit Ok is not completion proof — disposition is the oracle");
     rt

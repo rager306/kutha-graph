@@ -27,6 +27,8 @@ fn interval_patch_leaves_vt_2012_and_2021_residuals() {
         valid_from: VF_WIDE,
         valid_to: None,
         claim: None,
+        delivery_key: None,
+        polarity: None,
     })
     .unwrap();
 
@@ -128,6 +130,8 @@ fn whole_version_correct_does_not_invent_residuals() {
         valid_from: VF_WIDE,
         valid_to: None,
         claim: None,
+        delivery_key: None,
+        polarity: None,
     })
     .unwrap();
 
@@ -249,6 +253,8 @@ fn interval_patch_non_intersect_does_not_append() {
         valid_from: VF_WIDE,
         valid_to: Some(PATCH_FROM),
         claim: None,
+        delivery_key: None,
+        polarity: None,
     })
     .unwrap();
     let minting = rt
@@ -292,6 +298,8 @@ fn interval_patch_inverted_does_not_append() {
         valid_from: VF_WIDE,
         valid_to: None,
         claim: None,
+        delivery_key: None,
+        polarity: None,
     })
     .unwrap();
     let minting = rt
@@ -335,6 +343,8 @@ fn interval_patch_not_live_does_not_append() {
         valid_from: VF_WIDE,
         valid_to: None,
         claim: None,
+        delivery_key: None,
+        polarity: None,
     })
     .unwrap();
     let minting = rt

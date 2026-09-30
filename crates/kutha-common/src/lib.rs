@@ -4,5 +4,7 @@
 mod event;
 mod intern;
 
-pub use event::{Event, EventId, Op, OutcomeDisposition, TermId, TransactionTime, ValidTime};
+pub use event::{
+    Event, EventId, Op, OutcomeDisposition, SupportPolarity, TermId, TransactionTime, ValidTime,
+};
 pub use intern::TermDictionary;

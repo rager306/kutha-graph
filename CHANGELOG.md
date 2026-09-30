@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: delivery-key Assert ingest
+
+### Product
+
+### Added
+
+- `Op::Assert` carries an optional `delivery_key` and `SupportPolarity` (default none). Re-emitting an identical Assert with the same non-empty key returns the original `EventId` and does not append a second support.
+
+### Changed
+
+- Fold `Fact` copies `delivery_key` and polarity; both mix into the event digest and fold fingerprint.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. Active Slice remains **S03**. Freeze until M002 unchanged. Not M012 dictionaries-as-facts.
+
 ## 2026-10-01 — Process: lease M012a S03
 
 ### Process

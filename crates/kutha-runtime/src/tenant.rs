@@ -133,6 +133,8 @@ fn emit_chained(
             valid_from: timed[i].0,
             valid_to,
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })?;
     }
     Ok(timed.last().map(|row| row.0))

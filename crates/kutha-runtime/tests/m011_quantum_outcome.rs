@@ -38,6 +38,8 @@ fn crash_after_prefix_has_no_terminal_success_until_explicit_resume() {
             valid_from: 0,
             valid_to: None,
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .expect("Ok is not terminal success");
     let quantum_id = rt
@@ -109,6 +111,8 @@ fn run_knows_budget(mut rt: Runtime) -> Runtime {
             valid_from: 0,
             valid_to: None,
             claim: None,
+            delivery_key: None,
+            polarity: None,
         })
         .expect("emit Ok is not completion proof — disposition is the oracle");
     rt
