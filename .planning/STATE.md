@@ -5,17 +5,16 @@ milestone_name: Semantic core close
 current_phase: 6
 current_phase_name: Typed CSR lease
 status: planning
-stopped_at: Phase 5 complete, ready to plan Phase 6
-last_updated: "2026-09-29T17:02:48.822Z"
+stopped_at: Phase 6 context gathered
+last_updated: "2026-09-30T01:29:26.108Z"
 last_activity: 2026-09-30
 last_activity_desc: Phase 5 complete, transitioned to Phase 6
-state_head: ffaf370245e22789fd6091122a0004f9b8c89e8e
+state_head: 0f69e28961931427025771384e9e8bbfd8de5747
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 5
   completed_plans: 5
-  percent: 40
 ---
 
 # Project State
@@ -104,9 +103,9 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-30
-Stopped at: S06 leased; Phase 6 ready to discuss/plan
-Resume file: .planning/ROADMAP.md
+Last session: 2026-09-30T01:29:26.032Z
+Stopped at: Phase 6 context gathered
+Resume file: .planning/phases/06-typed-csr-lease/06-CONTEXT.md
 Next: `/gsd-discuss-phase 6` (S06 leased in `.kutha/STATE.md`)
 
 ## Operator Next Steps
