@@ -143,10 +143,10 @@ Plans:
   4. VT and TT declare an explicit scale (type, constant, or documented contract) used by fixtures (TIME-01)
   5. Named tests document how fixture years/cuts map to that scale (TT↔wall optional; full calendar map not required) (TIME-02); governor observes the DUR and TIME tests; `uv run kutha-gov ci` stays 0 HIGH; durability *protocol* (segmented WAL / Rocks) stays unstarted
 
-**Plans**: 1/3 plans executed
+**Plans**: 2/3 plans executed
 Plans:
 - [x] 15-01-PLAN.md — DUR-01..03 tracer: verify-on-open, atomic events.jsonl persist, stable Define ids
-- [ ] 15-02-PLAN.md — TIME-01..02: YearCe valid-time and log-sequence transaction-time
+- [x] 15-02-PLAN.md — TIME-01..02: YearCe valid-time and log-sequence transaction-time
 - [ ] 15-03-PLAN.md — Governor observes DUR and TIME oracles; freeze and Proposed map hold
 
 ### Phase 16: Fold-internal hot indexes
@@ -185,7 +185,7 @@ Plans:
 | 12. Log-native SoT | v0.04 | 3/3 | Complete    | 2026-10-01 |
 | 13. Stable references | v0.04 | 3/3 | Complete    | 2026-10-01 |
 | 14. Idempotent ingest | v0.04 | 3/3 | Complete    | 2026-10-01 |
-| 15. Verify, persist, and time scale | v0.04 | 1/3 | In Progress|  |
+| 15. Verify, persist, and time scale | v0.04 | 2/3 | In Progress|  |
 | 16. Fold-internal hot indexes | v0.04 | 0/? | Not started | - |
 
 **Harness citation (not this table):** Active Milestone **M012a**; Active Slice **S03**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012a-S02-done`; `L_capability=ff5-green`; freeze until explicit **M002**. See `.kutha/STATE.md`. Do not overwrite that file.
