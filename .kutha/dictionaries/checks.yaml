@@ -157,22 +157,15 @@ checks:
         message: "setuptools egg-info must not be in the tree: {path}"
 
   - id: observe-required-fn
-    description: FSM observe_cargo required names exist as Rust tests (static, not SoT)
-    selftest:
-      mutations:
-        # A required observe name that no Rust test defines must trip the check.
-        - op: replace_regex
-          path: .kutha/dictionaries/fsm.yaml
-          pattern: '- ff6_unknown_relation_does_not_append'
-          with: "- selftest_no_such_rust_test"
+    description: FSM observe_cargo required names exist as non-vacuous #[test] functions
     steps:
-      - kind: yaml_needles_in_glob
-        path: .kutha/dictionaries/fsm.yaml
-        select: states.observe_cargo.required
-        glob: "crates/**/*.rs"
-        prefix: "fn "
+      - kind: rust_test_asserts
+        names_from_yaml:
+          path: .kutha/dictionaries/fsm.yaml
+          select: states.observe_cargo.required
+          glob: "crates/**/*.rs"
         category: observe-fn
-        message: "FSM required names missing as fn in crates: {missing}"
+        message: "FSM required names missing as asserting #[test]: {missing}"
 
   - id: plane-mix-dicts
     description: process and product relation dictionaries keep distinct schemas
@@ -233,24 +226,14 @@ checks:
   - id: m010-semantic-open
     description: M010 — open recovers intern meanings; Define ops; live intern appends Define
     steps:
-      - kind: file_contains
+      - kind: rust_test_asserts
         path: crates/kutha-runtime/tests/m010_semantic_open.rs
-        needles: ["fn open_without_snapshot_recovers_intern_meanings"]
-        require: all
+        tests:
+          - open_without_snapshot_recovers_intern_meanings
+          - open_without_snapshot_or_terms_file_recovers_from_define_ops
+          - intern_appends_define_for_new_terms_only
         category: m010-s01
-        message: "M010 semantic open test missing {missing}"
-      - kind: file_contains
-        path: crates/kutha-runtime/tests/m010_semantic_open.rs
-        needles: ["fn open_without_snapshot_or_terms_file_recovers_from_define_ops"]
-        require: all
-        category: m010-s02
-        message: "M010 Define-op recovery test missing {missing}"
-      - kind: file_contains
-        path: crates/kutha-runtime/tests/m010_semantic_open.rs
-        needles: ["fn intern_appends_define_for_new_terms_only"]
-        require: all
-        category: m010-s03
-        message: "M010 live intern Define test missing {missing}"
+        message: "M010 semantic open tests missing {missing}"
       - kind: file_contains
         path: crates/kutha-common/src/event.rs
         needles: ["Define"]
@@ -273,24 +256,15 @@ checks:
   - id: m011-claim-supports
     description: M011 — independent supports; unknown claim fail-closed; replay lineage; thin P→Q eligibility
     steps:
-      - kind: file_contains
+      - kind: rust_test_asserts
         path: crates/kutha-runtime/tests/m011_claim_supports.rs
-        needles: ["fn retracting_one_support_leaves_claim_supported"]
-        require: all
+        tests:
+          - retracting_one_support_leaves_claim_supported
+          - unknown_claim_does_not_append
+          - replay_rejects_behavior_without_prior_cause
+          - derived_q_loses_eligibility_when_last_premise_support_withdrawn
         category: m011-s01
-        message: "M011 claim-support test missing {missing}"
-      - kind: file_contains
-        path: crates/kutha-runtime/tests/m011_claim_supports.rs
-        needles: ["fn unknown_claim_does_not_append", "fn replay_rejects_behavior_without_prior_cause"]
-        require: all
-        category: m011-s02
-        message: "M011 claim lineage tests missing {missing}"
-      - kind: file_contains
-        path: crates/kutha-runtime/tests/m011_claim_supports.rs
-        needles: ["fn derived_q_loses_eligibility_when_last_premise_support_withdrawn"]
-        require: all
-        category: m011-s03
-        message: "M011 P→Q eligibility test missing {missing}"
+        message: "M011 claim-support tests missing {missing}"
       - kind: file_contains
         path: crates/kutha-common/src/event.rs
         needles: ["claim"]
@@ -319,12 +293,11 @@ checks:
   - id: m011-partial-correction
     description: M011 S04 — interval-patch residuals; whole-version Correct invents none
     steps:
-      - kind: file_contains
+      - kind: rust_test_asserts
         path: crates/kutha-runtime/tests/m011_partial_correction.rs
-        needles:
-          - "fn interval_patch_leaves_vt_2012_and_2021_residuals"
-          - "fn whole_version_correct_does_not_invent_residuals"
-        require: all
+        tests:
+          - interval_patch_leaves_vt_2012_and_2021_residuals
+          - whole_version_correct_does_not_invent_residuals
         category: m011-s04
         message: "M011 partial-correction tests missing {missing}"
       - kind: file_contains
@@ -343,24 +316,22 @@ checks:
   - id: m011-quantum-outcome
     description: M011 S05 — budgets 0/1/2 Zero/Partial/Full after persist; crash prefix needs explicit resume
     steps:
-      - kind: file_contains
+      - kind: rust_test_asserts
         path: crates/kutha-runtime/tests/m011_quantum_outcome.rs
-        needles:
-          - "fn budgets_0_1_2_distinguish_zero_partial_full_after_persist_open"
-          - "fn crash_after_prefix_has_no_terminal_success_until_explicit_resume"
-        require: all
+        tests:
+          - budgets_0_1_2_distinguish_zero_partial_full_after_persist_open
+          - crash_after_prefix_has_no_terminal_success_until_explicit_resume
         category: m011-s05
         message: "M011 quantum-outcome tests missing {missing}"
 
   - id: m011-typed-csr
     description: M011 S06 — typed CSR lease preserves relation labels and support multiplicity; untyped neighbor-set and FF5 still hold
     steps:
-      - kind: file_contains
+      - kind: rust_test_asserts
         path: crates/kutha-runtime/tests/m011_typed_csr.rs
-        needles:
-          - "fn typed_csr_preserves_relation_labels_and_support_multiplicity"
-          - "fn untyped_csr_neighbor_set_and_ff5_still_hold"
-        require: all
+        tests:
+          - typed_csr_preserves_relation_labels_and_support_multiplicity
+          - untyped_csr_neighbor_set_and_ff5_still_hold
         category: m011-s06
         message: "M011 typed-csr tests missing {missing}"
       - kind: file_contains
@@ -379,12 +350,11 @@ checks:
   - id: m011-provenance
     description: M011 S07 — provenance digest detects caused_by swap and rule_version change while state fingerprint matches
     steps:
-      - kind: file_contains
+      - kind: rust_test_asserts
         path: crates/kutha-runtime/tests/m011_provenance.rs
-        needles:
-          - "fn provenance_detects_caused_by_swap_when_state_fingerprint_matches"
-          - "fn provenance_detects_rule_version_change_when_state_fingerprint_matches"
-        require: all
+        tests:
+          - provenance_detects_caused_by_swap_when_state_fingerprint_matches
+          - provenance_detects_rule_version_change_when_state_fingerprint_matches
         category: m011-s07
         message: "M011 provenance tests missing {missing}"
       - kind: file_contains
@@ -403,13 +373,12 @@ checks:
   - id: m011-e2e
     description: M011 S08 — candidate fixture distinguishes history, evidence, and stale admission at named cuts
     steps:
-      - kind: file_contains
+      - kind: rust_test_asserts
         path: crates/kutha-runtime/tests/m011_e2e_fixture.rs
-        needles:
-          - "fn e2e_fixture_supports_and_conflict_at_named_cuts"
-          - "fn e2e_justification_cites_sources_and_rejects_stale_admission"
-          - "fn e2e_incremental_matches_reconstruct_after_discarding_leases"
-        require: all
+        tests:
+          - e2e_fixture_supports_and_conflict_at_named_cuts
+          - e2e_justification_cites_sources_and_rejects_stale_admission
+          - e2e_incremental_matches_reconstruct_after_discarding_leases
         category: m011-s08
         message: "M011 e2e fixture tests missing {missing}"
       - kind: file_contains
@@ -940,15 +909,17 @@ checks:
           capability: named
         nonempty_list: evidence
         message: "capability=named cells missing evidence tests: {missing}"
-      - kind: yaml_map_list
-        path: .kutha/dictionaries/honeycomb.yaml
-        select: cells
-        when:
-          capability: named
-        list_field: evidence
-        glob: crates/**/*.rs
-        prefix: "fn "
-        message: "honeycomb evidence names missing as fn in crates: {missing}"
+      - kind: rust_test_asserts
+        names_from_yaml:
+          path: .kutha/dictionaries/honeycomb.yaml
+          select: cells
+          field: evidence
+          glob: "crates/**/*.rs"
+        require_evidence_when:
+          field: capability
+          equals: named
+        category: map
+        message: "honeycomb evidence names missing as asserting #[test]: {missing}"
       - kind: yaml_map_list
         path: .kutha/dictionaries/honeycomb.yaml
         select: cells

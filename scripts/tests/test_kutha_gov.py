@@ -722,6 +722,54 @@ class RustTestAssertsTests(unittest.TestCase):
             0, main(["--root", str(ROOT), "precommit", "--check", "h4-membership-as-of"])
         )
 
+    def test_rust_test_names_from_yaml_empty_named_evidence_is_high(self) -> None:
+        root = _rust_tree(
+            {
+                ".kutha/dictionaries/honeycomb.yaml": (
+                    "cells:\n  - id: ADR-X\n    capability: named\n    evidence: []\n"
+                ),
+                "crates/k/tests/t.rs": "#[test]\nfn dummy() { assert!(true); }\n",
+            }
+        )
+        result = _rust_run(
+            root,
+            {
+                "kind": "rust_test_asserts",
+                "names_from_yaml": {
+                    "path": ".kutha/dictionaries/honeycomb.yaml",
+                    "select": "cells",
+                    "field": "evidence",
+                    "glob": "crates/**/*.rs",
+                },
+                "require_evidence_when": {"field": "capability", "equals": "named"},
+            },
+        )
+        self.assertIn("rust-test-evidence", _rust_highs(result))
+
+    def test_rust_test_names_from_yaml_high_when_evidence_fn_missing(self) -> None:
+        root = _rust_tree(
+            {
+                ".kutha/dictionaries/honeycomb.yaml": (
+                    "cells:\n  - id: ADR-X\n    capability: named\n    evidence: [no_such_test]\n"
+                ),
+                "crates/k/tests/t.rs": "#[test]\nfn dummy() { assert!(true); }\n",
+            }
+        )
+        result = _rust_run(
+            root,
+            {
+                "kind": "rust_test_asserts",
+                "names_from_yaml": {
+                    "path": ".kutha/dictionaries/honeycomb.yaml",
+                    "select": "cells",
+                    "field": "evidence",
+                    "glob": "crates/**/*.rs",
+                },
+                "require_evidence_when": {"field": "capability", "equals": "named"},
+            },
+        )
+        self.assertIn("rust-test-missing", _rust_highs(result))
+
 
 if __name__ == "__main__":
     unittest.main()

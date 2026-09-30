@@ -10,6 +10,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Governor kind `rust_test_asserts` proves a named `#[test]` exists without `#[ignore]`, brace-matches the body after stripping comments/strings/chars, and requires an allowed assert or `assert_*` helper. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
 - `h4-membership-as-of` uses that kind instead of an `fn` substring needle. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
+- Remaining `fn`-needle checks (`m010-semantic-open`, `m011-*`, `observe-required-fn`) and honeycomb named evidence resolve through `rust_test_asserts` / `names_from_yaml` / `require_evidence_when`. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
 
 ### Trajectory
 

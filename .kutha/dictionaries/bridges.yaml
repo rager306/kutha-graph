@@ -12,7 +12,7 @@ bridges:
     check: freeze
 
   - id: B-observe-required-fn
-    claim: "FSM observe_cargo.required names exist as fn in crates"
+    claim: "FSM observe_cargo.required names exist as non-vacuous #[test] functions, not fn substring needles"
     cites: "crates/kutha-runtime"
     check: observe-required-fn
 

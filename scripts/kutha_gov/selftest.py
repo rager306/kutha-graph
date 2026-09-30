@@ -330,9 +330,10 @@ def _derive_rust_test_asserts(step: Step, work: Path) -> list[list[Mutation]]:
                         "op": "replace_regex",
                         "path": yaml_path,
                         "pattern": (
-                            r"(?s)("
+                            r"(?m)^("
+                            + r"[ \t]*"
                             + re.escape(f"{field}: {equals}")
-                            + r"\n(?:    .+\n)*?    evidence: )(\[[^\]]*\])"
+                            + r"\n(?:[ \t]+.+\n)*?[ \t]+evidence: )(\[[^\]]+\])"
                         ),
                         "with": r"\1[]",
                     }

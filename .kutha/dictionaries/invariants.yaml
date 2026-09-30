@@ -120,7 +120,7 @@ invariants:
     check: bridges-ledger
 
   - id: I-honeycomb-ledger
-    claim: "Honeycomb cells have a compact governor index with orthogonal stages and links"
+    claim: "Honeycomb cells have a compact governor index; capability named requires non-empty evidence that resolves to asserting #[test] functions"
     source: "docs/process/governor-intake.md"
     disposition: check
     check: honeycomb-ledger
