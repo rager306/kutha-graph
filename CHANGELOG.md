@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: M012a S04+S05 verify, persist, time scale
+
+### Product
+
+- `open` verifies snapshot via `replay_check` (tampered snapshot → `InvalidData`).
+- `persist` replaces `events.jsonl` atomically (temp + rename). `Define` ids are name-stable (`Event::stable_define`).
+- `TimeScale::{YearCe, LogSequence}` declared; fixture oracles map years and TT as log sequence.
+
+### Process
+
+- Governor `m012a-s04-verify-persist` / `m012a-s05-time-scale` + FSM observe for five DUR/TIME tests. GSD Phase 15 closed.
+
+### Trajectory
+
+- `L_delivery=M012a-S05-done`; Active Slice **None** until S06 leased. Active Milestone stays M012a. Freeze until M002 unchanged.
+
 ## 2026-10-01 — Process: governor observes DUR-01..03 and TIME-01..02
 
 ### Process

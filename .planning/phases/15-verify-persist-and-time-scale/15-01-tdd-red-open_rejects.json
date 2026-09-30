@@ -1,0 +1,8 @@
+{
+  "command": "cargo test -p kutha-runtime --offline --test m012a_verify_persist open_rejects_tampered_snapshot -- --exact --nocapture",
+  "exitCode": 101,
+  "targetTest": "open_rejects_tampered_snapshot",
+  "expected": "store::open returns Err InvalidData whose Display contains ReplayDivergenceError; do not unwrap a Runtime",
+  "actual": "open yielded a Runtime after fold.facts was popped from snapshot.json",
+  "output": "not ok 1 - open_rejects_tampered_snapshot\n# tests 1\n# pass 0\n# fail 1\n\nrunning 1 test\n\nthread 'open_rejects_tampered_snapshot' panicked at crates/kutha-runtime/tests/m012a_verify_persist.rs:76:18:\ntampered snapshot must not yield a Runtime\ntest open_rejects_tampered_snapshot ... FAILED\n\nfailures:\n    open_rejects_tampered_snapshot\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1 filtered out\n"
+}

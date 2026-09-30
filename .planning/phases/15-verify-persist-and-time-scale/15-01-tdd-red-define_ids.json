@@ -1,0 +1,8 @@
+{
+  "command": "cargo test -p kutha-runtime --offline --test m012a_verify_persist define_ids_stable_across_persist_open -- --exact --nocapture",
+  "exitCode": 101,
+  "targetTest": "define_ids_stable_across_persist_open",
+  "expected": "Define name-to-id map equal across persist then open then persist",
+  "actual": "second jsonl reminted UUID v7 Define ids",
+  "output": "not ok 1 - define_ids_stable_across_persist_open\n# tests 1\n# pass 0\n# fail 1\n\nassertion `left == right` failed: same term set must keep the same Define Event.id across persist/open/persist\ntest define_ids_stable_across_persist_open ... FAILED\n"
+}

@@ -63,7 +63,7 @@ Full detail: [milestones/v0.03-ROADMAP.md](./milestones/v0.03-ROADMAP.md) · req
 - [x] **Phase 12: Log-native SoT** - Outcomes, justifications, and resume are log records; sidecars are droppable leases (M012a S01) (completed 2026-10-01)
 - [x] **Phase 13: Stable references** - Retract, Correct, and justification cites target EventId / proposition id, not fold-local `fact_seq` (M012a S02) (completed 2026-10-01)
 - [x] **Phase 14: Idempotent ingest** - Same delivery key does not mint a second support; claim ≠ support slot (M012a S03) (completed 2026-10-01)
-- [ ] **Phase 15: Verify, persist, and time scale** - Verify-on-open, atomic log persist, stable Define ids, declared VT/TT scale (M012a S04 + S05)
+- [x] **Phase 15: Verify, persist, and time scale** - Verify-on-open, atomic log persist, stable Define ids, declared VT/TT scale (M012a S04 + S05) (completed 2026-10-01)
 - [ ] **Phase 16: Fold-internal hot indexes** - Hot `as_of` / `claim_supported_at` skip full fact scans; CSR stays a lease (M012a S06)
 
 ## Phase Details
@@ -143,7 +143,7 @@ Plans:
   4. VT and TT declare an explicit scale (type, constant, or documented contract) used by fixtures (TIME-01)
   5. Named tests document how fixture years/cuts map to that scale (TT↔wall optional; full calendar map not required) (TIME-02); governor observes the DUR and TIME tests; `uv run kutha-gov ci` stays 0 HIGH; durability *protocol* (segmented WAL / Rocks) stays unstarted
 
-**Plans**: 3/3 plans executed
+**Plans**: 3/3 plans complete
 Plans:
 - [x] 15-01-PLAN.md — DUR-01..03 tracer: verify-on-open, atomic events.jsonl persist, stable Define ids
 - [x] 15-02-PLAN.md — TIME-01..02: YearCe valid-time and log-sequence transaction-time
@@ -185,7 +185,7 @@ Plans:
 | 12. Log-native SoT | v0.04 | 3/3 | Complete    | 2026-10-01 |
 | 13. Stable references | v0.04 | 3/3 | Complete    | 2026-10-01 |
 | 14. Idempotent ingest | v0.04 | 3/3 | Complete    | 2026-10-01 |
-| 15. Verify, persist, and time scale | v0.04 | 3/3 | In Progress|  |
+| 15. Verify, persist, and time scale | v0.04 | 3/3 | Complete    | 2026-10-01 |
 | 16. Fold-internal hot indexes | v0.04 | 0/? | Not started | - |
 
 **Harness citation (not this table):** Active Milestone **M012a**; Active Slice **S03**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012a-S02-done`; `L_capability=ff5-green`; freeze until explicit **M002**. See `.kutha/STATE.md`. Do not overwrite that file.

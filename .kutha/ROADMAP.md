@@ -68,9 +68,9 @@ Proposed close-out of the semantic core (source: `docs/architecture/semantic-con
   > After this: Retract/Correct/justification target EventId (or proposition id), not fold-local fact_seq.
 - [x] **S03: Idempotent ingest and proposition polarity** `risk:medium` `depends:[S02]`
   > After this: re-emitting an identical Assert is a no-op or keyed delivery; conflict polarity is not caller-only free strings.
-- [ ] **S04: Verify-on-open, atomic persist, stable Define** `risk:high` `depends:[S01]`
+- [x] **S04: Verify-on-open, atomic persist, stable Define** `risk:high` `depends:[S01]`
   > After this: `open` runs replay_check (or equivalent) against snapshot identity; persist is rename-into-place; Define ids survive re-persist.
-- [ ] **S05: Declared time scale** `risk:low` `depends:[]`
+- [x] **S05: Declared time scale** `risk:low` `depends:[]`
   > After this: VT/TT document a scale (and optional TT↔wall map); fixtures use that scale explicitly.
 - [ ] **S06: Fold-internal indexes for hot reads** `risk:medium` `depends:[S02]`
   > After this: `as_of` / `claim_supported_at` do not scan the full fact vector at the leased N; CSR path stays a lease.
