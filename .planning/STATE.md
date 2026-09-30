@@ -107,7 +107,7 @@ None yet.
 Last session: 2026-09-30T02:09:07.245Z
 Stopped at: Phase 7 context gathered
 Resume file: .planning/phases/07-provenance-and-rule-version-check/07-CONTEXT.md
-Next: `/gsd-discuss-phase 7` (S07 leased in `.kutha/STATE.md`)
+Next: `/gsd-plan-phase 7` (S07 leased in `.kutha/STATE.md`)
 
 ## Operator Next Steps
 
