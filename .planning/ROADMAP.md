@@ -82,10 +82,10 @@ Full detail: [milestones/v0.03-ROADMAP.md](./milestones/v0.03-ROADMAP.md) · req
   3. `provenance_fingerprint` (or successor) mixes those log-native outcome/justification bytes, not only in-log Behavior rows (LOG-03)
   4. Named cargo tests for the three LOG oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; FF5/FF6 stay green; honeycomb stays Proposed; M012 dictionaries-as-facts and M002 Rocks stay unstarted
 
-**Plans**: 1/3 plans executed
+**Plans**: 2/3 plans executed
 Plans:
 - [x] 12-01-PLAN.md — LOG-01 tracer: quantum outcomes as log records; discard outcomes sidecar reconstructs disposition
-- [ ] 12-02-PLAN.md — LOG-02: justifications and resume as log records; sidecars are leases
+- [x] 12-02-PLAN.md — LOG-02: justifications and resume as log records; sidecars are leases
 - [ ] 12-03-PLAN.md — LOG-03: provenance mixes log-native bytes; governor observes the three LOG oracles
 
 ### Phase 13: Stable references
@@ -170,7 +170,7 @@ Plans:
 | 9. H5 lease + lean agent context | v0.03 | 2/2 | Complete | 2026-09-30 |
 | 10. ADR and roadmap correction | v0.03 | 2/2 | Complete | 2026-09-30 |
 | 11. Semantic governor | v0.03 | 4/4 | Complete | 2026-09-30 |
-| 12. Log-native SoT | v0.04 | 1/3 | In Progress|  |
+| 12. Log-native SoT | v0.04 | 2/3 | In Progress|  |
 | 13. Stable references | v0.04 | 0/? | Not started | - |
 | 14. Idempotent ingest | v0.04 | 0/? | Not started | - |
 | 15. Verify, persist, and time scale | v0.04 | 0/? | Not started | - |
