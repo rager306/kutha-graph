@@ -20,10 +20,10 @@ Each requirement maps to exactly one roadmap phase (one phase per harness slice)
 - [x] **OUT-01**: Developer can tell zero, partial, and full progress apart for budgets 0/1/2 from persisted quantum outcome records
 - [x] **OUT-02**: Developer can reopen a log after a crash following a committed prefix and see no terminal-success record; resume is an explicit record, never inferred
 
-### Typed CSR lease (M011 S06 — blocked until leased)
+### Typed CSR lease (M011 S06 — delivered)
 
-- [ ] **CSR-01**: Developer can query a CSR lease where the same endpoints carry different relations or supports and see labels and support multiplicity preserved
-- [ ] **CSR-02**: Developer still gets the untyped neighbor-set path, and the FF5 lease-agrees-with-fold check stays green
+- [x] **CSR-01**: Developer can query a CSR lease where the same endpoints carry different relations or supports and see labels and support multiplicity preserved
+- [x] **CSR-02**: Developer still gets the untyped neighbor-set path, and the FF5 lease-agrees-with-fold check stays green
 
 ### Provenance (M011 S07 — blocked until leased)
 
@@ -68,8 +68,8 @@ Primary owner is listed below. GATE-01/02/03 still apply to every slice's succes
 | GATE-01 | Phase 4 | Complete |
 | OUT-01 | Phase 5 | Complete |
 | OUT-02 | Phase 5 | Complete |
-| CSR-01 | Phase 6 | Pending |
-| CSR-02 | Phase 6 | Pending |
+| CSR-01 | Phase 6 | Complete |
+| CSR-02 | Phase 6 | Complete |
 | PROV-01 | Phase 7 | Pending |
 | PROV-02 | Phase 7 | Pending |
 | FIX-01 | Phase 8 | Pending |

@@ -15,10 +15,11 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Process
 
 - FSM `observe_cargo.required` plus `m011-typed-csr` / `B-m011-typed-csr` needles for named CSR-01 and CSR-02 tests (GATE-01).
+- Harness lease advanced: **S06** delivered (`L_delivery=M011-S06-done`); Active Slice **None**. S07–S08 remain unleased. Not ADR Accepted; not closed product delivery.
 
 ### Trajectory
 
-- ADR-040 and ADR-041 honeycomb evidence names `typed_csr_preserves_relation_labels_and_support_multiplicity` and `untyped_csr_neighbor_set_and_ff5_still_hold`; map stays Proposed on both (not Accepted, not L_capability). Green governor is not ADR Accepted and not L_capability.
+- **S06 delivered** (`L_delivery=M011-S06-done`); Active Slice cleared until an explicit S07+ lease. ADR-040 and ADR-041 honeycomb evidence names `typed_csr_preserves_relation_labels_and_support_multiplicity` and `untyped_csr_neighbor_set_and_ff5_still_hold`; map stays Proposed on both (not Accepted, not L_capability). Green governor is not ADR Accepted and not L_capability.
 
 ## 2026-09-30 — Process: lease Active Slice S06 after S05 delivery
 

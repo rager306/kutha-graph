@@ -41,7 +41,7 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 - [x] **S03: Thin P→Q derivation eligibility** `risk:medium` `depends:[S02]`
   > After this: Behavior-derived `Q` is eligible at a cut iff its premise claim still has a live support; retracting one of two supports leaves `Q` eligible; retracting the last drops eligibility without erasing historical `Q`; named test green.
 
-### M011 tail — S05 done; Active Slice S06
+### M011 tail — S06 done; S07–S08 unleased
 
 Proposed close-out of the semantic core (source: `docs/architecture/semantic-contract-validation.md` "Remaining decisions"). Each slice needs an explicit Active Slice lease in `.kutha/STATE.md` before any code. Order is by risk; stop when one fixture separates preserved history, current evidence, and allowed action.
 
@@ -49,7 +49,7 @@ Proposed close-out of the semantic core (source: `docs/architecture/semantic-con
   > After this: an explicit interval-patch correction leaves residual versions on both sides of the corrected VT range while whole-version `Correct` is unchanged; named test on the fixture's VT 2012 / 2021 residuals.
 - [x] **S05: Persisted quantum outcome and continuation** `risk:medium` `depends:[S03]`
   > After this: budgets 0/1/2 and a crash after a committed prefix are distinguishable; missing terminal evidence is never read as success; resume is an explicit record; named test green.
-- [ ] **S06: Typed CSR lease keeps labels and support multiplicity** `risk:medium` `depends:[S03]`
+- [x] **S06: Typed CSR lease keeps labels and support multiplicity** `risk:medium` `depends:[S03]`
   > After this: same endpoints with different relations or supports survive the lease; the untyped neighbor-set path stays available; named test green.
 - [ ] **S07: Provenance and rule-version check apart from state replay** `risk:high` `depends:[S04]`
   > After this: changing only a causal reference or a pinned rule version is detected even when the state fingerprint still matches; execution replay stays out of scope.

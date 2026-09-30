@@ -2,19 +2,20 @@
 gsd_state_version: "1.0"
 milestone: v0.02
 milestone_name: Semantic core close
-current_phase: 6
-current_phase_name: Typed CSR lease
-status: ready_to_execute
-stopped_at: Phase 6 plans complete
-last_updated: "2026-09-30T01:42:31.564Z"
+current_phase: 7
+current_phase_name: Provenance and rule-version check
+status: planning
+stopped_at: Phase 6 complete — typed CSR lease delivered; Active Slice None
+last_updated: "2026-09-30T08:30:00.000Z"
 last_activity: 2026-09-30
-last_activity_desc: Phase 6 PLAN.md files written (06-01, 06-02)
-state_head: f6eacbe7114cd6ad27dd2bd597acc2aa32f3c63a
+last_activity_desc: Phase 6 delivered (S06); lease cleared until S07
+state_head: d93e23159d1c5a9fe2bf10c3af63b162c2f8d2e9
 progress:
   total_phases: 5
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 7
-  completed_plans: 5
+  completed_plans: 7
+  percent: 60
 ---
 
 # Project State
@@ -24,25 +25,25 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** Phase 6 — Typed CSR lease (M011 **S06** leased). S05 delivered; S07–S08 unleased.
+**Current focus:** Phase 7 — Provenance and rule-version check (planning-only until harness leases **S07**). S06 delivered.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M011**; Active Slice **S06**; Phase **H4**; `L_map=honeycomb-proposed`; `L_delivery=M011-S05-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
+**Harness lease (cite only):** Active Milestone **M011**; Active Slice **None**; Phase **H4**; `L_map=honeycomb-proposed`; `L_delivery=M011-S06-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
 
 ## Current Position
 
-Phase: 6 (Typed CSR lease) — READY TO EXECUTE
-Plan: 01 (of 02) ready
-Status: Ready to execute (plans written)
-Last activity: 2026-09-30 — Phase 6 PLAN.md complete (06-01 tracer, 06-02 GATE)
+Phase: 7 — Provenance and rule-version check
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-09-30 — Phase 6 delivered (S06); Active Slice None
 
-Progress: [████░░░░░░] 40%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5 (v0.01)
+- Total plans completed: 7 (v0.01)
 - Average duration: 2min
 - Total execution time: ~23min
 
@@ -56,6 +57,7 @@ Progress: [████░░░░░░] 40%
 | 4–8 (v0.02) | 0/TBD | — | — |
 | 4 | 3 | - | - |
 | 5 | 2 | - | - |
+| 6 | 2 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 02-03 (1min), 03-01 (5min), 03-02 (5min), 03-03 (4min)
@@ -92,7 +94,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phases 7–8 remain lease-gated until `.kutha/STATE.md` names S07–S08 as Active Slice. Phase 6 (S06) is leased and executable.
+- Phases 7–8 remain lease-gated until `.kutha/STATE.md` names S07–S08 as Active Slice. Phase 6 (S06) is delivered (`L_delivery=M011-S06-done`; Active Slice None).
 - Do not start M002, legal pack, Cypher, HNSW, or ADR-050 because a GSD phase is planned — freeze holds until STATE names otherwise.
 
 ## Deferred Items
@@ -103,11 +105,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-09-30T01:45:00.000Z
-Stopped at: Phase 6 plans complete
-Resume file: .planning/phases/06-typed-csr-lease/06-01-PLAN.md
-Next: `/gsd-execute-phase 6` (S06 leased)
+Last session: 2026-09-30T08:30:00.000Z
+Stopped at: Phase 6 complete — typed CSR lease delivered; Active Slice None
+Resume file: .planning/phases/06-typed-csr-lease/06-VERIFICATION.md
+Next: lease S07 in `.kutha/STATE.md`, then `/gsd-discuss-phase 7`
 
 ## Operator Next Steps
 
-- Phase 6 plans ready under Active Slice **S06**. Execute next (`/gsd-execute-phase 6`). Do not edit `.kutha/STATE.md` during delivery. Freeze holds.
+- Phase 6 delivered. Next: lease S07 (Active Slice S07), then discuss Phase 7. Do not auto-lease. Freeze holds until STATE names M002+.

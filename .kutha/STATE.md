@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M011
-**Active Slice:** S06
+**Active Slice:** None
 **Phase:** H4
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M011-S05-done
+L_delivery=M011-S06-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M011 S05 done (persisted quantum outcomes); Active Slice **S06** leased | Capability proven / Rocks started / M002 leased |
+| L_delivery | M011 S06 done (typed CSR lease); S07–S08 unleased | Capability proven / Rocks started / M002 leased |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M011 S05 is in.** Active Slice **S06** (typed CSR lease keeps labels and support multiplicity) is leased; S07–S08 are candidates and remain unleased. Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW.
+**M011 S06 is in.** Typed CSR preserves labels and support multiplicity; untyped neighbor-set and FF5 stay green. S07–S08 stay candidates until an Active Slice lease names one. Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW.
 
 ## Freeze (until explicit M002 lease)
 
