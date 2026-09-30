@@ -6,7 +6,7 @@
 
 **Active Milestone:** M011
 **Active Slice:** None
-**Phase:** H4
+**Phase:** H5
 
 ## Lifecycles (do not collapse)
 
@@ -24,7 +24,7 @@ L_capability=ff5-green
 
 ## Next action
 
-**M011 S08 is in.** One end-to-end fixture separates preserved history, current evidence, and allowed action at named cuts (FIX-01…03). Active Slice cleared. Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW. Honeycomb stays Proposed (GATE-03).
+**H5 is a harness/docs-only rung.** Do not edit product crates on this rung. Product fixes wait for an explicit M012a lease. Do **not** start a legal pack. Do **not** start M002 (Rocks) until STATE names it. Do not open ADR-100. Do not implement Cypher/HNSW. Honeycomb stays Proposed (GATE-03).
 
 ## Freeze (until explicit M002 lease)
 

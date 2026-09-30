@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-30 — Process: name harness phase H5 on the operator lease
+
+### Process
+
+- Harness phase named **H5** on the operator lease. The Process history for H5 plus the AGENTS diet is Phase 11 SEM-08. Not ADR Accepted.
+
+### Trajectory
+
+- Operator Phase is **H5**; Active Milestone stays M011; Active Slice None; freeze and honeycomb Proposed unchanged. Green governor is not ADR Accepted and not L_capability.
+
 ## 2026-09-30 — Product: end-to-end candidate fixture
 
 ### Product
