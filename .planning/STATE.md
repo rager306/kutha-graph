@@ -5,18 +5,18 @@ milestone_name: Single-log SoT + stable references
 current_phase: 14
 current_phase_name: Idempotent ingest
 current_plan: 3
-status: executing
-stopped_at: Completed 14-02-PLAN.md
-last_updated: "2026-09-30T18:38:51.033Z"
+status: verifying
+stopped_at: Completed 14-03-PLAN.md
+last_updated: "2026-09-30T18:41:59.261Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 14 plans 14-01..14-03 written
-state_head: b6f6fd89f01fb5126008dd463329eb23f1411d41
+state_head: aa0fa3438cf13753f89f79296bbbceb0225c26c8
 progress:
   total_phases: 5
   completed_phases: 13
   total_plans: 9
-  completed_plans: 8
-  percent: 89
+  completed_plans: 9
+  percent: 100
 ---
 
 # Project State
@@ -38,10 +38,10 @@ Current Plan: 3
 Total Plans in Phase: 3
 Phase: 14 of 16 (Idempotent ingest)
 Plan: 3 of 3
-Status: executing
+Status: Phase complete — ready for verification
 Last activity: 2026-10-01 — Phase 14 plans 14-01..14-03 written
 
-Progress: [█████████░] 89% (v0.04 plans executed)
+Progress: [██████████] 100% (v0.04 plans executed)
 
 ## Performance Metrics
 
@@ -83,6 +83,7 @@ Progress: [█████████░] 89% (v0.04 plans executed)
 | Phase 13 P03 | 5 | 2 tasks | 6 files |
 | Phase 14 P01 | 8 | 2 tasks | 20 files |
 | Phase 14 P02 | 4 | 2 tasks | 6 files |
+| Phase 14 P03 | 3 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -113,6 +114,8 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 14]: SupportPolarity lands with default None so Plan 14-02 does not reshape Assert again
 - [Phase 14]: Residuals copy polarity; object-changing Correct/CorrectInterval rows flip when old polarity is Some
 - [Phase 14]: e2e t1 Asserts store Positive so t2 interior not-P is Negative without an opposite-of dictionary
+- [Phase 14]: Governor check lives on bridges.yaml, not invariants.yaml
+- [Phase 14]: ADR-011 and ADR-013 evidence append only; map stays Proposed
 
 ### Pending Todos
 
@@ -135,8 +138,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T18:38:49.667Z
-Stopped at: Completed 14-02-PLAN.md
+Last session: 2026-09-30T18:41:58.964Z
+Stopped at: Completed 14-03-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 13`. Harness lease is already S02. Freeze holds. Do not lease M002 without explicit operator intent.
 
