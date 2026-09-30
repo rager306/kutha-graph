@@ -290,6 +290,10 @@ White space vs Graphiti/Zep (memory layer), FalkorDB (perf, weak agents/temporal
 - kutkha vs kutha vs alternatives; trademark pass.
 - License for core vs agent packs vs legal ontology packs.
 
+### Open question (2026-09-30)
+
+Pointer only, from docs/architecture/semantic-gap-review.md (F7, D4): D4 names `valid_from` / `valid_to` / `ingested_at` / `invalidated_at` and native AS OF. It does not declare a calendar or epoch scale, nor a mapping from transaction-time to wall time. This question does not rewrite D1–D10 lock wording.
+
 ---
 
 ## Research & Detailing Backlog

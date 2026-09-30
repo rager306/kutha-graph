@@ -6,6 +6,7 @@ process: docs/process/governor-intake.md
 # map ∈ ADR Status. delivery ∈ {map-only | frozen | spike}. capability ∈ {none | named}.
 # Edit a row when a stage or edge changes; ADR body stays the narrative home.
 # 2026-09-30 restage (10-02 tracer): ADR-012; map/delivery/capability unchanged.
+# 2026-09-30 restage (10-02 remaining amends): ADR-000, ADR-013, ADR-014, ADR-050, ADR-060; map/delivery/capability unchanged.
 
 locks:
   - id: D1

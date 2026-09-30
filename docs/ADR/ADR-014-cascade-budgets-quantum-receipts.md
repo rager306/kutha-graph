@@ -57,6 +57,10 @@ Completion evidence and enough information to reconstruct or explicitly reject c
 
 Current `Runtime::emit` returns `Ok(QuantumOutcome)` even when its receipt says budget-aborted, may retain a committed prefix, and `store::persist` does not persist that receipt. Call success is therefore not quantum completion. Future budget-0/1/2 and crash-boundary fixtures must test this distinction before stronger guarantees are claimed.
 
+### Clarification (2026-09-30; Proposed)
+
+Target contract, from docs/architecture/semantic-gap-review.md (F1): authoritative completion records are log records; sidecars and caches are leases. Outcomes, justifications, and resume evidence needed after dropping a receipt must survive as log records, not as the only copy in a dropped sidecar. Exact encoding remains an implementation choice; the SoT kind is not. This subsection does not rewrite D014-1…D014-5 and does not mark this cell Accepted.
+
 **Hard separations:**
 
 ```text

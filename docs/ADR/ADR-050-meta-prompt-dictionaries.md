@@ -92,6 +92,10 @@ Planner cost model     ≠  This cell (ADR-043)
 Hindsight / Graphiti   ≠  Agent memory SoT
 ```
 
+### Clarification (2026-09-30; Proposed)
+
+Target contract, from docs/architecture/semantic-gap-review.md (F5): admission status is a bi-temporal fact (ADR-013 stamps). The policy version that admitted or refused is pinned in the log, not only in a dropped receipt. D050-2 remains fail-closed propose→validate→log; this subsection names the recorded status and version, not a new dictionary kind. This subsection does not rewrite D050-1…D050-6 and does not mark this cell Accepted.
+
 ## Consequences
 
 ### Positive

@@ -47,6 +47,10 @@ R3-style “what if this behavior were different” over a recorded cut belongs 
 
 `Runtime::replay_check` currently checks a fold fingerprint **and** that every `Op::Behavior.caused_by` names an earlier event in the same log (M011 S02). It still does not rerun behaviors or compare receipts. The passing check does not prove execution-replay obligation 3. An explicit unavailable outcome for missing code/cache/history remains a **proposed** requirement: today's API returns `Ok(rebuilt)` or `RuntimeError::ReplayDivergence` / `BrokenLineage` (and I/O errors from `store::open`).
 
+### Clarification (2026-09-30; Proposed)
+
+Target contract, from docs/architecture/semantic-gap-review.md (F1): provenance/integrity (obligation 2) validates quantum outcomes as log records, not as an extra source-of-truth file. Sidecar bytes are leases; omitting them from a fingerprint must not hide a SoT gap. State replay (obligation 1) and execution replay (obligation 3) are unchanged. This subsection does not rewrite D060-1…D060-3 and does not mark this cell Accepted.
+
 **Hard separations:**
 
 ```text
