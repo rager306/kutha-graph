@@ -125,6 +125,11 @@ fn op_relation(op: &Op) -> Option<TermId> {
     }
 }
 
+/// Fold-affecting ops only. `Define` and `QuantumOutcome` stay on the log as meta (LOG-01).
+fn op_affects_fold(op: &Op) -> bool {
+    !matches!(op, Op::Define { .. } | Op::QuantumOutcome { .. })
+}
+
 impl std::error::Error for RuntimeError {}
 
 pub(crate) fn cascade_limit() -> usize {
@@ -207,13 +212,10 @@ impl Runtime {
         &self.log
     }
 
-    /// Count of non-`Define` events (graph ops). Snapshot `log_offset` uses this so open-with-snapshot
-    /// stays aligned with the Define-stripped durable graph stream.
+    /// Count of fold-affecting events. Snapshot `log_offset` uses this so open-with-snapshot
+    /// stays aligned with the graph stream (`Define` and `QuantumOutcome` excluded).
     pub fn graph_len(&self) -> usize {
-        self.log
-            .iter()
-            .filter(|e| !matches!(e.op, Op::Define { .. }))
-            .count()
+        self.log.iter().filter(|e| op_affects_fold(&e.op)).count()
     }
 
     pub fn fold(&self) -> &GraphFold {
@@ -442,17 +444,28 @@ impl Runtime {
 
     pub fn from_snapshot(snap: Snapshot, all_events: Vec<Event>) -> Self {
         let dict = TermDictionary::from_strings(snap.dict_strings);
-        // Snapshot offset indexes the graph stream; Define ops are durable SoT but not fold/offset.
+        // Snapshot offset indexes fold-affecting ops. Keep QuantumOutcome on the log (LOG-01).
         let graph: Vec<Event> = all_events
             .into_iter()
             .filter(|e| !matches!(e.op, Op::Define { .. }))
             .collect();
         let mut fold = snap.fold;
         let mut next_tt = snap.next_tt;
-        let offset = snap.log_offset.min(graph.len());
-        for e in &graph[offset..] {
-            fold.apply(e);
-            next_tt = next_tt.max(e.ingested_at.saturating_add(1));
+        let offset = snap.log_offset;
+        let mut fold_seen = 0usize;
+        for e in &graph {
+            let affects = op_affects_fold(&e.op);
+            let in_tail = fold_seen >= offset;
+            if affects {
+                if in_tail {
+                    fold.apply(e);
+                    next_tt = next_tt.max(e.ingested_at.saturating_add(1));
+                }
+                fold_seen += 1;
+            } else if in_tail {
+                fold.apply(e);
+                next_tt = next_tt.max(e.ingested_at.saturating_add(1));
+            }
         }
         let mut rt = Self {
             log: EventLog::from_events(graph),
