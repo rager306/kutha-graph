@@ -64,7 +64,7 @@ Full detail: [milestones/v0.03-ROADMAP.md](./milestones/v0.03-ROADMAP.md) · req
 - [x] **Phase 13: Stable references** - Retract, Correct, and justification cites target EventId / proposition id, not fold-local `fact_seq` (M012a S02) (completed 2026-10-01)
 - [x] **Phase 14: Idempotent ingest** - Same delivery key does not mint a second support; claim ≠ support slot (M012a S03) (completed 2026-10-01)
 - [x] **Phase 15: Verify, persist, and time scale** - Verify-on-open, atomic log persist, stable Define ids, declared VT/TT scale (M012a S04 + S05) (completed 2026-10-01)
-- [ ] **Phase 16: Fold-internal hot indexes** - Hot `as_of` / `claim_supported_at` skip full fact scans; CSR stays a lease (M012a S06)
+- [x] **Phase 16: Fold-internal hot indexes** - Hot `as_of` / `claim_supported_at` skip full fact scans; CSR stays a lease (M012a S06) (completed 2026-10-01)
 
 ## Phase Details
 
@@ -163,11 +163,11 @@ Plans:
   3. Materializer vs `from_fold` is either wired on the hot path or explicitly deferred with a named test/guard documenting the spike limit (HOT-03)
   4. Named cargo tests for the HOT oracles are observed by the governor; FF5 stays green; `uv run kutha-gov ci` stays 0 HIGH; ADR-061 full GED-class diff stays out of M012a
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 Plans:
 - [x] 16-01-PLAN.md — HOT-01 tracer: fold-internal index for as_of / claim_supported_at
 - [x] 16-02-PLAN.md — HOT-02/HOT-03: droppable CSR; csr_lease_at via Materializer
-- [ ] 16-03-PLAN.md — Governor observes HOT oracles; freeze and Proposed map hold
+- [x] 16-03-PLAN.md — Governor observes HOT oracles; freeze and Proposed map hold
 
 ## Progress
 
@@ -190,7 +190,7 @@ Plans:
 | 13. Stable references | v0.04 | 3/3 | Complete    | 2026-10-01 |
 | 14. Idempotent ingest | v0.04 | 3/3 | Complete    | 2026-10-01 |
 | 15. Verify, persist, and time scale | v0.04 | 3/3 | Complete    | 2026-10-01 |
-| 16. Fold-internal hot indexes | v0.04 | 2/3 | In Progress|  |
+| 16. Fold-internal hot indexes | v0.04 | 3/3 | Complete   | 2026-10-01 |
 
 **Harness citation (not this table):** Active Milestone **M012a**; Active Slice **S03**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012a-S02-done`; `L_capability=ff5-green`; freeze until explicit **M002**. See `.kutha/STATE.md`. Do not overwrite that file.
 
