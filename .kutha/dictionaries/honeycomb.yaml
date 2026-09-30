@@ -5,6 +5,7 @@ process: docs/process/governor-intake.md
 # Not ADR-050 product dictionaries. Not a delivery backlog. Not invariants.yaml.
 # map ∈ ADR Status. delivery ∈ {map-only | frozen | spike}. capability ∈ {none | named}.
 # Edit a row when a stage or edge changes; ADR body stays the narrative home.
+# 2026-09-30 restage (10-02 tracer): ADR-012; map/delivery/capability unchanged.
 
 locks:
   - id: D1

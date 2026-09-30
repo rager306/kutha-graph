@@ -65,6 +65,10 @@ Legal hold             ≠  LSM tombstone
 Defined AS-OF failure  ≠  Silent hole after GC
 ```
 
+### Clarification (2026-09-30; Proposed)
+
+Target contract, from docs/architecture/semantic-gap-review.md (F6): snapshots remain leases of the log (D012-1). Snapshot identity is the pair (log offset, fingerprint) and must be verified when that snapshot is opened. Persist of the log is atomic and append-only; a truncated or rewritten log file is not a legal open. Tampered snapshot bytes that disagree with the retained log fail closed on open, not only on later semantic replay. This subsection does not rewrite D012-1…D012-5 and does not mark this cell Accepted.
+
 ## Consequences
 
 ### Positive

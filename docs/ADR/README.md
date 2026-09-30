@@ -106,6 +106,8 @@ Manifest / algorithms: [`../architecture/stca-guide.md`](../architecture/stca-gu
 
 Cross-cell contract review (2026-09-13): [semantic contract validation](../architecture/semantic-contract-validation.md). It connects recovery, supports, temporal cuts, trace/admission, and completion to proposed acceptance probes. It is not a new milestone or evidence that those capabilities ship.
 
+Semantic-gap review (2026-09-30): [semantic gap review](../architecture/semantic-gap-review.md). Proposed review, not an ADR, not delivery authorization.
+
 ## Process
 
 1. **Research** — hypothesis and detail plan (not final).
