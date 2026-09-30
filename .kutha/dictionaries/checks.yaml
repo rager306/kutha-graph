@@ -394,6 +394,18 @@ checks:
         category: m011-s08
         message: "e2e APIs missing: {missing}"
 
+  - id: m012a-s01-log-native
+    description: M012a S01 — log-native outcomes, justifications, and provenance mix
+    steps:
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m012a_log_native.rs
+        tests:
+          - discard_outcomes_sidecar_keeps_reconstructible_disposition
+          - discard_justifications_sidecar_keeps_admission_and_resume
+          - provenance_fingerprint_moves_when_log_native_record_bytes_change
+        category: m012a-s01
+        message: "M012a S01 log-native tests missing {missing}"
+
   - id: h4-lease
     description: H5 dogfood is closed without promoting ADR-090
     steps:

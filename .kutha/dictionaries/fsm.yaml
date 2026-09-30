@@ -53,6 +53,9 @@ states:
       - e2e_fixture_supports_and_conflict_at_named_cuts
       - e2e_justification_cites_sources_and_rejects_stale_admission
       - e2e_incremental_matches_reconstruct_after_discarding_leases
+      - discard_outcomes_sidecar_keeps_reconstructible_disposition
+      - discard_justifications_sidecar_keeps_admission_and_resume
+      - provenance_fingerprint_moves_when_log_native_record_bytes_change
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant

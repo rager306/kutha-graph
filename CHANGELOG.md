@@ -4,7 +4,7 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
-## 2026-10-01 — Product: log-native quantum outcomes
+## 2026-10-01 — Log-native SoT
 
 ### Product
 
@@ -16,6 +16,13 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Changed
 
 - Quantum outcome and justification SoT is the event log. Sidecar JSONL files remain written leases; open hydrates from log Events when they exist and does not let an empty sidecar wipe them.
+- `provenance_fingerprint` domain tag is `kutha-prov-log-native`; the mix includes Behavior plus log-native outcome and justification Event bytes (`provenance_fingerprint_moves_when_log_native_record_bytes_change`).
+
+### Process
+
+### Added
+
+- Governor bridge `B-m012a-s01` / check `m012a-s01-log-native` and three `observe_cargo.required` names for the LOG-01..03 oracles.
 
 ### Trajectory
 

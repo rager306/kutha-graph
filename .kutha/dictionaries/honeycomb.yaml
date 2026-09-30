@@ -135,6 +135,9 @@ cells:
     evidence:
       - budgets_0_1_2_distinguish_zero_partial_full_after_persist_open
       - crash_after_prefix_has_no_terminal_success_until_explicit_resume
+      - discard_outcomes_sidecar_keeps_reconstructible_disposition
+      - discard_justifications_sidecar_keeps_admission_and_resume
+      - provenance_fingerprint_moves_when_log_native_record_bytes_change
 
   - id: ADR-020
     axis: Space
@@ -284,7 +287,7 @@ cells:
     capability: none
     depends_on: [ADR-000, ADR-010, ADR-014]
     locks: [D9]
-    evidence: [replay_rejects_behavior_without_prior_cause, provenance_detects_caused_by_swap_when_state_fingerprint_matches, provenance_detects_rule_version_change_when_state_fingerprint_matches]
+    evidence: [replay_rejects_behavior_without_prior_cause, provenance_detects_caused_by_swap_when_state_fingerprint_matches, provenance_detects_rule_version_change_when_state_fingerprint_matches, discard_outcomes_sidecar_keeps_reconstructible_disposition, discard_justifications_sidecar_keeps_admission_and_resume, provenance_fingerprint_moves_when_log_native_record_bytes_change]
 
   - id: ADR-061
     axis: Verify

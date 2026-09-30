@@ -65,3 +65,8 @@ bridges:
     claim: "Candidate fixture distinguishes independent supports and conflict report at named cuts; justifications cannot renew stale admission; incremental matches reconstruct after discarding snapshot and CSR"
     cites: "crates/kutha-runtime/tests/m011_e2e_fixture.rs"
     check: m011-e2e
+
+  - id: B-m012a-s01
+    claim: "Quantum outcomes, justifications, and resume reconstruct from the event log after discarding sidecar leases; provenance_fingerprint mixes those log-native bytes"
+    cites: "crates/kutha-runtime/tests/m012a_log_native.rs"
+    check: m012a-s01-log-native
