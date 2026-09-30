@@ -4,6 +4,10 @@
 # Local GitNexus analyze defaults (skip AGENTS.md / CLAUDE.md / skills inject)
 .gitnexusrc
 
+# Local indexer ignore lists (codebase-memory-mcp / GitNexus)
+.cbmignore
+.gitnexusignore
+
 # Rust
 /target/
 **/*.rs.bk
