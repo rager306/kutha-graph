@@ -4,16 +4,16 @@ milestone: v0.02
 milestone_name: Semantic core close
 current_phase: 6
 current_phase_name: Typed CSR lease
-status: planning
-stopped_at: Phase 6 research complete
-last_updated: "2026-09-30T01:35:00.000Z"
+status: ready_to_execute
+stopped_at: Phase 6 plans complete
+last_updated: "2026-09-30T01:45:00.000Z"
 last_activity: 2026-09-30
-last_activity_desc: Phase 6 RESEARCH.md written (typed CSR lease)
+last_activity_desc: Phase 6 PLAN.md files written (06-01, 06-02)
 state_head: 0f69e28961931427025771384e9e8bbfd8de5747
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 5
+  total_plans: 7
   completed_plans: 5
 ---
 
@@ -33,9 +33,9 @@ See: `.planning/PROJECT.md` (updated 2026-09-29 after starting v0.02)
 ## Current Position
 
 Phase: 6 — Typed CSR lease
-Plan: Not started
-Status: Ready to plan (research done)
-Last activity: 2026-09-30 — Phase 6 RESEARCH.md complete
+Plan: 01 (of 02) ready
+Status: Ready to execute (plans written)
+Last activity: 2026-09-30 — Phase 6 PLAN.md complete (06-01 tracer, 06-02 GATE)
 
 Progress: [████░░░░░░] 40%
 

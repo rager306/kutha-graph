@@ -89,7 +89,14 @@ Plans:
   3. A named cargo test is registered in the governor and `uv run kutha-gov ci` stays at 0 HIGH (GATE-01 applies)
   4. This phase executes only while S06 is the Active Slice; until then it is planning-only (GATE-02 applies). Freeze items stay unstarted and honeycomb cells stay Proposed (GATE-03 applies)
 
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+**Wave 1**
+- [ ] 06-01-PLAN.md — Typed CSR lease tracer: labels + support multiplicity; untyped path holds (CSR-01, CSR-02)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 06-02-PLAN.md — Governor GATE-01 registration, changelog Process, ci HIGH-free
 
 ### Phase 7: Provenance and rule-version check
 
@@ -129,7 +136,7 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8. Phases 7–8 remain 
 |-------|----------------|--------|-----------|
 | 4. Partial correction with residual intervals | 3/3 | Complete    | 2026-09-29 |
 | 5. Persisted quantum outcome | 2/2 | Complete    | 2026-09-30 |
-| 6. Typed CSR lease | 0/TBD | Not started (S06 leased) | - |
+| 6. Typed CSR lease | 0/2 | Planned (S06 leased) | - |
 | 7. Provenance and rule-version check | 0/TBD | Not started (lease-gated) | - |
 | 8. End-to-end candidate fixture | 0/TBD | Not started (lease-gated) | - |
 
