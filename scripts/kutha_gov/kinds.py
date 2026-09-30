@@ -38,6 +38,7 @@ ALLOWED_KINDS: frozenset[str] = frozenset(
         "glob_paths_in_file",
         "rust_test_asserts",
         "cite_equals",
+        "refs_resolve",
     }
 )
 
@@ -1486,6 +1487,138 @@ def _kind_cite_equals(check: str, step: Step, ctx: Context, result: CheckResult)
                 )
 
 
+ADR_RANGE_RE = re.compile(r"ADR-(\d{3})\s*[–-]\s*(\d{3})(?!\d)")
+ADR_ONE_RE = re.compile(r"ADR-(\d{3})(?!\d)")
+LOCK_RE = re.compile(r"\bD([1-9]|10)\b")
+HONEYCOMB_LOCKS = ".kutha/dictionaries/honeycomb.yaml"
+
+
+def _refs_scan_files(step: Step, ctx: Context) -> list[Path]:
+    seen: set[str] = set()
+    out: list[Path] = []
+    for rel in _path_list(step, "paths"):
+        hit = ctx.root / rel
+        if hit.is_file():
+            key = _relpath(hit, ctx)
+            if key not in seen:
+                seen.add(key)
+                out.append(hit)
+    for pattern in _path_list(step, "globs"):
+        for hit in sorted(ctx.root.glob(pattern)):
+            if not hit.is_file():
+                continue
+            key = _relpath(hit, ctx)
+            if key not in seen:
+                seen.add(key)
+                out.append(hit)
+    return out
+
+
+def refs_resolve_mutation_target(step: Step, root: Path) -> str | None:
+    ctx = Context(root=root)
+    files = _refs_scan_files(step, ctx)
+    if not files:
+        return None
+    return _relpath(files[0], ctx)
+
+
+def _allow_dangling(step: Step) -> set[str]:
+    out: set[str] = set()
+    for raw in _str_list(step, "allow_dangling"):
+        text = raw.strip().upper()
+        if text.startswith("ADR-"):
+            text = text[4:]
+        if re.fullmatch(r"\d{3}", text):
+            out.add(text)
+    return out
+
+
+def _extract_adr_ids(text: str) -> list[str]:
+    found: set[str] = set()
+    for match in ADR_RANGE_RE.finditer(text):
+        found.add(match.group(1))
+        found.add(match.group(2))
+    for match in ADR_ONE_RE.finditer(text):
+        found.add(match.group(1))
+    return sorted(found)
+
+
+def _extract_lock_ids(text: str) -> list[str]:
+    return sorted({f"D{match.group(1)}" for match in LOCK_RE.finditer(text)})
+
+
+def _honeycomb_lock_ids(ctx: Context) -> set[str] | None:
+    raw = ctx.read(HONEYCOMB_LOCKS)
+    if raw is None:
+        return None
+    data = yaml.safe_load(raw)
+    if not isinstance(data, dict):
+        return set()
+    locks = data.get("locks")
+    if not isinstance(locks, list):
+        return set()
+    ids: set[str] = set()
+    for row in locks:
+        if not isinstance(row, dict):
+            continue
+        lock_id = row.get("id")
+        if isinstance(lock_id, str) and lock_id.strip():
+            ids.add(lock_id.strip())
+    return ids
+
+
+def _adr_file_exists(ctx: Context, num: str) -> bool:
+    return any(hit.is_file() for hit in ctx.root.glob(f"docs/ADR/ADR-{num}-*.md"))
+
+
+def _kind_refs_resolve(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
+    files = _refs_scan_files(step, ctx)
+    allowed = _allow_dangling(step)
+    lock_ids = _honeycomb_lock_ids(ctx)
+    for path in files:
+        rel = _relpath(path, ctx)
+        text = path.read_text(encoding="utf-8")
+        result.scanned += 1
+        for num in _extract_adr_ids(text):
+            if num in allowed or _adr_file_exists(ctx, num):
+                continue
+            message = _fmt(
+                _str(step, "message", "{path} cites ADR-{num} with no matching ADR file"),
+                path=rel,
+                num=num,
+            )
+            result.findings.append(
+                Finding(
+                    check,
+                    _severity(step),
+                    _category(step, "refs-adr"),
+                    message,
+                    rel,
+                )
+            )
+        for lock_id in _extract_lock_ids(text):
+            if lock_ids is None:
+                _high_missing(check, HONEYCOMB_LOCKS, result)
+                lock_ids = set()
+                continue
+            if lock_id in lock_ids:
+                continue
+            message = _fmt(
+                _str(step, "message", "{path} cites {lock} which is not a honeycomb lock"),
+                path=rel,
+                lock=lock_id,
+            )
+            result.findings.append(
+                Finding(
+                    check,
+                    _severity(step),
+                    _category(step, "refs-lock"),
+                    message,
+                    rel,
+                )
+            )
+
+
 RUNNERS: dict[str, Runner] = {
     "file_exists": _kind_file_exists,
     "file_equals": _kind_file_equals,
@@ -1504,4 +1637,5 @@ RUNNERS: dict[str, Runner] = {
     "glob_paths_in_file": _kind_glob_paths_in_file,
     "rust_test_asserts": _kind_rust_test_asserts,
     "cite_equals": _kind_cite_equals,
+    "refs_resolve": _kind_refs_resolve,
 }

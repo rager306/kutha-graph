@@ -862,6 +862,162 @@ class CiteEqualsTests(unittest.TestCase):
     def test_cite_equals_live_precommit_is_green(self) -> None:
         self.assertEqual(0, main(["--root", str(ROOT), "precommit", "--check", "cite-lease"]))
 
+    def test_cite_equals_active_milestone_stale_is_high(self) -> None:
+        root = _rust_tree(
+            {
+                ".kutha/STATE.md": "**Active Milestone:** M011\n",
+                "docs/note.md": "Active Milestone: M010 is the lease.\n",
+            }
+        )
+        result = _rust_run(
+            root,
+            {
+                "kind": "cite_equals",
+                "source": {
+                    "path": ".kutha/STATE.md",
+                    "pattern": r"(?m)^\*\*Active Milestone:\*\*\s*(M\d{3}|None)\s*$",
+                },
+                "cites": [
+                    {
+                        "path": "docs/note.md",
+                        "pattern": (
+                            r"Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?"
+                            r"(?::\*\*|:)?\s+\**?(M\d{3})\b"
+                        ),
+                    }
+                ],
+            },
+        )
+        self.assertEqual(["cite-mismatch"], _rust_highs(result))
+
+    def test_cite_equals_active_milestone_names_m002_is_not_a_cite(self) -> None:
+        root = _rust_tree(
+            {
+                ".kutha/STATE.md": "**Active Milestone:** M011\n",
+                "docs/note.md": "Do not start Rocks until Active Milestone names M002.\n",
+            }
+        )
+        result = _rust_run(
+            root,
+            {
+                "kind": "cite_equals",
+                "source": {
+                    "path": ".kutha/STATE.md",
+                    "pattern": r"(?m)^\*\*Active Milestone:\*\*\s*(M\d{3}|None)\s*$",
+                },
+                "cites": [
+                    {
+                        "path": "docs/note.md",
+                        "pattern": (
+                            r"Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?"
+                            r"(?::\*\*|:)?\s+\**?(M\d{3})\b"
+                        ),
+                    }
+                ],
+            },
+        )
+        self.assertEqual([], _rust_highs(result))
+
+
+def _refs_step(**extra: object) -> dict[str, object]:
+    step: dict[str, object] = {
+        "kind": "refs_resolve",
+        "paths": ["docs/note.md"],
+        "globs": [],
+    }
+    step.update(extra)
+    return step
+
+
+class RefsResolveTests(unittest.TestCase):
+    def test_refs_resolve_high_on_dangling_adr_999(self) -> None:
+        root = _rust_tree(
+            {
+                "docs/note.md": "See ADR-999.\n",
+                ".kutha/dictionaries/honeycomb.yaml": "locks:\n  - id: D1\n",
+            }
+        )
+        result = _rust_run(root, _refs_step())
+        self.assertEqual(["refs-adr"], _rust_highs(result))
+
+    def test_refs_resolve_allows_adr_100_when_listed(self) -> None:
+        root = _rust_tree(
+            {
+                "docs/note.md": "Do not open ADR-100.\n",
+                ".kutha/dictionaries/honeycomb.yaml": "locks:\n  - id: D1\n",
+            }
+        )
+        result = _rust_run(root, _refs_step(allow_dangling=["ADR-100"]))
+        self.assertEqual([], _rust_highs(result))
+
+    def test_refs_resolve_ignores_adr_xxx_placeholder(self) -> None:
+        root = _rust_tree(
+            {
+                "docs/note.md": "A future cell is ADR-XXX until numbered.\n",
+                ".kutha/dictionaries/honeycomb.yaml": "locks:\n  - id: D1\n",
+            }
+        )
+        result = _rust_run(root, _refs_step())
+        self.assertEqual([], _rust_highs(result))
+
+    def test_refs_resolve_d050_2_and_d010_1_are_not_lock_ids(self) -> None:
+        root = _rust_tree(
+            {
+                "docs/note.md": "Analog of ADR-050 D050-2 and D010-1.\n",
+                "docs/ADR/ADR-050-meta.md": "# ADR-050\n",
+                ".kutha/dictionaries/honeycomb.yaml": "locks:\n  - id: D1\n",
+            }
+        )
+        result = _rust_run(root, _refs_step())
+        self.assertEqual([], _rust_highs(result))
+
+    def test_refs_resolve_range_endpoints_only(self) -> None:
+        root = _rust_tree(
+            {
+                "docs/note.md": "Honeycomb cells (ADR-010–093, all Proposed).\n",
+                "docs/ADR/ADR-010-event.md": "# ten\n",
+                "docs/ADR/ADR-093-science.md": "# ninety-three\n",
+                ".kutha/dictionaries/honeycomb.yaml": "locks:\n  - id: D1\n",
+            }
+        )
+        result = _rust_run(root, _refs_step())
+        self.assertEqual([], _rust_highs(result))
+
+    def test_refs_resolve_range_missing_endpoint_is_high(self) -> None:
+        root = _rust_tree(
+            {
+                "docs/note.md": "See ADR-010-093.\n",
+                "docs/ADR/ADR-010-event.md": "# ten\n",
+                ".kutha/dictionaries/honeycomb.yaml": "locks:\n  - id: D1\n",
+            }
+        )
+        result = _rust_run(root, _refs_step())
+        self.assertEqual(["refs-adr"], _rust_highs(result))
+        self.assertTrue(any("ADR-093" in f.message for f in result.findings))
+
+    def test_refs_resolve_four_digit_neighbor_is_ignored(self) -> None:
+        root = _rust_tree(
+            {
+                "docs/note.md": "neighbors' ADR-0007 lesson\n",
+                ".kutha/dictionaries/honeycomb.yaml": "locks:\n  - id: D1\n",
+            }
+        )
+        result = _rust_run(root, _refs_step())
+        self.assertEqual([], _rust_highs(result))
+
+    def test_refs_resolve_unknown_lock_is_high(self) -> None:
+        root = _rust_tree(
+            {
+                "docs/note.md": "Honor D2 forever.\n",
+                ".kutha/dictionaries/honeycomb.yaml": "locks:\n  - id: D1\n",
+            }
+        )
+        result = _rust_run(root, _refs_step())
+        self.assertEqual(["refs-lock"], _rust_highs(result))
+
+    def test_refs_resolve_live_precommit_is_green(self) -> None:
+        self.assertEqual(0, main(["--root", str(ROOT), "precommit", "--check", "refs-resolve"]))
+
 
 if __name__ == "__main__":
     unittest.main()

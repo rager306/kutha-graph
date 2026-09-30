@@ -142,3 +142,9 @@ invariants:
     source: ".kutha/STATE.md"
     disposition: check
     check: cite-lease
+
+  - id: I-refs-resolve
+    claim: "ADR-NNN and D1-D10 citations in the process scope resolve to files or honeycomb locks"
+    source: ".kutha/STATE.md"
+    disposition: check
+    check: refs-resolve

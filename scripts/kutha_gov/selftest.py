@@ -34,6 +34,7 @@ DERIVABLE_KINDS = frozenset(
         "concat_contains_any",
         "rust_test_asserts",
         "cite_equals",
+        "refs_resolve",
     }
 )
 SKIP_DIR_NAMES = frozenset(
@@ -262,7 +263,20 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
             unit = _derive_cite_equals(step, work)
             if unit:
                 derived.append(unit)
+        elif kind == "refs_resolve":
+            unit = _derive_refs_resolve(step, work)
+            if unit:
+                derived.append(unit)
     return derived
+
+
+def _derive_refs_resolve(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import refs_resolve_mutation_target
+
+    path = refs_resolve_mutation_target(step, work)
+    if not path:
+        return []
+    return [{"op": "append_text", "path": path, "text": "\nADR-999\n"}]
 
 
 def _derive_cite_equals(step: Step, work: Path) -> list[Mutation]:

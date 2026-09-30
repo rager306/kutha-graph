@@ -937,13 +937,15 @@ checks:
 
   - id: cite-lease
     description: >-
-      Docs that write a concrete L_delivery= token must match the STATE assignment.
-      Capture is L_delivery= plus an alphanumeric lease token
+      Docs that write a concrete L_delivery=, L_map=, L_capability=, or
+      Active Milestone M### token must match the STATE assignment.
+      Lifecycle capture is KEY= plus an alphanumeric token
       ([A-Za-z0-9][A-Za-z0-9._-]*). Empty `L_delivery=` and placeholders such as
       `L_delivery=<lease>` are not cites (token-format prose and AGENTS.md
       "Read STATE.md" stay silent). A concrete token, including one inside
       backticks, is a cite — stale L_delivery=M011-S03-done is HIGH.
-      CHANGELOG.md and .planning/ are out of scope on purpose.
+      Active Milestone cites are status phrasing (is/stays/colon), not
+      "names M002" thaw language. CHANGELOG.md and .planning/ are out of scope.
     steps:
       - kind: cite_equals
         source:
@@ -962,4 +964,75 @@ checks:
             pattern: 'L_delivery=([A-Za-z0-9][A-Za-z0-9._-]*)'
           - path: docs/ADR/README.md
             pattern: 'L_delivery=([A-Za-z0-9][A-Za-z0-9._-]*)'
+      - kind: cite_equals
+        source:
+          path: .kutha/STATE.md
+          pattern: '(?m)^L_map=([A-Za-z0-9][A-Za-z0-9._-]*)\s*$'
+        cites:
+          - path: AGENTS.md
+            pattern: 'L_map=([A-Za-z0-9][A-Za-z0-9._-]*)'
+          - path: README.md
+            pattern: 'L_map=([A-Za-z0-9][A-Za-z0-9._-]*)'
+          - path: STRATEGY.md
+            pattern: 'L_map=([A-Za-z0-9][A-Za-z0-9._-]*)'
+          - glob: docs/process/*.md
+            pattern: 'L_map=([A-Za-z0-9][A-Za-z0-9._-]*)'
+          - glob: docs/architecture/*.md
+            pattern: 'L_map=([A-Za-z0-9][A-Za-z0-9._-]*)'
+          - path: docs/ADR/README.md
+            pattern: 'L_map=([A-Za-z0-9][A-Za-z0-9._-]*)'
+      - kind: cite_equals
+        source:
+          path: .kutha/STATE.md
+          pattern: '(?m)^L_capability=([A-Za-z0-9][A-Za-z0-9._-]*)\s*$'
+        cites:
+          - path: AGENTS.md
+            pattern: 'L_capability=([A-Za-z0-9][A-Za-z0-9._-]*)'
+          - path: README.md
+            pattern: 'L_capability=([A-Za-z0-9][A-Za-z0-9._-]*)'
+          - path: STRATEGY.md
+            pattern: 'L_capability=([A-Za-z0-9][A-Za-z0-9._-]*)'
+          - glob: docs/process/*.md
+            pattern: 'L_capability=([A-Za-z0-9][A-Za-z0-9._-]*)'
+          - glob: docs/architecture/*.md
+            pattern: 'L_capability=([A-Za-z0-9][A-Za-z0-9._-]*)'
+          - path: docs/ADR/README.md
+            pattern: 'L_capability=([A-Za-z0-9][A-Za-z0-9._-]*)'
+      - kind: cite_equals
+        source:
+          path: .kutha/STATE.md
+          pattern: '(?m)^\*\*Active Milestone:\*\*\s*(M\d{3}|None)\s*$'
+        cites:
+          - path: AGENTS.md
+            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3})\b'
+          - path: README.md
+            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3})\b'
+          - path: STRATEGY.md
+            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3})\b'
+          - glob: docs/process/*.md
+            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3})\b'
+          - glob: docs/architecture/*.md
+            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3})\b'
+          - path: docs/ADR/README.md
+            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3})\b'
+
+  - id: refs-resolve
+    description: >-
+      ADR-NNN and D1-D10 citations in AGENTS.md, README.md, .kutha markdown,
+      dictionary YAML, and docs/process must resolve. Ranges (en dash or hyphen)
+      contribute both endpoints, not the interior. ADR-XXX (non-digit) is ignored.
+      Leading-zero forms D010-1 and D050-2 are honeycomb sub-decisions, not lock
+      ids. ADR-100 may dangle (frozen do-not-open). CHANGELOG and .planning are
+      out of scope.
+    steps:
+      - kind: refs_resolve
+        paths:
+          - AGENTS.md
+          - README.md
+        globs:
+          - .kutha/**/*.md
+          - .kutha/dictionaries/*.yaml
+          - docs/process/*.md
+        allow_dangling:
+          - ADR-100
 
