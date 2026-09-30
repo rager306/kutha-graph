@@ -126,7 +126,7 @@ invariants:
     check: honeycomb-ledger
 
   - id: I-h4-adr-090-overlay
-    claim: "H4 overlay dogfood is leased: process membership AS OF a prior cut, not a legal pack"
+    claim: "H5 dogfood is closed and H4 overlay remains delivered: process membership AS OF a prior cut, not a legal pack"
     source: "docs/process/kutha-harness.md"
     disposition: check
     check: h4-lease

@@ -4,90 +4,48 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
-## 2026-09-30 — Process: deferred F-gaps and constitution kinds
+## 2026-09-30 — Process: semantic governor
 
 ### Process
 
-- Control-loop rows `I-F1-outcomes` … `I-F8-hot-reads` record F1–F8 as deferred (`until` names M012a / M012 / M002). Narrative remains Phase 11 SEM-08. Not ADR Accepted.
-- META Allowed kinds lists `rust_test_asserts`, `cite_equals`, `refs_resolve`, `file_max_lines`; Allowed FSM kinds lists `run_selftest`. Narrative remains Phase 11 SEM-08.
-- `AGENTS.md` Commands includes `uv run kutha-gov selftest` (mutates a copy). Narrative remains Phase 11 SEM-08.
+### Added
+
+- `kutha-gov selftest` copies the tree once, mutates only that copy, and fails closed on UNPROVEN or VACUOUS. FSM `run_selftest` records `h5_selftest`; `ci` labels H5 from that evidence.
+- Kinds `rust_test_asserts`, `cite_equals`, `refs_resolve`, and `file_max_lines`. Named `fn`-needle checks and honeycomb evidence resolve through asserting `#[test]` bodies. `cite-lease` also matches `L_map=`, `L_capability=`, and Active Milestone M### phrasing to STATE.
+- Intake section “What a green check proves”: presence is not meaning; every check is mutation-provable or carries a skip reason. META allowlists the new kinds and `run_selftest`. `AGENTS.md` Commands includes `uv run kutha-gov selftest` (line budget ≤110, no lease tokens).
+
+### Changed
+
+- `run_checks` default budget and `.env.example` are 48 so `ci` cannot truncate Cui slices (32 would drop checks).
+- Control-loop rows `I-F1-outcomes` … `I-F8-hot-reads` record F1–F8 as `disposition: deferred` (`until` names M012a / M012 / M002). Recorded, not enforced.
+- ROADMAP H5 checkbox is checked; `h4-lease` requires the done form without promoting ADR-090. Dogfood ladder marks H5 **Done**. It remains the current rung (no H6).
+
+### Fixed
+
+- Live-repo selftest found no vacuous named test and no vacuous YAML row (`docs-coupling` skips: depends on the live git diff).
 
 ### Trajectory
 
-- Honeycomb stays Proposed. F1–F8 are recorded, not enforced. Green governor is not ADR Accepted and not L_capability.
+- Operator Phase stays **H5**, now closed on the dogfood ladder. Active Milestone stays M011; Active Slice None; freeze and honeycomb **Proposed** unchanged. Governor green is not product correctness, not ADR Accepted, and not L_capability. F1–F8 are product gaps deferred to unleased M012a (F4/F5 until STATE names M012; F6 durability protocol until STATE names M002).
 
-## 2026-09-30 — Process: deferred F1 and green-check meaning
-
-### Process
-
-- Control-loop row `I-F1-outcomes` records that outcomes, justifications, and resume are log records, not sidecars (`disposition: deferred`, until STATE names M012a). Narrative remains Phase 11 SEM-08. Not ADR Accepted.
-- `docs/process/governor-intake.md` names what a green check proves: presence vs meaning; mutation-provable or skip-with-reason; green is not Accepted. Narrative remains Phase 11 SEM-08.
-
-### Trajectory
-
-- Honeycomb stays Proposed. F1 is recorded, not enforced. Green governor is not ADR Accepted and not L_capability.
-
-## 2026-09-30 — Process: semantic citation checks
+## 2026-09-30 — Process: semantic-gap review and Proposed honeycomb notes
 
 ### Process
 
-- Governor kind `cite_equals` proves a concrete `L_delivery=` token in the D-C1 doc set equals the STATE assignment. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
-- `cite-lease` also compares `L_map=`, `L_capability=`, and Active Milestone M### status phrasing to STATE. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
-- Governor kind `refs_resolve` fails closed on dangling ADR-NNN / D1-D10 citations in the process scope; ADR-100 may dangle. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
-- Check `agents-lean` keeps `AGENTS.md` at or under 110 lines (`wc -l`) and forbids lease assignment tokens. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
-
-### Trajectory
-
-- Honeycomb stays Proposed. Green governor is not ADR Accepted and not L_capability.
-
-## 2026-09-30 — Process: rust_test_asserts named tests
-
-### Process
-
-- Governor kind `rust_test_asserts` proves a named `#[test]` exists without `#[ignore]`, brace-matches the body after stripping comments/strings/chars, and requires an allowed assert or `assert_*` helper. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
-- `h4-membership-as-of` uses that kind instead of an `fn` substring needle. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
-- Remaining `fn`-needle checks (`m010-semantic-open`, `m011-*`, `observe-required-fn`) and honeycomb named evidence resolve through `rust_test_asserts` / `names_from_yaml` / `require_evidence_when`. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
-
-### Trajectory
-
-- Honeycomb stays Proposed. Green governor is not ADR Accepted and not L_capability.
-
-## 2026-09-30 — Process: vacuity selftest runner
-
-### Process
-
-- `kutha-gov selftest` copies the tree once, mutates only that copy, and records FSM evidence `h5_selftest`. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
-- Every live `checks.yaml` row is mutation-proved or skip-reasoned. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
-- Tracer skip placeholders replaced by explicit mutations for `adr-status`, `idle-delivery-closed`, `observe-required-fn`, and `state-readme`; only `docs-coupling` still skips (live git diff). Narrative remains Phase 11 SEM-08.
-
-### Trajectory
-
-- Honeycomb stays Proposed. Green governor is not ADR Accepted and not L_capability.
-
-## 2026-09-30 — Process: semantic-gap review artifact and M012a order
-
-### Process
-
-- Architecture gap review artifact (`docs/architecture/semantic-gap-review.md`) plus M012a proposed before M012 on the non-authoritative later-milestones list. Narrative is Phase 11 SEM-08. Not ADR Accepted.
-- The same review now carries per-cell verdicts (`no change` / `amend` / `open question`) and a D1–D10 lock assessment. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
-- Later-milestones proposed order: M012a before M012; M002 is log durability first. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
-- One-cell Proposed honeycomb amendment (first amend row: ADR-012) plus ADR README pointer to the semantic-gap review. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
-- Remaining Proposed honeycomb clarifications (ADR-013, ADR-014, ADR-050, ADR-060) and an ADR-000 D4 time-scale pointer. Narrative remains Phase 11 SEM-08. Not ADR Accepted.
-- Dated open questions on remaining verdict rows (ADR-010, ADR-011, ADR-013, ADR-040, ADR-041, ADR-050, ADR-051, ADR-061). Narrative remains Phase 11 SEM-08. Not ADR Accepted.
+- Architecture note `docs/architecture/semantic-gap-review.md` traces F1–F8 onto the honeycomb (per-cell verdicts, D1–D10 lock assessment). It is not an ADR and not a lease.
+- Twelve honeycomb ADRs received dated 2026-09-30 Proposed clarifications and/or open questions. Status stays Proposed. ADR README points at the review.
+- Later-milestones proposed order (non-authoritative): M012a (single-log SoT and stable refs) → M012 (dictionaries as facts) → M002 (log durability protocol first). Not leased.
 
 ### Trajectory
 
 - Honeycomb stays Proposed. No cell promoted. Green governor is not ADR Accepted and not L_capability.
 
-## 2026-09-30 — Process: name harness phase H5 on the operator lease
+## 2026-09-30 — Process: H5 operator lease and AGENTS diet
 
 ### Process
 
-- Harness phase named **H5** on the operator lease. The Process history for H5 plus the AGENTS diet is Phase 11 SEM-08. Not ADR Accepted.
-- Dogfood ladder and `h4-lease` / `dogfood` needles now name H5 (existing check ids). Narrative remains Phase 11 SEM-08.
-- P0 spike inventory relocated to `docs/architecture/p0-spike-inventory.md`. Full diet narrative is Phase 11 SEM-08.
-- AGENTS.md diet: volatile notes relocated (Leapfrog, applicability Agent notes, README Layout); narrative remains Phase 11 SEM-08.
-- Stale S03 live-lease caption on `docs/architecture/semantic-contract-validation.md` replaced with a STATE pointer; Codex subagent Cursor rules recorded. Narrative remains Phase 11 SEM-08.
+- Operator lease Phase named **H5** (semantic governor + lean agent context). Dogfood ladder and `h4-lease` / `dogfood` needles name H5 without promoting ADR-090.
+- `AGENTS.md` diet: 194 lines down to about 100 durable operating rules. Volatile notes relocated (P0 spike inventory, Leapfrog, applicability Agent notes, README Layout). Stale S03 live-lease caption replaced with a STATE pointer.
 
 ### Trajectory
 

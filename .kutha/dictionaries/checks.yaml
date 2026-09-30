@@ -395,7 +395,7 @@ checks:
         message: "e2e APIs missing: {missing}"
 
   - id: h4-lease
-    description: H5 phase token named without promoting ADR-090 L_map
+    description: H5 dogfood is closed without promoting ADR-090
     steps:
       - kind: file_contains
         path: .kutha/STATE.md
@@ -411,10 +411,10 @@ checks:
         message: "ROADMAP H4 checkbox not marked: {missing}"
       - kind: file_contains
         path: .kutha/ROADMAP.md
-        needles: ["- [ ] **H5**", "- [x] **H5**"]
-        require: any
+        needles: ["- [x] **H5**"]
+        require: all
         category: h4-lease
-        message: "ROADMAP missing H5 checkbox (open or done): {missing}"
+        message: "ROADMAP H5 checkbox not marked done: {missing}"
       - kind: file_contains
         path: .kutha/dictionaries/honeycomb.yaml
         needles: ["delivery: frozen", "full ADR-090 ontology"]

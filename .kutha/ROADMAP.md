@@ -105,7 +105,7 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 - [x] **H2** — harness JSONL ingested onto the Kutha log; query AS OF last process status.
 - [x] **H3** — fail-closed process writes through a relation allowlist.
 - [x] **H4** — process-relation membership editions logged as snapshots and queryable AS OF a prior tenant cut (tip YAML stays the admit lease; full ADR-090 ontology stays frozen).
-- [ ] **H5** — semantic governor + lean agent context (harness/docs only; checkbox flips at Phase 11 close)
+- [x] **H5** — semantic governor + lean agent context (harness/docs only)
 
 ## Later milestones (not active)
 
