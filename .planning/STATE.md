@@ -6,17 +6,17 @@ current_phase: 11
 current_phase_name: Semantic governor
 current_plan: Not started
 status: planning
-stopped_at: Completed 11-01-PLAN.md
-last_updated: "2026-09-30T07:44:53.796Z"
+stopped_at: Completed 11-02-PLAN.md
+last_updated: "2026-09-30T09:33:08.575Z"
 last_activity: 2026-09-30
 last_activity_desc: Phase 10 complete, transitioned to Phase 11
-state_head: 69192ea162ad30dbc349dcb4f4ad6739c94c8021
+state_head: a59d55578b9352032e33c8a155d2ff984fb52e4a
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 8
-  completed_plans: 5
-  percent: 63
+  completed_plans: 6
+  percent: 67
 ---
 
 # Project State
@@ -37,11 +37,11 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after v0.02)
 Phase: 11 of 11 (Semantic governor)
 Current Plan: Not started
 Total Plans in Phase: 4
-Plan: 2 of 4
+Plan: 3 of 4
 Status: Ready to execute
 Last activity: 2026-09-30 — Phase 10 complete, transitioned to Phase 11
 
-Progress: [██████░░░░] 63%
+Progress: [███████░░░] 67%
 
 ## Performance Metrics
 
@@ -85,6 +85,7 @@ Progress: [██████░░░░] 63%
 | Phase 10 P01 | 12min | 3 tasks | 5 files |
 | Phase 10 P02 | 9min | 3 tasks | 15 files |
 | Phase 11-semantic-governor P01 | 16min | 3 tasks | 10 files |
+| Phase 11-semantic-governor P02 | 93min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -120,6 +121,9 @@ Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constrain
 - [Phase 11-semantic-governor]: D-V1: one tempfile copy per selftest run; mutations never write the working tree
 - [Phase 11-semantic-governor]: D-V3: ci evidence h5_selftest labels the harness rung H5; META run_selftest row is 11-04
 - [Phase 11-semantic-governor]: require: any is one atomic mutation unit so mixed needles cannot false-VACUOUS
+- [Phase 11-semantic-governor]: D-T1: rust_test_asserts proves named #[test] bodies assert after noise strip
+- [Phase 11-semantic-governor]: D-T2: all former fn-needle checks converted; crates/ untouched
+- [Phase 11-semantic-governor]: D-E1: require_evidence_when on capability named; live evidence names already resolved
 
 ### Pending Todos
 
@@ -140,8 +144,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T07:44:53.716Z
-Stopped at: Completed 11-01-PLAN.md
+Last session: 2026-09-30T09:33:08.485Z
+Stopped at: Completed 11-02-PLAN.md
 Resume file: None
 Next: `/gsd-new-milestone` when ready. Freeze holds. Do not lease M002 without explicit operator intent.
 

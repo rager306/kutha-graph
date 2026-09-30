@@ -101,9 +101,9 @@ Full detail: [milestones/v0.02-ROADMAP.md](./milestones/v0.02-ROADMAP.md) · req
   7. Product gaps F1–F8 appear as `disposition: deferred` invariants with `until` naming target milestones; they are recorded, not enforced as product fixes (SEM-07)
   8. Each new kind has a red-path pytest; `.kutha/META.md` and `docs/process/governor-intake.md` document intake; **Process** CHANGELOG records the change; `uv run kutha-gov ci` stays **0 HIGH** (SEM-08)
 
-**Plans:** 1/4 plans executed
+**Plans:** 2/4 plans executed
 - [x] 11-01-PLAN.md — Vacuity selftest CLI, derived/declared mutations, FSM run_selftest, H5 evidence
-- [ ] 11-02-PLAN.md — rust_test_asserts + honeycomb evidence resolution
+- [x] 11-02-PLAN.md — rust_test_asserts + honeycomb evidence resolution
 - [ ] 11-03-PLAN.md — cite_equals, refs_resolve, AGENTS.md budget
 - [ ] 11-04-PLAN.md — deferred F1–F8, META/intake/CHANGELOG, H5 close
 
@@ -115,6 +115,6 @@ Full detail: [milestones/v0.02-ROADMAP.md](./milestones/v0.02-ROADMAP.md) · req
 |-------|-----------|----------------|--------|-----------|
 | 9. H5 lease + lean agent context | v0.03 | 2/2 | Complete    | 2026-09-30 |
 | 10. ADR and roadmap correction | v0.03 | 2/2 | Complete    | 2026-09-30 |
-| 11. Semantic governor | v0.03 | 1/4 | In Progress|  |
+| 11. Semantic governor | v0.03 | 2/4 | In Progress|  |
 
 **Harness citation (not this table):** Active Milestone M011; `L_delivery=M011-S08-done`; Phase H4; Active Slice **None**; freeze until explicit M002. See `.kutha/STATE.md`.
