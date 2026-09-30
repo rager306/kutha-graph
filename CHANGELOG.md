@@ -24,6 +24,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Live-repo selftest found no vacuous named test and no vacuous YAML row (`docs-coupling` skips: depends on the live git diff).
 - Harness tests no longer leak `/tmp/kutha-selftest-mini-*` and `/tmp/kutha-rust-test-*` directories (cleanup registered with `atexit`).
+- Harness scratch is repo-local: `scripts/tests/conftest.py` and `kutha-gov selftest` create temp trees under gitignored `tmp/` instead of system `/tmp`; selftest's tree copy skips root `tmp/`.
 
 ### Trajectory
 

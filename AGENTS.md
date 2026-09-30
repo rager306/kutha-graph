@@ -38,7 +38,7 @@ Read `.kutha/STATE.md` first; do not start work it does not name. Freeze is that
 ## Artifacts and layout rules
 
 - Compound Engineering `docs_root` is `.compound-engineering/artifacts` (`.compound-engineering/config.yaml`; `docs_root` in `config.local.yaml` is ignored). Plans, research, ideation, and handoffs live there, not under `docs/`. Captured learnings: `artifacts/solutions/<category>/` (YAML frontmatter `module`, `tags`, `problem_type`) — relevant context, not architecture SoT or a backlog.
-- Durable CE outputs stay under `docs_root`, never `/tmp`, `$TMPDIR`, or `.tmp`. `ce-handoff` defaults to OS-evictable `/tmp`: write `artifacts/handoffs/<topic>.md` instead. One-shot scratch may use `mktemp`; `.context/compound-engineering/` is gitignored scratch. Prefer `.planning/` for surviving session plans.
+- Durable CE outputs stay under `docs_root`, never `/tmp`, `$TMPDIR`, or `.tmp`. `ce-handoff` defaults to OS-evictable `/tmp`: write `artifacts/handoffs/<topic>.md` instead. One-shot scratch goes in repo-local gitignored `tmp/` (harness tests and `kutha-gov selftest` use it), not system `/tmp`; `.context/compound-engineering/` is gitignored scratch. Prefer `.planning/` for surviving session plans.
 - Do **not** add repo-root `ports/` / `adapters/` / `domain/` (ADR-022). Do **not** put Python inside `kutha-runtime`.
 
 ## Commands

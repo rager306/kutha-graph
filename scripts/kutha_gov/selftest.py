@@ -51,6 +51,7 @@ SKIP_DIR_NAMES = frozenset(
     }
 )
 SKIP_CURSOR_CHILDREN = frozenset({"gsd-core", "skills"})
+SCRATCH_DIR = "tmp"
 
 
 @dataclass(frozen=True)
@@ -80,6 +81,8 @@ def copy_harness_tree(src: Path, dst: Path) -> None:
             return dropped
         if rel == Path(".cursor"):
             dropped.update(name for name in names if name in SKIP_CURSOR_CHILDREN)
+        if rel == Path("."):
+            dropped.update(name for name in names if name == SCRATCH_DIR)
         return dropped
 
     shutil.copytree(src_root, dst, ignore=ignore, symlinks=True, ignore_dangling_symlinks=True)
@@ -95,7 +98,9 @@ def run_selftest(root: Path, check_id: str | None = None) -> tuple[list[Selftest
     else:
         selected = checks
     rows: list[SelftestRow] = []
-    with TemporaryDirectory(prefix="kutha-selftest-") as raw:
+    scratch = root / SCRATCH_DIR
+    scratch.mkdir(exist_ok=True)
+    with TemporaryDirectory(prefix="kutha-selftest-", dir=scratch) as raw:
         work = Path(raw) / "tree"
         copy_harness_tree(root, work)
         work_checks = get_checks(work)

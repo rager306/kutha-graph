@@ -23,3 +23,6 @@ uv.toml.bak
 # Harness observation log (process Time axis; product SoT is crates/)
 .kutha/events.jsonl
 .kutha/tenant/
+
+# Repo-local scratch (one-shot temp files; not SoT)
+/tmp/
