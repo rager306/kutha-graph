@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Process: lease M012a S06 for Phase 16
+
+### Process
+
+- Active Slice **S06** (fold-internal hot indexes for `as_of` / `claim_supported_at`). Active Milestone stays **M012a**; `L_delivery=M012a-S05-done` until S06 closes.
+
+### Trajectory
+
+- GSD Phase 16 may edit product crates for HOT-01..03. Last M012a slice. Freeze until M002 unchanged. Honeycomb Proposed.
+
 ## 2026-10-01 — Product: M012a S04+S05 verify, persist, time scale
 
 ### Product

@@ -26,11 +26,11 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.04 Phase 15 — Verify, persist, and time scale (M012a S04 + S05). Plans 15-01..15-03 written; execute next. Freeze holds for M002. Do not clear harness S04.
+**Current focus:** v0.04 Phase 16 — Fold-internal hot indexes (M012a S04 + S05). Plans 15-01..15-03 written; execute next. Freeze holds for M002. Do not clear harness S04.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M012a**; Active Slice **None**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012a-S05-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start). Do not overwrite `.kutha/STATE.md`.
+**Harness lease (cite only):** Active Milestone **M012a**; Active Slice **S06**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012a-S05-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start). Do not overwrite `.kutha/STATE.md`.
 
 ## Current Position
 
