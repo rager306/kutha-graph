@@ -40,8 +40,8 @@ Closing leased product gaps F1–F3, F6 (verify/atomic/Define), F7, F8 from `doc
 ### Hot reads (F8)
 
 - [x] **HOT-01**: `claim_supported_at` / `as_of` at the leased N do not require a full linear scan of all facts (fold-internal index or equivalent)
-- [ ] **HOT-02**: CSR lease path remains a droppable lease; indexes are not a second SoT
-- [ ] **HOT-03**: Materializer vs `from_fold` relationship is either wired on the hot path or explicitly deferred with a named test/guard documenting the spike limit
+- [x] **HOT-02**: CSR lease path remains a droppable lease; indexes are not a second SoT
+- [x] **HOT-03**: Materializer vs `from_fold` relationship is either wired on the hot path or explicitly deferred with a named test/guard documenting the spike limit
 
 ## Future Requirements (not v0.04)
 
@@ -85,8 +85,8 @@ Closing leased product gaps F1–F3, F6 (verify/atomic/Define), F7, F8 from `doc
 | TIME-01 | Phase 15 | Complete |
 | TIME-02 | Phase 15 | Complete |
 | HOT-01 | Phase 16 | Complete |
-| HOT-02 | Phase 16 | Pending |
-| HOT-03 | Phase 16 | Pending |
+| HOT-02 | Phase 16 | Complete |
+| HOT-03 | Phase 16 | Complete |
 
 **Coverage:**
 - v0.04 requirements: 17 total

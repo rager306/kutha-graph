@@ -163,10 +163,10 @@ Plans:
   3. Materializer vs `from_fold` is either wired on the hot path or explicitly deferred with a named test/guard documenting the spike limit (HOT-03)
   4. Named cargo tests for the HOT oracles are observed by the governor; FF5 stays green; `uv run kutha-gov ci` stays 0 HIGH; ADR-061 full GED-class diff stays out of M012a
 
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 Plans:
 - [x] 16-01-PLAN.md — HOT-01 tracer: fold-internal index for as_of / claim_supported_at
-- [ ] 16-02-PLAN.md — HOT-02/HOT-03: droppable CSR; csr_lease_at via Materializer
+- [x] 16-02-PLAN.md — HOT-02/HOT-03: droppable CSR; csr_lease_at via Materializer
 - [ ] 16-03-PLAN.md — Governor observes HOT oracles; freeze and Proposed map hold
 
 ## Progress
@@ -190,7 +190,7 @@ Plans:
 | 13. Stable references | v0.04 | 3/3 | Complete    | 2026-10-01 |
 | 14. Idempotent ingest | v0.04 | 3/3 | Complete    | 2026-10-01 |
 | 15. Verify, persist, and time scale | v0.04 | 3/3 | Complete    | 2026-10-01 |
-| 16. Fold-internal hot indexes | v0.04 | 1/3 | In Progress|  |
+| 16. Fold-internal hot indexes | v0.04 | 2/3 | In Progress|  |
 
 **Harness citation (not this table):** Active Milestone **M012a**; Active Slice **S03**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012a-S02-done`; `L_capability=ff5-green`; freeze until explicit **M002**. See `.kutha/STATE.md`. Do not overwrite that file.
 

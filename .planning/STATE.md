@@ -6,17 +6,17 @@ current_phase: 16
 current_phase_name: Fold-internal hot indexes
 current_plan: 01
 status: planning
-stopped_at: Completed 16-01-PLAN.md
-last_updated: "2026-09-30T19:29:46.861Z"
+stopped_at: Completed 16-02-PLAN.md
+last_updated: "2026-09-30T19:32:46.765Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 16 plans 16-01..16-03 written; execute next under harness S06
-state_head: 1e18dc2b950402605f81e5ee9d276c4110af7191
+state_head: adfbc09dd8a384304bfb57894ec5c2b4a10320be
 progress:
   total_phases: 5
   completed_phases: 15
   total_plans: 15
-  completed_plans: 13
-  percent: 87
+  completed_plans: 14
+  percent: 93
 ---
 
 # Project State
@@ -37,11 +37,11 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 Current Plan: 16-01
 Total Plans in Phase: 3
 Phase: 16 of 16 (Fold-internal hot indexes)
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-10-01 — Phase 16 plans 16-01..16-03 written
 
-Progress: [█████████░] 87% (v0.04 plans executed)
+Progress: [█████████░] 93% (v0.04 plans executed)
 
 ## Performance Metrics
 
@@ -90,6 +90,7 @@ Progress: [█████████░] 87% (v0.04 plans executed)
 | Phase 15 P02 | 1min | 2 tasks | 5 files |
 | Phase 15 P03 | 2min | 2 tasks | 5 files |
 | Phase 16 P01 | 9min | 2 tasks | 3 files |
+| Phase 16 P02 | 2min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -137,6 +138,9 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 16]: as_of / live_at walk vt_by_from.range(..=vt); claim_supported_at looks up claim_facts
 - [Phase 16]: Hot maps skip-serialize and rebuild from facts; they are not a second SoT
 - [Phase 16]: Examine counts prove skip; no Instant/elapsed oracle
+- [Phase 16]: CSR and hot maps remain droppable leases; persist/open reconstructs as_of from log and fold facts
+- [Phase 16]: csr_lease_at does not store CsrMaterializer on Runtime
+- [Phase 16]: typed_csr_lease_at stays TypedCsrLease::from_fold (HOT-03 spike limit)
 
 ### Pending Todos
 
@@ -159,8 +163,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T19:29:46.450Z
-Stopped at: Completed 16-01-PLAN.md
+Last session: 2026-09-30T19:32:46.353Z
+Stopped at: Completed 16-02-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 16`. Harness lease is already S06. Freeze holds. Do not lease M002 without explicit operator intent.
 
