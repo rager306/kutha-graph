@@ -4,6 +4,14 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-09-30 — Product: typed CSR lease (labels + support multiplicity)
+
+### Product
+
+- `TypedEdge` / `TypedCsrLease` beside untyped `CsrLease`; `Runtime::typed_csr_lease_at` + `edges_out` project one edge per live Fact (`relation`, `object`, `claim_id`, `fact_seq`). Untyped `CsrLease::from_fold` object-only dedup unchanged.
+- Named test `typed_csr_preserves_relation_labels_and_support_multiplicity` (CSR-01): ≥2 relations and ≥2 supports visible on typed edges; untyped neighbors stay a singleton object.
+- Named test `untyped_csr_neighbor_set_and_ff5_still_hold` (CSR-02): untyped neighbor-set + FF3-style drop/rebuild; existing FF5 statute observe stays green.
+
 ## 2026-09-30 — Process: lease Active Slice S06 after S05 delivery
 
 ### Process
