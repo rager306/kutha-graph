@@ -5,18 +5,18 @@ milestone_name: Single-log SoT + stable references
 current_phase: 13
 current_phase_name: Stable references
 current_plan: 3
-status: planning
-stopped_at: Completed 13-02-PLAN.md
-last_updated: "2026-09-30T18:11:23.325Z"
+status: verifying
+stopped_at: Completed 13-03-PLAN.md
+last_updated: "2026-09-30T18:16:46.905Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 13 plans 13-01..13-03 written
-state_head: d4a8e76b2c7ee80855da1c39a06882502535566c
+state_head: d2d98122e861da20257e53e35e420f5e4472b1f4
 progress:
   total_phases: 5
   completed_phases: 12
   total_plans: 6
-  completed_plans: 5
-  percent: 83
+  completed_plans: 6
+  percent: 100
 ---
 
 # Project State
@@ -38,10 +38,10 @@ Current Plan: 3
 Total Plans in Phase: 3
 Phase: 13 of 16 (Stable references)
 Plan: 3 of 3
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-10-01 — Phase 13-01 EventId retract/correct landed
 
-Progress: [████████░░] 83% (v0.04 plans executed)
+Progress: [██████████] 100% (v0.04 plans executed)
 
 ## Performance Metrics
 
@@ -79,6 +79,7 @@ Progress: [████████░░] 83% (v0.04 plans executed)
 | Phase 12 P03 | 15min | 2 tasks | 7 files |
 | Phase 13 P01 | 7 | 2 tasks | 9 files |
 | Phase 13 P02 | 4 | 2 tasks | 6 files |
+| Phase 13 P03 | 5 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -101,6 +102,9 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 13]: CSR TypedEdge.fact_seq and ConflictReport seqs stay lease indexes (ING-03 is Phase 14)
 - [Phase 13]: Dropped source_fact_seqs from the durable cite Op so a leaked payload cannot be replayed against a renumbered fold
 - [Phase 13]: check_admission still uses tt=MAX and row.vt (FIX-02); unknown EventId is stale_support
+- [Phase 13]: REF-03 rebuild drops the first Assert Event only; Defines and QuantumOutcome stay
+- [Phase 13]: Governor check lives on bridges.yaml, not invariants.yaml
+- [Phase 13]: ADR-061 stays capability none with a non-empty evidence array
 
 ### Pending Todos
 
@@ -123,8 +127,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-09-30T18:11:23.165Z
-Stopped at: Completed 13-02-PLAN.md
+Last session: 2026-09-30T18:16:46.690Z
+Stopped at: Completed 13-03-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 13`. Harness lease is already S02. Freeze holds. Do not lease M002 without explicit operator intent.
 

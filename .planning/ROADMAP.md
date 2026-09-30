@@ -61,7 +61,7 @@ Full detail: [milestones/v0.03-ROADMAP.md](./milestones/v0.03-ROADMAP.md) · req
 **Phase numbering:** Integer phases continue from v0.03 (Phase 12 follows Phase 11).
 
 - [x] **Phase 12: Log-native SoT** - Outcomes, justifications, and resume are log records; sidecars are droppable leases (M012a S01) (completed 2026-10-01)
-- [ ] **Phase 13: Stable references** - Retract, Correct, and justification cites target EventId / proposition id, not fold-local `fact_seq` (M012a S02)
+- [x] **Phase 13: Stable references** - Retract, Correct, and justification cites target EventId / proposition id, not fold-local `fact_seq` (M012a S02) (completed 2026-10-01)
 - [ ] **Phase 14: Idempotent ingest** - Same delivery key does not mint a second support; claim ≠ support slot (M012a S03)
 - [ ] **Phase 15: Verify, persist, and time scale** - Verify-on-open, atomic log persist, stable Define ids, declared VT/TT scale (M012a S04 + S05)
 - [ ] **Phase 16: Fold-internal hot indexes** - Hot `as_of` / `claim_supported_at` skip full fact scans; CSR stays a lease (M012a S06)
@@ -102,11 +102,11 @@ Plans:
   3. A rebuilt fold that renumbers local seqs still applies the same retract/cite payloads (REF-03)
   4. Named cargo tests for the three REF oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; freeze and Proposed map hold
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans complete
 Plans:
 - [x] 13-01-PLAN.md — REF-01 tracer: Retract/Correct/CorrectInterval target minting EventId
 - [x] 13-02-PLAN.md — REF-02: justification cites and admission use EventId across fork
-- [ ] 13-03-PLAN.md — REF-03 rebuilt-fold payloads; governor observes REF-01..03
+- [x] 13-03-PLAN.md — REF-03 rebuilt-fold payloads; governor observes REF-01..03
 
 ### Phase 14: Idempotent ingest
 
@@ -175,7 +175,7 @@ Plans:
 | 10. ADR and roadmap correction | v0.03 | 2/2 | Complete | 2026-09-30 |
 | 11. Semantic governor | v0.03 | 4/4 | Complete | 2026-09-30 |
 | 12. Log-native SoT | v0.04 | 3/3 | Complete    | 2026-10-01 |
-| 13. Stable references | v0.04 | 2/3 | In Progress|  |
+| 13. Stable references | v0.04 | 3/3 | Complete   | 2026-10-01 |
 | 14. Idempotent ingest | v0.04 | 0/? | Not started | - |
 | 15. Verify, persist, and time scale | v0.04 | 0/? | Not started | - |
 | 16. Fold-internal hot indexes | v0.04 | 0/? | Not started | - |
