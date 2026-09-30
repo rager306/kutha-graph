@@ -10,6 +10,17 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
+## Current Milestone: v0.03 Lean context + semantic governor
+
+**Goal:** Make the harness say what is true, not what is present: slim `AGENTS.md` to durable rules only, correct ADRs and the proposed roadmap order for the verified semantic gaps, and teach the governor to check meaning (vacuity, assertions, cited state, evidence links) instead of needle presence.
+
+**Target features:**
+- H5 harness lease (process plane only) and a lean `AGENTS.md` with no volatile lease/inventory data
+- ADR and proposed-roadmap corrections: single-log SoT, stable references, derivation model, admission-as-facts, time scale, log durability, index/benchmark ordering (all cells stay Proposed)
+- Semantic governor kinds: check vacuity self-test, test-body assertion proof, cited-state equality, evidence and cross-reference resolution
+
+**Boundary:** harness + docs only. No `crates/` edits; product fixes (single-log SoT, stable refs, `open`→`replay_check`, atomic persist, stable `Define` ids) are deferred to a separately leased M012a. Freeze holds.
+
 ## Business Context
 
 - **Customer**: Builders of legal/normative temporal agents (research wedge); not a paying GTM motion yet
@@ -53,6 +64,7 @@ GSD overlay v0.02 (Phases 4–8 — M011 semantic core close):
 - [ ] Keep governor CI honest; three lifecycles uncollapsed; freeze until STATE names otherwise
 - [ ] Start only the next delivery `.kutha/STATE.md` names — do **not** assume M002, legal pack, or honeycomb Accepted
 - [ ] Optional formal `/gsd-audit-milestone` for v0.02 (closeout used override for stale verification digests)
+- [ ] v0.03: lean `AGENTS.md`, ADR + proposed-roadmap corrections, semantic governor kinds (see `.planning/REQUIREMENTS.md`)
 
 ### Out of Scope
 
@@ -149,7 +161,7 @@ Shipped **GSD v0.01 — GSD foundation** (2026-09-29) and **GSD v0.02 — Semant
 
 ## Next Milestone Goals
 
-Planning-only until `/gsd-new-milestone` defines requirements. Delivery starts only when `.kutha/STATE.md` names the next Active Slice or milestone — freeze holds (no Rocks/Cypher/HNSW/ADR-050/legal pack by default).
+v0.03 (harness/docs plane) is defined above. Product delivery (M012a single-log SoT + stable refs, then M012, then M002 as log durability) starts only when `.kutha/STATE.md` names it — freeze holds (no Rocks/Cypher/HNSW/ADR-050/legal pack by default).
 
 ## Context
 

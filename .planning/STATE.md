@@ -1,21 +1,16 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.02
-status: Awaiting next milestone
-stopped_at: Phase 8 complete — M011 S08 delivered; Active Slice None
-last_updated: "2026-09-30T04:55:37.743Z"
+milestone: v0.03
+milestone_name: Lean context + semantic governor
+status: planning
+last_updated: "2026-09-30T05:22:15.674Z"
 last_activity: 2026-09-30
-last_activity_desc: Milestone v0.02 completed and archived
-state_head: e5b4737cbd1f2aaf43a10e5f3b2cf8c9e393d665
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 11
-  completed_plans: 11
-milestone_name: Semantic core close
-current_phase: 8
-current_phase_name: End-to-end candidate fixture
-current_plan: 2
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -33,10 +28,10 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after v0.02)
 
 ## Current Position
 
-Phase: Milestone v0.02 complete (archived)
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-09-30 — Archive ceremony; closeout_type=override_closeout (stale verification digests; no formal milestone audit)
+Status: Defining requirements
+Last activity: 2026-09-30 — Milestone v0.03 started
 
 ## Performance Metrics
 
