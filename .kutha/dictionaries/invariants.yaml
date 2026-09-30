@@ -3,6 +3,7 @@ meta_prompt: .kutha/META.md
 process: docs/process/governor-intake.md
 # Control-loop claims the governor may enforce.
 # Vacuity selftest (SEM-01) is declared on checks.yaml rows, not as dispositions here.
+# Skip reasons name the non-derivable kind or the live git diff; they are not boilerplate.
 # Not Kutha product requirements. Honeycomb cells stay in docs/ADR/.
 # Silence is not a disposition. New control-loop check = row here first, then checks.yaml.
 # Bridges that cite product live in bridges.yaml, not here.

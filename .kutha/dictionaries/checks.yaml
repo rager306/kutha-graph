@@ -2,6 +2,8 @@ schema: kutha-harness-checks/v1
 meta_prompt: .kutha/META.md
 # Dictionary of governor checks. Append a row to add a check.
 # Kinds: see .kutha/META.md. Unknown kind → HIGH (fail-closed).
+# Vacuity: optional `selftest.mutations` or `selftest.skip`. Several kinds derive
+# mutations; a row with neither is UNPROVEN (`kutha-gov selftest` fails closed).
 
 checks:
   - id: trajectory

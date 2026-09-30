@@ -106,6 +106,16 @@ class SelftestTests(unittest.TestCase):
         )
         self.assertEqual(porcelain_before, porcelain_after)
 
+    def test_live_repo_selftest_is_green(self) -> None:
+        before = _tracked_harness_digest(ROOT)
+        buf = StringIO()
+        with patch.object(sys, "stdout", buf):
+            code = main(["--root", str(ROOT), "selftest"])
+        text = buf.getvalue()
+        self.assertEqual(0, code, msg=text)
+        self.assertNotRegex(text, r"UNPROVEN|VACUOUS|BASELINE-FAIL")
+        self.assertEqual(before, _tracked_harness_digest(ROOT))
+
     def test_copy_excludes_dv1_heavy_trees(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             dest = Path(raw) / "tree"
