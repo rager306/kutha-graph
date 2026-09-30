@@ -68,33 +68,39 @@ Closing leased product gaps F1–F3, F6 (verify/atomic/Define), F7, F8 from `doc
 
 ## Traceability
 
-Filled by roadmapper.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LOG-01 | — | Pending |
-| LOG-02 | — | Pending |
-| LOG-03 | — | Pending |
-| REF-01 | — | Pending |
-| REF-02 | — | Pending |
-| REF-03 | — | Pending |
-| ING-01 | — | Pending |
-| ING-02 | — | Pending |
-| ING-03 | — | Pending |
-| DUR-01 | — | Pending |
-| DUR-02 | — | Pending |
-| DUR-03 | — | Pending |
-| TIME-01 | — | Pending |
-| TIME-02 | — | Pending |
-| HOT-01 | — | Pending |
-| HOT-02 | — | Pending |
-| HOT-03 | — | Pending |
+| LOG-01 | Phase 12 | Pending |
+| LOG-02 | Phase 12 | Pending |
+| LOG-03 | Phase 12 | Pending |
+| REF-01 | Phase 13 | Pending |
+| REF-02 | Phase 13 | Pending |
+| REF-03 | Phase 13 | Pending |
+| ING-01 | Phase 14 | Pending |
+| ING-02 | Phase 14 | Pending |
+| ING-03 | Phase 14 | Pending |
+| DUR-01 | Phase 15 | Pending |
+| DUR-02 | Phase 15 | Pending |
+| DUR-03 | Phase 15 | Pending |
+| TIME-01 | Phase 15 | Pending |
+| TIME-02 | Phase 15 | Pending |
+| HOT-01 | Phase 16 | Pending |
+| HOT-02 | Phase 16 | Pending |
+| HOT-03 | Phase 16 | Pending |
 
 **Coverage:**
 - v0.04 requirements: 17 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 17
+- Mapped to phases: 17/17
+- Unmapped: 0
+- Duplicates: 0
+
+**Phase map (harness S01–S06):**
+- Phase 12 (S01): LOG-01, LOG-02, LOG-03
+- Phase 13 (S02): REF-01, REF-02, REF-03
+- Phase 14 (S03): ING-01, ING-02, ING-03
+- Phase 15 (S04 + S05): DUR-01, DUR-02, DUR-03, TIME-01, TIME-02
+- Phase 16 (S06): HOT-01, HOT-02, HOT-03
 
 ---
 *Requirements defined: 2026-09-30*
-*Last updated: 2026-09-30 after M012a lease / gsd-new-milestone --auto*
+*Last updated: 2026-09-30 after v0.04 roadmap (Phases 12–16)*

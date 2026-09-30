@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 milestone: v0.04
 milestone_name: Single-log SoT + stable references
 status: planning
-last_updated: "2026-09-30T16:58:09.865Z"
+last_updated: "2026-09-30T17:05:00.000Z"
 last_activity: 2026-09-30
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,10 +17,10 @@ progress:
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-09-30 after v0.02)
+See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.04 M012a single-log SoT + stable refs (leased). Defining requirements; freeze holds for M002.
+**Current focus:** v0.04 Phase 12 — Log-native SoT (M012a S01). Roadmap ready; freeze holds for M002.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -28,26 +28,25 @@ See: `.planning/PROJECT.md` (updated 2026-09-30 after v0.02)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 12 of 16 (Log-native SoT) — first of five v0.04 phases
 Plan: —
-Status: Defining requirements
-Last activity: 2026-09-30 — Milestone v0.04 started
+Status: Ready to plan
+Last activity: 2026-09-30 — v0.04 roadmap written (Phases 12–16)
 
+Progress: [░░░░░░░░░░] 0% (v0.04 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19 (v0.01 + v0.02 through Phase 8)
-- Average duration: 2min
-- Total execution time: ~26min
+- Total plans completed: 27 (v0.01–v0.03; v0.04 none yet)
+- Average duration: ~2–5min typical; Phase 11 outliers 16–93min
+- Total execution time: v0.01 ~26min + v0.02/v0.03 as recorded below
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Legal PIT fitness | 3/3 | 3min | 1min |
-| 2. Honest harness and freeze | 3/3 | 5min | 2min |
-| 3. Lease-gated next slice | 3/3 | 14min | 5min |
+| 1–3 (v0.01) | 9/9 | ~22min | ~2min |
 | 4 | 3 | - | - |
 | 5 | 2 | - | - |
 | 6 | 2 | - | - |
@@ -56,76 +55,23 @@ Last activity: 2026-09-30 — Milestone v0.04 started
 | 9 | 2 | - | - |
 | 10 | 2 | - | - |
 | 11 | 4 | - | - |
+| 12–16 (v0.04) | 0 | - | - |
 
 **Recent Trend:**
-- Last 5 plans: Phase 08 P01–P02, Phase 07 P02
-- Trend: steady
-
-**Per-Plan Metrics:**
-
-| Plan | Duration | Tasks | Files |
-|------|----------|-------|-------|
-| Phase 04 P01 | 7min | 3 tasks | 5 files |
-| Phase 04 P02 | 6min | 2 tasks | 2 files |
-| Phase 04 P03 | 7min | 3 tasks | 5 files |
-| Phase 07 P01 | 4min | 3 tasks | 5 files |
-| Phase 07 P02 | 4min | 3 tasks | 6 files |
-| Phase 08 P01 | 7min | 3 tasks | 5 files |
-| Phase 08 P02 | 3min | 3 tasks | 6 files |
-| Phase 09 P01 | 7min | 3 tasks | 8 files |
-| Phase 09 P02 | 7min | 3 tasks | 9 files |
-| Phase 10 P01 | 12min | 3 tasks | 5 files |
-| Phase 10 P02 | 9min | 3 tasks | 15 files |
-| Phase 11-semantic-governor P01 | 16min | 3 tasks | 10 files |
-| Phase 11-semantic-governor P02 | 93min | 3 tasks | 8 files |
-| Phase 11 P03 | 42min | 3 tasks | 9 files |
-| Phase 11 P04 | 34min | 3 tasks | 8 files |
+- Last 5 plans: Phase 11 P01–P04, Phase 10 P02
+- Trend: v0.03 harness/docs complete; v0.04 product crates not started
 
 ## Accumulated Context
 
 ### Decisions
 
-Full table: `.planning/PROJECT.md`. Ingest: ADR-002 STCA; stca-guide = constraints; typed Op; honeycomb = map.
-- [v0.01]: Phases 1–3 verification overlay shipped; green ≠ Accepted ≠ L_capability ≠ lease grant
-- [v0.02]: One GSD phase per remaining M011 slice; Phases 4–8 delivered; M011 tail closed
-- [v0.02]: GATE-01 primary owner Phase 4; GATE-02 and GATE-03 primary owner Phase 8; all three gates apply to every slice
-- [v0.02]: Harness deps preserved — S05/S06 depend on S03; S07 on S04; S08 on S04–S07
-- [Phase 07]: D-P1…D-P7 — swap-valid-prior oracle; rule_version on Behavior; separate provenance_fingerprint; two named tests; GATE inheritance; no STATE edit during delivery
-- [Phase 08 research]: D-F1…D-F7 — shared e2e builder + three oracles; justifications.jsonl clone of outcomes; conflict_report polarity not winner; compose don’t rewrite fold/CSR/provenance; GATE-02/03 close owners
-- [Phase 08]: D-F1…D-F4, D-F7: justifications.jsonl sidecar, conflict_report_at without a winner, three named FIX oracles; GATE-01 deferred to 08-02; check_admission uses current-picture fact_seq liveness
-- [Phase 08]: D-F6: identical fn / required / needle strings for the three FIX oracles
-- [Phase 08]: D-F5: Process/Trajectory changelog; no closed-delivery lease sentence during delivery; harness STATE closed after verify
-- [Phase 08]: docs-coupling: Process CHANGELOG committed with dictionary registration
-- [Phase 08]: RESEARCH Q4: ADR-013/011/012/040 evidence lists get assigned FIX names; map stays Proposed
-- [Phase 09]: D-H1: operator lease commit names Phase H5; M011 / Active Slice None / lifecycles / freeze unchanged; product fixes wait for M012a
-- [Phase 09]: D-H2: unchecked H5 dogfood checkbox; h4-lease and dogfood needles edited in place; I-dogfood H0–H5
-- [Phase 09]: D-G2 as green-ci: CHANGELOG Process pointer only; SEM-08 narrative reserved for Phase 11
-- [Phase 09]: D-G3: freeze and three lifecycle assignment lines byte-stable
-- [Phase 09]: D-A1/D-A2: AGENTS.md is 96 lines; live lease tokens removed; STATE-first freeze pointer
-- [Phase 09]: D-A3: diet ledger maps every removed block to a home with grep evidence
-- [Phase 09]: D-A4: language, planes, D1–D10, CE routing, commands, conventions 1–9, CBM forbids, Task map retained
-- [Phase 09]: D-S1: semantic-contract header is a 2026-09-13 M011 S03 snapshot; live lease is STATE
-- [Phase 10]: D-R1: one Proposed review artifact; lease only as a pointer to .kutha/STATE.md
-- [Phase 10]: D-R2: four hypothesis changes vs scout map (ADR-011/061 F2, ADR-060 F4, ADR-081)
-- [Phase 10]: D-O1: M012a before M012; M002 log durability first; unique M### = 8
-- [Phase 10]: D-O2: harness M002 parenthetical; STRATEGY.md no-hit
-- [Phase 10]: Worklist SoT is the 10-01 verdict table; first amend row is ADR-012 (not D-R2 ADR-014)
-- [Phase 10]: Honeycomb restage is header comments only; map/delivery/capability unchanged
-- [Phase 10]: ADR-000: English D4 time-scale pointer only; D1-D10 Decision text byte-stable
-- [Phase 11-semantic-governor]: D-V1: one tempfile copy per selftest run; mutations never write the working tree
-- [Phase 11-semantic-governor]: D-V3: ci evidence h5_selftest labels the harness rung H5; META run_selftest row is 11-04
-- [Phase 11-semantic-governor]: require: any is one atomic mutation unit so mixed needles cannot false-VACUOUS
-- [Phase 11-semantic-governor]: D-T1: rust_test_asserts proves named #[test] bodies assert after noise strip
-- [Phase 11-semantic-governor]: D-T2: all former fn-needle checks converted; crates/ untouched
-- [Phase 11-semantic-governor]: D-E1: require_evidence_when on capability named; live evidence names already resolved
-- [Phase 11]: D-C1: capture alphanumeric KEY= tokens; empty and <placeholder> are not cites; backticks do not exempt a concrete token
-- [Phase 11]: D-X1: process-scope ADR/lock refs resolve; ranges are endpoints; ADR-100 may dangle; D010-1/D050-2 are not locks
-- [Phase 11]: D-B1: agents-lean is AGENTS.md wc -l <= 110 plus file_absent of four lease needles
-- [Phase 11]: D-G1: fsm/.env.example budget 48; no local .env; ci skipped==0 for 35 checks
-- [Phase 11]: I-F4 until is STATE names M012 (rule registry / n-ary derivation), not M012a
-- [Phase 11]: I-F6 until names M012a; durability protocol waits until STATE names M002
-- [Phase 11]: h4-lease id kept; ROADMAP needle is the checked H5 checkbox only
-- [Phase 11]: green governor is not product correctness and not ADR Accepted
+Full table: `.planning/PROJECT.md`.
+- [v0.04]: Five GSD phases 12–16 map M012a S01 | S02 | S03 | S04+S05 | S06; product crates allowed; no M012 dicts-as-facts; freeze until M002
+- [v0.04]: TIME (S05) folds into Phase 15 with DUR (S04); S05 `depends:[]` but numeric order is after Phase 14
+- [v0.04]: GATE-01/02/03 inherit — named cargo + governor; execute only under matching Active Slice; honeycomb stays Proposed
+- [v0.03]: H5 semantic governor + lean AGENTS.md shipped; crates untouched
+- [v0.02]: One GSD phase per M011 slice; GATE-01/02/03; M011 S04–S08 closed
+- [v0.01]: Phases 1–3 verification overlay; green ≠ Accepted ≠ L_capability ≠ lease grant
 
 ### Pending Todos
 
@@ -133,24 +79,28 @@ None.
 
 ### Blockers/Concerns
 
-- Do not auto-start M002 after S08. Freeze holds until STATE names otherwise.
-- Do not start legal pack, Cypher, HNSW, or ADR-050 because a GSD phase completed — honeycomb stays Proposed (GATE-03).
+- Execute Phase 12 only after `.kutha/STATE.md` names Active Slice **S01** (GATE-02). Roadmap planning does not lease the slice.
+- Do not start M012 dictionaries-as-facts, M002 Rocks, legal pack, Cypher, HNSW, or ADR-050 because a GSD phase completed — honeycomb stays Proposed (GATE-03).
 
 ## Deferred Items
 
 | Category | Item | Status | Deferred At | Milestone |
 |----------|------|--------|-------------|-----------|
 | later | Rocks / Cypher / HNSW / ADR-050 / packs | Frozen | 2026-09-29 | until STATE names M002+ |
-| verification | Phases 4–8 verification digests marked stale by manager (reports still passed) | Acknowledged override | 2026-09-30 | v0.02 closeout |
+| later | M012 dictionaries-as-facts (F4/F5) | Frozen | 2026-09-30 | until STATE names M012 |
+| later | ADR-061 full GED-class diff API | Out of M012a | 2026-09-30 | v0.04 / REQUIREMENTS |
+| verification | Phases 4–8 verification digests marked stale by manager | Acknowledged override | 2026-09-30 | v0.02 closeout |
 | audit | Formal `/gsd-audit-milestone` for v0.02 not run before archive | Acknowledged gap | 2026-09-30 | v0.02 closeout |
 
 ## Session Continuity
 
-Last session: 2026-09-30T11:20:41Z
-Stopped at: Phase 11 complete — all phases complete
-Resume file: .planning/phases/11-semantic-governor/11-VERIFICATION.md
-Next: `/gsd-new-milestone` when ready. Freeze holds. Do not lease M002 without explicit operator intent.
+Last session: 2026-09-30
+Stopped at: v0.04 roadmap created — Phases 12–16 mapped; coverage 17/17
+Resume file: `.planning/ROADMAP.md` (v0.04 section)
+Next: `/gsd-plan-phase 12` after roadmap approval. Lease S01 in `.kutha/STATE.md` before execute. Freeze holds. Do not lease M002 without explicit operator intent.
 
 ## Operator Next Steps
 
-- Start the next milestone with /gsd-new-milestone
+- Review `.planning/ROADMAP.md` v0.04 phases
+- After approval: `/gsd-plan-phase 12`
+- Before execute: lease Active Slice **S01** in `.kutha/STATE.md` (do not confuse with this file)
