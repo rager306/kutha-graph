@@ -1,6 +1,6 @@
 //! M012a S04 / DUR-01..03: verify-on-open, atomic events.jsonl, stable Define ids.
 
-use kutha_common::{Event, Op};
+use kutha_common::{Event, EventId, Op};
 use kutha_runtime::{store, Runtime};
 use std::fs;
 use std::io::ErrorKind;
@@ -65,10 +65,7 @@ fn open_rejects_tampered_snapshot() {
         .and_then(|f| f.get_mut("facts"))
         .and_then(|f| f.as_array_mut())
         .expect("fold.facts");
-    assert!(
-        !facts.is_empty(),
-        "seeded snapshot must have facts to pop"
-    );
+    assert!(!facts.is_empty(), "seeded snapshot must have facts to pop");
     facts.pop();
     fs::write(&snap_path, serde_json::to_vec_pretty(&snap).unwrap()).unwrap();
 
@@ -114,6 +111,41 @@ fn persist_replaces_events_jsonl_atomically() {
         "failed temp write must leave the previous complete jsonl"
     );
     assert_eq!(read_jsonl_events(&jsonl), seeded);
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+fn define_name_ids(path: &Path) -> Vec<(String, EventId)> {
+    let mut pairs: Vec<(String, EventId)> = read_jsonl_events(path)
+        .into_iter()
+        .filter_map(|e| match e.op {
+            Op::Define { name } => Some((name, e.id)),
+            _ => None,
+        })
+        .collect();
+    pairs.sort_by(|a, b| a.0.cmp(&b.0));
+    pairs
+}
+
+#[test]
+fn define_ids_stable_across_persist_open() {
+    let rt = seed_runtime();
+    let dir = temp_dir("define-ids");
+    store::persist(&rt, &dir).unwrap();
+    let jsonl = dir.join("events.jsonl");
+    let first = define_name_ids(&jsonl);
+    assert!(
+        !first.is_empty(),
+        "persisted log must include dictionary Define rows"
+    );
+
+    let opened = store::open(&dir).unwrap();
+    store::persist(&opened, &dir).unwrap();
+    let second = define_name_ids(&jsonl);
+    assert_eq!(
+        second, first,
+        "same term set must keep the same Define Event.id across persist/open/persist"
+    );
 
     let _ = fs::remove_dir_all(&dir);
 }
