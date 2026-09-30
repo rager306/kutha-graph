@@ -47,6 +47,8 @@ states:
       - crash_after_prefix_has_no_terminal_success_until_explicit_resume
       - typed_csr_preserves_relation_labels_and_support_multiplicity
       - untyped_csr_neighbor_set_and_ff5_still_hold
+      - provenance_detects_caused_by_swap_when_state_fingerprint_matches
+      - provenance_detects_rule_version_change_when_state_fingerprint_matches
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant

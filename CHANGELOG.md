@@ -14,9 +14,13 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - Named test `provenance_detects_caused_by_swap_when_state_fingerprint_matches` (PROV-01): swap `caused_by` among valid priors; state fingerprint matches; provenance digest moves; both `replay_check` Ok.
 - Named test `provenance_detects_rule_version_change_when_state_fingerprint_matches` (PROV-02): change only `rule_version` (`r1` → `r2`); state fingerprint matches; provenance digest moves; no execution replay.
 
+### Process
+
+- FSM `observe_cargo.required` plus `m011-provenance` / `B-m011-provenance` needles for named PROV-01 and PROV-02 tests (GATE-01).
+
 ### Trajectory
 
-- Active Slice remains **S07**; GATE-01 dictionary needles stay on plan 07-02. Honeycomb map unchanged (Proposed). Green governor is not ADR Accepted and not L_capability.
+- Active Slice remains **S07**; ADR-060 and ADR-011 remain Proposed (not Accepted, not L_capability). GATE-01 needles registered. Green governor is not ADR Accepted and not L_capability. `replay_check` Ok is not execution replay.
 
 ## 2026-09-30 — Process: lease Active Slice S07 after S06 delivery
 

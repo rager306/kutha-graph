@@ -55,3 +55,8 @@ bridges:
     claim: "Typed CSR lease preserves relation labels and support multiplicity; untyped neighbor-set and FF5 path still hold"
     cites: "crates/kutha-runtime/tests/m011_typed_csr.rs"
     check: m011-typed-csr
+
+  - id: B-m011-provenance
+    claim: "Provenance digest detects caused_by swap and rule_version change while state fold fingerprint still matches; replay_check stays Ok on valid priors"
+    cites: "crates/kutha-runtime/tests/m011_provenance.rs"
+    check: m011-provenance

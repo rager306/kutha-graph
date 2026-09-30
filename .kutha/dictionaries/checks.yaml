@@ -348,6 +348,30 @@ checks:
         category: m011-s06
         message: "typed_csr_lease_at missing: {missing}"
 
+  - id: m011-provenance
+    description: M011 S07 — provenance digest detects caused_by swap and rule_version change while state fingerprint matches
+    steps:
+      - kind: file_contains
+        path: crates/kutha-runtime/tests/m011_provenance.rs
+        needles:
+          - "fn provenance_detects_caused_by_swap_when_state_fingerprint_matches"
+          - "fn provenance_detects_rule_version_change_when_state_fingerprint_matches"
+        require: all
+        category: m011-s07
+        message: "M011 provenance tests missing {missing}"
+      - kind: file_contains
+        path: crates/kutha-common/src/event.rs
+        needles: ["rule_version"]
+        require: all
+        category: m011-s07
+        message: "rule_version missing: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/quantum.rs
+        needles: ["provenance_fingerprint"]
+        require: all
+        category: m011-s07
+        message: "provenance_fingerprint missing: {missing}"
+
   - id: h4-lease
     description: H4 delivery lease named without promoting ADR-090 L_map
     steps:
