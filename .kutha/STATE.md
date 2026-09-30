@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M012a
-**Active Slice:** S06
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M012a-S05-done
+L_delivery=M012a-S06-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M012a leased (single-log SoT + stable refs); M011 S08 remains the prior closed record | Capability proven / Rocks started / M002 leased |
+| L_delivery | M012a S01–S06 done (single-log SoT + stable refs closed) | Capability proven / Rocks started / M002 leased |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M012a / S06 is leased** (fold-internal hot indexes / Phase 16). `L_delivery` stays `M012a-S05-done` until S06 delivers. This is the last M012a product slice. Do **not** start M012 dictionaries-as-facts, a legal pack, or M002 (Rocks) until STATE names them. Do not open ADR-100. Do not implement Cypher/HNSW. Honeycomb stays Proposed (GATE-03). H5 dogfood remains the current harness rung.
+**M012a S01–S06 delivered** (`L_delivery=M012a-S06-done`). Active Slice cleared. M012a product scope closed pending GSD milestone archive. Do **not** start M012 dictionaries-as-facts or M002 Rocks until STATE names them. Honeycomb stays Proposed. Do **not** start M012 dictionaries-as-facts, a legal pack, or M002 (Rocks) until STATE names them. Do not open ADR-100. Do not implement Cypher/HNSW. Honeycomb stays Proposed (GATE-03). H5 dogfood remains the current harness rung.
 
 ## Freeze (until explicit M002 lease)
 

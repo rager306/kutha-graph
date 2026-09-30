@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: M012a S06 hot indexes (M012a closed)
+
+### Product
+
+- `GraphFold` indexes facts by `valid_from` / `claim_id`; `as_of` / `claim_supported_at` skip non-overlapping facts (HOT-01).
+- Untyped CSR builds via `CsrMaterializer`; CSR remains a droppable lease (HOT-02/03). Named oracles in `m012a_hot_indexes`.
+
+### Process
+
+- Governor `m012a-s06-hot-indexes` + FSM observe for three HOT tests. GSD Phase 16 closed. Harness ROADMAP marks M012a **CLOSED**.
+
+### Trajectory
+
+- `L_delivery=M012a-S06-done`; Active Slice **None**. Active Milestone still **M012a** until operator clears or leases M012. Freeze until M002 unchanged. Honeycomb Proposed.
+
 ## 2026-10-01 — Process: governor observes HOT-01..03
 
 ### Process

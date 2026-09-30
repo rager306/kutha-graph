@@ -190,7 +190,7 @@ Plans:
 | 13. Stable references | v0.04 | 3/3 | Complete    | 2026-10-01 |
 | 14. Idempotent ingest | v0.04 | 3/3 | Complete    | 2026-10-01 |
 | 15. Verify, persist, and time scale | v0.04 | 3/3 | Complete    | 2026-10-01 |
-| 16. Fold-internal hot indexes | v0.04 | 3/3 | Complete   | 2026-10-01 |
+| 16. Fold-internal hot indexes | v0.04 | 3/3 | Complete    | 2026-10-01 |
 
 **Harness citation (not this table):** Active Milestone **M012a**; Active Slice **S03**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012a-S02-done`; `L_capability=ff5-green`; freeze until explicit **M002**. See `.kutha/STATE.md`. Do not overwrite that file.
 

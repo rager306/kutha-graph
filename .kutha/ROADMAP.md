@@ -56,7 +56,7 @@ Proposed close-out of the semantic core (source: `docs/architecture/semantic-con
 - [x] **S08: End-to-end candidate fixture** `risk:medium` `depends:[S04,S05,S06,S07]`
   > After this: observations 1–5 of the semantic-contract fixture hold at named cuts; incremental maintenance and clean reconstruction agree; discarded leases change no answer.
 
-## M012a: Single-log SoT and stable references — ACTIVE
+## M012a: Single-log SoT and stable references — CLOSED
 
 **Success:** Outcomes, justifications, and resume survive as log records (sidecars are leases); Retract/Correct/justification cites use stable EventId / proposition ids; identical re-delivery does not mint a second support; `open` verifies snapshot identity against the log; persist is atomic for the log file; `Define` ids are stable across persist; VT/TT carry a declared scale; fold-hot reads use fold-internal indexes. Not M012 dictionaries-as-facts; not M002 Rocks; not ADR Accepted.
 
@@ -72,7 +72,7 @@ Proposed close-out of the semantic core (source: `docs/architecture/semantic-con
   > After this: `open` runs replay_check (or equivalent) against snapshot identity; persist is rename-into-place; Define ids survive re-persist.
 - [x] **S05: Declared time scale** `risk:low` `depends:[]`
   > After this: VT/TT document a scale (and optional TT↔wall map); fixtures use that scale explicitly.
-- [ ] **S06: Fold-internal indexes for hot reads** `risk:medium` `depends:[S02]`
+- [x] **S06: Fold-internal indexes for hot reads** `risk:medium` `depends:[S02]`
   > After this: `as_of` / `claim_supported_at` do not scan the full fact vector at the leased N; CSR path stays a lease.
 
 ## Boundary map (M001)
@@ -129,12 +129,12 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. **M012a is active** (leased; Active Slice None until a phase leases one). M011 is CLOSED. M012 / M002+ stay frozen until leased.
+Do not start until STATE names them. **M012a is CLOSED** (S01–S06 done). M011 is CLOSED. M012 / M002+ stay frozen until leased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
 1. **M011** — CLOSED (S01–S08). Historical record above.
-2. **M012a** — ACTIVE (this milestone). Detail above.
+2. **M012a** — CLOSED (S01–S06). Detail above.
 3. *(unnumbered)* Benchmark baseline — immediately after M012a indexes; not a new three-digit id.
 4. **M012** — Dictionaries as facts. The thawed subset this milestone names: versioned relation-allowlist entries, a rule registry (`rule_version` equal to the definition hash), admission status as meta-facts, and the policy version pinned in the log. LLM output remains a proposal; typed non-success. Its lease must name that subset.
 5. **M002** — Log durability protocol first: segmented append-only log, hash chain, atomic manifest, lease identity verified on open, replay parity across stores. Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity.
