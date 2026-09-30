@@ -24,7 +24,9 @@ struct Fixture {
     claim_q: EventId,
     event_a: EventId,
     event_b: EventId,
+    #[allow(dead_code)]
     seq_a: u64,
+    #[allow(dead_code)]
     seq_b: u64,
     t1: u64,
     t2: Option<u64>,
@@ -151,7 +153,6 @@ impl Fixture {
             self.claim_q,
             vec![self.claim_p],
             vec![self.event_a, self.event_b],
-            vec![self.seq_a, self.seq_b],
             "r1",
             self.t1,
             VT_INTERIOR,
@@ -304,7 +305,7 @@ fn e2e_justification_cites_sources_and_rejects_stale_admission() {
         .iter()
         .find(|j| j.justification_id == jid)
         .expect("t1 row");
-    assert_eq!(row.source_fact_seqs, vec![fx.seq_a, fx.seq_b]);
+    assert_eq!(row.source_event_ids, vec![fx.event_a, fx.event_b]);
     assert_eq!(row.rule_version, "r1");
     assert_eq!(row.target_claim, fx.claim_q);
     fx.rt.check_admission(&jid).unwrap();
@@ -326,7 +327,6 @@ fn e2e_justification_cites_sources_and_rejects_stale_admission() {
         fx.claim_q,
         vec![fx.claim_p],
         vec![fx.event_b],
-        vec![fx.seq_b],
         "r1",
         t2,
         VT_INTERIOR,
@@ -360,7 +360,6 @@ fn e2e_incremental_matches_reconstruct_after_discarding_leases() {
         fx.claim_q,
         vec![fx.claim_p],
         vec![fx.event_b],
-        vec![fx.seq_b],
         "r1",
         t2,
         VT_INTERIOR,

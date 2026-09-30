@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: EventId justification cites
+
+### Product
+
+### Changed
+
+- `Op::JustificationCite` and `check_admission` name source supports by minting `EventId` only. Fold-local seq is no longer in the durable cite payload.
+- `fork_at` of a prefix that contains the cite still admits after the parent retracts that EventId.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. Active Slice remains **S02**. Freeze until M002 unchanged.
+
 ## 2026-10-01 — Product: minting EventId retract and correct
 
 ### Product

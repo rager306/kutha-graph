@@ -88,7 +88,6 @@ pub enum Op {
         target_claim: EventId,
         source_claim_ids: Vec<EventId>,
         source_event_ids: Vec<EventId>,
-        source_fact_seqs: Vec<u64>,
         rule_version: String,
         tt: u64,
         vt: u64,
@@ -240,7 +239,6 @@ impl Event {
                 target_claim,
                 source_claim_ids,
                 source_event_ids,
-                source_fact_seqs,
                 rule_version,
                 tt,
                 vt,
@@ -255,10 +253,6 @@ impl Event {
                 h.update((source_event_ids.len() as u64).to_le_bytes());
                 for id in source_event_ids {
                     h.update(id.as_bytes());
-                }
-                h.update((source_fact_seqs.len() as u64).to_le_bytes());
-                for seq in source_fact_seqs {
-                    h.update(seq.to_le_bytes());
                 }
                 h.update(rule_version.as_bytes());
                 h.update(tt.to_le_bytes());

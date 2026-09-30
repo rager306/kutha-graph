@@ -93,7 +93,8 @@ fn discard_justifications_sidecar_keeps_admission_and_resume() {
     let mut opened_r = store::open(&pdir).unwrap();
     assert!(
         opened_r.outcome_records().iter().any(|row| {
-            row.disposition == OutcomeDisposition::Resume && row.resume_of.as_deref() == Some(qid.as_str())
+            row.disposition == OutcomeDisposition::Resume
+                && row.resume_of.as_deref() == Some(qid.as_str())
         }),
         "Resume reconstructs after discarding both sidecars"
     );
@@ -123,13 +124,13 @@ fn provenance_fingerprint_moves_when_log_native_record_bytes_change() {
             break;
         }
     }
-    assert!(flipped, "clone must contain a QuantumOutcome with receipt bytes");
-    let rt2 = Runtime::from_dict_and_events(
-        rt.dictionary().strings().to_vec(),
-        cloned,
-        rt.max_cascade,
-    )
-    .unwrap();
+    assert!(
+        flipped,
+        "clone must contain a QuantumOutcome with receipt bytes"
+    );
+    let rt2 =
+        Runtime::from_dict_and_events(rt.dictionary().strings().to_vec(), cloned, rt.max_cascade)
+            .unwrap();
     assert_eq!(
         rt.fold().fingerprint(),
         rt2.fold().fingerprint(),
@@ -163,7 +164,6 @@ fn derive_pq_with_justification() -> (Runtime, String) {
         })
         .unwrap();
     let event_a = first.receipt.event_ids[0];
-    let seq_a = rt.fold().facts().last().unwrap().seq;
     let claim_p = rt.fold().facts().last().unwrap().claim_id;
     let second = rt
         .emit(Op::Assert {
@@ -176,7 +176,6 @@ fn derive_pq_with_justification() -> (Runtime, String) {
         })
         .unwrap();
     let event_b = second.receipt.event_ids[0];
-    let seq_b = rt.fold().facts().last().unwrap().seq;
     let derived = rt
         .emit(Op::Behavior {
             name: "derive_pq".into(),
@@ -201,7 +200,6 @@ fn derive_pq_with_justification() -> (Runtime, String) {
         claim_q,
         vec![claim_p],
         vec![event_a, event_b],
-        vec![seq_a, seq_b],
         "r1",
         t1,
         2017,

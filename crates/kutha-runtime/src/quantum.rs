@@ -80,7 +80,6 @@ pub struct Justification {
     pub target_claim: EventId,
     pub source_claim_ids: Vec<EventId>,
     pub source_event_ids: Vec<EventId>,
-    pub source_fact_seqs: Vec<u64>,
     pub rule_version: String,
     pub tt: u64,
     pub vt: u64,
@@ -268,7 +267,6 @@ impl Runtime {
                     target_claim,
                     source_claim_ids,
                     source_event_ids,
-                    source_fact_seqs,
                     rule_version,
                     tt,
                     vt,
@@ -277,7 +275,6 @@ impl Runtime {
                     target_claim: *target_claim,
                     source_claim_ids: source_claim_ids.clone(),
                     source_event_ids: source_event_ids.clone(),
-                    source_fact_seqs: source_fact_seqs.clone(),
                     rule_version: rule_version.clone(),
                     tt: *tt,
                     vt: *vt,
@@ -325,7 +322,6 @@ impl Runtime {
             target_claim: row.target_claim,
             source_claim_ids: row.source_claim_ids.clone(),
             source_event_ids: row.source_event_ids.clone(),
-            source_fact_seqs: row.source_fact_seqs.clone(),
             rule_version: row.rule_version.clone(),
             tt: row.tt,
             vt: row.vt,
@@ -348,7 +344,6 @@ impl Runtime {
         target_claim: EventId,
         source_claim_ids: Vec<EventId>,
         source_event_ids: Vec<EventId>,
-        source_fact_seqs: Vec<u64>,
         rule_version: impl Into<String>,
         tt: u64,
         vt: u64,
@@ -369,7 +364,6 @@ impl Runtime {
             target_claim,
             source_claim_ids,
             source_event_ids,
-            source_fact_seqs,
             rule_version,
             tt,
             vt,
@@ -390,15 +384,15 @@ impl Runtime {
                 justification_id: justification_id.into(),
                 reason: "unknown_justification",
             })?;
-        // Cited seqs must still be live on the current picture at the row's VT.
+        // Cited minting EventIds must still be live on the current picture at the row's VT.
         // Historical row.tt records the claimed cut; using it alone would never
         // stale a cite after CorrectInterval/Retract (FIX-02).
-        for seq in &row.source_fact_seqs {
+        for event_id in &row.source_event_ids {
             let live = self
                 .fold
                 .facts()
                 .iter()
-                .any(|f| f.seq == *seq && f.is_live_at(u64::MAX, row.vt));
+                .any(|f| f.event_id == *event_id && f.is_live_at(u64::MAX, row.vt));
             if !live {
                 return Err(RuntimeError::AdmissionDenied {
                     justification_id: row.justification_id.clone(),
