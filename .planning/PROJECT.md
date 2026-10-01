@@ -10,9 +10,18 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: None
+## Current Milestone: v0.05 Dictionaries as facts
 
-v0.04 shipped 2026-10-01 (M012a S01–S06). Next GSD milestone starts only after an explicit lease in `.kutha/STATE.md` (candidate: M012).
+**Goal:** Land the leased M012 thawed subset so relation allowlist, rule registry, admission/policy, action record, and multi-hop derivation are log-native facts — without thawing ADR-050 six dictionaries, Cypher/HNSW, legal pack, or M002 Rocks.
+
+**Target features:**
+- Relation allowlist entries as versioned log facts; admit consults the fold cut
+- Rule registry with `rule_version` = definition hash (not free string)
+- Admission status and policy version as bi-temporal meta-facts; `check_admission` on the product path
+- Thin action record binding arguments to admission + policy version
+- Multi-hop / n-ary derivation eligibility beyond one-hop (F4)
+
+**Boundary:** Product crates allowed under M012. No ADR-050 six dictionaries. No Rocks/Cypher/HNSW/legal pack. Honeycomb stays Proposed. Freeze until explicit M002 for Rocks.
 
 
 ## Business Context
@@ -155,7 +164,7 @@ Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), and **v0
 
 ## Next Milestone Goals
 
-Next candidate: M012 (dictionaries as facts: allowlist entries, rule registry, admission meta-facts), then M002 (log durability protocol first; Rocks for indexes only). Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.
+M012 is leased. After this milestone: M002 (log durability protocol first; Rocks for indexes only). Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.
 
 ## Context
 
@@ -219,4 +228,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-01 after shipping v0.04 / M012a CLOSED*
+*Last updated: 2026-10-01 after leasing M012 / starting GSD v0.05*
