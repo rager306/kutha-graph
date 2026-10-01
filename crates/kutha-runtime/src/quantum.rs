@@ -1021,6 +1021,10 @@ impl Runtime {
         })
     }
 
+    /// Residual automatic Assert cascade: when `relation` equals interned
+    /// `knows`, emit `inverse_knows` with an empty pin. This is knows-only
+    /// and is not the leased multi-hop follow-on; hashed user Behavior chains
+    /// are. Do not mint `inverse_knows` for other relations.
     fn follow_ons(&self, event: &Event) -> Vec<Event> {
         match &event.op {
             Op::Assert {

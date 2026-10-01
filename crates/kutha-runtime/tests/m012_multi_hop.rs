@@ -163,3 +163,120 @@ fn two_hop_ineligible_when_parent_rule_retracted() {
         "hop2 must walk the parent pin and be ineligible (DER-01)"
     );
 }
+
+fn inverse_knows_rows(rt: &Runtime) -> Vec<&kutha_common::Event> {
+    rt.log()
+        .iter()
+        .filter(|e| matches!(&e.op, Op::Behavior { name, .. } if name == "inverse_knows"))
+        .collect()
+}
+
+#[test]
+fn inverse_knows_cascade_is_residual_spike() {
+    let mut rt = Runtime::default();
+    let alice = rt.intern("Alice");
+    let bob = rt.intern("Bob");
+    let knows = rt.intern("knows");
+    let asserted = rt
+        .emit(Op::Assert {
+            subject: alice,
+            relation: knows,
+            object: bob,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
+    let cause = asserted.receipt.event_ids[0];
+    let inverses = inverse_knows_rows(&rt);
+    assert_eq!(1, inverses.len(), "knows Assert must mint inverse_knows");
+    match &inverses[0].op {
+        Op::Behavior {
+            name,
+            caused_by,
+            rule_version,
+            ..
+        } => {
+            assert_eq!("inverse_knows", name);
+            assert_eq!(cause, *caused_by);
+            assert!(
+                rule_version.is_empty(),
+                "residual cascade keeps an empty pin: {rule_version}"
+            );
+        }
+        other => panic!("expected inverse_knows Behavior, got {other:?}"),
+    }
+
+    let p = rt.intern("P");
+    let q = rt.intern("Q");
+    let rel = rt.intern("relatedTo");
+    let true_ = rt.intern("true");
+    rt.emit(Op::RegisterRule {
+        definition: "derive_pq".into(),
+        valid_from: 2010,
+        valid_to: None,
+    })
+    .unwrap();
+    let related = rt
+        .emit(Op::Assert {
+            subject: p,
+            relation: rel,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
+    let related_id = related.receipt.event_ids[0];
+    let n = rt.log().len();
+    assert_eq!(
+        1,
+        inverse_knows_rows(&rt).len(),
+        "relatedTo Assert must not mint inverse_knows (DER-03)"
+    );
+
+    let pin = rule_definition_hash("derive_pq");
+    let derived = rt
+        .emit(Op::Behavior {
+            name: "derive_pq".into(),
+            caused_by: related_id,
+            rule_version: pin.clone(),
+            subject: q,
+            relation: rel,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+        })
+        .unwrap();
+    let hop = derived.receipt.event_ids[0];
+    let new_behavior = rt
+        .log()
+        .iter()
+        .find(|e| e.id == hop)
+        .expect("hashed Behavior");
+    match &new_behavior.op {
+        Op::Behavior {
+            name,
+            rule_version,
+            ..
+        } => {
+            assert_eq!("derive_pq", name);
+            assert_ne!("inverse_knows", name);
+            assert_eq!(pin, *rule_version);
+        }
+        other => panic!("expected hashed derive_pq, got {other:?}"),
+    }
+    assert!(
+        rt.log().len() > n,
+        "hashed Behavior emit must append a row"
+    );
+    assert_eq!(
+        1,
+        inverse_knows_rows(&rt).len(),
+        "hashed follow-on must not append another inverse_knows"
+    );
+}
