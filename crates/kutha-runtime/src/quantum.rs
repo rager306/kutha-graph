@@ -1,8 +1,8 @@
 use crate::allow::load_allowed_names;
 use crate::csr::{CsrLease, TypedCsrLease};
 use crate::fold::GraphFold;
-use crate::materializer::{CsrMaterializer, Materializer};
 use crate::log::EventLog;
+use crate::materializer::{CsrMaterializer, Materializer};
 use crate::receipt::{digest_to_hex, QuantumReceipt};
 use crate::snapshot::Snapshot;
 use kutha_common::{Event, EventId, Op, TermDictionary, TermId};
@@ -129,7 +129,8 @@ fn op_relation(op: &Op) -> Option<TermId> {
         | Op::CorrectInterval { .. }
         | Op::Define { .. }
         | Op::QuantumOutcome { .. }
-        | Op::JustificationCite { .. } => None,
+        | Op::JustificationCite { .. }
+        | Op::AllowRelation { .. } => None,
     }
 }
 
@@ -137,7 +138,10 @@ fn op_relation(op: &Op) -> Option<TermId> {
 fn op_affects_fold(op: &Op) -> bool {
     !matches!(
         op,
-        Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. }
+        Op::Define { .. }
+            | Op::QuantumOutcome { .. }
+            | Op::JustificationCite { .. }
+            | Op::AllowRelation { .. }
     )
 }
 
@@ -292,6 +296,7 @@ impl Runtime {
         }
         self.outcomes = outcomes;
         self.justifications = justifications;
+        self.fold.rebuild_allow_entries(self.log.as_slice());
     }
 
     pub(crate) fn log_has_quantum_outcome(&self) -> bool {
@@ -615,10 +620,26 @@ impl Runtime {
     }
 
     fn admit(&self, op: &Op) -> Result<(), RuntimeError> {
+        if let Op::AllowRelation { name, .. } = op {
+            if name.is_empty() {
+                return Err(RuntimeError::UnknownRelation {
+                    name: String::new(),
+                });
+            }
+            return Ok(());
+        }
         let Some(rel) = op_relation(op) else {
             return Ok(());
         };
         let name = self.dict.lookup(rel).unwrap_or("").to_string();
+        let vt = match op {
+            Op::Assert { valid_from, .. } | Op::Behavior { valid_from, .. } => *valid_from,
+            _ => 0,
+        };
+        let tt = self.next_tt.saturating_sub(1);
+        if !name.is_empty() && self.fold.relation_allowed_at(&name, tt, vt) {
+            return Ok(());
+        }
         if self.allowed.contains(&name) {
             return Ok(());
         }
@@ -764,6 +785,18 @@ impl Runtime {
             }
         }
         self.admit(&op)?;
+        if matches!(&op, Op::AllowRelation { .. }) {
+            let event = Event::new(op, self.next_tt());
+            let id = event.id;
+            let digest = event.digest_bytes();
+            self.fold.apply(&event);
+            self.log.append(event);
+            let receipt = QuantumReceipt::from_events(vec![id], &[digest], false);
+            return Ok(QuantumOutcome {
+                receipt,
+                events_in_quantum: 1,
+            });
+        }
         self.admit_claim(&op)?;
         if let Some(retry) = self.delivery_key_retry(&op)? {
             return Ok(retry);
@@ -897,7 +930,9 @@ impl Runtime {
                     h.update((rule_version.len() as u64).to_le_bytes());
                     h.update(rule_version.as_bytes());
                 }
-                Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {
+                Op::QuantumOutcome { .. }
+                | Op::JustificationCite { .. }
+                | Op::AllowRelation { .. } => {
                     h.update(e.digest_bytes());
                 }
                 _ => {}
@@ -940,7 +975,8 @@ impl Runtime {
             | Op::CorrectInterval { .. }
             | Op::Define { .. }
             | Op::QuantumOutcome { .. }
-            | Op::JustificationCite { .. } => return false,
+            | Op::JustificationCite { .. }
+            | Op::AllowRelation { .. } => return false,
         };
         self.fold.claim_supported_at(premise, tt, vt)
     }

@@ -130,6 +130,13 @@ pub enum Op {
         tt: u64,
         vt: u64,
     },
+    /// Versioned relation-allowlist entry (M012 S01 / ALL-01). Fold records a skip-serialized
+    /// allow-entry; not a graph Fact.
+    AllowRelation {
+        name: String,
+        valid_from: ValidTime,
+        valid_to: Option<ValidTime>,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -158,7 +165,8 @@ impl Event {
             Op::Retract { .. }
             | Op::Define { .. }
             | Op::QuantumOutcome { .. }
-            | Op::JustificationCite { .. } => vec![],
+            | Op::JustificationCite { .. }
+            | Op::AllowRelation { .. } => vec![],
             Op::Correct { object, .. } | Op::CorrectInterval { object, .. } => vec![*object],
         };
         Self {
@@ -326,6 +334,16 @@ impl Event {
                 h.update(rule_version.as_bytes());
                 h.update(tt.to_le_bytes());
                 h.update(vt.to_le_bytes());
+            }
+            Op::AllowRelation {
+                name,
+                valid_from,
+                valid_to,
+            } => {
+                h.update(b"allow-relation");
+                h.update(name.as_bytes());
+                h.update(valid_from.to_le_bytes());
+                h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
             }
         }
         h.finalize().into()

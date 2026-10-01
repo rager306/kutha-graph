@@ -151,6 +151,35 @@ impl Fact {
     }
 }
 
+/// Skip-serialized allowlist row (M012 S01). Log is SoT; not a graph Fact.
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct AllowEntry {
+    event_id: EventId,
+    name: String,
+    valid_from: ValidTime,
+    valid_to: Option<ValidTime>,
+    ingested_at: TransactionTime,
+    invalidated_at: Option<TransactionTime>,
+}
+
+impl AllowEntry {
+    fn is_live_at(&self, tt: TransactionTime, vt: ValidTime) -> bool {
+        if self.ingested_at > tt {
+            return false;
+        }
+        if self.invalidated_at.is_some_and(|inv| inv <= tt) {
+            return false;
+        }
+        if vt < self.valid_from {
+            return false;
+        }
+        if self.valid_to.is_some_and(|to| vt >= to) {
+            return false;
+        }
+        true
+    }
+}
+
 /// Deterministic fold of the log. Droppable picture, not SoT.
 /// Hot maps are leases: skip-serialized and rebuilt from `facts` (D-02).
 #[derive(Clone, Debug, Default, serde::Serialize)]
@@ -166,6 +195,9 @@ pub struct GraphFold {
     /// Fact indices grouped by portable `claim_id`.
     #[serde(skip)]
     claim_facts: HashMap<EventId, Vec<usize>>,
+    /// Live allowlist entries rebuilt from `Op::AllowRelation` (ALL-01). Not fingerprint input.
+    #[serde(skip)]
+    allow_entries: Vec<AllowEntry>,
 }
 
 impl<'de> serde::Deserialize<'de> for GraphFold {
@@ -182,6 +214,7 @@ impl<'de> serde::Deserialize<'de> for GraphFold {
             hot_examine: ExamineCounter::default(),
             vt_by_from: BTreeMap::new(),
             claim_facts: HashMap::new(),
+            allow_entries: Vec::new(),
         };
         fold.rebuild_hot_maps();
         Ok(fold)
@@ -205,7 +238,10 @@ impl GraphFold {
 
     fn index_slot(&mut self, idx: usize) {
         let fact = &self.facts[idx];
-        self.vt_by_from.entry(fact.valid_from).or_default().push(idx);
+        self.vt_by_from
+            .entry(fact.valid_from)
+            .or_default()
+            .push(idx);
         self.claim_facts.entry(fact.claim_id).or_default().push(idx);
     }
 
@@ -320,6 +356,50 @@ impl GraphFold {
         self.live_support_count(claim, tt, vt) > 0
     }
 
+    /// Fold-cut allowlist: a live `AllowRelation` entry for `name` at `(tt, vt)`.
+    pub fn relation_allowed_at(&self, name: &str, tt: TransactionTime, vt: ValidTime) -> bool {
+        self.allow_entries
+            .iter()
+            .any(|e| e.name == name && e.is_live_at(tt, vt))
+    }
+
+    /// Rebuild skip-serialized allow-entries from the log (open / fork / hydrate).
+    pub(crate) fn rebuild_allow_entries(&mut self, events: &[Event]) {
+        self.allow_entries.clear();
+        for e in events {
+            self.apply_allow_side(e);
+        }
+    }
+
+    fn apply_allow_side(&mut self, event: &Event) {
+        match &event.op {
+            Op::AllowRelation {
+                name,
+                valid_from,
+                valid_to,
+            } => {
+                self.allow_entries.push(AllowEntry {
+                    event_id: event.id,
+                    name: name.clone(),
+                    valid_from: *valid_from,
+                    valid_to: *valid_to,
+                    ingested_at: event.ingested_at,
+                    invalidated_at: None,
+                });
+            }
+            Op::Retract { event_id } => {
+                if let Some(entry) = self
+                    .allow_entries
+                    .iter_mut()
+                    .find(|a| a.event_id == *event_id && a.invalidated_at.is_none())
+                {
+                    entry.invalidated_at = Some(event.ingested_at);
+                }
+            }
+            _ => {}
+        }
+    }
+
     pub fn apply(&mut self, event: &Event) {
         self.ensure_hot_maps();
         match &event.op {
@@ -382,6 +462,7 @@ impl GraphFold {
                         self.facts[idx].invalidated_at = Some(event.ingested_at);
                     }
                 }
+                self.apply_allow_side(event);
             }
             Op::Correct {
                 event_id,
@@ -468,6 +549,9 @@ impl GraphFold {
                 if let Some((vf, vt)) = suffix {
                     push_row(old_object, vf, vt);
                 }
+            }
+            Op::AllowRelation { .. } => {
+                self.apply_allow_side(event);
             }
             Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
         }
