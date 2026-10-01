@@ -148,6 +148,7 @@ uv run kutha-gov list
 uv run kutha-gov explain trajectory
 uv run kutha-gov fsm
 uv run kutha-gov ci
+uv run kutha-gov ci --skip-cargo
 uv run kutha-gov ci --budget 4
 uv run kutha-gov precommit
 uv run kutha-gov precommit --check docs-coupling
@@ -158,9 +159,9 @@ uv run kutha-gov py
 uv run pytest
 ```
 
-Pin: `.python-version` → `3.13`. Copy `.env.example` to `.env` (`KUTHA_GOV_BUDGET`, `KUTHA_GOV_FAIL_ON_WARN`, `KUTHA_GOV_CARGO_TIMEOUT_SEC`, `KUTHA_TENANT_DIR`, `KUTHA_TENANT_BIN`, `KUTHA_HARNESS_RELATIONS_PATH`). CLI flags override env; env overrides `defaults.budget` in `.kutha/dictionaries/fsm.yaml`. Toolchain: **uv** + **ruff** + **ty** (Astral) + **pyrefly** (Meta). `kutha-gov py` is recursive dogfood of the harness Python. Do not invoke system `python3` (this host may be 3.12). HIGH findings → exit 1. LOW → exit 0 unless `--fail-on-warn`.
+Pin: `.python-version` → `3.13`. Copy `.env.example` to `.env` (`KUTHA_GOV_BUDGET`, `KUTHA_GOV_FAIL_ON_WARN`, `KUTHA_GOV_CARGO_TIMEOUT_SEC`, `KUTHA_TENANT_DIR`, `KUTHA_TENANT_BIN`, `KUTHA_HARNESS_RELATIONS_PATH`; product: `KUTHA_MAX_CASCADE`, `KUTHA_FOLD_INDEX_MODE`). CLI flags override env; env overrides `defaults.budget` in `.kutha/dictionaries/fsm.yaml`. `kutha-runtime` also loads repo-root `.env` via `apply_dotenv` (fold index mode documented in `docs/architecture/benchmark-baseline.md`). Toolchain: **uv** + **ruff** + **ty** (Astral) + **pyrefly** (Meta). `kutha-gov py` is recursive dogfood of the harness Python. Do not invoke system `python3` (this host may be 3.12). HIGH findings → exit 1. LOW → exit 0 unless `--fail-on-warn`.
 
-`precommit` is the neighbor **check-only** surface (daily-archive `--check-only`: no trajectory artifact write; law-nexus `--check` / `--list-checks`): it runs the dictionary, including `git_path_implies` against the **staged** diff, and does not walk observe_cargo / emit / tenant. `--check ID` is valid only with `json` or `precommit`. Full `ci` still runs coupling with `git_against=auto` (staged if nonempty, else worktree, else last commit). Optional hook file: `.pre-commit-config.yaml` (`uvx pre-commit install --overwrite`). Cargo stays path-filtered in neighbors; here cargo stays in `ci`, not in the hook.
+`precommit` is the neighbor **check-only** surface (daily-archive `--check-only`: no trajectory artifact write; law-nexus `--check` / `--list-checks`): it runs the dictionary, including `git_path_implies` against the **staged** diff, and does not walk observe_cargo / emit / tenant. `--check ID` is valid only with `json` or `precommit`. Full `ci` still runs coupling with `git_against=auto` (staged if nonempty, else worktree, else last commit). Optional hook file: `.pre-commit-config.yaml` (`uvx pre-commit install --overwrite`). Cargo stays path-filtered in neighbors; here cargo stays in `ci`, not in the hook. `uv run kutha-gov ci --skip-cargo` skips cargo/tenant observation for harness iteration; product closeout still uses full `ci`.
 
 `ci` walks the FSM in `.kutha/dictionaries/fsm.yaml` (idle → load constitution/dictionaries including **relations.yaml**, **invariants.yaml**, **bridges.yaml**, and **honeycomb.yaml** → run checks → **observe_cargo** (test + build `kutha-tenant`) → emit → **emit_tenant** (built binary) → fold → decide → ok|fail). Unknown process relation → no JSONL append (`unknown-relation`). `observe_cargo` records named FF tests as evidence; `emit_tenant` ingests the process JSONL through `kutha-tenant` and queries AS OF the emitted cut. Neither is product SoT. Unknown FSM kind or missing transition → fail-closed. Do not hardcode a new CI phase in Python.
 

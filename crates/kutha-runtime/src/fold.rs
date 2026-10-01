@@ -2,9 +2,16 @@ use kutha_common::{
     policy_version_hash, rule_definition_hash, Event, EventId, Op, SupportPolarity, TermId,
     TransactionTime, ValidTime,
 };
+use rustc_hash::FxHashMap;
 use sha2::{Digest, Sha256};
-use std::collections::{BTreeMap, HashMap};
+use smallvec::SmallVec;
+use std::collections::BTreeMap;
 use std::sync::atomic::{AtomicU64, Ordering};
+
+/// Ingest lookup leases: Fx hasher (trusted EventId/TermId; Samyama-style).
+type IngestMap<K, V> = FxHashMap<K, V>;
+/// Typical relatedTo mint: one fact per claim/event — inline without heap (Pogocache-ish).
+type FactIdxList = SmallVec<[usize; 1]>;
 
 /// Integration-test examine counter (not fingerprint / JSON). `cfg(test)` is off for `tests/*.rs`.
 #[derive(Debug, Default)]
@@ -307,27 +314,65 @@ impl ActionEntry {
     }
 }
 
+/// How fold secondary index leases are maintained on the write path.
+///
+/// - [`FoldIndexMode::Eager`]: warm maps on every fact push (accept write-cost; default).
+/// - [`FoldIndexMode::Lazy`]: thin write — append facts only; rebuild or scan on demand.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum FoldIndexMode {
+    /// O(1) lookups; higher ingest wall time (D-06 tradeoff).
+    #[default]
+    Eager,
+    /// Thin write / lazy lease (Helix/Samyama-style deferred secondary work).
+    Lazy,
+}
+
+impl FoldIndexMode {
+    /// Reads `KUTHA_FOLD_INDEX_MODE` from the process env after `apply_dotenv`
+    /// (repo-root `.env`; template `.env.example`).
+    ///
+    /// - `lazy` | `thin` → [`FoldIndexMode::Lazy`]
+    /// - `eager` | unset | other → [`FoldIndexMode::Eager`]
+    pub fn from_env() -> Self {
+        crate::allow::apply_dotenv();
+        match std::env::var("KUTHA_FOLD_INDEX_MODE")
+            .unwrap_or_default()
+            .to_ascii_lowercase()
+            .as_str()
+        {
+            "lazy" | "thin" => Self::Lazy,
+            _ => Self::Eager,
+        }
+    }
+}
+
 /// Deterministic fold of the log. Droppable picture, not SoT.
 /// Hot maps are leases: skip-serialized and rebuilt from `facts` (D-02).
-#[derive(Clone, Debug, Default, serde::Serialize)]
+#[derive(Clone, Debug, serde::Serialize)]
 pub struct GraphFold {
     facts: Vec<Fact>,
     next_seq: u64,
     /// Hot-path examine count. Not SoT; skipped in snapshot JSON.
     #[serde(skip)]
     hot_examine: ExamineCounter,
+    /// Ingest index policy (not fingerprint / JSON).
+    #[serde(skip)]
+    index_mode: FoldIndexMode,
+    /// Whether secondary maps match `facts` (Lazy may leave this false).
+    #[serde(skip)]
+    hot_maps_warm: bool,
     /// Fact indices grouped by `valid_from` so a cut can skip future-start decoys.
     #[serde(skip)]
     vt_by_from: BTreeMap<ValidTime, Vec<usize>>,
     /// Fact indices grouped by portable `claim_id`.
     #[serde(skip)]
-    claim_facts: HashMap<EventId, Vec<usize>>,
+    claim_facts: IngestMap<EventId, FactIdxList>,
     /// Fact indices grouped by minting `event_id` (ingest lookup lease).
     #[serde(skip)]
-    fact_by_event: HashMap<EventId, Vec<usize>>,
+    fact_by_event: IngestMap<EventId, FactIdxList>,
     /// Live (subject, relation, object) triples for residual cascade checks.
     #[serde(skip)]
-    live_triples: HashMap<(TermId, TermId, TermId), usize>,
+    live_triples: IngestMap<(TermId, TermId, TermId), usize>,
     /// Live allowlist entries rebuilt from `Op::AllowRelation` (ALL-01). Not fingerprint input.
     #[serde(skip)]
     allow_entries: Vec<AllowEntry>,
@@ -345,6 +390,12 @@ pub struct GraphFold {
     action_entries: Vec<ActionEntry>,
 }
 
+impl Default for GraphFold {
+    fn default() -> Self {
+        Self::with_index_mode(FoldIndexMode::from_env())
+    }
+}
+
 impl<'de> serde::Deserialize<'de> for GraphFold {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         #[derive(serde::Deserialize)]
@@ -353,26 +404,60 @@ impl<'de> serde::Deserialize<'de> for GraphFold {
             next_seq: u64,
         }
         let de = GraphFoldDe::deserialize(deserializer)?;
-        let mut fold = GraphFold {
-            facts: de.facts,
-            next_seq: de.next_seq,
-            hot_examine: ExamineCounter::default(),
-            vt_by_from: BTreeMap::new(),
-            claim_facts: HashMap::new(),
-            fact_by_event: HashMap::new(),
-            live_triples: HashMap::new(),
-            allow_entries: Vec::new(),
-            rule_entries: Vec::new(),
-            policy_entries: Vec::new(),
-            admission_entries: Vec::new(),
-            action_entries: Vec::new(),
-        };
-        fold.rebuild_hot_maps();
+        let mut fold = GraphFold::with_index_mode(FoldIndexMode::from_env());
+        fold.facts = de.facts;
+        fold.next_seq = de.next_seq;
+        match fold.index_mode {
+            FoldIndexMode::Eager => {
+                fold.rebuild_hot_maps();
+            }
+            FoldIndexMode::Lazy => {
+                // Thin hydrate: leave secondary leases cold until ensure / indexed op.
+                fold.hot_maps_warm = fold.facts.is_empty();
+            }
+        }
         Ok(fold)
     }
 }
 
 impl GraphFold {
+    pub fn with_index_mode(index_mode: FoldIndexMode) -> Self {
+        Self {
+            facts: Vec::new(),
+            next_seq: 0,
+            hot_examine: ExamineCounter::default(),
+            index_mode,
+            hot_maps_warm: true,
+            vt_by_from: BTreeMap::new(),
+            claim_facts: IngestMap::default(),
+            fact_by_event: IngestMap::default(),
+            live_triples: IngestMap::default(),
+            allow_entries: Vec::new(),
+            rule_entries: Vec::new(),
+            policy_entries: Vec::new(),
+            admission_entries: Vec::new(),
+            action_entries: Vec::new(),
+        }
+    }
+
+    pub fn index_mode(&self) -> FoldIndexMode {
+        self.index_mode
+    }
+
+    pub fn set_index_mode(&mut self, mode: FoldIndexMode) {
+        if self.index_mode == mode {
+            return;
+        }
+        self.index_mode = mode;
+        match mode {
+            FoldIndexMode::Eager => self.ensure_hot_maps(),
+            FoldIndexMode::Lazy => {
+                self.clear_hot_maps();
+                self.hot_maps_warm = self.facts.is_empty();
+            }
+        }
+    }
+
     pub fn facts(&self) -> &[Fact] {
         &self.facts
     }
@@ -387,13 +472,27 @@ impl GraphFold {
         self.hot_examine.get()
     }
 
+    /// Hint capacity for ingest index leases (bulk load / bench). Not SoT.
+    pub(crate) fn reserve_ingest_indexes(&mut self, expected_facts: usize) {
+        if expected_facts == 0 {
+            return;
+        }
+        self.claim_facts.reserve(expected_facts);
+        self.fact_by_event.reserve(expected_facts);
+        self.live_triples.reserve(expected_facts);
+    }
+
     fn index_slot(&mut self, idx: usize) {
         let fact = &self.facts[idx];
         self.vt_by_from
             .entry(fact.valid_from)
+            .or_insert_with(|| Vec::with_capacity(4))
+            .push(idx);
+        // Plain relatedTo: one fact per minting event / claim id — SmallVec inline.
+        self.claim_facts
+            .entry(fact.claim_id)
             .or_default()
             .push(idx);
-        self.claim_facts.entry(fact.claim_id).or_default().push(idx);
         self.fact_by_event
             .entry(fact.event_id)
             .or_default()
@@ -404,30 +503,56 @@ impl GraphFold {
         }
     }
 
-    fn rebuild_hot_maps(&mut self) {
+    fn clear_hot_maps(&mut self) {
         self.vt_by_from.clear();
         self.claim_facts.clear();
         self.fact_by_event.clear();
         self.live_triples.clear();
+    }
+
+    fn rebuild_hot_maps(&mut self) {
+        self.clear_hot_maps();
+        self.reserve_ingest_indexes(self.facts.len());
         for idx in 0..self.facts.len() {
             self.index_slot(idx);
         }
+        self.hot_maps_warm = true;
     }
 
-    fn ensure_hot_maps(&mut self) {
-        if self.vt_by_from.is_empty() && !self.facts.is_empty() {
-            self.rebuild_hot_maps();
+    /// Rebuild secondary leases if stale (Lazy) or missing after hydrate.
+    pub fn ensure_hot_maps(&mut self) {
+        if self.hot_maps_warm || self.facts.is_empty() {
+            return;
         }
+        self.rebuild_hot_maps();
     }
 
     fn push_fact(&mut self, fact: Fact) {
         let idx = self.facts.len();
         self.facts.push(fact);
-        self.index_slot(idx);
+        match self.index_mode {
+            FoldIndexMode::Eager => {
+                self.index_slot(idx);
+                self.hot_maps_warm = true;
+            }
+            FoldIndexMode::Lazy => {
+                self.hot_maps_warm = false;
+            }
+        }
     }
 
-    /// Live facts at an explicit cut, walking the VT index rather than every fact.
+    /// Live facts at an explicit cut. Uses VT lease when warm; otherwise scans `facts`.
     pub(crate) fn live_facts_at(&self, tt: TransactionTime, vt: ValidTime) -> Vec<&Fact> {
+        if !self.hot_maps_warm {
+            return self
+                .facts
+                .iter()
+                .filter(|f| {
+                    self.hot_examine.bump();
+                    f.is_live_at(tt, vt)
+                })
+                .collect();
+        }
         self.vt_by_from
             .range(..=vt)
             .flat_map(|(_, idxs)| idxs.iter().copied())
@@ -489,6 +614,23 @@ impl GraphFold {
 
     /// First Fact minted (or residual-replaced) by `event_id`. Prefer a live row.
     pub(crate) fn fact_index_by_event_id(&self, event_id: EventId) -> Option<usize> {
+        if !self.hot_maps_warm {
+            return self
+                .facts
+                .iter()
+                .enumerate()
+                .filter(|(_, f)| {
+                    self.hot_examine.bump();
+                    f.event_id == event_id
+                })
+                .map(|(i, _)| i)
+                .find(|&i| self.facts[i].invalidated_at.is_none())
+                .or_else(|| {
+                    self.facts
+                        .iter()
+                        .rposition(|f| f.event_id == event_id)
+                });
+        }
         let idxs = self.fact_by_event.get(&event_id)?;
         idxs.iter()
             .copied()
@@ -498,6 +640,12 @@ impl GraphFold {
 
     /// Whether any Fact (live or not) carries this claim id.
     pub(crate) fn claim_known(&self, claim: EventId) -> bool {
+        if !self.hot_maps_warm {
+            return self.facts.iter().any(|f| {
+                self.hot_examine.bump();
+                f.claim_id == claim
+            });
+        }
         self.claim_facts.contains_key(&claim)
     }
 
@@ -508,6 +656,15 @@ impl GraphFold {
         relation: TermId,
         object: TermId,
     ) -> bool {
+        if !self.hot_maps_warm {
+            return self.facts.iter().any(|f| {
+                self.hot_examine.bump();
+                f.invalidated_at.is_none()
+                    && f.subject == subject
+                    && f.relation == relation
+                    && f.object() == object
+            });
+        }
         match self.live_triples.get(&(subject, relation, object)) {
             Some(&idx) => self.facts[idx].invalidated_at.is_none(),
             None => false,
@@ -526,6 +683,16 @@ impl GraphFold {
 
     /// Live Facts that support `claim` at an explicit cut.
     pub fn live_supports(&self, claim: EventId, tt: TransactionTime, vt: ValidTime) -> Vec<&Fact> {
+        if !self.hot_maps_warm {
+            return self
+                .facts
+                .iter()
+                .filter(|f| {
+                    self.hot_examine.bump();
+                    f.claim_id == claim && f.is_live_at(tt, vt)
+                })
+                .collect();
+        }
         let Some(idxs) = self.claim_facts.get(&claim) else {
             return Vec::new();
         };
@@ -841,7 +1008,17 @@ impl GraphFold {
     }
 
     pub fn apply(&mut self, event: &Event) {
-        self.ensure_hot_maps();
+        // Eager keeps leases warm; Lazy only warms when the op needs indexed lookups.
+        let needs_indexes = matches!(
+            &event.op,
+            Op::Retract { .. }
+                | Op::Correct { .. }
+                | Op::CorrectInterval { .. }
+                | Op::Behavior { .. }
+        );
+        if self.index_mode == FoldIndexMode::Eager || needs_indexes {
+            self.ensure_hot_maps();
+        }
         match &event.op {
             Op::Assert {
                 subject,

@@ -13,4 +13,6 @@ uuid = { version = "1", features = ["v7", "std", "serde"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 crc32fast = "1"
+rustc-hash = "2"
+smallvec = "1"
 kutha-common = { path = "crates/kutha-common" }

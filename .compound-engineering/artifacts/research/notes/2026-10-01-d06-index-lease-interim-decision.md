@@ -12,11 +12,12 @@ We added hot maps so ingest lookups stay O(1) (visit oracle green). Every assert
 
 1. **North star:** treat fold/runtime lookup indexes as **ADR-040 leases** (derived, droppable, rebuildable from the log/facts), not as SoT and not as mandatory synchronous work on every assert forever.
 2. **Near-term experiment (optional, cheap):** `rustc_hash::FxHashMap` on trusted `EventId` / `TermId` maps; remeasure D-06. Do **not** expect this alone to guarantee ≤10%. Skip IdentityHasher for `Uuid` keys; skip `get_mut`-first on insert-heavy mint paths.
-3. **If D-06 still fails after FxHash (or we skip the spike):** prefer honesty over micro-opts:
-   - either **thin write path** (append + minimal fold; secondary maps lazy / rebuild / delta→compact later), or
-   - **process:** keep visit-oracle as the index correctness gate; document write-cost tradeoff / soften absolute D-06 for S03 close.
-4. **Out of S03:** VList, full Materializer/CSR delta lease as a shipping slice, M002 Rocks wiring.
-5. **Uncommitted reserve spike** remains experimental; alone it does not clear D-06.
+3. **Config setting (accepted 2026-10-01):** ship **both** policies as `FoldIndexMode` / env `KUTHA_FOLD_INDEX_MODE` (repo-root `.env`, template `.env.example`):
+   - **Eager** (default, `eager` / unset / other): accept write-cost — warm secondary maps on every fact push (visit-oracle friendly; D-06 may stay open).
+   - **Lazy** (`lazy` | `thin`): thin write / lazy lease — append facts only; cold reads scan; `ensure_fold_indexes` / indexed ops rebuild. Runtime `by_event_id` / `by_delivery_key` stay eager on the write path.
+4. **Process follow-up:** keep visit-oracle as the index correctness gate; controller may soften absolute D-06 for S03 close once Eager vs Lazy numbers are recorded, or keep Eager as default and document the tax.
+5. **Out of S03:** VList, full Materializer/CSR delta lease as a shipping slice, M002 Rocks wiring.
+6. **Uncommitted reserve spike** remains experimental; alone it does not clear D-06.
 
 ## Why RocksDB is a useful analogy (and what it is not)
 
@@ -39,9 +40,14 @@ What RocksDB (and LSM secondary-index literature) actually does that maps here:
 
 ## Next actions (controller picks)
 
-1. Optional FxHash spike + rebench D-06.  
-2. Else close S03 with visit-oracle gate + documented write-cost, **or** thin/lazy index write before close.  
-3. Longer-term Materializer lease (delta→frozen / CSR) stays honeycomb Proposed under ADR-040 — not this interim lock.
+1. Optional FxHash spike + rebench D-06 — **done as hybrid (FxHash + SmallVec + reserve)**; still ~+21…+28%, visit oracle green.  
+2. **Dual mode shipped in working tree:** `FoldIndexMode::{Eager,Lazy}`, `Runtime::with_index_mode` / `set_index_mode` / `ensure_fold_indexes`, env `KUTHA_FOLD_INDEX_MODE=lazy|thin`. Eager = accept write-cost (default); Lazy = thin write. Bench prints `fold_index_mode`.  
+3. Record Eager vs Lazy ingest numbers; then decide S03 close (visit-oracle + documented tax) vs further Materializer work.  
+4. Longer-term Materializer lease (delta→frozen / CSR) stays honeycomb Proposed under ADR-040 — not this interim lock.
+
+### Hybrid implementation note (2026-10-01)
+
+Shipped in working tree / pending commit: `rustc-hash` + `smallvec` on ingest leases. Samyama’s stronger pattern (`assert_no_index_dispatch_during_store_apply` + staged index batch post-commit) was **not** copied wholesale: Kutha ingest needs live `by_delivery_key` / `fact_by_event` during assert under Eager. Lazy defers fold secondary maps only. Measured hybrid under Eager: D-06 still open.
 
 ## Sources touched this note
 

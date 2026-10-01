@@ -1,0 +1,63 @@
+//! FoldIndexMode: Eager (accept write-cost) vs Lazy (thin write / lazy lease).
+
+use kutha_common::Op;
+use kutha_runtime::{FoldIndexMode, Runtime};
+
+fn fill(rt: &mut Runtime, n: u32) {
+    let rel = rt.intern("relatedTo");
+    let obj = rt.intern("o");
+    for i in 0..n {
+        let s = rt.intern(&format!("s{i}"));
+        rt.emit(Op::Assert {
+            subject: s,
+            relation: rel,
+            object: obj,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
+    }
+}
+
+fn live_sorted(rt: &Runtime) -> Vec<(u32, u32, u32)> {
+    let mut v = rt.fold().as_of(2010);
+    v.sort_unstable();
+    v
+}
+
+#[test]
+fn lazy_as_of_matches_eager_after_same_ingest() {
+    let n = 64u32;
+    let mut eager = Runtime::with_index_mode(32, FoldIndexMode::Eager);
+    let mut lazy = Runtime::with_index_mode(32, FoldIndexMode::Lazy);
+    fill(&mut eager, n);
+    fill(&mut lazy, n);
+
+    let a = live_sorted(&eager);
+    let b = live_sorted(&lazy);
+    assert_eq!(a.len(), n as usize);
+    assert_eq!(a, b, "Lazy scan path must match Eager lease as_of");
+    // EventIds differ across independent runtimes — compare shape, not fingerprint.
+    assert_eq!(eager.fold().facts().len(), lazy.fold().facts().len());
+    assert_eq!(eager.fold().live_count(u64::MAX, 2010), lazy.fold().live_count(u64::MAX, 2010));
+
+    lazy.ensure_fold_indexes();
+    assert_eq!(a, live_sorted(&lazy), "after ensure_fold_indexes, as_of still matches");
+}
+
+#[test]
+fn set_index_mode_roundtrips_eager_lazy() {
+    let mut rt = Runtime::with_index_mode(1, FoldIndexMode::Eager);
+    assert_eq!(rt.index_mode(), FoldIndexMode::Eager);
+    fill(&mut rt, 8);
+    let before = live_sorted(&rt);
+    rt.set_index_mode(FoldIndexMode::Lazy);
+    assert_eq!(rt.index_mode(), FoldIndexMode::Lazy);
+    assert_eq!(before, live_sorted(&rt));
+    rt.set_index_mode(FoldIndexMode::Eager);
+    assert_eq!(rt.index_mode(), FoldIndexMode::Eager);
+    assert_eq!(before, live_sorted(&rt));
+}

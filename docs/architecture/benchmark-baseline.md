@@ -10,6 +10,17 @@ cargo bench -p kutha-runtime --offline --bench baseline
 
 Override size with `KUTHA_BENCH_N` (default `10000`). Fail-closed sabotage: `KUTHA_BENCH_SABOTAGE=drop_one` must exit non-zero.
 
+### Fold index mode (env)
+
+Repo-root `.env` / `.env.example` key **`KUTHA_FOLD_INDEX_MODE`** (loaded by `apply_dotenv` before `Runtime` / `GraphFold` default):
+
+| Value | Mode | Meaning |
+|-------|------|---------|
+| `eager` (default), unset, other | Eager | Accept write-cost — warm secondary leases on every fact push |
+| `lazy` or `thin` | Lazy | Thin write — append facts; rebuild via `ensure_fold_indexes` or scan on cold reads |
+
+API override: `Runtime::with_index_mode` / `set_index_mode`. Bench prints metric `fold_index_mode`. D-06 absolute comparisons use Eager unless otherwise noted. See interim note `.compound-engineering/artifacts/research/notes/2026-10-01-d06-index-lease-interim-decision.md`.
+
 ## Measured run (default N = 10000)
 
 Host date: 2026-10-01. Absolute times are host-local; compare ratios across N, not wall times across machines.
@@ -87,5 +98,44 @@ Phase 22 reference: ingest_plain.n 95383904 ns, as_of.n 83195 ns.
 D-06 absolute gate (≤10% regression): **not met** for ingest_plain on either run. as_of is within 10% on run b (noise at ~0.1 ms). Within-run scaling still ~linear (ingest 2N/N≈2.01, 4N/N≈3.82).
 
 Interpretation: write-path index maintenance (fact_by_event, live_triples, by_event_id, by_delivery_key) adds per-assert work; lookup paths are O(1). Controller must accept the write-cost tradeoff or request a follow-up to thin the indexes.
+
+### Hybrid spike (2026-10-01): FxHash + SmallVec + reserve
+
+Inspired by Samyama (`rustc-hash` on hot maps), Pogocache (cheap per-entry storage), and the lease interim note — **not** a Samyama-style full index deferral (ingest still needs live leases for delivery-key / fact lookup):
+
+- `FxHashMap` for ingest index leases (`claim_facts`, `fact_by_event`, `live_triples`, `by_event_id`, `by_delivery_key`)
+- `SmallVec<[usize; 1]>` for claim/event posting lists (typical one fact per key)
+- Keep `reserve_ingest_indexes` pre-size
+
+Phase 22 reference: ingest_plain.n 95383904 ns.
+
+| run | ingest_plain.n | vs Phase 22 | as_of.n | vs Phase 22 |
+|-----|---------------:|------------:|--------:|------------:|
+| a | 115105156 | +20.7% | 84829 | +2.0% |
+| b | 121900974 | +27.8% | 89577 | +7.7% |
+
+Visit oracle still green (`m013_fold_indexes`). D-06 ≤10% still **not met**. Hybrid lowers hasher/alloc noise but does not remove per-assert multi-map maintenance.
+
+### FoldIndexMode (2026-10-01): Eager + Lazy as config
+
+Controller accepted both policies as a setting (not a forced single path):
+
+| Mode | Env | Write path | Lookup |
+|------|-----|------------|--------|
+| **Eager** (default) | unset / other | accept write-cost — index on every fact push | O(1) leases |
+| **Lazy** | `KUTHA_FOLD_INDEX_MODE=lazy` or `thin` | thin write — append facts only | scan until `ensure_fold_indexes` / indexed op |
+
+Runtime delivery-key / event-id maps stay eager either way. Bench prints `fold_index_mode`. Default D-06 comparisons remain Eager (accept tax); Lazy is for thin-write experiments and later Materializer work.
+
+### Reserve spike (superseded by hybrid; kept for history)
+
+Earlier: `Runtime::reserve_ingest_indexes` + `Vec::with_capacity(1)` alone — still +21…+28% ingest.
+
+| run | ingest_plain.n | vs Phase 22 | as_of.n | vs Phase 22 |
+|-----|---------------:|------------:|--------:|------------:|
+| a | 115079705 | +20.6% | 92101 | +10.7% |
+| b | 122023995 | +27.9% | 87774 | +5.5% |
+
+Still above the 10% ingest gate. Capacity hints remove rehash noise but do not erase per-assert map inserts. Next levers: thinner map shapes, or accept write-cost / soften D-06 to the visit oracle.
 
 regression within 10%: no (ingest); as_of run b yes

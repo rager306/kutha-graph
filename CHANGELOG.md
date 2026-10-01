@@ -4,6 +4,43 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Process: productivity from log audit
+
+### Process
+
+### Added
+
+- `kutha-gov ci --skip-cargo`: keep dictionary + H5 selftest + emit_log; skip cargo/tenant subprocess for harness iteration; fail-fast skips the same after HIGH; `phase_ms` on stdout (`docs/process/kutha-harness.md`).
+- Gate stacking + reindex discipline in `docs/process/gsd-auto-contract.md`.
+- Plan: `.compound-engineering/artifacts/plans/2026-10-01-process-productivity-from-log-audit.md`.
+
+### Changed
+
+- `.planning/config.json`: `skip_discuss`, no worktrees/Nyquist/UI/AI-integration phases, `git.create_tag=false`; keep `plan_check` + `verifier`.
+- `.planning/WINDOWS.md`: waive 1/3/5/6; fixed 8; leave 2/4/7/9 open.
+- Phase 23 `23-VERIFICATION.md` trimmed to ≤60 lines (artifact budget).
+
+### Trajectory
+
+- No lease change. Item deferred: hanging ideation `http.server` / unauth MCP (explain-only; no kill, no MCP edit).
+
+## 2026-10-01 — Product: M013 S03 fold ingest indexes (pending D-06)
+
+### Product
+
+### Added
+
+- Fold/Runtime ingest index leases (`fact_by_event`, `live_triples`, `by_event_id`, `by_delivery_key`) and `ingest_examine` visit counter; D-03 scan sites use indexes (Phase 24 / IDX-01, IDX-02).
+- Integration test `m013_fold_indexes` (`green_ingest_visits_constant_in_n`, fork/open checks).
+
+### Trajectory
+
+- Active Slice **S03**; `L_delivery=M013-S02-done` until S03 closes.
+- D-06 absolute ingest wall-time vs Phase 22 exceeded 10% on two runs (+17…+28%); documented in `benchmark-baseline.md` Phase 24 delta. Controller decision required before closing S03.
+- Reserve spike (`reserve_ingest_indexes`, small Vec caps): still +21…+28% ingest; capacity alone does not clear D-06.
+- Hybrid spike (`FxHashMap` + `SmallVec<[usize;1]>` + reserve; Samyama/Pogocache-inspired): ingest still +21…+28% vs Phase 22; visit oracle green. See `benchmark-baseline.md` hybrid section.
+- `FoldIndexMode` config (Eager = accept write-cost default; Lazy = thin write / lazy lease via `KUTHA_FOLD_INDEX_MODE=lazy|thin`). API: `Runtime::with_index_mode` / `set_index_mode` / `ensure_fold_indexes`. Tests: `m013_fold_index_mode`. Env template: `.env.example` (`KUTHA_FOLD_INDEX_MODE=eager`); see `benchmark-baseline.md` § Fold index mode.
+
 ## 2026-10-01 — Process: M013 S02 legal fixture reconnaissance
 
 ### Process

@@ -14,7 +14,7 @@ mod tenant;
 mod wal;
 
 pub use csr::{CsrLease, TypedCsrLease, TypedEdge};
-pub use fold::{Fact, GraphFold};
+pub use fold::{Fact, FoldIndexMode, GraphFold};
 pub use leapfrog::{leapfrog_intersect, AdjacencyIter};
 pub use log::EventLog;
 pub use materializer::{CsrMaterializer, Materializer};

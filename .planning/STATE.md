@@ -2,15 +2,19 @@
 gsd_state_version: "1.0"
 milestone: v0.06
 milestone_name: Honest baseline and one write path
+current_phase: 24
+current_phase_name: Fold indexes for ingest
 status: executing
-last_updated: "2026-10-01T07:00:00.000Z"
+stopped_at: Phase 23 closed; next lease S03 for Phase 24
+last_updated: "2026-10-01T15:01:27.093Z"
 last_activity: 2026-10-01
+last_activity_desc: Phase 24 execution started
+state_head: dbcd73afda7823805398c23ae3e43e97a7556131
 progress:
   total_phases: 7
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 3
-  percent: 29
+  total_plans: 5
+  completed_plans: 5
 ---
 
 # Project State
@@ -20,7 +24,7 @@ progress:
 See: `.planning/PROJECT.md`
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.06 Phases 22–23 complete; next is Phase 24 (fold indexes) after controller leases S03 and JIT-plans against post-22 code.
+**Current focus:** Phase 24 — Fold indexes for ingest
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -28,10 +32,10 @@ See: `.planning/PROJECT.md`
 
 ## Current Position
 
-Phase: 24 (ready after S03 lease + JIT plan)
-Plan: — (22–23 verified; 24–28 CONTEXT only until planned)
-Status: Phases 22 and 23 independently verified and closed
-Last activity: 2026-10-01 — Phase 23 legal fixture recon shipped
+Phase: 24 (Fold indexes for ingest) — EXECUTING
+Plan: 1 of 2
+Status: Executing Phase 24
+Last activity: 2026-10-01 — Phase 24 execution started
 
 ## Performance Metrics
 

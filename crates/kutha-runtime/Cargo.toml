@@ -11,6 +11,8 @@ sha2.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 crc32fast = { workspace = true }
+rustc-hash.workspace = true
+smallvec.workspace = true
 
 [[bench]]
 name = "baseline"

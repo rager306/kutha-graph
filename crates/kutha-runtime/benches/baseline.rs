@@ -2,7 +2,7 @@
 //! No criterion. Measures relatedTo (no inverse cascade). Validates answers.
 
 use kutha_common::{EventId, Op, TermId};
-use kutha_runtime::{store, Runtime};
+use kutha_runtime::{store, FoldIndexMode, Runtime};
 use std::collections::BTreeMap;
 use std::env;
 use std::path::PathBuf;
@@ -122,8 +122,18 @@ fn put(metrics: &mut BTreeMap<String, (String, String)>, key: &str, value: impl 
 fn main() {
     let n = parse_n();
     let drop_one = sabotage_drop_one();
+    let index_mode = FoldIndexMode::from_env();
     let mut metrics: BTreeMap<String, (String, String)> = BTreeMap::new();
     put(&mut metrics, "base_n", n, "1");
+    put(
+        &mut metrics,
+        "fold_index_mode",
+        match index_mode {
+            FoldIndexMode::Eager => "eager",
+            FoldIndexMode::Lazy => "lazy",
+        },
+        "1",
+    );
 
     let rss_before = vm_rss_bytes();
 
@@ -132,7 +142,12 @@ fn main() {
         let suffix = size_suffix(factor);
 
         // Plain ingest + validation + as_of + persist/open/replay + late retract.
-        let mut rt = Runtime::default();
+        let mut rt = Runtime::with_index_mode(32, index_mode);
+        // Buffer hint: ~Define+Assert+QuantumOutcome per relatedTo (+ headroom).
+        rt.reserve_ingest_indexes(
+            planned.saturating_mul(4).saturating_add(16) as usize,
+            planned.saturating_add(8) as usize,
+        );
         let t0 = Instant::now();
         let (first_id, last_id, emitted) = fill_plain(&mut rt, planned, drop_one && factor == 1);
         let ingest_ns = t0.elapsed().as_nanos();
@@ -143,6 +158,10 @@ fn main() {
             "ns",
         );
 
+        // Lazy may leave leases cold; warm before timed as_of so modes compare fairly on lookup.
+        if index_mode == FoldIndexMode::Lazy {
+            rt.ensure_fold_indexes();
+        }
         let live = rt.fold().live_count(u64::MAX, 2010) as u64;
         if live != planned {
             eprintln!(
@@ -228,7 +247,11 @@ fn main() {
         }
 
         // Keyed ingest on a fresh runtime (unretracted graph for this measurement).
-        let mut keyed = Runtime::default();
+        let mut keyed = Runtime::with_index_mode(32, index_mode);
+        keyed.reserve_ingest_indexes(
+            planned.saturating_mul(4).saturating_add(16) as usize,
+            planned.saturating_add(8) as usize,
+        );
         let tk = Instant::now();
         let keyed_first = fill_keyed(&mut keyed, planned);
         put(
@@ -237,6 +260,9 @@ fn main() {
             tk.elapsed().as_nanos(),
             "ns",
         );
+        if index_mode == FoldIndexMode::Lazy {
+            keyed.ensure_fold_indexes();
+        }
         let keyed_live = keyed.fold().live_count(u64::MAX, 2010) as u64;
         if keyed_live != planned {
             eprintln!("keyed live_count {keyed_live} != planned {planned}");
@@ -256,7 +282,7 @@ fn main() {
             let delta = after - before;
             // Approximate: last graph left retracted; use N*4 planned live peak ≈ factor sum.
             // Prefer bytes / live_count of a dedicated N-sized unretracted graph.
-            let mut sample = Runtime::default();
+            let mut sample = Runtime::with_index_mode(32, index_mode);
             let _ = fill_plain(&mut sample, n, false);
             let live = sample.fold().live_count(u64::MAX, 2010) as u64;
             let bpf = if live > 0 { delta / live.max(1) } else { 0 };
@@ -265,7 +291,7 @@ fn main() {
         _ => put(&mut metrics, "bytes_per_fact", "n/a", "n/a"),
     }
 
-    let expected: [&str; 27] = [
+    let expected: [&str; 28] = [
         "as_of.2n",
         "as_of.4n",
         "as_of.n",
@@ -275,6 +301,7 @@ fn main() {
         "claim_supported_at.4n",
         "claim_supported_at.n",
         "events_per_assert",
+        "fold_index_mode",
         "ingest_keyed.2n",
         "ingest_keyed.4n",
         "ingest_keyed.n",

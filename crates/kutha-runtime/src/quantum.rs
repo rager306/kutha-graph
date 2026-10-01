@@ -6,10 +6,15 @@ use crate::materializer::{CsrMaterializer, Materializer};
 use crate::receipt::{digest_to_hex, QuantumReceipt};
 use crate::snapshot::Snapshot;
 use kutha_common::{Event, EventId, Op, TermDictionary, TermId};
+use rustc_hash::FxHashMap;
 use sha2::{Digest, Sha256};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::fmt;
 use std::sync::atomic::{AtomicU64, Ordering};
+
+use crate::fold::FoldIndexMode;
+
+type IngestMap<K, V> = FxHashMap<K, V>;
 
 /// Integration-test ingest examine counter (not fingerprint / JSON).
 #[derive(Debug, Default)]
@@ -245,9 +250,9 @@ pub struct Runtime {
     /// Open hydrates from those Events; it never infers cites from Assert/Behavior triples.
     justifications: Vec<Justification>,
     /// Log position by EventId (lease; rebuilt on hydrate / fork).
-    by_event_id: HashMap<EventId, usize>,
+    by_event_id: IngestMap<EventId, usize>,
     /// Delivery key → EventId for identical Assert retry (lease).
-    by_delivery_key: HashMap<String, EventId>,
+    by_delivery_key: IngestMap<String, EventId>,
     /// Rows visited on ingest lookup paths (tests; not SoT).
     ingest_examine: IngestExamine,
 }
@@ -265,7 +270,7 @@ impl Runtime {
         let known_by = dict.intern("knownBy");
         Self {
             log: EventLog::default(),
-            fold: GraphFold::default(),
+            fold: GraphFold::with_index_mode(FoldIndexMode::from_env()),
             dict,
             next_tt: 0,
             max_cascade,
@@ -274,10 +279,30 @@ impl Runtime {
             allowed: load_allowed_names(),
             outcomes: Vec::new(),
             justifications: Vec::new(),
-            by_event_id: HashMap::new(),
-            by_delivery_key: HashMap::new(),
+            by_event_id: IngestMap::default(),
+            by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
         }
+    }
+
+    /// Construct with an explicit fold index policy (Eager = accept write-cost, Lazy = thin write).
+    pub fn with_index_mode(max_cascade: usize, index_mode: FoldIndexMode) -> Self {
+        let mut rt = Self::new(max_cascade);
+        rt.set_index_mode(index_mode);
+        rt
+    }
+
+    pub fn index_mode(&self) -> FoldIndexMode {
+        self.fold.index_mode()
+    }
+
+    pub fn set_index_mode(&mut self, mode: FoldIndexMode) {
+        self.fold.set_index_mode(mode);
+    }
+
+    /// Rebuild fold secondary leases after Lazy ingest (optional before hot reads).
+    pub fn ensure_fold_indexes(&mut self) {
+        self.fold.ensure_hot_maps();
     }
 
     /// Intern a term string. New strings append `Op::Define` to the live log (fold no-op).
@@ -312,9 +337,22 @@ impl Runtime {
         self.ingest_examine.get()
     }
 
+    /// Pre-size ingest index leases for an expected bulk load (bench / importer).
+    /// Does not change fold semantics; avoids rehash on the write path.
+    pub fn reserve_ingest_indexes(&mut self, expected_events: usize, expected_facts: usize) {
+        if expected_events > 0 {
+            self.by_event_id.reserve(expected_events);
+            self.by_delivery_key.reserve(expected_events);
+        }
+        self.fold.reserve_ingest_indexes(expected_facts);
+    }
+
     fn rebuild_log_indexes(&mut self) {
         self.by_event_id.clear();
         self.by_delivery_key.clear();
+        let n = self.log.len();
+        self.by_event_id.reserve(n);
+        self.by_delivery_key.reserve(n);
         for (i, e) in self.log.as_slice().iter().enumerate() {
             self.by_event_id.insert(e.id, i);
             if let Op::Assert {
@@ -738,8 +776,8 @@ impl Runtime {
             allowed: load_allowed_names(),
             outcomes: Vec::new(),
             justifications: Vec::new(),
-            by_event_id: HashMap::new(),
-            by_delivery_key: HashMap::new(),
+            by_event_id: IngestMap::default(),
+            by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
         };
         rt.hydrate_from_log();
@@ -769,6 +807,8 @@ impl Runtime {
             fold.apply(e);
             next_tt = next_tt.max(e.ingested_at.saturating_add(1));
         }
+        // Replay above may leave Lazy maps cold; Eager ensure for a consistent open picture.
+        fold.ensure_hot_maps();
         let mut rt = Self {
             log: EventLog::from_events(all_events),
             fold,
@@ -780,8 +820,8 @@ impl Runtime {
             allowed: load_allowed_names(),
             outcomes: Vec::new(),
             justifications: Vec::new(),
-            by_event_id: HashMap::new(),
-            by_delivery_key: HashMap::new(),
+            by_event_id: IngestMap::default(),
+            by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
         };
         rt.hydrate_from_log();
@@ -791,12 +831,13 @@ impl Runtime {
     /// Named overlay: replay a log prefix (ADR-061 P0). Does not share tentatives.
     pub fn fork_at(&self, n: usize) -> Self {
         let prefix = self.log.prefix(n);
-        let mut fold = GraphFold::default();
+        let mut fold = GraphFold::with_index_mode(self.index_mode());
         let mut next_tt = 0;
         for e in prefix.as_slice() {
             fold.apply(e);
             next_tt = next_tt.max(e.ingested_at.saturating_add(1));
         }
+        fold.ensure_hot_maps();
         let mut rt = Self {
             log: prefix,
             fold,
@@ -808,8 +849,8 @@ impl Runtime {
             allowed: self.allowed.clone(),
             outcomes: Vec::new(),
             justifications: Vec::new(),
-            by_event_id: HashMap::new(),
-            by_delivery_key: HashMap::new(),
+            by_event_id: IngestMap::default(),
+            by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
         };
         rt.hydrate_from_log();
