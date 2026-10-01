@@ -57,6 +57,12 @@ fn build_through_t1() -> Fixture {
         valid_to: None,
     })
     .unwrap();
+    rt.emit(Op::PinPolicy {
+        definition: "leased-policy".into(),
+        valid_from: VF_WIDE,
+        valid_to: None,
+    })
+    .unwrap();
 
     let first = rt
         .emit(Op::Assert {
@@ -160,14 +166,16 @@ impl Fixture {
     }
 
     fn record_t1_justification(&mut self) -> String {
-        self.rt.record_justification(
-            self.claim_q,
-            vec![self.claim_p],
-            vec![self.event_a, self.event_b],
-            rule_definition_hash("derive_pq"),
-            self.t1,
-            VT_INTERIOR,
-        )
+        self.rt
+            .record_justification(
+                self.claim_q,
+                vec![self.claim_p],
+                vec![self.event_a, self.event_b],
+                rule_definition_hash("derive_pq"),
+                self.t1,
+                VT_INTERIOR,
+            )
+            .expect("record_justification")
     }
 }
 
@@ -328,14 +336,17 @@ fn e2e_justification_cites_sources_and_rejects_stale_admission() {
     assert_stale(&fx.rt, &jid);
 
     let t2 = fx.t2.expect("t2");
-    let jid2 = fx.rt.record_justification(
-        fx.claim_q,
-        vec![fx.claim_p],
-        vec![fx.event_b],
-        rule_definition_hash("derive_pq"),
-        t2,
-        VT_INTERIOR,
-    );
+    let jid2 = fx
+        .rt
+        .record_justification(
+            fx.claim_q,
+            vec![fx.claim_p],
+            vec![fx.event_b],
+            rule_definition_hash("derive_pq"),
+            t2,
+            VT_INTERIOR,
+        )
+        .expect("record_justification");
     fx.rt.check_admission(&jid2).unwrap();
 
     fx.apply_t3_withdraw_b();
@@ -361,14 +372,17 @@ fn e2e_incremental_matches_reconstruct_after_discarding_leases() {
     let jid = fx.record_t1_justification();
     fx.apply_t2_conflict();
     let t2 = fx.t2.expect("t2");
-    let jid2 = fx.rt.record_justification(
-        fx.claim_q,
-        vec![fx.claim_p],
-        vec![fx.event_b],
-        rule_definition_hash("derive_pq"),
-        t2,
-        VT_INTERIOR,
-    );
+    let jid2 = fx
+        .rt
+        .record_justification(
+            fx.claim_q,
+            vec![fx.claim_p],
+            vec![fx.event_b],
+            rule_definition_hash("derive_pq"),
+            t2,
+            VT_INTERIOR,
+        )
+        .expect("record_justification");
     fx.apply_t3_withdraw_b();
     let t3 = fx.t3.expect("t3");
 

@@ -160,6 +160,12 @@ fn derive_pq_with_justification() -> (Runtime, String) {
         valid_to: None,
     })
     .unwrap();
+    rt.emit(Op::PinPolicy {
+        definition: "leased-policy".into(),
+        valid_from: 2010,
+        valid_to: None,
+    })
+    .unwrap();
     let first = rt
         .emit(Op::Assert {
             subject: a,
@@ -207,14 +213,16 @@ fn derive_pq_with_justification() -> (Runtime, String) {
         .find(|f| f.claim_id == claim_q)
         .unwrap()
         .ingested_at;
-    let jid = rt.record_justification(
-        claim_q,
-        vec![claim_p],
-        vec![event_a, event_b],
-        pin.clone(),
-        t1,
-        2017,
-    );
+    let jid = rt
+        .record_justification(
+            claim_q,
+            vec![claim_p],
+            vec![event_a, event_b],
+            pin.clone(),
+            t1,
+            2017,
+        )
+        .expect("record_justification");
     (rt, jid)
 }
 

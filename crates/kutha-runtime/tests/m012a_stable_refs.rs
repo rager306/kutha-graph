@@ -83,6 +83,12 @@ fn justification_cites_source_event_ids_survive_fork() {
         valid_to: None,
     })
     .unwrap();
+    rt.emit(Op::PinPolicy {
+        definition: "leased-policy".into(),
+        valid_from: 0,
+        valid_to: None,
+    })
+    .unwrap();
     let minted = rt
         .emit(Op::Assert {
             subject: a,
@@ -116,7 +122,9 @@ fn justification_cites_source_event_ids_survive_fork() {
         .find(|f| f.claim_id == claim_q)
         .unwrap()
         .ingested_at;
-    let jid = rt.record_justification(claim_q, vec![minting], vec![minting], pin.clone(), t1, 0);
+    let jid = rt
+        .record_justification(claim_q, vec![minting], vec![minting], pin.clone(), t1, 0)
+        .expect("record_justification");
     rt.check_admission(&jid).unwrap();
 
     let fork = rt.fork_at(rt.log().len());
@@ -155,6 +163,12 @@ fn rebuilt_fold_renumbered_seqs_apply_same_retract_and_cite_payloads() {
     let pin = rule_definition_hash("derive_pq");
     rt.emit(Op::RegisterRule {
         definition: "derive_pq".into(),
+        valid_from: 0,
+        valid_to: None,
+    })
+    .unwrap();
+    rt.emit(Op::PinPolicy {
+        definition: "leased-policy".into(),
         valid_from: 0,
         valid_to: None,
     })
@@ -203,7 +217,9 @@ fn rebuilt_fold_renumbered_seqs_apply_same_retract_and_cite_payloads() {
         .find(|f| f.claim_id == claim_q)
         .unwrap()
         .ingested_at;
-    let jid = rt.record_justification(claim_q, vec![minting], vec![minting], pin.clone(), t1, 0);
+    let jid = rt
+        .record_justification(claim_q, vec![minting], vec![minting], pin.clone(), t1, 0)
+        .expect("record_justification");
     rt.emit(Op::Retract { event_id: minting }).unwrap();
 
     let live = rt
