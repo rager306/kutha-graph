@@ -17,6 +17,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `.kutha/ROADMAP.md`: M013 (baseline, legal fixture reconnaissance, fold indexes, genesis log, dictionary entries as facts, one write path and facade, independent verification) leased; M014 (typed clocks) and M015 (executable rules and the real-text legal golden fixture) proposed; M002 re-scoped to segmentation, hash chain, manifest, and commit-marker framing, gated by the M015 verdict.
 - Code-graph rules: GitNexus runs together with CBM during M013 refactor phases only.
+- v0.06 Phases 22 and 23 are planned and plan-checked (two rounds, independent checker); Phases 24–28 carry CONTEXT only and are planned against the code the previous phase leaves. Executors commit per task; the final plan's commit carries the CHANGELOG entry.
 
 ### Trajectory
 
