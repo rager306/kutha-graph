@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Process: v0.06 milestone audit and PROC checkboxes
+
+### Process
+
+### Added
+
+- `.planning/v0.06-MILESTONE-AUDIT.md` from gsd-audit-milestone; status `gaps_found` because `28-VERIFICATION.md` is not written in this wave (D-08).
+
+### Changed
+
+- REQUIREMENTS PROC-01, PROC-03, and PROC-04 checked; PROC-02 left open pending independent verify-work.
+
+### Trajectory
+
+- No lease close, no SemVer tag, no `state.milestone-switch`. Cells remain **Proposed**. S07 stays leased.
+
 ## 2026-10-02 — Process: Id map cite from governor and ROADMAPs
 
 ### Process

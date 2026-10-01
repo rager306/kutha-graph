@@ -21,7 +21,7 @@ key-files:
 key-decisions:
   - "min_phase filters .planning/phases/NN-* only; max_files_per_dir -1 unlimited"
   - "glob_absent needles are literal -PLAN.md and -SUMMARY.md"
-requirements-completed: [PROC-01, PROC-02]
+requirements-completed: [PROC-01]
 coverage:
   - { id: D-02, description: "glob_max_lines budgets from phase 22", requirement: PROC-01, verification: [{ kind: unit, ref: "GlobMaxLinesTests + selftest artifact-budget", status: pass }], human_judgment: false }
   - { id: D-05, description: "22-27 VERIFICATION independent + independence check", requirement: PROC-02, verification: [{ kind: unit, ref: "precommit verification-independent", status: pass }], human_judgment: false }
@@ -45,6 +45,7 @@ status: complete
 - TDD_MODE false; plan named one commit per task. Tests written first; no separate `test(28-01)` RED commits.
 - Task 3 `kutha-gov py` failed on unrelated dirty `scripts/tests/test_fsm.py`; re-ran against HEAD of that file (green). Not committed.
 - 22-VERIFICATION already ≤60 with required keys; task 2 commit omitted it.
+- PROC-02 not completed: 28-VERIFICATION is D-08 post-execute (independent model).
 
 ## TDD Gate Compliance
 

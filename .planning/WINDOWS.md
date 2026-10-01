@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 5
+open_count: 7
 waived_count: 4
 fixed_count: 1
-total_count: 10
-last_updated: 2026-10-01T17:47:53.285Z
+total_count: 12
+last_updated: 2026-10-01T18:41:41.282Z
 ---
 
 # Broken Windows Ledger
@@ -25,6 +25,8 @@ last_updated: 2026-10-01T17:47:53.285Z
 | 8 | 11 | deviation | scripts/kutha_gov/kinds.py |  | Derived cite mutation token changed from __cite_selftest__ to WRONG so the alphanumeric capture actually HIGH | fixed | Intentional selftest mutation so cite HIGH is real; not a product defect | 2026-09-30T10:25:59.675Z | 2026-10-01T08:20:00.000Z |
 | 9 | 20 | deviation | crates/kutha-runtime/tests/m011_e2e_fixture.rs | 181 | Leased helper binds Action at u64::MAX because admission ingest is after t1 | open |  | 2026-10-01T03:34:35.212Z |  |
 | 10 | 27 | deviation | docs/architecture/benchmark-baseline.md |  | D-07 Phase 22 bench ≤10% STOP: ingest +2168% as_of +1566% | open |  | 2026-10-01T17:47:53.285Z |  |
+| 11 | 28 | unmet-truth | .planning/phases/28-independent-verification-and-artifact-budget/28-VERIFICATION.md |  | PROC-02 pending post-execute 28-VERIFICATION (verify-work, independent model per D-08) | open |  | 2026-10-01T18:41:40.853Z |  |
+| 12 | 28 | deviation | docs/process/gsd-auto-contract.md |  | Restored pre-existing uncommitted Gate stacking/reindex edits to HEAD so 28-02 did not change the contract | open |  | 2026-10-01T18:41:41.282Z |  |
 
 ````json
 [
@@ -155,6 +157,32 @@ last_updated: 2026-10-01T17:47:53.285Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-10-01T17:47:53.285Z",
+    "resolved_at": null,
+    "milestone": "v0.06"
+  },
+  {
+    "id": 11,
+    "kind": "unmet-truth",
+    "phase": "28",
+    "file": ".planning/phases/28-independent-verification-and-artifact-budget/28-VERIFICATION.md",
+    "line": null,
+    "description": "PROC-02 pending post-execute 28-VERIFICATION (verify-work, independent model per D-08)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-10-01T18:41:40.853Z",
+    "resolved_at": null,
+    "milestone": "v0.06"
+  },
+  {
+    "id": 12,
+    "kind": "deviation",
+    "phase": "28",
+    "file": "docs/process/gsd-auto-contract.md",
+    "line": null,
+    "description": "Restored pre-existing uncommitted Gate stacking/reindex edits to HEAD so 28-02 did not change the contract",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-10-01T18:41:41.282Z",
     "resolved_at": null,
     "milestone": "v0.06"
   }
