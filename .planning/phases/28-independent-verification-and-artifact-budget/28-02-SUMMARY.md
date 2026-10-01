@@ -12,7 +12,7 @@ provides:
 affects: [verify-work]
 actuals: { tokens: 4398, tasks: 2, commits: 2 }
 plan_head_before: ba90bfed0c980e2f4217c2c4d2c1f8fcdf31e4dd
-plan_head_after: pending
+plan_head_after: 4ab83bbcd1068ceef7f29c9526ceb3ff9b2fe886
 tech-stack: { added: [], patterns: [cite not copy Id map; honest gaps_found] }
 key-files:
   created: [.planning/v0.06-MILESTONE-AUDIT.md]
@@ -36,7 +36,7 @@ status: complete
 ## Task Commits
 
 1. **Id map cite** — `f49c147` feat
-2. **Milestone audit + PROC boxes** — (this commit) docs
+2. **Milestone audit + PROC boxes** — `4ab83bb` docs
 
 ## Deviations from Plan
 
