@@ -133,7 +133,7 @@ Plans:
 - [x] 27-01-PLAN.md — RED facade statute compile + unknown-relation admit oracle
 
 **Wave 2**
-- [ ] 27-02-PLAN.md — one pipeline, src split ≤800, facade, bench ≤10%, full ci
+- [x] 27-02-PLAN.md — one pipeline, src split ≤800, facade, bench ≤10%, full ci
 
 ### Phase 28: Independent verification and artifact budget
 

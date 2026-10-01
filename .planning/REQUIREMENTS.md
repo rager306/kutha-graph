@@ -41,10 +41,10 @@ Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semant
 
 ### One write path and facade (F11, F12)
 
-- [ ] **PIPE-01**: Every record kind enters the log through one propose, admit, commit, receipt pipeline; no kind-specific early return or side append remains
-- [ ] **PIPE-02**: The runtime is split by concern so no source file under `crates/kutha-runtime/src` exceeds 800 lines
-- [ ] **PIPE-03**: A public facade exposes assert, retract, correct, derive, admit, record action, `as_of`, and open/persist
-- [ ] **PIPE-04**: One example and one integration test use only the facade and run the statute-shaped AS OF scenario end to end
+- [x] **PIPE-01**: Every record kind enters the log through one propose, admit, commit, receipt pipeline; no kind-specific early return or side append remains
+- [x] **PIPE-02**: The runtime is split by concern so no source file under `crates/kutha-runtime/src` exceeds 800 lines
+- [x] **PIPE-03**: A public facade exposes assert, retract, correct, derive, admit, record action, `as_of`, and open/persist
+- [x] **PIPE-04**: One example and one integration test use only the facade and run the statute-shaped AS OF scenario end to end
 
 ### Process gates (R4, R5, R6)
 
@@ -92,7 +92,7 @@ Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semant
 | IDX-01, IDX-02, IDX-03 | Phase 24 | complete |
 | GEN-01, GEN-02, GEN-03 | Phase 25 | complete |
 | SUB-01, SUB-02, SUB-03, SUB-04 | Phase 26 | complete |
-| PIPE-01, PIPE-02, PIPE-03, PIPE-04 | Phase 27 | Pending |
+| PIPE-01, PIPE-02, PIPE-03, PIPE-04 | Phase 27 | complete |
 | PROC-01, PROC-02, PROC-03, PROC-04 | Phase 28 | Pending |
 
 **Coverage:** v0.06 requirements: 24 total; mapped to phases: 24; unmapped: 0.

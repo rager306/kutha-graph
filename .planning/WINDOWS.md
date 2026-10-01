@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 9
-waived_count: 0
-fixed_count: 0
-total_count: 9
-last_updated: 2026-10-01T03:34:35.212Z
+open_count: 5
+waived_count: 4
+fixed_count: 1
+total_count: 10
+last_updated: 2026-10-01T17:47:53.285Z
 ---
 
 # Broken Windows Ledger
@@ -15,15 +15,16 @@ last_updated: 2026-10-01T03:34:35.212Z
 
 | id | phase | kind | file | line | description | status | reason | recorded_at | resolved_at |
 |----|-------|------|------|------|-------------|--------|--------|-------------|-------------|
-| 1 | 01 | deviation | .planning/STATE.md |  | state.update-progress wrote percent 0; corrected to 67% in closeout | open |  | 2026-09-29T07:26:58.548Z |  |
+| 1 | 01 | deviation | .planning/STATE.md |  | state.update-progress wrote percent 0; corrected to 67% in closeout | waived | Historical SDK progress glitch; corrected in closeout; not an M013 blocker | 2026-09-29T07:26:58.548Z | 2026-10-01T08:20:00.000Z |
 | 2 | 01 | deviation | .kutha/STATE.md |  | Plan grep Active Slice: None vs markdown **Active Slice:** None; lease still None | open |  | 2026-09-29T07:32:17.882Z |  |
-| 3 | 01 | deviation | .planning/STATE.md |  | SDK state.update-progress wrote 33%; restored 100% after Phase 1 plan closeout | open |  | 2026-09-29T07:32:18.201Z |  |
+| 3 | 01 | deviation | .planning/STATE.md |  | SDK state.update-progress wrote 33%; restored 100% after Phase 1 plan closeout | waived | Same SDK progress class as #1; archaeology | 2026-09-29T07:32:18.201Z | 2026-10-01T08:20:00.000Z |
 | 4 | 02 | deviation | .kutha/STATE.md | 8 | Plan verify grep Active Slice: None misses markdown **Active Slice:** None; cite-only, no harness edit | open |  | 2026-09-29T08:23:38.090Z |  |
-| 5 | 03 | deviation | .planning/STATE.md |  | Relabeled Current Plan to numeric N so state.advance-plan can parse (Rule 3) | open |  | 2026-09-29T11:06:24.445Z |  |
-| 6 | 04 | deviation | crates/kutha-runtime/tests/m011_partial_correction.rs |  | Task 2 tdd=true had no RED: tracer already shipped IntervalPatchRejected; tests committed green | open |  | 2026-09-29T15:07:11.391Z |  |
+| 5 | 03 | deviation | .planning/STATE.md |  | Relabeled Current Plan to numeric N so state.advance-plan can parse (Rule 3) | waived | One-time Rule 3 workaround; document in contract, not a live defect | 2026-09-29T11:06:24.445Z | 2026-10-01T08:20:00.000Z |
+| 6 | 04 | deviation | crates/kutha-runtime/tests/m011_partial_correction.rs |  | Task 2 tdd=true had no RED: tracer already shipped IntervalPatchRejected; tests committed green | waived | Oracle pre-green by prior slice; M013 RED-first contract supersedes | 2026-09-29T15:07:11.391Z | 2026-10-01T08:20:00.000Z |
 | 7 | 04 | deviation | CHANGELOG.md |  | Wave-close ci auto-mode includes uncommitted .kutha/STATE.md; CHANGELOG kept in worktree set for docs-coupling | open |  | 2026-09-29T15:18:13.481Z |  |
-| 8 | 11 | deviation | scripts/kutha_gov/kinds.py |  | Derived cite mutation token changed from __cite_selftest__ to WRONG so the alphanumeric capture actually HIGH | open |  | 2026-09-30T10:25:59.675Z |  |
+| 8 | 11 | deviation | scripts/kutha_gov/kinds.py |  | Derived cite mutation token changed from __cite_selftest__ to WRONG so the alphanumeric capture actually HIGH | fixed | Intentional selftest mutation so cite HIGH is real; not a product defect | 2026-09-30T10:25:59.675Z | 2026-10-01T08:20:00.000Z |
 | 9 | 20 | deviation | crates/kutha-runtime/tests/m011_e2e_fixture.rs | 181 | Leased helper binds Action at u64::MAX because admission ingest is after t1 | open |  | 2026-10-01T03:34:35.212Z |  |
+| 10 | 27 | deviation | docs/architecture/benchmark-baseline.md |  | D-07 Phase 22 bench ≤10% STOP: ingest +2168% as_of +1566% | open |  | 2026-10-01T17:47:53.285Z |  |
 
 ````json
 [
@@ -34,10 +35,10 @@ last_updated: 2026-10-01T03:34:35.212Z
     "file": ".planning/STATE.md",
     "line": null,
     "description": "state.update-progress wrote percent 0; corrected to 67% in closeout",
-    "status": "open",
-    "reason": "",
+    "status": "waived",
+    "reason": "Historical SDK progress glitch; corrected in closeout; not an M013 blocker",
     "recorded_at": "2026-09-29T07:26:58.548Z",
-    "resolved_at": null,
+    "resolved_at": "2026-10-01T08:20:00.000Z",
     "milestone": null
   },
   {
@@ -60,10 +61,10 @@ last_updated: 2026-10-01T03:34:35.212Z
     "file": ".planning/STATE.md",
     "line": null,
     "description": "SDK state.update-progress wrote 33%; restored 100% after Phase 1 plan closeout",
-    "status": "open",
-    "reason": "",
+    "status": "waived",
+    "reason": "Same SDK progress class as #1; archaeology",
     "recorded_at": "2026-09-29T07:32:18.201Z",
-    "resolved_at": null,
+    "resolved_at": "2026-10-01T08:20:00.000Z",
     "milestone": null
   },
   {
@@ -86,10 +87,10 @@ last_updated: 2026-10-01T03:34:35.212Z
     "file": ".planning/STATE.md",
     "line": null,
     "description": "Relabeled Current Plan to numeric N so state.advance-plan can parse (Rule 3)",
-    "status": "open",
-    "reason": "",
+    "status": "waived",
+    "reason": "One-time Rule 3 workaround; document in contract, not a live defect",
     "recorded_at": "2026-09-29T11:06:24.445Z",
-    "resolved_at": null,
+    "resolved_at": "2026-10-01T08:20:00.000Z",
     "milestone": null
   },
   {
@@ -99,10 +100,10 @@ last_updated: 2026-10-01T03:34:35.212Z
     "file": "crates/kutha-runtime/tests/m011_partial_correction.rs",
     "line": null,
     "description": "Task 2 tdd=true had no RED: tracer already shipped IntervalPatchRejected; tests committed green",
-    "status": "open",
-    "reason": "",
+    "status": "waived",
+    "reason": "Oracle pre-green by prior slice; M013 RED-first contract supersedes",
     "recorded_at": "2026-09-29T15:07:11.391Z",
-    "resolved_at": null,
+    "resolved_at": "2026-10-01T08:20:00.000Z",
     "milestone": "v0.02"
   },
   {
@@ -125,10 +126,10 @@ last_updated: 2026-10-01T03:34:35.212Z
     "file": "scripts/kutha_gov/kinds.py",
     "line": null,
     "description": "Derived cite mutation token changed from __cite_selftest__ to WRONG so the alphanumeric capture actually HIGH",
-    "status": "open",
-    "reason": "",
+    "status": "fixed",
+    "reason": "Intentional selftest mutation so cite HIGH is real; not a product defect",
     "recorded_at": "2026-09-30T10:25:59.675Z",
-    "resolved_at": null,
+    "resolved_at": "2026-10-01T08:20:00.000Z",
     "milestone": "v0.03"
   },
   {
@@ -143,6 +144,19 @@ last_updated: 2026-10-01T03:34:35.212Z
     "recorded_at": "2026-10-01T03:34:35.212Z",
     "resolved_at": null,
     "milestone": "v0.05"
+  },
+  {
+    "id": 10,
+    "kind": "deviation",
+    "phase": "27",
+    "file": "docs/architecture/benchmark-baseline.md",
+    "line": null,
+    "description": "D-07 Phase 22 bench ≤10% STOP: ingest +2168% as_of +1566%",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-10-01T17:47:53.285Z",
+    "resolved_at": null,
+    "milestone": "v0.06"
   }
 ]
 ````

@@ -4,17 +4,17 @@ milestone: v0.06
 milestone_name: Honest baseline and one write path
 current_phase: 27
 current_phase_name: One write path and facade
-status: executing
-stopped_at: Completed 27-01-PLAN.md
-last_updated: "2026-10-01T17:06:42.981Z"
+status: verifying
+stopped_at: Completed 27-02-PLAN.md
+last_updated: "2026-10-01T17:49:49.454Z"
 last_activity: 2026-10-02
 last_activity_desc: Phase 27 execution started
-state_head: 53b944fb1b6aa5b02cd524a5d784e2cc124031a7
+state_head: 4c349defb7d4f9b970b66c69469f269671d1f8fd
 progress:
   total_phases: 7
   completed_phases: 5
   total_plans: 11
-  completed_plans: 10
+  completed_plans: 11
 ---
 
 # Project State
@@ -33,8 +33,8 @@ See: `.planning/PROJECT.md`
 ## Current Position
 
 Phase: 27 (One write path and facade) — EXECUTING
-Plan: 1 of 2
-Status: Executing Phase 27
+Plan: 2 of 2
+Status: Phase complete — ready for verification
 Last activity: 2026-10-02 — Phase 27 execution started
 
 ## Performance Metrics
@@ -45,6 +45,7 @@ Last activity: 2026-10-02 — Phase 27 execution started
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | Phase 27 P01 | 6min | 2 tasks | 4 files |
+| Phase 27 P02 | 40min | 2 tasks | 18 files |
 
 ## Accumulated Context
 
@@ -56,6 +57,8 @@ Last activity: 2026-10-02 — Phase 27 execution started
 - [v0.06/26]: Dictionary as kutha: facts + StoreBlob; five meta Ops removed
 - [Phase 27]: Facade RED imports only Runtime/RuntimeError and drives D-03 names
 - [Phase 27]: Admit RED compiles; fails because outcome_records do not grow after justification
+- [Phase 27]: emit stays public so D-07 named oracles and bench keep emit
+- [Phase 27]: Phase 22 bench STOP documented; no new allow-index
 
 ### Blockers/Concerns
 
@@ -63,8 +66,8 @@ Last activity: 2026-10-02 — Phase 27 execution started
 
 ## Session Continuity
 
-**Last session:** 2026-10-01T17:06:26.993Z
+**Last session:** 2026-10-01T17:48:32.044Z
 **Resume file:** None
 
-Stopped at: Completed 27-01-PLAN.md
-Next: Execute 27-02-PLAN.md (GREEN pipeline + facade)
+Stopped at: Completed 27-02-PLAN.md
+Next: Phase 27 ready for /gsd-verify-work
