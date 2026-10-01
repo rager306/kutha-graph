@@ -11,6 +11,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Added
 
 - Integration test `facade_statute::statute_as_of_via_facade` and example `statute_as_of`: D-08 RED (PIPE-03/04) — facade-only consumer (`Runtime` / `RuntimeError`; D-03 names `assert` / `retract` / `correct` / `derive` / `as_of` / `live_at` / `persist` / `open`) does not compile today. One admission and one action record. Wiring is 27-02.
+- Integration test `m013_write_path::unknown_relation_rejected_for_assert_justification_and_action`: D-08 RED (PIPE-01) — Assert unknown-relation is fail-closed; justification/action skip the same admit/receipt (`outcome_records` does not grow). Wiring is 27-02.
 
 ### Trajectory
 
