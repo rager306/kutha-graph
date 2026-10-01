@@ -95,3 +95,8 @@ bridges:
     claim: "as_of and claim_supported_at use fold-internal maps; CSR and indexes are droppable leases; untyped csr_lease_at builds through CsrMaterializer"
     cites: "crates/kutha-runtime/tests/m012a_hot_indexes.rs"
     check: m012a-s06-hot-indexes
+
+  - id: B-m012-s01
+    claim: "Versioned relation-allowlist entries are log facts; admit consults the fold cut for a YAML-absent name; unknown still fails closed"
+    cites: "crates/kutha-runtime/tests/m012_allowlist_facts.rs"
+    check: m012-s01-allowlist-facts

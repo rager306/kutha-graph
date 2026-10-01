@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Process: governor observes ALL-01..03
+
+### Process
+
+### Added
+
+- Governor bridge `B-m012-s01` / `m012-s01-allowlist-facts` and three `observe_cargo.required` names for ALL-01..03 (`allow_relation_appends_as_log_fact`, `retract_allow_relation_drops_admit_at_later_cut`, `admit_consults_fold_allowlist_not_yaml_alone`). FF6 `ff6_unknown_relation_does_not_append` stays required. LOG, REF, ING, DUR, TIME, and HOT names stay required.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. ADR-011 evidence lists include the ALL names. ADR-050 map stays Proposed and delivery frozen. Active Slice remains **S01**. Freeze until M002 unchanged.
+
 ## 2026-10-01 — Product: allowlist entries as log facts
 
 ### Product

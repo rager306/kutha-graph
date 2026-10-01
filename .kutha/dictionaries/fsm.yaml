@@ -70,6 +70,9 @@ states:
       - as_of_and_claim_supported_at_skip_non_overlapping_facts
       - discard_csr_lease_and_snapshot_rebuild_keeps_as_of
       - csr_lease_at_builds_via_materializer
+      - allow_relation_appends_as_log_fact
+      - retract_allow_relation_drops_admit_at_later_cut
+      - admit_consults_fold_allowlist_not_yaml_alone
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant

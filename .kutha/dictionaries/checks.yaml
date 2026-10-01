@@ -465,6 +465,18 @@ checks:
         category: m012a-s06
         message: "M012a S06 hot-index tests missing {missing}"
 
+  - id: m012-s01-allowlist-facts
+    description: M012 S01 — relation allowlist entries as versioned log facts; admit consults the fold cut
+    steps:
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m012_allowlist_facts.rs
+        tests:
+          - allow_relation_appends_as_log_fact
+          - retract_allow_relation_drops_admit_at_later_cut
+          - admit_consults_fold_allowlist_not_yaml_alone
+        category: m012-s01
+        message: "M012 S01 allowlist-as-facts tests missing {missing}"
+
   - id: h4-lease
     description: H5 dogfood is closed without promoting ADR-090
     steps:
@@ -615,7 +627,7 @@ checks:
         # README must show STATE's Active Milestone.
         - op: replace_regex
           path: README.md
-          pattern: 'M012a'
+          pattern: 'M012'
           with: "M999"
         # README must show STATE's Phase.
         - op: replace_regex
