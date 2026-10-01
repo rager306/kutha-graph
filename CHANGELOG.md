@@ -14,7 +14,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Trajectory
 
-- Active Slice **S01**; `L_delivery=M013-leased` until S01 closes.
+- `L_delivery=M013-S01-done`; Active Slice **None**. Independent verification passed (`22-VERIFICATION.md`).
 - `docs/architecture/benchmark-baseline.md`: measured default-N run, ratios, persist/open at three sizes, proposed target N 1000000 and memory budget 13674000000.
 
 ### Process

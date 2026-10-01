@@ -19,7 +19,7 @@ v0.01–v0.05 are shipped. **v0.05** delivered M012 (dictionaries as facts): all
 
 **v0.06 phases** (one phase per harness slice S01–S07; the controller leases each slice before the phase runs):
 
-- [ ] **Phase 22: Benchmark baseline and size target** — re-runnable bench harness, target N, memory budget
+- [x] **Phase 22: Benchmark baseline and size target** — re-runnable bench harness, target N, memory budget
 - [ ] **Phase 23: Legal fixture reconnaissance** — law-nexus real text mapped against the current model; no product code
 - [ ] **Phase 24: Fold indexes for ingest** — no log or fact-vector scans on ingest
 - [ ] **Phase 25: Genesis log** — relation allowance is log events; seeded relations are retractable
@@ -40,8 +40,8 @@ v0.01–v0.05 are shipped. **v0.05** delivered M012 (dictionaries as facts): all
 **Plans**: 2 plans (budget: `docs/process/gsd-auto-contract.md`)
 
 Plans:
-- [ ] 22-01: bench harness (one size tracer, then N/2N/4N, validation and sabotage run)
-- [ ] 22-02: dated baseline note with target N and memory budget; path-set check
+- [x] 22-01: bench harness (one size tracer, then N/2N/4N, validation and sabotage run)
+- [x] 22-02: dated baseline note with target N and memory budget; path-set check
 
 ### Phase 23: Legal fixture reconnaissance
 **Goal**: The riskiest assumption (two axes express real norms) is probed on paper with real text before any durability work.

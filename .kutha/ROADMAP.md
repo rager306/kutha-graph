@@ -150,7 +150,7 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 
 **Leased:** Active Milestone M013; Active Slice None until a GSD phase leases one. Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semantic-gap-review.md` (addendum 2026-10-01). No new features: S03–S06 are refactors under the existing named oracles (FF5, FF6, M010–M012). Thawed subset: bench harness, fold indexes, genesis, substrate refactor, facade. Still frozen: RocksDB, Cypher, HNSW, six dictionaries, legal pack, M002.
 
-- [ ] **S01: Benchmark baseline and size target** `risk:medium` `depends:[]`
+- [x] **S01: Benchmark baseline and size target** `risk:medium` `depends:[]`
   > After this: a bench harness with no new dependencies measures ingest, `as_of`, retract, persist, open, and replay at three sizes, reports bytes per fact, and states a target N; one command re-runs it; numbers land in a dated note, not in an ADR.
 - [ ] **S02: Legal fixture reconnaissance** `risk:high` `depends:[]`
   > After this: a note lists real-text cases from law-nexus (FZ-44 snippets, consultant sources with editions, the synthetic sunset clause), maps each against the two-axis model, and names the cases the current model cannot express. No product code.
