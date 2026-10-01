@@ -138,11 +138,11 @@ Plans:
   3. `check_admission` (or successor) is invoked on the product path for the leased fixture, not only from tests (ADM-03)
   4. Named cargo tests for the three ADM oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; freeze and Proposed map hold
 
-**Plans**: 1/3 plans executed
+**Plans**: 2/3 plans executed
 
 Plans:
 - [x] 19-01-PLAN.md — Tracer: PinPolicy + RecordAdmission AS OF; check_admission on record_justification
-- [ ] 19-02-PLAN.md — Retract versions admission/policy cuts; persist/open reconstructs
+- [x] 19-02-PLAN.md — Retract versions admission/policy cuts; persist/open reconstructs
 - [ ] 19-03-PLAN.md — Governor observation of ADM oracles; freeze and Proposed map hold
 
 ### Phase 20: Thin action record
@@ -200,6 +200,6 @@ Plans:
 | 16. Fold-internal hot indexes | v0.04 | 3/3 | Complete | 2026-10-01 |
 | 17. Allowlist as log facts | v0.05 | 3/3 | Complete    | 2026-10-01 |
 | 18. Rule registry | v0.05 | 3/3 | Complete    | 2026-10-01 |
-| 19. Admission and policy meta-facts | v0.05 | 1/3 | In Progress|  |
+| 19. Admission and policy meta-facts | v0.05 | 2/3 | In Progress|  |
 | 20. Thin action record | v0.05 | 0/? | Not started | - |
 | 21. Multi-hop derivation | v0.05 | 0/? | Not started | - |

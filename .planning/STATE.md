@@ -4,19 +4,19 @@ milestone: v0.05
 milestone_name: Dictionaries as facts
 current_phase: 19
 current_phase_name: Admission and policy meta-facts
-current_plan: 19-02
+current_plan: 3
 status: executing
-stopped_at: Completed 19-01-PLAN.md
-last_updated: "2026-10-01T02:55:09.704Z"
+stopped_at: Completed 19-02-PLAN.md
+last_updated: "2026-10-01T02:58:48.681Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 19 plans created (19-01 tracer, 19-02 retract/persist, 19-03 governor)
-state_head: 1c6827fc8fd8668d4ebeaac698e0c618e2ec2e09
+state_head: f6e529eb6e24b7f770112c83b2a961cc39db25e1
 progress:
   total_phases: 5
   completed_phases: 18
   total_plans: 9
-  completed_plans: 7
-  percent: 78
+  completed_plans: 8
+  percent: 89
 ---
 
 # Project State
@@ -26,7 +26,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.05 Phase 19 — Admission and policy meta-facts (M012 S03). 19-01 tracer landed; executing 19-02.
+**Current focus:** v0.05 Phase 19 — Admission and policy meta-facts (M012 S03). 19-01/19-02 landed; executing 19-03 governor.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -35,12 +35,12 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 ## Current Position
 
 Phase: 19 of 21 (Admission and policy meta-facts)
-Current Plan: 2
+Current Plan: 3
 Total Plans in Phase: 3
-Status: In Progress
-Last activity: 2026-10-01 — Completed 19-01-PLAN.md
+Status: Ready to execute
+Last activity: 2026-10-01 — Completed 19-02-PLAN.md
 
-Progress: [████████░░] 78% (v0.05)
+Progress: [█████████░] 89% (v0.05)
 
 ## Performance Metrics
 
@@ -63,6 +63,7 @@ Progress: [████████░░] 78% (v0.05)
 | Phase 18 P02 | 2 | 2 tasks | 4 files |
 | Phase 18 P03 | 3 | 2 tasks | 5 files |
 | Phase 19 P01 | 7 | 3 tasks | 8 files |
+| Phase 19 P02 | 2 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -94,6 +95,8 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 19]: PinPolicy and RecordAdmission are dedicated Ops, not Assert/Define/Behavior
 - [Phase 19]: policy_version_hash is SHA-256 of kutha-policy-def plus UTF-8 definition bytes
 - [Phase 19]: record_justification returns Ok(jid) after recording admitted=false so the status fact is the record
+- [Phase 19]: Retract of a live admission-entry or policy-entry EventId is not UnknownFact
+- [Phase 19]: Correct/CorrectInterval remain Fact-only
 
 ### Pending Todos
 
@@ -115,8 +118,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-10-01T02:55:09.177Z
-Stopped at: Completed 19-01-PLAN.md
+Last session: 2026-10-01T02:58:48.448Z
+Stopped at: Completed 19-02-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 19`. Active Slice S03 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
 
