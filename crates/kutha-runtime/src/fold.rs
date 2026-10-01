@@ -1,5 +1,6 @@
 use kutha_common::{
-    rule_definition_hash, Event, EventId, Op, SupportPolarity, TermId, TransactionTime, ValidTime,
+    policy_version_hash, rule_definition_hash, Event, EventId, Op, SupportPolarity, TermId,
+    TransactionTime, ValidTime,
 };
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, HashMap};
@@ -211,6 +212,66 @@ impl RuleEntry {
     }
 }
 
+/// Skip-serialized policy-pin row (M012 S03). Log is SoT; not a graph Fact.
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct PolicyEntry {
+    event_id: EventId,
+    definition_hash: String,
+    valid_from: ValidTime,
+    valid_to: Option<ValidTime>,
+    ingested_at: TransactionTime,
+    invalidated_at: Option<TransactionTime>,
+}
+
+impl PolicyEntry {
+    fn is_live_at(&self, tt: TransactionTime, vt: ValidTime) -> bool {
+        if self.ingested_at > tt {
+            return false;
+        }
+        if self.invalidated_at.is_some_and(|inv| inv <= tt) {
+            return false;
+        }
+        if vt < self.valid_from {
+            return false;
+        }
+        if self.valid_to.is_some_and(|to| vt >= to) {
+            return false;
+        }
+        true
+    }
+}
+
+/// Skip-serialized admission-status row (M012 S03). Log is SoT; not a graph Fact.
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct AdmissionEntry {
+    event_id: EventId,
+    justification_id: String,
+    admitted: bool,
+    policy_version: String,
+    valid_from: ValidTime,
+    valid_to: Option<ValidTime>,
+    ingested_at: TransactionTime,
+    invalidated_at: Option<TransactionTime>,
+}
+
+impl AdmissionEntry {
+    fn is_live_at(&self, tt: TransactionTime, vt: ValidTime) -> bool {
+        if self.ingested_at > tt {
+            return false;
+        }
+        if self.invalidated_at.is_some_and(|inv| inv <= tt) {
+            return false;
+        }
+        if vt < self.valid_from {
+            return false;
+        }
+        if self.valid_to.is_some_and(|to| vt >= to) {
+            return false;
+        }
+        true
+    }
+}
+
 /// Deterministic fold of the log. Droppable picture, not SoT.
 /// Hot maps are leases: skip-serialized and rebuilt from `facts` (D-02).
 #[derive(Clone, Debug, Default, serde::Serialize)]
@@ -232,6 +293,12 @@ pub struct GraphFold {
     /// Live rule-registry entries rebuilt from `Op::RegisterRule` (RULE-01). Not fingerprint input.
     #[serde(skip)]
     rule_entries: Vec<RuleEntry>,
+    /// Live policy-pin entries rebuilt from `Op::PinPolicy` (ADM-02). Not fingerprint input.
+    #[serde(skip)]
+    policy_entries: Vec<PolicyEntry>,
+    /// Live admission-status entries rebuilt from `Op::RecordAdmission` (ADM-01). Not fingerprint input.
+    #[serde(skip)]
+    admission_entries: Vec<AdmissionEntry>,
 }
 
 impl<'de> serde::Deserialize<'de> for GraphFold {
@@ -250,6 +317,8 @@ impl<'de> serde::Deserialize<'de> for GraphFold {
             claim_facts: HashMap::new(),
             allow_entries: Vec::new(),
             rule_entries: Vec::new(),
+            policy_entries: Vec::new(),
+            admission_entries: Vec::new(),
         };
         fold.rebuild_hot_maps();
         Ok(fold)
@@ -413,6 +482,46 @@ impl GraphFold {
         self.rule_entries.iter().any(|e| e.event_id == event_id)
     }
 
+    /// Fold-cut policy pin: a live `PinPolicy` hash at `(tt, vt)`.
+    pub fn policy_hash_live_at(&self, pin: &str, tt: TransactionTime, vt: ValidTime) -> bool {
+        self.policy_entries
+            .iter()
+            .any(|e| e.definition_hash == pin && e.is_live_at(tt, vt))
+    }
+
+    pub(crate) fn has_policy_entry(&self, event_id: EventId) -> bool {
+        self.policy_entries.iter().any(|e| e.event_id == event_id)
+    }
+
+    /// Latest ingested live policy hash at `(tt, vt)`.
+    pub fn live_policy_pin_at(&self, tt: TransactionTime, vt: ValidTime) -> Option<String> {
+        self.policy_entries
+            .iter()
+            .filter(|e| e.is_live_at(tt, vt))
+            .max_by_key(|e| e.ingested_at)
+            .map(|e| e.definition_hash.clone())
+    }
+
+    /// Latest ingested live admission status for `justification_id` at `(tt, vt)`.
+    pub fn admission_status_at(
+        &self,
+        justification_id: &str,
+        tt: TransactionTime,
+        vt: ValidTime,
+    ) -> Option<bool> {
+        self.admission_entries
+            .iter()
+            .filter(|e| e.justification_id == justification_id && e.is_live_at(tt, vt))
+            .max_by_key(|e| e.ingested_at)
+            .map(|e| e.admitted)
+    }
+
+    pub(crate) fn has_admission_entry(&self, event_id: EventId) -> bool {
+        self.admission_entries
+            .iter()
+            .any(|e| e.event_id == event_id)
+    }
+
     /// Rebuild skip-serialized allow-entries from the log (open / fork / hydrate).
     pub(crate) fn rebuild_allow_entries(&mut self, events: &[Event]) {
         self.allow_entries.clear();
@@ -426,6 +535,22 @@ impl GraphFold {
         self.rule_entries.clear();
         for e in events {
             self.apply_rule_side(e);
+        }
+    }
+
+    /// Rebuild skip-serialized policy-entries from the log (open / fork / hydrate).
+    pub(crate) fn rebuild_policy_entries(&mut self, events: &[Event]) {
+        self.policy_entries.clear();
+        for e in events {
+            self.apply_policy_side(e);
+        }
+    }
+
+    /// Rebuild skip-serialized admission-entries from the log (open / fork / hydrate).
+    pub(crate) fn rebuild_admission_entries(&mut self, events: &[Event]) {
+        self.admission_entries.clear();
+        for e in events {
+            self.apply_admission_side(e);
         }
     }
 
@@ -477,6 +602,68 @@ impl GraphFold {
             Op::Retract { event_id } => {
                 if let Some(entry) = self
                     .rule_entries
+                    .iter_mut()
+                    .find(|a| a.event_id == *event_id && a.invalidated_at.is_none())
+                {
+                    entry.invalidated_at = Some(event.ingested_at);
+                }
+            }
+            _ => {}
+        }
+    }
+
+    fn apply_policy_side(&mut self, event: &Event) {
+        match &event.op {
+            Op::PinPolicy {
+                definition,
+                valid_from,
+                valid_to,
+            } => {
+                self.policy_entries.push(PolicyEntry {
+                    event_id: event.id,
+                    definition_hash: policy_version_hash(definition),
+                    valid_from: *valid_from,
+                    valid_to: *valid_to,
+                    ingested_at: event.ingested_at,
+                    invalidated_at: None,
+                });
+            }
+            Op::Retract { event_id } => {
+                if let Some(entry) = self
+                    .policy_entries
+                    .iter_mut()
+                    .find(|a| a.event_id == *event_id && a.invalidated_at.is_none())
+                {
+                    entry.invalidated_at = Some(event.ingested_at);
+                }
+            }
+            _ => {}
+        }
+    }
+
+    fn apply_admission_side(&mut self, event: &Event) {
+        match &event.op {
+            Op::RecordAdmission {
+                justification_id,
+                admitted,
+                policy_version,
+                valid_from,
+                valid_to,
+            } => {
+                self.admission_entries.push(AdmissionEntry {
+                    event_id: event.id,
+                    justification_id: justification_id.clone(),
+                    admitted: *admitted,
+                    policy_version: policy_version.clone(),
+                    valid_from: *valid_from,
+                    valid_to: *valid_to,
+                    ingested_at: event.ingested_at,
+                    invalidated_at: None,
+                });
+            }
+            Op::Retract { event_id } => {
+                if let Some(entry) = self
+                    .admission_entries
                     .iter_mut()
                     .find(|a| a.event_id == *event_id && a.invalidated_at.is_none())
                 {
@@ -551,6 +738,8 @@ impl GraphFold {
                 }
                 self.apply_allow_side(event);
                 self.apply_rule_side(event);
+                self.apply_policy_side(event);
+                self.apply_admission_side(event);
             }
             Op::Correct {
                 event_id,
@@ -643,6 +832,12 @@ impl GraphFold {
             }
             Op::RegisterRule { .. } => {
                 self.apply_rule_side(event);
+            }
+            Op::PinPolicy { .. } => {
+                self.apply_policy_side(event);
+            }
+            Op::RecordAdmission { .. } => {
+                self.apply_admission_side(event);
             }
             Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
         }

@@ -5,7 +5,8 @@ mod event;
 mod intern;
 
 pub use event::{
-    rule_definition_hash, Event, EventId, Op, OutcomeDisposition, SupportPolarity, TermId,
-    TimeScale, TransactionTime, ValidTime, TRANSACTION_TIME_SCALE, VALID_TIME_SCALE,
+    policy_version_hash, rule_definition_hash, Event, EventId, Op, OutcomeDisposition,
+    SupportPolarity, TermId, TimeScale, TransactionTime, ValidTime, TRANSACTION_TIME_SCALE,
+    VALID_TIME_SCALE,
 };
 pub use intern::TermDictionary;

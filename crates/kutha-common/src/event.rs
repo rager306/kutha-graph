@@ -144,6 +144,22 @@ pub enum Op {
         valid_from: ValidTime,
         valid_to: Option<ValidTime>,
     },
+    /// Versioned policy-definition pin (M012 S03 / ADM-02). Fold records a
+    /// skip-serialized policy-entry; not a graph Fact. Hash is derived, not stored.
+    PinPolicy {
+        definition: String,
+        valid_from: ValidTime,
+        valid_to: Option<ValidTime>,
+    },
+    /// Admission status meta-fact (M012 S03 / ADM-01). Fold records a skip-serialized
+    /// admission-entry; not a graph Fact. Appended only via `record_justification`.
+    RecordAdmission {
+        justification_id: String,
+        admitted: bool,
+        policy_version: String,
+        valid_from: ValidTime,
+        valid_to: Option<ValidTime>,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -174,7 +190,9 @@ impl Event {
             | Op::QuantumOutcome { .. }
             | Op::JustificationCite { .. }
             | Op::AllowRelation { .. }
-            | Op::RegisterRule { .. } => vec![],
+            | Op::RegisterRule { .. }
+            | Op::PinPolicy { .. }
+            | Op::RecordAdmission { .. } => vec![],
             Op::Correct { object, .. } | Op::CorrectInterval { object, .. } => vec![*object],
         };
         Self {
@@ -363,6 +381,30 @@ impl Event {
                 h.update(valid_from.to_le_bytes());
                 h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
             }
+            Op::PinPolicy {
+                definition,
+                valid_from,
+                valid_to,
+            } => {
+                h.update(b"pin-policy");
+                h.update(definition.as_bytes());
+                h.update(valid_from.to_le_bytes());
+                h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
+            }
+            Op::RecordAdmission {
+                justification_id,
+                admitted,
+                policy_version,
+                valid_from,
+                valid_to,
+            } => {
+                h.update(b"record-admission");
+                h.update(justification_id.as_bytes());
+                h.update([u8::from(*admitted)]);
+                h.update(policy_version.as_bytes());
+                h.update(valid_from.to_le_bytes());
+                h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
+            }
         }
         h.finalize().into()
     }
@@ -372,6 +414,19 @@ impl Event {
 pub fn rule_definition_hash(definition: &str) -> String {
     let mut h = Sha256::new();
     h.update(b"kutha-rule-def");
+    h.update(definition.as_bytes());
+    let digest: [u8; 32] = h.finalize().into();
+    let mut out = String::with_capacity(64);
+    for b in digest {
+        out.push_str(&format!("{b:02x}"));
+    }
+    out
+}
+
+/// SHA-256 of domain `kutha-policy-def` then UTF-8 definition bytes (ADM-02).
+pub fn policy_version_hash(definition: &str) -> String {
+    let mut h = Sha256::new();
+    h.update(b"kutha-policy-def");
     h.update(definition.as_bytes());
     let digest: [u8; 32] = h.finalize().into();
     let mut out = String::with_capacity(64);

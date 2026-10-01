@@ -52,6 +52,10 @@ pub enum RuntimeError {
     UnknownRuleVersion {
         pin: String,
     },
+    /// Missing or empty live policy pin (ADM-02).
+    UnknownPolicyVersion {
+        pin: String,
+    },
 }
 
 impl fmt::Display for RuntimeError {
@@ -80,6 +84,9 @@ impl fmt::Display for RuntimeError {
             }
             RuntimeError::UnknownRuleVersion { pin } => {
                 write!(f, "unknown rule version {pin}")
+            }
+            RuntimeError::UnknownPolicyVersion { pin } => {
+                write!(f, "unknown policy version {pin}")
             }
         }
     }
@@ -138,7 +145,9 @@ fn op_relation(op: &Op) -> Option<TermId> {
         | Op::QuantumOutcome { .. }
         | Op::JustificationCite { .. }
         | Op::AllowRelation { .. }
-        | Op::RegisterRule { .. } => None,
+        | Op::RegisterRule { .. }
+        | Op::PinPolicy { .. }
+        | Op::RecordAdmission { .. } => None,
     }
 }
 
@@ -151,6 +160,8 @@ fn op_affects_fold(op: &Op) -> bool {
             | Op::JustificationCite { .. }
             | Op::AllowRelation { .. }
             | Op::RegisterRule { .. }
+            | Op::PinPolicy { .. }
+            | Op::RecordAdmission { .. }
     )
 }
 
@@ -307,6 +318,8 @@ impl Runtime {
         self.justifications = justifications;
         self.fold.rebuild_allow_entries(self.log.as_slice());
         self.fold.rebuild_rule_entries(self.log.as_slice());
+        self.fold.rebuild_policy_entries(self.log.as_slice());
+        self.fold.rebuild_admission_entries(self.log.as_slice());
     }
 
     pub(crate) fn log_has_quantum_outcome(&self) -> bool {
@@ -361,7 +374,8 @@ impl Runtime {
         self.justifications = rows;
     }
 
-    /// Append one justification cite. Does not run from `emit`. Returns the minted id.
+    /// Append one justification cite, then record admission citing the live policy pin.
+    /// Does not run from `emit`. Returns the minted id even when admission is denied.
     pub fn record_justification(
         &mut self,
         target_claim: EventId,
@@ -370,7 +384,12 @@ impl Runtime {
         rule_version: impl Into<String>,
         tt: u64,
         vt: u64,
-    ) -> String {
+    ) -> Result<String, RuntimeError> {
+        let Some(policy_version) = self.fold.live_policy_pin_at(tt, vt) else {
+            return Err(RuntimeError::UnknownPolicyVersion {
+                pin: String::new(),
+            });
+        };
         let rule_version = rule_version.into();
         let mut justification_id = format!("j:{target_claim}:{tt}:{vt}");
         let mut n = 0u32;
@@ -393,7 +412,25 @@ impl Runtime {
         });
         let row = self.justifications.last().expect("just pushed").clone();
         self.append_meta(Self::justification_op(&row));
-        justification_id
+        let admitted = self.check_admission(&justification_id).is_ok();
+        self.append_meta(Op::RecordAdmission {
+            justification_id: justification_id.clone(),
+            admitted,
+            policy_version,
+            valid_from: vt,
+            valid_to: None,
+        });
+        Ok(justification_id)
+    }
+
+    /// AS OF admission status for a justification (ADM-01). Delegates to the fold.
+    pub fn admission_status_at(&self, justification_id: &str, tt: u64, vt: u64) -> Option<bool> {
+        self.fold.admission_status_at(justification_id, tt, vt)
+    }
+
+    /// Fold-cut policy pin liveness (ADM-02).
+    pub fn policy_hash_live_at(&self, pin: &str, tt: u64, vt: u64) -> bool {
+        self.fold.policy_hash_live_at(pin, tt, vt)
     }
 
     /// Fail-closed admission for a persisted cite. Locked reasons: unknown_justification,
@@ -644,6 +681,12 @@ impl Runtime {
             }
             return Ok(());
         }
+        if let Op::PinPolicy { definition, .. } = op {
+            if definition.is_empty() {
+                return Err(RuntimeError::UnknownPolicyVersion { pin: String::new() });
+            }
+            return Ok(());
+        }
         let Some(rel) = op_relation(op) else {
             return Ok(());
         };
@@ -763,7 +806,10 @@ impl Runtime {
 
     /// Admit a user op, append, fold, cascade inverse-`knows` until idle or budget.
     pub fn emit(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
-        if matches!(op, Op::QuantumOutcome { .. } | Op::JustificationCite { .. }) {
+        if matches!(
+            op,
+            Op::QuantumOutcome { .. } | Op::JustificationCite { .. } | Op::RecordAdmission { .. }
+        ) {
             return Err(RuntimeError::MetaOpRejected);
         }
         if let Op::Retract { event_id } = &op {
@@ -808,7 +854,10 @@ impl Runtime {
             }
         }
         self.admit(&op)?;
-        if matches!(&op, Op::AllowRelation { .. } | Op::RegisterRule { .. }) {
+        if matches!(
+            &op,
+            Op::AllowRelation { .. } | Op::RegisterRule { .. } | Op::PinPolicy { .. }
+        ) {
             let event = Event::new(op, self.next_tt());
             let id = event.id;
             let digest = event.digest_bytes();
@@ -969,7 +1018,9 @@ impl Runtime {
                 Op::QuantumOutcome { .. }
                 | Op::JustificationCite { .. }
                 | Op::AllowRelation { .. }
-                | Op::RegisterRule { .. } => {
+                | Op::RegisterRule { .. }
+                | Op::PinPolicy { .. }
+                | Op::RecordAdmission { .. } => {
                     h.update(e.digest_bytes());
                 }
                 _ => {}
@@ -1019,7 +1070,9 @@ impl Runtime {
             | Op::QuantumOutcome { .. }
             | Op::JustificationCite { .. }
             | Op::AllowRelation { .. }
-            | Op::RegisterRule { .. } => return false,
+            | Op::RegisterRule { .. }
+            | Op::PinPolicy { .. }
+            | Op::RecordAdmission { .. } => return false,
         };
         if !self.fold.rule_hash_live_at(rule_version, tt, vt) {
             return false;
