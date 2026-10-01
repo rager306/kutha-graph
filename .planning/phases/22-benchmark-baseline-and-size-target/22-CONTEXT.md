@@ -19,7 +19,7 @@
 ## Spike anchors (re-locate by symbol; lines as of 2026-10-01)
 
 - `crates/kutha-runtime/src/quantum.rs` — `emit`, `replay_check`, `Runtime::new`, hot-read counters pattern used by `tests/m012a_hot_indexes.rs`
-- `crates/kutha-runtime/src/store.rs` — `persist`, `open`
+- `crates/kutha-runtime/src/store.rs` — free functions `persist(&Runtime, &Path)` and `open(&Path)` (not `Runtime` methods); `as_of` and `claim_supported_at` are on `GraphFold` via `rt.fold()`; `Op` comes from `kutha_common`
 - `crates/kutha-runtime/src/fold.rs` — `as_of`, `claim_supported_at`
 - Prior measurement definition: N≈121k log events for ≈40k asserts (log ≈ 3× asserts)
 

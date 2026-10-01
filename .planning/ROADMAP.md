@@ -37,7 +37,11 @@ v0.01–v0.05 are shipped. **v0.05** delivered M012 (dictionaries as facts): all
   1. One command runs ingest, `as_of`, claim support, retract, persist, open, and replay at three sizes and prints bytes per fact.
   2. A dated note declares target N and a memory budget beside the measured numbers.
   3. Two consecutive runs produce output of the same shape that can be diffed.
-**Plans**: 2 plans max (`docs/process/gsd-auto-contract.md` budget)
+**Plans**: 2 plans (budget: `docs/process/gsd-auto-contract.md`)
+
+Plans:
+- [ ] 22-01: bench harness (one size tracer, then N/2N/4N, validation and sabotage run)
+- [ ] 22-02: dated baseline note with target N and memory budget; path-set check
 
 ### Phase 23: Legal fixture reconnaissance
 **Goal**: The riskiest assumption (two axes express real norms) is probed on paper with real text before any durability work.

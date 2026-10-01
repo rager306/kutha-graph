@@ -29,8 +29,8 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after starting v0.06)
 ## Current Position
 
 Phase: 22 (not started)
-Plan: —
-Status: Ready to plan (CONTEXT written for 22–28)
+Plan: — (22: 2 plans, 23: 1 plan; both plan-checked twice; 24–28 have CONTEXT only and are planned just-in-time against the code left by the previous phase)
+Status: Ready to execute Phase 22 after the controller leases S01
 Last activity: 2026-10-01 — Milestone v0.06 roadmap and context prepared
 
 ## Performance Metrics

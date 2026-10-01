@@ -25,7 +25,7 @@ v0.06 phases: 22 baseline, 23 legal fixture reconnaissance, 24 fold indexes, 25 
 GSD must not edit `.kutha/STATE.md`. The controller (the parent session, not a GSD subagent) owns the lease.
 
 1. **Lease:** set Active Slice to the phase's slice and `L_delivery` to the previous slice's `-done` token in `.kutha/STATE.md`; commit that alone.
-2. **Run one phase:** `/gsd-autonomous --only N`. Do not run `--from 22 --to 28` in one go: execution stops at the lease and the independent verify gate. CONTEXT exists for every phase, so discuss is skipped.
+2. **Run one phase:** `/gsd-autonomous --only N`. Executors commit atomically per task on the feature branch with named files (as in phases 17–21); the final plan's commit carries the `CHANGELOG.md` entry so the docs-coupling check holds. Nobody but the controller edits `.kutha/STATE.md`. Do not run `--from 22 --to 28` in one go: execution stops at the lease and the independent verify gate. CONTEXT exists for every phase, so discuss is skipped.
 3. **Independent verify** (below). A failed kill-test reopens the phase; it is not waived.
 4. **Close:** clear Active Slice, set `L_delivery` to this slice's `-done` token, tick the slice in `.kutha/ROADMAP.md`, add one CHANGELOG entry (product and process kept apart), run `uv run kutha-gov precommit` and, for product phases, `uv run kutha-gov ci`.
 5. **Milestone end (phase 28):** audit, archive, tag, and `state.milestone-switch` stay GSD tools. The next lease is a controller decision.
