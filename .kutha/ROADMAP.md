@@ -139,7 +139,7 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
   > After this: Behavior pins a registry hash, not a free string; unknown/mismatched rule fails closed.
 - [x] **S03: Admission status and policy version as meta-facts** `risk:high` `depends:[S01]`
   > After this: admission decisions and the policy version are queryable AS OF a cut; `check_admission` is on the product path, not tests-only.
-- [ ] **S04: Thin action record** `risk:medium` `depends:[S03]`
+- [x] **S04: Thin action record** `risk:medium` `depends:[S03]`
   > After this: an Action (or equivalent Op) binds resolved arguments to admission + policy version; named test green.
 - [ ] **S05: Multi-hop / n-ary derivation eligibility** `risk:medium` `depends:[S02]`
   > After this: eligibility is not only one-hop `caused_by`; a two-hop (or n-ary) fixture is named and green — without claiming full provenance polynomials.

@@ -1,0 +1,9 @@
+{
+  "command": "cargo test -p kutha-runtime --offline --test m012_action_record action_binds_args_to_admission_and_policy -- --exact",
+  "exitCode": 101,
+  "output": "    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s\n     Running tests/m012_action_record.rs (target/debug/deps/m012_action_record-784b393fec0b1a3c)\n\nrunning 1 test\ntest action_binds_args_to_admission_and_policy ... FAILED\n\nfailures:\n\n---- action_binds_args_to_admission_and_policy stdout ----\n\nthread 'action_binds_args_to_admission_and_policy' (1352360) panicked at crates/kutha-runtime/tests/m012_action_record.rs:76:5:\nrecord_action must bind after justification: Err(UnknownAdmission { justification_id: \"j:01a0f580-564d-7f83-8fd8-a067f4343973:18446744073709551615:2017\" })\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\n\nfailures:\n    action_binds_args_to_admission_and_policy\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n\nerror: test failed, to rerun pass `-p kutha-runtime --test m012_action_record`\n\nnot ok 1 - action_binds_args_to_admission_and_policy\n# tests 1\n# pass 0\n# fail 1\n",
+  "targetTest": "action_binds_args_to_admission_and_policy",
+  "targetFile": "crates/kutha-runtime/tests/m012_action_record.rs",
+  "expected": "record_action Ok(EventId) after record_justification",
+  "actual": "Err(UnknownAdmission) \u2014 stub fail-closed until GREEN"
+}

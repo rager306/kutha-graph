@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: M012 S04 thin action record
+
+### Product
+
+- `Op::RecordAction` binds resolved arguments to admission + policy version.
+- Action + admission remain queryable AS OF a prior cut after a later policy pin. Named oracles in `m012_action_record`.
+
+### Process
+
+- Governor ACT observe + Phase 20 closed.
+
+### Trajectory
+
+- `L_delivery=M012-S04-done`; Active Slice **None** until S05 leased. Active Milestone stays M012. Six dictionaries / Cypher / HNSW / M002 stay frozen.
+
 ## 2026-10-01 — Process: governor observes ACT-01..02
 
 ### Process
