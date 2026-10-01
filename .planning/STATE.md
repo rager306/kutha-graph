@@ -4,19 +4,19 @@ milestone: v0.05
 milestone_name: Dictionaries as facts
 current_phase: 18
 current_phase_name: Rule registry
-current_plan: 2
+current_plan: 3
 status: ready_to_execute
-stopped_at: Completed 18-01-PLAN.md
-last_updated: "2026-10-01T02:25:12.481Z"
+stopped_at: Completed 18-02-PLAN.md
+last_updated: "2026-10-01T02:27:18.242Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 18 rule-registry plans written (18-01 tracer, 18-02 retract/persist, 18-03 governor)
-state_head: 7e00bc741b20f3c9e362098d26f3200465da8914
+state_head: d84a21a054c28affb7a9bb953d8f582f53d85509
 progress:
   total_phases: 5
   completed_phases: 17
   total_plans: 6
-  completed_plans: 4
-  percent: 67
+  completed_plans: 5
+  percent: 83
 ---
 
 # Project State
@@ -35,12 +35,12 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 ## Current Position
 
 Phase: 18 of 21 (Rule registry)
-Current Plan: 2
+Current Plan: 3
 Total Plans in Phase: 3
 Status: Ready to execute
 Last activity: 2026-10-01 — Completed 18-01-PLAN.md
 
-Progress: [███████░░░] 67% (v0.05)
+Progress: [████████░░] 83% (v0.05)
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Progress: [███████░░░] 67% (v0.05)
 | Phase 17-allowlist-as-log-facts P02 | 2min | 2 tasks | 4 files |
 | Phase 17-allowlist-as-log-facts P03 | 4min | 2 tasks | 5 files |
 | Phase 18 P01 | 7 | 3 tasks | 10 files |
+| Phase 18 P02 | 2 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -81,6 +82,8 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 18]: RegisterRule is a dedicated Op, not Assert/Define/Behavior, so the registry is a log fact
 - [Phase 18]: rule_definition_hash is SHA-256 of kutha-rule-def plus UTF-8 definition bytes; the Op does not store a precomputed hash
 - [Phase 18]: User emit(Behavior) pin check does not run on follow_ons inverse_knows
+- [Phase 18]: Retract of RegisterRule is accepted as a live rule-entry EventId, not as a graph Fact
+- [Phase 18]: Opened runtimes accept hashed Behavior because hydrate rebuilds rule-entries from the log
 
 ### Pending Todos
 
@@ -102,8 +105,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-10-01T02:24:56.438Z
-Stopped at: Completed 18-01-PLAN.md
+Last session: 2026-10-01T02:27:18.097Z
+Stopped at: Completed 18-02-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 17`. Active Slice S01 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
 
