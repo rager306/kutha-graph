@@ -4,12 +4,12 @@ milestone: v0.05
 milestone_name: Dictionaries as facts
 current_phase: 19
 current_phase_name: Admission and policy meta-facts
-current_plan: Not started
+current_plan: 19-01
 status: planning
-stopped_at: Phase 18 complete, ready to plan Phase 19
-last_updated: "2026-10-01T02:32:20.210Z"
+stopped_at: Phase 19 plans written (19-01..03), ready to execute
+last_updated: "2026-10-01T09:33:00.000Z"
 last_activity: 2026-10-01
-last_activity_desc: Phase 18 complete, transitioned to Phase 19
+last_activity_desc: Phase 19 plans created (19-01 tracer, 19-02 retract/persist, 19-03 governor)
 state_head: 614f92b664839e98d993fb18067c246fc143d247
 progress:
   total_phases: 5
@@ -26,7 +26,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.05 Phase 18 — Rule registry (M012 S02). Three execute plans written (18-01..03).
+**Current focus:** v0.05 Phase 19 — Admission and policy meta-facts (M012 S03). Three execute plans written (19-01..03).
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -35,10 +35,10 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 ## Current Position
 
 Phase: 19 of 21 (Admission and policy meta-facts)
-Current Plan: Not started
+Current Plan: 19-01
 Total Plans in Phase: 3
-Status: Ready to plan
-Last activity: 2026-10-01 — Phase 18 complete, transitioned to Phase 19
+Status: Ready to execute
+Last activity: 2026-10-01 — Phase 19 plans written (19-01..03)
 
 Progress: [█████████░] 86% (v0.05)
 
@@ -87,6 +87,9 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 18]: Opened runtimes accept hashed Behavior because hydrate rebuilds rule-entries from the log
 - [Phase 18]: RULE file oracles are required observe names; ALL and FF6 remain required
 - [Phase 18]: ADR-011 evidence append only; honeycomb map stays Proposed; ADR-050 delivery stays frozen
+- [Phase 19]: PinPolicy is a dedicated Op; RecordAdmission is append_meta from record_justification
+- [Phase 19]: record_justification invokes check_admission on the product path and cites live_policy_pin_at
+- [Phase 19]: Do not add an Action Op (Phase 20); honeycomb stays Proposed; ADR-050 delivery stays frozen
 
 ### Pending Todos
 
@@ -94,7 +97,7 @@ None.
 
 ### Blockers/Concerns
 
-- Harness Active Slice is **S01** (cite `.kutha/STATE.md`; do not overwrite it). Execute Phase 17 under that lease (GATE-02).
+- Harness Active Slice is **S03** (cite `.kutha/STATE.md`; do not overwrite it). Execute Phase 19 under that lease (GATE-02).
 - Do not start ADR-050 six dictionaries, M002 Rocks, legal pack, Cypher, or HNSW because a GSD phase completed — honeycomb stays Proposed (GATE-03).
 
 ## Deferred Items
@@ -108,11 +111,11 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-10-01T02:30:48.305Z
-Stopped at: Phase 18 complete, ready to plan Phase 19
+Last session: 2026-10-01T09:33:00.000Z
+Stopped at: Phase 19 plans written (19-01..03), ready to execute
 Resume file: None
-Next: `/gsd-execute-phase 17`. Active Slice S01 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
+Next: `/gsd-execute-phase 19`. Active Slice S03 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
 
 ## Operator Next Steps
 
-- `/gsd-execute-phase 17`
+- `/gsd-execute-phase 19`
