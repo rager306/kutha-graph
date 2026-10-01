@@ -272,6 +272,41 @@ impl AdmissionEntry {
     }
 }
 
+/// Skip-serialized action-record row (M012 S04). Log is SoT; not a graph Fact.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct ActionEntry {
+    pub(crate) event_id: EventId,
+    pub(crate) justification_id: String,
+    pub(crate) target_claim: EventId,
+    pub(crate) source_claim_ids: Vec<EventId>,
+    pub(crate) source_event_ids: Vec<EventId>,
+    pub(crate) rule_version: String,
+    pub(crate) admitted: bool,
+    pub(crate) policy_version: String,
+    valid_from: ValidTime,
+    valid_to: Option<ValidTime>,
+    ingested_at: TransactionTime,
+    invalidated_at: Option<TransactionTime>,
+}
+
+impl ActionEntry {
+    fn is_live_at(&self, tt: TransactionTime, vt: ValidTime) -> bool {
+        if self.ingested_at > tt {
+            return false;
+        }
+        if self.invalidated_at.is_some_and(|inv| inv <= tt) {
+            return false;
+        }
+        if vt < self.valid_from {
+            return false;
+        }
+        if self.valid_to.is_some_and(|to| vt >= to) {
+            return false;
+        }
+        true
+    }
+}
+
 /// Deterministic fold of the log. Droppable picture, not SoT.
 /// Hot maps are leases: skip-serialized and rebuilt from `facts` (D-02).
 #[derive(Clone, Debug, Default, serde::Serialize)]
@@ -299,6 +334,9 @@ pub struct GraphFold {
     /// Live admission-status entries rebuilt from `Op::RecordAdmission` (ADM-01). Not fingerprint input.
     #[serde(skip)]
     admission_entries: Vec<AdmissionEntry>,
+    /// Live action-record entries rebuilt from `Op::RecordAction` (ACT-01). Not fingerprint input.
+    #[serde(skip)]
+    action_entries: Vec<ActionEntry>,
 }
 
 impl<'de> serde::Deserialize<'de> for GraphFold {
@@ -319,6 +357,7 @@ impl<'de> serde::Deserialize<'de> for GraphFold {
             rule_entries: Vec::new(),
             policy_entries: Vec::new(),
             admission_entries: Vec::new(),
+            action_entries: Vec::new(),
         };
         fold.rebuild_hot_maps();
         Ok(fold)
@@ -522,6 +561,37 @@ impl GraphFold {
             .any(|e| e.event_id == event_id)
     }
 
+    /// Latest ingested live admission bind for `justification_id` at `(tt, vt)`.
+    pub(crate) fn live_admission_at(
+        &self,
+        justification_id: &str,
+        tt: TransactionTime,
+        vt: ValidTime,
+    ) -> Option<(bool, String)> {
+        self.admission_entries
+            .iter()
+            .filter(|e| e.justification_id == justification_id && e.is_live_at(tt, vt))
+            .max_by_key(|e| e.ingested_at)
+            .map(|e| (e.admitted, e.policy_version.clone()))
+    }
+
+    /// Latest ingested live Action bind for `justification_id` at `(tt, vt)`.
+    pub(crate) fn action_record_at(
+        &self,
+        justification_id: &str,
+        tt: TransactionTime,
+        vt: ValidTime,
+    ) -> Option<&ActionEntry> {
+        self.action_entries
+            .iter()
+            .filter(|e| e.justification_id == justification_id && e.is_live_at(tt, vt))
+            .max_by_key(|e| e.ingested_at)
+    }
+
+    pub(crate) fn has_action_entry(&self, event_id: EventId) -> bool {
+        self.action_entries.iter().any(|e| e.event_id == event_id)
+    }
+
     /// Rebuild skip-serialized allow-entries from the log (open / fork / hydrate).
     pub(crate) fn rebuild_allow_entries(&mut self, events: &[Event]) {
         self.allow_entries.clear();
@@ -551,6 +621,14 @@ impl GraphFold {
         self.admission_entries.clear();
         for e in events {
             self.apply_admission_side(e);
+        }
+    }
+
+    /// Rebuild skip-serialized action-entries from the log (open / fork / hydrate).
+    pub(crate) fn rebuild_action_entries(&mut self, events: &[Event]) {
+        self.action_entries.clear();
+        for e in events {
+            self.apply_action_side(e);
         }
     }
 
@@ -674,6 +752,47 @@ impl GraphFold {
         }
     }
 
+    fn apply_action_side(&mut self, event: &Event) {
+        match &event.op {
+            Op::RecordAction {
+                justification_id,
+                target_claim,
+                source_claim_ids,
+                source_event_ids,
+                rule_version,
+                admitted,
+                policy_version,
+                valid_from,
+                valid_to,
+            } => {
+                self.action_entries.push(ActionEntry {
+                    event_id: event.id,
+                    justification_id: justification_id.clone(),
+                    target_claim: *target_claim,
+                    source_claim_ids: source_claim_ids.clone(),
+                    source_event_ids: source_event_ids.clone(),
+                    rule_version: rule_version.clone(),
+                    admitted: *admitted,
+                    policy_version: policy_version.clone(),
+                    valid_from: *valid_from,
+                    valid_to: *valid_to,
+                    ingested_at: event.ingested_at,
+                    invalidated_at: None,
+                });
+            }
+            Op::Retract { event_id } => {
+                if let Some(entry) = self
+                    .action_entries
+                    .iter_mut()
+                    .find(|a| a.event_id == *event_id && a.invalidated_at.is_none())
+                {
+                    entry.invalidated_at = Some(event.ingested_at);
+                }
+            }
+            _ => {}
+        }
+    }
+
     pub fn apply(&mut self, event: &Event) {
         self.ensure_hot_maps();
         match &event.op {
@@ -740,6 +859,7 @@ impl GraphFold {
                 self.apply_rule_side(event);
                 self.apply_policy_side(event);
                 self.apply_admission_side(event);
+                self.apply_action_side(event);
             }
             Op::Correct {
                 event_id,
@@ -839,10 +959,10 @@ impl GraphFold {
             Op::RecordAdmission { .. } => {
                 self.apply_admission_side(event);
             }
-            Op::Define { .. }
-            | Op::QuantumOutcome { .. }
-            | Op::JustificationCite { .. }
-            | Op::RecordAction { .. } => {}
+            Op::RecordAction { .. } => {
+                self.apply_action_side(event);
+            }
+            Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
         }
     }
 

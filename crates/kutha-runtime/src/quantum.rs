@@ -341,6 +341,7 @@ impl Runtime {
         self.fold.rebuild_rule_entries(self.log.as_slice());
         self.fold.rebuild_policy_entries(self.log.as_slice());
         self.fold.rebuild_admission_entries(self.log.as_slice());
+        self.fold.rebuild_action_entries(self.log.as_slice());
     }
 
     pub(crate) fn log_has_quantum_outcome(&self) -> bool {
@@ -447,26 +448,60 @@ impl Runtime {
         self.fold.admission_status_at(justification_id, tt, vt)
     }
 
-    /// Append a thin Action bound to the live admission pin (ACT-01).
+    /// Append a thin Action bound to the live admission pin (ACT-01 / T-20-01 / T-20-02).
     pub fn record_action(
         &mut self,
         justification_id: &str,
-        _tt: u64,
-        _vt: u64,
+        tt: u64,
+        vt: u64,
     ) -> Result<EventId, RuntimeError> {
-        Err(RuntimeError::UnknownAdmission {
-            justification_id: justification_id.to_string(),
-        })
+        let cite = self
+            .justifications
+            .iter()
+            .find(|j| j.justification_id == justification_id)
+            .cloned()
+            .ok_or_else(|| RuntimeError::UnknownAdmission {
+                justification_id: justification_id.to_string(),
+            })?;
+        let Some((admitted, policy_version)) =
+            self.fold.live_admission_at(justification_id, tt, vt)
+        else {
+            return Err(RuntimeError::UnknownAdmission {
+                justification_id: justification_id.to_string(),
+            });
+        };
+        self.append_meta(Op::RecordAction {
+            justification_id: cite.justification_id,
+            target_claim: cite.target_claim,
+            source_claim_ids: cite.source_claim_ids,
+            source_event_ids: cite.source_event_ids,
+            rule_version: cite.rule_version,
+            admitted,
+            policy_version,
+            valid_from: vt,
+            valid_to: None,
+        });
+        Ok(self.log.as_slice().last().expect("just appended").id)
     }
 
     /// AS OF Action bind for a justification (ACT-01). Delegates to the fold.
     pub fn action_record_at(
         &self,
-        _justification_id: &str,
-        _tt: u64,
-        _vt: u64,
+        justification_id: &str,
+        tt: u64,
+        vt: u64,
     ) -> Option<ActionRecord> {
-        None
+        self.fold
+            .action_record_at(justification_id, tt, vt)
+            .map(|e| ActionRecord {
+                justification_id: e.justification_id.clone(),
+                target_claim: e.target_claim,
+                source_claim_ids: e.source_claim_ids.clone(),
+                source_event_ids: e.source_event_ids.clone(),
+                rule_version: e.rule_version.clone(),
+                admitted: e.admitted,
+                policy_version: e.policy_version.clone(),
+            })
     }
 
     /// Fold-cut policy pin liveness (ADM-02).
@@ -863,6 +898,7 @@ impl Runtime {
                 && !self.fold.has_rule_entry(*event_id)
                 && !self.fold.has_policy_entry(*event_id)
                 && !self.fold.has_admission_entry(*event_id)
+                && !self.fold.has_action_entry(*event_id)
             {
                 return Err(RuntimeError::UnknownFact {
                     event_id: *event_id,
