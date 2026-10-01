@@ -90,7 +90,7 @@ Plans:
 
 Plans:
 **Wave 1**
-- [ ] 25-01-PLAN.md — RED retract-seeded relatedTo admit; YAML-missing open
+- [x] 25-01-PLAN.md — RED retract-seeded relatedTo admit; YAML-missing open
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 25-02-PLAN.md — genesis AllowRelation on new log; admit fold-only; persist/open
