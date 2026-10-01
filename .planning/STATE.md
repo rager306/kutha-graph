@@ -2,15 +2,21 @@
 gsd_state_version: "1.0"
 milestone: v0.05
 milestone_name: Dictionaries as facts
-status: planning
-last_updated: "2026-10-01T08:45:00+07:00"
+current_phase: 17
+current_phase_name: v0.05 phases 17–21
+current_plan: 3
+status: executing
+stopped_at: Completed 17-01-PLAN.md
+last_updated: "2026-10-01T01:47:49.648Z"
 last_activity: 2026-10-01
+last_activity_desc: Phase 17 plans 17-01..03 written (tracer, versioning/persist, governor)
+state_head: e980d6f6791047fd639fede4a6c4fe2fa64a018a
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 16
   total_plans: 3
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
+  percent: 33
 ---
 
 # Project State
@@ -29,11 +35,12 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 ## Current Position
 
 Phase: 17 of 21 (Allowlist as log facts) — v0.05 phases 17–21
-Plan: 17-01 (next execute)
-Status: Planned
-Last activity: 2026-10-01 — Phase 17 plans 17-01..03 written (tracer, versioning/persist, governor)
+Current Plan: 3
+Total Plans in Phase: 3
+Status: Ready to execute
+Last activity: 2026-10-01 — 17-01 tracer complete; next 17-02 retract/persist
 
-Progress: [░░░░░░░░░░] 0% (v0.05)
+Progress: [███░░░░░░░] 33% (v0.05)
 
 ## Performance Metrics
 
@@ -45,6 +52,11 @@ Progress: [░░░░░░░░░░] 0% (v0.05)
 **By Phase:** v0.01 9/9 · v0.02 11/11 · v0.03 8/8 · v0.04 15/15 · v0.05 0/?
 
 **Recent Trend:** v0.04 crate work closed; v0.05 product crates allowed under M012 thawed subset.
+**Per-Plan Metrics:**
+
+| Plan | Duration | Tasks | Files |
+|------|----------|-------|-------|
+| Phase 17-allowlist-as-log-facts P01 | 3min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -56,6 +68,9 @@ Full table: `.planning/PROJECT.md`.
 - [v0.05]: GATE-01/02/03 inherit — named cargo + governor; execute only under matching Active Slice; honeycomb stays Proposed
 - [v0.04]: M012a S01–S06 shipped (Phases 12–16); F4/F5 wait for M012
 - [v0.03]: H5 semantic governor + lean AGENTS.md shipped; crates untouched
+- [Phase 17-allowlist-as-log-facts]: AllowRelation is a dedicated Op, not Assert/Define, so admit can bootstrap without gating itself
+- [Phase 17-allowlist-as-log-facts]: emit(AllowRelation) appends one log event without a QuantumOutcome sidecar so the tracer log-len contract holds
+- [Phase 17-allowlist-as-log-facts]: YAML seed remains the fallback so inForceAs admits on an empty-log Runtime (FF6)
 
 ### Pending Todos
 
@@ -77,8 +92,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-10-01
-Stopped at: Phase 17 plans written
+Last session: 2026-10-01T01:47:29.802Z
+Stopped at: Completed 17-01-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 17`. Active Slice S01 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
 

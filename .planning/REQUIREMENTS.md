@@ -10,9 +10,9 @@ Closing leased product gaps F4/F5 from `docs/architecture/semantic-gap-review.md
 
 ### Relation allowlist as facts (F5 ambient → log)
 
-- [ ] **ALL-01**: Relation allowlist entries are appendable versioned facts on the event log
-- [ ] **ALL-02**: `Runtime::admit` (or equivalent) consults the fold cut for allowed relations, not tip YAML/env alone
-- [ ] **ALL-03**: Unknown relation still fails closed; named FF6 oracle remains green
+- [x] **ALL-01**: Relation allowlist entries are appendable versioned facts on the event log
+- [x] **ALL-02**: `Runtime::admit` (or equivalent) consults the fold cut for allowed relations, not tip YAML/env alone
+- [x] **ALL-03**: Unknown relation still fails closed; named FF6 oracle remains green
 
 ### Rule registry (F4 free-string → hash)
 
@@ -62,9 +62,9 @@ Closing leased product gaps F4/F5 from `docs/architecture/semantic-gap-review.md
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ALL-01 | Phase 17 | Pending |
-| ALL-02 | Phase 17 | Pending |
-| ALL-03 | Phase 17 | Pending |
+| ALL-01 | Phase 17 | Complete |
+| ALL-02 | Phase 17 | Complete |
+| ALL-03 | Phase 17 | Complete |
 | RULE-01 | Phase 18 | Pending |
 | RULE-02 | Phase 18 | Pending |
 | RULE-03 | Phase 18 | Pending |

@@ -95,10 +95,11 @@ Full detail: [milestones/v0.04-ROADMAP.md](./milestones/v0.04-ROADMAP.md) · req
   2. `Runtime::admit` (or equivalent) consults the fold cut for allowed relations, not tip YAML/env alone (ALL-02)
   3. An unknown relation still fails closed; the named FF6 oracle remains green (ALL-03)
   4. Named cargo tests for the three ALL oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; FF5 stays green; honeycomb stays Proposed; ADR-050 six dictionaries and M002 Rocks stay unstarted
-**Plans**: 3 plans
+
+**Plans**: 1/3 plans executed
 
 Plans:
-- [ ] 17-01-PLAN.md — Tracer: Op::AllowRelation log fact; admit consults fold for a YAML-absent name; unknown fails closed
+- [x] 17-01-PLAN.md — Tracer: Op::AllowRelation log fact; admit consults fold for a YAML-absent name; unknown fails closed
 - [ ] 17-02-PLAN.md — Retract versions the cut; persist/open reconstructs admit from log facts
 - [ ] 17-03-PLAN.md — Governor observation of ALL oracles; freeze and Proposed map hold
 
@@ -115,6 +116,7 @@ Plans:
   2. Unknown or mismatched `rule_version` fails closed on emit/eligibility (RULE-02)
   3. Free-string `rule_version` is rejected on the leased path unless it matches a registry hash (RULE-03)
   4. Named cargo tests for the three RULE oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; freeze and Proposed map hold
+
 **Plans**: TBD
 
 ### Phase 19: Admission and policy meta-facts
@@ -130,6 +132,7 @@ Plans:
   2. Policy version is pinned in the log and cited by admission (ADM-02)
   3. `check_admission` (or successor) is invoked on the product path for the leased fixture, not only from tests (ADM-03)
   4. Named cargo tests for the three ADM oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; freeze and Proposed map hold
+
 **Plans**: TBD
 
 ### Phase 20: Thin action record
@@ -144,6 +147,7 @@ Plans:
   1. A thin Action record (or Op) binds resolved arguments to the admission decision and policy version (ACT-01)
   2. A named test shows Action + admission AS OF a prior cut after a later policy change (ACT-02)
   3. Named cargo tests for the ACT oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; ADR-050 six dictionaries stay frozen; honeycomb stays Proposed
+
 **Plans**: TBD
 
 ### Phase 21: Multi-hop derivation
@@ -159,6 +163,7 @@ Plans:
   2. A two-hop (or n-ary) named test is green without claiming full provenance polynomials (DER-02)
   3. Hard-coded `inverse_knows`-only cascade is not the sole follow-on mechanism, **or** it is documented as residual spike with a named guard (DER-03)
   4. Named cargo tests for the DER oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; ADR-011 MATCH/polynomial evaluator stays out of this milestone
+
 **Plans**: TBD
 
 ## Progress
@@ -183,7 +188,7 @@ Plans:
 | 14. Idempotent ingest | v0.04 | 3/3 | Complete | 2026-10-01 |
 | 15. Verify, persist, and time scale | v0.04 | 3/3 | Complete | 2026-10-01 |
 | 16. Fold-internal hot indexes | v0.04 | 3/3 | Complete | 2026-10-01 |
-| 17. Allowlist as log facts | v0.05 | 0/3 | Planned | - |
+| 17. Allowlist as log facts | v0.05 | 1/3 | In Progress|  |
 | 18. Rule registry | v0.05 | 0/? | Not started | - |
 | 19. Admission and policy meta-facts | v0.05 | 0/? | Not started | - |
 | 20. Thin action record | v0.05 | 0/? | Not started | - |
