@@ -115,7 +115,12 @@ fn fill_keyed(rt: &mut Runtime, planned: u64) -> EventId {
     first.expect("planned > 0")
 }
 
-fn put(metrics: &mut BTreeMap<String, (String, String)>, key: &str, value: impl ToString, unit: &str) {
+fn put(
+    metrics: &mut BTreeMap<String, (String, String)>,
+    key: &str,
+    value: impl ToString,
+    unit: &str,
+) {
     metrics.insert(key.to_string(), (value.to_string(), unit.to_string()));
 }
 
@@ -268,10 +273,7 @@ fn main() {
             eprintln!("keyed live_count {keyed_live} != planned {planned}");
             process::exit(1);
         }
-        if !keyed
-            .fold()
-            .claim_supported_at(keyed_first, u64::MAX, 2010)
-        {
+        if !keyed.fold().claim_supported_at(keyed_first, u64::MAX, 2010) {
             eprintln!("keyed claim_supported_at false");
             process::exit(1);
         }

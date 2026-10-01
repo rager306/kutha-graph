@@ -160,7 +160,7 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
   > After this: relation allowance enters through genesis events; the YAML file is read only when a new log is created; retracting a seeded relation makes admit fail closed; FF6 stays green.
 - [x] **S05: Dictionary entries as facts** `risk:high` `depends:[S04]`
   > After this: relation, rule, policy, admission, and action records are reserved-namespace facts with content-addressed bodies; the five meta `Op` variants and side tables are gone; the M012 oracles keep their assertions.
-- [ ] **S06: One write path and facade** `risk:high` `depends:[S05]`
+- [x] **S06: One write path and facade** `risk:high` `depends:[S05]`
   > After this: every record kind goes through one propose, admit, commit, receipt pipeline; justification and policy references are `EventId` or hash; the runtime is split by concern; a public facade is driven by one example and one integration test that use nothing else.
 - [ ] **S07: Independent verification and artifact budget** `risk:medium` `depends:[S06]`
   > After this: a governor check enforces the planning-artifact budget; milestone close requires a verification artifact from a verifier that did not write the code; the id map (GSD version, harness milestone, ADR) is one table.

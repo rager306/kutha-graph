@@ -1,6 +1,6 @@
 //! Replay and provenance (ADR-060). Not a MATCH compiler.
-use crate::quantum::{Runtime, RuntimeError};
 use crate::fold::GraphFold;
+use crate::quantum::{Runtime, RuntimeError};
 use kutha_common::{EventId, Op};
 use sha2::{Digest, Sha256};
 use std::collections::HashSet;

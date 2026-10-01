@@ -1,7 +1,5 @@
 //! One write path: propose → admit → commit → receipt (D-01).
-use crate::quantum::{
-    disposition, PersistedQuantumOutcome, QuantumOutcome, Runtime, RuntimeError,
-};
+use crate::quantum::{disposition, PersistedQuantumOutcome, QuantumOutcome, Runtime, RuntimeError};
 use crate::receipt::{digest_to_hex, QuantumReceipt};
 use kutha_common::{
     blob_digest_matches, policy_version_hash, rule_definition_hash, Event, Op, OutcomeDisposition,

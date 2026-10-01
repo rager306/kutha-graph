@@ -1,5 +1,7 @@
 //! Admit and delivery-key gates for the write pipeline (D-01 / T-27-02).
-use crate::quantum::{op_relation, ConflictReport, Justification, QuantumOutcome, Runtime, RuntimeError};
+use crate::quantum::{
+    op_relation, ConflictReport, Justification, QuantumOutcome, Runtime, RuntimeError,
+};
 use crate::receipt::QuantumReceipt;
 use kutha_common::{blob_digest_matches, EventId, Op};
 
@@ -160,7 +162,10 @@ impl Runtime {
     }
 
     /// Identical keyed Assert returns the original EventId without appending (ING-01 / D-01).
-    pub(crate) fn delivery_key_retry(&self, op: &Op) -> Result<Option<QuantumOutcome>, RuntimeError> {
+    pub(crate) fn delivery_key_retry(
+        &self,
+        op: &Op,
+    ) -> Result<Option<QuantumOutcome>, RuntimeError> {
         let Op::Assert { delivery_key, .. } = op else {
             return Ok(None);
         };

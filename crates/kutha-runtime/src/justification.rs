@@ -1,9 +1,7 @@
 //! Justification and Action constructors (typed records → pipeline).
 use crate::pipeline::ReceiptMode;
 use crate::quantum::{ActionRecord, Justification, Runtime, RuntimeError};
-use kutha_common::{
-    Event, EventId, Op, SupportPolarity, KUTHA_ACTION, KUTHA_ADMISSION,
-};
+use kutha_common::{Event, EventId, Op, SupportPolarity, KUTHA_ACTION, KUTHA_ADMISSION};
 
 impl Runtime {
     pub(crate) fn cite_from_log(&self, justification_id: &str) -> Option<Justification> {

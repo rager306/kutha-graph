@@ -8,9 +8,9 @@ use kutha_common::{
     rule_definition_hash, Event, EventId, Op, TermDictionary, TermId, TransactionTime, ValidTime,
     KUTHA_RESERVED_RELS,
 };
-use std::path::Path;
 use rustc_hash::FxHashMap;
 use std::fmt;
+use std::path::Path;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 type IngestMap<K, V> = FxHashMap<K, V>;

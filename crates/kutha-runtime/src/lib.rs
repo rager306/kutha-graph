@@ -1,15 +1,15 @@
 //! In-memory P0 runtime: log = SoT, fold = picture, quantum = emit→idle (ADR-010).
 
+mod admission;
 mod allow;
 mod csr;
 mod fold;
-mod leapfrog;
-mod log;
-mod materializer;
-mod admission;
 mod fold_query;
 mod hydrate;
 mod justification;
+mod leapfrog;
+mod log;
+mod materializer;
 mod pipeline;
 mod provenance;
 mod quantum;

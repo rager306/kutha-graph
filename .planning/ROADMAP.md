@@ -24,7 +24,7 @@ v0.01–v0.05 are shipped. **v0.05** delivered M012 (dictionaries as facts): all
 - [x] **Phase 24: Fold indexes for ingest** — no log or fact-vector scans on ingest
 - [x] **Phase 25: Genesis log** — relation allowance is log events; seeded relations are retractable
 - [x] **Phase 26: Dictionary entries as facts** — reserved-namespace facts replace five meta side tables (completed 2026-10-01)
-- [ ] **Phase 27: One write path and facade** — one pipeline, typed references, public facade with example and integration test
+- [x] **Phase 27: One write path and facade** — one pipeline, typed references, public facade with example and integration test (completed 2026-10-02)
 - [ ] **Phase 28: Independent verification and artifact budget** — governor check, id map, milestone audit
 
 ## Phase Details
@@ -126,7 +126,7 @@ Plans:
   3. One example and one integration test use only the facade and run the statute-shaped AS OF scenario.
   4. The baseline re-run shows no regression over 10 percent.
 
-**Plans**: 2 plans
+**Plans**: 2/2 plans complete
 
 Plans:
 **Wave 1**

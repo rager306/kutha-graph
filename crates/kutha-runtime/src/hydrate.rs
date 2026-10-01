@@ -1,10 +1,10 @@
 //! Hydrate, snapshot, fork (droppable leases; log remains SoT).
+use crate::fold::GraphFold;
+use crate::log::EventLog;
 use crate::quantum::{
     op_affects_fold, IngestExamine, PersistedQuantumOutcome, Runtime, RuntimeError,
 };
-use crate::log::EventLog;
 use crate::snapshot::Snapshot;
-use crate::fold::GraphFold;
 use kutha_common::{Event, Op, TermDictionary};
 use rustc_hash::FxHashMap;
 
