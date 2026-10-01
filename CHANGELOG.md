@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: M012 S03 admission and policy meta-facts
+
+### Product
+
+### Added
+
+- Admission status is `Op::RecordAdmission` log facts queryable AS OF a cut. Policy version is `Op::PinPolicy`; `record_justification` invokes `check_admission` and cites the live pin. Retract of those EventIds versions the later cut; persist/open reconstructs entries from the log. Named oracles in `m012_admission_facts`.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. Active Slice remains **S03**. Freeze until M002 unchanged. Not ADR-050 six dictionaries. Not a thin Action record.
+
 ## 2026-10-01 — Process: lease M012 Active Slice S03
 
 ### Process
