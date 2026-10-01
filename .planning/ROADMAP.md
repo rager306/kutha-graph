@@ -29,7 +29,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 - [x] **Phase 25: Genesis log** — relation allowance is log events; seeded relations are retractable
 - [x] **Phase 26: Dictionary entries as facts** — reserved-namespace facts replace five meta side tables (completed 2026-10-01)
 - [x] **Phase 27: One write path and facade** — one pipeline, typed references, public facade with example and integration test (completed 2026-10-02)
-- [ ] **Phase 28: Independent verification and artifact budget** — governor check, id map, milestone audit
+- [x] **Phase 28: Independent verification and artifact budget** — governor check, id map, milestone audit
 
 ## Phase Details
 
@@ -150,12 +150,12 @@ Plans:
   3. The id map exists in one table and is cited by the governor.
   4. `/gsd-audit-milestone` passes before archive.
 
-**Plans**: 1/2 plans complete
+**Plans**: 2/2 plans complete
 
 Plans:
 **Wave 1**
 - [x] 28-01-PLAN.md — glob_max_lines, artifact-budget, conform 22–27 VERIFICATION
-- [ ] 28-02-PLAN.md — id map, milestone audit
+- [x] 28-02-PLAN.md — id map, milestone audit
 
 <details>
 <summary>✅ v0.01 GSD foundation (Phases 1–3) — SHIPPED 2026-09-29</summary>

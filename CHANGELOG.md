@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Process: close M013 S07 after independent verification
+
+### Process
+
+### Changed
+
+- Phase 28 independent verification passed (`28-VERIFICATION.md`); PROC-02 closed. Active Slice cleared; `L_delivery=M013-S07-done`. M013 S01–S07 delivered.
+
+### Trajectory
+
+- Phase 28 / S07 closed. Cells remain **Proposed**. Do not start M014 until leased. No SemVer tag.
+
 ## 2026-10-02 — Process: v0.06 milestone audit and PROC checkboxes
 
 ### Process
