@@ -6,17 +6,17 @@ current_phase: 17
 current_phase_name: v0.05 phases 17–21
 current_plan: 3
 status: executing
-stopped_at: Completed 17-01-PLAN.md
-last_updated: "2026-10-01T01:47:49.648Z"
+stopped_at: Completed 17-02-PLAN.md
+last_updated: "2026-10-01T01:51:25.026Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 17 plans 17-01..03 written (tracer, versioning/persist, governor)
-state_head: e980d6f6791047fd639fede4a6c4fe2fa64a018a
+state_head: 9103bd28a213fcf01cd0b8db994b9d460339b88f
 progress:
   total_phases: 5
   completed_phases: 16
   total_plans: 3
-  completed_plans: 1
-  percent: 33
+  completed_plans: 2
+  percent: 67
 ---
 
 # Project State
@@ -40,7 +40,7 @@ Total Plans in Phase: 3
 Status: Ready to execute
 Last activity: 2026-10-01 — 17-01 tracer complete; next 17-02 retract/persist
 
-Progress: [███░░░░░░░] 33% (v0.05)
+Progress: [███████░░░] 67% (v0.05)
 
 ## Performance Metrics
 
@@ -57,6 +57,7 @@ Progress: [███░░░░░░░] 33% (v0.05)
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | Phase 17-allowlist-as-log-facts P01 | 3min | 2 tasks | 4 files |
+| Phase 17-allowlist-as-log-facts P02 | 2min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,8 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 17-allowlist-as-log-facts]: AllowRelation is a dedicated Op, not Assert/Define, so admit can bootstrap without gating itself
 - [Phase 17-allowlist-as-log-facts]: emit(AllowRelation) appends one log event without a QuantumOutcome sidecar so the tracer log-len contract holds
 - [Phase 17-allowlist-as-log-facts]: YAML seed remains the fallback so inForceAs admits on an empty-log Runtime (FF6)
+- [Phase 17-allowlist-as-log-facts]: Retract of an allow-entry EventId is not UnknownFact; Correct/CorrectInterval stay Fact-only
+- [Phase 17-allowlist-as-log-facts]: Open reconstructs allow-entries from the log walk, not from snapshot JSON keys
 
 ### Pending Todos
 
@@ -92,8 +95,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-10-01T01:47:29.802Z
-Stopped at: Completed 17-01-PLAN.md
+Last session: 2026-10-01T01:51:24.973Z
+Stopped at: Completed 17-02-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 17`. Active Slice S01 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
 
