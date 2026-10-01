@@ -61,6 +61,10 @@ TypeScript core        ≠  Allowed (D6)
 
 Open, from docs/architecture/semantic-gap-review.md (F8): D041-1 names the hot hop picture as CSR over interned ids. This cell does not yet say that temporal cuts (AS OF / supported-at) must use that picture rather than scanning the fold's fact table. This question does not rewrite D041-1…D041-4 and does not mark this cell Accepted.
 
+### Open question (2026-10-01)
+
+Open, from docs/architecture/semantic-gap-review.md (F9, F16): whether rule bodies (multi-hop, n-ary, inverse, admission) are evaluated by the existing leapfrog join over the CSR lease, with support counts as semiring multiplicities and delete/rederive maintenance on retraction. This is a candidate evaluator for a small positive rule language (M015), not a commitment to a Datalog engine or a MATCH compiler. This question does not rewrite D041-1…D041-4 and does not mark this cell Accepted.
+
 ## Consequences
 
 ### Positive

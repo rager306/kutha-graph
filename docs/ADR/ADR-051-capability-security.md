@@ -56,6 +56,10 @@ Tool list (ScopeGate)  ≠  Per-call argument check (PACT)
 MAS lattice            ≠  This noun
 ```
 
+### Clarification (2026-10-01; Proposed)
+
+Target contract, from docs/architecture/semantic-gap-review.md (F9): admission evaluates the pinned policy definition at the decision cut. An admission record that cites a policy version whose body was never evaluated does not satisfy this cell. An action record binds resolved arguments, the admission decision, and the policy hash, so a later policy change leaves the earlier decision readable AS OF its own cut. This subsection does not rewrite D051-1…D051-4 and does not mark this cell Accepted.
+
 ## Consequences
 
 ### Positive

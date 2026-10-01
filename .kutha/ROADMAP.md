@@ -144,28 +144,82 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 - [x] **S05: Multi-hop / n-ary derivation eligibility** `risk:medium` `depends:[S02]`
   > After this: eligibility is not only one-hop `caused_by`; a two-hop (or n-ary) fixture is named and green — without claiming full provenance polynomials.
 
+## M013: Honest baseline and one write path — LEASED
+
+**Success:** a declared target N and a re-runnable measured baseline exist; a real-text legal fixture has been mapped on paper against the current model; ingest, retract, correct, and claim-admit use fold indexes, not log scans; the initial relation allowance is genesis events in the log and a seeded relation can be retracted; dictionary entries are ordinary facts in a reserved namespace (the five meta side tables are gone); every record kind enters through one propose, admit, commit, receipt path and is consumed through a public facade by one example and one integration test; references are `EventId` or hash; the milestone closes only with an independent verification artifact and a planning-artifact budget check. Not rules, not typed clocks, not M002, not ADR Accepted.
+
+**Leased:** Active Milestone M013; Active Slice None until a GSD phase leases one. Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semantic-gap-review.md` (addendum 2026-10-01). No new features: S03–S06 are refactors under the existing named oracles (FF5, FF6, M010–M012). Thawed subset: bench harness, fold indexes, genesis, substrate refactor, facade. Still frozen: RocksDB, Cypher, HNSW, six dictionaries, legal pack, M002.
+
+- [ ] **S01: Benchmark baseline and size target** `risk:medium` `depends:[]`
+  > After this: a bench harness with no new dependencies measures ingest, `as_of`, retract, persist, open, and replay at three sizes, reports bytes per fact, and states a target N; one command re-runs it; numbers land in a dated note, not in an ADR.
+- [ ] **S02: Legal fixture reconnaissance** `risk:high` `depends:[]`
+  > After this: a note lists real-text cases from law-nexus (FZ-44 snippets, consultant sources with editions, the synthetic sunset clause), maps each against the two-axis model, and names the cases the current model cannot express. No product code.
+- [ ] **S03: Fold indexes for ingest** `risk:medium` `depends:[S01]`
+  > After this: delivery-key retry, claim admit, retract, correct, and follow-ons do no whole-log or whole-fact scans; a scaling oracle is RED before the change and GREEN after; the baseline is re-measured.
+- [ ] **S04: Genesis log** `risk:high` `depends:[S03]`
+  > After this: relation allowance enters through genesis events; the YAML file is read only when a new log is created; retracting a seeded relation makes admit fail closed; FF6 stays green.
+- [ ] **S05: Dictionary entries as facts** `risk:high` `depends:[S04]`
+  > After this: relation, rule, policy, admission, and action records are reserved-namespace facts with content-addressed bodies; the five meta `Op` variants and side tables are gone; the M012 oracles keep their assertions.
+- [ ] **S06: One write path and facade** `risk:high` `depends:[S05]`
+  > After this: every record kind goes through one propose, admit, commit, receipt pipeline; justification and policy references are `EventId` or hash; the runtime is split by concern; a public facade is driven by one example and one integration test that use nothing else.
+- [ ] **S07: Independent verification and artifact budget** `risk:medium` `depends:[S06]`
+  > After this: a governor check enforces the planning-artifact budget; milestone close requires a verification artifact from a verifier that did not write the code; the id map (GSD version, harness milestone, ADR) is one table.
+
+### Process gates (apply from S01, harness plane)
+
+- **Independent verify:** each phase ends with a verifier that receives requirements and the public API only, writes kill-tests, and does not read the executor's plan or summary. `/gsd-verify-work` is the human-facing form. Executor-written tests and governor green are not verification.
+- **Artifact budget:** per phase at most two PLAN files of 150 lines or fewer, one SUMMARY of 60 lines or fewer, one VERIFICATION of 60 lines or fewer. No per-plan evidence JSON. A phase that exceeds the budget stops for a decision.
+- **Tool pair:** CBM and GitNexus are both used on every phase that edits product code (`docs/process/gsd-auto-contract.md`).
+- **RED first:** each slice that closes a finding starts with an oracle that fails on current code, recorded before the change.
+
+## M014: Typed clocks and as-known-on — PROPOSED (GSD v0.07)
+
+**Success:** valid time, transaction time, and wall time are distinct types; mixing them without a conversion does not compile; `tt_anchor` facts map transaction time to wall time; “as known on date D” is an anchor lookup; FF5 stays green with explicit clocks. Closes F13. Needs a lease; do not start before M013 closes.
+
+- [ ] **S01: Clock newtypes** `risk:high` `depends:[]`
+  > After this: `Vt`, `Tt`, and a wall clock are separate types; a `compile_fail` doctest proves a silent mix is rejected.
+- [ ] **S02: `tt_anchor` facts and `as_known_on`** `risk:medium` `depends:[S01]`
+  > After this: anchors are log facts; `as_known_on(date)` resolves through the greatest anchor at or before the date; a named test separates “true on D” from “known on D”.
+- [ ] **S03: Fixture migration** `risk:low` `depends:[S02]`
+  > After this: FF5 and the M011/M012 fixtures use explicit clocks with unchanged assertions.
+
+## M015: Executable rules and the legal golden fixture — PROPOSED (GSD v0.08)
+
+**Success:** a canonical rule AST hashed into `rule_version`; rule bodies evaluated by the existing leapfrog over the CSR lease with support counting; admission evaluates the pinned policy; execution replay re-derives and compares; a golden fixture over real law-nexus text with one transitional rule answers the ADR-013 open question (are two axes plus typed clocks enough). Closes F9, F16. Needs a lease; do not start before M014 closes.
+
+- [ ] **S01: Rule AST and hash** `risk:high` `depends:[]`
+  > After this: a positive, bounded rule language has a canonical encoding; `rule_version` is its hash; unknown or non-canonical bodies fail closed.
+- [ ] **S02: Evaluator and support counting** `risk:high` `depends:[S01]`
+  > After this: multi-hop, n-ary, and `inverse_knows` are rules; retraction of a premise maintains derived supports; the hard-coded cascade is deleted.
+- [ ] **S03: Policy evaluation and execution replay** `risk:high` `depends:[S02]`
+  > After this: admission runs the pinned policy body; changing the policy changes a decision; replay re-derives derived facts and fails on any it cannot reproduce.
+- [ ] **S04: Legal golden fixture and verdict** `risk:high` `depends:[S03]`
+  > After this: a real-text fixture with one transitional rule and an as-known-on query is green, or the failing case is recorded and the plan stops before M002. The verdict is written into ADR-013 as a dated clarification.
+
 ## Later milestones (not active)
 
+Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is leased. M014 and M015 are proposed and need their own lease. M002+ stay frozen until leased.
 
-Do not start until STATE names them. **M012 is CLOSED** (S01–S05 done). M012a and M011 are CLOSED. M002+ stay frozen until leased.
+Id map and controller protocol: `docs/process/gsd-auto-contract.md`.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
 1. **M011** — CLOSED (S01–S08). Historical record above.
 2. **M012a** — CLOSED (S01–S06). Detail above.
-3. *(unnumbered)* Benchmark baseline — immediately after M012a indexes; not a new three-digit id.
-4. **M012** — CLOSED (S01–S05). Detail above.
-5. **M002** — Log durability protocol first: segmented append-only log, hash chain, atomic manifest, lease identity verified on open, replay parity across stores. Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity.
-6. *(unnumbered)* Thin real-text legal golden fixture — test-only, under a lease, before Cypher.
-7. **M003** — Cypher skin over the already-correct AS OF cut.
-8. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
-9. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
-10. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
-11. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
-12. *(unnumbered)* Packaging, naming and license decision (ADR-092) before any publish.
+3. **M012** — CLOSED (S01–S05). Detail above.
+4. **M013** — LEASED. Benchmark baseline with a target N, legal fixture reconnaissance, fold indexes, genesis log, dictionary entries as facts, one write path and facade, independent verification gate. Detail above. (Replaces the unnumbered “benchmark baseline” waypoint.)
+5. **M014** — PROPOSED. Typed clocks and as-known-on. Detail above.
+6. **M015** — PROPOSED. Executable rules and the real-text legal golden fixture. Its S04 verdict gates M002: if the model cannot express the fixture, re-plan before any durability work. Detail above.
+7. **M002** — Log durability protocol: segmented append-only log, hash chain, atomic manifest, replay parity across stores, with the quantum outcome as a commit marker in segment framing (ADR-010/014 open question). “Lease identity verified on open” is already done (v0.04 Phase 15). Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity.
+8. **M003** — Cypher skin over the already-correct AS OF cut.
+9. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
+10. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
+11. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
+12. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
+13. *(unnumbered)* Packaging, naming and license decision (ADR-092) before any publish.
 
 P4 (Raft/multi-node, learned indexes) is not planned until single-node hybrid evidence exists.
 
 ## Freeze until explicit M002 lease
 
-RocksDB crate, Cypher parser, HNSW, ABAC rewrite, RVF as hot store, bulk honeycomb Accepted, Consensus 103+. M001 is closed; freeze still holds.
+RocksDB crate, Cypher parser, HNSW, ABAC rewrite, RVF as hot store, bulk honeycomb Accepted, Consensus 103+. M001 is closed; freeze still holds. M013 thaws only the subset named in its section.

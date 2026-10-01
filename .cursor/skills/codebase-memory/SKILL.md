@@ -61,7 +61,7 @@ Parent queries graph first. Pass project, generation/freshness, symbols, paths, 
 
 ## GitNexus
 
-Secondary. Do not dual-query. If GitNexus index is refreshed, use `--index-only` (or local `.gitnexusrc` skip of AGENTS/skills inject).
+Secondary. Do not dual-query, except M013 refactor phases 24–27 (`docs/process/gsd-auto-contract.md`: tool pair, limits, `rg` arbiter). If GitNexus index is refreshed, use `--index-only` (or local `.gitnexusrc` skip of AGENTS/skills inject).
 
 ## Gotchas
 

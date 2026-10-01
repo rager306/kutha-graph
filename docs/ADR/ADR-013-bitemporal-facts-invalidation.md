@@ -120,3 +120,11 @@ Target contract, from docs/architecture/semantic-gap-review.md (F3): a propositi
 ### Open question (2026-09-30)
 
 Open, from docs/architecture/semantic-gap-review.md (F2, F7): retract and correct targeting is typed invalidation (D013-2) without a required stable id for the target. D013-1 names valid-time × transaction-time fields; it does not declare a time scale or a mapping from transaction-time to wall time. This question does not rewrite D013-1…D013-4 and does not mark this cell Accepted.
+
+### Clarification (2026-10-01; Proposed)
+
+Target contract, from docs/architecture/semantic-gap-review.md (F13): each clock is a distinct type, not an alias of one integer. At least valid time, transaction time (log sequence), and wall time cannot be mixed without an explicit conversion; a stamp carries its clock in its type. The mapping from transaction time to wall time is a stream of `tt_anchor` facts on the log, so “as known on date D” is a greatest-anchor lookup, not an extra axis in the core algebra. This keeps D013-1 (two axes in the core; the legal clocks are typed annotations) and makes ADR-090 TR-02 a compile-time property. This subsection does not rewrite D013-1…D013-4 and does not mark this cell Accepted.
+
+### Open question (2026-10-01)
+
+Open, from docs/architecture/semantic-gap-review.md (F13): whether two axes plus typed annotations and anchors are sufficient for effective-date, promulgation, and transitional-rule semantics (`tempus regit actum`). The test is a real-text golden fixture with one transitional rule (M015); this question is not answered by argument. This question does not rewrite D013-1…D013-4 and does not mark this cell Accepted.

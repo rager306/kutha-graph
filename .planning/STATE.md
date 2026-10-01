@@ -1,44 +1,37 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.05
-milestone_name: Dictionaries as facts
-status: Awaiting next milestone
-stopped_at: Phase 21 complete — all phases complete
-last_updated: "2026-10-01T04:30:00.000Z"
+milestone: v0.06
+milestone_name: Honest baseline and one write path
+status: planning
+last_updated: "2026-10-01T05:13:55.156Z"
 last_activity: 2026-10-01
-last_activity_desc: Milestone v0.05 completed and archived
-state_head: 636cc3043554fbedb0b7ae896ad7e986b9d0336d
 progress:
-  total_phases: 5
-  completed_phases: 21
-  total_plans: 15
-  completed_plans: 15
-  percent: 100
-current_phase: 21
-current_phase_name: Multi-hop derivation
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-10-01 after v0.05 archive)
+See: `.planning/PROJECT.md` (updated 2026-10-01 after starting v0.06)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.05 complete and archived (M012 S01–S05). Awaiting next leased milestone.
+**Current focus:** v0.06 Honest baseline and one write path (harness M013). Phases 22–28 have requirements, roadmap, and CONTEXT; next step is the controller's lease of S01 and `/gsd-autonomous --only 22`.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M012**; Active Slice **None**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012-S05-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start). Do not overwrite `.kutha/STATE.md`.
+**Harness lease (cite only):** Active Milestone **M013**; Active Slice **None**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M013-leased`; `L_capability=ff5-green`. Freeze until explicit **M002** except the M013 thawed subset (bench harness, fold indexes, genesis, dictionary entries as facts, facade). Do not overwrite `.kutha/STATE.md`.
 
 ## Current Position
 
-Phase: Milestone v0.05 complete
+Phase: 22 (not started)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-10-01 — Milestone v0.05 completed and archived
-
-Progress: [██████████] 100% (v0.05)
+Status: Ready to plan (CONTEXT written for 22–28)
+Last activity: 2026-10-01 — Milestone v0.06 roadmap and context prepared
 
 ## Performance Metrics
 
@@ -66,7 +59,8 @@ None.
 
 ### Blockers/Concerns
 
-- Harness Active Slice is **None**; `L_delivery=M012-S05-done` (cite `.kutha/STATE.md`; do not overwrite it).
+- Harness Active Slice is **None**; `L_delivery=M013-leased` (cite `.kutha/STATE.md`; do not overwrite it). The controller leases each slice before its phase runs.
+- Do not run `/gsd-autonomous` across phases 22–28 in one go: it would stop at the lease and the independent verify gate. Use `--only N`.
 - Do not start ADR-050 six dictionaries, M002 Rocks, legal pack, Cypher, or HNSW without an explicit STATE lease — honeycomb stays Proposed (GATE-03).
 
 ## Deferred Items
@@ -81,10 +75,10 @@ None.
 ## Session Continuity
 
 Last session: 2026-10-01T04:30:00.000Z
-Stopped at: Milestone v0.05 completed and archived
+Stopped at: v0.06 roadmap, requirements, and phase context prepared
 Resume file: None
-Next: Await explicit harness lease before `/gsd-new-milestone`. Freeze holds. Do not lease M002 without explicit operator intent.
+Next: Lease S01 in `.kutha/STATE.md` (controller), then `/gsd-autonomous --only 22`. Freeze holds beyond the M013 subset. Do not lease M002.
 
 ## Operator Next Steps
 
-- Decide next harness lease (benchmark baseline / M002 / other) then `/gsd-new-milestone`
+- Phase 22 first (benchmark baseline); Phase 23 can run next (docs only). Phases 24–27 are refactors with RED-first oracles and the CBM plus GitNexus pair.

@@ -183,6 +183,10 @@ Export path (research): `admit → fold → edition_ast_at → optional embed �
 
 No stage may promote lifecycle by documentation alone.
 
+### Clarification (2026-10-01; Proposed)
+
+Target contract, from docs/architecture/semantic-gap-review.md (F13): TR-02 (no silent substitution between clocks) is enforced by distinct clock types, not by naming convention. Real-text fixtures for the first legal golden test come from the sister product (law-nexus: FZ-44 snippets, consultant sources, a synthetic sunset clause) under a lease, as test data only. This subsection hosts no ontology, starts no pack, does not rewrite the Decision section, and does not mark this cell Accepted.
+
 ## Consequences
 
 ### Positive

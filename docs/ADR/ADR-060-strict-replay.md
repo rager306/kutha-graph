@@ -60,6 +60,10 @@ CA cache hit           ≠  Re-call the LLM
 Snapshot-shortened     ≠  Snapshot as SoT (012)
 ```
 
+### Clarification (2026-10-01; Proposed)
+
+Target contract, from docs/architecture/semantic-gap-review.md (F9, F16): execution replay is re-derivation. Registered rules are executed over the premises named in the log; the result is compared with the derived facts the log contains. A derived fact that no registered rule can reproduce is a replay failure. Today's causal-reference and rule-hash checks (obligations 1 and 2) remain necessary and are not sufficient for this. This subsection does not rewrite D060-1…D060-4 and does not mark this cell Accepted.
+
 ## Consequences
 
 ### Positive

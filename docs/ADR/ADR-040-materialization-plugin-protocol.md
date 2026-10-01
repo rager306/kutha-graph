@@ -67,6 +67,10 @@ Unload                 ≠  Vacuum of history
 WASM sandbox           ≠  Materializer plugin
 ```
 
+### Clarification (2026-10-01; Proposed)
+
+Target contract, from docs/architecture/semantic-gap-review.md (F15): lookup indexes inside the fold (`EventId` to fact, delivery key to event) are leases in the ADR-040 sense: derived from the log, droppable, and rebuilt by replay. They restore constant-time ingest and carry no truth of their own. A benchmark baseline with a declared target size is the evidence, not the index itself. This subsection does not rewrite D040-1…D040-4 and does not mark this cell Accepted.
+
 ## Consequences
 
 ### Positive

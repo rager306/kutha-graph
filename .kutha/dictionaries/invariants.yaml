@@ -188,6 +188,56 @@ invariants:
     disposition: deferred
     until: "STATE names M012a"
 
+  # I-F9…I-F16 record post-M012 gaps (semantic-gap-review addendum 2026-10-01). Not enforced.
+  # until names the milestone that closes each gap; none is Accepted by this ledger.
+  - id: I-F9-policy-semantics
+    claim: "A pinned policy or rule definition is executed by admission and derivation; identity without evaluation does not close the gap"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M015"
+
+  - id: I-F10-genesis
+    claim: "The log owns relation admission from its first event; a seeded relation can be retracted; no file is consulted at admit time"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M013"
+
+  - id: I-F11-one-write-path
+    claim: "Every record kind enters through one propose-admit-commit-receipt path; dictionary entries are facts, not parallel Op kinds with parallel side tables"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M013"
+
+  - id: I-F12-consumer
+    claim: "The product has a public facade consumed by one example and one integration test, not only by in-crate tests"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M013"
+
+  - id: I-F13-typed-clocks
+    claim: "Valid, transaction, and wall clocks are distinct types; as-known-on-date is an anchor lookup on the log"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M014"
+
+  - id: I-F14-typed-refs
+    claim: "References between records are EventId or content hash, not formatted strings, and no RAM buffer shadows the log"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M013"
+
+  - id: I-F15-ingest-o1
+    claim: "Keyed ingest, claim admit, retract, and correct use fold indexes, not a scan of the log or the fact vector"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M013"
+
+  - id: I-F16-derivable
+    claim: "A derived fact is reproducible by re-running registered rules over logged premises"
+    source: docs/architecture/semantic-gap-review.md
+    disposition: deferred
+    until: "STATE names M015"
+
   - id: I-cite-lease
     claim: "Docs that cite a delivery token must match the STATE assignment"
     source: ".kutha/STATE.md"

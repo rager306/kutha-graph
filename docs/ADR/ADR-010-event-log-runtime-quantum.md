@@ -67,6 +67,14 @@ Quantum (emit→idle)    ≠  Workflow-engine DAG
 Lease at log offset    ≠  Second database
 ```
 
+### Clarification (2026-10-01; Proposed)
+
+Target contract, from docs/architecture/semantic-gap-review.md (F11): every record kind (assert, retract, correct, behavior, definition, dictionary entry, admission, action) enters the log through one path: propose, admit, commit, receipt. A kind-specific early return or a side append without admission is a spike shortcut, not the contract. This subsection does not rewrite D010-1…D010-4 and does not mark this cell Accepted.
+
+### Open question (2026-10-01)
+
+Open, from docs/architecture/semantic-gap-review.md (F11): the quantum outcome is currently an `Op` that roughly triples the log (121k events for 40k asserts at the 2026-09-30 bench). Whether the outcome is better carried as a commit marker in segment framing, with `Full` derivable from the log, is decided with the durability protocol, not before. This question does not rewrite D010-1…D010-4 and does not mark this cell Accepted.
+
 ## Consequences
 
 ### Positive

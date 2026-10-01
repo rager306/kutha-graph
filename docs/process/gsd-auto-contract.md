@@ -1,0 +1,72 @@
+# GSD auto contract
+
+Agent workflow, not a product ADR and not a delivery lease. `.kutha/STATE.md` decides what is allowed; this file says how a GSD auto run executes inside that lease. Honeycomb stays **Proposed**. GSD progress (`.planning/STATE.md`) is not harness lease, and governor green is not verification.
+
+## Id map
+
+One table. GSD versions are process tags, harness milestones are delivery ids, ADRs are the map.
+
+| GSD version | Phases | Harness | Slices | Closes | Status |
+|-------------|--------|---------|--------|--------|--------|
+| v0.01 | 1–3 | M001, harness H0–H4 | — | fitness, honest governor, lease gate | shipped |
+| v0.02 | 4–8 | M011 tail | S04–S08 | semantic core | shipped |
+| v0.03 | 9–11 | harness H5 | — | lean context, semantic governor | shipped |
+| v0.04 | 12–16 | M012a | S01–S06 | F1–F3, F6–F8 | shipped |
+| v0.05 | 17–21 | M012 | S01–S05 | F4, F5 | shipped |
+| v0.06 | 22–28 | M013 | S01–S07 | F10–F12, F14, F15, R2, R4–R6 | leased |
+| v0.07 | next | M014 | S01–S03 | F13 | proposed |
+| v0.08 | next | M015 | S01–S04 | F9, F16 | proposed |
+| v0.09 | next | M002 | tbd | durability, commit marker | frozen |
+
+v0.06 phases: 22 baseline, 23 legal fixture reconnaissance, 24 fold indexes, 25 genesis log, 26 dictionary entries as facts, 27 one write path and facade, 28 independent verification and artifact budget. Phase N maps to slice S(N-21).
+
+## Controller protocol
+
+GSD must not edit `.kutha/STATE.md`. The controller (the parent session, not a GSD subagent) owns the lease.
+
+1. **Lease:** set Active Slice to the phase's slice and `L_delivery` to the previous slice's `-done` token in `.kutha/STATE.md`; commit that alone.
+2. **Run one phase:** `/gsd-autonomous --only N`. Do not run `--from 22 --to 28` in one go: execution stops at the lease and the independent verify gate. CONTEXT exists for every phase, so discuss is skipped.
+3. **Independent verify** (below). A failed kill-test reopens the phase; it is not waived.
+4. **Close:** clear Active Slice, set `L_delivery` to this slice's `-done` token, tick the slice in `.kutha/ROADMAP.md`, add one CHANGELOG entry (product and process kept apart), run `uv run kutha-gov precommit` and, for product phases, `uv run kutha-gov ci`.
+5. **Milestone end (phase 28):** audit, archive, tag, and `state.milestone-switch` stay GSD tools. The next lease is a controller decision.
+
+## Code-graph tool pair
+
+Refactor phases (24–27) use CBM and GitNexus together. Phases 22, 23, 28 use CBM only where code is read. This supersedes “GitNexus is secondary” for M013; outside M013 the secondary rule stands.
+
+| Moment | CBM (`root-kutha-graph`) | GitNexus (`kutha-graph`) |
+|--------|--------------------------|--------------------------|
+| Phase start | `list_projects`, `index_status`, `check_index_coverage` on touched paths | `list_repos`; if behind, `gitnexus analyze --index-only` (controller only) |
+| Plan: blast radius | `search_graph`, inbound `trace_path` on each public symbol to be changed | `impact` upstream on the same symbols; `context` for call and process view |
+| Variant and literal questions | `search_code`, then `rg` as arbiter | not usable (see limits) |
+| Before edit | `get_code_snippet` for the exact bodies | `context` on the symbol |
+| After edit | `detect_changes` and `check_index_coverage` on edited paths | `detect_changes` on the working tree |
+| Review | `detect_changes` on the diff | `impact` on symbols the diff touched |
+
+Known limits (2026-10-01): GitNexus `impact` on `Runtime::emit` found 15 callers and none under `crates/*/tests/`; CBM fan-in is 76. GitNexus resolves 0 usage edges for enum `Op`, so `Op::RecordAction`-style questions need `search_code` or `rg`. CBM `common→runtime` call edges on names like `intern` and `id` are resolver noise. The plan's blast-radius section records both counts and the `rg` count; when they differ, `rg` wins. Neither tool proves a test oracle: tests do.
+
+Every `Task` prompt that needs the graph names `codebase-memory-mcp` and, in phases 24–27, the GitNexus `impact` / `context` / `detect_changes` calls above, plus `list_projects` first and `check_index_coverage` on cited paths. Only the controller runs `index_repository` or `gitnexus analyze`. Never `delete_project` or `manage_adr`. A child without MCP reads source and says so.
+
+## Independent verification
+
+Executor-written tests and governor observations are evidence, not verification. At the end of each phase:
+
+- The verifier receives the phase requirements and the public API only. It does not read the PLAN or SUMMARY files.
+- It writes kill-tests: inputs that would pass a lazy implementation and fail a correct one (for example: retract a seeded relation, then admit; re-emit the same keyed Assert at large N and check the scan count; two runs of the same log give the same fingerprint).
+- Output is one `NN-VERIFICATION.md` with frontmatter `independent: true`, `verifier_model`, `commands:` (with exit statuses), and `read_only_inputs:` (requirement and public-API files only, never a PLAN or SUMMARY path). Phase 28 turns the structure into a governor check. `/gsd-verify-work` is the interactive form for the same gate.
+- Different model family or at least a fresh context from the executor. A phase does not close on its own author's check.
+
+## Refactor safety (S03–S06)
+
+- **RED first:** the oracle for the finding fails on current code and the failure is recorded before the change.
+- **Oracle preservation:** named tests (FF5, FF6, M010, M011, M012a, M012 files) keep their assertions. Allowed mechanical edits are constructor and helper renames, recorded as an old-to-new table in the phase SUMMARY. Any changed assertion stops the phase for a decision.
+- **No new feature:** a refactor slice adds no public capability beyond its “After this” line.
+- **Benchmarks:** phase 22's harness is re-run at the end of phases 24 and 27; a regression over 10 percent in ingest or `as_of` is a stop.
+
+## Artifact budget
+
+Per phase: at most two PLAN files of 150 lines or fewer, one SUMMARY of 60 lines or fewer, one VERIFICATION of 60 lines or fewer, one CONTEXT of 80 lines or fewer. No per-plan evidence JSON. Exceeding the budget stops the phase for a decision. Phase 28 turns this into a governor check. Reference for scale: v0.05 produced 1,107 planning lines for its last phase alone.
+
+## Stop conditions
+
+Stop and ask the controller when: a freeze item would be thawed; an oracle assertion must change; a phase exceeds its budget; a RED oracle passes on current code (the finding is wrong); the product needs a decision that ADR-000 D1–D10 does not allow.

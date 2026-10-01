@@ -104,3 +104,71 @@ Copied from the Phase 10 context (D-R1). This wave did **not** re-run the bench.
 - `Define` ids differed across persists.
 
 Linear growth of the two read probes with N is a read-scan observation at three sizes. Persist/open must not be extrapolated from the single N. “No non-transitive eligibility” and “no action entity” remain **not verified by a failing test** (source reading; see F4 and F5).
+
+## Addendum 2026-10-01: post-M012 review (F9–F16)
+
+**Proposed review, not an ADR, and not delivery authorization.** F1–F8 above are closed or re-scoped by M011/M012a/M012 (v0.04–v0.05). This addendum records what the closure exposed. Live lease: `.kutha/STATE.md`. Honeycomb stays **Proposed**. Nothing here thaws Rocks, Cypher, HNSW, a legal pack, or six dictionaries.
+
+Evidence classes as above, plus **graph-checked** (CBM project `root-kutha-graph` and GitNexus `kutha-graph`, reindexed 2026-10-01). Tool limits matter: GitNexus `impact` on `Runtime::emit` resolved 15 callers and none from `crates/*/tests/`; on enum `Op` it resolved 0 usage edges. CBM fan-in for `emit` is 76. Variant-level questions (`Op::RecordAction`) are answered by `search_code` / `rg`, not by either impact tool. Every finding below is still **not verified by a failing test**; each M013–M015 phase opens with a RED oracle for the finding it closes.
+
+### Findings F9–F16
+
+| ID | Finding | Evidence | Class | Why it matters |
+|----|---------|----------|-------|----------------|
+| F9 | “Dictionaries as facts” stores identity, not semantics. Policy and rule bodies are opaque strings, and `check_admission` runs four hard-coded checks. | `event.rs` `Op::PinPolicy { definition: String }` and `Op::RegisterRule { definition: String }`. `quantum.rs` `check_admission` never reads the pinned policy definition. | read in source; graph-checked | Changing a policy changes no decision. ADR-060 execution replay (re-derive and compare) is impossible. |
+| F10 | YAML remains a root of trust for relation admission. | `quantum.rs` `admit`: allowed if `fold.relation_allowed_at(..)`, else allowed if `self.allowed` (YAML/env) contains the name. | read in source | Log facts can only widen the allowlist. A seeded relation cannot be retracted, which breaks D1 for admission. |
+| F11 | Three write paths and a fourth for retraction of meta entries. | `emit` (cascade, receipt, `QuantumOutcome`); early-return branch for Allow/Rule/Policy; `append_meta` for justification/admission/action without `admit` or receipt; six `has_*_entry` scans for meta retract. | read in source; graph-checked | D2 (one quantum) holds for assert/retract only. Every new dictionary kind adds an `Op` variant, a side table, and a copy of `is_live_at` (five today in `fold.rs`). |
+| F12 | The product has no consumer. | Inbound `trace_path` on `record_justification` and `record_action`: zero non-test callers. The only binary is `kutha-tenant` (harness). | graph-checked | “On the product path” currently means “reachable from the public API in tests”. No fixture drives the engine through one facade. |
+| F13 | Clocks are untyped, and “as known on a date” is inexpressible. | `type ValidTime = u64`, `type TransactionTime = u64`; TT is a log sequence number (`next_tt`), VT is a year (`TimeScale::YearCe`). | read in source | ADR-090 TR-02 (no silent clock substitution) is not enforced by types. The legal wedge needs at least valid, transaction, wall, and effective-date clocks kept apart. |
+| F14 | String references returned after the stable-reference phase. | `justification_id` is `format!("j:{claim}:{tt}:{vt}")`; `policy_version` and `RecordAdmission.justification_id` are `String`; a RAM buffer `self.justifications` is searched linearly. | read in source | A second source of truth beside the log (the F1 shape) and a regression from stable `EventId`. |
+| F15 | Ingest is no longer O(1). | `delivery_key_retry` scans the whole log per keyed Assert; `admit_claim`, Retract, Correct, and `follow_ons` call `facts().iter().any(..)`. | read in source | The 2026-09-30 “ingest ≈ O(1)” baseline is stale. M012a S06 closed hot reads only. |
+| F16 | Derived facts are asserted by the caller, not derived. | `Op::Behavior` is emitted by caller code. `derivation_eligible_at` walks one `caused_by` chain with a visited set. n-ary support is not implemented. | read in source | A trust chain, not derivation. Nothing re-computes a derived fact from its premises. |
+
+### Roadmap findings R1–R6
+
+| ID | Finding | Evidence |
+|----|---------|----------|
+| R1 | Risk inversion: durability (M002) and a real-text legal fixture were ordered before the cheapest check of the riskiest assumption (two axes plus typed clocks express real norms). | `.kutha/ROADMAP.md` “Later milestones” order 5 then 6. |
+| R2 | The benchmark baseline is unscheduled and has no target N or memory budget. The fold is fully RAM-resident; no benches exist in `crates/`. | Measured baselines above (one N for persist/open). |
+| R3 | M002 overlaps work already done: “lease identity verified on open” closed in DUR-01. What remains is segmentation, hash chain, manifest, and framing. | v0.04 Phase 15. |
+| R4 | Verification is not independent: the executor writes the tests and the governor observations; `/gsd-verify-work` never ran. | `.planning/` has no UAT artifacts. |
+| R5 | Planning artifacts outweigh the product: about 40.8k lines of `.planning` markdown, 12.3k of CE artifacts, 6.0k of harness Python, 2.1k of YAML against 9.2k of product Rust including tests. | `wc -l`, 2026-10-01. |
+| R6 | Three id systems (GSD `v0.0x` and phases, harness `M0xx/S0x`, ADRs) with no single map. | `docs/process/gsd-auto-contract.md` now holds the map. |
+
+### Cell verdicts (addendum)
+
+Verdicts are amendments or open questions only. No cell is Accepted and no lock is rewritten.
+
+| Cell | F | Verdict | Direction |
+|------|---|---------|-----------|
+| ADR-010 | F11 | amend | One write path for every record kind; quantum outcome targets a commit marker in log framing (M002), not an `Op`. |
+| ADR-011 | F10, F11, F14, F15 | amend | Dictionary entries are bi-temporal facts in a reserved namespace with content-addressed bodies; references are `EventId`; EventId→fact and delivery-key→event indexes are fold-internal leases. |
+| ADR-013 | F13 | amend, open question | Typed clocks; TT↔wall as `tt_anchor` facts; “as known on D” is an anchor lookup. Sufficiency of two axes for five legal clocks is decided at the golden fixture, not here. |
+| ADR-014 | F11 | open question | Commit marker versus receipt versus cascade budget. |
+| ADR-040 | F15 | amend | Indexes are leases; the source of truth stays the log. |
+| ADR-041 | F9, F16 | open question | Leapfrog as the evaluator of rule bodies over the CSR lease. |
+| ADR-050 | F9, F10 | amend, open question | Genesis events replace the YAML seed; policy and rule bodies are executable and hashed. Six dictionaries stay frozen. |
+| ADR-051 | F9 | amend | `check_admission` evaluates the pinned policy definition. |
+| ADR-060 | F9, F16 | amend | Execution replay is re-derivation by registered rules, compared with the log. |
+| ADR-090 | F13 | amend | TR-02 is enforced by types; real-text fixtures come from the sister product (law-nexus). |
+
+### Lock assessment (addendum)
+
+| Lock | Holds? | Note |
+|------|--------|------|
+| D1 log = SoT | Holds, spike deviates | F10 (YAML root) and F14 (RAM buffer) are spike deviations, not a reason to reopen D1. |
+| D2 reactive quantum | Holds, spike deviates | F11: four write paths. |
+| D3 dict-first agents | Holds | F9: dictionaries carry identity but no semantics yet. |
+| D4 bi-temporal | Holds, with a question | F13: which clocks are typed, and whether two axes plus anchors suffice. |
+
+### Proposed remedies (not Accepted)
+
+Each remedy is falsifiable by a named oracle in `.kutha/ROADMAP.md` M013–M015.
+
+1. **Unified fact substrate** (F10, F11, F14): dictionary entries become ordinary bi-temporal facts in a reserved namespace; rule and policy bodies are content-addressed blobs referenced by hash; the YAML seed becomes genesis events at the head of a new log.
+2. **Executable rules** (F9, F16): a canonical rule AST hashed into `rule_version`, bodies evaluated by the existing leapfrog over the CSR lease, support counting as the existing `claim_id` multiplicity, execution replay as re-derivation.
+3. **Commit marker in framing** (F11): the quantum outcome moves out of `Op` into segment framing at M002 (the log is about 3× the number of asserts today: 121k events for 40k asserts).
+4. **Typed clocks** (F13): newtypes for valid time, transaction time, and stamps per clock; TT↔wall as `tt_anchor` facts.
+5. **Indexes and one facade** (F12, F15): EventId→fact and delivery-key→event fold indexes; one public write path (propose, admit, commit, receipt) consumed by one example and one integration test.
+
+Sequencing and gates: `.kutha/ROADMAP.md` (M013 → M014 → M015 → M002) and `docs/process/gsd-auto-contract.md`.

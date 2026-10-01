@@ -100,6 +100,14 @@ Target contract, from docs/architecture/semantic-gap-review.md (F5): admission s
 
 Open, from docs/architecture/semantic-gap-review.md (F4): D050-1 already names a Relation kind. A rule registry whose rule version equals the definition hash is not a Decision in this cell. This question does not rewrite D050-1…D050-6 and does not mark this cell Accepted.
 
+### Clarification (2026-10-01; Proposed)
+
+Target contract, from docs/architecture/semantic-gap-review.md (F9, F10): the log owns dictionary truth from its first event. The initial relation allowance is a sequence of genesis events at the head of a new log, not a file read at admit time; a relation that arrived by genesis can be retracted like any other fact. A rule or policy entry carries an executable, hashed body; pinning a version that no decision consults is identity without semantics. This subsection does not rewrite D050-1…D050-6, does not thaw the six dictionaries, and does not mark this cell Accepted.
+
+### Open question (2026-10-01)
+
+Open, from docs/architecture/semantic-gap-review.md (F9): how the six dictionaries of this cell relate to the unified fact substrate (ADR-011). A single reserved namespace may make most of them views over facts rather than six stores. The six dictionaries stay frozen until STATE names them. This question does not rewrite D050-1…D050-6 and does not mark this cell Accepted.
+
 ## Consequences
 
 ### Positive

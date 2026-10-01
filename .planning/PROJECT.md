@@ -10,9 +10,22 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: None
+## Current Milestone: v0.06 Honest baseline and one write path
 
-v0.05 shipped 2026-10-01 (M012 S01–S05). Next GSD milestone starts only after an explicit lease in `.kutha/STATE.md` (candidate: benchmark baseline or M002 log durability).
+**Goal:** Close the post-M012 findings that block the legal wedge: no declared size target or baseline, scan-based ingest, a YAML root of trust, five parallel meta-record kinds, four write paths, no public consumer, and a verification process that checks itself.
+
+**Harness lease:** M013 (leased 2026-10-01; Active Slice None until a phase leases one). Source: `docs/architecture/semantic-gap-review.md` addendum F9–F16 and R1–R6; contract: `docs/process/gsd-auto-contract.md`.
+
+**Target (phases 22–28):**
+- Baseline and target N with a re-runnable bench harness (BASE)
+- Real-text legal fixture reconnaissance on law-nexus data, no product code (REC)
+- Fold indexes: no log or fact-vector scans on ingest (IDX)
+- Genesis log: relation allowance is log events; a seeded relation is retractable (GEN)
+- Dictionary entries as reserved-namespace facts; five meta side tables gone (SUB)
+- One write path, typed references, public facade with one example and one integration test (PIPE)
+- Independent verification gate, planning-artifact budget check, one id map (PROC)
+
+**Next after v0.06 (proposed, need their own lease):** M014 typed clocks (v0.07), M015 executable rules and legal golden fixture (v0.08), then M002 durability with commit-marker framing.
 
 
 ## Business Context
@@ -155,7 +168,7 @@ Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), **v0.04 
 
 ## Next Milestone Goals
 
-Next candidate: benchmark baseline after M012a indexes, or M002 (log durability protocol first; Rocks for indexes only). Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.
+Now: v0.06 (M013), see Current Milestone above. After it: M014 typed clocks, M015 executable rules plus the real-text legal golden fixture, then M002 (segmented log, hash chain, manifest, commit-marker framing; Rocks for indexes only). Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.
 
 ## Context
 
@@ -163,11 +176,11 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 
 **Harness lease** (process intent, not GSD memory, not product SoT): `.kutha/STATE.md`
 
-- Active Milestone: **M012** (CLOSED on ROADMAP; Active Slice None)
+- Active Milestone: **M013** (leased; Active Slice None until a phase leases one)
 - Active Slice: **None**
 - Phase: **H5**
-- Lifecycles: `L_map=honeycomb-proposed` · `L_delivery=M012-S05-done` · `L_capability=ff5-green`
-- Next: Freeze until STATE names M002+ (or another explicit lease). Do not start a legal pack. Green governor ≠ ADR Accepted ≠ L_capability.
+- Lifecycles: `L_map=honeycomb-proposed` · `L_delivery=M013-leased` · `L_capability=ff5-green`
+- Next: M013 slices only, one phase at a time (`docs/process/gsd-auto-contract.md`). Freeze holds beyond the M013 thawed subset. Do not start a legal pack. Green governor ≠ ADR Accepted ≠ L_capability.
 
 GSD files live under `.planning/`. **Never overwrite** `.kutha/STATE.md` with GSD STATE.
 
@@ -199,6 +212,9 @@ Literature bound is closed (163 cards). Do not mint aggregator waves.
 | Compose S08 (justifications + conflict_report) without rewriting fold/CSR/provenance | D-F1…D-F7 | ✓ Good (v0.02) |
 | GSD overlay annotated tags (`v0.01`, `v0.02`) | Milestone archival; not product SemVer / GitHub Release | ⚠️ Revisit (process tags only) |
 | M002/Rocks/Cypher/HNSW frozen | `.kutha/STATE.md` | — Pending (lease) |
+| Refactor and legal-fixture reconnaissance before durability (M013 before M002) | Post-M012 review R1: riskiest assumption last | — Pending (v0.06) |
+| Independent verification and planning-artifact budget as gates | Post-M012 review R4/R5 | — Pending (v0.06) |
+| CBM and GitNexus used together on M013 refactor phases | Measured tool limits; `rg` is arbiter | — Pending (v0.06) |
 | License / rename (ADR-092) | Undecided | — Pending |
 
 ## Evolution
@@ -219,4 +235,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-01 after shipping v0.05 / M012 CLOSED*
+*Last updated: 2026-10-01 after starting v0.06 / M013 leased*

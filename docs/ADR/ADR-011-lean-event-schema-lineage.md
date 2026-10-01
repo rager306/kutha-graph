@@ -75,6 +75,14 @@ N-ary object links    ≠  Single case_id flatten
 SchemaModify payload  ≠  Silent ALTER of SoT
 ```
 
+### Clarification (2026-10-01; Proposed)
+
+Target contract, from docs/architecture/semantic-gap-review.md (F10, F11, F14, F15): dictionary entries (relation allowance, rule, policy, admission, action) are ordinary bi-temporal facts in a reserved namespace, with large bodies stored as content-addressed blobs referenced by hash; they are not parallel `Op` kinds with parallel side tables. References between records are `EventId` or a content hash, never a formatted string. Lookup by `EventId` and by delivery key is a fold-internal index (a lease over the log), not a log scan. The intern map stays distinct from agent dictionaries (ADR-050). This subsection does not rewrite D011-1…D011-4 and does not mark this cell Accepted.
+
+### Open question (2026-10-01)
+
+Open, from docs/architecture/semantic-gap-review.md (F11): how the reserved namespace is encoded (relation prefix versus a dedicated term class), the blob hash scheme, and whether legacy meta-op rows are decoded or the format is simply replaced (the crates are `0.0.0` and unpublished). This question does not rewrite D011-1…D011-4 and does not mark this cell Accepted.
+
 ## Consequences
 
 ### Positive

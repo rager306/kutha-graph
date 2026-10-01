@@ -73,6 +73,10 @@ Budget abort           ≠  Silent truncate of truth
 Hard FSM allocator     ≠  Cui envelope
 ```
 
+### Open question (2026-10-01)
+
+Open, from docs/architecture/semantic-gap-review.md (F11): the quantum receipt, the persisted outcome (`Zero` / `Partial` / `Full`), and the cascade budget are three records of one commit. Whether the outcome is a commit marker in log framing, with `Full` derivable from the log and `Partial` / resume kept as explicit records, is open and belongs to the durability protocol. This question does not rewrite D014-1…D014-5 and does not mark this cell Accepted.
+
 ## Consequences
 
 ### Positive

@@ -4,6 +4,25 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Post-M012 review: roadmap reset and M013 lease
+
+### Process
+
+### Added
+
+- `docs/process/gsd-auto-contract.md`: id map (GSD version, harness milestone, ADR), controller protocol for lease-per-phase GSD runs, the CBM plus GitNexus tool pair with measured limits, an independent-verification gate, refactor safety rules, and a planning-artifact budget.
+- Ledger rows `I-F9`…`I-F16` in `.kutha/dictionaries/invariants.yaml` (deferred, not enforced).
+
+### Changed
+
+- `.kutha/ROADMAP.md`: M013 (baseline, legal fixture reconnaissance, fold indexes, genesis log, dictionary entries as facts, one write path and facade, independent verification) leased; M014 (typed clocks) and M015 (executable rules and the real-text legal golden fixture) proposed; M002 re-scoped to segmentation, hash chain, manifest, and commit-marker framing, gated by the M015 verdict.
+- Code-graph rules: GitNexus runs together with CBM during M013 refactor phases only.
+
+### Trajectory
+
+- `docs/architecture/semantic-gap-review.md` gains an addendum (F9–F16, roadmap findings R1–R6, remedies). ADR-010, 011, 013, 014, 040, 041, 050, 051, 060, and 090 gain dated Proposed clarifications or open questions; `honeycomb.yaml` restaged. No cell is Accepted and no lock is rewritten.
+- `L_delivery=M013-leased`; Active Slice **None**. Freeze holds except the thawed M013 subset named in STATE. M014, M015, and M002 need their own lease.
+
 ## 2026-10-01 — Product: M012 S05 multi-hop derivation (M012 closed)
 
 ### Product

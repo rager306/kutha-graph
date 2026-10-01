@@ -13,6 +13,7 @@ Read `.cursor/skills/codebase-memory/SKILL.md` for tool matrix and Scout / Verif
 
 - **Primary:** CBM `list_projects`, `search_graph`, `trace_path`, `get_code_snippet`, `detect_changes`, `check_index_coverage`. Add `search_code` for literals or coverage gaps; `query_graph` / `get_architecture` only for Verify / Auditor.
 - **Grep / Glob:** literals, non-code text, YAML/docs, or ranges CBM flags as partial / skipped / stale.
+- **M013 exception (refactor phases 24–27):** GitNexus `impact` / `context` / `detect_changes` run together with CBM, per `docs/process/gsd-auto-contract.md` (tool pair, known limits, `rg` as arbiter). Outside M013 the rule below stands.
 - **GitNexus:** secondary. Do not run GitNexus `query` / `impact` / `detect_changes` in parallel “just in case”. Use it only if the user asks or CBM cannot answer. Reindex GitNexus with `gitnexus analyze --index-only` (or a local `.gitnexusrc` with `skipAgentsMd` + `skipSkills`). Do not let analyze rewrite `AGENTS.md` or `CLAUDE.md`.
 
 ## Compound Engineering map
