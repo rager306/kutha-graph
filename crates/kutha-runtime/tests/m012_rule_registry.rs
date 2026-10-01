@@ -2,7 +2,7 @@
 //! Not ADR-050's six dictionary kinds.
 
 use kutha_common::{rule_definition_hash, Op};
-use kutha_runtime::{Runtime, RuntimeError};
+use kutha_runtime::{store, Runtime, RuntimeError};
 
 #[test]
 fn register_rule_pins_behavior_to_definition_hash() {
@@ -221,4 +221,216 @@ fn free_string_rule_version_does_not_append() {
         rt.log().len(),
         "fail-closed: empty definition must not append"
     );
+}
+
+#[test]
+fn retract_register_rule_drops_eligibility_at_later_cut() {
+    let mut rt = Runtime::default();
+    let p = rt.intern("P");
+    let q = rt.intern("Q");
+    let rel = rt.intern("relatedTo");
+    let true_ = rt.intern("true");
+    let pin = rule_definition_hash("derive_pq");
+    let registered = rt
+        .emit(Op::RegisterRule {
+            definition: "derive_pq".into(),
+            valid_from: 2010,
+            valid_to: None,
+        })
+        .unwrap();
+    let rule_id = registered.receipt.event_ids[0];
+    let n = rt.log().len();
+
+    let asserted = rt
+        .emit(Op::Assert {
+            subject: p,
+            relation: rel,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
+    let cause = asserted.receipt.event_ids[0];
+    let derived = rt
+        .emit(Op::Behavior {
+            name: "derive_pq".into(),
+            caused_by: cause,
+            rule_version: pin.clone(),
+            subject: q,
+            relation: rel,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+        })
+        .unwrap();
+    let claim_q = derived.receipt.event_ids[0];
+    assert!(rt.derivation_eligible_at(claim_q, u64::MAX, 2017));
+
+    rt.emit(Op::Retract { event_id: rule_id }).unwrap();
+
+    let after = rt.log().len();
+    let err = rt
+        .emit(Op::Behavior {
+            name: "derive_pq".into(),
+            caused_by: cause,
+            rule_version: pin.clone(),
+            subject: q,
+            relation: rel,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+        })
+        .unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::UnknownRuleVersion { ref pin } if pin == &rule_definition_hash("derive_pq")),
+        "{err:?}"
+    );
+    assert_eq!(after, rt.log().len(), "fail-closed: log must not grow");
+    assert!(
+        !rt.derivation_eligible_at(claim_q, u64::MAX, 2017),
+        "retracted registry hash must drop eligibility"
+    );
+
+    let mut prefix = rt.fork_at(n);
+    let p = prefix.intern("P");
+    let q = prefix.intern("Q");
+    let rel = prefix.intern("relatedTo");
+    let true_ = prefix.intern("true");
+    let asserted = prefix
+        .emit(Op::Assert {
+            subject: p,
+            relation: rel,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
+    let cause = asserted.receipt.event_ids[0];
+    prefix
+        .emit(Op::Behavior {
+            name: "derive_pq".into(),
+            caused_by: cause,
+            rule_version: pin,
+            subject: q,
+            relation: rel,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+        })
+        .unwrap();
+}
+
+#[test]
+fn persist_open_behavior_requires_hydrated_registry() {
+    let mut rt = Runtime::default();
+    let p = rt.intern("P");
+    let q = rt.intern("Q");
+    let rel = rt.intern("relatedTo");
+    let true_ = rt.intern("true");
+    let pin = rule_definition_hash("derive_pq");
+    rt.emit(Op::RegisterRule {
+        definition: "derive_pq".into(),
+        valid_from: 2010,
+        valid_to: None,
+    })
+    .unwrap();
+    let asserted = rt
+        .emit(Op::Assert {
+            subject: p,
+            relation: rel,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
+    let cause = asserted.receipt.event_ids[0];
+    rt.emit(Op::Behavior {
+        name: "derive_pq".into(),
+        caused_by: cause,
+        rule_version: pin.clone(),
+        subject: q,
+        relation: rel,
+        object: true_,
+        valid_from: 2010,
+        valid_to: None,
+    })
+    .unwrap();
+
+    let dir = std::env::temp_dir().join(format!(
+        "kutha-m012-s02-{}",
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    store::persist(&rt, &dir).unwrap();
+    let mut opened = store::open(&dir).unwrap();
+    assert!(
+        opened.log().iter().any(
+            |e| matches!(&e.op, Op::RegisterRule { definition, .. } if definition == "derive_pq")
+        ),
+        "opened log must contain RegisterRule"
+    );
+    let q = opened.intern("Q");
+    let rel = opened.intern("relatedTo");
+    let true_ = opened.intern("true");
+    let p = opened.intern("P");
+    let asserted = opened
+        .emit(Op::Assert {
+            subject: p,
+            relation: rel,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
+    let cause = asserted.receipt.event_ids[0];
+    opened
+        .emit(Op::Behavior {
+            name: "derive_pq".into(),
+            caused_by: cause,
+            rule_version: pin,
+            subject: q,
+            relation: rel,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+        })
+        .unwrap();
+
+    let n = opened.log().len();
+    let err = opened
+        .emit(Op::Behavior {
+            name: "derive_pq".into(),
+            caused_by: cause,
+            rule_version: "abc".into(),
+            subject: q,
+            relation: rel,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+        })
+        .unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::UnknownRuleVersion { ref pin } if pin == "abc"),
+        "{err:?}"
+    );
+    assert_eq!(
+        n,
+        opened.log().len(),
+        "fail-closed: free-string pin must not append"
+    );
+    let _ = std::fs::remove_dir_all(&dir);
 }

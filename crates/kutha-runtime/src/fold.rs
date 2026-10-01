@@ -409,7 +409,6 @@ impl GraphFold {
             .any(|e| e.definition_hash == pin && e.is_live_at(tt, vt))
     }
 
-    #[allow(dead_code)]
     pub(crate) fn has_rule_entry(&self, event_id: EventId) -> bool {
         self.rule_entries.iter().any(|e| e.event_id == event_id)
     }

@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: M012 S02 rule registry as log facts
+
+### Product
+
+### Added
+
+- Rule definitions are `Op::RegisterRule` log facts. `Behavior.rule_version` equals `rule_definition_hash` of the registered body. Unknown, mismatched, and free-string pins fail closed on emit and eligibility. Retract of a registry EventId versions the later cut; persist/open reconstructs the hash from the log. Named oracles in `m012_rule_registry`.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. Active Slice remains **S02**. Freeze until M002 unchanged. Not ADR-050 six dictionaries.
+
 ## 2026-10-01 — Process: lease M012 Active Slice S02
 
 ### Process

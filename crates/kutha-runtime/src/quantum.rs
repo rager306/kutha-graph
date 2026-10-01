@@ -768,7 +768,10 @@ impl Runtime {
         }
         if let Op::Retract { event_id } = &op {
             let known_fact = self.fold.facts().iter().any(|f| f.event_id == *event_id);
-            if !known_fact && !self.fold.has_allow_entry(*event_id) {
+            if !known_fact
+                && !self.fold.has_allow_entry(*event_id)
+                && !self.fold.has_rule_entry(*event_id)
+            {
                 return Err(RuntimeError::UnknownFact {
                     event_id: *event_id,
                 });
