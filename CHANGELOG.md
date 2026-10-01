@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: M012 S01 allowlist as log facts
+
+### Product
+
+- `Op::AllowRelation` appends versioned allowlist facts; `Runtime::admit` consults the fold cut (YAML seed is fallback only).
+- Retract by EventId versions the allowlist; persist/open reconstructs YAML-absent names from the log. Named oracles in `m012_allowlist_facts`.
+
+### Process
+
+- Governor `m012-s01-allowlist-facts` + FSM observe for three ALL tests. GSD Phase 17 closed.
+
+### Trajectory
+
+- `L_delivery=M012-S01-done`; Active Slice **None** until S02 leased. Active Milestone stays M012. Six dictionaries / Cypher / HNSW / M002 stay frozen.
+
 ## 2026-10-01 — Process: governor observes ALL-01..03
 
 ### Process

@@ -188,7 +188,7 @@ Plans:
 | 14. Idempotent ingest | v0.04 | 3/3 | Complete | 2026-10-01 |
 | 15. Verify, persist, and time scale | v0.04 | 3/3 | Complete | 2026-10-01 |
 | 16. Fold-internal hot indexes | v0.04 | 3/3 | Complete | 2026-10-01 |
-| 17. Allowlist as log facts | v0.05 | 3/3 | Complete   | 2026-10-01 |
+| 17. Allowlist as log facts | v0.05 | 3/3 | Complete    | 2026-10-01 |
 | 18. Rule registry | v0.05 | 0/? | Not started | - |
 | 19. Admission and policy meta-facts | v0.05 | 0/? | Not started | - |
 | 20. Thin action record | v0.05 | 0/? | Not started | - |

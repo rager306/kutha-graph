@@ -5,14 +5,14 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M012
-**Active Slice:** S01
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M012-leased
+L_delivery=M012-S01-done
 L_capability=ff5-green
 ```
 
@@ -24,7 +24,8 @@ L_capability=ff5-green
 
 ## Next action
 
-**M012 is leased** (dictionaries as facts). Thawed subset only: versioned relation-allowlist entries as log facts, a rule registry (`rule_version` = definition hash), admission status as meta-facts, policy version pinned in the log, thin action record, and multi-hop derivation eligibility beyond one-hop (F4/F5). Do **not** implement ADR-050 six dictionaries, a legal pack, Cypher/HNSW, or M002 Rocks until STATE names them. Do not open ADR-100. Honeycomb stays Proposed (GATE-03). H5 dogfood remains the current harness rung. Active Slice **S01** (relation allowlist as log facts / Phase 17). `L_delivery` stays `M012-leased` until S01 delivers.
+**M012 S01 delivered** (`L_delivery=M012-S01-done`). Active Slice cleared. Next product wave needs an explicit S02 lease (rule registry / Phase 18). Remaining M012 scope: rule registry, admission/policy meta-facts, thin action record, multi-hop derivation. Do **not** implement ADR-050 six dictionaries, a legal pack, Cypher/HNSW, or M002 Rocks until STATE names them. Honeycomb stays Proposed (GATE-03). H5 dogfood remains the current harness rung.
+
 
 ## Freeze (until explicit M002 lease)
 

@@ -133,7 +133,7 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 
 **Leased:** Active Milestone M012; Active Slice None until a GSD phase leases one. Closing F4/F5 from `docs/architecture/semantic-gap-review.md`. Freeze still blocks six dictionaries, Cypher, HNSW, legal pack, M002.
 
-- [ ] **S01: Relation allowlist as log facts** `risk:high` `depends:[]`
+- [x] **S01: Relation allowlist as log facts** `risk:high` `depends:[]`
   > After this: allowlisted relations are appendable/versioned facts; admit consults the fold cut, not only tip YAML/env.
 - [ ] **S02: Rule registry (`rule_version` = definition hash)** `risk:high` `depends:[S01]`
   > After this: Behavior pins a registry hash, not a free string; unknown/mismatched rule fails closed.

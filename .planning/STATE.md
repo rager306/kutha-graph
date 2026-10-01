@@ -2,21 +2,21 @@
 gsd_state_version: "1.0"
 milestone: v0.05
 milestone_name: Dictionaries as facts
-current_phase: 17
-current_phase_name: v0.05 phases 17–21
-current_plan: 3
-status: verifying
-stopped_at: Completed 17-03-PLAN.md
-last_updated: "2026-10-01T01:57:03.943Z"
+current_phase: 18
+current_phase_name: Rule registry
+current_plan: Not started
+status: planning
+stopped_at: Phase 17 complete, ready to plan Phase 18
+last_updated: "2026-10-01T02:01:20.292Z"
 last_activity: 2026-10-01
-last_activity_desc: Phase 17 plans 17-01..03 written (tracer, versioning/persist, governor)
-state_head: 0d9c11c439007d5c011e4747002d866b813f8882
+last_activity_desc: Phase 17 complete, transitioned to Phase 18
+state_head: 5e2e93d941b251ec1cd6c033f6eb5bdc2ec0a47e
 progress:
   total_phases: 5
-  completed_phases: 16
+  completed_phases: 17
   total_plans: 3
   completed_plans: 3
-  percent: 100
+  percent: 81
 ---
 
 # Project State
@@ -30,17 +30,17 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M012**; Active Slice **S01**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012-leased`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
+**Harness lease (cite only):** Active Milestone **M012**; Active Slice **None**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012-S01-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
 
 ## Current Position
 
-Phase: 17 of 21 (Allowlist as log facts) — v0.05 phases 17–21
-Current Plan: 3
+Phase: 18 of 21 (Rule registry)
+Current Plan: Not started
 Total Plans in Phase: 3
-Status: Phase complete — ready for verification
-Last activity: 2026-10-01 — 17-01 tracer complete; next 17-02 retract/persist
+Status: Ready to plan
+Last activity: 2026-10-01 — Phase 17 complete, transitioned to Phase 18
 
-Progress: [██████████] 100% (v0.05)
+Progress: [████████░░] 81% (v0.05)
 
 ## Performance Metrics
 
@@ -99,7 +99,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-10-01T01:57:03.814Z
-Stopped at: Completed 17-03-PLAN.md
+Stopped at: Phase 17 complete, ready to plan Phase 18
 Resume file: None
 Next: `/gsd-execute-phase 17`. Active Slice S01 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
 
