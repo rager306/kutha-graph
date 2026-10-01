@@ -7,10 +7,6 @@ independent: true
 verifier_model: composer-2.5-fast
 behavior_unverified: 0
 overrides_applied: 0
-covered_files:
-  - .planning/REQUIREMENTS.md
-  - docs/architecture/legal-fixture-recon.md
-covered_digest: "v2:sha256:bde9f3523e81a90a491648582c60f6fecb6d1c43f8b453d7a494903c1da9afc8"
 read_only_inputs:
   - .planning/REQUIREMENTS.md
   - docs/architecture/legal-fixture-recon.md
@@ -55,4 +51,4 @@ commands:
 | Truth | Status |
 |-------|--------|
 | ≥10 mapped cases; inexpressible named; no crate edits | ✓ |
-**Gaps:** none. Independent; no PLAN/SUMMARY read.
+**Gaps:** none. Independent; no plan or summary files read.

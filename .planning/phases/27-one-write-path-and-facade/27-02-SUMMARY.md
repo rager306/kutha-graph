@@ -52,16 +52,9 @@ Phase 22: ingest_plain.n 95383904 · as_of.n 83195.
 | Phase 27 STOP (collect all live facts) | 2163469973 | +2168% | 1386193 | +1566% |
 | Phase 27 after `kutha:allows` lease | 120267790 | +26.1% | 511233 | +514% |
 
-Ingest is back in the Phase 24 hybrid band (+20–28%). Scaling ingest 2N/N=1.69, 4N/N=3.37 (Phase 22 1.55 / 3.29). as_of is a single-shot fold walk (2N/N=1.28, 4N/N=2.93, not 4N-scaled); still above +10% vs Phase 22, 63% below the STOP figure. Product `as_of` still excludes `kutha:`; `dictionary_as_of` unchanged.
-
-Full bench: `tmp/p27-bench-lease.txt` (`fold_index_mode eager`, `events_per_assert` 3.000800, `bytes_per_fact` 16710).
+Ingest is back in the Phase 24 hybrid band. Scaling ingest 2N/N=1.69, 4N/N=3.37 (Phase 22 1.55 / 3.29). as_of is a single-shot fold walk (still above +10% vs Phase 22, 63% below STOP). Product `as_of` still excludes `kutha:`.
 
 ## Commits
-
-1. `53c757f` feat(27-02): one write pipeline and runtime module split
-2. `4c349de` feat(27-02): public facade, green write-path oracles, bench delta
-3. follow-up `perf(27): O(1) kutha:allows lease for admit` (this working tree)
+`53c757f` feat(27-02): one write pipeline and runtime module split · `4c349de` feat(27-02): public facade, green write-path oracles, bench delta · follow-up `perf(27): O(1) kutha:allows lease for admit`.
 
 **Deviations:** emit public (D-07). Governor needles retargeted (Rule 3). Bench ≤10% ingest not met vs Phase 22; write-cost accepted as in Phase 24 hybrid. `.kutha/STATE.md` untouched.
-
-## Self-Check: PASSED
