@@ -4,12 +4,12 @@ milestone: v0.05
 milestone_name: Dictionaries as facts
 current_phase: 18
 current_phase_name: Rule registry
-current_plan: Not started
-status: planning
-stopped_at: Phase 17 complete, ready to plan Phase 18
-last_updated: "2026-10-01T02:01:20.292Z"
+current_plan: 18-01
+status: ready_to_execute
+stopped_at: Phase 18 plans written (18-01..03), ready to execute
+last_updated: "2026-10-01T09:15:00.000Z"
 last_activity: 2026-10-01
-last_activity_desc: Phase 17 complete, transitioned to Phase 18
+last_activity_desc: Phase 18 rule-registry plans written (18-01 tracer, 18-02 retract/persist, 18-03 governor)
 state_head: 5e2e93d941b251ec1cd6c033f6eb5bdc2ec0a47e
 progress:
   total_phases: 5
@@ -26,7 +26,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.05 Phase 17 — Allowlist as log facts (M012 S01). Three execute plans written (17-01..03).
+**Current focus:** v0.05 Phase 18 — Rule registry (M012 S02). Three execute plans written (18-01..03).
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -35,10 +35,10 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 ## Current Position
 
 Phase: 18 of 21 (Rule registry)
-Current Plan: Not started
+Current Plan: 18-01 (not started)
 Total Plans in Phase: 3
-Status: Ready to plan
-Last activity: 2026-10-01 — Phase 17 complete, transitioned to Phase 18
+Status: Ready to execute
+Last activity: 2026-10-01 — Phase 18 plans written (18-01..03)
 
 Progress: [████████░░] 81% (v0.05)
 

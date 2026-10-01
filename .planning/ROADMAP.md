@@ -117,7 +117,12 @@ Plans:
   3. Free-string `rule_version` is rejected on the leased path unless it matches a registry hash (RULE-03)
   4. Named cargo tests for the three RULE oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; freeze and Proposed map hold
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 18-01-PLAN.md — Tracer: Op::RegisterRule log fact; Behavior pin equals definition hash; unknown/free-string fail closed
+- [ ] 18-02-PLAN.md — Retract versions the registry cut; persist/open reconstructs hashed Behavior
+- [ ] 18-03-PLAN.md — Governor observation of RULE oracles; freeze and Proposed map hold
 
 ### Phase 19: Admission and policy meta-facts
 
@@ -189,7 +194,7 @@ Plans:
 | 15. Verify, persist, and time scale | v0.04 | 3/3 | Complete | 2026-10-01 |
 | 16. Fold-internal hot indexes | v0.04 | 3/3 | Complete | 2026-10-01 |
 | 17. Allowlist as log facts | v0.05 | 3/3 | Complete    | 2026-10-01 |
-| 18. Rule registry | v0.05 | 0/? | Not started | - |
+| 18. Rule registry | v0.05 | 0/3 | Planned | - |
 | 19. Admission and policy meta-facts | v0.05 | 0/? | Not started | - |
 | 20. Thin action record | v0.05 | 0/? | Not started | - |
 | 21. Multi-hop derivation | v0.05 | 0/? | Not started | - |
