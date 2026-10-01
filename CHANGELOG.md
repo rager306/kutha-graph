@@ -11,14 +11,16 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Added
 
 - `Runtime::new` seeds one `Op::AllowRelation` per YAML name (`valid_from` 0) on an empty log. Names are not interned. Sorted for a stable provenance mix.
+- Genesis oracles `stripped_genesis_rejects_product_relation` and `persist_open_replay_keeps_genesis` (stripped log fail-closed; persist/open keeps YAML names; genesis payload tamper fails `provenance_check`).
 
 ### Changed
 
 - `admit` consults `fold.relation_allowed_at` only. Runtime no longer holds a YAML `HashSet`. `from_snapshot` / `from_dict_and_events` / `fork_at` do not read relations YAML (D-01, D-02, D-03).
+- M010 `intern_appends_define_for_new_terms_only` length proxies use genesis prefix `G` (Define-silence unchanged).
 
 ### Trajectory
 
-- No lease change. Active Slice **S04**. Cells remain **Proposed**. Wiring continues in 25-02 oracles.
+- No lease change. Active Slice **S04**. Cells remain **Proposed**. Genesis wiring green; do not start Phase 26 Op removal.
 
 ## 2026-10-01 — Product: RED genesis log oracles
 

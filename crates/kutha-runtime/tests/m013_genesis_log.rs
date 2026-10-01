@@ -1,5 +1,5 @@
-//! M013 S04 / Phase 25: genesis-log RED oracles (YAML HashSet fallback).
-//! Constructors still load YAML; 25-02 wires genesis. Do not intern extra YAML names.
+//! M013 S04 / Phase 25: genesis-log oracles (YAML only on new-log create).
+//! Do not intern extra YAML names. FF6 / m012_allowlist_facts asserts stay unchanged.
 
 use kutha_common::Op;
 use kutha_runtime::{store, Runtime, RuntimeError};
@@ -123,5 +123,109 @@ fn open_after_relations_path_missing_still_emits() {
             polarity: None,
         })
         .expect("open must still emit inForceAs when the YAML path is missing");
+    let _ = std::fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn stripped_genesis_rejects_product_relation() {
+    let _env = RELATIONS_ENV.lock().unwrap_or_else(|e| e.into_inner());
+    let rt = Runtime::default();
+    let dict = rt.dictionary().strings().to_vec();
+    let events: Vec<_> = rt
+        .log()
+        .as_slice()
+        .iter()
+        .filter(|e| !matches!(e.op, Op::AllowRelation { .. }))
+        .cloned()
+        .collect();
+    let mut stripped = Runtime::from_dict_and_events(dict, events, rt.max_cascade).unwrap();
+    let relation = stripped.intern("relatedTo");
+    let subject = stripped.intern("alice-stripped");
+    let object = stripped.intern("bob-stripped");
+    let n = stripped.log().len();
+    let err = stripped
+        .emit(Op::Assert {
+            subject,
+            relation,
+            object,
+            valid_from: 2017,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::UnknownRelation { ref name } if name == "relatedTo"),
+        "{err:?}"
+    );
+    assert_eq!(n, stripped.log().len(), "fail-closed: log must not grow");
+}
+
+#[test]
+fn persist_open_replay_keeps_genesis() {
+    let _env = RELATIONS_ENV.lock().unwrap_or_else(|e| e.into_inner());
+    let rt = Runtime::default();
+    const YAML_NAMES: [&str; 7] = [
+        "knows",
+        "knownBy",
+        "relatedTo",
+        "inForceAs",
+        "runStatus",
+        "observed",
+        "processAllows",
+    ];
+    for name in YAML_NAMES {
+        assert!(
+            rt.log()
+                .iter()
+                .any(|e| matches!(&e.op, Op::AllowRelation { name: n, .. } if n == name)),
+            "genesis missing {name}"
+        );
+    }
+
+    let dir = std::env::temp_dir().join(format!(
+        "kutha-m013-s04-keep-{}",
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    store::persist(&rt, &dir).unwrap();
+    let opened = store::open(&dir).unwrap();
+    opened.replay_check().unwrap();
+    for name in YAML_NAMES {
+        assert!(
+            opened
+                .log()
+                .iter()
+                .any(|e| matches!(&e.op, Op::AllowRelation { name: n, .. } if n == name)),
+            "opened log missing genesis {name}"
+        );
+    }
+    let expected_prov = opened.provenance_fingerprint();
+    opened.provenance_check(expected_prov).unwrap();
+
+    let mut tampered_events = opened.log().as_slice().to_vec();
+    let mut flipped = false;
+    for e in &mut tampered_events {
+        if let Op::AllowRelation { name, .. } = &mut e.op {
+            *name = format!("{name}-tampered");
+            flipped = true;
+            break;
+        }
+    }
+    assert!(flipped, "expected a genesis AllowRelation to tamper");
+    let tampered = Runtime::from_dict_and_events(
+        opened.dictionary().strings().to_vec(),
+        tampered_events,
+        opened.max_cascade,
+    )
+    .unwrap();
+    let err = tampered.provenance_check(expected_prov).unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::ProvenanceMismatch { .. }),
+        "{err:?}"
+    );
     let _ = std::fs::remove_dir_all(&dir);
 }
