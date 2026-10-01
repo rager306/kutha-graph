@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Process: governor observes RULE-01..03
+
+### Process
+
+### Added
+
+- Governor bridge `B-m012-s02` / `m012-s02-rule-registry` and three `observe_cargo.required` names for RULE-01..03 (`register_rule_pins_behavior_to_definition_hash`, `unknown_or_mismatched_rule_version_fails_closed`, `free_string_rule_version_does_not_append`). ALL, FF6, LOG, REF, ING, DUR, TIME, and HOT names stay required.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. ADR-011 evidence lists include the RULE names. ADR-050 map stays Proposed and delivery frozen. Active Slice remains **S02**. Freeze until M002 unchanged.
+
 ## 2026-10-01 — Product: M012 S02 rule registry as log facts
 
 ### Product
