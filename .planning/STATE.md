@@ -5,18 +5,18 @@ milestone_name: Dictionaries as facts
 current_phase: 19
 current_phase_name: Admission and policy meta-facts
 current_plan: 3
-status: executing
-stopped_at: Completed 19-02-PLAN.md
-last_updated: "2026-10-01T02:58:48.681Z"
+status: verifying
+stopped_at: Completed 19-03-PLAN.md
+last_updated: "2026-10-01T03:03:29.863Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 19 plans created (19-01 tracer, 19-02 retract/persist, 19-03 governor)
-state_head: f6e529eb6e24b7f770112c83b2a961cc39db25e1
+state_head: a3fd8907d9d0031d7a1c0663d05253d70970635c
 progress:
   total_phases: 5
   completed_phases: 18
   total_plans: 9
-  completed_plans: 8
-  percent: 89
+  completed_plans: 9
+  percent: 100
 ---
 
 # Project State
@@ -26,7 +26,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.05 Phase 19 — Admission and policy meta-facts (M012 S03). 19-01/19-02 landed; executing 19-03 governor.
+**Current focus:** v0.05 Phase 19 — Admission and policy meta-facts (M012 S03). 19-01..03 complete; ready for verification. Do not clear S03.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -37,10 +37,10 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 Phase: 19 of 21 (Admission and policy meta-facts)
 Current Plan: 3
 Total Plans in Phase: 3
-Status: Ready to execute
-Last activity: 2026-10-01 — Completed 19-02-PLAN.md
+Status: Phase complete — ready for verification
+Last activity: 2026-10-01 — Completed 19-03-PLAN.md
 
-Progress: [█████████░] 89% (v0.05)
+Progress: [██████████] 100% (v0.05)
 
 ## Performance Metrics
 
@@ -64,6 +64,7 @@ Progress: [█████████░] 89% (v0.05)
 | Phase 18 P03 | 3 | 2 tasks | 5 files |
 | Phase 19 P01 | 7 | 3 tasks | 8 files |
 | Phase 19 P02 | 2 | 2 tasks | 3 files |
+| Phase 19 P03 | 3 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -97,6 +98,8 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 19]: record_justification returns Ok(jid) after recording admitted=false so the status fact is the record
 - [Phase 19]: Retract of a live admission-entry or policy-entry EventId is not UnknownFact
 - [Phase 19]: Correct/CorrectInterval remain Fact-only
+- [Phase 19]: ADM file oracles are required observe names; ALL, RULE, and FF6 remain required
+- [Phase 19]: ADR-011 and ADR-050 evidence append only; honeycomb map stays Proposed; ADR-050 delivery stays frozen
 
 ### Pending Todos
 
@@ -118,8 +121,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-10-01T02:58:48.448Z
-Stopped at: Completed 19-02-PLAN.md
+Last session: 2026-10-01T03:03:29.511Z
+Stopped at: Completed 19-03-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 19`. Active Slice S03 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
 

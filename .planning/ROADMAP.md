@@ -76,7 +76,7 @@ Full detail: [milestones/v0.04-ROADMAP.md](./milestones/v0.04-ROADMAP.md) · req
 
 - [x] **Phase 17: Allowlist as log facts** - Relation allowlist entries are versioned log facts; admit consults the fold cut (M012 S01) (completed 2026-10-01)
 - [x] **Phase 18: Rule registry** - `rule_version` equals a definition hash; unknown or free-string pins fail closed (M012 S02) (completed 2026-10-01)
-- [ ] **Phase 19: Admission and policy meta-facts** - Admission status and policy version are bi-temporal log facts; `check_admission` runs on the product path (M012 S03)
+- [x] **Phase 19: Admission and policy meta-facts** - Admission status and policy version are bi-temporal log facts; `check_admission` runs on the product path (M012 S03) (completed 2026-10-01)
 - [ ] **Phase 20: Thin action record** - An Action binds resolved arguments to admission and policy version (M012 S04)
 - [ ] **Phase 21: Multi-hop derivation** - Derivation eligibility is not one-hop-only; a two-hop fixture is named and green (M012 S05)
 
@@ -138,12 +138,12 @@ Plans:
   3. `check_admission` (or successor) is invoked on the product path for the leased fixture, not only from tests (ADM-03)
   4. Named cargo tests for the three ADM oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; freeze and Proposed map hold
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans complete
 
 Plans:
 - [x] 19-01-PLAN.md — Tracer: PinPolicy + RecordAdmission AS OF; check_admission on record_justification
 - [x] 19-02-PLAN.md — Retract versions admission/policy cuts; persist/open reconstructs
-- [ ] 19-03-PLAN.md — Governor observation of ADM oracles; freeze and Proposed map hold
+- [x] 19-03-PLAN.md — Governor observation of ADM oracles; freeze and Proposed map hold
 
 ### Phase 20: Thin action record
 
@@ -200,6 +200,6 @@ Plans:
 | 16. Fold-internal hot indexes | v0.04 | 3/3 | Complete | 2026-10-01 |
 | 17. Allowlist as log facts | v0.05 | 3/3 | Complete    | 2026-10-01 |
 | 18. Rule registry | v0.05 | 3/3 | Complete    | 2026-10-01 |
-| 19. Admission and policy meta-facts | v0.05 | 2/3 | In Progress|  |
+| 19. Admission and policy meta-facts | v0.05 | 3/3 | Complete   | 2026-10-01 |
 | 20. Thin action record | v0.05 | 0/? | Not started | - |
 | 21. Multi-hop derivation | v0.05 | 0/? | Not started | - |
