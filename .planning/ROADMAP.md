@@ -22,7 +22,7 @@ v0.01–v0.05 are shipped. **v0.05** delivered M012 (dictionaries as facts): all
 - [x] **Phase 22: Benchmark baseline and size target** — re-runnable bench harness, target N, memory budget
 - [x] **Phase 23: Legal fixture reconnaissance** — law-nexus real text mapped against the current model; no product code
 - [x] **Phase 24: Fold indexes for ingest** — no log or fact-vector scans on ingest
-- [ ] **Phase 25: Genesis log** — relation allowance is log events; seeded relations are retractable
+- [x] **Phase 25: Genesis log** — relation allowance is log events; seeded relations are retractable
 - [ ] **Phase 26: Dictionary entries as facts** — reserved-namespace facts replace five meta side tables
 - [ ] **Phase 27: One write path and facade** — one pipeline, typed references, public facade with example and integration test
 - [ ] **Phase 28: Independent verification and artifact budget** — governor check, id map, milestone audit
@@ -86,14 +86,14 @@ Plans:
   2. Retracting a seeded relation fails admit at the later cut and still admits at the earlier cut.
   3. FF6 and the M012 allowlist oracle are green with unchanged assertions.
 
-**Plans**: 2 plans
+**Plans**: 2/2 plans complete 2026-10-01
 
 Plans:
 **Wave 1**
 - [x] 25-01-PLAN.md — RED retract-seeded relatedTo admit; YAML-missing open
 
-**Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 25-02-PLAN.md — genesis AllowRelation on new log; admit fold-only; persist/open
+**Wave 2**
+- [x] 25-02-PLAN.md — genesis AllowRelation on new log; admit fold-only; persist/open
 
 ### Phase 26: Dictionary entries as facts
 

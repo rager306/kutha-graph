@@ -28,9 +28,9 @@ Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semant
 
 ### Genesis log (F10)
 
-- [ ] **GEN-01**: A new log begins with genesis events that carry the initial relation allowance; the YAML file is read only when a new log is created
-- [ ] **GEN-02**: `admit` consults the fold cut only; no file or environment path is read at admit time
-- [ ] **GEN-03**: Retracting a seeded relation makes admit fail closed for it at the later cut and still admits it at the earlier cut; FF6 stays green
+- [x] **GEN-01**: A new log begins with genesis events that carry the initial relation allowance; the YAML file is read only when a new log is created
+- [x] **GEN-02**: `admit` consults the fold cut only; no file or environment path is read at admit time
+- [x] **GEN-03**: Retracting a seeded relation makes admit fail closed for it at the later cut and still admits it at the earlier cut; FF6 stays green
 
 ### Dictionary entries as facts (F11, F14)
 
@@ -90,7 +90,7 @@ Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semant
 | BASE-01, BASE-02, BASE-03 | Phase 22 | Pending |
 | REC-01, REC-02, REC-03 | Phase 23 | Pending |
 | IDX-01, IDX-02, IDX-03 | Phase 24 | complete |
-| GEN-01, GEN-02, GEN-03 | Phase 25 | Pending |
+| GEN-01, GEN-02, GEN-03 | Phase 25 | complete |
 | SUB-01, SUB-02, SUB-03, SUB-04 | Phase 26 | Pending |
 | PIPE-01, PIPE-02, PIPE-03, PIPE-04 | Phase 27 | Pending |
 | PROC-01, PROC-02, PROC-03, PROC-04 | Phase 28 | Pending |
