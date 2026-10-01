@@ -5,18 +5,18 @@ milestone_name: Dictionaries as facts
 current_phase: 21
 current_phase_name: Multi-hop derivation
 current_plan: 03 (21-01 tracer)
-status: ready_to_execute
-stopped_at: Completed 21-02-PLAN.md
-last_updated: "2026-10-01T04:08:55.533Z"
+status: verifying
+stopped_at: Completed 21-03-PLAN.md
+last_updated: "2026-10-01T04:16:18.094Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 21 plans created (21-01..03)
-state_head: 23c95a75ac3b996fd68f836f4c2efa3bd7b3c36f
+state_head: df9464142b48a35b927913b1320eb72e7ba28b7b
 progress:
   total_phases: 5
   completed_phases: 20
   total_plans: 15
-  completed_plans: 14
-  percent: 93
+  completed_plans: 15
+  percent: 100
 ---
 
 # Project State
@@ -37,10 +37,10 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 Phase: 21 of 21 (Multi-hop derivation)
 Current Plan: 03 (21-01 tracer)
 Total Plans in Phase: 3
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-10-01 — Phase 21 plans created (21-01..03)
 
-Progress: [█████████░] 93% (v0.05)
+Progress: [██████████] 100% (v0.05)
 
 ## Performance Metrics
 
@@ -70,6 +70,7 @@ Progress: [█████████░] 93% (v0.05)
 | Phase 20 P03 | 5 | 2 tasks | 5 files |
 | Phase 21 P01 | 2 | 3 tasks | 2 files |
 | Phase 21 P02 | 2 | 2 tasks | 3 files |
+| Phase 21 P03 | 5 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -112,6 +113,7 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 21]: Keep caused_by as a single EventId; satisfy D-01/D-02 by walking ancestor Behaviors
 - [Phase 21]: Do not bound the eligibility walk with KUTHA_MAX_CASCADE; finite log plus visited is the bound
 - [Phase 21]: D-03 locked or: keep follow_ons as the residual automatic cascade; do not add a second interned-relation cascade
+- [Phase 21]: GATE-01: three DER file names are required observe names; do not clear S05 from the executor
 
 ### Pending Todos
 
@@ -133,8 +135,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-10-01T04:08:54.984Z
-Stopped at: Completed 21-02-PLAN.md
+Last session: 2026-10-01T04:16:17.096Z
+Stopped at: Completed 21-03-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 19`. Active Slice S03 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
 
