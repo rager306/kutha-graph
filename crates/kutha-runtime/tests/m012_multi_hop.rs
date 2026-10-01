@@ -4,6 +4,14 @@
 use kutha_common::{rule_definition_hash, EventId, Op};
 use kutha_runtime::Runtime;
 
+fn register_rule_id(rt: &Runtime, definition: &str) -> EventId {
+    rt.log()
+        .iter()
+        .find(|e| matches!(&e.op, Op::RegisterRule { definition: d, .. } if d == definition))
+        .map(|e| e.id)
+        .unwrap_or_else(|| panic!("RegisterRule {definition}"))
+}
+
 fn emit_two_hop_chain(rt: &mut Runtime) -> (EventId, EventId, EventId) {
     let p = rt.intern("P");
     let q = rt.intern("Q");
@@ -116,5 +124,42 @@ fn two_hop_ineligible_when_root_assert_retracted() {
     assert!(
         !rt.derivation_eligible_at(hop2, u64::MAX, 2017),
         "hop2 eligibility must walk caused_by and be false after root retract (DER-01)"
+    );
+}
+
+#[test]
+fn two_hop_ineligible_when_parent_rule_retracted() {
+    let mut rt = Runtime::default();
+    let (_cause_p, hop1, hop2) = emit_two_hop_chain(&mut rt);
+    let rule_pq = register_rule_id(&rt, "derive_pq");
+
+    assert!(
+        rt.derivation_eligible_at(hop2, u64::MAX, 2017),
+        "hop2 must start eligible"
+    );
+
+    rt.emit(Op::Retract { event_id: rule_pq }).unwrap();
+
+    assert!(
+        rt.fold()
+            .facts()
+            .iter()
+            .any(|f| f.claim_id == hop1 && f.is_live_at(u64::MAX, 2017)),
+        "hop1 fact may still be live after retracting derive_pq"
+    );
+    assert!(
+        rt.fold()
+            .facts()
+            .iter()
+            .any(|f| f.claim_id == hop2 && f.is_live_at(u64::MAX, 2017)),
+        "hop2 fact may still be live after retracting derive_pq"
+    );
+    assert!(
+        !rt.derivation_eligible_at(hop1, u64::MAX, 2017),
+        "hop1 must lose eligibility when its registry pin is retracted"
+    );
+    assert!(
+        !rt.derivation_eligible_at(hop2, u64::MAX, 2017),
+        "hop2 must walk the parent pin and be ineligible (DER-01)"
     );
 }
