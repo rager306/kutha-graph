@@ -91,7 +91,7 @@ Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semant
 | REC-01, REC-02, REC-03 | Phase 23 | Pending |
 | IDX-01, IDX-02, IDX-03 | Phase 24 | complete |
 | GEN-01, GEN-02, GEN-03 | Phase 25 | complete |
-| SUB-01, SUB-02, SUB-03, SUB-04 | Phase 26 | Pending |
+| SUB-01, SUB-02, SUB-03, SUB-04 | Phase 26 | complete |
 | PIPE-01, PIPE-02, PIPE-03, PIPE-04 | Phase 27 | Pending |
 | PROC-01, PROC-02, PROC-03, PROC-04 | Phase 28 | Pending |
 

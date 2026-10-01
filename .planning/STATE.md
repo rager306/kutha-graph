@@ -2,17 +2,17 @@
 gsd_state_version: "1.0"
 milestone: v0.06
 milestone_name: Honest baseline and one write path
-current_phase: 26
-current_phase_name: Dictionary entries as facts
-status: verifying
-stopped_at: Completed 26-02-PLAN.md
-last_updated: "2026-10-01T16:36:41.926Z"
+current_phase: 27
+current_phase_name: One write path and facade
+status: planning
+stopped_at: Phase 26 complete; S05 closed; wait S06 lease for Phase 27
+last_updated: "2026-10-01T16:45:00.000Z"
 last_activity: 2026-10-01
-last_activity_desc: Phase 26 execution started
-state_head: 1307ffef54e5a62e6004c41015c15db05037b4fb
+last_activity_desc: Phase 26 verified; L_delivery=M013-S05-done
+state_head: 0e8d5cc
 progress:
   total_phases: 7
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 9
   completed_plans: 9
 ---
@@ -24,48 +24,37 @@ progress:
 See: `.planning/PROJECT.md`
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** Phase 26 — Dictionary entries as facts
+**Current focus:** v0.06 Phase 26 closed; next is Phase 27 after controller leases S06.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M013**; Active Slice **None**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M013-S04-done`; `L_capability=ff5-green`.
+**Harness lease (cite only):** Active Milestone **M013**; Active Slice **None**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M013-S05-done`; `L_capability=ff5-green`.
 
 ## Current Position
 
-Phase: 26 (Dictionary entries as facts) — EXECUTING
-Plan: 2 of 2
-Status: Phase complete — ready for verification
-Last activity: 2026-10-01 — Phase 26 execution started
+Phase: 27 — One write path and facade (CONTEXT only; not leased)
+Plan: Not started
+Status: Ready to plan after S06 lease
+Last activity: 2026-10-01 — Phase 26 verified and S05 closed
 
 ## Performance Metrics
 
-**By Phase:** v0.01–v0.05 shipped · v0.06 Phase 22–25 complete
-**Per-Plan Metrics:**
-
-| Plan | Duration | Tasks | Files |
-|------|----------|-------|-------|
-| Phase 26 P01 | 7 | 2 tasks | 2 files |
-| Phase 26-dictionary-entries-as-facts P02 | 90min | 2 tasks | 24 files |
+**By Phase:** v0.01–v0.05 shipped · v0.06 Phase 22–26 complete
 
 ## Accumulated Context
 
 ### Decisions
 
-- [v0.06]: relatedTo baseline; target N 1e6 provisional; C01 syn-001 proposed as M015 golden; T/R gaps named for M014/M015
-- [v0.06/24]: FoldIndexMode Eager (accept write-cost) + Lazy thin-write; D-06 absolute ≤10% waived under controller override
-- [v0.06/25]: Genesis AllowRelation on Runtime::new; admit fold-only; YAML only at new-log create
-- [Phase 26]: D-08 RED: as_of walks facts only; policy/admission/allows stay in side tables until 26-02
-- [Phase 26-dictionary-entries-as-facts]: D-02 StoreBlob only; five meta Ops removed; product as_of excludes kutha:
-- [Phase 26-dictionary-entries-as-facts]: justification_id is kutha:admission EventId
+- [v0.06]: relatedTo baseline; target N 1e6 provisional; C01 syn-001 proposed as M015 golden
+- [v0.06/24]: FoldIndexMode Eager + Lazy; D-06 write-cost accepted
+- [v0.06/25]: Genesis AllowRelation on new(); admit fold-only
+- [v0.06/26]: Dictionary as kutha: facts + StoreBlob; five meta Ops removed
 
 ### Blockers/Concerns
 
-- Phase 26+ need controller S05 lease before `/gsd-autonomous --only 26`. Do not run beyond leased slice.
+- Phase 27+ need controller S06 lease before `/gsd-autonomous --only 27`.
 
 ## Session Continuity
 
-**Last session:** 2026-10-01T16:36:41.659Z
-**Resume file:** None
-
-Stopped at: Completed 26-02-PLAN.md
-Next: Controller leases S05, then `/gsd-plan-phase 26` / `/gsd-autonomous --only 26`
+Stopped at: Phase 26 / S05 closed (`L_delivery=M013-S05-done`)
+Next: Controller leases S06, then `/gsd-plan-phase 27` / `/gsd-autonomous --only 27`

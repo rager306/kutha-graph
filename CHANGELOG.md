@@ -15,7 +15,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Trajectory
 
-- Active Slice **S05**. Cells remain **Proposed**. No lease change.
+- Phase 26 / S05 closed: independent verification passed; `L_delivery=M013-S05-done`; Active Slice **None**. Cells remain **Proposed**. Do not start Phase 27 until S06 leased.
 
 ## 2026-10-01 — Product: dictionary entries as kutha facts and StoreBlob
 

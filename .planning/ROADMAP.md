@@ -23,7 +23,7 @@ v0.01–v0.05 are shipped. **v0.05** delivered M012 (dictionaries as facts): all
 - [x] **Phase 23: Legal fixture reconnaissance** — law-nexus real text mapped against the current model; no product code
 - [x] **Phase 24: Fold indexes for ingest** — no log or fact-vector scans on ingest
 - [x] **Phase 25: Genesis log** — relation allowance is log events; seeded relations are retractable
-- [ ] **Phase 26: Dictionary entries as facts** — reserved-namespace facts replace five meta side tables
+- [x] **Phase 26: Dictionary entries as facts** — reserved-namespace facts replace five meta side tables (completed 2026-10-01)
 - [ ] **Phase 27: One write path and facade** — one pipeline, typed references, public facade with example and integration test
 - [ ] **Phase 28: Independent verification and artifact budget** — governor check, id map, milestone audit
 
@@ -106,14 +106,14 @@ Plans:
   3. Justification and policy references are `EventId` or hash; the RAM buffer is gone.
   4. M012 oracles keep their assertions; the rename table is in the SUMMARY.
 
-**Plans**: 1/2 plans complete
+**Plans**: 2/2 plans complete
 
 Plans:
 **Wave 1**
 - [x] 26-01-PLAN.md — RED as_of cannot see admission/policy/allow (side tables)
 
 **Wave 2**
-- [ ] 26-02-PLAN.md — kutha: facts + StoreBlob; drop five meta Ops; EventId admissions
+- [x] 26-02-PLAN.md — kutha: facts + StoreBlob; drop five meta Ops; EventId admissions
 
 ### Phase 27: One write path and facade
 
