@@ -242,7 +242,6 @@ pub struct Runtime {
     pub max_cascade: usize,
     knows: TermId,
     known_by: TermId,
-    allowed: HashSet<String>,
     /// In-memory buffer of quantum outcomes. SoT is `Op::QuantumOutcome` on the log;
     /// `quantum_outcomes.jsonl` is a droppable lease after those Events exist (LOG-01 / D-02).
     outcomes: Vec<PersistedQuantumOutcome>,
@@ -268,7 +267,7 @@ impl Runtime {
         let mut dict = TermDictionary::default();
         let knows = dict.intern("knows");
         let known_by = dict.intern("knownBy");
-        Self {
+        let mut rt = Self {
             log: EventLog::default(),
             fold: GraphFold::with_index_mode(FoldIndexMode::from_env()),
             dict,
@@ -276,13 +275,25 @@ impl Runtime {
             max_cascade,
             knows,
             known_by,
-            allowed: load_allowed_names(),
             outcomes: Vec::new(),
             justifications: Vec::new(),
             by_event_id: IngestMap::default(),
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
+        };
+        // Empty-log genesis only: YAML names become AllowRelation events (valid_from 0).
+        // Do not intern those names (D-05). Sorted so provenance is deterministic (D-04).
+        let mut names: Vec<String> = load_allowed_names().into_iter().collect();
+        names.sort();
+        for name in names {
+            rt.emit(Op::AllowRelation {
+                name,
+                valid_from: 0,
+                valid_to: None,
+            })
+            .expect("genesis AllowRelation");
         }
+        rt
     }
 
     /// Construct with an explicit fold index policy (Eager = accept write-cost, Lazy = thin write).
@@ -773,7 +784,6 @@ impl Runtime {
             max_cascade: snap.max_cascade,
             knows: snap.knows,
             known_by: snap.known_by,
-            allowed: load_allowed_names(),
             outcomes: Vec::new(),
             justifications: Vec::new(),
             by_event_id: IngestMap::default(),
@@ -817,7 +827,6 @@ impl Runtime {
             max_cascade,
             knows,
             known_by,
-            allowed: load_allowed_names(),
             outcomes: Vec::new(),
             justifications: Vec::new(),
             by_event_id: IngestMap::default(),
@@ -846,7 +855,6 @@ impl Runtime {
             max_cascade: self.max_cascade,
             knows: self.knows,
             known_by: self.known_by,
-            allowed: self.allowed.clone(),
             outcomes: Vec::new(),
             justifications: Vec::new(),
             by_event_id: IngestMap::default(),
@@ -912,9 +920,6 @@ impl Runtime {
         };
         let tt = self.next_tt.saturating_sub(1);
         if !name.is_empty() && self.fold.relation_allowed_at(&name, tt, vt) {
-            return Ok(());
-        }
-        if self.allowed.contains(&name) {
             return Ok(());
         }
         Err(RuntimeError::UnknownRelation {

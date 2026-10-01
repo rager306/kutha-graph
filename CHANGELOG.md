@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: genesis AllowRelation on new log
+
+### Product
+
+### Added
+
+- `Runtime::new` seeds one `Op::AllowRelation` per YAML name (`valid_from` 0) on an empty log. Names are not interned. Sorted for a stable provenance mix.
+
+### Changed
+
+- `admit` consults `fold.relation_allowed_at` only. Runtime no longer holds a YAML `HashSet`. `from_snapshot` / `from_dict_and_events` / `fork_at` do not read relations YAML (D-01, D-02, D-03).
+
+### Trajectory
+
+- No lease change. Active Slice **S04**. Cells remain **Proposed**. Wiring continues in 25-02 oracles.
+
 ## 2026-10-01 — Product: RED genesis log oracles
 
 ### Product
