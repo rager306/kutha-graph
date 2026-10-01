@@ -750,10 +750,14 @@ impl Runtime {
         if matches!(op, Op::QuantumOutcome { .. } | Op::JustificationCite { .. }) {
             return Err(RuntimeError::MetaOpRejected);
         }
-        if let Op::Retract { event_id }
-        | Op::Correct { event_id, .. }
-        | Op::CorrectInterval { event_id, .. } = &op
-        {
+        if let Op::Retract { event_id } = &op {
+            let known_fact = self.fold.facts().iter().any(|f| f.event_id == *event_id);
+            if !known_fact && !self.fold.has_allow_entry(*event_id) {
+                return Err(RuntimeError::UnknownFact {
+                    event_id: *event_id,
+                });
+            }
+        } else if let Op::Correct { event_id, .. } | Op::CorrectInterval { event_id, .. } = &op {
             if !self.fold.facts().iter().any(|f| f.event_id == *event_id) {
                 return Err(RuntimeError::UnknownFact {
                     event_id: *event_id,

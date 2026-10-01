@@ -110,3 +110,70 @@ fn empty_allow_relation_name_does_not_append() {
     );
     assert_eq!(n, rt.log().len(), "fail-closed: log must not grow");
 }
+
+#[test]
+fn retract_allow_relation_drops_admit_at_later_cut() {
+    let mut rt = Runtime::default();
+    let leased = rt.intern("leasedRel");
+    let allow = rt
+        .emit(Op::AllowRelation {
+            name: "leasedRel".into(),
+            valid_from: 2017,
+            valid_to: None,
+        })
+        .unwrap();
+    let allow_id = allow.receipt.event_ids[0];
+    let n = rt.log().len();
+
+    let subject = rt.intern("alice-lease");
+    let object = rt.intern("bob-lease");
+    rt.emit(Op::Assert {
+        subject,
+        relation: leased,
+        object,
+        valid_from: 2017,
+        valid_to: None,
+        claim: None,
+        delivery_key: None,
+        polarity: None,
+    })
+    .unwrap();
+
+    rt.emit(Op::Retract { event_id: allow_id }).unwrap();
+
+    let after = rt.log().len();
+    let err = rt
+        .emit(Op::Assert {
+            subject,
+            relation: leased,
+            object,
+            valid_from: 2017,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::UnknownRelation { ref name } if name == "leasedRel"),
+        "{err:?}"
+    );
+    assert_eq!(after, rt.log().len(), "fail-closed: log must not grow");
+
+    let mut prefix = rt.fork_at(n);
+    let rel = prefix.intern("leasedRel");
+    let s = prefix.intern("alice-lease");
+    let o = prefix.intern("bob-lease");
+    prefix
+        .emit(Op::Assert {
+            subject: s,
+            relation: rel,
+            object: o,
+            valid_from: 2017,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
+}

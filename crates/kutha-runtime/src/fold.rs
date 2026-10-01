@@ -363,6 +363,10 @@ impl GraphFold {
             .any(|e| e.name == name && e.is_live_at(tt, vt))
     }
 
+    pub(crate) fn has_allow_entry(&self, event_id: EventId) -> bool {
+        self.allow_entries.iter().any(|e| e.event_id == event_id)
+    }
+
     /// Rebuild skip-serialized allow-entries from the log (open / fork / hydrate).
     pub(crate) fn rebuild_allow_entries(&mut self, events: &[Event]) {
         self.allow_entries.clear();
