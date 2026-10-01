@@ -200,3 +200,54 @@ fn action_cites_admission_pin_and_rejects_public_emit() {
     );
     assert_eq!(n, rt.log().len());
 }
+
+#[test]
+fn action_and_admission_as_of_prior_cut_after_policy_change() {
+    let (mut rt, claim_q, cause) = leased_pin_and_derive();
+    let jid = rt
+        .record_justification(
+            claim_q,
+            vec![cause],
+            vec![cause],
+            rule_definition_hash("derive_pq"),
+            u64::MAX,
+            2017,
+        )
+        .expect("record_justification");
+    let action_id = rt
+        .record_action(&jid, u64::MAX, 2017)
+        .expect("record_action");
+    let prior_tt = rt
+        .log()
+        .iter()
+        .find(|e| e.id == action_id)
+        .expect("RecordAction")
+        .ingested_at;
+    let first = policy_version_hash("leased-policy");
+    let rec = rt
+        .action_record_at(&jid, prior_tt, 2017)
+        .expect("action at prior cut");
+    assert_eq!(first, rec.policy_version);
+    assert_eq!(Some(true), rt.admission_status_at(&jid, prior_tt, 2017));
+
+    rt.emit(Op::PinPolicy {
+        definition: "later-policy".into(),
+        valid_from: 2010,
+        valid_to: None,
+    })
+    .unwrap();
+    assert_eq!(
+        Some(policy_version_hash("later-policy")),
+        rt.live_policy_pin_at(u64::MAX, 2017)
+    );
+    let rec = rt
+        .action_record_at(&jid, prior_tt, 2017)
+        .expect("action still at prior cut");
+    assert_eq!(first, rec.policy_version);
+    assert!(rec.admitted);
+    assert_eq!(Some(true), rt.admission_status_at(&jid, prior_tt, 2017));
+    let tip = rt
+        .action_record_at(&jid, u64::MAX, 2017)
+        .expect("action at tip");
+    assert_eq!(first, tip.policy_version);
+}

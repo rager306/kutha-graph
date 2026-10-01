@@ -509,6 +509,11 @@ impl Runtime {
         self.fold.policy_hash_live_at(pin, tt, vt)
     }
 
+    /// Latest ingested live policy hash at `(tt, vt)` (ADM-02 / ACT-02).
+    pub fn live_policy_pin_at(&self, tt: u64, vt: u64) -> Option<String> {
+        self.fold.live_policy_pin_at(tt, vt)
+    }
+
     /// Fail-closed admission for a persisted cite. Locked reasons: unknown_justification,
     /// stale_support, ineligible, rule_version.
     pub fn check_admission(&self, justification_id: &str) -> Result<(), RuntimeError> {
