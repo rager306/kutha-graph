@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: RED facade statute consumer
+
+### Product
+
+### Added
+
+- Integration test `facade_statute::statute_as_of_via_facade` and example `statute_as_of`: D-08 RED (PIPE-03/04) — facade-only consumer (`Runtime` / `RuntimeError`; D-03 names `assert` / `retract` / `correct` / `derive` / `as_of` / `live_at` / `persist` / `open`) does not compile today. One admission and one action record. Wiring is 27-02.
+
+### Trajectory
+
+- No lease change. Active Slice **S06**. Cells remain **Proposed**.
+
 ## 2026-10-01 — Product: EventId admissions and green dictionary oracles
 
 ### Product
