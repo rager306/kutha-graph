@@ -16,9 +16,9 @@ Closing leased product gaps F4/F5 from `docs/architecture/semantic-gap-review.md
 
 ### Rule registry (F4 free-string → hash)
 
-- [ ] **RULE-01**: A rule registry stores definitions; `rule_version` on Behavior equals the definition hash
-- [ ] **RULE-02**: Unknown or mismatched `rule_version` fails closed on emit/eligibility
-- [ ] **RULE-03**: Free-string `rule_version` is no longer accepted on the leased path (or is rejected unless it matches a registry hash)
+- [x] **RULE-01**: A rule registry stores definitions; `rule_version` on Behavior equals the definition hash
+- [x] **RULE-02**: Unknown or mismatched `rule_version` fails closed on emit/eligibility
+- [x] **RULE-03**: Free-string `rule_version` is no longer accepted on the leased path (or is rejected unless it matches a registry hash)
 
 ### Admission and policy meta-facts (F5)
 
@@ -65,9 +65,9 @@ Closing leased product gaps F4/F5 from `docs/architecture/semantic-gap-review.md
 | ALL-01 | Phase 17 | Complete |
 | ALL-02 | Phase 17 | Complete |
 | ALL-03 | Phase 17 | Complete |
-| RULE-01 | Phase 18 | Pending |
-| RULE-02 | Phase 18 | Pending |
-| RULE-03 | Phase 18 | Pending |
+| RULE-01 | Phase 18 | Complete |
+| RULE-02 | Phase 18 | Complete |
+| RULE-03 | Phase 18 | Complete |
 | ADM-01 | Phase 19 | Pending |
 | ADM-02 | Phase 19 | Pending |
 | ADM-03 | Phase 19 | Pending |

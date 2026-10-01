@@ -4,19 +4,19 @@ milestone: v0.05
 milestone_name: Dictionaries as facts
 current_phase: 18
 current_phase_name: Rule registry
-current_plan: 18-01
+current_plan: 2
 status: ready_to_execute
-stopped_at: Phase 18 plans written (18-01..03), ready to execute
-last_updated: "2026-10-01T09:15:00.000Z"
+stopped_at: Completed 18-01-PLAN.md
+last_updated: "2026-10-01T02:25:12.481Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 18 rule-registry plans written (18-01 tracer, 18-02 retract/persist, 18-03 governor)
-state_head: 5e2e93d941b251ec1cd6c033f6eb5bdc2ec0a47e
+state_head: 7e00bc741b20f3c9e362098d26f3200465da8914
 progress:
   total_phases: 5
   completed_phases: 17
-  total_plans: 3
-  completed_plans: 3
-  percent: 81
+  total_plans: 6
+  completed_plans: 4
+  percent: 67
 ---
 
 # Project State
@@ -35,12 +35,12 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 ## Current Position
 
 Phase: 18 of 21 (Rule registry)
-Current Plan: 18-01 (not started)
+Current Plan: 2
 Total Plans in Phase: 3
 Status: Ready to execute
-Last activity: 2026-10-01 — Phase 18 plans written (18-01..03)
+Last activity: 2026-10-01 — Completed 18-01-PLAN.md
 
-Progress: [████████░░] 81% (v0.05)
+Progress: [███████░░░] 67% (v0.05)
 
 ## Performance Metrics
 
@@ -59,6 +59,7 @@ Progress: [████████░░] 81% (v0.05)
 | Phase 17-allowlist-as-log-facts P01 | 3min | 2 tasks | 4 files |
 | Phase 17-allowlist-as-log-facts P02 | 2min | 2 tasks | 4 files |
 | Phase 17-allowlist-as-log-facts P03 | 4min | 2 tasks | 5 files |
+| Phase 18 P01 | 7 | 3 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,9 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 17-allowlist-as-log-facts]: Open reconstructs allow-entries from the log walk, not from snapshot JSON keys
 - [Phase 17-allowlist-as-log-facts]: ALL file oracles are required observe names; FF6 remains required
 - [Phase 17-allowlist-as-log-facts]: ADR-011 evidence append only; honeycomb map stays Proposed; ADR-050 delivery stays frozen
+- [Phase 18]: RegisterRule is a dedicated Op, not Assert/Define/Behavior, so the registry is a log fact
+- [Phase 18]: rule_definition_hash is SHA-256 of kutha-rule-def plus UTF-8 definition bytes; the Op does not store a precomputed hash
+- [Phase 18]: User emit(Behavior) pin check does not run on follow_ons inverse_knows
 
 ### Pending Todos
 
@@ -98,8 +102,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-10-01T01:57:03.814Z
-Stopped at: Phase 17 complete, ready to plan Phase 18
+Last session: 2026-10-01T02:24:56.438Z
+Stopped at: Completed 18-01-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 17`. Active Slice S01 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
 
