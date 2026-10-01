@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: M012 S05 multi-hop derivation (M012 closed)
+
+### Product
+
+- Two-hop `derivation_eligible_at` walk and residual `inverse_knows` cascade are green under named DER oracles (`m012_multi_hop`).
+
+### Process
+
+- Governor DER observe + Phase 21 closed. Harness ROADMAP marks M012 **CLOSED**.
+
+### Trajectory
+
+- `L_delivery=M012-S05-done`; Active Slice **None**. Active Milestone still **M012** until operator clears or leases the next wave. Freeze until M002 unchanged. Honeycomb Proposed.
+
 ## 2026-10-01 — Process: governor observes DER-01..03
 
 ### Process

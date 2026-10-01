@@ -4,16 +4,16 @@ milestone: v0.05
 milestone_name: Dictionaries as facts
 current_phase: 21
 current_phase_name: Multi-hop derivation
-current_plan: 03 (21-01 tracer)
-status: verifying
-stopped_at: Completed 21-03-PLAN.md
-last_updated: "2026-10-01T04:16:18.094Z"
+current_plan: Not started
+status: completed
+stopped_at: Phase 21 complete — all phases complete
+last_updated: "2026-10-01T04:25:00.000Z"
 last_activity: 2026-10-01
-last_activity_desc: Phase 21 plans created (21-01..03)
-state_head: df9464142b48a35b927913b1320eb72e7ba28b7b
+last_activity_desc: Phase 21 complete
+state_head: 4895f82394b0a6cd9037c6f22edf79c82a0e475e
 progress:
   total_phases: 5
-  completed_phases: 20
+  completed_phases: 21
   total_plans: 15
   completed_plans: 15
   percent: 100
@@ -26,19 +26,19 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.05 Phase 21 — Multi-hop derivation (M012 S05) planned (21-01..03). Execute under Active Slice S05. Do not clear S05 until Phase 21 verification passes.
+**Current focus:** v0.05 complete — M012 S01–S05 delivered. Awaiting milestone archive.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M012**; Active Slice **S05**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012-S04-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
+**Harness lease (cite only):** Active Milestone **M012**; Active Slice **None**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012-S05-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
 
 ## Current Position
 
 Phase: 21 of 21 (Multi-hop derivation)
-Current Plan: 03 (21-01 tracer)
+Current Plan: Not started
 Total Plans in Phase: 3
-Status: Phase complete — ready for verification
-Last activity: 2026-10-01 — Phase 21 plans created (21-01..03)
+Status: All phases complete
+Last activity: 2026-10-01 — Phase 21 complete
 
 Progress: [██████████] 100% (v0.05)
 
@@ -49,9 +49,9 @@ Progress: [██████████] 100% (v0.05)
 - Average duration: ~2–5min typical; Phase 11 outliers 16–93min
 - v0.04: 15 plans (Phases 12–16), all complete 2026-10-01
 
-**By Phase:** v0.01 9/9 · v0.02 11/11 · v0.03 8/8 · v0.04 15/15 · v0.05 12/15 (Phase 21 planned 0/3)
+**By Phase:** v0.01 9/9 · v0.02 11/11 · v0.03 8/8 · v0.04 15/15 · v0.05 15/15
 
-**Recent Trend:** v0.04 crate work closed; v0.05 product crates allowed under M012 thawed subset.
+**Recent Trend:** v0.05 M012 dictionaries-as-facts closed (Phases 17–21).
 **Per-Plan Metrics:**
 
 | Plan | Duration | Tasks | Files |
@@ -121,7 +121,7 @@ None.
 
 ### Blockers/Concerns
 
-- Harness Active Slice is **S03** (cite `.kutha/STATE.md`; do not overwrite it). Execute Phase 19 under that lease (GATE-02).
+- Harness Active Slice is **None**; `L_delivery=M012-S05-done` (cite `.kutha/STATE.md`; do not overwrite it).
 - Do not start ADR-050 six dictionaries, M002 Rocks, legal pack, Cypher, or HNSW because a GSD phase completed — honeycomb stays Proposed (GATE-03).
 
 ## Deferred Items
@@ -135,11 +135,11 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-10-01T04:16:17.096Z
-Stopped at: Completed 21-03-PLAN.md
+Last session: 2026-10-01T04:25:00.000Z
+Stopped at: Phase 21 complete — all phases complete
 Resume file: None
-Next: `/gsd-execute-phase 19`. Active Slice S03 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
+Next: `/gsd-complete-milestone 0.05`. Harness M012 CLOSED. Freeze holds. Do not lease M002 without explicit operator intent.
 
 ## Operator Next Steps
 
-- `/gsd-execute-phase 19`
+- `/gsd-complete-milestone 0.05`

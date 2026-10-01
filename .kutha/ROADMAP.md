@@ -127,11 +127,11 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 - [x] **H4** — process-relation membership editions logged as snapshots and queryable AS OF a prior tenant cut (tip YAML stays the admit lease; full ADR-090 ontology stays frozen).
 - [x] **H5** — semantic governor + lean agent context (harness/docs only)
 
-## M012: Dictionaries as facts — ACTIVE
+## M012: Dictionaries as facts — CLOSED
 
 **Success:** Relation allowlist entries are versioned log facts (not ambient file-only SoT); `rule_version` equals a definition hash from a rule registry; admission status and policy version are bi-temporal meta-facts on the log; a thin action record binds resolved arguments to the admission decision; derivation eligibility is not limited to hard-coded one-hop + free-string `rule_version`. LLM output remains a proposal. Not ADR-050 six dictionaries; not M002 Rocks; not ADR Accepted.
 
-**Leased:** Active Milestone M012; Active Slice None until a GSD phase leases one. Closing F4/F5 from `docs/architecture/semantic-gap-review.md`. Freeze still blocks six dictionaries, Cypher, HNSW, legal pack, M002.
+**Closed:** Active Milestone M012 S01–S05 done. Closing F4/F5 from `docs/architecture/semantic-gap-review.md`. Freeze still blocks six dictionaries, Cypher, HNSW, legal pack, M002.
 
 - [x] **S01: Relation allowlist as log facts** `risk:high` `depends:[]`
   > After this: allowlisted relations are appendable/versioned facts; admit consults the fold cut, not only tip YAML/env.
@@ -141,20 +141,20 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
   > After this: admission decisions and the policy version are queryable AS OF a cut; `check_admission` is on the product path, not tests-only.
 - [x] **S04: Thin action record** `risk:medium` `depends:[S03]`
   > After this: an Action (or equivalent Op) binds resolved arguments to admission + policy version; named test green.
-- [ ] **S05: Multi-hop / n-ary derivation eligibility** `risk:medium` `depends:[S02]`
+- [x] **S05: Multi-hop / n-ary derivation eligibility** `risk:medium` `depends:[S02]`
   > After this: eligibility is not only one-hop `caused_by`; a two-hop (or n-ary) fixture is named and green — without claiming full provenance polynomials.
 
 ## Later milestones (not active)
 
 
-Do not start until STATE names them. **M012 is active** (leased; Active Slice None until a phase leases one). M012a and M011 are CLOSED. M002+ stay frozen until leased.
+Do not start until STATE names them. **M012 is CLOSED** (S01–S05 done). M012a and M011 are CLOSED. M002+ stay frozen until leased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
 1. **M011** — CLOSED (S01–S08). Historical record above.
 2. **M012a** — CLOSED (S01–S06). Detail above.
 3. *(unnumbered)* Benchmark baseline — immediately after M012a indexes; not a new three-digit id.
-4. **M012** — ACTIVE (this milestone). Detail above.
+4. **M012** — CLOSED (S01–S05). Detail above.
 5. **M002** — Log durability protocol first: segmented append-only log, hash chain, atomic manifest, lease identity verified on open, replay parity across stores. Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity.
 6. *(unnumbered)* Thin real-text legal golden fixture — test-only, under a lease, before Cypher.
 7. **M003** — Cypher skin over the already-correct AS OF cut.
