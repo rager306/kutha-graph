@@ -5,18 +5,18 @@ milestone_name: Dictionaries as facts
 current_phase: 18
 current_phase_name: Rule registry
 current_plan: 3
-status: ready_to_execute
-stopped_at: Completed 18-02-PLAN.md
-last_updated: "2026-10-01T02:27:18.242Z"
+status: verifying
+stopped_at: Completed 18-03-PLAN.md
+last_updated: "2026-10-01T02:30:48.552Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 18 rule-registry plans written (18-01 tracer, 18-02 retract/persist, 18-03 governor)
-state_head: d84a21a054c28affb7a9bb953d8f582f53d85509
+state_head: 25cf3ac1927caeb0d7481246e7fbc235853d5864
 progress:
   total_phases: 5
   completed_phases: 17
   total_plans: 6
-  completed_plans: 5
-  percent: 83
+  completed_plans: 6
+  percent: 100
 ---
 
 # Project State
@@ -37,10 +37,10 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 Phase: 18 of 21 (Rule registry)
 Current Plan: 3
 Total Plans in Phase: 3
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-10-01 — Completed 18-01-PLAN.md
 
-Progress: [████████░░] 83% (v0.05)
+Progress: [██████████] 100% (v0.05)
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Progress: [████████░░] 83% (v0.05)
 | Phase 17-allowlist-as-log-facts P03 | 4min | 2 tasks | 5 files |
 | Phase 18 P01 | 7 | 3 tasks | 10 files |
 | Phase 18 P02 | 2 | 2 tasks | 4 files |
+| Phase 18 P03 | 3 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -84,6 +85,8 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 18]: User emit(Behavior) pin check does not run on follow_ons inverse_knows
 - [Phase 18]: Retract of RegisterRule is accepted as a live rule-entry EventId, not as a graph Fact
 - [Phase 18]: Opened runtimes accept hashed Behavior because hydrate rebuilds rule-entries from the log
+- [Phase 18]: RULE file oracles are required observe names; ALL and FF6 remain required
+- [Phase 18]: ADR-011 evidence append only; honeycomb map stays Proposed; ADR-050 delivery stays frozen
 
 ### Pending Todos
 
@@ -105,8 +108,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-10-01T02:27:18.097Z
-Stopped at: Completed 18-02-PLAN.md
+Last session: 2026-10-01T02:30:48.305Z
+Stopped at: Completed 18-03-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 17`. Active Slice S01 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
 

@@ -75,7 +75,7 @@ Full detail: [milestones/v0.04-ROADMAP.md](./milestones/v0.04-ROADMAP.md) · req
 **Phase numbering:** Integer phases continue from v0.04 (Phase 17 follows Phase 16). Sequential IDs (`phase_naming`: sequential).
 
 - [x] **Phase 17: Allowlist as log facts** - Relation allowlist entries are versioned log facts; admit consults the fold cut (M012 S01) (completed 2026-10-01)
-- [ ] **Phase 18: Rule registry** - `rule_version` equals a definition hash; unknown or free-string pins fail closed (M012 S02)
+- [x] **Phase 18: Rule registry** - `rule_version` equals a definition hash; unknown or free-string pins fail closed (M012 S02) (completed 2026-10-01)
 - [ ] **Phase 19: Admission and policy meta-facts** - Admission status and policy version are bi-temporal log facts; `check_admission` runs on the product path (M012 S03)
 - [ ] **Phase 20: Thin action record** - An Action binds resolved arguments to admission and policy version (M012 S04)
 - [ ] **Phase 21: Multi-hop derivation** - Derivation eligibility is not one-hop-only; a two-hop fixture is named and green (M012 S05)
@@ -117,12 +117,12 @@ Plans:
   3. Free-string `rule_version` is rejected on the leased path unless it matches a registry hash (RULE-03)
   4. Named cargo tests for the three RULE oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; freeze and Proposed map hold
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans complete
 
 Plans:
 - [x] 18-01-PLAN.md — Tracer: Op::RegisterRule log fact; Behavior pin equals definition hash; unknown/free-string fail closed
 - [x] 18-02-PLAN.md — Retract versions the registry cut; persist/open reconstructs hashed Behavior
-- [ ] 18-03-PLAN.md — Governor observation of RULE oracles; freeze and Proposed map hold
+- [x] 18-03-PLAN.md — Governor observation of RULE oracles; freeze and Proposed map hold
 
 ### Phase 19: Admission and policy meta-facts
 
@@ -194,7 +194,7 @@ Plans:
 | 15. Verify, persist, and time scale | v0.04 | 3/3 | Complete | 2026-10-01 |
 | 16. Fold-internal hot indexes | v0.04 | 3/3 | Complete | 2026-10-01 |
 | 17. Allowlist as log facts | v0.05 | 3/3 | Complete    | 2026-10-01 |
-| 18. Rule registry | v0.05 | 2/3 | In Progress|  |
+| 18. Rule registry | v0.05 | 3/3 | Complete   | 2026-10-01 |
 | 19. Admission and policy meta-facts | v0.05 | 0/? | Not started | - |
 | 20. Thin action record | v0.05 | 0/? | Not started | - |
 | 21. Multi-hop derivation | v0.05 | 0/? | Not started | - |
