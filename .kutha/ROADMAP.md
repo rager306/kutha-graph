@@ -135,7 +135,7 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 
 - [x] **S01: Relation allowlist as log facts** `risk:high` `depends:[]`
   > After this: allowlisted relations are appendable/versioned facts; admit consults the fold cut, not only tip YAML/env.
-- [ ] **S02: Rule registry (`rule_version` = definition hash)** `risk:high` `depends:[S01]`
+- [x] **S02: Rule registry (`rule_version` = definition hash)** `risk:high` `depends:[S01]`
   > After this: Behavior pins a registry hash, not a free string; unknown/mismatched rule fails closed.
 - [ ] **S03: Admission status and policy version as meta-facts** `risk:high` `depends:[S01]`
   > After this: admission decisions and the policy version are queryable AS OF a cut; `check_admission` is on the product path, not tests-only.
