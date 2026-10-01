@@ -1,6 +1,5 @@
-//! D-08 RED (PIPE-03/04): facade-only statute consumer.
-//! Import only the public crate surface. Do not call emit, intern, fold, log, or store.
-//! Never edit `.kutha/STATE.md`.
+//! D-04 GREEN (PIPE-03/04): facade-only statute consumer.
+//! Import only the public crate surface. Never edit `.kutha/STATE.md`.
 
 use kutha_runtime::{Runtime, RuntimeError};
 use std::path::Path;
@@ -14,7 +13,7 @@ const VF_SECOND: u64 = 2020;
 #[test]
 fn statute_as_of_via_facade() -> Result<(), RuntimeError> {
     let mut rt = Runtime::default();
-    rt.assert(
+    let first = rt.assert(
         "art-12-speed",
         "inForceAs",
         "50-kmh",
@@ -28,8 +27,10 @@ fn statute_as_of_via_facade() -> Result<(), RuntimeError> {
     assert_ne!(old, new, "AS OF 2015 must differ from AS OF 2021");
     let _live = rt.live_at(u64::MAX, T_OLD);
 
-    let jid = rt.record_justification("admit", T_OLD)?;
-    let _action = rt.record_action(&jid, T_OLD)?;
+    rt.emit_policy("leased-policy", VF_FIRST, None)?;
+    let claim = first.receipt.event_ids[0];
+    let jid = rt.record_justification(claim, vec![claim], vec![claim], "", u64::MAX, T_OLD)?;
+    let _action = rt.record_action(&jid, u64::MAX, T_OLD)?;
     rt.derive("statute-fold", "art-12-speed", T_OLD)?;
     rt.correct("art-12-speed", "inForceAs", "50-kmh", VF_FIRST)?;
     rt.retract("art-12-speed", VF_FIRST)?;

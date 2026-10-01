@@ -43,8 +43,8 @@ fn ff5_as_of_t1_differs_from_as_of_t2_on_statute_log() {
     })
     .unwrap();
 
-    let old = rt.fold().as_of(T_OLD);
-    let new = rt.fold().as_of(T_NEW);
+    let old = rt.as_of(T_OLD);
+    let new = rt.as_of(T_NEW);
     assert_ne!(
         old, new,
         "AS OF T1 must differ from AS OF T2 on the same log"

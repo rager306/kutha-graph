@@ -4,7 +4,11 @@ use crate::fold::{FoldIndexMode, GraphFold};
 use crate::log::EventLog;
 use crate::materializer::{CsrMaterializer, Materializer};
 use crate::receipt::QuantumReceipt;
-use kutha_common::{Event, EventId, Op, TermDictionary, TermId, KUTHA_RESERVED_RELS};
+use kutha_common::{
+    rule_definition_hash, Event, EventId, Op, TermDictionary, TermId, TransactionTime, ValidTime,
+    KUTHA_RESERVED_RELS,
+};
+use std::path::Path;
 use rustc_hash::FxHashMap;
 use std::fmt;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -85,6 +89,10 @@ pub enum RuntimeError {
     UnknownAdmission {
         justification_id: String,
     },
+    /// Persist/open IO (facade wrap of `store`).
+    StoreIo {
+        message: String,
+    },
 }
 
 impl fmt::Display for RuntimeError {
@@ -120,6 +128,7 @@ impl fmt::Display for RuntimeError {
             RuntimeError::UnknownAdmission { justification_id } => {
                 write!(f, "unknown admission {justification_id}")
             }
+            RuntimeError::StoreIo { message } => write!(f, "store io {message}"),
         }
     }
 }
@@ -396,6 +405,147 @@ impl Runtime {
     /// Typed CSR lease at an explicit cut (labels + support multiplicity). Droppable; not SoT.
     pub fn typed_csr_lease_at(&self, tt: u64, vt: u64) -> TypedCsrLease {
         TypedCsrLease::from_fold(&self.fold, tt, vt, self.dict.len())
+    }
+
+    /// Internable Assert (PIPE-03). Goes through the write pipeline.
+    pub fn assert(
+        &mut self,
+        subject: impl AsRef<str>,
+        relation: impl AsRef<str>,
+        object: impl AsRef<str>,
+        valid_from: ValidTime,
+        valid_to: Option<ValidTime>,
+    ) -> Result<QuantumOutcome, RuntimeError> {
+        let subject = self.intern(subject.as_ref());
+        let relation = self.intern(relation.as_ref());
+        let object = self.intern(object.as_ref());
+        self.pipeline(Op::Assert {
+            subject,
+            relation,
+            object,
+            valid_from,
+            valid_to,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+    }
+
+    /// Retract the latest live product fact for `subject` starting at `valid_from`.
+    pub fn retract(
+        &mut self,
+        subject: impl AsRef<str>,
+        valid_from: ValidTime,
+    ) -> Result<QuantumOutcome, RuntimeError> {
+        let subject = self.intern(subject.as_ref());
+        let event_id = self
+            .fold
+            .facts()
+            .iter()
+            .rev()
+            .find(|f| {
+                f.subject == subject
+                    && f.valid_from == valid_from
+                    && f.invalidated_at.is_none()
+                    && !self.fold.is_dictionary_rel(f.relation)
+            })
+            .map(|f| f.event_id)
+            .ok_or(RuntimeError::UnknownFact {
+                event_id: EventId::nil(),
+            })?;
+        self.pipeline(Op::Retract { event_id })
+    }
+
+    /// Correct the latest live fact for `subject`/`relation` starting at `valid_from`.
+    pub fn correct(
+        &mut self,
+        subject: impl AsRef<str>,
+        relation: impl AsRef<str>,
+        object: impl AsRef<str>,
+        valid_from: ValidTime,
+    ) -> Result<QuantumOutcome, RuntimeError> {
+        let subject = self.intern(subject.as_ref());
+        let relation = self.intern(relation.as_ref());
+        let object = self.intern(object.as_ref());
+        let fact = self
+            .fold
+            .facts()
+            .iter()
+            .rev()
+            .find(|f| {
+                f.subject == subject
+                    && f.relation == relation
+                    && f.valid_from == valid_from
+                    && f.invalidated_at.is_none()
+            })
+            .ok_or(RuntimeError::UnknownFact {
+                event_id: EventId::nil(),
+            })?;
+        let event_id = fact.event_id;
+        let valid_to = fact.valid_to;
+        self.pipeline(Op::Correct {
+            event_id,
+            object,
+            valid_from,
+            valid_to,
+        })
+    }
+
+    /// Behavior-derived follow-on pinned to `rule_definition_hash(name)` (PIPE-03).
+    pub fn derive(
+        &mut self,
+        name: impl AsRef<str>,
+        subject: impl AsRef<str>,
+        valid_from: ValidTime,
+    ) -> Result<QuantumOutcome, RuntimeError> {
+        let name = name.as_ref();
+        let pin = rule_definition_hash(name);
+        if !self.fold.rule_hash_live_at(&pin, u64::MAX, valid_from) {
+            self.emit_rule(name, valid_from, None)?;
+        }
+        let subject = self.intern(subject.as_ref());
+        let premise = self
+            .fold
+            .facts()
+            .iter()
+            .rev()
+            .find(|f| f.subject == subject && !self.fold.is_dictionary_rel(f.relation))
+            .ok_or(RuntimeError::UnknownFact {
+                event_id: EventId::nil(),
+            })?;
+        let caused_by = premise.event_id;
+        let relation = premise.relation;
+        let object = premise.object();
+        self.pipeline(Op::Behavior {
+            name: name.to_string(),
+            caused_by,
+            rule_version: pin,
+            subject,
+            relation,
+            object,
+            valid_from,
+            valid_to: None,
+        })
+    }
+
+    pub fn as_of(&self, vt: ValidTime) -> Vec<(TermId, TermId, TermId)> {
+        self.fold.as_of(vt)
+    }
+
+    pub fn live_at(&self, tt: TransactionTime, vt: ValidTime) -> Vec<(TermId, TermId, TermId)> {
+        self.fold.live_at(tt, vt)
+    }
+
+    pub fn persist(&self, dir: impl AsRef<Path>) -> Result<(), RuntimeError> {
+        crate::store::persist(self, dir.as_ref()).map_err(|e| RuntimeError::StoreIo {
+            message: e.to_string(),
+        })
+    }
+
+    pub fn open(dir: impl AsRef<Path>) -> Result<Self, RuntimeError> {
+        crate::store::open(dir.as_ref()).map_err(|e| RuntimeError::StoreIo {
+            message: e.to_string(),
+        })
     }
 }
 

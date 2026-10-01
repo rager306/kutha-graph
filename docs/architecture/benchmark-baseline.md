@@ -139,3 +139,20 @@ Earlier: `Runtime::reserve_ingest_indexes` + `Vec::with_capacity(1)` alone — s
 Still above the 10% ingest gate. Capacity hints remove rehash noise but do not erase per-assert map inserts. Next levers: thinner map shapes, or accept write-cost / soften D-06 to the visit oracle.
 
 regression within 10%: no (ingest); as_of run b yes
+
+## Phase 27 delta (2026-10-02)
+
+One write pipeline + facade (M013 S06 / 27-02). Eager. `KUTHA_BENCH_N=10000`. Host date: 2026-10-02.
+
+Phase 22 reference: ingest_plain.n **95383904** ns, as_of.n **83195** ns.
+
+| key | Phase 27 | vs Phase 22 |
+|-----|--------:|------------:|
+| ingest_plain.n | 2163469973 | +2168% |
+| as_of.n | 1386193 | +1566% |
+| ingest_plain.2n / n | 3.34 | (Phase 22 1.55) |
+| ingest_plain.4n / n | 13.38 | (Phase 22 3.29) |
+
+D-07 ≤10% gate: **STOP — not met.** Admit still calls `fold.relation_allowed_at`, which collects every live fact before the allow hit (dictionary SoT from Phase 26). That is O(live facts) per Assert; N=10000 ingest is superlinear vs the Phase 22 HashSet allowlist. No new allow-index (freeze / D-07 named expects). as_of stays a fold walk; this host’s as_of.n is also far above +10% (fixed overhead vs Phase 22, not 4N-scaled). Recorded, not papered over.
+
+Full bench: `tmp/p27-bench.txt` (`fold_index_mode eager`, `events_per_assert` 3.000800, `bytes_per_fact` 16829).

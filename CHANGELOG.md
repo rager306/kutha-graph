@@ -4,6 +4,27 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: public facade and write-path oracles
+
+### Product
+
+### Added
+
+- Public Runtime facade: `assert` / `retract` / `correct` / `derive` (internable names), `as_of` / `live_at`, `persist` / `open`. Statute example and `facade_statute` compile against that surface; `as_of(2015) ≠ as_of(2021)` plus one admission and one action.
+- `m013_write_path` unknown-relation Assert is `UnknownRelation`; justification/action go through pipeline receipt (`outcome_records` grows); no ghost-relation fact.
+
+### Changed
+
+- FF5 named `as_of` reads `Runtime::as_of` (same triples as `fold().as_of`). `emit` stays public so m012/ff6/bench call sites and expects are unchanged (D-07).
+
+### Process
+
+- Governor `file_contains` needles for `live_support_count` / `claim_supported_at`, `derivation_eligible_at`, `provenance_fingerprint`, and `check_admission` / `conflict_report_at` follow the 27-02 module split (`fold_query.rs`, `provenance.rs`, `admission.rs`). Same symbols; named cargo expects unchanged.
+
+### Trajectory
+
+- S06 still Active Slice. Phase 22 bench re-run: ingest_plain.n +2168%, as_of.n +1566% vs the Phase 22 table — D-07 ≤10% **STOP** (documented in `docs/architecture/benchmark-baseline.md`). Cells remain **Proposed**.
+
 ## 2026-10-02 — Product: one write pipeline and runtime module split
 
 ### Product

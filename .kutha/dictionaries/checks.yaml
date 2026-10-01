@@ -272,7 +272,7 @@ checks:
         category: m011-s01
         message: "Assert claim field missing: {missing}"
       - kind: file_contains
-        path: crates/kutha-runtime/src/fold.rs
+        path: crates/kutha-runtime/src/fold_query.rs
         needles: ["claim_id", "live_support_count", "claim_supported_at"]
         require: all
         category: m011-s01
@@ -284,7 +284,7 @@ checks:
         category: m011-s02
         message: "unknown-claim / lineage errors missing: {missing}"
       - kind: file_contains
-        path: crates/kutha-runtime/src/quantum.rs
+        path: crates/kutha-runtime/src/provenance.rs
         needles: ["derivation_eligible_at"]
         require: all
         category: m011-s03
@@ -364,7 +364,7 @@ checks:
         category: m011-s07
         message: "rule_version missing: {missing}"
       - kind: file_contains
-        path: crates/kutha-runtime/src/quantum.rs
+        path: crates/kutha-runtime/src/provenance.rs
         needles: ["provenance_fingerprint"]
         require: all
         category: m011-s07
@@ -388,7 +388,7 @@ checks:
         category: m011-s08
         message: "JUSTIFICATIONS_REL missing: {missing}"
       - kind: file_contains
-        path: crates/kutha-runtime/src/quantum.rs
+        path: crates/kutha-runtime/src/admission.rs
         needles: ["conflict_report_at", "check_admission"]
         require: all
         category: m011-s08
