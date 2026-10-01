@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Process: remaining artifact budgets and verification independence
+
+### Process
+
+### Added
+
+- `artifact-budget` steps for SUMMARY (max 60, n≤2), VERIFICATION (max 60, n=1), and CONTEXT (max 80, n=1) from phase 22.
+- Check `verification-independent` and invariant `I-verification-independent`: `glob_absent` of `-PLAN.md` / `-SUMMARY.md` on VERIFICATION files; `file_contains` independence keys on phases 22–27.
+
+### Trajectory
+
+- No lease or honeycomb change in this commit. Cells remain **Proposed**.
+
 ## 2026-10-02 — Process: glob_max_lines and PLAN artifact budget
 
 ### Process

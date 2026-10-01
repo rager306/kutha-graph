@@ -1141,6 +1141,75 @@ class GlobMaxLinesTests(unittest.TestCase):
         result = _rust_run(root, {"kind": "not_a_kind"})
         self.assertEqual(["unknown-kind"], _rust_highs(result))
 
+    def test_glob_max_lines_verification_over_60_is_high(self) -> None:
+        root = _rust_tree({".planning/phases/22-x/22-VERIFICATION.md": "a\n" * 61})
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_max_lines",
+                "glob": ".planning/phases/*-*/*-VERIFICATION.md",
+                "max": 60,
+                "min_phase": 22,
+                "max_files_per_dir": 1,
+            },
+        )
+        self.assertEqual(["max-lines"], _rust_highs(result))
+
+
+class VerificationIndependentTests(unittest.TestCase):
+    def test_verification_independent_glob_absent_high_on_plan_path(self) -> None:
+        root = _rust_tree(
+            {".planning/phases/22-x/22-VERIFICATION.md": "read_only:\n  - foo-PLAN.md\n"}
+        )
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_absent",
+                "glob": ".planning/phases/*-*/*-VERIFICATION.md",
+                "needles": ["-PLAN.md", "-SUMMARY.md"],
+            },
+        )
+        self.assertEqual(["glob-absent"], _rust_highs(result))
+
+    def test_verification_independent_glob_absent_prose_passes(self) -> None:
+        root = _rust_tree(
+            {".planning/phases/22-x/22-VERIFICATION.md": "no plan or summary files read\n"}
+        )
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_absent",
+                "glob": ".planning/phases/*-*/*-VERIFICATION.md",
+                "needles": ["-PLAN.md", "-SUMMARY.md"],
+            },
+        )
+        self.assertEqual([], _rust_highs(result))
+
+    def test_verification_independent_file_contains_high_without_independent(self) -> None:
+        root = _rust_tree(
+            {
+                ".planning/phases/22-x/22-VERIFICATION.md": (
+                    "verifier_model: x\ncommands:\nread_only_inputs:\nexit: 0\n"
+                )
+            }
+        )
+        result = _rust_run(
+            root,
+            {
+                "kind": "file_contains",
+                "path": ".planning/phases/22-x/22-VERIFICATION.md",
+                "needles": [
+                    "independent: true",
+                    "verifier_model",
+                    "commands:",
+                    "read_only_inputs:",
+                    "exit:",
+                ],
+                "require": "all",
+            },
+        )
+        self.assertEqual(["contains"], _rust_highs(result))
+
 
 if __name__ == "__main__":
     unittest.main()

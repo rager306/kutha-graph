@@ -1192,12 +1192,61 @@ checks:
   - id: artifact-budget
     description: >-
       v0.06 planning artifacts from phase 22 onward stay within declared
-      line and per-directory file budgets (D-02, D-04). PLAN step in 28-01;
-      remaining globs in 28-01 task 3.
+      line and per-directory file budgets (D-02, D-04).
     steps:
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-PLAN.md
         min_phase: 22
         max: 150
         max_files_per_dir: 2
+      - kind: glob_max_lines
+        glob: .planning/phases/*-*/*-SUMMARY.md
+        min_phase: 22
+        max: 60
+        max_files_per_dir: 2
+      - kind: glob_max_lines
+        glob: .planning/phases/*-*/*-VERIFICATION.md
+        min_phase: 22
+        max: 60
+        max_files_per_dir: 1
+      - kind: glob_max_lines
+        glob: .planning/phases/*-*/*-CONTEXT.md
+        min_phase: 22
+        max: 80
+        max_files_per_dir: 1
+
+  - id: verification-independent
+    description: >-
+      v0.06 VERIFICATION files must not list plan or summary artifact paths
+      and must carry independence frontmatter (D-05).
+    steps:
+      - kind: glob_absent
+        glob: .planning/phases/*-*/*-VERIFICATION.md
+        needles:
+          - "-PLAN.md"
+          - "-SUMMARY.md"
+      - kind: file_contains
+        path: .planning/phases/22-benchmark-baseline-and-size-target/22-VERIFICATION.md
+        needles: ["independent: true", "verifier_model", "commands:", "read_only_inputs:", "exit:"]
+        require: all
+      - kind: file_contains
+        path: .planning/phases/23-legal-fixture-reconnaissance/23-VERIFICATION.md
+        needles: ["independent: true", "verifier_model", "commands:", "read_only_inputs:", "exit:"]
+        require: all
+      - kind: file_contains
+        path: .planning/phases/24-fold-indexes-for-ingest/24-VERIFICATION.md
+        needles: ["independent: true", "verifier_model", "commands:", "read_only_inputs:", "exit:"]
+        require: all
+      - kind: file_contains
+        path: .planning/phases/25-genesis-log/25-VERIFICATION.md
+        needles: ["independent: true", "verifier_model", "commands:", "read_only_inputs:", "exit:"]
+        require: all
+      - kind: file_contains
+        path: .planning/phases/26-dictionary-entries-as-facts/26-VERIFICATION.md
+        needles: ["independent: true", "verifier_model", "commands:", "read_only_inputs:", "exit:"]
+        require: all
+      - kind: file_contains
+        path: .planning/phases/27-one-write-path-and-facade/27-VERIFICATION.md
+        needles: ["independent: true", "verifier_model", "commands:", "read_only_inputs:", "exit:"]
+        require: all
 
