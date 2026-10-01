@@ -115,3 +115,8 @@ bridges:
     claim: "A thin Action binds resolved arguments to the admission decision and policy version; Action plus admission remain AS OF a prior cut after a later policy change"
     cites: "crates/kutha-runtime/tests/m012_action_record.rs"
     check: m012-s04-action-record
+
+  - id: B-m012-s05
+    claim: "Two-hop derivation eligibility is not one-hop-only; a named two-hop hashed fixture is eligible while live; inverse_knows remains the residual automatic cascade"
+    cites: "crates/kutha-runtime/tests/m012_multi_hop.rs"
+    check: m012-s05-multi-hop

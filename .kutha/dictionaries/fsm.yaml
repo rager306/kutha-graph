@@ -81,6 +81,9 @@ states:
       - record_justification_invokes_check_admission
       - action_binds_args_to_admission_and_policy
       - action_and_admission_as_of_prior_cut_after_policy_change
+      - two_hop_derivation_eligible_when_chain_live
+      - two_hop_ineligible_when_root_assert_retracted
+      - inverse_knows_cascade_is_residual_spike
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant

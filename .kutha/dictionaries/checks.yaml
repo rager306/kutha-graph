@@ -512,6 +512,18 @@ checks:
         category: m012-s04
         message: "M012 S04 action-record tests missing {missing}"
 
+  - id: m012-s05-multi-hop
+    description: M012 S05 — two-hop derivation eligibility is not one-hop-only
+    steps:
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m012_multi_hop.rs
+        tests:
+          - two_hop_derivation_eligible_when_chain_live
+          - two_hop_ineligible_when_root_assert_retracted
+          - inverse_knows_cascade_is_residual_spike
+        category: m012-s05
+        message: "M012 S05 multi-hop tests missing {missing}"
+
   - id: h4-lease
     description: H5 dogfood is closed without promoting ADR-090
     steps:

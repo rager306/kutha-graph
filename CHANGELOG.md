@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Process: governor observes DER-01..03
+
+### Process
+
+### Added
+
+- Governor bridge `B-m012-s05` / `m012-s05-multi-hop` and three `observe_cargo.required` names for DER-01..03 (`two_hop_derivation_eligible_when_chain_live`, `two_hop_ineligible_when_root_assert_retracted`, `inverse_knows_cascade_is_residual_spike`). ALL, RULE, ADM, ACT, FF6, LOG, REF, ING, DUR, TIME, and HOT names stay required.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. ADR-011 evidence lists include the DER names. ADR-050 map stays Proposed and delivery frozen. Active Slice remains **S05**. Freeze until M002 unchanged.
+
 ## 2026-10-01 — Product: M012 S05 two-hop derivation eligibility
 
 ### Product
