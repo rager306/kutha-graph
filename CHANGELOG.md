@@ -10,7 +10,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Added
 
-- Integration test `m013_genesis_log::retract_seeded_related_to_fails_closed_after`: D-07 / GEN-03 RED — retract YAML-seeded `relatedTo` then Assert must fail closed at the later cut (currently admitted via constructor HashSet). Wiring is 25-02.
+- Integration tests `m013_genesis_log` (`retract_seeded_related_to_fails_closed_after`, `open_after_relations_path_missing_still_emits`): D-07 / GEN-03 and D-03 / GEN-01 RED — retract YAML-seeded `relatedTo` then Assert must fail closed; persist then `open` with `KUTHA_RELATIONS_PATH` pointing at a missing file must still emit `inForceAs` (currently fails closed because `open` reloads YAML). Wiring is 25-02.
 
 ### Trajectory
 
