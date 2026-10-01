@@ -10,7 +10,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Added
 
-- `crates/kutha-runtime/benches/baseline.rs` (`[[bench]] harness = false`): relatedTo plain-ingest path with live_count and fingerprint validation (Phase 22 / BASE-01).
+- `crates/kutha-runtime/benches/baseline.rs` (`[[bench]] harness = false`): relatedTo plain and keyed ingest at N/2N/4N with live_count, fingerprint, claim_supported_at, late retract, and 27 sorted metric keys (Phase 22 / BASE-01).
 
 ### Trajectory
 
@@ -34,7 +34,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Trajectory
 
 - `docs/architecture/semantic-gap-review.md` gains an addendum (F9–F16, roadmap findings R1–R6, remedies). ADR-010, 011, 013, 014, 040, 041, 050, 051, 060, and 090 gain dated Proposed clarifications or open questions; `honeycomb.yaml` restaged. No cell is Accepted and no lock is rewritten.
-- `L_delivery=M013-leased`; Active Slice **None**. Freeze holds except the thawed M013 subset named in STATE. M014, M015, and M002 need their own lease.
+- `L_delivery=M013-leased` at milestone open (Active Slice was cleared until S01). Freeze holds except the thawed M013 subset named in STATE. M014, M015, and M002 need their own lease.
 
 ## 2026-10-01 — Product: M012 S05 multi-hop derivation (M012 closed)
 

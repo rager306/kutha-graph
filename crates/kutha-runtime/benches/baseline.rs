@@ -1,8 +1,9 @@
 //! M013 S01 / Phase 22: std-only baseline bench (`harness = false`).
 //! No criterion. Measures relatedTo (no inverse cascade). Validates answers.
 
-use kutha_common::Op;
+use kutha_common::{EventId, Op, TermId};
 use kutha_runtime::{store, Runtime};
+use std::collections::BTreeMap;
 use std::env;
 use std::path::PathBuf;
 use std::process;
@@ -22,11 +23,11 @@ fn sabotage_drop_one() -> bool {
 
 fn emit_related(
     rt: &mut Runtime,
-    subject: kutha_common::TermId,
-    relation: kutha_common::TermId,
-    object: kutha_common::TermId,
+    subject: TermId,
+    relation: TermId,
+    object: TermId,
     delivery_key: Option<String>,
-) -> kutha_common::EventId {
+) -> EventId {
     rt.emit(Op::Assert {
         subject,
         relation,
@@ -42,73 +43,15 @@ fn emit_related(
     .event_ids[0]
 }
 
-fn main() {
-    let n = parse_n();
-    let drop_one = sabotage_drop_one();
-    let planned = n;
-
-    let mut rt = Runtime::default();
-    let relation = rt.intern("relatedTo");
-    let object = rt.intern("o");
-
-    let t0 = Instant::now();
-    let mut first_id = None;
-    let mut emitted = 0u64;
-    for i in 0..planned {
-        if drop_one && i + 1 == planned {
-            break;
+fn vm_rss_bytes() -> Option<u64> {
+    let status = std::fs::read_to_string("/proc/self/status").ok()?;
+    for line in status.lines() {
+        if let Some(rest) = line.strip_prefix("VmRSS:") {
+            let kb: u64 = rest.split_whitespace().next()?.parse().ok()?;
+            return Some(kb.saturating_mul(1024));
         }
-        let s = rt.intern(&format!("s{i}"));
-        let id = emit_related(&mut rt, s, relation, object, None);
-        if first_id.is_none() {
-            first_id = Some(id);
-        }
-        emitted += 1;
     }
-    let ingest_ns = t0.elapsed().as_nanos();
-
-    let live = rt.fold().live_count(u64::MAX, 2010) as u64;
-    if live != planned {
-        eprintln!("live_count {live} != planned {planned} (emitted {emitted})");
-        process::exit(1);
-    }
-
-    let t1 = Instant::now();
-    let _triples = rt.fold().as_of(2010);
-    let as_of_ns = t1.elapsed().as_nanos();
-
-    let dir = scratch_dir("plain");
-    let t2 = Instant::now();
-    store::persist(&rt, &dir).expect("persist");
-    let persist_ns = t2.elapsed().as_nanos();
-
-    let t3 = Instant::now();
-    let opened = store::open(&dir).expect("open");
-    let open_ns = t3.elapsed().as_nanos();
-
-    if opened.fold().fingerprint() != rt.fold().fingerprint() {
-        eprintln!("fingerprint mismatch after open");
-        process::exit(1);
-    }
-
-    let t4 = Instant::now();
-    opened.replay_check().expect("replay_check");
-    let replay_ns = t4.elapsed().as_nanos();
-
-    let mut lines = vec![
-        format!("as_of.n {as_of_ns} ns"),
-        format!("base_n {n} 1"),
-        format!("ingest_plain.n {ingest_ns} ns"),
-        format!("open.n {open_ns} ns"),
-        format!("persist.n {persist_ns} ns"),
-        format!("replay_check.n {replay_ns} ns"),
-    ];
-    lines.sort();
-    for line in &lines {
-        println!("{line}");
-    }
-    println!("validated yes");
-    let _ = first_id;
+    None
 }
 
 fn scratch_dir(tag: &str) -> PathBuf {
@@ -116,4 +59,244 @@ fn scratch_dir(tag: &str) -> PathBuf {
     let dir = PathBuf::from(format!("tmp/kutha-bench-{tag}-{pid}"));
     let _ = std::fs::remove_dir_all(&dir);
     dir
+}
+
+fn size_suffix(factor: u64) -> &'static str {
+    match factor {
+        1 => "n",
+        2 => "2n",
+        4 => "4n",
+        _ => unreachable!("factors are 1, 2, 4"),
+    }
+}
+
+fn fill_plain(rt: &mut Runtime, planned: u64, drop_last: bool) -> (EventId, EventId, u64) {
+    let relation = rt.intern("relatedTo");
+    let object = rt.intern("o");
+    let mut first = None;
+    let mut last = None;
+    let mut emitted = 0u64;
+    for i in 0..planned {
+        if drop_last && i + 1 == planned {
+            break;
+        }
+        let s = rt.intern(&format!("s{i}"));
+        let id = emit_related(rt, s, relation, object, None);
+        if first.is_none() {
+            first = Some(id);
+        }
+        last = Some(id);
+        emitted += 1;
+    }
+    (
+        first.expect("at least one assert when planned > 0"),
+        last.expect("at least one assert when planned > 0"),
+        emitted,
+    )
+}
+
+fn fill_keyed(rt: &mut Runtime, planned: u64) -> EventId {
+    let relation = rt.intern("relatedTo");
+    let object = rt.intern("o");
+    let mut first = None;
+    for i in 0..planned {
+        let s = rt.intern(&format!("ks{i}"));
+        let id = emit_related(rt, s, relation, object, Some(format!("dk{i}")));
+        if first.is_none() {
+            first = Some(id);
+        }
+    }
+    first.expect("planned > 0")
+}
+
+fn put(metrics: &mut BTreeMap<String, (String, String)>, key: &str, value: impl ToString, unit: &str) {
+    metrics.insert(key.to_string(), (value.to_string(), unit.to_string()));
+}
+
+fn main() {
+    let n = parse_n();
+    let drop_one = sabotage_drop_one();
+    let mut metrics: BTreeMap<String, (String, String)> = BTreeMap::new();
+    put(&mut metrics, "base_n", n, "1");
+
+    let rss_before = vm_rss_bytes();
+
+    for &factor in &[1u64, 2, 4] {
+        let planned = n.saturating_mul(factor);
+        let suffix = size_suffix(factor);
+
+        // Plain ingest + validation + as_of + persist/open/replay + late retract.
+        let mut rt = Runtime::default();
+        let t0 = Instant::now();
+        let (first_id, last_id, emitted) = fill_plain(&mut rt, planned, drop_one && factor == 1);
+        let ingest_ns = t0.elapsed().as_nanos();
+        put(
+            &mut metrics,
+            &format!("ingest_plain.{suffix}"),
+            ingest_ns,
+            "ns",
+        );
+
+        let live = rt.fold().live_count(u64::MAX, 2010) as u64;
+        if live != planned {
+            eprintln!(
+                "plain live_count {live} != planned {planned} (emitted {emitted}, factor {factor})"
+            );
+            process::exit(1);
+        }
+
+        let t1 = Instant::now();
+        let _ = rt.fold().as_of(2010);
+        put(
+            &mut metrics,
+            &format!("as_of.{suffix}"),
+            t1.elapsed().as_nanos(),
+            "ns",
+        );
+
+        let t_claim = Instant::now();
+        let supported = rt.fold().claim_supported_at(first_id, u64::MAX, 2010);
+        put(
+            &mut metrics,
+            &format!("claim_supported_at.{suffix}"),
+            t_claim.elapsed().as_nanos(),
+            "ns",
+        );
+        if !supported {
+            eprintln!("claim_supported_at false for first plain assert");
+            process::exit(1);
+        }
+
+        let dir = scratch_dir(&format!("plain-{suffix}"));
+        let t2 = Instant::now();
+        store::persist(&rt, &dir).expect("persist");
+        put(
+            &mut metrics,
+            &format!("persist.{suffix}"),
+            t2.elapsed().as_nanos(),
+            "ns",
+        );
+
+        let t3 = Instant::now();
+        let opened = store::open(&dir).expect("open");
+        put(
+            &mut metrics,
+            &format!("open.{suffix}"),
+            t3.elapsed().as_nanos(),
+            "ns",
+        );
+
+        if opened.fold().fingerprint() != rt.fold().fingerprint() {
+            eprintln!("fingerprint mismatch after open ({suffix})");
+            process::exit(1);
+        }
+
+        let t4 = Instant::now();
+        opened.replay_check().expect("replay_check");
+        put(
+            &mut metrics,
+            &format!("replay_check.{suffix}"),
+            t4.elapsed().as_nanos(),
+            "ns",
+        );
+
+        if factor == 1 {
+            let events = rt.log().len() as f64;
+            let epa = events / (n as f64);
+            put(&mut metrics, "events_per_assert", format!("{epa:.6}"), "1");
+        }
+
+        let t5 = Instant::now();
+        rt.emit(Op::Retract { event_id: last_id })
+            .expect("late retract");
+        put(
+            &mut metrics,
+            &format!("retract_late.{suffix}"),
+            t5.elapsed().as_nanos(),
+            "ns",
+        );
+        let after = rt.fold().live_count(u64::MAX, 2010) as u64;
+        if after != planned - 1 {
+            eprintln!("after retract live_count {after} != {}", planned - 1);
+            process::exit(1);
+        }
+
+        // Keyed ingest on a fresh runtime (unretracted graph for this measurement).
+        let mut keyed = Runtime::default();
+        let tk = Instant::now();
+        let keyed_first = fill_keyed(&mut keyed, planned);
+        put(
+            &mut metrics,
+            &format!("ingest_keyed.{suffix}"),
+            tk.elapsed().as_nanos(),
+            "ns",
+        );
+        let keyed_live = keyed.fold().live_count(u64::MAX, 2010) as u64;
+        if keyed_live != planned {
+            eprintln!("keyed live_count {keyed_live} != planned {planned}");
+            process::exit(1);
+        }
+        if !keyed
+            .fold()
+            .claim_supported_at(keyed_first, u64::MAX, 2010)
+        {
+            eprintln!("keyed claim_supported_at false");
+            process::exit(1);
+        }
+    }
+
+    match (rss_before, vm_rss_bytes()) {
+        (Some(before), Some(after)) if after >= before => {
+            let delta = after - before;
+            // Approximate: last graph left retracted; use N*4 planned live peak ≈ factor sum.
+            // Prefer bytes / live_count of a dedicated N-sized unretracted graph.
+            let mut sample = Runtime::default();
+            let _ = fill_plain(&mut sample, n, false);
+            let live = sample.fold().live_count(u64::MAX, 2010) as u64;
+            let bpf = if live > 0 { delta / live.max(1) } else { 0 };
+            put(&mut metrics, "bytes_per_fact", bpf, "B");
+        }
+        _ => put(&mut metrics, "bytes_per_fact", "n/a", "n/a"),
+    }
+
+    let expected: [&str; 27] = [
+        "as_of.2n",
+        "as_of.4n",
+        "as_of.n",
+        "base_n",
+        "bytes_per_fact",
+        "claim_supported_at.2n",
+        "claim_supported_at.4n",
+        "claim_supported_at.n",
+        "events_per_assert",
+        "ingest_keyed.2n",
+        "ingest_keyed.4n",
+        "ingest_keyed.n",
+        "ingest_plain.2n",
+        "ingest_plain.4n",
+        "ingest_plain.n",
+        "open.2n",
+        "open.4n",
+        "open.n",
+        "persist.2n",
+        "persist.4n",
+        "persist.n",
+        "replay_check.2n",
+        "replay_check.4n",
+        "replay_check.n",
+        "retract_late.2n",
+        "retract_late.4n",
+        "retract_late.n",
+    ];
+    for key in expected {
+        if !metrics.contains_key(key) {
+            eprintln!("missing metric key {key}");
+            process::exit(1);
+        }
+    }
+
+    for (key, (value, unit)) in &metrics {
+        println!("{key} {value} {unit}");
+    }
+    println!("validated yes");
 }
