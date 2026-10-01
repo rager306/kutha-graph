@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Process: M013 S02 legal fixture reconnaissance
+
+### Process
+
+### Added
+
+- `docs/architecture/legal-fixture-recon.md`: Proposed review mapping law-nexus fixtures to the current two-axis API (Phase 23 / REC-01..03).
+
+### Trajectory
+
+- Active Slice **S02**; `L_delivery=M013-S01-done` until S02 closes. Note `legal-fixture-recon` names ≥10 QUOTE-INDEX cases including sunset C01.
+
 ## 2026-10-01 — Product: M013 S01 benchmark baseline
 
 ### Product
@@ -12,9 +24,13 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `crates/kutha-runtime/benches/baseline.rs` (`[[bench]] harness = false`): relatedTo plain and keyed ingest at N/2N/4N with live_count, fingerprint, claim_supported_at, late retract, 27 sorted metric keys, and fail-closed `KUTHA_BENCH_SABOTAGE=drop_one` (Phase 22 / BASE-01, BASE-03).
 
+### Fixed
+
+- Baseline bench scratch dirs resolve under repo-root `tmp/` via `CARGO_MANIFEST_DIR` (cargo package cwd no longer leaves untracked `crates/kutha-runtime/tmp/`).
+
 ### Trajectory
 
-- `L_delivery=M013-S01-done`; Active Slice **None**. Independent verification passed (`22-VERIFICATION.md`).
+- `L_delivery=M013-S01-done` after Phase 22 verify; Active Slice cleared before S02 lease. Independent verification passed (`22-VERIFICATION.md`).
 - `docs/architecture/benchmark-baseline.md`: measured default-N run, ratios, persist/open at three sizes, proposed target N 1000000 and memory budget 13674000000.
 
 ### Process

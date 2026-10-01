@@ -57,7 +57,12 @@ fn vm_rss_bytes() -> Option<u64> {
 
 fn scratch_dir(tag: &str) -> PathBuf {
     let pid = process::id();
-    let dir = PathBuf::from(format!("tmp/kutha-bench-{tag}-{pid}"));
+    // Resolve to repo-root tmp/ even when cargo runs with package cwd.
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .join("tmp");
+    let _ = std::fs::create_dir_all(&root);
+    let dir = root.join(format!("kutha-bench-{tag}-{pid}"));
     let _ = std::fs::remove_dir_all(&dir);
     dir
 }
