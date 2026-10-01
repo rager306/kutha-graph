@@ -1,5 +1,19 @@
 # Milestones
 
+## v0.05 Dictionaries as facts (Shipped: 2026-10-01)
+
+**Phases completed:** 5 phases, 15 plans, 34 tasks
+
+**Key accomplishments:**
+- `Op::AllowRelation` versioned allowlist facts; admit consults the fold cut; unknown relations still fail closed (FF6)
+- `Op::RegisterRule` registry; Behavior `rule_version` equals definition hash; unknown/mismatched/free-string pins fail closed
+- `Op::PinPolicy` + `RecordAdmission`; `check_admission` on the product path; admission and policy queryable AS OF a cut
+- `Op::RecordAction` binds resolved arguments to admission + policy version; Action + admission survive a later policy pin
+- `derivation_eligible_at` walks `caused_by` for a named two-hop hashed fixture; `inverse_knows` remains the residual automatic cascade
+- Governor observes ALL/RULE/ADM/ACT/DER named oracles; `uv run kutha-gov ci` is 0 HIGH; honeycomb stays Proposed; M012 CLOSED
+
+---
+
 ## v0.04 Single-log SoT + stable references (Shipped: 2026-10-01)
 
 **Phases completed:** 5 phases, 15 plans, 31 tasks

@@ -10,18 +10,9 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.05 Dictionaries as facts
+## Current Milestone: None
 
-**Goal:** Land the leased M012 thawed subset so relation allowlist, rule registry, admission/policy, action record, and multi-hop derivation are log-native facts — without thawing ADR-050 six dictionaries, Cypher/HNSW, legal pack, or M002 Rocks.
-
-**Target features:**
-- Relation allowlist entries as versioned log facts; admit consults the fold cut
-- Rule registry with `rule_version` = definition hash (not free string)
-- Admission status and policy version as bi-temporal meta-facts; `check_admission` on the product path
-- Thin action record binding arguments to admission + policy version
-- Multi-hop / n-ary derivation eligibility beyond one-hop (F4)
-
-**Boundary:** Product crates allowed under M012. No ADR-050 six dictionaries. No Rocks/Cypher/HNSW/legal pack. Honeycomb stays Proposed. Freeze until explicit M002 for Rocks.
+v0.05 shipped 2026-10-01 (M012 S01–S05). Next GSD milestone starts only after an explicit lease in `.kutha/STATE.md` (candidate: benchmark baseline or M002 log durability).
 
 
 ## Business Context
@@ -160,11 +151,11 @@ Harness compact index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov m
 
 ## Current State
 
-Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), and **v0.04 — Single-log SoT + stable references** (2026-10-01, M012a S01–S06). M011 tail S04–S08 is in crates and harness GATE needles; one e2e fixture separates preserved history, current evidence, and allowed action. v0.03 (harness/docs only) delivered H5: lean `AGENTS.md`, Proposed-only ADR corrections for F1–F8 (`docs/architecture/semantic-gap-review.md`), and a semantic governor (`kutha-gov selftest`, assertion-proving kinds, cited-lease and reference checks). Honeycomb cells stay Proposed. Product stays `0.0.0`.
+Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), **v0.04 — Single-log SoT + stable references** (2026-10-01, M012a S01–S06), and **v0.05 — Dictionaries as facts** (2026-10-01, M012 S01–S05). M011 tail S04–S08 is in crates and harness GATE needles; one e2e fixture separates preserved history, current evidence, and allowed action. v0.03 (harness/docs only) delivered H5: lean `AGENTS.md`, Proposed-only ADR corrections for F1–F8 (`docs/architecture/semantic-gap-review.md`), and a semantic governor (`kutha-gov selftest`, assertion-proving kinds, cited-lease and reference checks). Honeycomb cells stay Proposed. Product stays `0.0.0`.
 
 ## Next Milestone Goals
 
-M012 is leased. After this milestone: M002 (log durability protocol first; Rocks for indexes only). Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.
+Next candidate: benchmark baseline after M012a indexes, or M002 (log durability protocol first; Rocks for indexes only). Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.
 
 ## Context
 
@@ -172,10 +163,10 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 
 **Harness lease** (process intent, not GSD memory, not product SoT): `.kutha/STATE.md`
 
-- Active Milestone: **M012**
+- Active Milestone: **M012** (CLOSED on ROADMAP; Active Slice None)
 - Active Slice: **None**
 - Phase: **H5**
-- Lifecycles: `L_map=honeycomb-proposed` · `L_delivery=M012-leased` · `L_capability=ff5-green`
+- Lifecycles: `L_map=honeycomb-proposed` · `L_delivery=M012-S05-done` · `L_capability=ff5-green`
 - Next: Freeze until STATE names M002+ (or another explicit lease). Do not start a legal pack. Green governor ≠ ADR Accepted ≠ L_capability.
 
 GSD files live under `.planning/`. **Never overwrite** `.kutha/STATE.md` with GSD STATE.
@@ -228,4 +219,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-01 after leasing M012 / starting GSD v0.05*
+*Last updated: 2026-10-01 after shipping v0.05 / M012 CLOSED*
