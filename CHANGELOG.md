@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Process: glob_max_lines and PLAN artifact budget
+
+### Process
+
+### Added
+
+- Kind `glob_max_lines`: glob matches counted with `wc -l`, optional `min_phase` (phases 22+), optional `max_files_per_dir`. Excess lines are HIGH `max-lines`; too many files in one phase directory are HIGH `max-files`. Derived selftest mutation appends newlines to the first sorted match.
+- Check `artifact-budget` (PLAN step only) and invariant `I-artifact-budget`. Unknown kind stays fail-closed HIGH.
+
+### Trajectory
+
+- No lease or honeycomb change in this commit. Cells remain **Proposed**.
+
 ## 2026-10-02 — Product: O(1) kutha:allows admit lease
 
 ### Product

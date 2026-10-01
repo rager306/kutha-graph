@@ -641,6 +641,7 @@ checks:
           - "cite_equals"
           - "refs_resolve"
           - "file_max_lines"
+          - "glob_max_lines"
           - "run_selftest"
           - "invariants.yaml"
           - "bridges.yaml"
@@ -1187,4 +1188,16 @@ checks:
           - "L_map="
           - "L_capability="
           - "M011 is active"
+
+  - id: artifact-budget
+    description: >-
+      v0.06 planning artifacts from phase 22 onward stay within declared
+      line and per-directory file budgets (D-02, D-04). PLAN step in 28-01;
+      remaining globs in 28-01 task 3.
+    steps:
+      - kind: glob_max_lines
+        glob: .planning/phases/*-*/*-PLAN.md
+        min_phase: 22
+        max: 150
+        max_files_per_dir: 2
 

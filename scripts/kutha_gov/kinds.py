@@ -40,6 +40,7 @@ ALLOWED_KINDS: frozenset[str] = frozenset(
         "cite_equals",
         "refs_resolve",
         "file_max_lines",
+        "glob_max_lines",
     }
 )
 
@@ -1621,6 +1622,101 @@ def _kind_refs_resolve(check: str, step: Step, ctx: Context, result: CheckResult
             )
 
 
+_PHASE_DIR_RE = re.compile(r"^(\d+)-")
+
+
+def _planning_phase_nn(rel: str) -> int | None:
+    parts = Path(rel).as_posix().split("/")
+    if len(parts) < 3 or parts[0] != ".planning" or parts[1] != "phases":
+        return None
+    match = _PHASE_DIR_RE.match(parts[2])
+    if match is None:
+        return None
+    return int(match.group(1))
+
+
+def _glob_max_lines_hits(step: Step, root: Path) -> list[Path]:
+    pattern = _str(step, "glob")
+    if not pattern:
+        return []
+    min_phase = _int(step, "min_phase", 0)
+    hits: list[Path] = []
+    for path in sorted(root.glob(pattern)):
+        if not path.is_file():
+            continue
+        rel = path.relative_to(root).as_posix()
+        if min_phase > 0:
+            nn = _planning_phase_nn(rel)
+            if nn is None or nn < min_phase:
+                continue
+        hits.append(path)
+    return hits
+
+
+def glob_max_lines_mutation_target(step: Step, root: Path) -> tuple[str, str] | None:
+    pattern = _str(step, "glob")
+    maximum = _int(step, "max", -1)
+    if not pattern or maximum < 0:
+        return None
+    hits = _glob_max_lines_hits(step, root)
+    if not hits:
+        return None
+    rel = hits[0].relative_to(root).as_posix()
+    return rel, "\n" * (maximum + 1)
+
+
+def _kind_glob_max_lines(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
+    pattern = _str(step, "glob")
+    maximum = _int(step, "max", -1)
+    per_dir = _int(step, "max_files_per_dir", -1)
+    if not pattern:
+        result.scanned += 1
+        result.findings.append(Finding(check, Severity.HIGH, "max-lines", "glob is required"))
+        return
+    if maximum < 0:
+        result.scanned += 1
+        result.findings.append(
+            Finding(check, Severity.HIGH, "max-lines", "max must be a non-negative integer")
+        )
+        return
+    counts: dict[str, int] = {}
+    for path in _glob_max_lines_hits(step, ctx.root):
+        rel = path.relative_to(ctx.root).as_posix()
+        result.scanned += 1
+        text = ctx.read(rel)
+        if text is None:
+            _high_missing(check, rel, result)
+            continue
+        n = _wc_lines(text)
+        if n > maximum:
+            message = _fmt(
+                _str(step, "message", "{path} has {n} lines (wc -l), max {max}"),
+                path=rel,
+                n=n,
+                max=maximum,
+            )
+            result.findings.append(
+                Finding(check, _severity(step), _category(step, "max-lines"), message, rel)
+            )
+        parent = Path(rel).parent.as_posix()
+        counts[parent] = counts.get(parent, 0) + 1
+    if per_dir < 0:
+        return
+    for directory in sorted(counts):
+        n_files = counts[directory]
+        if n_files <= per_dir:
+            continue
+        message = _fmt(
+            "{dir} has {n} files, max {max_files_per_dir}",
+            dir=directory,
+            n=n_files,
+            max_files_per_dir=per_dir,
+        )
+        result.findings.append(
+            Finding(check, _severity(step), _category(step, "max-files"), message, directory)
+        )
+
+
 def file_max_lines_mutation_target(step: Step, root: Path) -> tuple[str, str] | None:
     path = _str(step, "path")
     maximum = _int(step, "max", -1)
@@ -1685,4 +1781,5 @@ RUNNERS: dict[str, Runner] = {
     "cite_equals": _kind_cite_equals,
     "refs_resolve": _kind_refs_resolve,
     "file_max_lines": _kind_file_max_lines,
+    "glob_max_lines": _kind_glob_max_lines,
 }

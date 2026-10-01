@@ -1060,5 +1060,87 @@ class FileMaxLinesTests(unittest.TestCase):
         self.assertLessEqual(agents.count("\n"), 110)
 
 
+class GlobMaxLinesTests(unittest.TestCase):
+    def test_glob_max_lines_high_when_tempfile_exceeds_max(self) -> None:
+        root = _rust_tree({".planning/phases/22-x/22-PLAN.md": "a\nb\nc\n"})
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_max_lines",
+                "glob": ".planning/phases/*-*/*-PLAN.md",
+                "max": 2,
+            },
+        )
+        self.assertEqual(["max-lines"], _rust_highs(result))
+
+    def test_glob_max_lines_at_budget_passes(self) -> None:
+        root = _rust_tree({".planning/phases/22-x/22-PLAN.md": "a\nb\n"})
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_max_lines",
+                "glob": ".planning/phases/*-*/*-PLAN.md",
+                "max": 2,
+            },
+        )
+        self.assertEqual([], _rust_highs(result))
+
+    def test_glob_max_lines_high_when_too_many_files_per_dir(self) -> None:
+        root = _rust_tree(
+            {
+                ".planning/phases/22-x/22-01-PLAN.md": "a\n",
+                ".planning/phases/22-x/22-02-PLAN.md": "a\n",
+                ".planning/phases/22-x/22-03-PLAN.md": "a\n",
+            }
+        )
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_max_lines",
+                "glob": ".planning/phases/*-*/*-PLAN.md",
+                "max": 150,
+                "max_files_per_dir": 2,
+                "min_phase": 22,
+            },
+        )
+        self.assertEqual(["max-files"], _rust_highs(result))
+
+    def test_glob_max_lines_ignores_phase_below_min_phase(self) -> None:
+        root = _rust_tree(
+            {
+                ".planning/phases/21-old/21-PLAN.md": "a\nb\nc\n",
+                ".planning/phases/22-new/22-PLAN.md": "a\n",
+            }
+        )
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_max_lines",
+                "glob": ".planning/phases/*-*/*-PLAN.md",
+                "max": 2,
+                "min_phase": 22,
+            },
+        )
+        self.assertEqual([], _rust_highs(result))
+
+    def test_glob_max_lines_missing_glob_is_high(self) -> None:
+        root = _rust_tree({".planning/phases/22-x/22-PLAN.md": "a\n"})
+        result = _rust_run(root, {"kind": "glob_max_lines", "max": 2})
+        self.assertEqual(["max-lines"], _rust_highs(result))
+
+    def test_glob_max_lines_max_less_than_zero_is_high(self) -> None:
+        root = _rust_tree({".planning/phases/22-x/22-PLAN.md": "a\n"})
+        result = _rust_run(
+            root,
+            {"kind": "glob_max_lines", "glob": ".planning/phases/*-*/*-PLAN.md", "max": -1},
+        )
+        self.assertEqual(["max-lines"], _rust_highs(result))
+
+    def test_glob_max_lines_unknown_kind_stays_high(self) -> None:
+        root = _rust_tree({".planning/phases/22-x/22-PLAN.md": "a\n"})
+        result = _rust_run(root, {"kind": "not_a_kind"})
+        self.assertEqual(["unknown-kind"], _rust_highs(result))
+
+
 if __name__ == "__main__":
     unittest.main()
