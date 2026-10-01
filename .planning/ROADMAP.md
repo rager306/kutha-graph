@@ -130,7 +130,7 @@ Plans:
 
 Plans:
 **Wave 1**
-- [ ] 27-01-PLAN.md — RED facade statute compile + unknown-relation admit oracle
+- [x] 27-01-PLAN.md — RED facade statute compile + unknown-relation admit oracle
 
 **Wave 2**
 - [ ] 27-02-PLAN.md — one pipeline, src split ≤800, facade, bench ≤10%, full ci
