@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: M012 S05 two-hop derivation eligibility
+
+### Product
+
+### Added
+
+- `derivation_eligible_at` walks `caused_by` for a named two-hop hashed fixture. Retracting the root Assert drops hop2 eligibility while the hop2 fact may stay live. persist/open reconstructs that picture from the log.
+- `inverse_knows` remains the residual automatic cascade (empty pin, knows-only) with a named guard. Hashed user Behavior chains are the leased follow-on.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. Active Slice remains **S05**. Freeze until M002 unchanged. Not ADR-050 six dictionaries. Not a MATCH compiler or provenance polynomials.
+
 ## 2026-10-01 — Process: lease M012 Active Slice S05
 
 ### Process

@@ -2,7 +2,7 @@
 //! Walks `caused_by`; not a MATCH compiler or provenance-polynomial evaluator.
 
 use kutha_common::{rule_definition_hash, EventId, Op};
-use kutha_runtime::Runtime;
+use kutha_runtime::{store, Runtime};
 
 fn register_rule_id(rt: &Runtime, definition: &str) -> EventId {
     rt.log()
@@ -279,4 +279,52 @@ fn inverse_knows_cascade_is_residual_spike() {
         inverse_knows_rows(&rt).len(),
         "hashed follow-on must not append another inverse_knows"
     );
+}
+
+fn persist_dir() -> std::path::PathBuf {
+    std::env::temp_dir().join(format!(
+        "kutha-m012-s05-{}",
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ))
+}
+
+#[test]
+fn persist_open_reconstructs_two_hop_eligibility() {
+    let mut rt = Runtime::default();
+    let (_cause_p, hop1, hop2) = emit_two_hop_chain(&mut rt);
+    let live_dir = persist_dir();
+    store::persist(&rt, &live_dir).unwrap();
+    let opened = store::open(&live_dir).unwrap();
+    assert!(
+        opened.derivation_eligible_at(hop1, u64::MAX, 2017),
+        "opened hop1 must stay eligible"
+    );
+    assert!(
+        opened.derivation_eligible_at(hop2, u64::MAX, 2017),
+        "opened hop2 must stay eligible (DER-01, DER-02)"
+    );
+    let _ = std::fs::remove_dir_all(&live_dir);
+
+    let mut rt = Runtime::default();
+    let (cause_p, _hop1, hop2) = emit_two_hop_chain(&mut rt);
+    rt.emit(Op::Retract { event_id: cause_p }).unwrap();
+    let retract_dir = persist_dir();
+    store::persist(&rt, &retract_dir).unwrap();
+    let opened = store::open(&retract_dir).unwrap();
+    assert!(
+        opened
+            .fold()
+            .facts()
+            .iter()
+            .any(|f| f.claim_id == hop2 && f.is_live_at(u64::MAX, 2017)),
+        "opened hop2 fact must still be live"
+    );
+    assert!(
+        !opened.derivation_eligible_at(hop2, u64::MAX, 2017),
+        "opened hop2 must be ineligible after persisted root Retract (T-21-04)"
+    );
+    let _ = std::fs::remove_dir_all(&retract_dir);
 }
