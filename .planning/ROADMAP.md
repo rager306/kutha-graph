@@ -126,7 +126,14 @@ Plans:
   3. One example and one integration test use only the facade and run the statute-shaped AS OF scenario.
   4. The baseline re-run shows no regression over 10 percent.
 
-**Plans**: 2 plans max
+**Plans**: 2 plans
+
+Plans:
+**Wave 1**
+- [ ] 27-01-PLAN.md — RED facade statute compile + unknown-relation admit oracle
+
+**Wave 2**
+- [ ] 27-02-PLAN.md — one pipeline, src split ≤800, facade, bench ≤10%, full ci
 
 ### Phase 28: Independent verification and artifact budget
 
