@@ -152,7 +152,7 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 
 - [x] **S01: Benchmark baseline and size target** `risk:medium` `depends:[]`
   > After this: a bench harness with no new dependencies measures ingest, `as_of`, retract, persist, open, and replay at three sizes, reports bytes per fact, and states a target N; one command re-runs it; numbers land in a dated note, not in an ADR.
-- [ ] **S02: Legal fixture reconnaissance** `risk:high` `depends:[]`
+- [x] **S02: Legal fixture reconnaissance** `risk:high` `depends:[]`
   > After this: a note lists real-text cases from law-nexus (FZ-44 snippets, consultant sources with editions, the synthetic sunset clause), maps each against the two-axis model, and names the cases the current model cannot express. No product code.
 - [ ] **S03: Fold indexes for ingest** `risk:medium` `depends:[S01]`
   > After this: delivery-key retry, claim admit, retract, correct, and follow-ons do no whole-log or whole-fact scans; a scaling oracle is RED before the change and GREEN after; the baseline is re-measured.
