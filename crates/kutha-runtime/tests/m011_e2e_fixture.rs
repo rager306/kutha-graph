@@ -1,6 +1,6 @@
 //! M011 S08 candidate fixture; semantic-contract observations at named cuts.
 
-use kutha_common::{EventId, Op, SupportPolarity, TermId};
+use kutha_common::{rule_definition_hash, EventId, Op, SupportPolarity, TermId};
 use kutha_runtime::{store, GraphFold, Runtime, RuntimeError};
 
 /// Year-like valid-time instants (same as S04).
@@ -50,6 +50,13 @@ fn build_through_t1() -> Fixture {
     let related = rt.intern("relatedTo");
     let true_ = rt.intern("true");
     let not_p = rt.intern("not-P");
+    let pin = rule_definition_hash("derive_pq");
+    rt.emit(Op::RegisterRule {
+        definition: "derive_pq".into(),
+        valid_from: VF_WIDE,
+        valid_to: None,
+    })
+    .unwrap();
 
     let first = rt
         .emit(Op::Assert {
@@ -91,7 +98,7 @@ fn build_through_t1() -> Fixture {
         .emit(Op::Behavior {
             name: "derive_pq".into(),
             caused_by: claim_p,
-            rule_version: "r1".into(),
+            rule_version: pin,
             subject: q,
             relation: related,
             object: true_,
@@ -157,7 +164,7 @@ impl Fixture {
             self.claim_q,
             vec![self.claim_p],
             vec![self.event_a, self.event_b],
-            "r1",
+            rule_definition_hash("derive_pq"),
             self.t1,
             VT_INTERIOR,
         )
@@ -304,7 +311,7 @@ fn e2e_justification_cites_sources_and_rejects_stale_admission() {
         .find(|j| j.justification_id == jid)
         .expect("t1 row");
     assert_eq!(row.source_event_ids, vec![fx.event_a, fx.event_b]);
-    assert_eq!(row.rule_version, "r1");
+    assert_eq!(row.rule_version, rule_definition_hash("derive_pq"));
     assert_eq!(row.target_claim, fx.claim_q);
     fx.rt.check_admission(&jid).unwrap();
 
@@ -325,7 +332,7 @@ fn e2e_justification_cites_sources_and_rejects_stale_admission() {
         fx.claim_q,
         vec![fx.claim_p],
         vec![fx.event_b],
-        "r1",
+        rule_definition_hash("derive_pq"),
         t2,
         VT_INTERIOR,
     );
@@ -358,7 +365,7 @@ fn e2e_incremental_matches_reconstruct_after_discarding_leases() {
         fx.claim_q,
         vec![fx.claim_p],
         vec![fx.event_b],
-        "r1",
+        rule_definition_hash("derive_pq"),
         t2,
         VT_INTERIOR,
     );

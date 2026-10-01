@@ -1,6 +1,6 @@
 //! M011 S01: independent supports share a claim_id; retract one, the other remains.
 
-use kutha_common::{EventId, Op};
+use kutha_common::{rule_definition_hash, EventId, Op};
 use kutha_runtime::Runtime;
 
 #[test]
@@ -116,6 +116,12 @@ fn derived_q_loses_eligibility_when_last_premise_support_withdrawn() {
     let q = rt.intern("Q");
     let rel = rt.intern("relatedTo");
     let true_ = rt.intern("true");
+    rt.emit(Op::RegisterRule {
+        definition: "derive_pq".into(),
+        valid_from: 2010,
+        valid_to: None,
+    })
+    .unwrap();
 
     let first = rt
         .emit(Op::Assert {
@@ -157,7 +163,7 @@ fn derived_q_loses_eligibility_when_last_premise_support_withdrawn() {
         .emit(Op::Behavior {
             name: "derive_pq".into(),
             caused_by: claim_p,
-            rule_version: String::new(),
+            rule_version: rule_definition_hash("derive_pq"),
             subject: q,
             relation: rel,
             object: true_,

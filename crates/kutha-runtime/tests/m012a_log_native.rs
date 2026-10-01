@@ -1,6 +1,6 @@
 //! M012a S01 / LOG-01: quantum outcomes are log records; the outcomes file is a lease.
 
-use kutha_common::Op;
+use kutha_common::{rule_definition_hash, Op};
 use kutha_runtime::{store, OutcomeDisposition, Runtime};
 
 #[test]
@@ -153,6 +153,13 @@ fn derive_pq_with_justification() -> (Runtime, String) {
     let q = rt.intern("Q");
     let related = rt.intern("relatedTo");
     let true_ = rt.intern("true");
+    let pin = rule_definition_hash("derive_pq");
+    rt.emit(Op::RegisterRule {
+        definition: "derive_pq".into(),
+        valid_from: 2010,
+        valid_to: None,
+    })
+    .unwrap();
     let first = rt
         .emit(Op::Assert {
             subject: a,
@@ -184,7 +191,7 @@ fn derive_pq_with_justification() -> (Runtime, String) {
         .emit(Op::Behavior {
             name: "derive_pq".into(),
             caused_by: claim_p,
-            rule_version: "r1".into(),
+            rule_version: pin.clone(),
             subject: q,
             relation: related,
             object: true_,
@@ -204,7 +211,7 @@ fn derive_pq_with_justification() -> (Runtime, String) {
         claim_q,
         vec![claim_p],
         vec![event_a, event_b],
-        "r1",
+        pin.clone(),
         t1,
         2017,
     );

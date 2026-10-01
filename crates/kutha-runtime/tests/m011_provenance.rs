@@ -1,7 +1,7 @@
 //! M011 S07 provenance digest; ADR-060 obligation 2.
 //! State fold fingerprint stays Facts-only; lineage mix is a separate surface.
 
-use kutha_common::{EventId, Op};
+use kutha_common::{rule_definition_hash, EventId, Op};
 use kutha_runtime::Runtime;
 
 /// Two valid priors plus a Behavior caused_by the first, name `derive_pq`, pin `r1`.
@@ -11,6 +11,13 @@ fn baseline_derive_pq_r1() -> (Runtime, EventId, EventId) {
     let q = rt.intern("Q");
     let rel = rt.intern("relatedTo");
     let true_ = rt.intern("true");
+    let pin = rule_definition_hash("derive_pq");
+    rt.emit(Op::RegisterRule {
+        definition: "derive_pq".into(),
+        valid_from: 2010,
+        valid_to: None,
+    })
+    .unwrap();
 
     let a1 = rt
         .emit(Op::Assert {
@@ -44,7 +51,7 @@ fn baseline_derive_pq_r1() -> (Runtime, EventId, EventId) {
     rt.emit(Op::Behavior {
         name: "derive_pq".into(),
         caused_by: a1_id,
-        rule_version: "r1".into(),
+        rule_version: pin,
         subject: q,
         relation: rel,
         object: true_,
@@ -57,12 +64,8 @@ fn baseline_derive_pq_r1() -> (Runtime, EventId, EventId) {
 }
 
 fn rebuild_cloned(rt: &Runtime, events: Vec<kutha_common::Event>) -> Runtime {
-    Runtime::from_dict_and_events(
-        rt.dictionary().strings().to_vec(),
-        events,
-        rt.max_cascade,
-    )
-    .unwrap()
+    Runtime::from_dict_and_events(rt.dictionary().strings().to_vec(), events, rt.max_cascade)
+        .unwrap()
 }
 
 #[test]

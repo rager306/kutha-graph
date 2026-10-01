@@ -1,6 +1,6 @@
 //! M012a S02 / REF-01: Retract targets the minting EventId, not fold-local seq.
 
-use kutha_common::{Event, EventId, Op};
+use kutha_common::{rule_definition_hash, Event, EventId, Op};
 use kutha_runtime::{Runtime, RuntimeError};
 
 #[test]
@@ -76,6 +76,13 @@ fn justification_cites_source_event_ids_survive_fork() {
     let q = rt.intern("Q");
     let rel = rt.intern("relatedTo");
     let true_ = rt.intern("true");
+    let pin = rule_definition_hash("derive_pq");
+    rt.emit(Op::RegisterRule {
+        definition: "derive_pq".into(),
+        valid_from: 0,
+        valid_to: None,
+    })
+    .unwrap();
     let minted = rt
         .emit(Op::Assert {
             subject: a,
@@ -93,7 +100,7 @@ fn justification_cites_source_event_ids_survive_fork() {
         .emit(Op::Behavior {
             name: "derive_pq".into(),
             caused_by: minting,
-            rule_version: "r1".into(),
+            rule_version: pin.clone(),
             subject: q,
             relation: rel,
             object: true_,
@@ -109,7 +116,7 @@ fn justification_cites_source_event_ids_survive_fork() {
         .find(|f| f.claim_id == claim_q)
         .unwrap()
         .ingested_at;
-    let jid = rt.record_justification(claim_q, vec![minting], vec![minting], "r1", t1, 0);
+    let jid = rt.record_justification(claim_q, vec![minting], vec![minting], pin.clone(), t1, 0);
     rt.check_admission(&jid).unwrap();
 
     let fork = rt.fork_at(rt.log().len());
@@ -145,6 +152,13 @@ fn rebuilt_fold_renumbered_seqs_apply_same_retract_and_cite_payloads() {
     let q = rt.intern("Q");
     let rel = rt.intern("relatedTo");
     let true_ = rt.intern("true");
+    let pin = rule_definition_hash("derive_pq");
+    rt.emit(Op::RegisterRule {
+        definition: "derive_pq".into(),
+        valid_from: 0,
+        valid_to: None,
+    })
+    .unwrap();
     rt.emit(Op::Assert {
         subject: filler_s,
         relation: rel,
@@ -173,7 +187,7 @@ fn rebuilt_fold_renumbered_seqs_apply_same_retract_and_cite_payloads() {
         .emit(Op::Behavior {
             name: "derive_pq".into(),
             caused_by: minting,
-            rule_version: "r1".into(),
+            rule_version: pin.clone(),
             subject: q,
             relation: rel,
             object: true_,
@@ -189,7 +203,7 @@ fn rebuilt_fold_renumbered_seqs_apply_same_retract_and_cite_payloads() {
         .find(|f| f.claim_id == claim_q)
         .unwrap()
         .ingested_at;
-    let jid = rt.record_justification(claim_q, vec![minting], vec![minting], "r1", t1, 0);
+    let jid = rt.record_justification(claim_q, vec![minting], vec![minting], pin.clone(), t1, 0);
     rt.emit(Op::Retract { event_id: minting }).unwrap();
 
     let live = rt
