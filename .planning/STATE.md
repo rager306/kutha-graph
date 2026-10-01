@@ -4,12 +4,12 @@ milestone: v0.05
 milestone_name: Dictionaries as facts
 current_phase: 21
 current_phase_name: Multi-hop derivation
-current_plan: Not started
-status: planning
-stopped_at: Phase 20 complete, ready to plan Phase 21
-last_updated: "2026-10-01T03:47:41.195Z"
+current_plan: 01
+status: ready_to_execute
+stopped_at: Phase 21 plans created, ready to execute 21-01
+last_updated: "2026-10-01T03:55:00.000Z"
 last_activity: 2026-10-01
-last_activity_desc: Phase 20 complete, transitioned to Phase 21
+last_activity_desc: Phase 21 plans created (21-01..03)
 state_head: f656cf6b71f672c59d0c62e05a87af0d94d35417
 progress:
   total_phases: 5
@@ -26,7 +26,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.05 Phase 20 — Thin action record (M012 S04) executed (20-01..03). Independent `/gsd-verify-work` may still kill-test. Do not clear S04. Do not start Phase 21 until STATE names S05.
+**Current focus:** v0.05 Phase 21 — Multi-hop derivation (M012 S05) planned (21-01..03). Execute under Active Slice S05. Do not clear S05 until Phase 21 verification passes.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -35,10 +35,10 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 ## Current Position
 
 Phase: 21 of 21 (Multi-hop derivation)
-Current Plan: Not started
+Current Plan: 01 (21-01 tracer)
 Total Plans in Phase: 3
-Status: Ready to plan
-Last activity: 2026-10-01 — Phase 20 complete, transitioned to Phase 21
+Status: Ready to execute
+Last activity: 2026-10-01 — Phase 21 plans created (21-01..03)
 
 Progress: [█████████░] 95% (v0.05)
 
@@ -49,7 +49,7 @@ Progress: [█████████░] 95% (v0.05)
 - Average duration: ~2–5min typical; Phase 11 outliers 16–93min
 - v0.04: 15 plans (Phases 12–16), all complete 2026-10-01
 
-**By Phase:** v0.01 9/9 · v0.02 11/11 · v0.03 8/8 · v0.04 15/15 · v0.05 0/?
+**By Phase:** v0.01 9/9 · v0.02 11/11 · v0.03 8/8 · v0.04 15/15 · v0.05 12/15 (Phase 21 planned 0/3)
 
 **Recent Trend:** v0.04 crate work closed; v0.05 product crates allowed under M012 thawed subset.
 **Per-Plan Metrics:**
