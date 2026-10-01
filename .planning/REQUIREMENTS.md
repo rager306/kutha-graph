@@ -29,7 +29,7 @@ Closing leased product gaps F4/F5 from `docs/architecture/semantic-gap-review.md
 ### Action record (F5 / ADR-051)
 
 - [x] **ACT-01**: A thin Action record (or Op) binds resolved arguments to the admission decision and policy version
-- [ ] **ACT-02**: Named test shows Action + admission AS OF a prior cut after a later policy change
+- [x] **ACT-02**: Named test shows Action + admission AS OF a prior cut after a later policy change
 
 ### Multi-hop derivation (F4)
 
@@ -72,7 +72,7 @@ Closing leased product gaps F4/F5 from `docs/architecture/semantic-gap-review.md
 | ADM-02 | Phase 19 | Complete |
 | ADM-03 | Phase 19 | Complete |
 | ACT-01 | Phase 20 | Complete |
-| ACT-02 | Phase 20 | Pending |
+| ACT-02 | Phase 20 | Complete |
 | DER-01 | Phase 21 | Pending |
 | DER-02 | Phase 21 | Pending |
 | DER-03 | Phase 21 | Pending |
