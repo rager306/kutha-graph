@@ -1250,3 +1250,27 @@ checks:
         needles: ["independent: true", "verifier_model", "commands:", "read_only_inputs:", "exit:"]
         require: all
 
+  - id: id-map-cite
+    description: >-
+      One Id map table lives in docs/process/gsd-auto-contract.md; both
+      ROADMAPs link to § Id map and must not restate the table header (D-06).
+    steps:
+      - kind: file_contains
+        path: docs/process/gsd-auto-contract.md
+        needles: ["## Id map", "GSD version", "v0.06"]
+        require: all
+      - kind: file_contains
+        path: .planning/ROADMAP.md
+        needles: ["docs/process/gsd-auto-contract.md", "Id map"]
+        require: all
+      - kind: file_contains
+        path: .kutha/ROADMAP.md
+        needles: ["docs/process/gsd-auto-contract.md", "Id map"]
+        require: all
+      - kind: file_absent
+        path: .planning/ROADMAP.md
+        needles: ["| GSD version | Phases | Harness"]
+      - kind: file_absent
+        path: .kutha/ROADMAP.md
+        needles: ["| GSD version | Phases | Harness"]
+

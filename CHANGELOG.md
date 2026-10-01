@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Process: Id map cite from governor and ROADMAPs
+
+### Process
+
+### Added
+
+- Invariant `I-id-map` and check `id-map-cite`: the Id map table stays in `docs/process/gsd-auto-contract.md`; `.planning/ROADMAP.md` and `.kutha/ROADMAP.md` link to § Id map and must not restate the table header.
+
+### Trajectory
+
+- No lease or honeycomb change in this commit. Cells remain **Proposed**.
+
 ## 2026-10-02 — Process: remaining artifact budgets and verification independence
 
 ### Process

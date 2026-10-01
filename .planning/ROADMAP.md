@@ -4,7 +4,11 @@
 
 GSD overlay tracks the steel thread already in crates — not honeycomb waterfall. Harness delivery stays in `.kutha/STATE.md` / `.kutha/ROADMAP.md`. Do not plan ADR-010–093 as sequential GSD phases.
 
-v0.01–v0.05 are shipped. **v0.05** delivered M012 (dictionaries as facts): allowlist as log facts, rule registry (`rule_version` = hash), admission/policy meta-facts, thin action record, multi-hop derivation eligibility. **v0.06** (harness M013) answers the post-M012 review: baseline and target N, legal fixture reconnaissance, fold indexes, genesis log, dictionary entries as facts, one write path with a public facade, and an independent verification gate. Honeycomb stays Proposed. ADR-050 six dictionaries and M002 Rocks stay frozen until STATE names them. Id map and run protocol: `docs/process/gsd-auto-contract.md`.
+v0.01–v0.05 are shipped. **v0.05** delivered M012 (dictionaries as facts): allowlist as log facts, rule registry (`rule_version` = hash), admission/policy meta-facts, thin action record, multi-hop derivation eligibility. **v0.06** (harness M013) answers the post-M012 review: baseline and target N, legal fixture reconnaissance, fold indexes, genesis log, dictionary entries as facts, one write path with a public facade, and an independent verification gate. Honeycomb stays Proposed. ADR-050 six dictionaries and M002 Rocks stay frozen until STATE names them. Run protocol: `docs/process/gsd-auto-contract.md`.
+
+## Id map
+
+See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP.
 
 ## Milestones
 

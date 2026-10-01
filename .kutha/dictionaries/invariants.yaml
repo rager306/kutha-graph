@@ -267,3 +267,9 @@ invariants:
     source: ".planning/phases/28-independent-verification-and-artifact-budget/28-CONTEXT.md"
     disposition: check
     check: verification-independent
+
+  - id: I-id-map
+    claim: "One Id map table lives in docs/process/gsd-auto-contract.md; both ROADMAPs link to it and do not restate the table"
+    source: ".planning/phases/28-independent-verification-and-artifact-budget/28-CONTEXT.md"
+    disposition: check
+    check: id-map-cite

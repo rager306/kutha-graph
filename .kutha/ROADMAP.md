@@ -4,6 +4,10 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 **Vision:** Event-sourced bi-temporal graph engine; LLM proposes; log and dictionaries own audited truth. Wedge: legal temporal agents.
 
+## Id map
+
+See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
+
 ## M001: Legal PIT steel thread — CLOSED
 
 **Success:** same log, two valid-times, different live triples; replay bit-stable; CSR cut agrees with fold. Cosine is not the oracle.
@@ -199,8 +203,6 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 ## Later milestones (not active)
 
 Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is leased. M014 and M015 are proposed and need their own lease. M002+ stay frozen until leased.
-
-Id map and controller protocol: `docs/process/gsd-auto-contract.md`.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
