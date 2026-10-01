@@ -96,3 +96,14 @@ fn admission_and_policy_visible_on_as_of_after_later_pin() {
         "as_of(2010) after later PinPolicy must contain a kutha:admission triple (cut A={cut_a})"
     );
 }
+
+#[test]
+fn genesis_allow_visible_on_as_of() {
+    let mut rt = Runtime::default();
+    let allows = rt.intern("kutha:allows");
+    let triples = rt.fold().as_of(0);
+    assert!(
+        triples.iter().any(|&(_, rel, _)| rel == allows),
+        "as_of(0) must contain a kutha:allows triple (genesis allow is a live fact, not a side-table entry)"
+    );
+}

@@ -11,6 +11,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Added
 
 - Integration test `m013_dictionary_facts::admission_and_policy_visible_on_as_of_after_later_pin` (D-08 RED): after `PinPolicy` + `record_justification` + a later `PinPolicy`, `fold.as_of(2010)` must contain interned `kutha:policy` and `kutha:admission` triples (same walk as FF5). Fails today: those rows live in fold side tables. Wiring is 26-02.
+- Integration test `m013_dictionary_facts::genesis_allow_visible_on_as_of` (D-08 RED): `Runtime::default()` then intern `kutha:allows`; `fold.as_of(0)` must contain that relation. Fails today: genesis is a non-fact allow-entry. Do not intern extra YAML names.
 
 ### Trajectory
 
