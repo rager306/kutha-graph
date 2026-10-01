@@ -18,6 +18,7 @@ fn parse_n() -> u64 {
 }
 
 fn sabotage_drop_one() -> bool {
+    // D-05: KUTHA_BENCH_SABOTAGE=drop_one must exit non-zero (live_count != planned).
     env::var("KUTHA_BENCH_SABOTAGE").ok().as_deref() == Some("drop_one")
 }
 

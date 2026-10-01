@@ -10,7 +10,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Added
 
-- `crates/kutha-runtime/benches/baseline.rs` (`[[bench]] harness = false`): relatedTo plain and keyed ingest at N/2N/4N with live_count, fingerprint, claim_supported_at, late retract, and 27 sorted metric keys (Phase 22 / BASE-01).
+- `crates/kutha-runtime/benches/baseline.rs` (`[[bench]] harness = false`): relatedTo plain and keyed ingest at N/2N/4N with live_count, fingerprint, claim_supported_at, late retract, 27 sorted metric keys, and fail-closed `KUTHA_BENCH_SABOTAGE=drop_one` (Phase 22 / BASE-01, BASE-03).
 
 ### Trajectory
 
