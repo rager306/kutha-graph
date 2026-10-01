@@ -125,3 +125,49 @@ fn fork_at_parent_indexes_untouched() {
     assert_eq!(parent.fold().fingerprint(), before);
     assert_ne!(child.fold().fingerprint(), before);
 }
+
+#[test]
+fn admit_allow_lookup_is_constant_in_product_n() {
+    let mut examined = Vec::new();
+    for &n in &[64u32, 256] {
+        let mut rt = Runtime::default();
+        let rel = rt.intern("relatedTo");
+        let obj = rt.intern("o");
+        for i in 0..n {
+            let s = rt.intern(&format!("s{i}"));
+            rt.emit(Op::Assert {
+                subject: s,
+                relation: rel,
+                object: obj,
+                valid_from: 2010,
+                valid_to: None,
+                claim: None,
+                delivery_key: None,
+                polarity: None,
+            })
+            .unwrap();
+        }
+        rt.fold().reset_hot_examine_count();
+        let extra = rt.intern("s-extra");
+        rt.emit(Op::Assert {
+            subject: extra,
+            relation: rel,
+            object: obj,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
+        examined.push(rt.fold().hot_examine_count());
+    }
+    assert!(
+        examined[1] <= examined[0] + 8,
+        "admit kutha:allows lookup must not grow with product N: {examined:?}"
+    );
+    assert!(
+        examined[1] < 32,
+        "admit must not collect live product facts: {examined:?}"
+    );
+}

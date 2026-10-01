@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: O(1) kutha:allows admit lease
+
+### Product
+
+### Changed
+
+- Fold maintains a droppable `kutha:allows` hot lease (`allows_by_name`) rebuilt with other fold leases. `relation_allowed_at` is O(allows) per admit instead of collecting all live facts. Eager/Lazy still applies to product maps; product `as_of` excludes `kutha:`; `dictionary_as_of` unchanged. Named D-07 expects and `Op::AllowRelation` absence unchanged.
+- Phase 22 bench at N=10000 after the lease: ingest_plain.n 120267790 ns (+26.1% vs Phase 22, was +2168%); as_of.n 511233 ns (single-shot fold walk; was +1566%).
+
+### Trajectory
+
+- No harness lease change. Active Slice **S06**. Cells remain **Proposed**.
+
 ## 2026-10-02 — Product: public facade and write-path oracles
 
 ### Product

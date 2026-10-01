@@ -13,12 +13,12 @@ tech-stack: { added: [], patterns: [one propose-admit-commit-receipt; facade on 
 key-files:
   created: [crates/kutha-runtime/src/pipeline.rs, crates/kutha-runtime/src/admission.rs, crates/kutha-runtime/src/justification.rs, crates/kutha-runtime/src/hydrate.rs, crates/kutha-runtime/src/provenance.rs, crates/kutha-runtime/src/fold_query.rs, crates/kutha-runtime/src/quantum_invariants.rs]
   modified: [crates/kutha-runtime/src/quantum.rs, crates/kutha-runtime/src/fold.rs, crates/kutha-runtime/src/lib.rs]
-key-decisions: ["emit stays public (D-07)", "bench STOP vs Phase 22 documented; no allow-index"]
+key-decisions: ["emit stays public (D-07)", "O(1) kutha:allows lease after ingest STOP"]
 patterns-established: ["typed constructors call pipeline; no append_meta"]
 requirements-completed: [PIPE-01, PIPE-02, PIPE-03, PIPE-04]
 coverage:
   - { id: D1, description: "one pipeline; append_meta gone", requirement: PIPE-01, verification: [{ kind: unit, ref: "rg fn append_meta crates = 0", status: pass }], human_judgment: false }
-  - { id: D2, description: "src/*.rs ≤800", requirement: PIPE-02, verification: [{ kind: other, ref: "wc -l max fold.rs 627", status: pass }], human_judgment: false }
+  - { id: D2, description: "src/*.rs ≤800", requirement: PIPE-02, verification: [{ kind: other, ref: "wc -l max fold.rs 667", status: pass }], human_judgment: false }
   - { id: D3, description: "public facade + statute consumer", requirement: PIPE-03, verification: [{ kind: integration, ref: "cargo test --test facade_statute", status: pass }], human_judgment: false }
   - { id: D4, description: "as_of(2015)≠as_of(2021); admission+action", requirement: PIPE-04, verification: [{ kind: integration, ref: "cargo test --test facade_statute", status: pass }], human_judgment: false }
 duration: 40min
@@ -28,7 +28,7 @@ status: complete
 
 # Phase 27 Plan 02: One write path, module split, facade Summary
 
-**One propose-admit-commit-receipt pipeline; Runtime/fold split ≤800; public facade greens 27-01; Phase 22 bench STOP documented.**
+**One propose-admit-commit-receipt pipeline; Runtime/fold split ≤800; public facade greens 27-01; ingest STOP cleared with O(1) kutha:allows lease.**
 
 ## Rename table (old → new)
 
@@ -41,17 +41,27 @@ status: complete
 
 ## Module map
 
-`quantum.rs` Runtime+facade · `pipeline.rs` emit/pipeline/dict · `admission.rs` admit/check · `justification.rs` j/action · `hydrate.rs` snapshot/fork · `provenance.rs` replay/fingerprint · `fold.rs` apply/hot · `fold_query.rs` as_of/dictionary · `quantum_invariants.rs` tests. pub fn 39→47. max `fold.rs` 627.
+`quantum.rs` Runtime+facade · `pipeline.rs` emit/pipeline/dict · `admission.rs` admit/check · `justification.rs` j/action · `hydrate.rs` snapshot/fork · `provenance.rs` replay/fingerprint · `fold.rs` apply/hot · `fold_query.rs` as_of/dictionary · `quantum_invariants.rs` tests. pub fn 39→47. max `fold.rs` 667.
 
 ## Bench (KUTHA_BENCH_N=10000)
 
-Phase 22: ingest_plain.n 95383904 · as_of.n 83195. Phase 27: 2163469973 (+2168%) · 1386193 (+1566%). **STOP** — admit still collects all live facts (Phase 26 dictionary SoT). CBM new modules `not_tracked`. GitNexus 30 behind still lists `append_meta`.
+Phase 22: ingest_plain.n 95383904 · as_of.n 83195.
+
+| run | ingest_plain.n | vs P22 | as_of.n | vs P22 |
+|-----|---------------:|-------:|--------:|-------:|
+| Phase 27 STOP (collect all live facts) | 2163469973 | +2168% | 1386193 | +1566% |
+| Phase 27 after `kutha:allows` lease | 120267790 | +26.1% | 511233 | +514% |
+
+Ingest is back in the Phase 24 hybrid band (+20–28%). Scaling ingest 2N/N=1.69, 4N/N=3.37 (Phase 22 1.55 / 3.29). as_of is a single-shot fold walk (2N/N=1.28, 4N/N=2.93, not 4N-scaled); still above +10% vs Phase 22, 63% below the STOP figure. Product `as_of` still excludes `kutha:`; `dictionary_as_of` unchanged.
+
+Full bench: `tmp/p27-bench-lease.txt` (`fold_index_mode eager`, `events_per_assert` 3.000800, `bytes_per_fact` 16710).
 
 ## Commits
 
 1. `53c757f` feat(27-02): one write pipeline and runtime module split
 2. `4c349de` feat(27-02): public facade, green write-path oracles, bench delta
+3. follow-up `perf(27): O(1) kutha:allows lease for admit` (this working tree)
 
-**Deviations:** emit public (D-07). Governor needles retargeted (Rule 3). Bench ≤10% not met — documented. `.kutha/STATE.md` untouched.
+**Deviations:** emit public (D-07). Governor needles retargeted (Rule 3). Bench ≤10% ingest not met vs Phase 22; write-cost accepted as in Phase 24 hybrid. `.kutha/STATE.md` untouched.
 
 ## Self-Check: PASSED

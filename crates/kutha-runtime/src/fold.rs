@@ -237,6 +237,13 @@ pub struct GraphFold {
     /// Live (subject, relation, object) triples for residual cascade checks.
     #[serde(skip)]
     pub(crate) live_triples: IngestMap<(TermId, TermId, TermId), usize>,
+    /// `kutha:allows` fact indices by delivery_key (product relation name). ADR-040
+    /// droppable lease, rebuilt from `facts`. Not fingerprint / JSON. Maintained on
+    /// every fact push even under [`FoldIndexMode::Lazy`] so admit stays O(allows);
+    /// product maps (`vt_by_from`, `claim_facts`, `fact_by_event`, `live_triples`)
+    /// still follow Eager/Lazy.
+    #[serde(skip)]
+    pub(crate) allows_by_name: IngestMap<String, FactIdxList>,
     /// Interned `kutha:*` relation TermIds (D-05). Rebuilt from the dictionary; not fingerprint.
     #[serde(skip)]
     pub(crate) dictionary_rels: HashSet<TermId>,
@@ -297,6 +304,7 @@ impl GraphFold {
             claim_facts: IngestMap::default(),
             fact_by_event: IngestMap::default(),
             live_triples: IngestMap::default(),
+            allows_by_name: IngestMap::default(),
             dictionary_rels: HashSet::new(),
             rel_allows: None,
             rel_rule: None,
@@ -315,11 +323,17 @@ impl GraphFold {
                 self.dictionary_rels.insert(i as TermId);
             }
         }
+        let prev_allows = self.rel_allows;
         self.rel_allows = dict.id(KUTHA_ALLOWS);
         self.rel_rule = dict.id(KUTHA_RULE);
         self.rel_policy = dict.id(KUTHA_POLICY);
         self.rel_admission = dict.id(KUTHA_ADMISSION);
         self.rel_action = dict.id(KUTHA_ACTION);
+        // Deserialize / replay may index before reserved ids exist. Rebuild the
+        // admit lease once `kutha:allows` is bound; skip when the id is unchanged.
+        if self.rel_allows != prev_allows {
+            self.rebuild_allows_lease();
+        }
     }
 
     pub(crate) fn is_dictionary_rel(&self, rel: TermId) -> bool {
@@ -391,10 +405,7 @@ impl GraphFold {
             .or_insert_with(|| Vec::with_capacity(4))
             .push(idx);
         // Plain relatedTo: one fact per minting event / claim id — SmallVec inline.
-        self.claim_facts
-            .entry(fact.claim_id)
-            .or_default()
-            .push(idx);
+        self.claim_facts.entry(fact.claim_id).or_default().push(idx);
         self.fact_by_event
             .entry(fact.event_id)
             .or_default()
@@ -402,6 +413,33 @@ impl GraphFold {
         if fact.invalidated_at.is_none() {
             self.live_triples
                 .insert((fact.subject, fact.relation, fact.object()), idx);
+        }
+    }
+
+    fn index_allows_slot(&mut self, idx: usize) {
+        let Some(rel) = self.rel_allows else {
+            return;
+        };
+        let fact = &self.facts[idx];
+        if fact.relation != rel {
+            return;
+        }
+        let Some(name) = fact.delivery_key.as_ref() else {
+            return;
+        };
+        self.allows_by_name
+            .entry(name.clone())
+            .or_default()
+            .push(idx);
+    }
+
+    fn rebuild_allows_lease(&mut self) {
+        self.allows_by_name.clear();
+        if self.rel_allows.is_none() {
+            return;
+        }
+        for idx in 0..self.facts.len() {
+            self.index_allows_slot(idx);
         }
     }
 
@@ -414,6 +452,7 @@ impl GraphFold {
 
     fn rebuild_hot_maps(&mut self) {
         self.clear_hot_maps();
+        self.rebuild_allows_lease();
         self.reserve_ingest_indexes(self.facts.len());
         for idx in 0..self.facts.len() {
             self.index_slot(idx);
@@ -432,6 +471,7 @@ impl GraphFold {
     fn push_fact(&mut self, fact: Fact) {
         let idx = self.facts.len();
         self.facts.push(fact);
+        self.index_allows_slot(idx);
         match self.index_mode {
             FoldIndexMode::Eager => {
                 self.index_slot(idx);

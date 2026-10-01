@@ -1,7 +1,5 @@
 //! Fold query surface: as_of / live_at / dictionary / fingerprint / registry cuts.
-use kutha_common::{
-    EventId, SupportPolarity, TermId, TransactionTime, ValidTime,
-};
+use kutha_common::{EventId, SupportPolarity, TermId, TransactionTime, ValidTime};
 use sha2::{Digest, Sha256};
 
 use crate::fold::{Fact, GraphFold, LiveFactFilter};
@@ -126,11 +124,7 @@ impl GraphFold {
                 })
                 .map(|(i, _)| i)
                 .find(|&i| self.facts[i].invalidated_at.is_none())
-                .or_else(|| {
-                    self.facts
-                        .iter()
-                        .rposition(|f| f.event_id == event_id)
-                });
+                .or_else(|| self.facts.iter().rposition(|f| f.event_id == event_id));
         }
         let idxs = self.fact_by_event.get(&event_id)?;
         idxs.iter()
@@ -217,13 +211,26 @@ impl GraphFold {
     }
 
     /// Fold-cut allowlist: a live `kutha:allows` fact whose delivery_key is `name`.
+    /// Warm path is O(facts for that name), not O(live product facts).
     pub fn relation_allowed_at(&self, name: &str, tt: TransactionTime, vt: ValidTime) -> bool {
         let Some(rel) = self.rel_allows else {
             return false;
         };
-        self.all_live_facts_at(tt, vt)
-            .into_iter()
-            .any(|f| f.relation == rel && f.delivery_key.as_deref() == Some(name))
+        if let Some(idxs) = self.allows_by_name.get(name) {
+            return idxs.iter().copied().any(|idx| {
+                self.hot_examine.bump();
+                self.facts[idx].is_live_at(tt, vt)
+            });
+        }
+        if !self.allows_by_name.is_empty() {
+            self.hot_examine.bump();
+            return false;
+        }
+        // Lease empty (replay before bind): scan only kutha:allows rows.
+        self.facts.iter().any(|f| {
+            self.hot_examine.bump();
+            f.relation == rel && f.delivery_key.as_deref() == Some(name) && f.is_live_at(tt, vt)
+        })
     }
 
     /// Fold-cut rule registry: a live `kutha:rule` fact whose delivery_key is `pin`.
@@ -312,5 +319,4 @@ impl GraphFold {
             .filter(|f| f.relation == rel && f.delivery_key.as_deref() == Some(justification_id))
             .max_by_key(|f| f.ingested_at)
     }
-
 }

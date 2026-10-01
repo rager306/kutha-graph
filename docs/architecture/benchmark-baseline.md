@@ -146,6 +146,8 @@ One write pipeline + facade (M013 S06 / 27-02). Eager. `KUTHA_BENCH_N=10000`. Ho
 
 Phase 22 reference: ingest_plain.n **95383904** ns, as_of.n **83195** ns.
 
+### First run (STOP)
+
 | key | Phase 27 | vs Phase 22 |
 |-----|--------:|------------:|
 | ingest_plain.n | 2163469973 | +2168% |
@@ -153,6 +155,19 @@ Phase 22 reference: ingest_plain.n **95383904** ns, as_of.n **83195** ns.
 | ingest_plain.2n / n | 3.34 | (Phase 22 1.55) |
 | ingest_plain.4n / n | 13.38 | (Phase 22 3.29) |
 
-D-07 ≤10% gate: **STOP — not met.** Admit still calls `fold.relation_allowed_at`, which collects every live fact before the allow hit (dictionary SoT from Phase 26). That is O(live facts) per Assert; N=10000 ingest is superlinear vs the Phase 22 HashSet allowlist. No new allow-index (freeze / D-07 named expects). as_of stays a fold walk; this host’s as_of.n is also far above +10% (fixed overhead vs Phase 22, not 4N-scaled). Recorded, not papered over.
+D-07 ≤10% gate: **STOP — not met.** Admit called `fold.relation_allowed_at`, which collected every live fact before the allow hit (dictionary SoT from Phase 26). O(live facts) per Assert; N=10000 ingest superlinear vs the Phase 22 HashSet allowlist.
 
-Full bench: `tmp/p27-bench.txt` (`fold_index_mode eager`, `events_per_assert` 3.000800, `bytes_per_fact` 16829).
+### After `kutha:allows` lease (same day)
+
+Droppable ADR-040 lease `allows_by_name` (delivery_key → fact indices), maintained on every fact push even under Lazy product maps; rebuilt in `rebuild_hot_maps` / `bind_reserved`. `relation_allowed_at` is O(allows). Product `as_of` still excludes `kutha:`. `dictionary_as_of` unchanged. `Op::AllowRelation` not revived. Named D-07 expects unchanged.
+
+| key | after lease | vs Phase 22 | vs STOP |
+|-----|--------:|------------:|--------:|
+| ingest_plain.n | 120267790 | +26.1% | was +2168% |
+| as_of.n | 511233 | +514% | was +1566% |
+| ingest_plain.2n / n | 1.69 | (Phase 22 1.55) | |
+| ingest_plain.4n / n | 3.37 | (Phase 22 3.29) | |
+
+Ingest is back in the Phase 24 hybrid band (+20–28% vs Phase 22; write-cost accepted there). as_of is a single-shot fold walk (2N/N=1.28, 4N/N=2.93, not 4N-scaled); still above +10% vs Phase 22, 63% below the STOP figure.
+
+Full bench: `tmp/p27-bench-lease.txt` (`fold_index_mode eager`, `events_per_assert` 3.000800, `bytes_per_fact` 16710).

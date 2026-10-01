@@ -42,10 +42,17 @@ fn lazy_as_of_matches_eager_after_same_ingest() {
     assert_eq!(a, b, "Lazy scan path must match Eager lease as_of");
     // EventIds differ across independent runtimes — compare shape, not fingerprint.
     assert_eq!(eager.fold().facts().len(), lazy.fold().facts().len());
-    assert_eq!(eager.fold().live_count(u64::MAX, 2010), lazy.fold().live_count(u64::MAX, 2010));
+    assert_eq!(
+        eager.fold().live_count(u64::MAX, 2010),
+        lazy.fold().live_count(u64::MAX, 2010)
+    );
 
     lazy.ensure_fold_indexes();
-    assert_eq!(a, live_sorted(&lazy), "after ensure_fold_indexes, as_of still matches");
+    assert_eq!(
+        a,
+        live_sorted(&lazy),
+        "after ensure_fold_indexes, as_of still matches"
+    );
 }
 
 #[test]
@@ -60,4 +67,32 @@ fn set_index_mode_roundtrips_eager_lazy() {
     rt.set_index_mode(FoldIndexMode::Eager);
     assert_eq!(rt.index_mode(), FoldIndexMode::Eager);
     assert_eq!(before, live_sorted(&rt));
+}
+
+#[test]
+fn lazy_admit_does_not_scan_product_facts() {
+    let n = 128u32;
+    let mut rt = Runtime::with_index_mode(32, FoldIndexMode::Lazy);
+    fill(&mut rt, n);
+    rt.fold().reset_hot_examine_count();
+    let rel = rt.intern("relatedTo");
+    let extra = rt.intern("s-lazy-extra");
+    let obj = rt.intern("o");
+    rt.emit(Op::Assert {
+        subject: extra,
+        relation: rel,
+        object: obj,
+        valid_from: 2010,
+        valid_to: None,
+        claim: None,
+        delivery_key: None,
+        polarity: None,
+    })
+    .unwrap();
+    let examined = rt.fold().hot_examine_count();
+    assert!(
+        examined < 32,
+        "Lazy product maps stay cold; admit must use the allows lease: examined={examined}"
+    );
+    assert_eq!(live_sorted(&rt).len(), (n + 1) as usize);
 }
