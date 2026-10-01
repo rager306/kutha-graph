@@ -1,0 +1,5 @@
+# GSD runtime install (vendored tooling, not product/harness code).
+.cursor/gsd-core/
+
+# Indexer noise: minified vendor JS in ideation HTML.
+.compound-engineering/artifacts/ideation/mermaid.min.js
