@@ -163,10 +163,10 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 
 **Harness lease** (process intent, not GSD memory, not product SoT): `.kutha/STATE.md`
 
-- Active Milestone: **M012a** (CLOSED on ROADMAP; Active Slice None)
+- Active Milestone: **M012**
 - Active Slice: **None**
 - Phase: **H5**
-- Lifecycles: `L_map=honeycomb-proposed` · `L_delivery=M012a-S06-done` · `L_capability=ff5-green`
+- Lifecycles: `L_map=honeycomb-proposed` · `L_delivery=M012-leased` · `L_capability=ff5-green`
 - Next: Freeze until STATE names M002+ (or another explicit lease). Do not start a legal pack. Green governor ≠ ADR Accepted ≠ L_capability.
 
 GSD files live under `.planning/`. **Never overwrite** `.kutha/STATE.md` with GSD STATE.

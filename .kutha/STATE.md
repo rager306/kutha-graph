@@ -4,7 +4,7 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M012a
+**Active Milestone:** M012
 **Active Slice:** None
 **Phase:** H5
 
@@ -12,19 +12,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M012a-S06-done
+L_delivery=M012-leased
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M012a S01–S06 done (single-log SoT + stable refs closed) | Capability proven / Rocks started / M002 leased |
+| L_delivery | M012 leased (dictionaries as facts — allowlist entries, rule registry, admission meta-facts, policy version); M012a S06 remains the prior closed record | Capability proven / Rocks started / M002 leased / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M012a S01–S06 delivered** (`L_delivery=M012a-S06-done`). Active Slice cleared. M012a product scope closed pending GSD milestone archive. Do **not** start M012 dictionaries-as-facts or M002 Rocks until STATE names them. Honeycomb stays Proposed. Do **not** start M012 dictionaries-as-facts, a legal pack, or M002 (Rocks) until STATE names them. Do not open ADR-100. Do not implement Cypher/HNSW. Honeycomb stays Proposed (GATE-03). H5 dogfood remains the current harness rung.
+**M012 is leased** (dictionaries as facts). Thawed subset only: versioned relation-allowlist entries as log facts, a rule registry (`rule_version` = definition hash), admission status as meta-facts, policy version pinned in the log, thin action record, and multi-hop derivation eligibility beyond one-hop (F4/F5). Do **not** implement ADR-050 six dictionaries, a legal pack, Cypher/HNSW, or M002 Rocks until STATE names them. Do not open ADR-100. Honeycomb stays Proposed (GATE-03). H5 dogfood remains the current harness rung. Active Slice **None** until a GSD phase leases one.
 
 ## Freeze (until explicit M002 lease)
 

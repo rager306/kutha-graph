@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Process: lease M012 dictionaries as facts
+
+### Process
+
+- Harness lease: Active Milestone **M012**; Active Slice **None**; `L_delivery=M012-leased`. Phase stays **H5**.
+- Thawed subset named on STATE/ROADMAP: versioned relation-allowlist entries, rule registry (`rule_version` = definition hash), admission status + policy version as meta-facts, thin action record, multi-hop derivation eligibility. ADR-050 six dictionaries, Cypher/HNSW, legal pack, M002 remain frozen.
+
+### Trajectory
+
+- Product plane may land F4/F5 under M012. Governor green is not ADR Accepted. Honeycomb stays Proposed.
+
 ## 2026-10-01 — Product: M012a S06 hot indexes (M012a closed)
 
 ### Product
