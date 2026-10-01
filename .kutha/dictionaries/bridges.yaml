@@ -110,3 +110,8 @@ bridges:
     claim: "Admission status is a log fact queryable AS OF a cut; RecordAdmission cites the live PinPolicy hash; record_justification invokes check_admission"
     cites: "crates/kutha-runtime/tests/m012_admission_facts.rs"
     check: m012-s03-admission-facts
+
+  - id: B-m012-s04
+    claim: "A thin Action binds resolved arguments to the admission decision and policy version; Action plus admission remain AS OF a prior cut after a later policy change"
+    cites: "crates/kutha-runtime/tests/m012_action_record.rs"
+    check: m012-s04-action-record

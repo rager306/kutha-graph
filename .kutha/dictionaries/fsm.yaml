@@ -79,6 +79,8 @@ states:
       - admission_status_queryable_as_of_cut
       - admission_cites_pinned_policy_version
       - record_justification_invokes_check_admission
+      - action_binds_args_to_admission_and_policy
+      - action_and_admission_as_of_prior_cut_after_policy_change
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant

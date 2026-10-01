@@ -501,6 +501,17 @@ checks:
         category: m012-s03
         message: "M012 S03 admission-facts tests missing {missing}"
 
+  - id: m012-s04-action-record
+    description: M012 S04 — thin Action record binds args to admission and policy
+    steps:
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m012_action_record.rs
+        tests:
+          - action_binds_args_to_admission_and_policy
+          - action_and_admission_as_of_prior_cut_after_policy_change
+        category: m012-s04
+        message: "M012 S04 action-record tests missing {missing}"
+
   - id: h4-lease
     description: H5 dogfood is closed without promoting ADR-090
     steps:
