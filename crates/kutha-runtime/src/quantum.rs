@@ -48,6 +48,10 @@ pub enum RuntimeError {
     DeliveryKeyConflict {
         key: String,
     },
+    /// User Behavior pin is not a live registry hash (RULE-02 / RULE-03).
+    UnknownRuleVersion {
+        pin: String,
+    },
 }
 
 impl fmt::Display for RuntimeError {
@@ -73,6 +77,9 @@ impl fmt::Display for RuntimeError {
             RuntimeError::MetaOpRejected => write!(f, "MetaOpRejectedError"),
             RuntimeError::DeliveryKeyConflict { key } => {
                 write!(f, "delivery key conflict {key}")
+            }
+            RuntimeError::UnknownRuleVersion { pin } => {
+                write!(f, "unknown rule version {pin}")
             }
         }
     }
@@ -130,7 +137,8 @@ fn op_relation(op: &Op) -> Option<TermId> {
         | Op::Define { .. }
         | Op::QuantumOutcome { .. }
         | Op::JustificationCite { .. }
-        | Op::AllowRelation { .. } => None,
+        | Op::AllowRelation { .. }
+        | Op::RegisterRule { .. } => None,
     }
 }
 
@@ -142,6 +150,7 @@ fn op_affects_fold(op: &Op) -> bool {
             | Op::QuantumOutcome { .. }
             | Op::JustificationCite { .. }
             | Op::AllowRelation { .. }
+            | Op::RegisterRule { .. }
     )
 }
 
@@ -297,6 +306,7 @@ impl Runtime {
         self.outcomes = outcomes;
         self.justifications = justifications;
         self.fold.rebuild_allow_entries(self.log.as_slice());
+        self.fold.rebuild_rule_entries(self.log.as_slice());
     }
 
     pub(crate) fn log_has_quantum_outcome(&self) -> bool {
@@ -628,6 +638,12 @@ impl Runtime {
             }
             return Ok(());
         }
+        if let Op::RegisterRule { definition, .. } = op {
+            if definition.is_empty() {
+                return Err(RuntimeError::UnknownRuleVersion { pin: String::new() });
+            }
+            return Ok(());
+        }
         let Some(rel) = op_relation(op) else {
             return Ok(());
         };
@@ -789,7 +805,7 @@ impl Runtime {
             }
         }
         self.admit(&op)?;
-        if matches!(&op, Op::AllowRelation { .. }) {
+        if matches!(&op, Op::AllowRelation { .. } | Op::RegisterRule { .. }) {
             let event = Event::new(op, self.next_tt());
             let id = event.id;
             let digest = event.digest_bytes();
@@ -800,6 +816,19 @@ impl Runtime {
                 receipt,
                 events_in_quantum: 1,
             });
+        }
+        if let Op::Behavior {
+            rule_version,
+            valid_from,
+            ..
+        } = &op
+        {
+            let tt = self.next_tt.saturating_sub(1);
+            if !self.fold.rule_hash_live_at(rule_version, tt, *valid_from) {
+                return Err(RuntimeError::UnknownRuleVersion {
+                    pin: rule_version.clone(),
+                });
+            }
         }
         self.admit_claim(&op)?;
         if let Some(retry) = self.delivery_key_retry(&op)? {
@@ -936,7 +965,8 @@ impl Runtime {
                 }
                 Op::QuantumOutcome { .. }
                 | Op::JustificationCite { .. }
-                | Op::AllowRelation { .. } => {
+                | Op::AllowRelation { .. }
+                | Op::RegisterRule { .. } => {
                     h.update(e.digest_bytes());
                 }
                 _ => {}
@@ -965,7 +995,12 @@ impl Runtime {
         let Some(event) = self.log.iter().find(|e| e.id == derived) else {
             return false;
         };
-        let Op::Behavior { caused_by, .. } = &event.op else {
+        let Op::Behavior {
+            caused_by,
+            rule_version,
+            ..
+        } = &event.op
+        else {
             return false;
         };
         let Some(cause) = self.log.iter().find(|e| e.id == *caused_by) else {
@@ -980,8 +1015,12 @@ impl Runtime {
             | Op::Define { .. }
             | Op::QuantumOutcome { .. }
             | Op::JustificationCite { .. }
-            | Op::AllowRelation { .. } => return false,
+            | Op::AllowRelation { .. }
+            | Op::RegisterRule { .. } => return false,
         };
+        if !self.fold.rule_hash_live_at(rule_version, tt, vt) {
+            return false;
+        }
         self.fold.claim_supported_at(premise, tt, vt)
     }
 

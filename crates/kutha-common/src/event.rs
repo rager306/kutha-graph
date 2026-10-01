@@ -137,6 +137,13 @@ pub enum Op {
         valid_from: ValidTime,
         valid_to: Option<ValidTime>,
     },
+    /// Versioned rule-definition registry entry (M012 S02 / RULE-01). Fold records a
+    /// skip-serialized rule-entry; not a graph Fact. Hash is derived, not stored.
+    RegisterRule {
+        definition: String,
+        valid_from: ValidTime,
+        valid_to: Option<ValidTime>,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -166,7 +173,8 @@ impl Event {
             | Op::Define { .. }
             | Op::QuantumOutcome { .. }
             | Op::JustificationCite { .. }
-            | Op::AllowRelation { .. } => vec![],
+            | Op::AllowRelation { .. }
+            | Op::RegisterRule { .. } => vec![],
             Op::Correct { object, .. } | Op::CorrectInterval { object, .. } => vec![*object],
         };
         Self {
@@ -345,9 +353,32 @@ impl Event {
                 h.update(valid_from.to_le_bytes());
                 h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
             }
+            Op::RegisterRule {
+                definition,
+                valid_from,
+                valid_to,
+            } => {
+                h.update(b"register-rule");
+                h.update(definition.as_bytes());
+                h.update(valid_from.to_le_bytes());
+                h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
+            }
         }
         h.finalize().into()
     }
+}
+
+/// SHA-256 of domain `kutha-rule-def` then UTF-8 definition bytes (RULE-01).
+pub fn rule_definition_hash(definition: &str) -> String {
+    let mut h = Sha256::new();
+    h.update(b"kutha-rule-def");
+    h.update(definition.as_bytes());
+    let digest: [u8; 32] = h.finalize().into();
+    let mut out = String::with_capacity(64);
+    for b in digest {
+        out.push_str(&format!("{b:02x}"));
+    }
+    out
 }
 
 fn polarity_tag(p: Option<SupportPolarity>) -> &'static [u8] {

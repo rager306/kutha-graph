@@ -1,4 +1,6 @@
-use kutha_common::{Event, EventId, Op, SupportPolarity, TermId, TransactionTime, ValidTime};
+use kutha_common::{
+    rule_definition_hash, Event, EventId, Op, SupportPolarity, TermId, TransactionTime, ValidTime,
+};
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, HashMap};
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -180,6 +182,35 @@ impl AllowEntry {
     }
 }
 
+/// Skip-serialized rule-registry row (M012 S02). Log is SoT; not a graph Fact.
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct RuleEntry {
+    event_id: EventId,
+    definition_hash: String,
+    valid_from: ValidTime,
+    valid_to: Option<ValidTime>,
+    ingested_at: TransactionTime,
+    invalidated_at: Option<TransactionTime>,
+}
+
+impl RuleEntry {
+    fn is_live_at(&self, tt: TransactionTime, vt: ValidTime) -> bool {
+        if self.ingested_at > tt {
+            return false;
+        }
+        if self.invalidated_at.is_some_and(|inv| inv <= tt) {
+            return false;
+        }
+        if vt < self.valid_from {
+            return false;
+        }
+        if self.valid_to.is_some_and(|to| vt >= to) {
+            return false;
+        }
+        true
+    }
+}
+
 /// Deterministic fold of the log. Droppable picture, not SoT.
 /// Hot maps are leases: skip-serialized and rebuilt from `facts` (D-02).
 #[derive(Clone, Debug, Default, serde::Serialize)]
@@ -198,6 +229,9 @@ pub struct GraphFold {
     /// Live allowlist entries rebuilt from `Op::AllowRelation` (ALL-01). Not fingerprint input.
     #[serde(skip)]
     allow_entries: Vec<AllowEntry>,
+    /// Live rule-registry entries rebuilt from `Op::RegisterRule` (RULE-01). Not fingerprint input.
+    #[serde(skip)]
+    rule_entries: Vec<RuleEntry>,
 }
 
 impl<'de> serde::Deserialize<'de> for GraphFold {
@@ -215,6 +249,7 @@ impl<'de> serde::Deserialize<'de> for GraphFold {
             vt_by_from: BTreeMap::new(),
             claim_facts: HashMap::new(),
             allow_entries: Vec::new(),
+            rule_entries: Vec::new(),
         };
         fold.rebuild_hot_maps();
         Ok(fold)
@@ -367,11 +402,31 @@ impl GraphFold {
         self.allow_entries.iter().any(|e| e.event_id == event_id)
     }
 
+    /// Fold-cut rule registry: a live `RegisterRule` hash at `(tt, vt)`.
+    pub fn rule_hash_live_at(&self, pin: &str, tt: TransactionTime, vt: ValidTime) -> bool {
+        self.rule_entries
+            .iter()
+            .any(|e| e.definition_hash == pin && e.is_live_at(tt, vt))
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn has_rule_entry(&self, event_id: EventId) -> bool {
+        self.rule_entries.iter().any(|e| e.event_id == event_id)
+    }
+
     /// Rebuild skip-serialized allow-entries from the log (open / fork / hydrate).
     pub(crate) fn rebuild_allow_entries(&mut self, events: &[Event]) {
         self.allow_entries.clear();
         for e in events {
             self.apply_allow_side(e);
+        }
+    }
+
+    /// Rebuild skip-serialized rule-entries from the log (open / fork / hydrate).
+    pub(crate) fn rebuild_rule_entries(&mut self, events: &[Event]) {
+        self.rule_entries.clear();
+        for e in events {
+            self.apply_rule_side(e);
         }
     }
 
@@ -394,6 +449,35 @@ impl GraphFold {
             Op::Retract { event_id } => {
                 if let Some(entry) = self
                     .allow_entries
+                    .iter_mut()
+                    .find(|a| a.event_id == *event_id && a.invalidated_at.is_none())
+                {
+                    entry.invalidated_at = Some(event.ingested_at);
+                }
+            }
+            _ => {}
+        }
+    }
+
+    fn apply_rule_side(&mut self, event: &Event) {
+        match &event.op {
+            Op::RegisterRule {
+                definition,
+                valid_from,
+                valid_to,
+            } => {
+                self.rule_entries.push(RuleEntry {
+                    event_id: event.id,
+                    definition_hash: rule_definition_hash(definition),
+                    valid_from: *valid_from,
+                    valid_to: *valid_to,
+                    ingested_at: event.ingested_at,
+                    invalidated_at: None,
+                });
+            }
+            Op::Retract { event_id } => {
+                if let Some(entry) = self
+                    .rule_entries
                     .iter_mut()
                     .find(|a| a.event_id == *event_id && a.invalidated_at.is_none())
                 {
@@ -467,6 +551,7 @@ impl GraphFold {
                     }
                 }
                 self.apply_allow_side(event);
+                self.apply_rule_side(event);
             }
             Op::Correct {
                 event_id,
@@ -556,6 +641,9 @@ impl GraphFold {
             }
             Op::AllowRelation { .. } => {
                 self.apply_allow_side(event);
+            }
+            Op::RegisterRule { .. } => {
+                self.apply_rule_side(event);
             }
             Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
         }
