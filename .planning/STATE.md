@@ -4,17 +4,18 @@ milestone: v0.06
 milestone_name: Honest baseline and one write path
 current_phase: 28
 current_phase_name: Independent verification and artifact budget
-status: planning
-stopped_at: Phase 27 complete; S06 closed; wait S07 lease for Phase 28
-last_updated: "2026-10-01T17:30:00.000Z"
-last_activity: 2026-10-01
+current_plan: 2
+status: executing
+stopped_at: Completed 28-01-PLAN.md
+last_updated: "2026-10-01T18:30:08.744Z"
+last_activity: 2026-10-02
 last_activity_desc: Phase 27 verified; L_delivery=M013-S06-done
-state_head: 7f5cfad
+state_head: 53660bbaf6a832f414fa253b6692fb593fba48a2
 progress:
   total_phases: 7
   completed_phases: 6
-  total_plans: 11
-  completed_plans: 11
+  total_plans: 13
+  completed_plans: 12
 ---
 
 # Project State
@@ -32,14 +33,20 @@ See: `.planning/PROJECT.md`
 
 ## Current Position
 
-Phase: 28 — Independent verification and artifact budget (CONTEXT only; not leased)
-Plan: Not started
-Status: Ready to plan after S07 lease
-Last activity: 2026-10-01 — Phase 27 verified and S06 closed
+Phase: 28 — Independent verification and artifact budget
+Current Plan: 2
+Total Plans in Phase: 2
+Status: Ready to execute
+Last activity: 2026-10-02 — Completed 28-01-PLAN.md
 
 ## Performance Metrics
 
 **By Phase:** v0.01–v0.05 shipped · v0.06 Phase 22–27 complete
+**Per-Plan Metrics:**
+
+| Plan | Duration | Tasks | Files |
+|------|----------|-------|-------|
+| Phase 28 P01 | 7min | 3 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -47,6 +54,8 @@ Last activity: 2026-10-01 — Phase 27 verified and S06 closed
 
 - [v0.06/24–27]: FoldIndexMode; genesis; kutha: dictionary facts; one pipeline + facade
 - [v0.06/27]: Bench ≤10% overridden (ingest ~+26% after allows lease; as_of elevated)
+- [Phase 28]: min_phase filters .planning/phases/NN-* only; max_files_per_dir -1 unlimited
+- [Phase 28]: glob_absent needles are literal -PLAN.md and -SUMMARY.md
 
 ### Blockers/Concerns
 
@@ -54,5 +63,8 @@ Last activity: 2026-10-01 — Phase 27 verified and S06 closed
 
 ## Session Continuity
 
-Stopped at: Phase 27 / S06 closed (`L_delivery=M013-S06-done`)
+**Last session:** 2026-10-01T18:29:34.020Z
+**Resume file:** None
+
+Stopped at: Completed 28-01-PLAN.md
 Next: Controller leases S07, then `/gsd-plan-phase 28` / `/gsd-autonomous --only 28`

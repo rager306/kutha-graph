@@ -146,7 +146,12 @@ Plans:
   3. The id map exists in one table and is cited by the governor.
   4. `/gsd-audit-milestone` passes before archive.
 
-**Plans**: 2 plans max
+**Plans**: 1/2 plans complete
+
+Plans:
+**Wave 1**
+- [x] 28-01-PLAN.md — glob_max_lines, artifact-budget, conform 22–27 VERIFICATION
+- [ ] 28-02-PLAN.md — id map, milestone audit
 
 <details>
 <summary>✅ v0.01 GSD foundation (Phases 1–3) — SHIPPED 2026-09-29</summary>

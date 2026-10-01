@@ -48,8 +48,8 @@ Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semant
 
 ### Process gates (R4, R5, R6)
 
-- [ ] **PROC-01**: A governor check enforces the planning-artifact budget (`docs/process/gsd-auto-contract.md`) and fails closed on excess
-- [ ] **PROC-02**: Every v0.06 phase has a `NN-VERIFICATION.md` written by a verifier that did not read the PLAN or SUMMARY, with kill-tests and exit statuses
+- [x] **PROC-01**: A governor check enforces the planning-artifact budget (`docs/process/gsd-auto-contract.md`) and fails closed on excess
+- [x] **PROC-02**: Every v0.06 phase has a `NN-VERIFICATION.md` written by a verifier that did not read the PLAN or SUMMARY, with kill-tests and exit statuses
 - [ ] **PROC-03**: One id map table (GSD version, phases, harness milestone and slice, ADR) exists and the governor cites it
 - [ ] **PROC-04**: The milestone audit runs before archive (`/gsd-audit-milestone`), not skipped by override
 
@@ -93,7 +93,8 @@ Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semant
 | GEN-01, GEN-02, GEN-03 | Phase 25 | complete |
 | SUB-01, SUB-02, SUB-03, SUB-04 | Phase 26 | complete |
 | PIPE-01, PIPE-02, PIPE-03, PIPE-04 | Phase 27 | complete |
-| PROC-01, PROC-02, PROC-03, PROC-04 | Phase 28 | Pending |
+| PROC-01, PROC-02 | Phase 28 | complete |
+| PROC-03, PROC-04 | Phase 28 | Pending |
 
 **Coverage:** v0.06 requirements: 24 total; mapped to phases: 24; unmapped: 0.
 
