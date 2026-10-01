@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 milestone: v0.05
 milestone_name: Dictionaries as facts
 status: planning
-last_updated: "2026-10-01T01:31:54.056Z"
+last_updated: "2026-10-01T08:32:00+07:00"
 last_activity: 2026-10-01
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,126 +17,45 @@ progress:
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-09-30 after M012a lease)
+See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.05 M012 dictionaries as facts (leased). Defining requirements; freeze holds for M002. v0.04 Phase 16 — Fold-internal hot indexes (M012a S06). Plans 16-01..16-03 written; execute next. Freeze holds for M002. Do not clear harness S06.
+**Current focus:** v0.05 Phase 17 — Allowlist as log facts (M012 S01). Roadmap written; plan next.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M012**; Active Slice **None**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012-leased`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start). Do not overwrite `.kutha/STATE.md`.
+**Harness lease (cite only):** Active Milestone **M012**; Active Slice **None**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012-leased`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 17 of 21 (Allowlist as log facts) — v0.05 phases 17–21
 Plan: —
-Status: Defining requirements
-Last activity: 2026-10-01 — Milestone v0.05 started
+Status: Ready to plan
+Last activity: 2026-10-01 — v0.05 roadmap created (Phases 17–21 map M012 S01–S05)
 
+Progress: [░░░░░░░░░░] 0% (v0.05)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 34 (v0.01–v0.03; v0.04 none yet)
+- Total plans completed: 49 (v0.01–v0.04)
 - Average duration: ~2–5min typical; Phase 11 outliers 16–93min
-- Total execution time: v0.01 ~26min + v0.02/v0.03 as recorded below
+- v0.04: 15 plans (Phases 12–16), all complete 2026-10-01
 
-**By Phase:**
+**By Phase:** v0.01 9/9 · v0.02 11/11 · v0.03 8/8 · v0.04 15/15 · v0.05 0/?
 
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| 1–3 (v0.01) | 9/9 | ~22min | ~2min |
-| 4 | 3 | - | - |
-| 5 | 2 | - | - |
-| 6 | 2 | - | - |
-| 7 | 2 | ~8min | 4min |
-| 8 | 2 | ~10min | 5min |
-| 9 | 2 | - | - |
-| 10 | 2 | - | - |
-| 11 | 4 | - | - |
-| 12–16 (v0.04) | 0/3 planned | - | - |
-| 12 | 3 | - | - |
-| 13 | 3 | - | - |
-| 14 | 3 | - | - |
-| 15 | 3 | - | - |
-| 16 | 3 | - | - |
-
-**Recent Trend:**
-- Last 5 plans: Phase 11 P01–P04, Phase 10 P02
-- Trend: v0.03 harness/docs complete; Phase 12 plans ready; v0.04 crates not started
-
-**Per-Plan Metrics:**
-
-| Plan | Duration | Tasks | Files |
-|------|----------|-------|-------|
-| Phase 12 P01 | 8min | 3 tasks | 8 files |
-| Phase 12 P02 | 12min | 2 tasks | 8 files |
-| Phase 12 P03 | 15min | 2 tasks | 7 files |
-| Phase 13 P01 | 7 | 2 tasks | 9 files |
-| Phase 13 P02 | 4 | 2 tasks | 6 files |
-| Phase 13 P03 | 5 | 2 tasks | 6 files |
-| Phase 14 P01 | 8 | 2 tasks | 20 files |
-| Phase 14 P02 | 4 | 2 tasks | 6 files |
-| Phase 14 P03 | 3 | 2 tasks | 5 files |
-| Phase 15 P01 | 6min | 2 tasks | 4 files |
-| Phase 15 P02 | 1min | 2 tasks | 5 files |
-| Phase 15 P03 | 2min | 2 tasks | 5 files |
-| Phase 16 P01 | 9min | 2 tasks | 3 files |
-| Phase 16 P02 | 2min | 2 tasks | 4 files |
-| Phase 16 P03 | 3min | 2 tasks | 5 files |
+**Recent Trend:** v0.04 crate work closed; v0.05 product crates allowed under M012 thawed subset.
 
 ## Accumulated Context
 
 ### Decisions
 
 Full table: `.planning/PROJECT.md`.
-- [v0.04]: Five GSD phases 12–16 map M012a S01 | S02 | S03 | S04+S05 | S06; product crates allowed; no M012 dicts-as-facts; freeze until M002
-- [v0.04]: TIME (S05) folds into Phase 15 with DUR (S04); S05 `depends:[]` but numeric order is after Phase 14
-- [v0.04]: GATE-01/02/03 inherit — named cargo + governor; execute only under matching Active Slice; honeycomb stays Proposed
+- [v0.05]: Five GSD phases 17–21 map M012 S01 | S02 | S03 | S04 | S05; product crates allowed; no ADR-050 six dictionaries; freeze until M002
+- [v0.05]: S03 depends on S01 not S02; S05 depends on S02 not S03/S04; numeric execute order is still 17 → 18 → 19 → 20 → 21
+- [v0.05]: GATE-01/02/03 inherit — named cargo + governor; execute only under matching Active Slice; honeycomb stays Proposed
+- [v0.04]: M012a S01–S06 shipped (Phases 12–16); F4/F5 wait for M012
 - [v0.03]: H5 semantic governor + lean AGENTS.md shipped; crates untouched
-- [v0.02]: One GSD phase per M011 slice; GATE-01/02/03; M011 S04–S08 closed
-- [v0.01]: Phases 1–3 verification overlay; green ≠ Accepted ≠ L_capability ≠ lease grant
-- [Phase 12]: OutcomeDisposition lives in kutha-common so Op::QuantumOutcome can carry it
-- [Phase 12]: Public emit of Op::QuantumOutcome is MetaOpRejected (T-12-02)
-- [Phase 12]: Resume persist/open after sidecar discard stays Plan 12-02
-- [Phase 12]: JustificationCite is a distinct fold-noop Op; Resume reuses QuantumOutcome
-- [Phase 12]: Provenance domain tag kutha-prov-log-native; I-F1-outcomes stays deferred
-- [Phase 13]: Retract/Correct/CorrectInterval share EventId because UnknownFact and IntervalPatchRejected are one type
-- [Phase 13]: Lookup prefers the live Fact when several residuals share one CorrectInterval Event.id
-- [Phase 13]: CSR TypedEdge.fact_seq and ConflictReport seqs stay lease indexes (ING-03 is Phase 14)
-- [Phase 13]: Dropped source_fact_seqs from the durable cite Op so a leaked payload cannot be replayed against a renumbered fold
-- [Phase 13]: check_admission still uses tt=MAX and row.vt (FIX-02); unknown EventId is stale_support
-- [Phase 13]: REF-03 rebuild drops the first Assert Event only; Defines and QuantumOutcome stay
-- [Phase 13]: Governor check lives on bridges.yaml, not invariants.yaml
-- [Phase 13]: ADR-061 stays capability none with a non-empty evidence array
-- [Phase 14]: Identity for the delivery-key gate is subject, relation, object, valid_from, valid_to, claim, polarity, and delivery_key
-- [Phase 14]: Retracted original still returns that EventId; do not mint a replacement support
-- [Phase 14]: SupportPolarity lands with default None so Plan 14-02 does not reshape Assert again
-- [Phase 14]: Residuals copy polarity; object-changing Correct/CorrectInterval rows flip when old polarity is Some
-- [Phase 14]: e2e t1 Asserts store Positive so t2 interior not-P is Negative without an opposite-of dictionary
-- [Phase 14]: Governor check lives on bridges.yaml, not invariants.yaml
-- [Phase 14]: ADR-011 and ADR-013 evidence append only; map stays Proposed
-- [Phase 15]: open maps ReplayDivergence through runtime_err (InvalidData) and does not return Ok Runtime
-- [Phase 15]: persist jsonl is same-directory temp, sync_all, rename; abort-before-rename is a pub test seam
-- [Phase 15]: Define persist ids are SHA-256 prefix kutha-define-id; intern() still Event::new
-- [Phase 15]: ValidTime stays a u64 alias; fixtures treat 2017 as YearCe, not Unix epoch
-- [Phase 15]: TransactionTime is log sequence; TT-to-wall mapping is out of M012a S05
-- [Phase 15]: Governor checks live on bridges.yaml, not invariants.yaml
-- [Phase 15]: ADR-012 and ADR-013 evidence append only; map stays Proposed
-- [Phase 15]: Harness Active Slice stays S04 until parent verification closes S04/S05
-- [Phase 16]: Fold-internal VT/claim maps are skip-serialized leases; as_of/claim_supported_at must match brute-force liveness (HOT-01)
-- [Phase 16]: csr_lease_at builds through CsrMaterializer then unloads; typed_csr_lease_at stays from_fold as a named spike limit (HOT-03)
-- [Phase 16]: Governor check lives on bridges.yaml, not invariants.yaml
-- [Phase 16]: ADR-040 and ADR-041 evidence append only; map stays Proposed; GED-class fork-diff stays out of M012a
-- [Phase 16]: as_of / live_at walk vt_by_from.range(..=vt); claim_supported_at looks up claim_facts
-- [Phase 16]: Hot maps skip-serialize and rebuild from facts; they are not a second SoT
-- [Phase 16]: Examine counts prove skip; no Instant/elapsed oracle
-- [Phase 16]: CSR and hot maps remain droppable leases; persist/open reconstructs as_of from log and fold facts
-- [Phase 16]: csr_lease_at does not store CsrMaterializer on Runtime
-- [Phase 16]: typed_csr_lease_at stays TypedCsrLease::from_fold (HOT-03 spike limit)
-- [Phase 16]: HOT-01..03 are required observe names so ci fail-closes if they vanish
-- [Phase 16]: Honeycomb map stays Proposed; ADR-061 not claimed as GED-class comparison
-- [Phase 16]: Harness S06 lease is not cleared in this plan
 
 ### Pending Todos
 
@@ -144,26 +63,25 @@ None.
 
 ### Blockers/Concerns
 
-- Harness Active Slice is **S06** (GATE-02). Execute Phase 16 under that lease. Do not clear S06 until Phase 16 SUMMARY + verification pass.
-- Do not start M012 dictionaries-as-facts, M002 Rocks, legal pack, Cypher, HNSW, or ADR-050 because a GSD phase completed — honeycomb stays Proposed (GATE-03).
+- Harness Active Slice is **None**. Plan Phase 17 now; execute only after `.kutha/STATE.md` leases **S01** (GATE-02). Do not overwrite the harness lease from GSD memory.
+- Do not start ADR-050 six dictionaries, M002 Rocks, legal pack, Cypher, or HNSW because a GSD phase completed — honeycomb stays Proposed (GATE-03).
 
 ## Deferred Items
 
 | Category | Item | Status | Deferred At | Milestone |
 |----------|------|--------|-------------|-----------|
 | later | Rocks / Cypher / HNSW / ADR-050 / packs | Frozen | 2026-09-29 | until STATE names M002+ |
-| later | M012 dictionaries-as-facts (F4/F5) | Frozen | 2026-09-30 | until STATE names M012 |
 | later | ADR-061 full GED-class diff API | Out of M012a | 2026-09-30 | v0.04 / REQUIREMENTS |
 | verification | Phases 4–8 verification digests marked stale by manager | Acknowledged override | 2026-09-30 | v0.02 closeout |
 | audit | Formal `/gsd-audit-milestone` for v0.02 not run before archive | Acknowledged gap | 2026-09-30 | v0.02 closeout |
 
 ## Session Continuity
 
-Last session: 2026-09-30T19:36:41.322Z
-Stopped at: Phase 16 complete — all phases complete
+Last session: 2026-10-01
+Stopped at: v0.05 roadmap written (Phases 17–21)
 Resume file: None
-Next: `/gsd-execute-phase 16`. Harness lease is already S06. Freeze holds. Do not lease M002 without explicit operator intent.
+Next: `/gsd-plan-phase 17`. Lease S01 in `.kutha/STATE.md` before execute. Freeze holds. Do not lease M002 without explicit operator intent.
 
 ## Operator Next Steps
 
-- Start the next milestone with /gsd-new-milestone
+- `/gsd-plan-phase 17`

@@ -60,29 +60,31 @@ Closing leased product gaps F4/F5 from `docs/architecture/semantic-gap-review.md
 
 ## Traceability
 
-Filled by roadmapper.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ALL-01 | — | Pending |
-| ALL-02 | — | Pending |
-| ALL-03 | — | Pending |
-| RULE-01 | — | Pending |
-| RULE-02 | — | Pending |
-| RULE-03 | — | Pending |
-| ADM-01 | — | Pending |
-| ADM-02 | — | Pending |
-| ADM-03 | — | Pending |
-| ACT-01 | — | Pending |
-| ACT-02 | — | Pending |
-| DER-01 | — | Pending |
-| DER-02 | — | Pending |
-| DER-03 | — | Pending |
+| ALL-01 | Phase 17 | Pending |
+| ALL-02 | Phase 17 | Pending |
+| ALL-03 | Phase 17 | Pending |
+| RULE-01 | Phase 18 | Pending |
+| RULE-02 | Phase 18 | Pending |
+| RULE-03 | Phase 18 | Pending |
+| ADM-01 | Phase 19 | Pending |
+| ADM-02 | Phase 19 | Pending |
+| ADM-03 | Phase 19 | Pending |
+| ACT-01 | Phase 20 | Pending |
+| ACT-02 | Phase 20 | Pending |
+| DER-01 | Phase 21 | Pending |
+| DER-02 | Phase 21 | Pending |
+| DER-03 | Phase 21 | Pending |
 
 **Coverage:**
 - v0.05 requirements: 14 total
-- Mapped to phases: 0 (pending roadmap)
+- Mapped to phases: 14/14
+- Orphans: none
+- Duplicates: none
+
+**Phase map (M012 slices):** Phase 17 = S01 (ALL) · Phase 18 = S02 (RULE) · Phase 19 = S03 (ADM) · Phase 20 = S04 (ACT) · Phase 21 = S05 (DER)
 
 ---
 *Requirements defined: 2026-10-01*
-*Last updated: 2026-10-01 after M012 lease / gsd-new-milestone --auto*
+*Last updated: 2026-10-01 after v0.05 roadmap (Phases 17–21)*
