@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 8
+open_count: 9
 waived_count: 0
 fixed_count: 0
-total_count: 8
-last_updated: 2026-09-30T10:25:59.675Z
+total_count: 9
+last_updated: 2026-10-01T03:34:35.212Z
 ---
 
 # Broken Windows Ledger
@@ -23,6 +23,7 @@ last_updated: 2026-09-30T10:25:59.675Z
 | 6 | 04 | deviation | crates/kutha-runtime/tests/m011_partial_correction.rs |  | Task 2 tdd=true had no RED: tracer already shipped IntervalPatchRejected; tests committed green | open |  | 2026-09-29T15:07:11.391Z |  |
 | 7 | 04 | deviation | CHANGELOG.md |  | Wave-close ci auto-mode includes uncommitted .kutha/STATE.md; CHANGELOG kept in worktree set for docs-coupling | open |  | 2026-09-29T15:18:13.481Z |  |
 | 8 | 11 | deviation | scripts/kutha_gov/kinds.py |  | Derived cite mutation token changed from __cite_selftest__ to WRONG so the alphanumeric capture actually HIGH | open |  | 2026-09-30T10:25:59.675Z |  |
+| 9 | 20 | deviation | crates/kutha-runtime/tests/m011_e2e_fixture.rs | 181 | Leased helper binds Action at u64::MAX because admission ingest is after t1 | open |  | 2026-10-01T03:34:35.212Z |  |
 
 ````json
 [
@@ -129,6 +130,19 @@ last_updated: 2026-09-30T10:25:59.675Z
     "recorded_at": "2026-09-30T10:25:59.675Z",
     "resolved_at": null,
     "milestone": "v0.03"
+  },
+  {
+    "id": 9,
+    "kind": "deviation",
+    "phase": "20",
+    "file": "crates/kutha-runtime/tests/m011_e2e_fixture.rs",
+    "line": 181,
+    "description": "Leased helper binds Action at u64::MAX because admission ingest is after t1",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-10-01T03:34:35.212Z",
+    "resolved_at": null,
+    "milestone": "v0.05"
   }
 ]
 ````

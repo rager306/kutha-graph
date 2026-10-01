@@ -4,19 +4,19 @@ milestone: v0.05
 milestone_name: Dictionaries as facts
 current_phase: 20
 current_phase_name: Thin action record
-current_plan: 20-01
-status: planning
-stopped_at: Phase 20 plans created, ready to execute
-last_updated: "2026-10-01T10:20:00.000Z"
+current_plan: 2
+status: executing
+stopped_at: Completed 20-01-PLAN.md
+last_updated: "2026-10-01T03:34:41.038Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 20 plans 20-01..03 created (ACT-01..02)
-state_head: d647abda6decb51a658989757def3e467c3ae579
+state_head: 783b2c7c64f18e62c11c7cc2cc073b3b22ef9e6b
 progress:
   total_phases: 5
   completed_phases: 19
-  total_plans: 9
-  completed_plans: 9
-  percent: 90
+  total_plans: 12
+  completed_plans: 10
+  percent: 83
 ---
 
 # Project State
@@ -26,7 +26,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.05 Phase 20 — Thin action record (M012 S04). 20-01..03 planned; ready to execute. Do not clear S04.
+**Current focus:** v0.05 Phase 20 — Thin action record (M012 S04). 20-01 complete; executing 20-02. Do not clear S04.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -35,12 +35,12 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 ## Current Position
 
 Phase: 20 of 21 (Thin action record)
-Current Plan: 20-01
+Current Plan: 2
 Total Plans in Phase: 3
-Status: Ready to execute
-Last activity: 2026-10-01 — Phase 20 plans created (20-01 tracer, 20-02 AS OF, 20-03 governor)
+Status: Executing 20-02
+Last activity: 2026-10-01 — Completed 20-01 thin Action record tracer
 
-Progress: [█████████░] 90% (v0.05)
+Progress: [████████░░] 83% (v0.05)
 
 ## Performance Metrics
 
@@ -65,6 +65,7 @@ Progress: [█████████░] 90% (v0.05)
 | Phase 19 P01 | 7 | 3 tasks | 8 files |
 | Phase 19 P02 | 2 | 2 tasks | 3 files |
 | Phase 19 P03 | 3 | 2 tasks | 5 files |
+| Phase 20 P01 | 10 | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -100,6 +101,8 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 19]: Correct/CorrectInterval remain Fact-only
 - [Phase 19]: ADM file oracles are required observe names; ALL, RULE, and FF6 remain required
 - [Phase 19]: ADR-011 and ADR-050 evidence append only; honeycomb map stays Proposed; ADR-050 delivery stays frozen
+- [Phase 20]: RecordAction is a dedicated Op; policy_version is copied from the live RecordAdmission
+- [Phase 20]: Leased e2e helper looks up admission at u64::MAX because RecordAdmission is ingested after t1
 
 ### Pending Todos
 
@@ -121,8 +124,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-10-01T03:03:29.511Z
-Stopped at: Phase 19 complete, ready to plan Phase 20
+Last session: 2026-10-01T03:34:40.692Z
+Stopped at: Completed 20-01-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 19`. Active Slice S03 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
 

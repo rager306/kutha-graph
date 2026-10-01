@@ -158,10 +158,10 @@ Plans:
   2. A named test shows Action + admission AS OF a prior cut after a later policy change (ACT-02)
   3. Named cargo tests for the ACT oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; ADR-050 six dictionaries stay frozen; honeycomb stays Proposed
 
-**Plans**: 3 plans
+**Plans**: 1/3 plans executed
 
 Plans:
-- [ ] 20-01-PLAN.md — Tracer: Op::RecordAction binds resolved args to admission and policy
+- [x] 20-01-PLAN.md — Tracer: Op::RecordAction binds resolved args to admission and policy
 - [ ] 20-02-PLAN.md — Action + admission AS OF after later policy; persist/open reconstructs
 - [ ] 20-03-PLAN.md — Governor observation of ACT oracles; freeze and Proposed map hold
 
@@ -206,5 +206,5 @@ Plans:
 | 17. Allowlist as log facts | v0.05 | 3/3 | Complete    | 2026-10-01 |
 | 18. Rule registry | v0.05 | 3/3 | Complete    | 2026-10-01 |
 | 19. Admission and policy meta-facts | v0.05 | 3/3 | Complete    | 2026-10-01 |
-| 20. Thin action record | v0.05 | 0/3 | Planned     | - |
+| 20. Thin action record | v0.05 | 1/3 | In Progress|  |
 | 21. Multi-hop derivation | v0.05 | 0/? | Not started | - |
