@@ -2,7 +2,7 @@
 //! Not ADR-050's six dictionary kinds. Not n-ary derivation.
 
 use kutha_common::{policy_version_hash, rule_definition_hash, EventId, Op};
-use kutha_runtime::{Runtime, RuntimeError};
+use kutha_runtime::{store, Runtime, RuntimeError};
 
 fn leased_pin_and_derive() -> (Runtime, EventId, EventId) {
     let mut rt = Runtime::default();
@@ -250,4 +250,62 @@ fn action_and_admission_as_of_prior_cut_after_policy_change() {
         .action_record_at(&jid, u64::MAX, 2017)
         .expect("action at tip");
     assert_eq!(first, tip.policy_version);
+}
+
+#[test]
+fn persist_open_reconstructs_action_record() {
+    let (mut rt, claim_q, cause) = leased_pin_and_derive();
+    let jid = rt
+        .record_justification(
+            claim_q,
+            vec![cause],
+            vec![cause],
+            rule_definition_hash("derive_pq"),
+            u64::MAX,
+            2017,
+        )
+        .expect("record_justification");
+    rt.record_action(&jid, u64::MAX, 2017)
+        .expect("record_action");
+    let first = policy_version_hash("leased-policy");
+
+    let dir = std::env::temp_dir().join(format!(
+        "kutha-m012-s04-{}",
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    store::persist(&rt, &dir).unwrap();
+    let mut opened = store::open(&dir).unwrap();
+    let rec = opened
+        .action_record_at(&jid, u64::MAX, 2017)
+        .expect("opened action_record_at");
+    assert_eq!(first, rec.policy_version);
+    assert!(rec.admitted);
+    assert_eq!(claim_q, rec.target_claim);
+    assert_eq!(Some(true), opened.admission_status_at(&jid, u64::MAX, 2017));
+    assert!(
+        opened.log().iter().any(
+            |e| matches!(&e.op, Op::RecordAction { justification_id, .. } if justification_id == &jid)
+        ),
+        "opened log must contain RecordAction"
+    );
+    let n = opened.log().len();
+    let err = opened
+        .emit(Op::RecordAction {
+            justification_id: jid.clone(),
+            target_claim: claim_q,
+            source_claim_ids: vec![cause],
+            source_event_ids: vec![cause],
+            rule_version: rule_definition_hash("derive_pq"),
+            admitted: true,
+            policy_version: "caller-supplied".into(),
+            valid_from: 2017,
+            valid_to: None,
+        })
+        .unwrap_err();
+    assert!(matches!(err, RuntimeError::MetaOpRejected), "{err:?}");
+    assert_eq!(n, opened.log().len());
+    let _ = std::fs::remove_dir_all(&dir);
 }

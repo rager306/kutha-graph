@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: M012 S04 thin Action record
+
+### Product
+
+### Added
+
+- Thin Action is `Op::RecordAction` log facts that bind resolved justification arguments to the admission decision and policy version. Named AS OF-after-later-policy oracle. persist/open reconstructs action-entries from the log.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. Active Slice remains **S04**. Freeze until M002 unchanged. Not ADR-050 six dictionaries. Not n-ary derivation.
+
 ## 2026-10-01 — Process: lease M012 Active Slice S04
 
 ### Process
