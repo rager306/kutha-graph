@@ -22,9 +22,9 @@ Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semant
 
 ### Fold indexes (F15)
 
-- [ ] **IDX-01**: Keyed Assert retry, claim admit, retract, correct, and follow-ons do no whole-log or whole-fact-vector scan
-- [ ] **IDX-02**: A scaling oracle fails on the pre-change code and passes after (per-op cost does not grow with N across three sizes)
-- [ ] **IDX-03**: The baseline is re-run and ingest and `as_of` regress by no more than 10 percent
+- [x] **IDX-01**: Keyed Assert retry, claim admit, retract, correct, and follow-ons do no whole-log or whole-fact-vector scan
+- [x] **IDX-02**: A scaling oracle fails on the pre-change code and passes after (per-op cost does not grow with N across three sizes)
+- [x] **IDX-03**: The baseline is re-run and ingest and `as_of` regress by no more than 10 percent
 
 ### Genesis log (F10)
 
@@ -89,7 +89,7 @@ Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semant
 |-------------|-------|--------|
 | BASE-01, BASE-02, BASE-03 | Phase 22 | Pending |
 | REC-01, REC-02, REC-03 | Phase 23 | Pending |
-| IDX-01, IDX-02, IDX-03 | Phase 24 | Pending |
+| IDX-01, IDX-02, IDX-03 | Phase 24 | complete |
 | GEN-01, GEN-02, GEN-03 | Phase 25 | Pending |
 | SUB-01, SUB-02, SUB-03, SUB-04 | Phase 26 | Pending |
 | PIPE-01, PIPE-02, PIPE-03, PIPE-04 | Phase 27 | Pending |

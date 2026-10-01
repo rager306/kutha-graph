@@ -40,6 +40,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - Reserve spike (`reserve_ingest_indexes`, small Vec caps): still +21…+28% ingest; capacity alone does not clear D-06.
 - Hybrid spike (`FxHashMap` + `SmallVec<[usize;1]>` + reserve; Samyama/Pogocache-inspired): ingest still +21…+28% vs Phase 22; visit oracle green. See `benchmark-baseline.md` hybrid section.
 - `FoldIndexMode` config (Eager = accept write-cost default; Lazy = thin write / lazy lease via `KUTHA_FOLD_INDEX_MODE=lazy|thin`). API: `Runtime::with_index_mode` / `set_index_mode` / `ensure_fold_indexes`. Tests: `m013_fold_index_mode`. Env template: `.env.example` (`KUTHA_FOLD_INDEX_MODE=eager`); see `benchmark-baseline.md` § Fold index mode.
+- Phase 24 / S03 closed: independent verification passed (IDX-03 with controller D-06 override); `L_delivery=M013-S03-done`.
 
 ## 2026-10-01 — Process: M013 S02 legal fixture reconnaissance
 

@@ -21,7 +21,7 @@ v0.01–v0.05 are shipped. **v0.05** delivered M012 (dictionaries as facts): all
 
 - [x] **Phase 22: Benchmark baseline and size target** — re-runnable bench harness, target N, memory budget
 - [x] **Phase 23: Legal fixture reconnaissance** — law-nexus real text mapped against the current model; no product code
-- [ ] **Phase 24: Fold indexes for ingest** — no log or fact-vector scans on ingest
+- [x] **Phase 24: Fold indexes for ingest** — no log or fact-vector scans on ingest
 - [ ] **Phase 25: Genesis log** — relation allowance is log events; seeded relations are retractable
 - [ ] **Phase 26: Dictionary entries as facts** — reserved-namespace facts replace five meta side tables
 - [ ] **Phase 27: One write path and facade** — one pipeline, typed references, public facade with example and integration test
@@ -30,6 +30,7 @@ v0.01–v0.05 are shipped. **v0.05** delivered M012 (dictionaries as facts): all
 ## Phase Details
 
 ### Phase 22: Benchmark baseline and size target
+
 **Goal**: The engine has a declared size target and a re-runnable measured baseline before anything is refactored.
 **Depends on**: Nothing
 **Requirements**: BASE-01, BASE-02, BASE-03
@@ -37,6 +38,7 @@ v0.01–v0.05 are shipped. **v0.05** delivered M012 (dictionaries as facts): all
   1. One command runs ingest, `as_of`, claim support, retract, persist, open, and replay at three sizes and prints bytes per fact.
   2. A dated note declares target N and a memory budget beside the measured numbers.
   3. Two consecutive runs produce output of the same shape that can be diffed.
+
 **Plans**: 2 plans (budget: `docs/process/gsd-auto-contract.md`)
 
 Plans:
@@ -44,6 +46,7 @@ Plans:
 - [x] 22-02: dated baseline note with target N and memory budget; path-set check
 
 ### Phase 23: Legal fixture reconnaissance
+
 **Goal**: The riskiest assumption (two axes express real norms) is probed on paper with real text before any durability work.
 **Depends on**: Nothing (runs independently of Phase 22)
 **Requirements**: REC-01, REC-02, REC-03
@@ -51,12 +54,14 @@ Plans:
   1. At least ten law-nexus cases are mapped against the current model, each marked expressible or not with a reason.
   2. The inexpressible set is named and listed as input for M014/M015.
   3. `git diff --stat -- crates/` is empty for the phase.
+
 **Plans**: 1 plan
 
 Plans:
 - [x] 23-01: inventory, classify at least ten cases, quote gate, golden-fixture proposal
 
 ### Phase 24: Fold indexes for ingest
+
 **Goal**: Ingest, retract, correct, claim admit, and follow-ons cost O(1) in log size.
 **Depends on**: Phase 22
 **Requirements**: IDX-01, IDX-02, IDX-03
@@ -64,9 +69,15 @@ Plans:
   1. A scaling oracle fails on the pre-change code and passes after.
   2. No whole-log or whole-fact-vector scan remains on the listed paths (`rg` and CBM `trace_path` evidence).
   3. The baseline re-run shows no ingest or `as_of` regression over 10 percent; all named oracles are green.
-**Plans**: 2 plans max
+
+**Plans**: 2/2 plans complete max
+
+Plans:
+- [x] 24-01: RED visit oracle + lease indexes on fold/Runtime
+- [x] 24-02: wire D-03 sites, green oracle, bench delta + FoldIndexMode
 
 ### Phase 25: Genesis log
+
 **Goal**: The log owns relation admission from its first event; no file is read at admit time.
 **Depends on**: Phase 24
 **Requirements**: GEN-01, GEN-02, GEN-03
@@ -74,9 +85,11 @@ Plans:
   1. A new log starts with genesis events; opening an existing log never reads the YAML.
   2. Retracting a seeded relation fails admit at the later cut and still admits at the earlier cut.
   3. FF6 and the M012 allowlist oracle are green with unchanged assertions.
+
 **Plans**: 2 plans max
 
 ### Phase 26: Dictionary entries as facts
+
 **Goal**: One substrate: dictionary entries are ordinary bi-temporal facts; the five meta kinds disappear.
 **Depends on**: Phase 25
 **Requirements**: SUB-01, SUB-02, SUB-03, SUB-04
@@ -85,9 +98,11 @@ Plans:
   2. Five side tables and five `is_live_at` copies are gone; one `as_of` answers all entries.
   3. Justification and policy references are `EventId` or hash; the RAM buffer is gone.
   4. M012 oracles keep their assertions; the rename table is in the SUMMARY.
+
 **Plans**: 2 plans max
 
 ### Phase 27: One write path and facade
+
 **Goal**: A single propose, admit, commit, receipt pipeline and a public facade used by something other than in-crate tests.
 **Depends on**: Phase 26
 **Requirements**: PIPE-01, PIPE-02, PIPE-03, PIPE-04
@@ -96,9 +111,11 @@ Plans:
   2. No file under `crates/kutha-runtime/src` exceeds 800 lines.
   3. One example and one integration test use only the facade and run the statute-shaped AS OF scenario.
   4. The baseline re-run shows no regression over 10 percent.
+
 **Plans**: 2 plans max
 
 ### Phase 28: Independent verification and artifact budget
+
 **Goal**: The process stops grading itself: budget and independence are enforced, ids have one map, the milestone is audited.
 **Depends on**: Phase 27
 **Requirements**: PROC-01, PROC-02, PROC-03, PROC-04
@@ -107,6 +124,7 @@ Plans:
   2. Every v0.06 phase has a verification file from a verifier that did not read PLAN or SUMMARY.
   3. The id map exists in one table and is cited by the governor.
   4. `/gsd-audit-milestone` passes before archive.
+
 **Plans**: 2 plans max
 
 <details>

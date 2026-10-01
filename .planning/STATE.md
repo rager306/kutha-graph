@@ -2,14 +2,14 @@
 gsd_state_version: "1.0"
 milestone: v0.06
 milestone_name: Honest baseline and one write path
-current_phase: 24
-current_phase_name: Fold indexes for ingest
-status: executing
-stopped_at: Phase 23 closed; next lease S03 for Phase 24
-last_updated: "2026-10-01T15:01:27.093Z"
+current_phase: 25
+current_phase_name: Genesis log
+status: planning
+stopped_at: Phase 24 complete, ready to plan Phase 25
+last_updated: "2026-10-01T15:07:35.176Z"
 last_activity: 2026-10-01
-last_activity_desc: Phase 24 execution started
-state_head: dbcd73afda7823805398c23ae3e43e97a7556131
+last_activity_desc: Phase 24 complete, transitioned to Phase 25
+state_head: 027a2ce1fcba5dc4b903d3fbbd9901290e1a3478
 progress:
   total_phases: 7
   completed_phases: 2
@@ -32,10 +32,10 @@ See: `.planning/PROJECT.md`
 
 ## Current Position
 
-Phase: 24 (Fold indexes for ingest) — EXECUTING
-Plan: 1 of 2
-Status: Executing Phase 24
-Last activity: 2026-10-01 — Phase 24 execution started
+Phase: 25 — Genesis log
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-10-01 — Phase 24 complete, transitioned to Phase 25
 
 ## Performance Metrics
 
@@ -53,5 +53,5 @@ Last activity: 2026-10-01 — Phase 24 execution started
 
 ## Session Continuity
 
-Stopped at: Phase 23 closed; next lease S03 for Phase 24
+Stopped at: Phase 24 complete, ready to plan Phase 25
 Next: Lease S03, `/gsd-plan-phase 24`, then `/gsd-autonomous --only 24`
