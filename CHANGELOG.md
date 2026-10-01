@@ -4,6 +4,24 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: one write pipeline and runtime module split
+
+### Product
+
+### Added
+
+- `Runtime::pipeline` / `pipeline_kind` / `pipeline_events`: one propose→admit→commit→receipt path. `emit` is a thin wrapper that still rejects public forging of `JustificationCite`, `QuantumOutcome`, `kutha:admission`, and `kutha:action` (`MetaOpRejected`).
+- Runtime modules under `crates/kutha-runtime/src/`: `pipeline.rs`, `admission.rs`, `justification.rs`, `hydrate.rs`, `provenance.rs`, `fold_query.rs`, `quantum_invariants.rs`. Every `src/*.rs` is ≤800 lines. No new crate.
+
+### Changed
+
+- `emit_allow` / `emit_rule` / `emit_policy`, `record_justification` / `record_action` / `record_resume`, and user `emit` all call the pipeline. The `append_meta` side path is deleted. Dictionary constructors stay receipt-quiet so named m012 log-growth expects hold; justification/action buffer a receipt without an extra log `QuantumOutcome`.
+- `GraphFold` query surface (`as_of`, `live_at`, dictionary/registry cuts, fingerprint) lives in `fold_query.rs`; apply/replay/hot maps stay in `fold.rs`.
+
+### Trajectory
+
+- No lease change. Active Slice **S06**. Cells remain **Proposed**. Facade methods and Phase 22 bench delta are the next 27-02 commit.
+
 ## 2026-10-01 — Product: RED facade statute consumer
 
 ### Product
