@@ -106,7 +106,14 @@ Plans:
   3. Justification and policy references are `EventId` or hash; the RAM buffer is gone.
   4. M012 oracles keep their assertions; the rename table is in the SUMMARY.
 
-**Plans**: 2 plans max
+**Plans**: 2 plans
+
+Plans:
+**Wave 1**
+- [ ] 26-01-PLAN.md — RED as_of cannot see admission/policy/allow (side tables)
+
+**Wave 2**
+- [ ] 26-02-PLAN.md — kutha: facts + StoreBlob; drop five meta Ops; EventId admissions
 
 ### Phase 27: One write path and facade
 
