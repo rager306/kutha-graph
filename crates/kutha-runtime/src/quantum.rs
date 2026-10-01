@@ -1126,11 +1126,28 @@ impl Runtime {
         Ok(())
     }
 
-    /// Thin P→Q oracle (M011 S03): a Behavior-derived claim is eligible at a cut
-    /// iff the derived fact is still live and its premise claim still has a live support.
-    /// `caused_by` may name any prior Assert/Behavior event; eligibility keys on that
-    /// event's claim identity, so withdrawing one of several supports does not drop Q.
+    /// Derivation eligibility at a named cut. A Behavior-derived claim is
+    /// eligible iff the derived fact is live, its pin is a live registry hash,
+    /// and its immediate premise claim is live. When that premise is itself a
+    /// Behavior, eligibility also walks `caused_by` through ancestor Behaviors
+    /// with a visited [`EventId`] set (already-seen id is ineligible).
+    ///
+    /// This is not a provenance-polynomial evaluator and is not a MATCH compiler.
     pub fn derivation_eligible_at(&self, derived: EventId, tt: u64, vt: u64) -> bool {
+        let mut visited = HashSet::new();
+        self.derivation_eligible_at_walk(derived, tt, vt, &mut visited)
+    }
+
+    fn derivation_eligible_at_walk(
+        &self,
+        derived: EventId,
+        tt: u64,
+        vt: u64,
+        visited: &mut HashSet<EventId>,
+    ) -> bool {
+        if !visited.insert(derived) {
+            return false;
+        }
         if !self.fold.claim_supported_at(derived, tt, vt) {
             return false;
         }
@@ -1166,7 +1183,14 @@ impl Runtime {
         if !self.fold.rule_hash_live_at(rule_version, tt, vt) {
             return false;
         }
-        self.fold.claim_supported_at(premise, tt, vt)
+        if !self.fold.claim_supported_at(premise, tt, vt) {
+            return false;
+        }
+        match &cause.op {
+            Op::Assert { .. } => true,
+            Op::Behavior { .. } => self.derivation_eligible_at_walk(cause.id, tt, vt, visited),
+            _ => false,
+        }
     }
 
     #[cfg(test)]
