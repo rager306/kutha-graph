@@ -200,6 +200,6 @@ Plans:
 | 16. Fold-internal hot indexes | v0.04 | 3/3 | Complete | 2026-10-01 |
 | 17. Allowlist as log facts | v0.05 | 3/3 | Complete    | 2026-10-01 |
 | 18. Rule registry | v0.05 | 3/3 | Complete    | 2026-10-01 |
-| 19. Admission and policy meta-facts | v0.05 | 3/3 | Complete   | 2026-10-01 |
+| 19. Admission and policy meta-facts | v0.05 | 3/3 | Complete    | 2026-10-01 |
 | 20. Thin action record | v0.05 | 0/? | Not started | - |
 | 21. Multi-hop derivation | v0.05 | 0/? | Not started | - |
