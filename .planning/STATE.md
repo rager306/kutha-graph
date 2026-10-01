@@ -4,19 +4,19 @@ milestone: v0.05
 milestone_name: Dictionaries as facts
 current_phase: 21
 current_phase_name: Multi-hop derivation
-current_plan: 01
+current_plan: 02 (21-01 tracer)
 status: ready_to_execute
-stopped_at: Phase 21 plans created, ready to execute 21-01
-last_updated: "2026-10-01T03:55:00.000Z"
+stopped_at: Completed 21-01-PLAN.md
+last_updated: "2026-10-01T04:05:42.824Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 21 plans created (21-01..03)
-state_head: f656cf6b71f672c59d0c62e05a87af0d94d35417
+state_head: d7496a06d40f30208640b14f682658b04b4f0913
 progress:
   total_phases: 5
   completed_phases: 20
-  total_plans: 12
-  completed_plans: 12
-  percent: 95
+  total_plans: 15
+  completed_plans: 13
+  percent: 87
 ---
 
 # Project State
@@ -35,12 +35,12 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 ## Current Position
 
 Phase: 21 of 21 (Multi-hop derivation)
-Current Plan: 01 (21-01 tracer)
+Current Plan: 02 (21-01 tracer)
 Total Plans in Phase: 3
 Status: Ready to execute
 Last activity: 2026-10-01 — Phase 21 plans created (21-01..03)
 
-Progress: [█████████░] 95% (v0.05)
+Progress: [█████████░] 87% (v0.05)
 
 ## Performance Metrics
 
@@ -68,6 +68,7 @@ Progress: [█████████░] 95% (v0.05)
 | Phase 20 P01 | 10 | 3 tasks | 6 files |
 | Phase 20 P02 | 2 | 2 tasks | 3 files |
 | Phase 20 P03 | 5 | 2 tasks | 5 files |
+| Phase 21 P01 | 2 | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -107,6 +108,8 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 20]: Leased e2e helper looks up admission at u64::MAX because RecordAdmission is ingested after t1
 - [Phase 20]: Later PinPolicy changes only the live pin at the tip; Action.policy_version stays the first hash
 - [Phase 20]: GATE-01: two ACT file names are required observe names; honeycomb stays Proposed
+- [Phase 21]: Keep caused_by as a single EventId; satisfy D-01/D-02 by walking ancestor Behaviors
+- [Phase 21]: Do not bound the eligibility walk with KUTHA_MAX_CASCADE; finite log plus visited is the bound
 
 ### Pending Todos
 
@@ -128,8 +131,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-10-01T03:44:37.732Z
-Stopped at: Phase 20 complete, ready to plan Phase 21
+Last session: 2026-10-01T04:05:42.308Z
+Stopped at: Completed 21-01-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 19`. Active Slice S03 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
 

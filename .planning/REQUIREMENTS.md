@@ -33,8 +33,8 @@ Closing leased product gaps F4/F5 from `docs/architecture/semantic-gap-review.md
 
 ### Multi-hop derivation (F4)
 
-- [ ] **DER-01**: Derivation eligibility is not limited to one-hop `caused_by` for the leased fixture
-- [ ] **DER-02**: A two-hop (or n-ary) named test is green without claiming full provenance polynomials
+- [x] **DER-01**: Derivation eligibility is not limited to one-hop `caused_by` for the leased fixture
+- [x] **DER-02**: A two-hop (or n-ary) named test is green without claiming full provenance polynomials
 - [ ] **DER-03**: Hard-coded `inverse_knows`-only cascade is not the sole follow-on mechanism (or is documented as residual spike with a named guard)
 
 ## Future Requirements (not v0.05)
@@ -73,8 +73,8 @@ Closing leased product gaps F4/F5 from `docs/architecture/semantic-gap-review.md
 | ADM-03 | Phase 19 | Complete |
 | ACT-01 | Phase 20 | Complete |
 | ACT-02 | Phase 20 | Complete |
-| DER-01 | Phase 21 | Pending |
-| DER-02 | Phase 21 | Pending |
+| DER-01 | Phase 21 | Complete |
+| DER-02 | Phase 21 | Complete |
 | DER-03 | Phase 21 | Pending |
 
 **Coverage:**

@@ -1,0 +1,8 @@
+{
+  "command": "cargo test -p kutha-runtime --offline --test m012_multi_hop two_hop_ineligible_when_root_assert_retracted -- --exact",
+  "exitCode": 101,
+  "targetTest": "two_hop_ineligible_when_root_assert_retracted",
+  "expected": "derivation_eligible_at(hop2, u64::MAX, 2017) is false after Retract of cause_p",
+  "actual": "hop2 eligibility remained true because the walk keys only the immediate caused_by claim",
+  "output": "1..1\nnot ok 1 - two_hop_ineligible_when_root_assert_retracted\n# tests 1\n# pass 0\n# fail 1\n"
+}

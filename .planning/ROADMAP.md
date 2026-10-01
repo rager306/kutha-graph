@@ -179,10 +179,10 @@ Plans:
   3. Hard-coded `inverse_knows`-only cascade is not the sole follow-on mechanism, **or** it is documented as residual spike with a named guard (DER-03)
   4. Named cargo tests for the DER oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; ADR-011 MATCH/polynomial evaluator stays out of this milestone
 
-**Plans**: 3 plans
+**Plans**: 1/3 plans executed
 
 Plans:
-- [ ] 21-01-PLAN.md — Tracer: walk caused_by so two-hop hashed eligibility is not one-hop-only
+- [x] 21-01-PLAN.md — Tracer: walk caused_by so two-hop hashed eligibility is not one-hop-only
 - [ ] 21-02-PLAN.md — Residual inverse_knows guard; persist/open reconstructs two-hop eligibility
 - [ ] 21-03-PLAN.md — Governor observation of DER oracles; freeze and Proposed map hold
 
@@ -212,4 +212,4 @@ Plans:
 | 18. Rule registry | v0.05 | 3/3 | Complete    | 2026-10-01 |
 | 19. Admission and policy meta-facts | v0.05 | 3/3 | Complete    | 2026-10-01 |
 | 20. Thin action record | v0.05 | 3/3 | Complete    | 2026-10-01 |
-| 21. Multi-hop derivation | v0.05 | 0/3 | Planned     | - |
+| 21. Multi-hop derivation | v0.05 | 1/3 | In Progress|  |
