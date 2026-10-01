@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Process: lease M012 Active Slice S04
+
+### Process
+
+- Active Slice **S04** (thin action record). Active Milestone stays **M012**; `L_delivery=M012-S03-done` until S04 closes.
+
+### Trajectory
+
+- GSD Phase 20 may edit product crates for ACT-01..02. Six dictionaries / Cypher / HNSW / M002 stay frozen.
+
 ## 2026-10-01 — Process: governor observes ADM-01..03
 
 ### Process

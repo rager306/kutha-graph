@@ -30,7 +30,7 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M012**; Active Slice **None**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012-S03-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
+**Harness lease (cite only):** Active Milestone **M012**; Active Slice **S04**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M012-S03-done`; `L_capability=ff5-green`. Freeze until explicit **M002** (no RocksDB/Cypher/HNSW/ADR-050 six dicts/legal pack start).
 
 ## Current Position
 
