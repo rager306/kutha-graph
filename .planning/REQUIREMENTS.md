@@ -34,10 +34,10 @@ Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semant
 
 ### Dictionary entries as facts (F11, F14)
 
-- [ ] **SUB-01**: Relation, rule, policy, admission, and action records are facts in a reserved namespace; rule and policy bodies are content-addressed blobs referenced by hash
-- [ ] **SUB-02**: The five meta `Op` variants, their five side-table structs, and the five copies of `is_live_at` are removed; one `as_of` and one Retract/Correct path serve all of them
-- [ ] **SUB-03**: Justification and policy references are `EventId` or content hash; the RAM justification buffer is gone
-- [ ] **SUB-04**: The M012 oracles keep their assertions; every mechanical rename is listed in an old-to-new table in the phase SUMMARY
+- [x] **SUB-01**: Relation, rule, policy, admission, and action records are facts in a reserved namespace; rule and policy bodies are content-addressed blobs referenced by hash
+- [x] **SUB-02**: The five meta `Op` variants, their five side-table structs, and the five copies of `is_live_at` are removed; one `as_of` and one Retract/Correct path serve all of them
+- [x] **SUB-03**: Justification and policy references are `EventId` or content hash; the RAM justification buffer is gone
+- [x] **SUB-04**: The M012 oracles keep their assertions; every mechanical rename is listed in an old-to-new table in the phase SUMMARY
 
 ### One write path and facade (F11, F12)
 
