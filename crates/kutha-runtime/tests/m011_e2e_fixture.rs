@@ -166,7 +166,8 @@ impl Fixture {
     }
 
     fn record_t1_justification(&mut self) -> String {
-        self.rt
+        let jid = self
+            .rt
             .record_justification(
                 self.claim_q,
                 vec![self.claim_p],
@@ -175,7 +176,11 @@ impl Fixture {
                 self.t1,
                 VT_INTERIOR,
             )
-            .expect("record_justification")
+            .expect("record_justification");
+        self.rt
+            .record_action(&jid, u64::MAX, VT_INTERIOR)
+            .expect("record_action");
+        jid
     }
 }
 
