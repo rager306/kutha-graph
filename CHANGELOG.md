@@ -4,7 +4,7 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
-## 2026-10-01 — Product: M013 S01 benchmark baseline (in progress)
+## 2026-10-01 — Product: M013 S01 benchmark baseline
 
 ### Product
 
@@ -15,6 +15,13 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Trajectory
 
 - Active Slice **S01**; `L_delivery=M013-leased` until S01 closes.
+- `docs/architecture/benchmark-baseline.md`: measured default-N run, ratios, persist/open at three sizes, proposed target N 1000000 and memory budget 13674000000.
+
+### Process
+
+### Added
+
+- Phase 22 / M013-S01 baseline note under `docs/architecture/` (not an ADR); governor docs-coupling satisfied by this CHANGELOG entry.
 
 ## 2026-10-01 — Post-M012 review: roadmap reset and M013 lease
 
