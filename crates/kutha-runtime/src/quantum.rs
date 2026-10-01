@@ -7,8 +7,33 @@ use crate::receipt::{digest_to_hex, QuantumReceipt};
 use crate::snapshot::Snapshot;
 use kutha_common::{Event, EventId, Op, TermDictionary, TermId};
 use sha2::{Digest, Sha256};
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::fmt;
+use std::sync::atomic::{AtomicU64, Ordering};
+
+/// Integration-test ingest examine counter (not fingerprint / JSON).
+#[derive(Debug, Default)]
+struct IngestExamine(AtomicU64);
+
+impl Clone for IngestExamine {
+    fn clone(&self) -> Self {
+        Self(AtomicU64::new(self.0.load(Ordering::Relaxed)))
+    }
+}
+
+impl IngestExamine {
+    fn reset(&self) {
+        self.0.store(0, Ordering::Relaxed);
+    }
+
+    fn get(&self) -> u64 {
+        self.0.load(Ordering::Relaxed)
+    }
+
+    fn bump(&self) {
+        self.0.fetch_add(1, Ordering::Relaxed);
+    }
+}
 
 #[derive(Debug)]
 pub enum RuntimeError {
@@ -219,6 +244,12 @@ pub struct Runtime {
     /// In-memory buffer of justification cites. SoT is `Op::JustificationCite` on the log.
     /// Open hydrates from those Events; it never infers cites from Assert/Behavior triples.
     justifications: Vec<Justification>,
+    /// Log position by EventId (lease; rebuilt on hydrate / fork).
+    by_event_id: HashMap<EventId, usize>,
+    /// Delivery key → EventId for identical Assert retry (lease).
+    by_delivery_key: HashMap<String, EventId>,
+    /// Rows visited on ingest lookup paths (tests; not SoT).
+    ingest_examine: IngestExamine,
 }
 
 impl Default for Runtime {
@@ -243,6 +274,9 @@ impl Runtime {
             allowed: load_allowed_names(),
             outcomes: Vec::new(),
             justifications: Vec::new(),
+            by_event_id: HashMap::new(),
+            by_delivery_key: HashMap::new(),
+            ingest_examine: IngestExamine::default(),
         }
     }
 
@@ -260,12 +294,60 @@ impl Runtime {
             self.next_tt(),
         );
         self.fold.apply(&event);
-        self.log.append(event);
+        self.append_indexed(event);
         id
     }
 
     pub fn log(&self) -> &EventLog {
         &self.log
+    }
+
+    /// Reset ingest examine counter (integration tests; not fingerprint input).
+    pub fn reset_ingest_examine_count(&self) {
+        self.ingest_examine.reset();
+    }
+
+    /// Log/fact rows visited on ingest lookup paths since reset.
+    pub fn ingest_examine_count(&self) -> u64 {
+        self.ingest_examine.get()
+    }
+
+    fn rebuild_log_indexes(&mut self) {
+        self.by_event_id.clear();
+        self.by_delivery_key.clear();
+        for (i, e) in self.log.as_slice().iter().enumerate() {
+            self.by_event_id.insert(e.id, i);
+            if let Op::Assert {
+                delivery_key: Some(k),
+                ..
+            } = &e.op
+            {
+                if !k.is_empty() {
+                    self.by_delivery_key.insert(k.clone(), e.id);
+                }
+            }
+        }
+    }
+
+    fn append_indexed(&mut self, event: Event) {
+        let pos = self.log.len();
+        self.by_event_id.insert(event.id, pos);
+        if let Op::Assert {
+            delivery_key: Some(k),
+            ..
+        } = &event.op
+        {
+            if !k.is_empty() {
+                self.by_delivery_key.insert(k.clone(), event.id);
+            }
+        }
+        self.log.append(event);
+    }
+
+    fn event_by_id(&self, id: EventId) -> Option<&Event> {
+        self.ingest_examine.bump();
+        let pos = *self.by_event_id.get(&id)?;
+        self.log.as_slice().get(pos)
     }
 
     /// Count of fold-affecting events. Snapshot `log_offset` uses this so open-with-snapshot
@@ -342,6 +424,7 @@ impl Runtime {
         self.fold.rebuild_policy_entries(self.log.as_slice());
         self.fold.rebuild_admission_entries(self.log.as_slice());
         self.fold.rebuild_action_entries(self.log.as_slice());
+        self.rebuild_log_indexes();
     }
 
     pub(crate) fn log_has_quantum_outcome(&self) -> bool {
@@ -359,7 +442,7 @@ impl Runtime {
     fn append_meta(&mut self, op: Op) {
         let event = Event::new(op, self.next_tt());
         self.fold.apply(&event);
-        self.log.append(event);
+        self.append_indexed(event);
     }
 
     fn outcome_op(row: &PersistedQuantumOutcome) -> Op {
@@ -529,11 +612,12 @@ impl Runtime {
         // Historical row.tt records the claimed cut; using it alone would never
         // stale a cite after CorrectInterval/Retract (FIX-02).
         for event_id in &row.source_event_ids {
+            self.ingest_examine.bump();
             let live = self
                 .fold
-                .facts()
-                .iter()
-                .any(|f| f.event_id == *event_id && f.is_live_at(u64::MAX, row.vt));
+                .fact_index_by_event_id(*event_id)
+                .map(|idx| self.fold.facts()[idx].is_live_at(u64::MAX, row.vt))
+                .unwrap_or(false);
             if !live {
                 return Err(RuntimeError::AdmissionDenied {
                     justification_id: row.justification_id.clone(),
@@ -547,7 +631,7 @@ impl Runtime {
                 reason: "ineligible",
             });
         }
-        let pin = match self.log.iter().find(|e| e.id == row.target_claim) {
+        let pin = match self.event_by_id(row.target_claim) {
             Some(e) => match &e.op {
                 Op::Behavior { rule_version, .. } => rule_version.as_str(),
                 _ => "",
@@ -654,6 +738,9 @@ impl Runtime {
             allowed: load_allowed_names(),
             outcomes: Vec::new(),
             justifications: Vec::new(),
+            by_event_id: HashMap::new(),
+            by_delivery_key: HashMap::new(),
+            ingest_examine: IngestExamine::default(),
         };
         rt.hydrate_from_log();
         rt
@@ -693,6 +780,9 @@ impl Runtime {
             allowed: load_allowed_names(),
             outcomes: Vec::new(),
             justifications: Vec::new(),
+            by_event_id: HashMap::new(),
+            by_delivery_key: HashMap::new(),
+            ingest_examine: IngestExamine::default(),
         };
         rt.hydrate_from_log();
         Ok(rt)
@@ -718,6 +808,9 @@ impl Runtime {
             allowed: self.allowed.clone(),
             outcomes: Vec::new(),
             justifications: Vec::new(),
+            by_event_id: HashMap::new(),
+            by_delivery_key: HashMap::new(),
+            ingest_examine: IngestExamine::default(),
         };
         rt.hydrate_from_log();
         rt
@@ -799,7 +892,8 @@ impl Runtime {
         else {
             return Ok(());
         };
-        if self.fold.facts().iter().any(|f| f.claim_id == *claim) {
+        self.ingest_examine.bump();
+        if self.fold.claim_known(*claim) {
             return Ok(());
         }
         Err(RuntimeError::UnknownClaim { claim: *claim })
@@ -857,32 +951,23 @@ impl Runtime {
         let Some(key) = Self::delivery_key_active(delivery_key) else {
             return Ok(None);
         };
-        for e in self.log.iter() {
-            let Op::Assert {
-                delivery_key: existing,
-                ..
-            } = &e.op
-            else {
-                continue;
-            };
-            let Some(found) = Self::delivery_key_active(existing) else {
-                continue;
-            };
-            if found != key {
-                continue;
-            }
-            if Self::assert_payload_matches(&e.op, op) {
-                let receipt = QuantumReceipt::from_events(vec![e.id], &[e.digest_bytes()], false);
-                return Ok(Some(QuantumOutcome {
-                    receipt,
-                    events_in_quantum: 0,
-                }));
-            }
-            return Err(RuntimeError::DeliveryKeyConflict {
-                key: key.to_string(),
-            });
+        self.ingest_examine.bump();
+        let Some(existing_id) = self.by_delivery_key.get(key).copied() else {
+            return Ok(None);
+        };
+        let Some(e) = self.event_by_id(existing_id) else {
+            return Ok(None);
+        };
+        if Self::assert_payload_matches(&e.op, op) {
+            let receipt = QuantumReceipt::from_events(vec![e.id], &[e.digest_bytes()], false);
+            return Ok(Some(QuantumOutcome {
+                receipt,
+                events_in_quantum: 0,
+            }));
         }
-        Ok(None)
+        Err(RuntimeError::DeliveryKeyConflict {
+            key: key.to_string(),
+        })
     }
 
     /// Admit a user op, append, fold, cascade inverse-`knows` until idle or budget.
@@ -897,7 +982,8 @@ impl Runtime {
             return Err(RuntimeError::MetaOpRejected);
         }
         if let Op::Retract { event_id } = &op {
-            let known_fact = self.fold.facts().iter().any(|f| f.event_id == *event_id);
+            self.ingest_examine.bump();
+            let known_fact = self.fold.fact_index_by_event_id(*event_id).is_some();
             if !known_fact
                 && !self.fold.has_allow_entry(*event_id)
                 && !self.fold.has_rule_entry(*event_id)
@@ -910,7 +996,8 @@ impl Runtime {
                 });
             }
         } else if let Op::Correct { event_id, .. } | Op::CorrectInterval { event_id, .. } = &op {
-            if !self.fold.facts().iter().any(|f| f.event_id == *event_id) {
+            self.ingest_examine.bump();
+            if self.fold.fact_index_by_event_id(*event_id).is_none() {
                 return Err(RuntimeError::UnknownFact {
                     event_id: *event_id,
                 });
@@ -923,13 +1010,12 @@ impl Runtime {
             ..
         } = &op
         {
-            let fact = self
+            self.ingest_examine.bump();
+            let idx = self
                 .fold
-                .facts()
-                .iter()
-                .find(|f| f.event_id == *event_id && f.invalidated_at.is_none())
-                .or_else(|| self.fold.facts().iter().find(|f| f.event_id == *event_id))
+                .fact_index_by_event_id(*event_id)
                 .expect("UnknownFact gate already ran");
+            let fact = &self.fold.facts()[idx];
             if fact.invalidated_at.is_some()
                 || patch_to.is_some_and(|t| *patch_from >= t)
                 || crate::fold::vt_intersect(fact.valid_from, fact.valid_to, *patch_from, *patch_to)
@@ -949,7 +1035,7 @@ impl Runtime {
             let id = event.id;
             let digest = event.digest_bytes();
             self.fold.apply(&event);
-            self.log.append(event);
+            self.append_indexed(event);
             let receipt = QuantumReceipt::from_events(vec![id], &[digest], false);
             return Ok(QuantumOutcome {
                 receipt,
@@ -993,7 +1079,7 @@ impl Runtime {
             digests.push(event.digest_bytes());
             let follow = self.follow_ons(&event);
             self.fold.apply(&event);
-            self.log.append(event);
+            self.append_indexed(event);
             for e in follow {
                 pending.push(e);
             }
@@ -1035,12 +1121,10 @@ impl Runtime {
                 valid_to,
                 ..
             } if *relation == self.knows => {
-                let exists = self.fold.facts().iter().any(|f| {
-                    f.subject == *object
-                        && f.relation == self.known_by
-                        && f.object() == *subject
-                        && f.invalidated_at.is_none()
-                });
+                self.ingest_examine.bump();
+                let exists =
+                    self.fold
+                        .has_live_triple(*object, self.known_by, *subject);
                 if exists {
                     return vec![];
                 }
@@ -1155,18 +1239,15 @@ impl Runtime {
         if !self.fold.claim_supported_at(derived, tt, vt) {
             return false;
         }
-        let Some(event) = self.log.iter().find(|e| e.id == derived) else {
-            return false;
+        let (caused_by, rule_version) = match self.event_by_id(derived).map(|e| &e.op) {
+            Some(Op::Behavior {
+                caused_by,
+                rule_version,
+                ..
+            }) => (*caused_by, rule_version.clone()),
+            _ => return false,
         };
-        let Op::Behavior {
-            caused_by,
-            rule_version,
-            ..
-        } = &event.op
-        else {
-            return false;
-        };
-        let Some(cause) = self.log.iter().find(|e| e.id == *caused_by) else {
+        let Some(cause) = self.event_by_id(caused_by) else {
             return false;
         };
         let premise = match &cause.op {
@@ -1184,7 +1265,7 @@ impl Runtime {
             | Op::RecordAdmission { .. }
             | Op::RecordAction { .. } => return false,
         };
-        if !self.fold.rule_hash_live_at(rule_version, tt, vt) {
+        if !self.fold.rule_hash_live_at(&rule_version, tt, vt) {
             return false;
         }
         if !self.fold.claim_supported_at(premise, tt, vt) {

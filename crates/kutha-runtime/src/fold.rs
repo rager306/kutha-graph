@@ -322,6 +322,12 @@ pub struct GraphFold {
     /// Fact indices grouped by portable `claim_id`.
     #[serde(skip)]
     claim_facts: HashMap<EventId, Vec<usize>>,
+    /// Fact indices grouped by minting `event_id` (ingest lookup lease).
+    #[serde(skip)]
+    fact_by_event: HashMap<EventId, Vec<usize>>,
+    /// Live (subject, relation, object) triples for residual cascade checks.
+    #[serde(skip)]
+    live_triples: HashMap<(TermId, TermId, TermId), usize>,
     /// Live allowlist entries rebuilt from `Op::AllowRelation` (ALL-01). Not fingerprint input.
     #[serde(skip)]
     allow_entries: Vec<AllowEntry>,
@@ -353,6 +359,8 @@ impl<'de> serde::Deserialize<'de> for GraphFold {
             hot_examine: ExamineCounter::default(),
             vt_by_from: BTreeMap::new(),
             claim_facts: HashMap::new(),
+            fact_by_event: HashMap::new(),
+            live_triples: HashMap::new(),
             allow_entries: Vec::new(),
             rule_entries: Vec::new(),
             policy_entries: Vec::new(),
@@ -386,11 +394,21 @@ impl GraphFold {
             .or_default()
             .push(idx);
         self.claim_facts.entry(fact.claim_id).or_default().push(idx);
+        self.fact_by_event
+            .entry(fact.event_id)
+            .or_default()
+            .push(idx);
+        if fact.invalidated_at.is_none() {
+            self.live_triples
+                .insert((fact.subject, fact.relation, fact.object()), idx);
+        }
     }
 
     fn rebuild_hot_maps(&mut self) {
         self.vt_by_from.clear();
         self.claim_facts.clear();
+        self.fact_by_event.clear();
+        self.live_triples.clear();
         for idx in 0..self.facts.len() {
             self.index_slot(idx);
         }
@@ -470,11 +488,40 @@ impl GraphFold {
     }
 
     /// First Fact minted (or residual-replaced) by `event_id`. Prefer a live row.
-    fn fact_index_by_event_id(&self, event_id: EventId) -> Option<usize> {
-        self.facts
-            .iter()
-            .position(|f| f.event_id == event_id && f.invalidated_at.is_none())
-            .or_else(|| self.facts.iter().position(|f| f.event_id == event_id))
+    pub(crate) fn fact_index_by_event_id(&self, event_id: EventId) -> Option<usize> {
+        let idxs = self.fact_by_event.get(&event_id)?;
+        idxs.iter()
+            .copied()
+            .find(|&i| self.facts[i].invalidated_at.is_none())
+            .or_else(|| idxs.last().copied())
+    }
+
+    /// Whether any Fact (live or not) carries this claim id.
+    pub(crate) fn claim_known(&self, claim: EventId) -> bool {
+        self.claim_facts.contains_key(&claim)
+    }
+
+    /// Live triple presence for residual cascade checks (knows → knownBy).
+    pub(crate) fn has_live_triple(
+        &self,
+        subject: TermId,
+        relation: TermId,
+        object: TermId,
+    ) -> bool {
+        match self.live_triples.get(&(subject, relation, object)) {
+            Some(&idx) => self.facts[idx].invalidated_at.is_none(),
+            None => false,
+        }
+    }
+
+    /// Mark a fact slot invalidated and drop it from the live-triple lease.
+    fn invalidate_fact_at(&mut self, idx: usize, at: TransactionTime) {
+        self.facts[idx].invalidated_at = Some(at);
+        let fact = &self.facts[idx];
+        let key = (fact.subject, fact.relation, fact.object());
+        if self.live_triples.get(&key) == Some(&idx) {
+            self.live_triples.remove(&key);
+        }
     }
 
     /// Live Facts that support `claim` at an explicit cut.
@@ -852,7 +899,7 @@ impl GraphFold {
             Op::Retract { event_id } => {
                 if let Some(idx) = self.fact_index_by_event_id(*event_id) {
                     if self.facts[idx].invalidated_at.is_none() {
-                        self.facts[idx].invalidated_at = Some(event.ingested_at);
+                        self.invalidate_fact_at(idx, event.ingested_at);
                     }
                 }
                 self.apply_allow_side(event);
@@ -869,12 +916,12 @@ impl GraphFold {
             } => {
                 if let Some(idx) = self.fact_index_by_event_id(*event_id) {
                     if self.facts[idx].invalidated_at.is_none() {
-                        self.facts[idx].invalidated_at = Some(event.ingested_at);
                         let s = self.facts[idx].subject;
                         let r = self.facts[idx].relation;
                         let claim_id = self.facts[idx].claim_id;
                         let old_object = self.facts[idx].object();
                         let old_polarity = self.facts[idx].polarity;
+                        self.invalidate_fact_at(idx, event.ingested_at);
                         let seq = self.next_seq;
                         self.next_seq += 1;
                         self.push_fact(Fact {
@@ -919,7 +966,7 @@ impl GraphFold {
                 let claim_id = old.claim_id;
                 let old_object = old.object();
                 let old_polarity = old.polarity;
-                self.facts[idx].invalidated_at = Some(event.ingested_at);
+                self.invalidate_fact_at(idx, event.ingested_at);
 
                 let mut push_row = |obj: TermId, vf: ValidTime, vt: Option<ValidTime>| {
                     let seq = self.next_seq;
@@ -977,8 +1024,8 @@ impl GraphFold {
     /// Test-only: mutate the picture without a log event (must fail replay).
     #[cfg(test)]
     pub(crate) fn tamper_invalidate_first(&mut self) {
-        if let Some(f) = self.facts.get_mut(0) {
-            f.invalidated_at = Some(999);
+        if !self.facts.is_empty() {
+            self.invalidate_fact_at(0, 999);
         }
     }
 }

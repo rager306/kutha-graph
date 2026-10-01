@@ -67,3 +67,25 @@ target N 1000000
 memory budget 13674000000
 
 Budget is `bytes_per_fact × target N` on Linux VmRSS delta from this run. Independent verification must still approve the pair. No optimization in this phase.
+## Phase 24 delta (2026-10-01)
+
+After fold ingest indexes (M013 S03).
+
+### Visit oracle (IDX-02)
+
+`green_ingest_visits_constant_in_n` passes: ingest examine count at N=256 ≤ N=64 + 8.
+
+### Absolute wall times vs Phase 22 default-N run (D-06)
+
+Phase 22 reference: ingest_plain.n 95383904 ns, as_of.n 83195 ns.
+
+| run | ingest_plain.n | vs Phase 22 | as_of.n | vs Phase 22 |
+|-----|---------------:|------------:|--------:|------------:|
+| a | 111500502 | +16.9% | 130742 | +57.2% |
+| b | 122563370 | +28.5% | 90177 | +8.4% |
+
+D-06 absolute gate (≤10% regression): **not met** for ingest_plain on either run. as_of is within 10% on run b (noise at ~0.1 ms). Within-run scaling still ~linear (ingest 2N/N≈2.01, 4N/N≈3.82).
+
+Interpretation: write-path index maintenance (fact_by_event, live_triples, by_event_id, by_delivery_key) adds per-assert work; lookup paths are O(1). Controller must accept the write-cost tradeoff or request a follow-up to thin the indexes.
+
+regression within 10%: no (ingest); as_of run b yes
