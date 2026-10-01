@@ -5,18 +5,18 @@ milestone_name: Dictionaries as facts
 current_phase: 17
 current_phase_name: v0.05 phases 17–21
 current_plan: 3
-status: executing
-stopped_at: Completed 17-02-PLAN.md
-last_updated: "2026-10-01T01:51:25.026Z"
+status: verifying
+stopped_at: Completed 17-03-PLAN.md
+last_updated: "2026-10-01T01:57:03.943Z"
 last_activity: 2026-10-01
 last_activity_desc: Phase 17 plans 17-01..03 written (tracer, versioning/persist, governor)
-state_head: 9103bd28a213fcf01cd0b8db994b9d460339b88f
+state_head: 0d9c11c439007d5c011e4747002d866b813f8882
 progress:
   total_phases: 5
   completed_phases: 16
   total_plans: 3
-  completed_plans: 2
-  percent: 67
+  completed_plans: 3
+  percent: 100
 ---
 
 # Project State
@@ -37,10 +37,10 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 Phase: 17 of 21 (Allowlist as log facts) — v0.05 phases 17–21
 Current Plan: 3
 Total Plans in Phase: 3
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-10-01 — 17-01 tracer complete; next 17-02 retract/persist
 
-Progress: [███████░░░] 67% (v0.05)
+Progress: [██████████] 100% (v0.05)
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Progress: [███████░░░] 67% (v0.05)
 |------|----------|-------|-------|
 | Phase 17-allowlist-as-log-facts P01 | 3min | 2 tasks | 4 files |
 | Phase 17-allowlist-as-log-facts P02 | 2min | 2 tasks | 4 files |
+| Phase 17-allowlist-as-log-facts P03 | 4min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -74,6 +75,8 @@ Full table: `.planning/PROJECT.md`.
 - [Phase 17-allowlist-as-log-facts]: YAML seed remains the fallback so inForceAs admits on an empty-log Runtime (FF6)
 - [Phase 17-allowlist-as-log-facts]: Retract of an allow-entry EventId is not UnknownFact; Correct/CorrectInterval stay Fact-only
 - [Phase 17-allowlist-as-log-facts]: Open reconstructs allow-entries from the log walk, not from snapshot JSON keys
+- [Phase 17-allowlist-as-log-facts]: ALL file oracles are required observe names; FF6 remains required
+- [Phase 17-allowlist-as-log-facts]: ADR-011 evidence append only; honeycomb map stays Proposed; ADR-050 delivery stays frozen
 
 ### Pending Todos
 
@@ -95,8 +98,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-10-01T01:51:24.973Z
-Stopped at: Completed 17-02-PLAN.md
+Last session: 2026-10-01T01:57:03.814Z
+Stopped at: Completed 17-03-PLAN.md
 Resume file: None
 Next: `/gsd-execute-phase 17`. Active Slice S01 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
 
