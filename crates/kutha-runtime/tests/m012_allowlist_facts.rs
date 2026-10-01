@@ -72,3 +72,41 @@ fn allow_relation_appends_as_log_fact() {
     );
     assert_eq!(n, rt.log().len(), "fail-closed: log must not grow");
 }
+
+#[test]
+fn yaml_seed_still_admits_in_force_as() {
+    let mut rt = Runtime::default();
+    let article = rt.intern("art-12-speed");
+    let in_force = rt.intern("inForceAs");
+    let limit = rt.intern("50-kmh");
+    rt.emit(Op::Assert {
+        subject: article,
+        relation: in_force,
+        object: limit,
+        valid_from: 2017,
+        valid_to: None,
+        claim: None,
+        delivery_key: None,
+        polarity: None,
+    })
+    .unwrap();
+    assert_eq!(1, rt.fold().facts().len());
+}
+
+#[test]
+fn empty_allow_relation_name_does_not_append() {
+    let mut rt = Runtime::default();
+    let n = rt.log().len();
+    let err = rt
+        .emit(Op::AllowRelation {
+            name: String::new(),
+            valid_from: 2017,
+            valid_to: None,
+        })
+        .unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::UnknownRelation { ref name } if name.is_empty()),
+        "{err:?}"
+    );
+    assert_eq!(n, rt.log().len(), "fail-closed: log must not grow");
+}
