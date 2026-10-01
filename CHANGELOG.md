@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: RED genesis log oracles
+
+### Product
+
+### Added
+
+- Integration test `m013_genesis_log::retract_seeded_related_to_fails_closed_after`: D-07 / GEN-03 RED — retract YAML-seeded `relatedTo` then Assert must fail closed at the later cut (currently admitted via constructor HashSet). Wiring is 25-02.
+
+### Trajectory
+
+- No lease change. Active Slice **S04**. Cells remain **Proposed**.
+
 ## 2026-10-01 — Process: productivity from log audit
 
 ### Process
