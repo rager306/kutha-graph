@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: M013 S01 benchmark baseline (in progress)
+
+### Product
+
+### Added
+
+- `crates/kutha-runtime/benches/baseline.rs` (`[[bench]] harness = false`): relatedTo plain-ingest path with live_count and fingerprint validation (Phase 22 / BASE-01).
+
+### Trajectory
+
+- Active Slice **S01**; `L_delivery=M013-leased` until S01 closes.
+
 ## 2026-10-01 — Post-M012 review: roadmap reset and M013 lease
 
 ### Process

@@ -11,3 +11,7 @@ sha2.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 crc32fast = { workspace = true }
+
+[[bench]]
+name = "baseline"
+harness = false
