@@ -839,7 +839,10 @@ impl GraphFold {
             Op::RecordAdmission { .. } => {
                 self.apply_admission_side(event);
             }
-            Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
+            Op::Define { .. }
+            | Op::QuantumOutcome { .. }
+            | Op::JustificationCite { .. }
+            | Op::RecordAction { .. } => {}
         }
     }
 

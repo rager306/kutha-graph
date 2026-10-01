@@ -56,6 +56,10 @@ pub enum RuntimeError {
     UnknownPolicyVersion {
         pin: String,
     },
+    /// Missing cite or missing live admission for an Action bind (ACT-01 / T-20-02).
+    UnknownAdmission {
+        justification_id: String,
+    },
 }
 
 impl fmt::Display for RuntimeError {
@@ -88,11 +92,26 @@ impl fmt::Display for RuntimeError {
             RuntimeError::UnknownPolicyVersion { pin } => {
                 write!(f, "unknown policy version {pin}")
             }
+            RuntimeError::UnknownAdmission { justification_id } => {
+                write!(f, "unknown admission {justification_id}")
+            }
         }
     }
 }
 
 pub use kutha_common::OutcomeDisposition;
+
+/// Thin Action bind (ACT-01). Not a graph Fact; log `Op::RecordAction` is SoT.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ActionRecord {
+    pub justification_id: String,
+    pub target_claim: EventId,
+    pub source_claim_ids: Vec<EventId>,
+    pub source_event_ids: Vec<EventId>,
+    pub rule_version: String,
+    pub admitted: bool,
+    pub policy_version: String,
+}
 
 /// Authoritative justification / admission cite (D-F2).
 /// SoT is `Op::JustificationCite` on the log; `justifications.jsonl` is a lease (LOG-02 / D-02).
@@ -147,7 +166,8 @@ fn op_relation(op: &Op) -> Option<TermId> {
         | Op::AllowRelation { .. }
         | Op::RegisterRule { .. }
         | Op::PinPolicy { .. }
-        | Op::RecordAdmission { .. } => None,
+        | Op::RecordAdmission { .. }
+        | Op::RecordAction { .. } => None,
     }
 }
 
@@ -162,6 +182,7 @@ fn op_affects_fold(op: &Op) -> bool {
             | Op::RegisterRule { .. }
             | Op::PinPolicy { .. }
             | Op::RecordAdmission { .. }
+            | Op::RecordAction { .. }
     )
 }
 
@@ -386,9 +407,7 @@ impl Runtime {
         vt: u64,
     ) -> Result<String, RuntimeError> {
         let Some(policy_version) = self.fold.live_policy_pin_at(tt, vt) else {
-            return Err(RuntimeError::UnknownPolicyVersion {
-                pin: String::new(),
-            });
+            return Err(RuntimeError::UnknownPolicyVersion { pin: String::new() });
         };
         let rule_version = rule_version.into();
         let mut justification_id = format!("j:{target_claim}:{tt}:{vt}");
@@ -426,6 +445,28 @@ impl Runtime {
     /// AS OF admission status for a justification (ADM-01). Delegates to the fold.
     pub fn admission_status_at(&self, justification_id: &str, tt: u64, vt: u64) -> Option<bool> {
         self.fold.admission_status_at(justification_id, tt, vt)
+    }
+
+    /// Append a thin Action bound to the live admission pin (ACT-01).
+    pub fn record_action(
+        &mut self,
+        justification_id: &str,
+        _tt: u64,
+        _vt: u64,
+    ) -> Result<EventId, RuntimeError> {
+        Err(RuntimeError::UnknownAdmission {
+            justification_id: justification_id.to_string(),
+        })
+    }
+
+    /// AS OF Action bind for a justification (ACT-01). Delegates to the fold.
+    pub fn action_record_at(
+        &self,
+        _justification_id: &str,
+        _tt: u64,
+        _vt: u64,
+    ) -> Option<ActionRecord> {
+        None
     }
 
     /// Fold-cut policy pin liveness (ADM-02).
@@ -808,7 +849,10 @@ impl Runtime {
     pub fn emit(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
         if matches!(
             op,
-            Op::QuantumOutcome { .. } | Op::JustificationCite { .. } | Op::RecordAdmission { .. }
+            Op::QuantumOutcome { .. }
+                | Op::JustificationCite { .. }
+                | Op::RecordAdmission { .. }
+                | Op::RecordAction { .. }
         ) {
             return Err(RuntimeError::MetaOpRejected);
         }
@@ -1022,7 +1066,8 @@ impl Runtime {
                 | Op::AllowRelation { .. }
                 | Op::RegisterRule { .. }
                 | Op::PinPolicy { .. }
-                | Op::RecordAdmission { .. } => {
+                | Op::RecordAdmission { .. }
+                | Op::RecordAction { .. } => {
                     h.update(e.digest_bytes());
                 }
                 _ => {}
@@ -1074,7 +1119,8 @@ impl Runtime {
             | Op::AllowRelation { .. }
             | Op::RegisterRule { .. }
             | Op::PinPolicy { .. }
-            | Op::RecordAdmission { .. } => return false,
+            | Op::RecordAdmission { .. }
+            | Op::RecordAction { .. } => return false,
         };
         if !self.fold.rule_hash_live_at(rule_version, tt, vt) {
             return false;

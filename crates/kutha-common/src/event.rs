@@ -160,6 +160,19 @@ pub enum Op {
         valid_from: ValidTime,
         valid_to: Option<ValidTime>,
     },
+    /// Thin action record (M012 S04 / ACT-01). Fold records a skip-serialized
+    /// action-entry; not a graph Fact. Appended only via `record_action`.
+    RecordAction {
+        justification_id: String,
+        target_claim: EventId,
+        source_claim_ids: Vec<EventId>,
+        source_event_ids: Vec<EventId>,
+        rule_version: String,
+        admitted: bool,
+        policy_version: String,
+        valid_from: ValidTime,
+        valid_to: Option<ValidTime>,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -192,7 +205,8 @@ impl Event {
             | Op::AllowRelation { .. }
             | Op::RegisterRule { .. }
             | Op::PinPolicy { .. }
-            | Op::RecordAdmission { .. } => vec![],
+            | Op::RecordAdmission { .. }
+            | Op::RecordAction { .. } => vec![],
             Op::Correct { object, .. } | Op::CorrectInterval { object, .. } => vec![*object],
         };
         Self {
@@ -400,6 +414,32 @@ impl Event {
             } => {
                 h.update(b"record-admission");
                 h.update(justification_id.as_bytes());
+                h.update([u8::from(*admitted)]);
+                h.update(policy_version.as_bytes());
+                h.update(valid_from.to_le_bytes());
+                h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
+            }
+            Op::RecordAction {
+                justification_id,
+                target_claim,
+                source_claim_ids,
+                source_event_ids,
+                rule_version,
+                admitted,
+                policy_version,
+                valid_from,
+                valid_to,
+            } => {
+                h.update(b"record-action");
+                h.update(justification_id.as_bytes());
+                h.update(target_claim.as_bytes());
+                for id in source_claim_ids {
+                    h.update(id.as_bytes());
+                }
+                for id in source_event_ids {
+                    h.update(id.as_bytes());
+                }
+                h.update(rule_version.as_bytes());
                 h.update([u8::from(*admitted)]);
                 h.update(policy_version.as_bytes());
                 h.update(valid_from.to_le_bytes());
