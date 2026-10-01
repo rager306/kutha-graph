@@ -22,9 +22,9 @@ Closing leased product gaps F4/F5 from `docs/architecture/semantic-gap-review.md
 
 ### Admission and policy meta-facts (F5)
 
-- [ ] **ADM-01**: Admission status is recorded as a bi-temporal meta-fact (or equivalent log record) queryable AS OF a cut
-- [ ] **ADM-02**: Policy version is pinned in the log and cited by admission
-- [ ] **ADM-03**: `check_admission` (or successor) is invoked on the product path for the leased fixture, not only from tests
+- [x] **ADM-01**: Admission status is recorded as a bi-temporal meta-fact (or equivalent log record) queryable AS OF a cut
+- [x] **ADM-02**: Policy version is pinned in the log and cited by admission
+- [x] **ADM-03**: `check_admission` (or successor) is invoked on the product path for the leased fixture, not only from tests
 
 ### Action record (F5 / ADR-051)
 
@@ -68,9 +68,9 @@ Closing leased product gaps F4/F5 from `docs/architecture/semantic-gap-review.md
 | RULE-01 | Phase 18 | Complete |
 | RULE-02 | Phase 18 | Complete |
 | RULE-03 | Phase 18 | Complete |
-| ADM-01 | Phase 19 | Pending |
-| ADM-02 | Phase 19 | Pending |
-| ADM-03 | Phase 19 | Pending |
+| ADM-01 | Phase 19 | Complete |
+| ADM-02 | Phase 19 | Complete |
+| ADM-03 | Phase 19 | Complete |
 | ACT-01 | Phase 20 | Pending |
 | ACT-02 | Phase 20 | Pending |
 | DER-01 | Phase 21 | Pending |
