@@ -2,7 +2,7 @@
 //! Not ADR-050's six dictionary kinds.
 
 use kutha_common::Op;
-use kutha_runtime::{Runtime, RuntimeError};
+use kutha_runtime::{store, Runtime, RuntimeError};
 
 #[test]
 fn allow_relation_appends_as_log_fact() {
@@ -176,4 +176,62 @@ fn retract_allow_relation_drops_admit_at_later_cut() {
             polarity: None,
         })
         .unwrap();
+}
+
+#[test]
+fn admit_consults_fold_allowlist_not_yaml_alone() {
+    let mut rt = Runtime::default();
+    let leased = rt.intern("leasedRel");
+    rt.emit(Op::AllowRelation {
+        name: "leasedRel".into(),
+        valid_from: 2017,
+        valid_to: None,
+    })
+    .unwrap();
+    let subject = rt.intern("alice-lease");
+    let object = rt.intern("bob-lease");
+    rt.emit(Op::Assert {
+        subject,
+        relation: leased,
+        object,
+        valid_from: 2017,
+        valid_to: None,
+        claim: None,
+        delivery_key: None,
+        polarity: None,
+    })
+    .unwrap();
+
+    let dir = std::env::temp_dir().join(format!(
+        "kutha-m012-s01-{}",
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    store::persist(&rt, &dir).unwrap();
+    let mut opened = store::open(&dir).unwrap();
+    assert!(
+        opened
+            .log()
+            .iter()
+            .any(|e| matches!(&e.op, Op::AllowRelation { name, .. } if name == "leasedRel")),
+        "opened log must contain AllowRelation"
+    );
+    let rel = opened.intern("leasedRel");
+    let s = opened.intern("alice-lease");
+    let o = opened.intern("bob-lease");
+    opened
+        .emit(Op::Assert {
+            subject: s,
+            relation: rel,
+            object: o,
+            valid_from: 2017,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
+    let _ = std::fs::remove_dir_all(&dir);
 }

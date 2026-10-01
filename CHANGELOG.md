@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: allowlist entries as log facts
+
+### Product
+
+### Added
+
+- Relation allowlist entries are `Op::AllowRelation` log facts. `Runtime::admit` consults the fold cut for a live name; YAML/env remains a seed for names never logged. Unknown relations and empty allow-names still fail closed. Retract of an allow-entry EventId versions the later cut. Named oracles in `m012_allowlist_facts`.
+
+### Trajectory
+
+- Honeycomb stays **Proposed**. Active Slice remains **S01**. Freeze until M002 unchanged. Not ADR-050 six dictionaries.
+
 ## 2026-10-01 — Process: lease M012 Active Slice S01
 
 ### Process
