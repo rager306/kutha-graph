@@ -817,6 +817,8 @@ impl Runtime {
             if !known_fact
                 && !self.fold.has_allow_entry(*event_id)
                 && !self.fold.has_rule_entry(*event_id)
+                && !self.fold.has_policy_entry(*event_id)
+                && !self.fold.has_admission_entry(*event_id)
             {
                 return Err(RuntimeError::UnknownFact {
                     event_id: *event_id,

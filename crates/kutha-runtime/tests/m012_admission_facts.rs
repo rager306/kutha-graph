@@ -1,10 +1,10 @@
 //! M012 S03: admission status and policy version as log meta-facts (ADM-01..03).
 //! Not ADR-050's six dictionary kinds. Not a thin Action record.
 
-use kutha_common::{policy_version_hash, rule_definition_hash, Op};
-use kutha_runtime::{Runtime, RuntimeError};
+use kutha_common::{policy_version_hash, rule_definition_hash, EventId, Op};
+use kutha_runtime::{store, Runtime, RuntimeError};
 
-fn leased_pin_and_derive() -> (Runtime, kutha_common::EventId, kutha_common::EventId) {
+fn leased_pin_and_derive() -> (Runtime, EventId, EventId, EventId) {
     let mut rt = Runtime::default();
     assert_eq!(0, rt.fold().facts().len());
 
@@ -19,12 +19,14 @@ fn leased_pin_and_derive() -> (Runtime, kutha_common::EventId, kutha_common::Eve
         valid_to: None,
     })
     .unwrap();
-    rt.emit(Op::PinPolicy {
-        definition: "leased-policy".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
+    let pinned = rt
+        .emit(Op::PinPolicy {
+            definition: "leased-policy".into(),
+            valid_from: 2010,
+            valid_to: None,
+        })
+        .unwrap();
+    let pin_event = pinned.receipt.event_ids[0];
 
     let asserted = rt
         .emit(Op::Assert {
@@ -53,7 +55,7 @@ fn leased_pin_and_derive() -> (Runtime, kutha_common::EventId, kutha_common::Eve
         })
         .unwrap();
     let claim_q = derived.receipt.event_ids[0];
-    (rt, claim_q, cause)
+    (rt, claim_q, cause, pin_event)
 }
 
 #[test]
@@ -156,7 +158,7 @@ fn admission_status_queryable_as_of_cut() {
 
 #[test]
 fn admission_cites_pinned_policy_version() {
-    let (mut rt, claim_q, cause) = leased_pin_and_derive();
+    let (mut rt, claim_q, cause, _) = leased_pin_and_derive();
     let jid = rt
         .record_justification(
             claim_q,
@@ -182,7 +184,7 @@ fn admission_cites_pinned_policy_version() {
 
 #[test]
 fn record_justification_invokes_check_admission() {
-    let (mut rt, claim_q, cause) = leased_pin_and_derive();
+    let (mut rt, claim_q, cause, _) = leased_pin_and_derive();
     rt.emit(Op::Retract { event_id: cause }).unwrap();
     let jid = rt
         .record_justification(
@@ -279,4 +281,122 @@ fn empty_or_missing_policy_pin_fails_closed() {
         .unwrap_err();
     assert!(matches!(err, RuntimeError::MetaOpRejected), "{err:?}");
     assert_eq!(n, rt.log().len());
+}
+
+#[test]
+fn retract_admission_and_policy_version_at_later_cut() {
+    let (mut rt, claim_q, cause, pin_event) = leased_pin_and_derive();
+    let jid = rt
+        .record_justification(
+            claim_q,
+            vec![cause],
+            vec![cause],
+            rule_definition_hash("derive_pq"),
+            u64::MAX,
+            2017,
+        )
+        .expect("record_justification");
+    let admission_id = rt
+        .log()
+        .as_slice()
+        .iter()
+        .rev()
+        .find(|e| {
+            matches!(
+                &e.op,
+                Op::RecordAdmission {
+                    justification_id,
+                    ..
+                } if justification_id == &jid
+            )
+        })
+        .expect("RecordAdmission")
+        .id;
+    assert_eq!(Some(true), rt.admission_status_at(&jid, u64::MAX, 2017));
+    let n = rt.log().len();
+
+    rt.emit(Op::Retract {
+        event_id: admission_id,
+    })
+    .unwrap();
+    assert_eq!(None, rt.admission_status_at(&jid, u64::MAX, 2017));
+    let fork = rt.fork_at(n);
+    assert_eq!(Some(true), fork.admission_status_at(&jid, u64::MAX, 2017));
+
+    rt.emit(Op::Retract {
+        event_id: pin_event,
+    })
+    .unwrap();
+    let after = rt.log().len();
+    let err = rt
+        .record_justification(
+            claim_q,
+            vec![cause],
+            vec![cause],
+            rule_definition_hash("derive_pq"),
+            u64::MAX,
+            2017,
+        )
+        .unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::UnknownPolicyVersion { .. }),
+        "{err:?}"
+    );
+    assert_eq!(after, rt.log().len(), "fail-closed: log must not grow");
+}
+
+#[test]
+fn persist_open_reconstructs_admission_and_policy() {
+    let (mut rt, claim_q, cause, _) = leased_pin_and_derive();
+    let jid = rt
+        .record_justification(
+            claim_q,
+            vec![cause],
+            vec![cause],
+            rule_definition_hash("derive_pq"),
+            u64::MAX,
+            2017,
+        )
+        .expect("record_justification");
+
+    let dir = std::env::temp_dir().join(format!(
+        "kutha-m012-s03-{}",
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    store::persist(&rt, &dir).unwrap();
+    let mut opened = store::open(&dir).unwrap();
+    assert_eq!(
+        Some(true),
+        opened.admission_status_at(&jid, u64::MAX, 2017)
+    );
+    opened.check_admission(&jid).unwrap();
+    assert!(
+        opened.log().iter().any(
+            |e| matches!(&e.op, Op::PinPolicy { definition, .. } if definition == "leased-policy")
+        ),
+        "opened log must contain PinPolicy"
+    );
+    assert!(
+        opened.log().iter().any(
+            |e| matches!(&e.op, Op::RecordAdmission { justification_id, .. } if justification_id == &jid)
+        ),
+        "opened log must contain RecordAdmission"
+    );
+    let n = opened.log().len();
+    let err = opened
+        .emit(Op::PinPolicy {
+            definition: String::new(),
+            valid_from: 2010,
+            valid_to: None,
+        })
+        .unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::UnknownPolicyVersion { ref pin } if pin.is_empty()),
+        "{err:?}"
+    );
+    assert_eq!(n, opened.log().len());
+    let _ = std::fs::remove_dir_all(&dir);
 }
