@@ -2,7 +2,7 @@
 //! Not ADR-050's six dictionary kinds. Not n-ary derivation.
 
 use kutha_common::{policy_version_hash, rule_definition_hash, EventId, Op};
-use kutha_runtime::Runtime;
+use kutha_runtime::{Runtime, RuntimeError};
 
 fn leased_pin_and_derive() -> (Runtime, EventId, EventId) {
     let mut rt = Runtime::default();
@@ -108,4 +108,95 @@ fn action_binds_args_to_admission_and_policy() {
     assert_eq!(policy_version_hash("leased-policy"), rec.policy_version);
     assert_eq!(Some(true), rt.admission_status_at(&jid, u64::MAX, 2017));
     assert_eq!(None, rt.action_record_at(&jid, 0, 2017));
+}
+
+#[test]
+fn action_cites_admission_pin_and_rejects_public_emit() {
+    let (mut rt, claim_q, cause) = leased_pin_and_derive();
+    let jid = rt
+        .record_justification(
+            claim_q,
+            vec![cause],
+            vec![cause],
+            rule_definition_hash("derive_pq"),
+            u64::MAX,
+            2017,
+        )
+        .expect("record_justification");
+    rt.record_action(&jid, u64::MAX, 2017)
+        .expect("record_action");
+
+    let policy = policy_version_hash("leased-policy");
+    let admission_pin = rt.log().as_slice().iter().rev().find_map(|e| match &e.op {
+        Op::RecordAdmission {
+            justification_id,
+            policy_version,
+            ..
+        } if justification_id == &jid => Some(policy_version.clone()),
+        _ => None,
+    });
+    let action_pin = rt.log().as_slice().iter().rev().find_map(|e| match &e.op {
+        Op::RecordAction {
+            justification_id,
+            policy_version,
+            ..
+        } if justification_id == &jid => Some(policy_version.clone()),
+        _ => None,
+    });
+    assert_eq!(Some(policy.clone()), admission_pin);
+    assert_eq!(Some(policy), action_pin);
+
+    let n = rt.log().len();
+    let err = rt
+        .emit(Op::RecordAction {
+            justification_id: jid.clone(),
+            target_claim: claim_q,
+            source_claim_ids: vec![cause],
+            source_event_ids: vec![cause],
+            rule_version: rule_definition_hash("derive_pq"),
+            admitted: true,
+            policy_version: "caller-supplied".into(),
+            valid_from: 2017,
+            valid_to: None,
+        })
+        .unwrap_err();
+    assert!(matches!(err, RuntimeError::MetaOpRejected), "{err:?}");
+    assert_eq!(n, rt.log().len());
+
+    let err = rt
+        .record_action("j:never-recorded", u64::MAX, 2017)
+        .unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::UnknownAdmission { ref justification_id } if justification_id == "j:never-recorded"),
+        "{err:?}"
+    );
+    assert_eq!(n, rt.log().len());
+
+    let admission_id = rt
+        .log()
+        .as_slice()
+        .iter()
+        .rev()
+        .find(|e| {
+            matches!(
+                &e.op,
+                Op::RecordAdmission {
+                    justification_id,
+                    ..
+                } if justification_id == &jid
+            )
+        })
+        .expect("RecordAdmission")
+        .id;
+    rt.emit(Op::Retract {
+        event_id: admission_id,
+    })
+    .unwrap();
+    let n = rt.log().len();
+    let err = rt.record_action(&jid, u64::MAX, 2017).unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::UnknownAdmission { ref justification_id } if justification_id == &jid),
+        "{err:?}"
+    );
+    assert_eq!(n, rt.log().len());
 }
