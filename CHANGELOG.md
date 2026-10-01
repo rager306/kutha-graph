@@ -4,7 +4,29 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: dictionary entries as kutha facts and StoreBlob
+
+### Product
+
+### Added
+
+- `Op::StoreBlob { digest, bytes }` — content-addressed body on the log (store-once; digest is SHA-256 hex of bytes). Used for `kutha:rule` / `kutha:policy` payloads; digest is `rule_definition_hash` / `policy_version_hash`.
+- Reserved relation constants `KUTHA_ALLOWS`, `KUTHA_RULE`, `KUTHA_POLICY`, `KUTHA_ADMISSION`, `KUTHA_ACTION` and `KUTHA_RESERVED_RELS`.
+- `Fold::dictionary_as_of` / `dictionary_live_at` — live dictionary facts including `kutha:` (D-05). Product `as_of` / `live_at` exclude `kutha:`.
+- Runtime helpers `emit_allow`, `emit_rule`, `emit_policy` (silent intern + `StoreBlob` + dictionary Assert). `intern` marks reserved `kutha:` names so `admit` skips the product allowlist for those relations. `Retract` is fact-only (`EventId`).
+
+### Changed
+
+- Removed `Op::AllowRelation`, `RegisterRule`, `PinPolicy`, `RecordAdmission`, `RecordAction` and the five fold side tables. Dictionary rows are ordinary bi-temporal Facts with those reserved relations.
+- Genesis emits `kutha:allows` Asserts (`valid_from` 0) after silent intern of reserved names plus YAML, instead of `AllowRelation`.
+- `check_admission` reads the fold and log (no RAM justification buffer). `record_justification` returns the `kutha:admission` Assert `EventId` as `justification_id`. Public `emit` of `kutha:admission` / `kutha:action` Assert or `JustificationCite` is `MetaOpRejected`.
+
+### Trajectory
+
+- No lease change. Active Slice **S05**. Cells remain **Proposed**.
+
 ## 2026-10-01 — Product: RED dictionary entries on as_of
+
 
 ### Product
 

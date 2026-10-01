@@ -9,6 +9,7 @@ pub struct CsrLease {
 }
 
 impl CsrLease {
+    /// Product facts only (`kutha:` dictionary relations excluded, D-05).
     pub fn from_fold(fold: &GraphFold, tt: u64, vt: u64, vertex_count: usize) -> Self {
         let mut buckets: Vec<Vec<TermId>> = vec![Vec::new(); vertex_count];
         for f in fold.live_facts_at(tt, vt) {
@@ -66,6 +67,7 @@ pub struct TypedCsrLease {
 
 impl TypedCsrLease {
     /// Rebuild typed adjacency from the same live-fact cut as [`CsrLease::from_fold`].
+    /// Product facts only (`kutha:` dictionary relations excluded, D-05).
     /// Keeps every live Fact as its own edge (no object-only dedup).
     pub fn from_fold(fold: &GraphFold, tt: u64, vt: u64, vertex_count: usize) -> Self {
         let mut buckets: Vec<Vec<TypedEdge>> = vec![Vec::new(); vertex_count];

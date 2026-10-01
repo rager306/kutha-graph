@@ -29,7 +29,7 @@ pub fn persist(runtime: &Runtime, dir: &Path) -> std::io::Result<()> {
     write_outcomes(dir, runtime.outcome_records())?;
     // Justifications last so a crash cannot leave cites without matching events;
     // missing file on open is empty vec (cannot admit).
-    write_justifications(dir, runtime.justification_records())?;
+    write_justifications(dir, &runtime.justification_records())?;
     Ok(())
 }
 
@@ -135,9 +135,7 @@ fn finish_open(
     if !rt.log_has_quantum_outcome() {
         rt.attach_outcomes(outcomes);
     }
-    if !rt.log_has_justification_cite() {
-        rt.attach_justifications(justifications);
-    }
+    let _ = justifications;
     rt
 }
 

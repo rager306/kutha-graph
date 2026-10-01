@@ -54,6 +54,21 @@ pub enum SupportPolarity {
     Negative,
 }
 
+/// Reserved dictionary relation names (D-01). Not product graph labels.
+pub const KUTHA_ALLOWS: &str = "kutha:allows";
+pub const KUTHA_RULE: &str = "kutha:rule";
+pub const KUTHA_POLICY: &str = "kutha:policy";
+pub const KUTHA_ADMISSION: &str = "kutha:admission";
+pub const KUTHA_ACTION: &str = "kutha:action";
+
+pub const KUTHA_RESERVED_RELS: [&str; 5] = [
+    KUTHA_ALLOWS,
+    KUTHA_RULE,
+    KUTHA_POLICY,
+    KUTHA_ADMISSION,
+    KUTHA_ACTION,
+];
+
 /// Lean write operators (TGMS-shaped; ADR-010 D010-3).
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum Op {
@@ -130,48 +145,10 @@ pub enum Op {
         tt: u64,
         vt: u64,
     },
-    /// Versioned relation-allowlist entry (M012 S01 / ALL-01). Fold records a skip-serialized
-    /// allow-entry; not a graph Fact.
-    AllowRelation {
-        name: String,
-        valid_from: ValidTime,
-        valid_to: Option<ValidTime>,
-    },
-    /// Versioned rule-definition registry entry (M012 S02 / RULE-01). Fold records a
-    /// skip-serialized rule-entry; not a graph Fact. Hash is derived, not stored.
-    RegisterRule {
-        definition: String,
-        valid_from: ValidTime,
-        valid_to: Option<ValidTime>,
-    },
-    /// Versioned policy-definition pin (M012 S03 / ADM-02). Fold records a
-    /// skip-serialized policy-entry; not a graph Fact. Hash is derived, not stored.
-    PinPolicy {
-        definition: String,
-        valid_from: ValidTime,
-        valid_to: Option<ValidTime>,
-    },
-    /// Admission status meta-fact (M012 S03 / ADM-01). Fold records a skip-serialized
-    /// admission-entry; not a graph Fact. Appended only via `record_justification`.
-    RecordAdmission {
-        justification_id: String,
-        admitted: bool,
-        policy_version: String,
-        valid_from: ValidTime,
-        valid_to: Option<ValidTime>,
-    },
-    /// Thin action record (M012 S04 / ACT-01). Fold records a skip-serialized
-    /// action-entry; not a graph Fact. Appended only via `record_action`.
-    RecordAction {
-        justification_id: String,
-        target_claim: EventId,
-        source_claim_ids: Vec<EventId>,
-        source_event_ids: Vec<EventId>,
-        rule_version: String,
-        admitted: bool,
-        policy_version: String,
-        valid_from: ValidTime,
-        valid_to: Option<ValidTime>,
+    /// Content-addressed body (D-02). Fold stores once; not a graph Fact.
+    StoreBlob {
+        digest: String,
+        bytes: Vec<u8>,
     },
 }
 
@@ -202,11 +179,7 @@ impl Event {
             | Op::Define { .. }
             | Op::QuantumOutcome { .. }
             | Op::JustificationCite { .. }
-            | Op::AllowRelation { .. }
-            | Op::RegisterRule { .. }
-            | Op::PinPolicy { .. }
-            | Op::RecordAdmission { .. }
-            | Op::RecordAction { .. } => vec![],
+            | Op::StoreBlob { .. } => vec![],
             Op::Correct { object, .. } | Op::CorrectInterval { object, .. } => vec![*object],
         };
         Self {
@@ -375,79 +348,30 @@ impl Event {
                 h.update(tt.to_le_bytes());
                 h.update(vt.to_le_bytes());
             }
-            Op::AllowRelation {
-                name,
-                valid_from,
-                valid_to,
-            } => {
-                h.update(b"allow-relation");
-                h.update(name.as_bytes());
-                h.update(valid_from.to_le_bytes());
-                h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
-            }
-            Op::RegisterRule {
-                definition,
-                valid_from,
-                valid_to,
-            } => {
-                h.update(b"register-rule");
-                h.update(definition.as_bytes());
-                h.update(valid_from.to_le_bytes());
-                h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
-            }
-            Op::PinPolicy {
-                definition,
-                valid_from,
-                valid_to,
-            } => {
-                h.update(b"pin-policy");
-                h.update(definition.as_bytes());
-                h.update(valid_from.to_le_bytes());
-                h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
-            }
-            Op::RecordAdmission {
-                justification_id,
-                admitted,
-                policy_version,
-                valid_from,
-                valid_to,
-            } => {
-                h.update(b"record-admission");
-                h.update(justification_id.as_bytes());
-                h.update([u8::from(*admitted)]);
-                h.update(policy_version.as_bytes());
-                h.update(valid_from.to_le_bytes());
-                h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
-            }
-            Op::RecordAction {
-                justification_id,
-                target_claim,
-                source_claim_ids,
-                source_event_ids,
-                rule_version,
-                admitted,
-                policy_version,
-                valid_from,
-                valid_to,
-            } => {
-                h.update(b"record-action");
-                h.update(justification_id.as_bytes());
-                h.update(target_claim.as_bytes());
-                for id in source_claim_ids {
-                    h.update(id.as_bytes());
-                }
-                for id in source_event_ids {
-                    h.update(id.as_bytes());
-                }
-                h.update(rule_version.as_bytes());
-                h.update([u8::from(*admitted)]);
-                h.update(policy_version.as_bytes());
-                h.update(valid_from.to_le_bytes());
-                h.update(valid_to.unwrap_or(u64::MAX).to_le_bytes());
+            Op::StoreBlob { digest, bytes } => {
+                h.update(b"store-blob");
+                h.update(digest.as_bytes());
+                h.update((bytes.len() as u64).to_le_bytes());
+                h.update(bytes);
             }
         }
         h.finalize().into()
     }
+}
+
+fn hex32(digest: [u8; 32]) -> String {
+    let mut out = String::with_capacity(64);
+    for b in digest {
+        out.push_str(&format!("{b:02x}"));
+    }
+    out
+}
+
+/// Raw SHA-256 hex of `bytes` (StoreBlob address).
+pub fn sha256_hex(bytes: &[u8]) -> String {
+    let mut h = Sha256::new();
+    h.update(bytes);
+    hex32(h.finalize().into())
 }
 
 /// SHA-256 of domain `kutha-rule-def` then UTF-8 definition bytes (RULE-01).
@@ -455,12 +379,7 @@ pub fn rule_definition_hash(definition: &str) -> String {
     let mut h = Sha256::new();
     h.update(b"kutha-rule-def");
     h.update(definition.as_bytes());
-    let digest: [u8; 32] = h.finalize().into();
-    let mut out = String::with_capacity(64);
-    for b in digest {
-        out.push_str(&format!("{b:02x}"));
-    }
-    out
+    hex32(h.finalize().into())
 }
 
 /// SHA-256 of domain `kutha-policy-def` then UTF-8 definition bytes (ADM-02).
@@ -468,12 +387,22 @@ pub fn policy_version_hash(definition: &str) -> String {
     let mut h = Sha256::new();
     h.update(b"kutha-policy-def");
     h.update(definition.as_bytes());
-    let digest: [u8; 32] = h.finalize().into();
-    let mut out = String::with_capacity(64);
-    for b in digest {
-        out.push_str(&format!("{b:02x}"));
+    hex32(h.finalize().into())
+}
+
+/// Admit StoreBlob: non-empty bytes and digest match raw SHA-256 or domain hashes (T-26-03).
+pub fn blob_digest_matches(digest: &str, bytes: &[u8]) -> bool {
+    if bytes.is_empty() || digest.is_empty() {
+        return false;
     }
-    out
+    if digest == sha256_hex(bytes) {
+        return true;
+    }
+    if let Ok(s) = std::str::from_utf8(bytes) {
+        digest == rule_definition_hash(s) || digest == policy_version_hash(s)
+    } else {
+        false
+    }
 }
 
 fn polarity_tag(p: Option<SupportPolarity>) -> &'static [u8] {

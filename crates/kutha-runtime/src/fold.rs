@@ -1,11 +1,11 @@
 use kutha_common::{
-    policy_version_hash, rule_definition_hash, Event, EventId, Op, SupportPolarity, TermId,
-    TransactionTime, ValidTime,
+    Event, EventId, Op, SupportPolarity, TermDictionary, TermId, TransactionTime, ValidTime,
+    KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE,
 };
 use rustc_hash::FxHashMap;
 use sha2::{Digest, Sha256};
 use smallvec::SmallVec;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::sync::atomic::{AtomicU64, Ordering};
 
 /// Ingest lookup leases: Fx hasher (trusted EventId/TermId; Samyama-style).
@@ -161,159 +161,6 @@ impl Fact {
     }
 }
 
-/// Skip-serialized allowlist row (M012 S01). Log is SoT; not a graph Fact.
-#[derive(Clone, Debug, PartialEq, Eq)]
-struct AllowEntry {
-    event_id: EventId,
-    name: String,
-    valid_from: ValidTime,
-    valid_to: Option<ValidTime>,
-    ingested_at: TransactionTime,
-    invalidated_at: Option<TransactionTime>,
-}
-
-impl AllowEntry {
-    fn is_live_at(&self, tt: TransactionTime, vt: ValidTime) -> bool {
-        if self.ingested_at > tt {
-            return false;
-        }
-        if self.invalidated_at.is_some_and(|inv| inv <= tt) {
-            return false;
-        }
-        if vt < self.valid_from {
-            return false;
-        }
-        if self.valid_to.is_some_and(|to| vt >= to) {
-            return false;
-        }
-        true
-    }
-}
-
-/// Skip-serialized rule-registry row (M012 S02). Log is SoT; not a graph Fact.
-#[derive(Clone, Debug, PartialEq, Eq)]
-struct RuleEntry {
-    event_id: EventId,
-    definition_hash: String,
-    valid_from: ValidTime,
-    valid_to: Option<ValidTime>,
-    ingested_at: TransactionTime,
-    invalidated_at: Option<TransactionTime>,
-}
-
-impl RuleEntry {
-    fn is_live_at(&self, tt: TransactionTime, vt: ValidTime) -> bool {
-        if self.ingested_at > tt {
-            return false;
-        }
-        if self.invalidated_at.is_some_and(|inv| inv <= tt) {
-            return false;
-        }
-        if vt < self.valid_from {
-            return false;
-        }
-        if self.valid_to.is_some_and(|to| vt >= to) {
-            return false;
-        }
-        true
-    }
-}
-
-/// Skip-serialized policy-pin row (M012 S03). Log is SoT; not a graph Fact.
-#[derive(Clone, Debug, PartialEq, Eq)]
-struct PolicyEntry {
-    event_id: EventId,
-    definition_hash: String,
-    valid_from: ValidTime,
-    valid_to: Option<ValidTime>,
-    ingested_at: TransactionTime,
-    invalidated_at: Option<TransactionTime>,
-}
-
-impl PolicyEntry {
-    fn is_live_at(&self, tt: TransactionTime, vt: ValidTime) -> bool {
-        if self.ingested_at > tt {
-            return false;
-        }
-        if self.invalidated_at.is_some_and(|inv| inv <= tt) {
-            return false;
-        }
-        if vt < self.valid_from {
-            return false;
-        }
-        if self.valid_to.is_some_and(|to| vt >= to) {
-            return false;
-        }
-        true
-    }
-}
-
-/// Skip-serialized admission-status row (M012 S03). Log is SoT; not a graph Fact.
-#[derive(Clone, Debug, PartialEq, Eq)]
-struct AdmissionEntry {
-    event_id: EventId,
-    justification_id: String,
-    admitted: bool,
-    policy_version: String,
-    valid_from: ValidTime,
-    valid_to: Option<ValidTime>,
-    ingested_at: TransactionTime,
-    invalidated_at: Option<TransactionTime>,
-}
-
-impl AdmissionEntry {
-    fn is_live_at(&self, tt: TransactionTime, vt: ValidTime) -> bool {
-        if self.ingested_at > tt {
-            return false;
-        }
-        if self.invalidated_at.is_some_and(|inv| inv <= tt) {
-            return false;
-        }
-        if vt < self.valid_from {
-            return false;
-        }
-        if self.valid_to.is_some_and(|to| vt >= to) {
-            return false;
-        }
-        true
-    }
-}
-
-/// Skip-serialized action-record row (M012 S04). Log is SoT; not a graph Fact.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct ActionEntry {
-    pub(crate) event_id: EventId,
-    pub(crate) justification_id: String,
-    pub(crate) target_claim: EventId,
-    pub(crate) source_claim_ids: Vec<EventId>,
-    pub(crate) source_event_ids: Vec<EventId>,
-    pub(crate) rule_version: String,
-    pub(crate) admitted: bool,
-    pub(crate) policy_version: String,
-    valid_from: ValidTime,
-    valid_to: Option<ValidTime>,
-    ingested_at: TransactionTime,
-    invalidated_at: Option<TransactionTime>,
-}
-
-impl ActionEntry {
-    fn is_live_at(&self, tt: TransactionTime, vt: ValidTime) -> bool {
-        if self.ingested_at > tt {
-            return false;
-        }
-        if self.invalidated_at.is_some_and(|inv| inv <= tt) {
-            return false;
-        }
-        if vt < self.valid_from {
-            return false;
-        }
-        if self.valid_to.is_some_and(|to| vt >= to) {
-            return false;
-        }
-        true
-    }
-}
-
 /// How fold secondary index leases are maintained on the write path.
 ///
 /// - [`FoldIndexMode::Eager`]: warm maps on every fact push (accept write-cost; default).
@@ -346,6 +193,24 @@ impl FoldIndexMode {
     }
 }
 
+#[derive(Clone, Copy)]
+enum LiveFactFilter {
+    Product,
+    Dictionary,
+    All,
+}
+
+impl LiveFactFilter {
+    fn keep(self, fold: &GraphFold, fact: &Fact) -> bool {
+        let dict = fold.is_dictionary_rel(fact.relation);
+        match self {
+            Self::Product => !dict,
+            Self::Dictionary => dict,
+            Self::All => true,
+        }
+    }
+}
+
 /// Deterministic fold of the log. Droppable picture, not SoT.
 /// Hot maps are leases: skip-serialized and rebuilt from `facts` (D-02).
 #[derive(Clone, Debug, serde::Serialize)]
@@ -373,21 +238,22 @@ pub struct GraphFold {
     /// Live (subject, relation, object) triples for residual cascade checks.
     #[serde(skip)]
     live_triples: IngestMap<(TermId, TermId, TermId), usize>,
-    /// Live allowlist entries rebuilt from `Op::AllowRelation` (ALL-01). Not fingerprint input.
+    /// Interned `kutha:*` relation TermIds (D-05). Rebuilt from the dictionary; not fingerprint.
     #[serde(skip)]
-    allow_entries: Vec<AllowEntry>,
-    /// Live rule-registry entries rebuilt from `Op::RegisterRule` (RULE-01). Not fingerprint input.
+    dictionary_rels: HashSet<TermId>,
     #[serde(skip)]
-    rule_entries: Vec<RuleEntry>,
-    /// Live policy-pin entries rebuilt from `Op::PinPolicy` (ADM-02). Not fingerprint input.
+    rel_allows: Option<TermId>,
     #[serde(skip)]
-    policy_entries: Vec<PolicyEntry>,
-    /// Live admission-status entries rebuilt from `Op::RecordAdmission` (ADM-01). Not fingerprint input.
+    rel_rule: Option<TermId>,
     #[serde(skip)]
-    admission_entries: Vec<AdmissionEntry>,
-    /// Live action-record entries rebuilt from `Op::RecordAction` (ACT-01). Not fingerprint input.
+    rel_policy: Option<TermId>,
     #[serde(skip)]
-    action_entries: Vec<ActionEntry>,
+    rel_admission: Option<TermId>,
+    #[serde(skip)]
+    rel_action: Option<TermId>,
+    /// Content-addressed bodies from `Op::StoreBlob` (store-once). Not fingerprint input.
+    #[serde(skip)]
+    blobs: HashMap<String, Vec<u8>>,
 }
 
 impl Default for GraphFold {
@@ -432,11 +298,48 @@ impl GraphFold {
             claim_facts: IngestMap::default(),
             fact_by_event: IngestMap::default(),
             live_triples: IngestMap::default(),
-            allow_entries: Vec::new(),
-            rule_entries: Vec::new(),
-            policy_entries: Vec::new(),
-            admission_entries: Vec::new(),
-            action_entries: Vec::new(),
+            dictionary_rels: HashSet::new(),
+            rel_allows: None,
+            rel_rule: None,
+            rel_policy: None,
+            rel_admission: None,
+            rel_action: None,
+            blobs: HashMap::new(),
+        }
+    }
+
+    /// Bind reserved `kutha:*` relation TermIds from the live dictionary (D-01 / D-05).
+    pub fn bind_reserved(&mut self, dict: &TermDictionary) {
+        self.dictionary_rels.clear();
+        for (i, s) in dict.strings().iter().enumerate() {
+            if s.starts_with("kutha:") {
+                self.dictionary_rels.insert(i as TermId);
+            }
+        }
+        self.rel_allows = dict.id(KUTHA_ALLOWS);
+        self.rel_rule = dict.id(KUTHA_RULE);
+        self.rel_policy = dict.id(KUTHA_POLICY);
+        self.rel_admission = dict.id(KUTHA_ADMISSION);
+        self.rel_action = dict.id(KUTHA_ACTION);
+    }
+
+    pub(crate) fn is_dictionary_rel(&self, rel: TermId) -> bool {
+        self.dictionary_rels.contains(&rel)
+    }
+
+    pub(crate) fn store_blob_once(&mut self, digest: &str, bytes: &[u8]) {
+        if self.blobs.contains_key(digest) {
+            return;
+        }
+        self.blobs.insert(digest.to_string(), bytes.to_vec());
+    }
+
+    pub(crate) fn rebuild_blobs(&mut self, events: &[Event]) {
+        self.blobs.clear();
+        for e in events {
+            if let Op::StoreBlob { digest, bytes } = &e.op {
+                self.store_blob_once(digest, bytes);
+            }
         }
     }
 
@@ -542,14 +445,34 @@ impl GraphFold {
     }
 
     /// Live facts at an explicit cut. Uses VT lease when warm; otherwise scans `facts`.
+    /// Product picture: `kutha:` dictionary relations are excluded (D-05).
     pub(crate) fn live_facts_at(&self, tt: TransactionTime, vt: ValidTime) -> Vec<&Fact> {
+        self.collect_live_facts_at(tt, vt, LiveFactFilter::Product)
+    }
+
+    /// All live facts including dictionary relations (fingerprint/replay walks `facts` directly).
+    fn all_live_facts_at(&self, tt: TransactionTime, vt: ValidTime) -> Vec<&Fact> {
+        self.collect_live_facts_at(tt, vt, LiveFactFilter::All)
+    }
+
+    fn dictionary_live_facts_at(&self, tt: TransactionTime, vt: ValidTime) -> Vec<&Fact> {
+        self.collect_live_facts_at(tt, vt, LiveFactFilter::Dictionary)
+    }
+
+    fn collect_live_facts_at(
+        &self,
+        tt: TransactionTime,
+        vt: ValidTime,
+        filter: LiveFactFilter,
+    ) -> Vec<&Fact> {
+        let keep = |f: &Fact| filter.keep(self, f);
         if !self.hot_maps_warm {
             return self
                 .facts
                 .iter()
                 .filter(|f| {
                     self.hot_examine.bump();
-                    f.is_live_at(tt, vt)
+                    f.is_live_at(tt, vt) && keep(f)
                 })
                 .collect();
         }
@@ -559,7 +482,7 @@ impl GraphFold {
             .filter_map(|idx| {
                 self.hot_examine.bump();
                 let fact = &self.facts[idx];
-                fact.is_live_at(tt, vt).then_some(fact)
+                (fact.is_live_at(tt, vt) && keep(fact)).then_some(fact)
             })
             .collect()
     }
@@ -578,8 +501,25 @@ impl GraphFold {
     }
 
     /// AS OF valid-time on the current transaction picture (`tt = MAX`).
+    /// Product picture: dictionary (`kutha:`) relations are excluded (D-05).
     pub fn as_of(&self, vt: ValidTime) -> Vec<(TermId, TermId, TermId)> {
         self.live_at(u64::MAX, vt)
+    }
+
+    /// Dictionary entries at a valid-time cut (kutha: relations only).
+    pub fn dictionary_as_of(&self, vt: ValidTime) -> Vec<(TermId, TermId, TermId)> {
+        self.dictionary_live_at(u64::MAX, vt)
+    }
+
+    pub fn dictionary_live_at(
+        &self,
+        tt: TransactionTime,
+        vt: ValidTime,
+    ) -> Vec<(TermId, TermId, TermId)> {
+        self.dictionary_live_facts_at(tt, vt)
+            .into_iter()
+            .map(|f| (f.subject, f.relation, f.object()))
+            .collect()
     }
 
     pub fn fingerprint(&self) -> [u8; 32] {
@@ -681,7 +621,7 @@ impl GraphFold {
         }
     }
 
-    /// Live Facts that support `claim` at an explicit cut.
+    /// Live Facts that support `claim` at an explicit cut (product facts only, D-05).
     pub fn live_supports(&self, claim: EventId, tt: TransactionTime, vt: ValidTime) -> Vec<&Fact> {
         if !self.hot_maps_warm {
             return self
@@ -689,7 +629,9 @@ impl GraphFold {
                 .iter()
                 .filter(|f| {
                     self.hot_examine.bump();
-                    f.claim_id == claim && f.is_live_at(tt, vt)
+                    f.claim_id == claim
+                        && f.is_live_at(tt, vt)
+                        && !self.is_dictionary_rel(f.relation)
                 })
                 .collect();
         }
@@ -700,7 +642,7 @@ impl GraphFold {
             .filter_map(|&idx| {
                 self.hot_examine.bump();
                 let fact = &self.facts[idx];
-                fact.is_live_at(tt, vt).then_some(fact)
+                (fact.is_live_at(tt, vt) && !self.is_dictionary_rel(fact.relation)).then_some(fact)
             })
             .collect()
     }
@@ -713,46 +655,44 @@ impl GraphFold {
         self.live_support_count(claim, tt, vt) > 0
     }
 
-    /// Fold-cut allowlist: a live `AllowRelation` entry for `name` at `(tt, vt)`.
+    /// Fold-cut allowlist: a live `kutha:allows` fact whose delivery_key is `name`.
     pub fn relation_allowed_at(&self, name: &str, tt: TransactionTime, vt: ValidTime) -> bool {
-        self.allow_entries
-            .iter()
-            .any(|e| e.name == name && e.is_live_at(tt, vt))
+        let Some(rel) = self.rel_allows else {
+            return false;
+        };
+        self.all_live_facts_at(tt, vt)
+            .into_iter()
+            .any(|f| f.relation == rel && f.delivery_key.as_deref() == Some(name))
     }
 
-    pub(crate) fn has_allow_entry(&self, event_id: EventId) -> bool {
-        self.allow_entries.iter().any(|e| e.event_id == event_id)
-    }
-
-    /// Fold-cut rule registry: a live `RegisterRule` hash at `(tt, vt)`.
+    /// Fold-cut rule registry: a live `kutha:rule` fact whose delivery_key is `pin`.
     pub fn rule_hash_live_at(&self, pin: &str, tt: TransactionTime, vt: ValidTime) -> bool {
-        self.rule_entries
-            .iter()
-            .any(|e| e.definition_hash == pin && e.is_live_at(tt, vt))
+        let Some(rel) = self.rel_rule else {
+            return false;
+        };
+        self.all_live_facts_at(tt, vt)
+            .into_iter()
+            .any(|f| f.relation == rel && f.delivery_key.as_deref() == Some(pin))
     }
 
-    pub(crate) fn has_rule_entry(&self, event_id: EventId) -> bool {
-        self.rule_entries.iter().any(|e| e.event_id == event_id)
-    }
-
-    /// Fold-cut policy pin: a live `PinPolicy` hash at `(tt, vt)`.
+    /// Fold-cut policy pin: a live `kutha:policy` fact whose delivery_key is `pin`.
     pub fn policy_hash_live_at(&self, pin: &str, tt: TransactionTime, vt: ValidTime) -> bool {
-        self.policy_entries
-            .iter()
-            .any(|e| e.definition_hash == pin && e.is_live_at(tt, vt))
-    }
-
-    pub(crate) fn has_policy_entry(&self, event_id: EventId) -> bool {
-        self.policy_entries.iter().any(|e| e.event_id == event_id)
+        let Some(rel) = self.rel_policy else {
+            return false;
+        };
+        self.all_live_facts_at(tt, vt)
+            .into_iter()
+            .any(|f| f.relation == rel && f.delivery_key.as_deref() == Some(pin))
     }
 
     /// Latest ingested live policy hash at `(tt, vt)`.
     pub fn live_policy_pin_at(&self, tt: TransactionTime, vt: ValidTime) -> Option<String> {
-        self.policy_entries
-            .iter()
-            .filter(|e| e.is_live_at(tt, vt))
-            .max_by_key(|e| e.ingested_at)
-            .map(|e| e.definition_hash.clone())
+        let rel = self.rel_policy?;
+        self.all_live_facts_at(tt, vt)
+            .into_iter()
+            .filter(|f| f.relation == rel)
+            .max_by_key(|f| f.ingested_at)
+            .and_then(|f| f.delivery_key.clone())
     }
 
     /// Latest ingested live admission status for `justification_id` at `(tt, vt)`.
@@ -762,249 +702,54 @@ impl GraphFold {
         tt: TransactionTime,
         vt: ValidTime,
     ) -> Option<bool> {
-        self.admission_entries
-            .iter()
-            .filter(|e| e.justification_id == justification_id && e.is_live_at(tt, vt))
-            .max_by_key(|e| e.ingested_at)
-            .map(|e| e.admitted)
+        self.live_admission_fact(justification_id, tt, vt)
+            .map(|f| f.polarity == Some(SupportPolarity::Positive))
     }
 
-    pub(crate) fn has_admission_entry(&self, event_id: EventId) -> bool {
-        self.admission_entries
-            .iter()
-            .any(|e| e.event_id == event_id)
-    }
-
-    /// Latest ingested live admission bind for `justification_id` at `(tt, vt)`.
     pub(crate) fn live_admission_at(
         &self,
         justification_id: &str,
         tt: TransactionTime,
         vt: ValidTime,
     ) -> Option<(bool, String)> {
-        self.admission_entries
-            .iter()
-            .filter(|e| e.justification_id == justification_id && e.is_live_at(tt, vt))
-            .max_by_key(|e| e.ingested_at)
-            .map(|e| (e.admitted, e.policy_version.clone()))
+        let f = self.live_admission_fact(justification_id, tt, vt)?;
+        let admitted = f.polarity == Some(SupportPolarity::Positive);
+        let policy = f.delivery_key.clone().unwrap_or_default();
+        Some((admitted, policy))
     }
 
-    /// Latest ingested live Action bind for `justification_id` at `(tt, vt)`.
-    pub(crate) fn action_record_at(
+    fn live_admission_fact(
         &self,
         justification_id: &str,
         tt: TransactionTime,
         vt: ValidTime,
-    ) -> Option<&ActionEntry> {
-        self.action_entries
-            .iter()
-            .filter(|e| e.justification_id == justification_id && e.is_live_at(tt, vt))
-            .max_by_key(|e| e.ingested_at)
-    }
-
-    pub(crate) fn has_action_entry(&self, event_id: EventId) -> bool {
-        self.action_entries.iter().any(|e| e.event_id == event_id)
-    }
-
-    /// Rebuild skip-serialized allow-entries from the log (open / fork / hydrate).
-    pub(crate) fn rebuild_allow_entries(&mut self, events: &[Event]) {
-        self.allow_entries.clear();
-        for e in events {
-            self.apply_allow_side(e);
-        }
-    }
-
-    /// Rebuild skip-serialized rule-entries from the log (open / fork / hydrate).
-    pub(crate) fn rebuild_rule_entries(&mut self, events: &[Event]) {
-        self.rule_entries.clear();
-        for e in events {
-            self.apply_rule_side(e);
-        }
-    }
-
-    /// Rebuild skip-serialized policy-entries from the log (open / fork / hydrate).
-    pub(crate) fn rebuild_policy_entries(&mut self, events: &[Event]) {
-        self.policy_entries.clear();
-        for e in events {
-            self.apply_policy_side(e);
-        }
-    }
-
-    /// Rebuild skip-serialized admission-entries from the log (open / fork / hydrate).
-    pub(crate) fn rebuild_admission_entries(&mut self, events: &[Event]) {
-        self.admission_entries.clear();
-        for e in events {
-            self.apply_admission_side(e);
-        }
-    }
-
-    /// Rebuild skip-serialized action-entries from the log (open / fork / hydrate).
-    pub(crate) fn rebuild_action_entries(&mut self, events: &[Event]) {
-        self.action_entries.clear();
-        for e in events {
-            self.apply_action_side(e);
-        }
-    }
-
-    fn apply_allow_side(&mut self, event: &Event) {
-        match &event.op {
-            Op::AllowRelation {
-                name,
-                valid_from,
-                valid_to,
-            } => {
-                self.allow_entries.push(AllowEntry {
-                    event_id: event.id,
-                    name: name.clone(),
-                    valid_from: *valid_from,
-                    valid_to: *valid_to,
-                    ingested_at: event.ingested_at,
-                    invalidated_at: None,
-                });
-            }
-            Op::Retract { event_id } => {
-                if let Some(entry) = self
-                    .allow_entries
-                    .iter_mut()
-                    .find(|a| a.event_id == *event_id && a.invalidated_at.is_none())
-                {
-                    entry.invalidated_at = Some(event.ingested_at);
+    ) -> Option<&Fact> {
+        let rel = self.rel_admission?;
+        if let Ok(eid) = justification_id.parse::<EventId>() {
+            if let Some(idx) = self.fact_index_by_event_id(eid) {
+                let f = &self.facts[idx];
+                if f.relation == rel && f.is_live_at(tt, vt) {
+                    return Some(f);
                 }
             }
-            _ => {}
         }
+        self.all_live_facts_at(tt, vt)
+            .into_iter()
+            .filter(|f| f.relation == rel && f.delivery_key.as_deref() == Some(justification_id))
+            .max_by_key(|f| f.ingested_at)
     }
 
-    fn apply_rule_side(&mut self, event: &Event) {
-        match &event.op {
-            Op::RegisterRule {
-                definition,
-                valid_from,
-                valid_to,
-            } => {
-                self.rule_entries.push(RuleEntry {
-                    event_id: event.id,
-                    definition_hash: rule_definition_hash(definition),
-                    valid_from: *valid_from,
-                    valid_to: *valid_to,
-                    ingested_at: event.ingested_at,
-                    invalidated_at: None,
-                });
-            }
-            Op::Retract { event_id } => {
-                if let Some(entry) = self
-                    .rule_entries
-                    .iter_mut()
-                    .find(|a| a.event_id == *event_id && a.invalidated_at.is_none())
-                {
-                    entry.invalidated_at = Some(event.ingested_at);
-                }
-            }
-            _ => {}
-        }
-    }
-
-    fn apply_policy_side(&mut self, event: &Event) {
-        match &event.op {
-            Op::PinPolicy {
-                definition,
-                valid_from,
-                valid_to,
-            } => {
-                self.policy_entries.push(PolicyEntry {
-                    event_id: event.id,
-                    definition_hash: policy_version_hash(definition),
-                    valid_from: *valid_from,
-                    valid_to: *valid_to,
-                    ingested_at: event.ingested_at,
-                    invalidated_at: None,
-                });
-            }
-            Op::Retract { event_id } => {
-                if let Some(entry) = self
-                    .policy_entries
-                    .iter_mut()
-                    .find(|a| a.event_id == *event_id && a.invalidated_at.is_none())
-                {
-                    entry.invalidated_at = Some(event.ingested_at);
-                }
-            }
-            _ => {}
-        }
-    }
-
-    fn apply_admission_side(&mut self, event: &Event) {
-        match &event.op {
-            Op::RecordAdmission {
-                justification_id,
-                admitted,
-                policy_version,
-                valid_from,
-                valid_to,
-            } => {
-                self.admission_entries.push(AdmissionEntry {
-                    event_id: event.id,
-                    justification_id: justification_id.clone(),
-                    admitted: *admitted,
-                    policy_version: policy_version.clone(),
-                    valid_from: *valid_from,
-                    valid_to: *valid_to,
-                    ingested_at: event.ingested_at,
-                    invalidated_at: None,
-                });
-            }
-            Op::Retract { event_id } => {
-                if let Some(entry) = self
-                    .admission_entries
-                    .iter_mut()
-                    .find(|a| a.event_id == *event_id && a.invalidated_at.is_none())
-                {
-                    entry.invalidated_at = Some(event.ingested_at);
-                }
-            }
-            _ => {}
-        }
-    }
-
-    fn apply_action_side(&mut self, event: &Event) {
-        match &event.op {
-            Op::RecordAction {
-                justification_id,
-                target_claim,
-                source_claim_ids,
-                source_event_ids,
-                rule_version,
-                admitted,
-                policy_version,
-                valid_from,
-                valid_to,
-            } => {
-                self.action_entries.push(ActionEntry {
-                    event_id: event.id,
-                    justification_id: justification_id.clone(),
-                    target_claim: *target_claim,
-                    source_claim_ids: source_claim_ids.clone(),
-                    source_event_ids: source_event_ids.clone(),
-                    rule_version: rule_version.clone(),
-                    admitted: *admitted,
-                    policy_version: policy_version.clone(),
-                    valid_from: *valid_from,
-                    valid_to: *valid_to,
-                    ingested_at: event.ingested_at,
-                    invalidated_at: None,
-                });
-            }
-            Op::Retract { event_id } => {
-                if let Some(entry) = self
-                    .action_entries
-                    .iter_mut()
-                    .find(|a| a.event_id == *event_id && a.invalidated_at.is_none())
-                {
-                    entry.invalidated_at = Some(event.ingested_at);
-                }
-            }
-            _ => {}
-        }
+    pub(crate) fn live_action_fact(
+        &self,
+        justification_id: &str,
+        tt: TransactionTime,
+        vt: ValidTime,
+    ) -> Option<&Fact> {
+        let rel = self.rel_action?;
+        self.all_live_facts_at(tt, vt)
+            .into_iter()
+            .filter(|f| f.relation == rel && f.delivery_key.as_deref() == Some(justification_id))
+            .max_by_key(|f| f.ingested_at)
     }
 
     pub fn apply(&mut self, event: &Event) {
@@ -1079,11 +824,6 @@ impl GraphFold {
                         self.invalidate_fact_at(idx, event.ingested_at);
                     }
                 }
-                self.apply_allow_side(event);
-                self.apply_rule_side(event);
-                self.apply_policy_side(event);
-                self.apply_admission_side(event);
-                self.apply_action_side(event);
             }
             Op::Correct {
                 event_id,
@@ -1171,20 +911,8 @@ impl GraphFold {
                     push_row(old_object, vf, vt);
                 }
             }
-            Op::AllowRelation { .. } => {
-                self.apply_allow_side(event);
-            }
-            Op::RegisterRule { .. } => {
-                self.apply_rule_side(event);
-            }
-            Op::PinPolicy { .. } => {
-                self.apply_policy_side(event);
-            }
-            Op::RecordAdmission { .. } => {
-                self.apply_admission_side(event);
-            }
-            Op::RecordAction { .. } => {
-                self.apply_action_side(event);
+            Op::StoreBlob { digest, bytes } => {
+                self.store_blob_once(digest, bytes);
             }
             Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
         }

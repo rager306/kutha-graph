@@ -5,7 +5,11 @@ use crate::log::EventLog;
 use crate::materializer::{CsrMaterializer, Materializer};
 use crate::receipt::{digest_to_hex, QuantumReceipt};
 use crate::snapshot::Snapshot;
-use kutha_common::{Event, EventId, Op, TermDictionary, TermId};
+use kutha_common::{
+    blob_digest_matches, policy_version_hash, rule_definition_hash, Event, EventId, Op,
+    SupportPolarity, TermDictionary, TermId, ValidTime, KUTHA_ACTION, KUTHA_ADMISSION,
+    KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RESERVED_RELS, KUTHA_RULE,
+};
 use rustc_hash::FxHashMap;
 use sha2::{Digest, Sha256};
 use std::collections::HashSet;
@@ -131,7 +135,7 @@ impl fmt::Display for RuntimeError {
 
 pub use kutha_common::OutcomeDisposition;
 
-/// Thin Action bind (ACT-01). Not a graph Fact; log `Op::RecordAction` is SoT.
+/// Thin Action bind (ACT-01). Reconstructed from `kutha:action` + `JustificationCite`.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ActionRecord {
     pub justification_id: String,
@@ -193,26 +197,19 @@ fn op_relation(op: &Op) -> Option<TermId> {
         | Op::Define { .. }
         | Op::QuantumOutcome { .. }
         | Op::JustificationCite { .. }
-        | Op::AllowRelation { .. }
-        | Op::RegisterRule { .. }
-        | Op::PinPolicy { .. }
-        | Op::RecordAdmission { .. }
-        | Op::RecordAction { .. } => None,
+        | Op::StoreBlob { .. } => None,
     }
 }
 
-/// Fold-affecting ops only. `Define` and `QuantumOutcome` stay on the log as meta (LOG-01).
+/// Fold-affecting ops only. `Define`, `QuantumOutcome`, `JustificationCite`, and `StoreBlob`
+/// stay on the log as meta (LOG-01 / D-02). Dictionary `Assert`s are fold facts.
 fn op_affects_fold(op: &Op) -> bool {
     !matches!(
         op,
         Op::Define { .. }
             | Op::QuantumOutcome { .. }
             | Op::JustificationCite { .. }
-            | Op::AllowRelation { .. }
-            | Op::RegisterRule { .. }
-            | Op::PinPolicy { .. }
-            | Op::RecordAdmission { .. }
-            | Op::RecordAction { .. }
+            | Op::StoreBlob { .. }
     )
 }
 
@@ -245,9 +242,6 @@ pub struct Runtime {
     /// In-memory buffer of quantum outcomes. SoT is `Op::QuantumOutcome` on the log;
     /// `quantum_outcomes.jsonl` is a droppable lease after those Events exist (LOG-01 / D-02).
     outcomes: Vec<PersistedQuantumOutcome>,
-    /// In-memory buffer of justification cites. SoT is `Op::JustificationCite` on the log.
-    /// Open hydrates from those Events; it never infers cites from Assert/Behavior triples.
-    justifications: Vec<Justification>,
     /// Log position by EventId (lease; rebuilt on hydrate / fork).
     by_event_id: IngestMap<EventId, usize>,
     /// Delivery key → EventId for identical Assert retry (lease).
@@ -276,22 +270,22 @@ impl Runtime {
             knows,
             known_by,
             outcomes: Vec::new(),
-            justifications: Vec::new(),
             by_event_id: IngestMap::default(),
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
         };
-        // Empty-log genesis only: YAML names become AllowRelation events (valid_from 0).
-        // Do not intern those names (D-05). Sorted so provenance is deterministic (D-04).
+        for name in KUTHA_RESERVED_RELS {
+            rt.intern_silent(name);
+        }
+        rt.intern_silent("true");
+        rt.intern_silent("false");
+        rt.fold.bind_reserved(&rt.dict);
+        // Empty-log genesis: silent intern of YAML names + Assert kutha:allows valid_from 0 (D-01).
         let mut names: Vec<String> = load_allowed_names().into_iter().collect();
         names.sort();
         for name in names {
-            rt.emit(Op::AllowRelation {
-                name,
-                valid_from: 0,
-                valid_to: None,
-            })
-            .expect("genesis AllowRelation");
+            rt.emit_allow(name, 0, None)
+                .expect("genesis kutha:allows");
         }
         rt
     }
@@ -317,12 +311,13 @@ impl Runtime {
     }
 
     /// Intern a term string. New strings append `Op::Define` to the live log (fold no-op).
-    /// Bootstrap `knows`/`knownBy` from [`Runtime::new`] stay silent until persist synthesizes them.
+    /// Bootstrap `knows`/`knownBy` and genesis reserved/YAML names stay silent until persist synthesizes them.
+    /// Names with prefix `kutha:` are marked as dictionary relations (D-01 / D-05).
     pub fn intern(&mut self, s: &str) -> TermId {
         if let Some(id) = self.dict.id(s) {
             return id;
         }
-        let id = self.dict.intern(s);
+        let id = self.intern_silent(s);
         let event = Event::new(
             Op::Define {
                 name: s.to_string(),
@@ -331,6 +326,20 @@ impl Runtime {
         );
         self.fold.apply(&event);
         self.append_indexed(event);
+        id
+    }
+
+    fn intern_silent(&mut self, s: &str) -> TermId {
+        if let Some(id) = self.dict.id(s) {
+            if s.starts_with("kutha:") {
+                self.fold.bind_reserved(&self.dict);
+            }
+            return id;
+        }
+        let id = self.dict.intern(s);
+        if s.starts_with("kutha:") {
+            self.fold.bind_reserved(&self.dict);
+        }
         id
     }
 
@@ -423,21 +432,21 @@ impl Runtime {
         self.outcomes = rows;
     }
 
-    /// Rebuild outcome and justification rows from log Events (D-01). Sidecars are not consulted.
+    /// Rebuild outcome rows from log Events (D-01). Dictionary blobs rebound from StoreBlob.
     pub(crate) fn hydrate_from_log(&mut self) {
         let mut outcomes = Vec::new();
-        let mut justifications = Vec::new();
         for e in self.log.iter() {
-            match &e.op {
-                Op::QuantumOutcome {
-                    quantum_id,
-                    disposition,
-                    aborted_on_budget,
-                    events_in_quantum,
-                    event_ids,
-                    receipt_digest_hex,
-                    resume_of,
-                } => outcomes.push(PersistedQuantumOutcome {
+            if let Op::QuantumOutcome {
+                quantum_id,
+                disposition,
+                aborted_on_budget,
+                events_in_quantum,
+                event_ids,
+                receipt_digest_hex,
+                resume_of,
+            } = &e.op
+            {
+                outcomes.push(PersistedQuantumOutcome {
                     quantum_id: quantum_id.clone(),
                     disposition: *disposition,
                     aborted_on_budget: *aborted_on_budget,
@@ -445,34 +454,12 @@ impl Runtime {
                     event_ids: event_ids.clone(),
                     receipt_digest_hex: receipt_digest_hex.clone(),
                     resume_of: resume_of.clone(),
-                }),
-                Op::JustificationCite {
-                    justification_id,
-                    target_claim,
-                    source_claim_ids,
-                    source_event_ids,
-                    rule_version,
-                    tt,
-                    vt,
-                } => justifications.push(Justification {
-                    justification_id: justification_id.clone(),
-                    target_claim: *target_claim,
-                    source_claim_ids: source_claim_ids.clone(),
-                    source_event_ids: source_event_ids.clone(),
-                    rule_version: rule_version.clone(),
-                    tt: *tt,
-                    vt: *vt,
-                }),
-                _ => {}
+                });
             }
         }
         self.outcomes = outcomes;
-        self.justifications = justifications;
-        self.fold.rebuild_allow_entries(self.log.as_slice());
-        self.fold.rebuild_rule_entries(self.log.as_slice());
-        self.fold.rebuild_policy_entries(self.log.as_slice());
-        self.fold.rebuild_admission_entries(self.log.as_slice());
-        self.fold.rebuild_action_entries(self.log.as_slice());
+        self.fold.rebuild_blobs(self.log.as_slice());
+        self.fold.bind_reserved(&self.dict);
         self.rebuild_log_indexes();
     }
 
@@ -482,16 +469,146 @@ impl Runtime {
             .any(|e| matches!(e.op, Op::QuantumOutcome { .. }))
     }
 
-    pub(crate) fn log_has_justification_cite(&self) -> bool {
-        self.log
-            .iter()
-            .any(|e| matches!(e.op, Op::JustificationCite { .. }))
-    }
-
     fn append_meta(&mut self, op: Op) {
         let event = Event::new(op, self.next_tt());
         self.fold.apply(&event);
         self.append_indexed(event);
+    }
+
+    /// Fast-path dictionary Assert (no quantum outcome), matching former AllowRelation emit.
+    fn emit_dictionary_assert(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
+        self.admit(&op)?;
+        let event = Event::new(op, self.next_tt());
+        let id = event.id;
+        let digest = event.digest_bytes();
+        self.fold.apply(&event);
+        self.append_indexed(event);
+        let receipt = QuantumReceipt::from_events(vec![id], &[digest], false);
+        Ok(QuantumOutcome {
+            receipt,
+            events_in_quantum: 1,
+        })
+    }
+
+    /// Allow a product relation name as a `kutha:allows` fact (D-01).
+    pub fn emit_allow(
+        &mut self,
+        name: impl Into<String>,
+        valid_from: ValidTime,
+        valid_to: Option<ValidTime>,
+    ) -> Result<QuantumOutcome, RuntimeError> {
+        let name = name.into();
+        if name.is_empty() {
+            return Err(RuntimeError::UnknownRelation {
+                name: String::new(),
+            });
+        }
+        let subject = self.intern_silent(&name);
+        let relation = self.intern_silent(KUTHA_ALLOWS);
+        self.emit_dictionary_assert(Op::Assert {
+            subject,
+            relation,
+            object: subject,
+            valid_from,
+            valid_to,
+            claim: None,
+            delivery_key: Some(name),
+            polarity: None,
+        })
+    }
+
+    /// Store a rule body once, then assert `kutha:rule` carrying `rule_definition_hash` (D-02).
+    pub fn emit_rule(
+        &mut self,
+        definition: impl Into<String>,
+        valid_from: ValidTime,
+        valid_to: Option<ValidTime>,
+    ) -> Result<QuantumOutcome, RuntimeError> {
+        let definition = definition.into();
+        if definition.is_empty() {
+            return Err(RuntimeError::UnknownRuleVersion { pin: String::new() });
+        }
+        let digest = rule_definition_hash(&definition);
+        self.admit_store_blob(&digest, definition.as_bytes())?;
+        self.append_meta(Op::StoreBlob {
+            digest: digest.clone(),
+            bytes: definition.into_bytes(),
+        });
+        let subject = self.intern_silent(&digest);
+        let relation = self.intern_silent(KUTHA_RULE);
+        self.emit_dictionary_assert(Op::Assert {
+            subject,
+            relation,
+            object: subject,
+            valid_from,
+            valid_to,
+            claim: None,
+            delivery_key: Some(digest),
+            polarity: None,
+        })
+    }
+
+    /// Store a policy body once, then assert `kutha:policy` carrying `policy_version_hash` (D-02).
+    pub fn emit_policy(
+        &mut self,
+        definition: impl Into<String>,
+        valid_from: ValidTime,
+        valid_to: Option<ValidTime>,
+    ) -> Result<QuantumOutcome, RuntimeError> {
+        let definition = definition.into();
+        if definition.is_empty() {
+            return Err(RuntimeError::UnknownPolicyVersion { pin: String::new() });
+        }
+        let digest = policy_version_hash(&definition);
+        self.admit_store_blob(&digest, definition.as_bytes())?;
+        self.append_meta(Op::StoreBlob {
+            digest: digest.clone(),
+            bytes: definition.into_bytes(),
+        });
+        let subject = self.intern_silent(&digest);
+        let relation = self.intern_silent(KUTHA_POLICY);
+        self.emit_dictionary_assert(Op::Assert {
+            subject,
+            relation,
+            object: subject,
+            valid_from,
+            valid_to,
+            claim: None,
+            delivery_key: Some(digest),
+            polarity: None,
+        })
+    }
+
+    fn admit_store_blob(&self, digest: &str, bytes: &[u8]) -> Result<(), RuntimeError> {
+        if !blob_digest_matches(digest, bytes) {
+            return Err(RuntimeError::UnknownRuleVersion {
+                pin: digest.to_string(),
+            });
+        }
+        Ok(())
+    }
+
+    fn cite_from_log(&self, justification_id: &str) -> Option<Justification> {
+        self.log.as_slice().iter().rev().find_map(|e| match &e.op {
+            Op::JustificationCite {
+                justification_id: jid,
+                target_claim,
+                source_claim_ids,
+                source_event_ids,
+                rule_version,
+                tt,
+                vt,
+            } if jid == justification_id => Some(Justification {
+                justification_id: jid.clone(),
+                target_claim: *target_claim,
+                source_claim_ids: source_claim_ids.clone(),
+                source_event_ids: source_event_ids.clone(),
+                rule_version: rule_version.clone(),
+                tt: *tt,
+                vt: *vt,
+            }),
+            _ => None,
+        })
     }
 
     fn outcome_op(row: &PersistedQuantumOutcome) -> Op {
@@ -506,30 +623,35 @@ impl Runtime {
         }
     }
 
-    fn justification_op(row: &Justification) -> Op {
-        Op::JustificationCite {
-            justification_id: row.justification_id.clone(),
-            target_claim: row.target_claim,
-            source_claim_ids: row.source_claim_ids.clone(),
-            source_event_ids: row.source_event_ids.clone(),
-            rule_version: row.rule_version.clone(),
-            tt: row.tt,
-            vt: row.vt,
-        }
+    /// Justification cites reconstructed from the log (LOG-02). Not a RAM admission buffer.
+    pub fn justification_records(&self) -> Vec<Justification> {
+        self.log
+            .iter()
+            .filter_map(|e| match &e.op {
+                Op::JustificationCite {
+                    justification_id,
+                    target_claim,
+                    source_claim_ids,
+                    source_event_ids,
+                    rule_version,
+                    tt,
+                    vt,
+                } => Some(Justification {
+                    justification_id: justification_id.clone(),
+                    target_claim: *target_claim,
+                    source_claim_ids: source_claim_ids.clone(),
+                    source_event_ids: source_event_ids.clone(),
+                    rule_version: rule_version.clone(),
+                    tt: *tt,
+                    vt: *vt,
+                }),
+                _ => None,
+            })
+            .collect()
     }
 
-    /// Persisted justification rows buffered for `store::persist` (D-F2).
-    pub fn justification_records(&self) -> &[Justification] {
-        &self.justifications
-    }
-
-    /// Attach rows loaded from the justifications sidecar when the log has no `JustificationCite` Events.
-    pub fn attach_justifications(&mut self, rows: Vec<Justification>) {
-        self.justifications = rows;
-    }
-
-    /// Append one justification cite, then record admission citing the live policy pin.
-    /// Does not run from `emit`. Returns the minted id even when admission is denied.
+    /// Append one justification cite, then a `kutha:admission` Assert citing the live policy pin.
+    /// Does not run from `emit`. Returns the admission EventId as a string even when denied.
     pub fn record_justification(
         &mut self,
         target_claim: EventId,
@@ -543,36 +665,60 @@ impl Runtime {
             return Err(RuntimeError::UnknownPolicyVersion { pin: String::new() });
         };
         let rule_version = rule_version.into();
-        let mut justification_id = format!("j:{target_claim}:{tt}:{vt}");
-        let mut n = 0u32;
-        while self
-            .justifications
-            .iter()
-            .any(|j| j.justification_id == justification_id)
-        {
-            n += 1;
-            justification_id = format!("j:{target_claim}:{tt}:{vt}:{n}");
-        }
-        self.justifications.push(Justification {
-            justification_id: justification_id.clone(),
+        let row = Justification {
+            justification_id: String::new(),
             target_claim,
             source_claim_ids,
             source_event_ids,
             rule_version,
             tt,
             vt,
+        };
+        let admitted = self.check_admission_row(&row).is_ok();
+        let relation = self.intern_silent(KUTHA_ADMISSION);
+        let object = self.intern_silent(if admitted { "true" } else { "false" });
+        let polarity = Some(if admitted {
+            SupportPolarity::Positive
+        } else {
+            SupportPolarity::Negative
         });
-        let row = self.justifications.last().expect("just pushed").clone();
-        self.append_meta(Self::justification_op(&row));
-        let admitted = self.check_admission(&justification_id).is_ok();
-        self.append_meta(Op::RecordAdmission {
-            justification_id: justification_id.clone(),
-            admitted,
-            policy_version,
-            valid_from: vt,
-            valid_to: None,
+        let mut event = Event::new(
+            Op::Assert {
+                subject: 0,
+                relation,
+                object,
+                valid_from: vt,
+                valid_to: None,
+                claim: None,
+                delivery_key: Some(policy_version),
+                polarity,
+            },
+            self.next_tt(),
+        );
+        let jid = event.id.to_string();
+        let subject = self.intern_silent(&jid);
+        if let Op::Assert {
+            subject: subj,
+            relation: rel,
+            object: obj,
+            ..
+        } = &mut event.op
+        {
+            *subj = subject;
+            event.object_ids = vec![*subj, *rel, *obj];
+        }
+        self.fold.apply(&event);
+        self.append_indexed(event);
+        self.append_meta(Op::JustificationCite {
+            justification_id: jid.clone(),
+            target_claim,
+            source_claim_ids: row.source_claim_ids,
+            source_event_ids: row.source_event_ids,
+            rule_version: row.rule_version,
+            tt,
+            vt,
         });
-        Ok(justification_id)
+        Ok(jid)
     }
 
     /// AS OF admission status for a justification (ADM-01). Delegates to the fold.
@@ -587,53 +733,65 @@ impl Runtime {
         tt: u64,
         vt: u64,
     ) -> Result<EventId, RuntimeError> {
-        let cite = self
-            .justifications
-            .iter()
-            .find(|j| j.justification_id == justification_id)
-            .cloned()
-            .ok_or_else(|| RuntimeError::UnknownAdmission {
+        let cite = self.cite_from_log(justification_id).ok_or_else(|| {
+            RuntimeError::UnknownAdmission {
                 justification_id: justification_id.to_string(),
-            })?;
-        let Some((admitted, policy_version)) =
+            }
+        })?;
+        let Some((admitted, _policy_version)) =
             self.fold.live_admission_at(justification_id, tt, vt)
         else {
             return Err(RuntimeError::UnknownAdmission {
                 justification_id: justification_id.to_string(),
             });
         };
-        self.append_meta(Op::RecordAction {
-            justification_id: cite.justification_id,
-            target_claim: cite.target_claim,
-            source_claim_ids: cite.source_claim_ids,
-            source_event_ids: cite.source_event_ids,
-            rule_version: cite.rule_version,
-            admitted,
-            policy_version,
-            valid_from: vt,
-            valid_to: None,
+        let relation = self.intern_silent(KUTHA_ACTION);
+        let object = self.intern_silent(&cite.target_claim.to_string());
+        let subject = self.intern_silent(justification_id);
+        let polarity = Some(if admitted {
+            SupportPolarity::Positive
+        } else {
+            SupportPolarity::Negative
         });
-        Ok(self.log.as_slice().last().expect("just appended").id)
+        let event = Event::new(
+            Op::Assert {
+                subject,
+                relation,
+                object,
+                valid_from: vt,
+                valid_to: None,
+                claim: None,
+                delivery_key: Some(justification_id.to_string()),
+                polarity,
+            },
+            self.next_tt(),
+        );
+        let id = event.id;
+        self.fold.apply(&event);
+        self.append_indexed(event);
+        Ok(id)
     }
 
-    /// AS OF Action bind for a justification (ACT-01). Delegates to the fold.
+    /// AS OF Action bind for a justification (ACT-01).
     pub fn action_record_at(
         &self,
         justification_id: &str,
         tt: u64,
         vt: u64,
     ) -> Option<ActionRecord> {
-        self.fold
-            .action_record_at(justification_id, tt, vt)
-            .map(|e| ActionRecord {
-                justification_id: e.justification_id.clone(),
-                target_claim: e.target_claim,
-                source_claim_ids: e.source_claim_ids.clone(),
-                source_event_ids: e.source_event_ids.clone(),
-                rule_version: e.rule_version.clone(),
-                admitted: e.admitted,
-                policy_version: e.policy_version.clone(),
-            })
+        let fact = self.fold.live_action_fact(justification_id, tt, vt)?;
+        let cite = self.cite_from_log(justification_id)?;
+        let (admitted, policy_version) = self.fold.live_admission_at(justification_id, tt, vt)?;
+        let _ = fact;
+        Some(ActionRecord {
+            justification_id: justification_id.to_string(),
+            target_claim: cite.target_claim,
+            source_claim_ids: cite.source_claim_ids,
+            source_event_ids: cite.source_event_ids,
+            rule_version: cite.rule_version,
+            admitted,
+            policy_version,
+        })
     }
 
     /// Fold-cut policy pin liveness (ADM-02).
@@ -649,17 +807,16 @@ impl Runtime {
     /// Fail-closed admission for a persisted cite. Locked reasons: unknown_justification,
     /// stale_support, ineligible, rule_version.
     pub fn check_admission(&self, justification_id: &str) -> Result<(), RuntimeError> {
-        let row = self
-            .justifications
-            .iter()
-            .find(|j| j.justification_id == justification_id)
-            .ok_or(RuntimeError::AdmissionDenied {
+        let row = self.cite_from_log(justification_id).ok_or(
+            RuntimeError::AdmissionDenied {
                 justification_id: justification_id.into(),
                 reason: "unknown_justification",
-            })?;
-        // Cited minting EventIds must still be live on the current picture at the row's VT.
-        // Historical row.tt records the claimed cut; using it alone would never
-        // stale a cite after CorrectInterval/Retract (FIX-02).
+            },
+        )?;
+        self.check_admission_row(&row)
+    }
+
+    fn check_admission_row(&self, row: &Justification) -> Result<(), RuntimeError> {
         for event_id in &row.source_event_ids {
             self.ingest_examine.bump();
             let live = self
@@ -785,7 +942,6 @@ impl Runtime {
             knows: snap.knows,
             known_by: snap.known_by,
             outcomes: Vec::new(),
-            justifications: Vec::new(),
             by_event_id: IngestMap::default(),
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
@@ -828,7 +984,6 @@ impl Runtime {
             knows,
             known_by,
             outcomes: Vec::new(),
-            justifications: Vec::new(),
             by_event_id: IngestMap::default(),
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
@@ -856,7 +1011,6 @@ impl Runtime {
             knows: self.knows,
             known_by: self.known_by,
             outcomes: Vec::new(),
-            justifications: Vec::new(),
             by_event_id: IngestMap::default(),
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
@@ -890,23 +1044,11 @@ impl Runtime {
     }
 
     fn admit(&self, op: &Op) -> Result<(), RuntimeError> {
-        if let Op::AllowRelation { name, .. } = op {
-            if name.is_empty() {
-                return Err(RuntimeError::UnknownRelation {
-                    name: String::new(),
+        if let Op::StoreBlob { digest, bytes } = op {
+            if !blob_digest_matches(digest, bytes) {
+                return Err(RuntimeError::UnknownRuleVersion {
+                    pin: digest.clone(),
                 });
-            }
-            return Ok(());
-        }
-        if let Op::RegisterRule { definition, .. } = op {
-            if definition.is_empty() {
-                return Err(RuntimeError::UnknownRuleVersion { pin: String::new() });
-            }
-            return Ok(());
-        }
-        if let Op::PinPolicy { definition, .. } = op {
-            if definition.is_empty() {
-                return Err(RuntimeError::UnknownPolicyVersion { pin: String::new() });
             }
             return Ok(());
         }
@@ -914,6 +1056,9 @@ impl Runtime {
             return Ok(());
         };
         let name = self.dict.lookup(rel).unwrap_or("").to_string();
+        if name.starts_with("kutha:") {
+            return Ok(());
+        }
         let vt = match op {
             Op::Assert { valid_from, .. } | Op::Behavior { valid_from, .. } => *valid_from,
             _ => 0,
@@ -1020,23 +1165,23 @@ impl Runtime {
     pub fn emit(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
         if matches!(
             op,
-            Op::QuantumOutcome { .. }
-                | Op::JustificationCite { .. }
-                | Op::RecordAdmission { .. }
-                | Op::RecordAction { .. }
+            Op::QuantumOutcome { .. } | Op::JustificationCite { .. }
         ) {
             return Err(RuntimeError::MetaOpRejected);
+        }
+        if let Op::Assert { relation, .. } = &op {
+            if self
+                .dict
+                .lookup(*relation)
+                .is_some_and(|n| n == KUTHA_ADMISSION || n == KUTHA_ACTION)
+            {
+                return Err(RuntimeError::MetaOpRejected);
+            }
         }
         if let Op::Retract { event_id } = &op {
             self.ingest_examine.bump();
             let known_fact = self.fold.fact_index_by_event_id(*event_id).is_some();
-            if !known_fact
-                && !self.fold.has_allow_entry(*event_id)
-                && !self.fold.has_rule_entry(*event_id)
-                && !self.fold.has_policy_entry(*event_id)
-                && !self.fold.has_admission_entry(*event_id)
-                && !self.fold.has_action_entry(*event_id)
-            {
+            if !known_fact {
                 return Err(RuntimeError::UnknownFact {
                     event_id: *event_id,
                 });
@@ -1073,10 +1218,7 @@ impl Runtime {
             }
         }
         self.admit(&op)?;
-        if matches!(
-            &op,
-            Op::AllowRelation { .. } | Op::RegisterRule { .. } | Op::PinPolicy { .. }
-        ) {
+        if matches!(&op, Op::StoreBlob { .. }) {
             let event = Event::new(op, self.next_tt());
             let id = event.id;
             let digest = event.digest_bytes();
@@ -1238,11 +1380,7 @@ impl Runtime {
                 }
                 Op::QuantumOutcome { .. }
                 | Op::JustificationCite { .. }
-                | Op::AllowRelation { .. }
-                | Op::RegisterRule { .. }
-                | Op::PinPolicy { .. }
-                | Op::RecordAdmission { .. }
-                | Op::RecordAction { .. } => {
+                | Op::StoreBlob { .. } => {
                     h.update(e.digest_bytes());
                 }
                 _ => {}
@@ -1305,11 +1443,7 @@ impl Runtime {
             | Op::Define { .. }
             | Op::QuantumOutcome { .. }
             | Op::JustificationCite { .. }
-            | Op::AllowRelation { .. }
-            | Op::RegisterRule { .. }
-            | Op::PinPolicy { .. }
-            | Op::RecordAdmission { .. }
-            | Op::RecordAction { .. } => return false,
+            | Op::StoreBlob { .. } => return false,
         };
         if !self.fold.rule_hash_live_at(&rule_version, tt, vt) {
             return false;
@@ -1376,10 +1510,22 @@ mod tests {
             polarity: None,
         })
         .unwrap();
-        let minting = rt.fold().facts()[0].event_id;
+        let minting = rt
+            .fold()
+            .facts()
+            .iter()
+            .find(|f| f.relation == r)
+            .expect("knows fact")
+            .event_id;
         rt.emit(Op::Retract { event_id: minting }).unwrap();
-        assert_eq!(rt.fold().facts().len(), 2); // knows retracted, inverse still live
-        assert!(!rt.fold().facts()[0].is_live_at(u64::MAX, 0));
+        assert_eq!(rt.fold().live_count(u64::MAX, 0), 1); // inverse still live
+        assert!(!rt
+            .fold()
+            .facts()
+            .iter()
+            .find(|f| f.relation == r)
+            .unwrap()
+            .is_live_at(u64::MAX, 0));
         assert!(rt.fold().facts().iter().any(|f| f.invalidated_at.is_some()));
         rt.replay_check().unwrap();
     }
@@ -1405,7 +1551,7 @@ mod tests {
             .unwrap();
         assert_eq!(q.events_in_quantum, 2);
         assert!(!q.receipt.aborted_on_budget);
-        assert_eq!(rt.graph_len(), 2);
+        assert_eq!(rt.fold().live_count(u64::MAX, 0), 2);
     }
 
     #[test]
