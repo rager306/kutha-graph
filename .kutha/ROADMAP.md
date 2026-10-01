@@ -156,7 +156,7 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
   > After this: a note lists real-text cases from law-nexus (FZ-44 snippets, consultant sources with editions, the synthetic sunset clause), maps each against the two-axis model, and names the cases the current model cannot express. No product code.
 - [x] **S03: Fold indexes for ingest** `risk:medium` `depends:[S01]`
   > After this: delivery-key retry, claim admit, retract, correct, and follow-ons do no whole-log or whole-fact scans; a scaling oracle is RED before the change and GREEN after; the baseline is re-measured.
-- [ ] **S04: Genesis log** `risk:high` `depends:[S03]`
+- [x] **S04: Genesis log** `risk:high` `depends:[S03]`
   > After this: relation allowance enters through genesis events; the YAML file is read only when a new log is created; retracting a seeded relation makes admit fail closed; FF6 stays green.
 - [ ] **S05: Dictionary entries as facts** `risk:high` `depends:[S04]`
   > After this: relation, rule, policy, admission, and action records are reserved-namespace facts with content-addressed bodies; the five meta `Op` variants and side tables are gone; the M012 oracles keep their assertions.

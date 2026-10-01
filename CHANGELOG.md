@@ -20,7 +20,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Trajectory
 
-- No lease change. Active Slice **S04**. Cells remain **Proposed**. Genesis wiring green; do not start Phase 26 Op removal.
+- Phase 25 / S04 closed: independent verification passed; `L_delivery=M013-S04-done`; Active Slice **None**. Cells remain **Proposed**. Do not start Phase 26 until S05 leased.
 
 ## 2026-10-01 — Product: RED genesis log oracles
 
