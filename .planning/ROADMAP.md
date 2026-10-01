@@ -95,7 +95,12 @@ Full detail: [milestones/v0.04-ROADMAP.md](./milestones/v0.04-ROADMAP.md) · req
   2. `Runtime::admit` (or equivalent) consults the fold cut for allowed relations, not tip YAML/env alone (ALL-02)
   3. An unknown relation still fails closed; the named FF6 oracle remains green (ALL-03)
   4. Named cargo tests for the three ALL oracles are observed by the governor; `uv run kutha-gov ci` stays 0 HIGH; FF5 stays green; honeycomb stays Proposed; ADR-050 six dictionaries and M002 Rocks stay unstarted
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 17-01-PLAN.md — Tracer: Op::AllowRelation log fact; admit consults fold for a YAML-absent name; unknown fails closed
+- [ ] 17-02-PLAN.md — Retract versions the cut; persist/open reconstructs admit from log facts
+- [ ] 17-03-PLAN.md — Governor observation of ALL oracles; freeze and Proposed map hold
 
 ### Phase 18: Rule registry
 
@@ -178,7 +183,7 @@ Full detail: [milestones/v0.04-ROADMAP.md](./milestones/v0.04-ROADMAP.md) · req
 | 14. Idempotent ingest | v0.04 | 3/3 | Complete | 2026-10-01 |
 | 15. Verify, persist, and time scale | v0.04 | 3/3 | Complete | 2026-10-01 |
 | 16. Fold-internal hot indexes | v0.04 | 3/3 | Complete | 2026-10-01 |
-| 17. Allowlist as log facts | v0.05 | 0/? | Not started | - |
+| 17. Allowlist as log facts | v0.05 | 0/3 | Planned | - |
 | 18. Rule registry | v0.05 | 0/? | Not started | - |
 | 19. Admission and policy meta-facts | v0.05 | 0/? | Not started | - |
 | 20. Thin action record | v0.05 | 0/? | Not started | - |

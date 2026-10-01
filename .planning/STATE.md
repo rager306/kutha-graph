@@ -3,12 +3,12 @@ gsd_state_version: "1.0"
 milestone: v0.05
 milestone_name: Dictionaries as facts
 status: planning
-last_updated: "2026-10-01T08:32:00+07:00"
+last_updated: "2026-10-01T08:45:00+07:00"
 last_activity: 2026-10-01
 progress:
   total_phases: 5
   completed_phases: 0
-  total_plans: 0
+  total_plans: 3
   completed_plans: 0
   percent: 0
 ---
@@ -20,7 +20,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.05 Phase 17 — Allowlist as log facts (M012 S01). Roadmap written; plan next.
+**Current focus:** v0.05 Phase 17 — Allowlist as log facts (M012 S01). Three execute plans written (17-01..03).
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -29,9 +29,9 @@ See: `.planning/PROJECT.md` (updated 2026-10-01 after M012 lease / GSD v0.05)
 ## Current Position
 
 Phase: 17 of 21 (Allowlist as log facts) — v0.05 phases 17–21
-Plan: —
-Status: Ready to plan
-Last activity: 2026-10-01 — v0.05 roadmap created (Phases 17–21 map M012 S01–S05)
+Plan: 17-01 (next execute)
+Status: Planned
+Last activity: 2026-10-01 — Phase 17 plans 17-01..03 written (tracer, versioning/persist, governor)
 
 Progress: [░░░░░░░░░░] 0% (v0.05)
 
@@ -63,7 +63,7 @@ None.
 
 ### Blockers/Concerns
 
-- Harness Active Slice is **None**. Plan Phase 17 now; execute only after `.kutha/STATE.md` leases **S01** (GATE-02). Do not overwrite the harness lease from GSD memory.
+- Harness Active Slice is **S01** (cite `.kutha/STATE.md`; do not overwrite it). Execute Phase 17 under that lease (GATE-02).
 - Do not start ADR-050 six dictionaries, M002 Rocks, legal pack, Cypher, or HNSW because a GSD phase completed — honeycomb stays Proposed (GATE-03).
 
 ## Deferred Items
@@ -78,10 +78,10 @@ None.
 ## Session Continuity
 
 Last session: 2026-10-01
-Stopped at: v0.05 roadmap written (Phases 17–21)
+Stopped at: Phase 17 plans written
 Resume file: None
-Next: `/gsd-plan-phase 17`. Lease S01 in `.kutha/STATE.md` before execute. Freeze holds. Do not lease M002 without explicit operator intent.
+Next: `/gsd-execute-phase 17`. Active Slice S01 is leased. Freeze holds. Do not lease M002 without explicit operator intent.
 
 ## Operator Next Steps
 
-- `/gsd-plan-phase 17`
+- `/gsd-execute-phase 17`
