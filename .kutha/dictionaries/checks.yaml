@@ -489,6 +489,18 @@ checks:
         category: m012-s02
         message: "M012 S02 rule-registry tests missing {missing}"
 
+  - id: m012-s03-admission-facts
+    description: M012 S03 — admission status and policy version as log meta-facts
+    steps:
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m012_admission_facts.rs
+        tests:
+          - admission_status_queryable_as_of_cut
+          - admission_cites_pinned_policy_version
+          - record_justification_invokes_check_admission
+        category: m012-s03
+        message: "M012 S03 admission-facts tests missing {missing}"
+
   - id: h4-lease
     description: H5 dogfood is closed without promoting ADR-090
     steps:

@@ -76,6 +76,9 @@ states:
       - register_rule_pins_behavior_to_definition_hash
       - unknown_or_mismatched_rule_version_fails_closed
       - free_string_rule_version_does_not_append
+      - admission_status_queryable_as_of_cut
+      - admission_cites_pinned_policy_version
+      - record_justification_invokes_check_admission
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant
