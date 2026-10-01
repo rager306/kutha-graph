@@ -53,6 +53,9 @@ Plans:
   3. `git diff --stat -- crates/` is empty for the phase.
 **Plans**: 1 plan
 
+Plans:
+- [ ] 23-01: inventory, classify at least ten cases, quote gate, golden-fixture proposal
+
 ### Phase 24: Fold indexes for ingest
 **Goal**: Ingest, retract, correct, claim admit, and follow-ons cost O(1) in log size.
 **Depends on**: Phase 22
