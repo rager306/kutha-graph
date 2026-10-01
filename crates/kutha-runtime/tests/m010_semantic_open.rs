@@ -8,6 +8,7 @@ fn intern_appends_define_for_new_terms_only() {
     let mut rt = Runtime::default();
     // G = genesis AllowRelation prefix (D-05). Numeric proxies, not new intern semantics.
     let g = rt.log().len();
+    let graph0 = rt.graph_len();
     assert!(
         !rt.log()
             .as_slice()
@@ -29,7 +30,7 @@ fn intern_appends_define_for_new_terms_only() {
         rt.log().len(),
         "bootstrap relation re-intern stays silent"
     );
-    assert_eq!(0, rt.graph_len());
+    assert_eq!(graph0, rt.graph_len());
     rt.replay_check().unwrap();
 }
 

@@ -154,18 +154,8 @@ fn derive_pq_with_justification() -> (Runtime, String) {
     let related = rt.intern("relatedTo");
     let true_ = rt.intern("true");
     let pin = rule_definition_hash("derive_pq");
-    rt.emit(Op::RegisterRule {
-        definition: "derive_pq".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
-    rt.emit(Op::PinPolicy {
-        definition: "leased-policy".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
+    rt.emit_rule("derive_pq", 2010, None).unwrap();
+    rt.emit_policy("leased-policy", 2010, None).unwrap();
     let first = rt
         .emit(Op::Assert {
             subject: a,

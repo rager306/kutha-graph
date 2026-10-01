@@ -51,18 +51,8 @@ fn build_through_t1() -> Fixture {
     let true_ = rt.intern("true");
     let not_p = rt.intern("not-P");
     let pin = rule_definition_hash("derive_pq");
-    rt.emit(Op::RegisterRule {
-        definition: "derive_pq".into(),
-        valid_from: VF_WIDE,
-        valid_to: None,
-    })
-    .unwrap();
-    rt.emit(Op::PinPolicy {
-        definition: "leased-policy".into(),
-        valid_from: VF_WIDE,
-        valid_to: None,
-    })
-    .unwrap();
+    rt.emit_rule("derive_pq", VF_WIDE, None).unwrap();
+    rt.emit_policy("leased-policy", VF_WIDE, None).unwrap();
 
     let first = rt
         .emit(Op::Assert {
@@ -320,7 +310,7 @@ fn e2e_justification_cites_sources_and_rejects_stale_admission() {
     let row = fx
         .rt
         .justification_records()
-        .iter()
+        .into_iter()
         .find(|j| j.justification_id == jid)
         .expect("t1 row");
     assert_eq!(row.source_event_ids, vec![fx.event_a, fx.event_b]);
@@ -391,7 +381,8 @@ fn e2e_incremental_matches_reconstruct_after_discarding_leases() {
     fx.apply_t3_withdraw_b();
     let t3 = fx.t3.expect("t3");
 
-    let replayed = GraphFold::replay(fx.rt.log().as_slice());
+    let mut replayed = GraphFold::replay(fx.rt.log().as_slice());
+    replayed.bind_reserved(fx.rt.dictionary());
     assert_eq!(replayed.fingerprint(), fx.rt.fold().fingerprint());
     for (tt, vt) in [
         (fx.t1, VT_INTERIOR),

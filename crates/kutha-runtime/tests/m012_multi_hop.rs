@@ -7,7 +7,15 @@ use kutha_runtime::{store, Runtime};
 fn register_rule_id(rt: &Runtime, definition: &str) -> EventId {
     rt.log()
         .iter()
-        .find(|e| matches!(&e.op, Op::RegisterRule { definition: d, .. } if d == definition))
+        .find(|e| {
+            matches!(
+                &e.op,
+                Op::Assert {
+                    delivery_key: Some(d),
+                    ..
+                } if d == &rule_definition_hash(definition)
+            )
+        })
         .map(|e| e.id)
         .unwrap_or_else(|| panic!("RegisterRule {definition}"))
 }
@@ -19,18 +27,8 @@ fn emit_two_hop_chain(rt: &mut Runtime) -> (EventId, EventId, EventId) {
     let rel = rt.intern("relatedTo");
     let true_ = rt.intern("true");
 
-    rt.emit(Op::RegisterRule {
-        definition: "derive_pq".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
-    rt.emit(Op::RegisterRule {
-        definition: "derive_qr".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
+    rt.emit_rule("derive_pq", 2010, None).unwrap();
+    rt.emit_rule("derive_qr", 2010, None).unwrap();
 
     let asserted = rt
         .emit(Op::Assert {
@@ -213,12 +211,7 @@ fn inverse_knows_cascade_is_residual_spike() {
     let q = rt.intern("Q");
     let rel = rt.intern("relatedTo");
     let true_ = rt.intern("true");
-    rt.emit(Op::RegisterRule {
-        definition: "derive_pq".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
+    rt.emit_rule("derive_pq", 2010, None).unwrap();
     let related = rt
         .emit(Op::Assert {
             subject: p,
@@ -260,9 +253,7 @@ fn inverse_knows_cascade_is_residual_spike() {
         .expect("hashed Behavior");
     match &new_behavior.op {
         Op::Behavior {
-            name,
-            rule_version,
-            ..
+            name, rule_version, ..
         } => {
             assert_eq!("derive_pq", name);
             assert_ne!("inverse_knows", name);
@@ -270,10 +261,7 @@ fn inverse_knows_cascade_is_residual_spike() {
         }
         other => panic!("expected hashed derive_pq, got {other:?}"),
     }
-    assert!(
-        rt.log().len() > n,
-        "hashed Behavior emit must append a row"
-    );
+    assert!(rt.log().len() > n, "hashed Behavior emit must append a row");
     assert_eq!(
         1,
         inverse_knows_rows(&rt).len(),

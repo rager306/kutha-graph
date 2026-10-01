@@ -23,8 +23,14 @@ fn retracting_one_support_leaves_claim_supported() {
         })
         .unwrap();
     let claim: EventId = first.receipt.event_ids[0];
-    let event_a = rt.fold().facts()[0].event_id;
-    assert_eq!(rt.fold().facts()[0].claim_id, claim);
+    let event_a = claim;
+    let minted = rt
+        .fold()
+        .facts()
+        .iter()
+        .find(|f| f.event_id == claim)
+        .expect("minted product fact");
+    assert_eq!(minted.claim_id, claim);
     assert_eq!(1, rt.fold().live_support_count(claim, u64::MAX, 2017));
 
     rt.emit(Op::Assert {
@@ -116,12 +122,7 @@ fn derived_q_loses_eligibility_when_last_premise_support_withdrawn() {
     let q = rt.intern("Q");
     let rel = rt.intern("relatedTo");
     let true_ = rt.intern("true");
-    rt.emit(Op::RegisterRule {
-        definition: "derive_pq".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
+    rt.emit_rule("derive_pq", 2010, None).unwrap();
 
     let first = rt
         .emit(Op::Assert {
@@ -136,7 +137,7 @@ fn derived_q_loses_eligibility_when_last_premise_support_withdrawn() {
         })
         .unwrap();
     let claim_p: EventId = first.receipt.event_ids[0];
-    let event_a = rt.fold().facts()[0].event_id;
+    let event_a = claim_p;
 
     let second = rt
         .emit(Op::Assert {

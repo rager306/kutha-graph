@@ -7,7 +7,7 @@ use kutha_runtime::{store, Runtime, RuntimeError};
 #[test]
 fn register_rule_pins_behavior_to_definition_hash() {
     let mut rt = Runtime::default();
-    assert_eq!(0, rt.fold().facts().len());
+    assert_eq!(0, rt.fold().live_count(u64::MAX, 0));
 
     let p = rt.intern("P");
     let q = rt.intern("Q");
@@ -15,31 +15,26 @@ fn register_rule_pins_behavior_to_definition_hash() {
     let true_ = rt.intern("true");
     let n = rt.log().len();
 
-    rt.emit(Op::RegisterRule {
-        definition: "derive_pq".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
+    rt.emit_rule("derive_pq", 2010, None).unwrap();
 
-    assert_eq!(n + 1, rt.log().len(), "RegisterRule appends one log event");
+    assert_eq!(n + 2, rt.log().len(), "StoreBlob then kutha:rule Assert");
     let last = rt.log().as_slice().last().expect("appended");
+    let pin = rule_definition_hash("derive_pq");
     assert!(
         matches!(
             &last.op,
-            Op::RegisterRule {
-                definition,
+            Op::Assert {
+                delivery_key: Some(k),
                 valid_from: 2010,
-                valid_to: None
-            } if definition == "derive_pq"
+                valid_to: None,
+                ..
+            } if k == &pin
         ),
         "{:?}",
         last.op
     );
-    assert_eq!(0, rt.fold().facts().len());
-    assert_eq!(0, rt.graph_len());
-
-    let pin = rule_definition_hash("derive_pq");
+    assert_eq!(0, rt.fold().live_count(u64::MAX, 2010));
+    assert_eq!(0, rt.fold().as_of(2010).len());
     assert_eq!(64, pin.len());
     assert!(
         pin.chars().all(|c| matches!(c, '0'..='9' | 'a'..='f')),
@@ -128,12 +123,7 @@ fn unknown_or_mismatched_rule_version_fails_closed() {
     );
     assert_eq!(n, rt.log().len(), "fail-closed: log must not grow");
 
-    rt.emit(Op::RegisterRule {
-        definition: "derive_pq".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
+    rt.emit_rule("derive_pq", 2010, None).unwrap();
     let n = rt.log().len();
     let err = rt
         .emit(Op::Behavior {
@@ -205,13 +195,7 @@ fn free_string_rule_version_does_not_append() {
     }
 
     let n = rt.log().len();
-    let err = rt
-        .emit(Op::RegisterRule {
-            definition: String::new(),
-            valid_from: 2010,
-            valid_to: None,
-        })
-        .unwrap_err();
+    let err = rt.emit_rule(String::new(), 2010, None).unwrap_err();
     assert!(
         matches!(err, RuntimeError::UnknownRuleVersion { ref pin } if pin.is_empty()),
         "{err:?}"
@@ -231,13 +215,7 @@ fn retract_register_rule_drops_eligibility_at_later_cut() {
     let rel = rt.intern("relatedTo");
     let true_ = rt.intern("true");
     let pin = rule_definition_hash("derive_pq");
-    let registered = rt
-        .emit(Op::RegisterRule {
-            definition: "derive_pq".into(),
-            valid_from: 2010,
-            valid_to: None,
-        })
-        .unwrap();
+    let registered = rt.emit_rule("derive_pq", 2010, None).unwrap();
     let rule_id = registered.receipt.event_ids[0];
     let n = rt.log().len();
 
@@ -334,12 +312,7 @@ fn persist_open_behavior_requires_hydrated_registry() {
     let rel = rt.intern("relatedTo");
     let true_ = rt.intern("true");
     let pin = rule_definition_hash("derive_pq");
-    rt.emit(Op::RegisterRule {
-        definition: "derive_pq".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
+    rt.emit_rule("derive_pq", 2010, None).unwrap();
     let asserted = rt
         .emit(Op::Assert {
             subject: p,
@@ -375,9 +348,15 @@ fn persist_open_behavior_requires_hydrated_registry() {
     store::persist(&rt, &dir).unwrap();
     let mut opened = store::open(&dir).unwrap();
     assert!(
-        opened.log().iter().any(
-            |e| matches!(&e.op, Op::RegisterRule { definition, .. } if definition == "derive_pq")
-        ),
+        opened.log().iter().any(|e| {
+            matches!(
+                &e.op,
+                Op::Assert {
+                    delivery_key: Some(k),
+                    ..
+                } if k == &pin
+            )
+        }),
         "opened log must contain RegisterRule"
     );
     let q = opened.intern("Q");

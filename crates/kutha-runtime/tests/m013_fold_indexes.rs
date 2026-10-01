@@ -40,7 +40,7 @@ fn green_ingest_visits_constant_in_n() {
                 Op::Assert {
                     delivery_key: Some(k),
                     ..
-                } => Some((e.id, k.clone())),
+                } if k.starts_with("dk") => Some((e.id, k.clone())),
                 _ => None,
             })
             .expect("keyed assert");
@@ -104,7 +104,10 @@ fn open_retract_reemit_indexes_match_fingerprint() {
     // Parent dir still has pre-retract log; fork path instead:
     let mut forked = opened.fork_at(opened.log().len());
     emit_keyed(&mut forked, 2, rel, obj);
-    assert_eq!(forked.fold().fingerprint(), forked.replay_check().unwrap().fingerprint());
+    assert_eq!(
+        forked.fold().fingerprint(),
+        forked.replay_check().unwrap().fingerprint()
+    );
     let _ = (fp, rebuilt);
     let _ = fs::remove_dir_all(&dir);
 }

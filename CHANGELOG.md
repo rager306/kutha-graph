@@ -4,7 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: EventId admissions and green dictionary oracles
+
+### Product
+
+### Changed
+
+- `justification_id` is the `EventId` of the `kutha:admission` Assert. Named oracles (`m012_*`, `m012a_*`, `m011_*`, `ff5`, `ff6`) call `emit_allow` / `emit_rule` / `emit_policy`; 26-01 tests read `dictionary_as_of` (product `as_of` stays kutha-free). Retract of an admission or genesis allow EventId versions the later cut; `fork_at` still admits.
+- Provenance mix hashes dictionary Asserts (former AllowRelation/RegisterRule/PinPolicy/RecordAdmission/RecordAction) plus `StoreBlob`.
+
+### Trajectory
+
+- Active Slice **S05**. Cells remain **Proposed**. No lease change.
+
 ## 2026-10-01 — Product: dictionary entries as kutha facts and StoreBlob
+
 
 ### Product
 

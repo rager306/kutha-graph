@@ -1,7 +1,7 @@
 //! M013 S04 / Phase 25: genesis-log oracles (YAML only on new-log create).
 //! Do not intern extra YAML names. FF6 / m012_allowlist_facts asserts stay unchanged.
 
-use kutha_common::Op;
+use kutha_common::{Op, KUTHA_ALLOWS};
 use kutha_runtime::{store, Runtime, RuntimeError};
 use std::sync::Mutex;
 
@@ -26,7 +26,13 @@ fn retract_seeded_related_to_fails_closed_after() {
     let cut = rt.log().len();
 
     let retract_id = rt.log().iter().find_map(|e| match &e.op {
-        Op::AllowRelation { name, .. } if name == "relatedTo" => Some(e.id),
+        Op::Assert {
+            delivery_key: Some(name),
+            relation,
+            ..
+        } if name == "relatedTo" && rt.dictionary().lookup(*relation) == Some(KUTHA_ALLOWS) => {
+            Some(e.id)
+        }
         _ => None,
     });
     if let Some(id) = retract_id {
@@ -135,7 +141,16 @@ fn stripped_genesis_rejects_product_relation() {
         .log()
         .as_slice()
         .iter()
-        .filter(|e| !matches!(e.op, Op::AllowRelation { .. }))
+        .filter(|e| {
+            !matches!(
+                &e.op,
+                Op::Assert {
+                    relation,
+                    delivery_key: Some(_),
+                    ..
+                } if rt.dictionary().lookup(*relation) == Some(KUTHA_ALLOWS)
+            )
+        })
         .cloned()
         .collect();
     let mut stripped = Runtime::from_dict_and_events(dict, events, rt.max_cascade).unwrap();
@@ -177,9 +192,14 @@ fn persist_open_replay_keeps_genesis() {
     ];
     for name in YAML_NAMES {
         assert!(
-            rt.log()
-                .iter()
-                .any(|e| matches!(&e.op, Op::AllowRelation { name: n, .. } if n == name)),
+            rt.log().iter().any(|e| matches!(
+                &e.op,
+                Op::Assert {
+                    delivery_key: Some(n),
+                    relation,
+                    ..
+                } if n == name && rt.dictionary().lookup(*relation) == Some(KUTHA_ALLOWS)
+            )),
             "genesis missing {name}"
         );
     }
@@ -196,10 +216,14 @@ fn persist_open_replay_keeps_genesis() {
     opened.replay_check().unwrap();
     for name in YAML_NAMES {
         assert!(
-            opened
-                .log()
-                .iter()
-                .any(|e| matches!(&e.op, Op::AllowRelation { name: n, .. } if n == name)),
+            opened.log().iter().any(|e| matches!(
+                &e.op,
+                Op::Assert {
+                    delivery_key: Some(n),
+                    relation,
+                    ..
+                } if n == name && opened.dictionary().lookup(*relation) == Some(KUTHA_ALLOWS)
+            )),
             "opened log missing genesis {name}"
         );
     }
@@ -209,10 +233,17 @@ fn persist_open_replay_keeps_genesis() {
     let mut tampered_events = opened.log().as_slice().to_vec();
     let mut flipped = false;
     for e in &mut tampered_events {
-        if let Op::AllowRelation { name, .. } = &mut e.op {
-            *name = format!("{name}-tampered");
-            flipped = true;
-            break;
+        if let Op::Assert {
+            delivery_key: Some(name),
+            relation,
+            ..
+        } = &mut e.op
+        {
+            if opened.dictionary().lookup(*relation) == Some(KUTHA_ALLOWS) {
+                *name = format!("{name}-tampered");
+                flipped = true;
+                break;
+            }
         }
     }
     assert!(flipped, "expected a genesis AllowRelation to tamper");

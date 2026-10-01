@@ -73,10 +73,20 @@ fn transaction_time_is_log_sequence() {
     })
     .unwrap();
 
+    let related = rel;
     let asserts: Vec<_> = rt
         .log()
         .iter()
-        .filter(|e| matches!(e.op, Op::Assert { .. }))
+        .filter(|e| {
+            matches!(
+                &e.op,
+                Op::Assert {
+                    relation,
+                    delivery_key: None,
+                    ..
+                } if *relation == related
+            )
+        })
         .collect();
     assert_eq!(asserts.len(), 2);
     assert!(

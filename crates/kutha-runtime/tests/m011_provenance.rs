@@ -12,12 +12,7 @@ fn baseline_derive_pq_r1() -> (Runtime, EventId, EventId) {
     let rel = rt.intern("relatedTo");
     let true_ = rt.intern("true");
     let pin = rule_definition_hash("derive_pq");
-    rt.emit(Op::RegisterRule {
-        definition: "derive_pq".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
+    rt.emit_rule("derive_pq", 2010, None).unwrap();
 
     let a1 = rt
         .emit(Op::Assert {

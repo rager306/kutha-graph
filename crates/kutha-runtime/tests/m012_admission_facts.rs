@@ -1,31 +1,22 @@
 //! M012 S03: admission status and policy version as log meta-facts (ADM-01..03).
 //! Not ADR-050's six dictionary kinds. Not a thin Action record.
 
-use kutha_common::{policy_version_hash, rule_definition_hash, EventId, Op};
+use kutha_common::{
+    policy_version_hash, rule_definition_hash, EventId, Op, KUTHA_ADMISSION, KUTHA_POLICY,
+};
 use kutha_runtime::{store, Runtime, RuntimeError};
 
 fn leased_pin_and_derive() -> (Runtime, EventId, EventId, EventId) {
     let mut rt = Runtime::default();
-    assert_eq!(0, rt.fold().facts().len());
+    assert_eq!(0, rt.fold().live_count(u64::MAX, 0));
 
     let p = rt.intern("P");
     let q = rt.intern("Q");
     let rel = rt.intern("relatedTo");
     let true_ = rt.intern("true");
 
-    rt.emit(Op::RegisterRule {
-        definition: "derive_pq".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
-    let pinned = rt
-        .emit(Op::PinPolicy {
-            definition: "leased-policy".into(),
-            valid_from: 2010,
-            valid_to: None,
-        })
-        .unwrap();
+    rt.emit_rule("derive_pq", 2010, None).unwrap();
+    let pinned = rt.emit_policy("leased-policy", 2010, None).unwrap();
     let pin_event = pinned.receipt.event_ids[0];
 
     let asserted = rt
@@ -61,44 +52,34 @@ fn leased_pin_and_derive() -> (Runtime, EventId, EventId, EventId) {
 #[test]
 fn admission_status_queryable_as_of_cut() {
     let mut rt = Runtime::default();
-    assert_eq!(0, rt.fold().facts().len());
+    assert_eq!(0, rt.fold().live_count(u64::MAX, 0));
 
     let p = rt.intern("P");
     let q = rt.intern("Q");
     let rel = rt.intern("relatedTo");
     let true_ = rt.intern("true");
 
-    rt.emit(Op::RegisterRule {
-        definition: "derive_pq".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
+    rt.emit_rule("derive_pq", 2010, None).unwrap();
 
     let n = rt.log().len();
-    rt.emit(Op::PinPolicy {
-        definition: "leased-policy".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
-    assert_eq!(n + 1, rt.log().len(), "PinPolicy appends one log event");
+    rt.emit_policy("leased-policy", 2010, None).unwrap();
+    assert_eq!(n + 2, rt.log().len(), "StoreBlob then kutha:policy Assert");
     let last = rt.log().as_slice().last().expect("appended");
+    let policy = policy_version_hash("leased-policy");
     assert!(
         matches!(
             &last.op,
-            Op::PinPolicy {
-                definition,
+            Op::Assert {
+                delivery_key: Some(k),
                 valid_from: 2010,
-                valid_to: None
-            } if definition == "leased-policy"
+                valid_to: None,
+                ..
+            } if k == &policy
         ),
         "{:?}",
         last.op
     );
-    assert_eq!(0, rt.fold().facts().len());
-
-    let policy = policy_version_hash("leased-policy");
+    assert_eq!(0, rt.fold().live_count(u64::MAX, 2010));
     assert_eq!(64, policy.len());
     assert!(
         policy.chars().all(|c| matches!(c, '0'..='9' | 'a'..='f')),
@@ -133,7 +114,7 @@ fn admission_status_queryable_as_of_cut() {
         })
         .unwrap();
     let claim_q = derived.receipt.event_ids[0];
-    let facts_before = rt.fold().facts().len();
+    let facts_before = rt.fold().live_count(u64::MAX, 2017);
     let log_before = rt.log().len();
 
     let jid = rt
@@ -149,9 +130,9 @@ fn admission_status_queryable_as_of_cut() {
     assert_eq!(
         log_before + 2,
         rt.log().len(),
-        "JustificationCite then RecordAdmission"
+        "kutha:admission Assert then JustificationCite"
     );
-    assert_eq!(facts_before, rt.fold().facts().len());
+    assert_eq!(facts_before, rt.fold().live_count(u64::MAX, 2017));
     assert_eq!(Some(true), rt.admission_status_at(&jid, u64::MAX, 2017));
     assert_eq!(None, rt.admission_status_at(&jid, 0, 2017));
 }
@@ -171,11 +152,15 @@ fn admission_cites_pinned_policy_version() {
         .expect("record_justification");
     let policy = policy_version_hash("leased-policy");
     let cited = rt.log().as_slice().iter().rev().find_map(|e| match &e.op {
-        Op::RecordAdmission {
-            justification_id,
-            policy_version,
+        Op::Assert {
+            relation,
+            delivery_key: Some(policy_version),
             ..
-        } if justification_id == &jid => Some(policy_version.clone()),
+        } if e.id.to_string() == jid
+            && rt.dictionary().lookup(*relation) == Some(KUTHA_ADMISSION) =>
+        {
+            Some(policy_version.clone())
+        }
         _ => None,
     });
     assert_eq!(Some(policy.clone()), cited);
@@ -203,13 +188,7 @@ fn record_justification_invokes_check_admission() {
 fn empty_or_missing_policy_pin_fails_closed() {
     let mut rt = Runtime::default();
     let n = rt.log().len();
-    let err = rt
-        .emit(Op::PinPolicy {
-            definition: String::new(),
-            valid_from: 2010,
-            valid_to: None,
-        })
-        .unwrap_err();
+    let err = rt.emit_policy(String::new(), 2010, None).unwrap_err();
     assert!(
         matches!(err, RuntimeError::UnknownPolicyVersion { ref pin } if pin.is_empty()),
         "{err:?}"
@@ -220,12 +199,7 @@ fn empty_or_missing_policy_pin_fails_closed() {
     let q = rt.intern("Q");
     let rel = rt.intern("relatedTo");
     let true_ = rt.intern("true");
-    rt.emit(Op::RegisterRule {
-        definition: "derive_pq".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
+    rt.emit_rule("derive_pq", 2010, None).unwrap();
     let asserted = rt
         .emit(Op::Assert {
             subject: p,
@@ -269,14 +243,19 @@ fn empty_or_missing_policy_pin_fails_closed() {
     );
     assert_eq!(n, rt.log().len());
 
+    let admission = rt.intern("kutha:admission");
+    let subj = rt.intern("public-admission");
     let n = rt.log().len();
     let err = rt
-        .emit(Op::RecordAdmission {
-            justification_id: "j".into(),
-            admitted: true,
-            policy_version: "x".into(),
+        .emit(Op::Assert {
+            subject: subj,
+            relation: admission,
+            object: subj,
             valid_from: 2010,
             valid_to: None,
+            claim: None,
+            delivery_key: Some("x".into()),
+            polarity: None,
         })
         .unwrap_err();
     assert!(matches!(err, RuntimeError::MetaOpRejected), "{err:?}");
@@ -296,22 +275,7 @@ fn retract_admission_and_policy_version_at_later_cut() {
             2017,
         )
         .expect("record_justification");
-    let admission_id = rt
-        .log()
-        .as_slice()
-        .iter()
-        .rev()
-        .find(|e| {
-            matches!(
-                &e.op,
-                Op::RecordAdmission {
-                    justification_id,
-                    ..
-                } if justification_id == &jid
-            )
-        })
-        .expect("RecordAdmission")
-        .id;
+    let admission_id: EventId = jid.parse().expect("admission EventId");
     assert_eq!(Some(true), rt.admission_status_at(&jid, u64::MAX, 2017));
     let n = rt.log().len();
 
@@ -368,31 +332,33 @@ fn persist_open_reconstructs_admission_and_policy() {
     ));
     store::persist(&rt, &dir).unwrap();
     let mut opened = store::open(&dir).unwrap();
-    assert_eq!(
-        Some(true),
-        opened.admission_status_at(&jid, u64::MAX, 2017)
-    );
+    assert_eq!(Some(true), opened.admission_status_at(&jid, u64::MAX, 2017));
     opened.check_admission(&jid).unwrap();
     assert!(
-        opened.log().iter().any(
-            |e| matches!(&e.op, Op::PinPolicy { definition, .. } if definition == "leased-policy")
-        ),
+        opened.log().iter().any(|e| matches!(
+            &e.op,
+            Op::Assert {
+                delivery_key: Some(k),
+                relation,
+                ..
+            } if k == &policy_version_hash("leased-policy")
+                && opened.dictionary().lookup(*relation) == Some(KUTHA_POLICY)
+        )),
         "opened log must contain PinPolicy"
     );
     assert!(
-        opened.log().iter().any(
-            |e| matches!(&e.op, Op::RecordAdmission { justification_id, .. } if justification_id == &jid)
-        ),
+        opened.log().iter().any(|e| {
+            e.id.to_string() == jid
+                && matches!(
+                    &e.op,
+                    Op::Assert { relation, .. }
+                        if opened.dictionary().lookup(*relation) == Some(KUTHA_ADMISSION)
+                )
+        }),
         "opened log must contain RecordAdmission"
     );
     let n = opened.log().len();
-    let err = opened
-        .emit(Op::PinPolicy {
-            definition: String::new(),
-            valid_from: 2010,
-            valid_to: None,
-        })
-        .unwrap_err();
+    let err = opened.emit_policy(String::new(), 2010, None).unwrap_err();
     assert!(
         matches!(err, RuntimeError::UnknownPolicyVersion { ref pin } if pin.is_empty()),
         "{err:?}"

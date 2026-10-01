@@ -284,8 +284,7 @@ impl Runtime {
         let mut names: Vec<String> = load_allowed_names().into_iter().collect();
         names.sort();
         for name in names {
-            rt.emit_allow(name, 0, None)
-                .expect("genesis kutha:allows");
+            rt.emit_allow(name, 0, None).expect("genesis kutha:allows");
         }
         rt
     }
@@ -733,11 +732,11 @@ impl Runtime {
         tt: u64,
         vt: u64,
     ) -> Result<EventId, RuntimeError> {
-        let cite = self.cite_from_log(justification_id).ok_or_else(|| {
-            RuntimeError::UnknownAdmission {
-                justification_id: justification_id.to_string(),
-            }
-        })?;
+        let cite =
+            self.cite_from_log(justification_id)
+                .ok_or_else(|| RuntimeError::UnknownAdmission {
+                    justification_id: justification_id.to_string(),
+                })?;
         let Some((admitted, _policy_version)) =
             self.fold.live_admission_at(justification_id, tt, vt)
         else {
@@ -807,12 +806,12 @@ impl Runtime {
     /// Fail-closed admission for a persisted cite. Locked reasons: unknown_justification,
     /// stale_support, ineligible, rule_version.
     pub fn check_admission(&self, justification_id: &str) -> Result<(), RuntimeError> {
-        let row = self.cite_from_log(justification_id).ok_or(
-            RuntimeError::AdmissionDenied {
+        let row = self
+            .cite_from_log(justification_id)
+            .ok_or(RuntimeError::AdmissionDenied {
                 justification_id: justification_id.into(),
                 reason: "unknown_justification",
-            },
-        )?;
+            })?;
         self.check_admission_row(&row)
     }
 
@@ -1163,10 +1162,7 @@ impl Runtime {
 
     /// Admit a user op, append, fold, cascade inverse-`knows` until idle or budget.
     pub fn emit(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
-        if matches!(
-            op,
-            Op::QuantumOutcome { .. } | Op::JustificationCite { .. }
-        ) {
+        if matches!(op, Op::QuantumOutcome { .. } | Op::JustificationCite { .. }) {
             return Err(RuntimeError::MetaOpRejected);
         }
         if let Op::Assert { relation, .. } = &op {
@@ -1310,9 +1306,7 @@ impl Runtime {
                 ..
             } if *relation == self.knows => {
                 self.ingest_examine.bump();
-                let exists =
-                    self.fold
-                        .has_live_triple(*object, self.known_by, *subject);
+                let exists = self.fold.has_live_triple(*object, self.known_by, *subject);
                 if exists {
                     return vec![];
                 }
@@ -1378,9 +1372,10 @@ impl Runtime {
                     h.update((rule_version.len() as u64).to_le_bytes());
                     h.update(rule_version.as_bytes());
                 }
-                Op::QuantumOutcome { .. }
-                | Op::JustificationCite { .. }
-                | Op::StoreBlob { .. } => {
+                Op::QuantumOutcome { .. } | Op::JustificationCite { .. } | Op::StoreBlob { .. } => {
+                    h.update(e.digest_bytes());
+                }
+                Op::Assert { relation, .. } if self.fold.is_dictionary_rel(*relation) => {
                     h.update(e.digest_bytes());
                 }
                 _ => {}

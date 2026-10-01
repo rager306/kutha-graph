@@ -1,17 +1,21 @@
 //! M012a S06 / HOT-01: fold-internal as_of and claim_supported_at skip non-overlapping facts.
 
-use kutha_common::{EventId, Op, TermId};
+use kutha_common::{EventId, Op, TermId, KUTHA_RESERVED_RELS};
 use kutha_runtime::{store, CsrLease, CsrMaterializer, Materializer, Runtime, TypedCsrLease};
 use std::fs;
 use std::path::PathBuf;
 
-/// Brute-force live triples at `as_of(vt)` using `facts()` + `is_live_at` only (test oracle).
+/// Brute-force product `as_of(vt)` using `facts()` + `is_live_at`, excluding `kutha:` (D-05).
 fn brute_force_as_of(rt: &Runtime, vt: u64) -> Vec<(TermId, TermId, TermId)> {
+    let skip: std::collections::HashSet<TermId> = KUTHA_RESERVED_RELS
+        .iter()
+        .filter_map(|n| rt.dictionary().id(n))
+        .collect();
     let mut triples: Vec<_> = rt
         .fold()
         .facts()
         .iter()
-        .filter(|f| f.is_live_at(u64::MAX, vt))
+        .filter(|f| f.is_live_at(u64::MAX, vt) && !skip.contains(&f.relation))
         .map(|f| (f.subject, f.relation, f.object()))
         .collect();
     triples.sort_unstable();

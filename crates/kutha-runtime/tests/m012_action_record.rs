@@ -1,30 +1,22 @@
 //! M012 S04: thin Action record binds resolved args to admission and policy (ACT-01..02).
 //! Not ADR-050's six dictionary kinds. Not n-ary derivation.
 
-use kutha_common::{policy_version_hash, rule_definition_hash, EventId, Op};
+use kutha_common::{
+    policy_version_hash, rule_definition_hash, EventId, Op, KUTHA_ACTION, KUTHA_ADMISSION,
+};
 use kutha_runtime::{store, Runtime, RuntimeError};
 
 fn leased_pin_and_derive() -> (Runtime, EventId, EventId) {
     let mut rt = Runtime::default();
-    assert_eq!(0, rt.fold().facts().len());
+    assert_eq!(0, rt.fold().live_count(u64::MAX, 0));
 
     let p = rt.intern("P");
     let q = rt.intern("Q");
     let rel = rt.intern("relatedTo");
     let true_ = rt.intern("true");
 
-    rt.emit(Op::RegisterRule {
-        definition: "derive_pq".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
-    rt.emit(Op::PinPolicy {
-        definition: "leased-policy".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
+    rt.emit_rule("derive_pq", 2010, None).unwrap();
+    rt.emit_policy("leased-policy", 2010, None).unwrap();
 
     let asserted = rt
         .emit(Op::Assert {
@@ -70,7 +62,7 @@ fn action_binds_args_to_admission_and_policy() {
         )
         .expect("record_justification");
     let log_before = rt.log().len();
-    let facts_before = rt.fold().facts().len();
+    let facts_before = rt.fold().live_count(u64::MAX, 2017);
 
     let action_id = rt.record_action(&jid, u64::MAX, 2017);
     assert!(
@@ -81,20 +73,23 @@ fn action_binds_args_to_admission_and_policy() {
     assert_eq!(log_before + 1, rt.log().len());
     let last = rt.log().as_slice().last().expect("RecordAction");
     assert_eq!(action_id, last.id);
+    let last_op = last.op.clone();
+    let action_rel = rt.intern("kutha:action");
+    let target_obj = rt.intern(&claim_q.to_string());
     assert!(
         matches!(
-            &last.op,
-            Op::RecordAction {
-                justification_id,
-                target_claim,
-                admitted: true,
+            &last_op,
+            Op::Assert {
+                relation,
+                object,
+                delivery_key: Some(justification_id),
                 ..
-            } if justification_id == &jid && *target_claim == claim_q
+            } if justification_id == &jid && *relation == action_rel && *object == target_obj
         ),
         "{:?}",
-        last.op
+        last_op
     );
-    assert_eq!(facts_before, rt.fold().facts().len());
+    assert_eq!(facts_before, rt.fold().live_count(u64::MAX, 2017));
 
     let rec = rt.action_record_at(&jid, u64::MAX, 2017);
     assert!(rec.is_some(), "action_record_at at live cut");
@@ -128,36 +123,36 @@ fn action_cites_admission_pin_and_rejects_public_emit() {
 
     let policy = policy_version_hash("leased-policy");
     let admission_pin = rt.log().as_slice().iter().rev().find_map(|e| match &e.op {
-        Op::RecordAdmission {
-            justification_id,
-            policy_version,
+        Op::Assert {
+            relation,
+            delivery_key: Some(policy_version),
             ..
-        } if justification_id == &jid => Some(policy_version.clone()),
+        } if e.id.to_string() == jid
+            && rt.dictionary().lookup(*relation) == Some(KUTHA_ADMISSION) =>
+        {
+            Some(policy_version.clone())
+        }
         _ => None,
     });
-    let action_pin = rt.log().as_slice().iter().rev().find_map(|e| match &e.op {
-        Op::RecordAction {
-            justification_id,
-            policy_version,
-            ..
-        } if justification_id == &jid => Some(policy_version.clone()),
-        _ => None,
-    });
+    let rec_pin = rt
+        .action_record_at(&jid, u64::MAX, 2017)
+        .expect("action_record_at");
     assert_eq!(Some(policy.clone()), admission_pin);
-    assert_eq!(Some(policy), action_pin);
+    assert_eq!(policy, rec_pin.policy_version);
 
     let n = rt.log().len();
+    let action = rt.intern("kutha:action");
+    let subj = rt.intern(&jid);
     let err = rt
-        .emit(Op::RecordAction {
-            justification_id: jid.clone(),
-            target_claim: claim_q,
-            source_claim_ids: vec![cause],
-            source_event_ids: vec![cause],
-            rule_version: rule_definition_hash("derive_pq"),
-            admitted: true,
-            policy_version: "caller-supplied".into(),
+        .emit(Op::Assert {
+            subject: subj,
+            relation: action,
+            object: subj,
             valid_from: 2017,
             valid_to: None,
+            claim: None,
+            delivery_key: Some("caller-supplied".into()),
+            polarity: None,
         })
         .unwrap_err();
     assert!(matches!(err, RuntimeError::MetaOpRejected), "{err:?}");
@@ -172,22 +167,7 @@ fn action_cites_admission_pin_and_rejects_public_emit() {
     );
     assert_eq!(n, rt.log().len());
 
-    let admission_id = rt
-        .log()
-        .as_slice()
-        .iter()
-        .rev()
-        .find(|e| {
-            matches!(
-                &e.op,
-                Op::RecordAdmission {
-                    justification_id,
-                    ..
-                } if justification_id == &jid
-            )
-        })
-        .expect("RecordAdmission")
-        .id;
+    let admission_id: EventId = jid.parse().expect("admission EventId");
     rt.emit(Op::Retract {
         event_id: admission_id,
     })
@@ -230,12 +210,7 @@ fn action_and_admission_as_of_prior_cut_after_policy_change() {
     assert_eq!(first, rec.policy_version);
     assert_eq!(Some(true), rt.admission_status_at(&jid, prior_tt, 2017));
 
-    rt.emit(Op::PinPolicy {
-        definition: "later-policy".into(),
-        valid_from: 2010,
-        valid_to: None,
-    })
-    .unwrap();
+    rt.emit_policy("later-policy", 2010, None).unwrap();
     assert_eq!(
         Some(policy_version_hash("later-policy")),
         rt.live_policy_pin_at(u64::MAX, 2017)
@@ -286,23 +261,30 @@ fn persist_open_reconstructs_action_record() {
     assert_eq!(claim_q, rec.target_claim);
     assert_eq!(Some(true), opened.admission_status_at(&jid, u64::MAX, 2017));
     assert!(
-        opened.log().iter().any(
-            |e| matches!(&e.op, Op::RecordAction { justification_id, .. } if justification_id == &jid)
-        ),
+        opened.log().iter().any(|e| matches!(
+            &e.op,
+            Op::Assert {
+                delivery_key: Some(justification_id),
+                relation,
+                ..
+            } if justification_id == &jid
+                && opened.dictionary().lookup(*relation) == Some(KUTHA_ACTION)
+        )),
         "opened log must contain RecordAction"
     );
     let n = opened.log().len();
+    let action = opened.intern("kutha:action");
+    let subj = opened.intern(&jid);
     let err = opened
-        .emit(Op::RecordAction {
-            justification_id: jid.clone(),
-            target_claim: claim_q,
-            source_claim_ids: vec![cause],
-            source_event_ids: vec![cause],
-            rule_version: rule_definition_hash("derive_pq"),
-            admitted: true,
-            policy_version: "caller-supplied".into(),
+        .emit(Op::Assert {
+            subject: subj,
+            relation: action,
+            object: subj,
             valid_from: 2017,
             valid_to: None,
+            claim: None,
+            delivery_key: Some("caller-supplied".into()),
+            polarity: None,
         })
         .unwrap_err();
     assert!(matches!(err, RuntimeError::MetaOpRejected), "{err:?}");

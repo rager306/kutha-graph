@@ -31,12 +31,13 @@ fn ff6_unknown_relation_does_not_append() {
         "{err:?}"
     );
     assert_eq!(n, rt.log().len(), "fail-closed: log must not grow");
-    assert_eq!(0, rt.fold().facts().len());
+    assert_eq!(0, rt.fold().live_count(u64::MAX, 2010));
 }
 
 #[test]
 fn ff6_allowlisted_relation_still_appends() {
     let mut rt = Runtime::default();
+    let graph0 = rt.graph_len();
     let article = rt.intern("art-12-speed");
     let in_force = rt.intern("inForceAs");
     let limit = rt.intern("50-kmh");
@@ -52,6 +53,10 @@ fn ff6_allowlisted_relation_still_appends() {
         polarity: None,
     })
     .unwrap();
-    assert_eq!(1, rt.graph_len(), "one Assert; Define ops are not graph facts");
+    assert_eq!(
+        graph0 + 1,
+        rt.graph_len(),
+        "one Assert; Define ops are not graph facts"
+    );
     rt.replay_check().unwrap();
 }
