@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-01 — Product: RED dictionary entries on as_of
+
+### Product
+
+### Added
+
+- Integration test `m013_dictionary_facts::admission_and_policy_visible_on_as_of_after_later_pin` (D-08 RED): after `PinPolicy` + `record_justification` + a later `PinPolicy`, `fold.as_of(2010)` must contain interned `kutha:policy` and `kutha:admission` triples (same walk as FF5). Fails today: those rows live in fold side tables. Wiring is 26-02.
+
+### Trajectory
+
+- No lease change. Active Slice **S05**. Cells remain **Proposed**.
+
 ## 2026-10-01 — Product: genesis AllowRelation on new log
 
 ### Product
