@@ -1679,8 +1679,25 @@ def _kind_glob_max_lines(check: str, step: Step, ctx: Context, result: CheckResu
             Finding(check, Severity.HIGH, "max-lines", "max must be a non-negative integer")
         )
         return
+    min_hits = _int(step, "min_hits", 0)
+    hits = _glob_max_lines_hits(step, ctx.root)
+    if len(hits) < min_hits:
+        result.scanned += 1
+        message = _fmt(
+            _str(
+                step,
+                "message",
+                "glob {glob} matched {n} files, min_hits {min_hits}",
+            ),
+            glob=pattern,
+            n=len(hits),
+            min_hits=min_hits,
+        )
+        result.findings.append(
+            Finding(check, Severity.HIGH, _category(step, "min-hits"), message, pattern)
+        )
     counts: dict[str, int] = {}
-    for path in _glob_max_lines_hits(step, ctx.root):
+    for path in hits:
         rel = path.relative_to(ctx.root).as_posix()
         result.scanned += 1
         text = ctx.read(rel)

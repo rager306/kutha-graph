@@ -256,6 +256,12 @@ invariants:
     disposition: check
     check: agents-lean
 
+  - id: I-cui-budget
+    claim: "FSM run_checks must not silently truncate the checks dictionary when budget is below the check count"
+    source: "docs/process/governor-intake.md"
+    disposition: kind
+    kind: run_checks
+
   - id: I-artifact-budget
     claim: "v0.06 planning PLAN/SUMMARY/VERIFICATION/CONTEXT files stay within line and per-directory file budgets from phase 22 onward"
     source: ".planning/phases/28-independent-verification-and-artifact-budget/28-CONTEXT.md"

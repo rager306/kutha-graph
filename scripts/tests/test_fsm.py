@@ -156,6 +156,36 @@ class FsmTests(unittest.TestCase):
         self.assertEqual(budget, len(selected))
         self.assertGreaterEqual(load_machine(ROOT).budget_default, n)
 
+    def test_cui_budget_skipped_checks_is_high(self) -> None:
+        from unittest.mock import patch
+
+        from kutha_gov.protocol import Check, CheckResult
+
+        class ProbeCheck(Check):
+            name = "probe-a"
+
+            def run(self, ctx: Context) -> CheckResult:
+                return CheckResult(check=self.name)
+
+        class ProbeCheckB(Check):
+            name = "probe-b"
+
+            def run(self, ctx: Context) -> CheckResult:
+                return CheckResult(check=self.name)
+
+        ctx = Context(root=ROOT, skip_cargo=True)
+        with patch(
+            "kutha_gov.fsm.get_checks",
+            return_value={"probe-a": ProbeCheck(), "probe-b": ProbeCheckB()},
+        ):
+            outcome = run_quantum(ctx, budget=1, start_event="start")
+        self.assertEqual(1, outcome.skipped)
+        budget_highs = [
+            f for f in outcome.findings if f.category == "budget" and f.severity is Severity.HIGH
+        ]
+        self.assertEqual(1, len(budget_highs))
+        self.assertEqual("fail", outcome.terminal)
+
     def test_fsm_transition_keys_are_not_yaml_booleans(self) -> None:
         machine = load_machine(ROOT)
         for row in machine.transitions:

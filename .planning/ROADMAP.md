@@ -170,7 +170,14 @@ Plans:
   3. Every touched ADR cell is still Proposed and carries a dated Evidence or Clarification note; D1–D10 are untouched.
   4. A scratch copy with budget below the check count, an empty budget glob, or a VERIFICATION missing `independent: true` makes the governor fail.
 
-**Plans**: 2 plans max
+**Plans**: 2 plans
+
+Plans:
+**Wave 1**
+- [ ] 29-01-PLAN.md — governor honesty (budget truncation, min_hits, independence glob, I-F restage)
+
+**Wave 2**
+- [ ] 29-02-PLAN.md — documents (bookkeeping, semantic addendum, ADR notes, process docs)
 
 ### Phase 30: Write-path integrity hardening
 

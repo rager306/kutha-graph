@@ -1155,6 +1155,33 @@ class GlobMaxLinesTests(unittest.TestCase):
         )
         self.assertEqual(["max-lines"], _rust_highs(result))
 
+    def test_glob_max_lines_min_hits_zero_allows_empty_glob(self) -> None:
+        root = _rust_tree({})
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_max_lines",
+                "glob": ".planning/phases/*-*/*-PLAN.md",
+                "max": 150,
+                "min_phase": 22,
+            },
+        )
+        self.assertEqual([], _rust_highs(result))
+
+    def test_glob_max_lines_min_hits_one_empty_glob_is_high(self) -> None:
+        root = _rust_tree({})
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_max_lines",
+                "glob": ".planning/phases/*-*/*-PLAN.md",
+                "max": 150,
+                "min_phase": 22,
+                "min_hits": 1,
+            },
+        )
+        self.assertEqual(["min-hits"], _rust_highs(result))
+
 
 class VerificationIndependentTests(unittest.TestCase):
     def test_verification_independent_glob_absent_high_on_plan_path(self) -> None:

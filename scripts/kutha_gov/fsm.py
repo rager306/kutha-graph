@@ -237,6 +237,15 @@ def _execute(
         ordered = sorted(checks.items())
         selected = ordered[:budget]
         outcome.skipped = len(ordered) - len(selected)
+        if outcome.skipped > 0:
+            outcome.findings.append(
+                Finding(
+                    "fsm",
+                    Severity.HIGH,
+                    "budget",
+                    f"truncated {outcome.skipped} checks under budget={budget}",
+                )
+            )
         outcome.results = [_run_one(chk, ctx) for _, chk in selected]
         return "done"
     if kind == "run_selftest":

@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Process: fail closed on check-budget truncation and empty budget globs
+
+### Process
+
+### Added
+
+- FSM `run_checks` emits HIGH `budget` when any check is skipped under the configured budget; ledger row `I-cui-budget` records the `run_checks` kind obligation.
+- `glob_max_lines` optional `min_hits` (default 0); artifact-budget steps require at least one phase-22+ match per glob.
+
+### Trajectory
+
+- No lease change. Cells remain **Proposed**.
+
 ## 2026-10-02 — Process: M013 tail S08–S09 from the audit and project review
 
 ### Process

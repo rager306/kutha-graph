@@ -296,8 +296,15 @@ def _derive_file_max_lines(step: Step, work: Path) -> list[Mutation]:
 
 
 def _derive_glob_max_lines(step: Step, work: Path) -> list[Mutation]:
-    from kutha_gov.kinds import glob_max_lines_mutation_target
+    from kutha_gov.kinds import _glob_max_lines_hits, glob_max_lines_mutation_target
 
+    min_hits = step.get("min_hits", 0)
+    if isinstance(min_hits, int) and min_hits > 0:
+        hits = _glob_max_lines_hits(step, work)
+        if len(hits) >= min_hits:
+            return [
+                {"op": "delete_file", "path": path.relative_to(work).as_posix()} for path in hits
+            ]
     target = glob_max_lines_mutation_target(step, work)
     if target is None:
         return []
