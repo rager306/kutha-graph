@@ -171,3 +171,18 @@ Droppable ADR-040 lease `allows_by_name` (delivery_key → fact indices), mainta
 Ingest is back in the Phase 24 hybrid band (+20–28% vs Phase 22; write-cost accepted there). as_of is a single-shot fold walk (2N/N=1.28, 4N/N=2.93, not 4N-scaled); still above +10% vs Phase 22, 63% below the STOP figure.
 
 Full bench: `tmp/p27-bench-lease.txt` (`fold_index_mode eager`, `events_per_assert` 3.000800, `bytes_per_fact` 16710).
+
+## Phase 30 delta (2026-10-02)
+
+Write-path integrity hardening (M013 S09 / 30-02). Eager. `KUTHA_BENCH_N=10000`. Host date: 2026-10-02.
+
+Phase 27 after-lease reference: ingest_plain.n **120267790** ns, as_of.n **511233** ns. Gate: ≤10% regression vs Phase 27 (not Phase 22).
+
+| key | Phase 30 | vs Phase 27 | vs Phase 27 +10% cap |
+|-----|--------:|------------:|---------------------:|
+| ingest_plain.n | 126962516 | +5.6% | 132294569 |
+| as_of.n | 288999 | −43.5% (faster) | 562356 |
+
+Single run (`tmp/p30-bench.txt`). Workspace tests and facade/dual-mode oracles added; no ingest path change intended in this plan slice.
+
+regression within 10% vs Phase 27: yes

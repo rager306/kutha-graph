@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: facade exact triples and dual-mode bench (Phase 30-02)
+
+### Product
+
+### Added
+
+- `facade_statute`: `assert_eq!` on sorted live triples after assert, correct, retract, persist/open, and empty `fork_at(0)` product picture (HARD-04).
+
+### Changed
+
+- `benchmark-baseline.md`: Phase 30 bench delta vs Phase 27 after-lease (ingest +5.6%, as_of faster).
+
+### Trajectory
+
+- Cells remain **Proposed**. M013 S09 lease unchanged; no SemVer tag.
+
 ## 2026-10-02 — Product: dual-mode FF5 oracle (Phase 30-02)
 
 ### Product
