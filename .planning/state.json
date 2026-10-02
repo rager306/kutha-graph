@@ -1,28 +1,23 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v0.07 — Typed clocks and as-known-on",
+  "milestone": "v0.08 — Known-on honesty and M014 residuals",
   "phases": [
     {
-      "number": "31",
-      "name": "Clock newtypes",
+      "number": "34",
+      "name": "Known-on cut and anchor admission",
       "status": "complete"
     },
     {
-      "number": "32",
-      "name": "`tt_anchor` facts and `as_known_on`",
+      "number": "35",
+      "name": "Living docs and governor honesty",
       "status": "in_progress"
-    },
-    {
-      "number": "33",
-      "name": "Fixture migration",
-      "status": "pending"
     }
   ],
   "next": {
-    "command": "/gsd-progress --next",
-    "label": "Advance to the next step (plan phase 32)",
-    "reason": "Phase 32 of 3 — needs a plan"
+    "command": "/gsd-verify-work 35",
+    "label": "Independent 35-VERIFICATION",
+    "reason": "Phase 35 executor complete; D-05 verifier writes 35-VERIFICATION.md"
   },
-  "updated_at": "2026-10-02T08:11:03.926Z"
+  "updated_at": "2026-10-02T09:59:30Z"
 }

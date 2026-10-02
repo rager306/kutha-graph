@@ -65,7 +65,7 @@ Plans:
 
 Plans:
 **Wave 1**
-- [ ] 35-01-PLAN.md — living docs + governor honesty (DOC-01/GOV-01)
+- [x] 35-01-PLAN.md — living docs + governor honesty (DOC-01/GOV-01)
 
 ## Progress
 
@@ -74,4 +74,4 @@ Plans:
 | v0.01–v0.07 | 1–33 | shipped |
 | v0.08 | 34–35 | active (M015) |
 
-**Next:** Phase 35 planned. Execute 35-01 (M015 S02). Do not start M016. Independent verifier writes `35-VERIFICATION.md` after execute (D-05).
+**Next:** Phase 35 executor complete. Independent verifier writes `35-VERIFICATION.md` (D-05). Do not start M016.

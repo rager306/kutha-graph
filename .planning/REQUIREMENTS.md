@@ -20,8 +20,8 @@ Audit follow-up after M014 close. Cells stay Proposed. Not F9/F16 rules (M016). 
 
 ### Living docs and governor (DOC / GOV)
 
-- [ ] **DOC-01**: Living docs no longer claim M014 future / F13 fully open / M013 LEASED; PROJECT idle matches STATE; semantic-gap and ADR-013 Evidence reflect M014 ship + known-on residual
-- [ ] **GOV-01**: `true_on_d_differs_from_known_on_d` is in `observe_cargo.required`; honeycomb ADR-013 evidence lists it; when live `.planning/phases/` is non-empty, artifact-budget `min_hits` is restored to 1 for PLAN/SUMMARY/VERIFICATION/CONTEXT globs
+- [x] **DOC-01**: Living docs no longer claim M014 future / F13 fully open / M013 LEASED; PROJECT idle matches STATE; semantic-gap and ADR-013 Evidence reflect M014 ship + known-on residual
+- [x] **GOV-01**: `true_on_d_differs_from_known_on_d` is in `observe_cargo.required`; honeycomb ADR-013 evidence lists it; when live `.planning/phases/` is non-empty, artifact-budget `min_hits` is restored to 1 for PLAN/SUMMARY/VERIFICATION/CONTEXT globs
 
 ## Future Requirements (not v0.08)
 
@@ -54,6 +54,6 @@ Audit follow-up after M014 close. Cells stay Proposed. Not F9/F16 rules (M016). 
 |-------------|-------|--------|
 | KNOWN-01, KNOWN-02 | Phase 34 | Complete (34-01) |
 | ANK-ADM-01, ANK-ADM-02 | Phase 34 | Complete (34-02) |
-| DOC-01, GOV-01 | Phase 35 | Pending |
+| DOC-01, GOV-01 | Phase 35 | Complete (35-01) |
 
 **Coverage:** v0.08 requirements: 6 total; mapped: 6; unmapped: 0.
