@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: rule body hash is rule_version (Phase 37)
+
+### Product
+
+### Changed
+
+- `rule_definition_hash` of an identifier is the canonical `Named` body hash. `emit_rule` stores tagged AST bytes, not raw UTF-8. Non-canonical names fail closed (`UnknownRuleVersion`). `blob_digest_matches` accepts a rule-domain digest only for exact-canonical bodies.
+
+### Trajectory
+
+- Cells remain **Proposed**. M016 S02 lease unchanged; no SemVer tag.
+
 ## 2026-10-02 — Product: rule AST canonical encoding (Phase 37)
 
 ### Product

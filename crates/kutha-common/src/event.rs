@@ -1,3 +1,4 @@
+use crate::rule::{rule_body_hash, RuleAst};
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
@@ -471,12 +472,13 @@ pub fn sha256_hex(bytes: &[u8]) -> String {
     hex32(h.finalize().into())
 }
 
-/// SHA-256 of domain `kutha-rule-def` then UTF-8 definition bytes (RULE-01).
+/// Pin for a named rule: hash of [`RuleAst::Named`] canonical bytes (RULE-01).
+/// Non-idents keep domain+UTF-8 so free-string Behavior pins stay fail-closed.
 pub fn rule_definition_hash(definition: &str) -> String {
-    let mut h = Sha256::new();
-    h.update(b"kutha-rule-def");
-    h.update(definition.as_bytes());
-    hex32(h.finalize().into())
+    match RuleAst::named(definition) {
+        Some(ast) => ast.hash(),
+        None => rule_body_hash(definition.as_bytes()),
+    }
 }
 
 /// SHA-256 of domain `kutha-policy-def` then UTF-8 definition bytes (ADM-02).
@@ -487,7 +489,7 @@ pub fn policy_version_hash(definition: &str) -> String {
     hex32(h.finalize().into())
 }
 
-/// Admit StoreBlob: non-empty bytes and digest match raw SHA-256 or domain hashes (T-26-03).
+/// Admit StoreBlob: raw SHA-256, canonical rule body hash, or policy UTF-8 hash (T-26-03).
 pub fn blob_digest_matches(digest: &str, bytes: &[u8]) -> bool {
     if bytes.is_empty() || digest.is_empty() {
         return false;
@@ -495,8 +497,11 @@ pub fn blob_digest_matches(digest: &str, bytes: &[u8]) -> bool {
     if digest == sha256_hex(bytes) {
         return true;
     }
+    if RuleAst::from_canonical(bytes).is_some() && digest == rule_body_hash(bytes) {
+        return true;
+    }
     if let Ok(s) = std::str::from_utf8(bytes) {
-        digest == rule_definition_hash(s) || digest == policy_version_hash(s)
+        digest == policy_version_hash(s)
     } else {
         false
     }

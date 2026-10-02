@@ -2,8 +2,8 @@
 use crate::quantum::{disposition, PersistedQuantumOutcome, QuantumOutcome, Runtime, RuntimeError};
 use crate::receipt::{digest_to_hex, QuantumReceipt};
 use kutha_common::{
-    blob_digest_matches, policy_version_hash, rule_definition_hash, Event, Op, OutcomeDisposition,
-    WallTime, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE,
+    blob_digest_matches, policy_version_hash, Event, Op, OutcomeDisposition, RuleAst, WallTime,
+    KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE,
 };
 
 /// How the shared pipeline finishes a committed quantum (D-01 / D-07).
@@ -327,7 +327,7 @@ impl Runtime {
         )
     }
 
-    /// Store a rule body once, then assert `kutha:rule` carrying `rule_definition_hash` (D-02).
+    /// Store a named rule body once, then assert `kutha:rule` carrying its canonical hash.
     pub fn emit_rule(
         &mut self,
         definition: impl Into<String>,
@@ -335,15 +335,29 @@ impl Runtime {
         valid_to: Option<u64>,
     ) -> Result<QuantumOutcome, RuntimeError> {
         let definition = definition.into();
-        if definition.is_empty() {
-            return Err(RuntimeError::UnknownRuleVersion { pin: String::new() });
+        let Some(ast) = RuleAst::named(&definition) else {
+            return Err(RuntimeError::UnknownRuleVersion { pin: definition });
+        };
+        self.emit_rule_ast(&ast, valid_from, valid_to)
+    }
+
+    /// Store a canonical [`RuleAst`] body once, then assert `kutha:rule` (RULE-01).
+    pub fn emit_rule_ast(
+        &mut self,
+        ast: &RuleAst,
+        valid_from: u64,
+        valid_to: Option<u64>,
+    ) -> Result<QuantumOutcome, RuntimeError> {
+        let bytes = ast.encode();
+        if RuleAst::from_canonical(&bytes).as_ref() != Some(ast) {
+            return Err(RuntimeError::UnknownRuleVersion { pin: ast.hash() });
         }
-        let digest = rule_definition_hash(&definition);
-        self.admit_store_blob(&digest, definition.as_bytes())?;
+        let digest = ast.hash();
+        self.admit_store_blob(&digest, &bytes)?;
         self.pipeline_kind(
             Op::StoreBlob {
                 digest: digest.clone(),
-                bytes: definition.into_bytes(),
+                bytes,
             },
             ReceiptMode::Dictionary,
         )?;
