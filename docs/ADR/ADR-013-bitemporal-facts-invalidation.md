@@ -6,7 +6,9 @@
 
 ### Evidence (2026-10-02; Proposed)
 
-M014 shipped typed clocks (`ValidTime` / `TransactionTime` / `WallTime`) and `as_known_on` via `tt_anchor` (`true_on_d_differs_from_known_on_d`). Phase 34 (M015 S01) made the known-on cut TT-only (`closed_vt_interval_survives_as_known_on`) and fail-closed duplicate/backwards walls. FF5 still compares two valid-time windows at transaction-time max; it is not the known-on query. F13 clock/anchor ship is in crates; the five-clock / transitional-rule question stays open (M016 golden fixture). Cell remains Proposed.
+M014 shipped typed clocks (`ValidTime` / `TransactionTime` / `WallTime`) and `as_known_on` via `tt_anchor` (`true_on_d_differs_from_known_on_d`). Phase 34 (M015 S01) made the known-on cut TT-only (`closed_vt_interval_survives_as_known_on`) and fail-closed duplicate/backwards walls. FF5 still compares two valid-time windows at transaction-time max; it is not the known-on query. F13 clock/anchor ship is in crates.
+
+**FIXG-01 / M016 S05 (2026-10-02; fail-closed):** C01 sunset («пункт 15.1 действует до 01.01.2028») cannot be a Named/Horn body distinct from valid-time. `RuleTerm::Const` is rule-ident only (no calendar tokens); RuleAst has no temporal atoms. Folding the sunset into `valid_to` is VT, not an application clock. Two axes + typed annotations + `as_known_on` remain sufficient for known-on vs true-on; they are **not** sufficient for transitional-rule / application-end semantics without a fifth core axis. This verdict **stops** before inventing five clocks. Cell remains **Proposed**. Named oracle: `fixg01_c01_sunset_inexpressible_as_horn`.
 
 ## Date
 
@@ -132,3 +134,7 @@ Target contract, from docs/architecture/semantic-gap-review.md (F13): each clock
 ### Open question (2026-10-01)
 
 Open, from docs/architecture/semantic-gap-review.md (F13): whether two axes plus typed annotations and anchors are sufficient for effective-date, promulgation, and transitional-rule semantics (`tempus regit actum`). The test is a real-text golden fixture with one transitional rule (M016); this question is not answered by argument. This question does not rewrite D013-1…D013-4 and does not mark this cell Accepted.
+
+### Verdict (2026-10-02; Proposed)
+
+Answered fail-closed by FIXG-01 (`fixg01_c01_sunset_inexpressible_as_horn`): two axes plus typed annotations and `as_known_on` are **not** sufficient for C01 application-end / transitional-rule semantics. Do not add five peer clocks. This subsection does not rewrite D013-1…D013-4 and does not mark this cell Accepted.

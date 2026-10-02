@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: C01 sunset fail-closed FIXG-01 verdict (Phase 40)
+
+### Product
+
+### Added
+
+- Named oracle `fixg01_c01_sunset_inexpressible_as_horn`: C01 quote; Horn cannot hold a calendar sunset; `valid_to` folding is VT not a transitional rule.
+
+### Changed
+
+- ADR-013 Evidence (2026-10-02): fail-closed — two axes + current RuleAst cannot express application-end without a fifth clock. Cell stays **Proposed**. No five clocks invented.
+
+### Trajectory
+
+- Cells remain **Proposed**. M016 S05 lease unchanged; no SemVer tag.
+
 ## 2026-10-02 — Trajectory: M016 S05 leased
 
 ### Trajectory
