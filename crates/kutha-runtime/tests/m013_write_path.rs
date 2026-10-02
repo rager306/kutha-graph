@@ -113,7 +113,7 @@ fn keyed_correct_preserves_delivery_key_and_retry() {
         .emit(Op::Assert {
             subject: s,
             relation: rel,
-            object: o2,
+            object: o,
             valid_from: 2010,
             valid_to: None,
             claim: None,
@@ -178,7 +178,7 @@ fn keyed_correct_interval_preserves_delivery_key_and_retry() {
         .emit(Op::Assert {
             subject: s,
             relation: rel,
-            object: p_prime,
+            object: p,
             valid_from: 2010,
             valid_to: None,
             claim: None,

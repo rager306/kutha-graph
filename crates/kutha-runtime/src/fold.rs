@@ -569,6 +569,7 @@ impl GraphFold {
                         let claim_id = self.facts[idx].claim_id;
                         let old_object = self.facts[idx].object();
                         let old_polarity = self.facts[idx].polarity;
+                        let prior_key = self.facts[idx].delivery_key.clone();
                         self.invalidate_fact_at(idx, event.ingested_at);
                         let seq = self.next_seq;
                         self.next_seq += 1;
@@ -583,7 +584,7 @@ impl GraphFold {
                             invalidated_at: None,
                             claim_id,
                             event_id: event.id,
-                            delivery_key: None,
+                            delivery_key: prior_key,
                             polarity: polarity_for_row(old_polarity, old_object, *object),
                         });
                     }
@@ -614,6 +615,7 @@ impl GraphFold {
                 let claim_id = old.claim_id;
                 let old_object = old.object();
                 let old_polarity = old.polarity;
+                let prior_key = old.delivery_key.clone();
                 self.invalidate_fact_at(idx, event.ingested_at);
 
                 let mut push_row = |obj: TermId, vf: ValidTime, vt: Option<ValidTime>| {
@@ -630,7 +632,7 @@ impl GraphFold {
                         invalidated_at: None,
                         claim_id,
                         event_id: event.id,
-                        delivery_key: None,
+                        delivery_key: prior_key.clone(),
                         polarity: polarity_for_row(old_polarity, old_object, obj),
                     });
                 };

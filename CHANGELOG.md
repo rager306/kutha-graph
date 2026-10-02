@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: write-path admit origin and keyed correct identity
+
+### Product
+
+### Changed
+
+- User `emit` cannot Assert, Correct, or CorrectInterval reserved `kutha:` relations (`MetaOpRejected`); dictionary constructors (`emit_allow` / rule / policy) and typed justification/action paths unchanged; user Retract of dictionary facts still admitted (D-07 oracles).
+- `GraphFold::apply` copies the prior fact `delivery_key` onto Correct and CorrectInterval replacement rows so keyed ingest retry stays idempotent after correction.
+
+### Trajectory
+
+- Cells remain **Proposed**. M013 S09 lease unchanged; no SemVer tag.
+
 ## 2026-10-02 — Product: Phase 30-01 RED oracles (write-path integrity)
 
 ### Product

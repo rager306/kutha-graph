@@ -190,7 +190,7 @@ impl Runtime {
         if mode == ReceiptMode::User {
             self.gate_user_op(&op)?;
         }
-        self.admit(&op)?;
+        self.admit(&op, mode)?;
         if mode == ReceiptMode::User && matches!(&op, Op::StoreBlob { .. }) {
             return self.pipeline_kind(op, ReceiptMode::Dictionary);
         }
@@ -215,7 +215,7 @@ impl Runtime {
         mode: ReceiptMode,
     ) -> Result<QuantumOutcome, RuntimeError> {
         for e in &events {
-            self.admit(&e.op)?;
+            self.admit(&e.op, mode)?;
         }
         let mut ids = Vec::new();
         let mut digests = Vec::new();
@@ -243,7 +243,7 @@ impl Runtime {
     fn commit_user_cascade(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
         let first = Event::new(op, self.next_tt());
         for follow in self.follow_ons(&first) {
-            self.admit(&follow.op)?;
+            self.admit(&follow.op, ReceiptMode::User)?;
         }
         let mut ids = Vec::new();
         let mut digests = Vec::new();

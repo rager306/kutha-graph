@@ -1,9 +1,10 @@
 //! Admit and delivery-key gates for the write pipeline (D-01 / T-27-02).
+use crate::pipeline::ReceiptMode;
 use crate::quantum::{
     op_relation, ConflictReport, Justification, QuantumOutcome, Runtime, RuntimeError,
 };
 use crate::receipt::QuantumReceipt;
-use kutha_common::{blob_digest_matches, EventId, Op};
+use kutha_common::{blob_digest_matches, EventId, Op, KUTHA_RESERVED_RELS, TermId};
 
 impl Runtime {
     pub fn check_admission(&self, justification_id: &str) -> Result<(), RuntimeError> {
@@ -70,7 +71,7 @@ impl Runtime {
             negative_supports,
         }
     }
-    pub(crate) fn admit(&self, op: &Op) -> Result<(), RuntimeError> {
+    pub(crate) fn admit(&self, op: &Op, mode: ReceiptMode) -> Result<(), RuntimeError> {
         if let Op::StoreBlob { digest, bytes } = op {
             if !blob_digest_matches(digest, bytes) {
                 return Err(RuntimeError::UnknownRuleVersion {
@@ -78,6 +79,21 @@ impl Runtime {
                 });
             }
             return Ok(());
+        }
+        if mode == ReceiptMode::User {
+            if let Op::Assert { relation, .. } = op {
+                if self.relation_name_reserved(*relation) {
+                    return Err(RuntimeError::MetaOpRejected);
+                }
+            }
+            if let Op::Correct { event_id, .. } | Op::CorrectInterval { event_id, .. } = op {
+                if let Some(idx) = self.fold.fact_index_by_event_id(*event_id) {
+                    let rel = self.fold.facts()[idx].relation;
+                    if self.relation_name_reserved(rel) {
+                        return Err(RuntimeError::MetaOpRejected);
+                    }
+                }
+            }
         }
         let Some(rel) = op_relation(op) else {
             return Ok(());
@@ -101,6 +117,12 @@ impl Runtime {
                 name
             },
         })
+    }
+
+    fn relation_name_reserved(&self, rel: TermId) -> bool {
+        self.dict
+            .lookup(rel)
+            .is_some_and(|n| KUTHA_RESERVED_RELS.contains(&n) || n.starts_with("kutha:"))
     }
 
     pub(crate) fn admit_claim(&self, op: &Op) -> Result<(), RuntimeError> {
