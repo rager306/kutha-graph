@@ -1796,7 +1796,7 @@ def _frontmatter_list_field(block: str, field: str) -> list[str] | None:
         items: list[str] = []
         for rest in lines[index + 1 :]:
             if rest.startswith("  - "):
-                items.append(rest[4:].strip())
+                items.append(rest[4:].strip().strip("'\""))
             elif rest.strip() and not rest.startswith(" "):
                 break
         return items
@@ -1874,6 +1874,17 @@ def _kind_frontmatter_paths_exist(
                 )
             )
             continue
+        if not raw:
+            result.findings.append(
+                Finding(
+                    check,
+                    Severity.HIGH,
+                    _category(step, "frontmatter"),
+                    f"{rel} frontmatter key {field!r} lists no paths",
+                    rel,
+                )
+            )
+            continue
         for item in raw:
             if not item.strip():
                 result.findings.append(
@@ -1898,7 +1909,19 @@ def _kind_frontmatter_paths_exist(
                     )
                 )
                 continue
-            if not (ctx.root / rel_path).is_file():
+            target = (ctx.root / rel_path).resolve()
+            if not target.is_relative_to(ctx.root.resolve()):
+                result.findings.append(
+                    Finding(
+                        check,
+                        Severity.HIGH,
+                        _category(step, "frontmatter-path"),
+                        f"{rel} lists path outside the repo {rel_path!r}",
+                        rel,
+                    )
+                )
+                continue
+            if not target.is_file():
                 result.findings.append(
                     Finding(
                         check,

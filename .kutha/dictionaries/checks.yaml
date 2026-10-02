@@ -1342,6 +1342,10 @@ checks:
         path: crates/kutha-runtime/tests/m013_write_path.rs
         tests:
           - unknown_relation_rejected_for_assert_justification_and_action
+        require_symbols:
+          unknown_relation_rejected_for_assert_justification_and_action:
+            - UnknownRelation
+            - outcome_records
         category: i-f-oracle
         message: "I-F11 one-write-path oracle missing {missing}"
 

@@ -4,6 +4,15 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Process: Phase 29 review follow-ups
+
+### Process
+
+### Fixed
+
+- `frontmatter_paths_exist` rejects paths that resolve outside the repo and an empty `read_only_inputs` list (HIGH); quoted entries are unquoted. Two tests pin both.
+- `i-f11-one-write-path` pins `require_symbols`; invariants comment now says only deferred rows are unenforced; META `file_contains` row names `glob` / `min_phase`.
+
 ## 2026-10-02 — Process: honor-system verify and process doc alignment
 
 ### Process

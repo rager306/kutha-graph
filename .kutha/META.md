@@ -51,7 +51,7 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 |------|---------|
 | `file_exists` | path must be a file |
 | `file_equals` | file strip-equals a string |
-| `file_contains` | file contains all/any needles |
+| `file_contains` | file (or `glob` with optional `min_phase`; zero hits HIGH) contains all/any needles |
 | `file_absent` | file contains none of the needles |
 | `concat_absent` | concatenated files contain none of the needles |
 | `concat_contains_any` | concatenated files contain at least one needle |

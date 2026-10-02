@@ -188,7 +188,7 @@ invariants:
     disposition: deferred
     until: "remaining fork-diff (typed CSR still from_fold)"
 
-  # I-F9…I-F16 record post-M012 gaps (semantic-gap-review addendum 2026-10-01). Not enforced.
+  # I-F9…I-F16 record post-M012 gaps (semantic-gap-review addendum 2026-10-01). Rows with disposition deferred are not enforced; restaged check rows are.
   # until names the milestone that closes each gap; none is Accepted by this ledger.
   - id: I-F9-policy-semantics
     claim: "A pinned policy or rule definition is executed by admission and derivation; identity without evaluation does not close the gap"

@@ -1290,6 +1290,32 @@ class VerificationIndependentTests(unittest.TestCase):
         )
         self.assertEqual([], _rust_highs(result))
 
+    def test_frontmatter_paths_exist_high_on_parent_escape(self) -> None:
+        body = "---\nindependent: true\nread_only_inputs:\n  - ../../etc/passwd\n---\n# verify\n"
+        root = _rust_tree({".planning/phases/22-x/22-VERIFICATION.md": body})
+        result = _rust_run(
+            root,
+            {
+                "kind": "frontmatter_paths_exist",
+                "glob": ".planning/phases/*-*/*-VERIFICATION.md",
+                "min_phase": 22,
+            },
+        )
+        self.assertEqual(["frontmatter-path"], _rust_highs(result))
+
+    def test_frontmatter_paths_exist_high_on_empty_list(self) -> None:
+        body = "---\nindependent: true\nread_only_inputs:\n---\n# verify\n"
+        root = _rust_tree({".planning/phases/22-x/22-VERIFICATION.md": body})
+        result = _rust_run(
+            root,
+            {
+                "kind": "frontmatter_paths_exist",
+                "glob": ".planning/phases/*-*/*-VERIFICATION.md",
+                "min_phase": 22,
+            },
+        )
+        self.assertEqual(["frontmatter"], _rust_highs(result))
+
 
 if __name__ == "__main__":
     unittest.main()
