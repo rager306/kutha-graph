@@ -68,6 +68,7 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 | `refs_resolve` | ADR-NNN and D1–D10 citations resolve to files or honeycomb locks |
 | `file_max_lines` | file line count (`wc -l`) is at most `max` |
 | `glob_max_lines` | glob matches (`wc -l`) at most `max`; optional `min_phase`, `min_hits` (default 0), and `max_files_per_dir` |
+| `frontmatter_paths_exist` | every string in a YAML frontmatter list field must be a repo-relative file that exists; optional `glob`, `min_phase`, `field` (default `read_only_inputs`) |
 
 ## Allowed FSM kinds
 

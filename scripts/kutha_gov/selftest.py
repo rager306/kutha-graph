@@ -37,6 +37,7 @@ DERIVABLE_KINDS = frozenset(
         "refs_resolve",
         "file_max_lines",
         "glob_max_lines",
+        "frontmatter_paths_exist",
     }
 )
 SKIP_DIR_NAMES = frozenset(
@@ -234,7 +235,7 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
             if path:
                 derived.append([{"op": "delete_file", "path": path}])
         elif kind == "file_contains":
-            unit = _derive_file_contains(step)
+            unit = _derive_file_contains(step, work)
             if unit:
                 derived.append(unit)
         elif kind == "file_absent":
@@ -282,6 +283,10 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
             unit = _derive_glob_max_lines(step, work)
             if unit:
                 derived.append(unit)
+        elif kind == "frontmatter_paths_exist":
+            unit = _derive_frontmatter_paths_exist(step, work)
+            if unit:
+                derived.append(unit)
     return derived
 
 
@@ -293,6 +298,16 @@ def _derive_file_max_lines(step: Step, work: Path) -> list[Mutation]:
         return []
     path, text = target
     return [{"op": "append_text", "path": path, "text": text}]
+
+
+def _derive_frontmatter_paths_exist(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import frontmatter_paths_exist_mutation_target
+
+    target = frontmatter_paths_exist_mutation_target(step, work)
+    if target is None:
+        return []
+    path, text, _bogus = target
+    return [{"op": "replace_regex", "path": path, "pattern": ".*", "with": text}]
 
 
 def _derive_glob_max_lines(step: Step, work: Path) -> list[Mutation]:
@@ -380,10 +395,21 @@ def _derive_rust_test_asserts(step: Step, work: Path) -> list[list[Mutation]]:
     return units
 
 
-def _derive_file_contains(step: Step) -> list[Mutation]:
-    path = _str(step, "path")
+def _derive_file_contains(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import _glob_max_lines_hits
+
+    pattern = _str(step, "glob")
     needles = _str_list(step, "needles")
-    if not path or not needles:
+    if not needles:
+        return []
+    if pattern:
+        hits = _glob_max_lines_hits(step, work)
+        if not hits:
+            return []
+        path = hits[0].relative_to(work).as_posix()
+    else:
+        path = _str(step, "path")
+    if not path:
         return []
     require = _str(step, "require", "all").lower()
     if require == "any":

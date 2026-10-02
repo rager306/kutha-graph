@@ -13,7 +13,6 @@ read_only_inputs:
   - crates/kutha-common/src/event.rs
   - crates/kutha-runtime/src/fold.rs
   - crates/kutha-runtime/src/quantum.rs
-  - /root/law-nexus (QUOTE-INDEX sources)
 commands:
   - cmd: "git status --porcelain -- crates/"; exit: 0
   - cmd: "git diff --stat -- crates/"; exit: 0

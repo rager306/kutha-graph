@@ -642,6 +642,7 @@ checks:
           - "refs_resolve"
           - "file_max_lines"
           - "glob_max_lines"
+          - "frontmatter_paths_exist"
           - "run_selftest"
           - "invariants.yaml"
           - "bridges.yaml"
@@ -1226,33 +1227,19 @@ checks:
     steps:
       - kind: glob_absent
         glob: .planning/phases/*-*/*-VERIFICATION.md
+        min_phase: 22
         needles:
           - "-PLAN.md"
           - "-SUMMARY.md"
       - kind: file_contains
-        path: .planning/phases/22-benchmark-baseline-and-size-target/22-VERIFICATION.md
+        glob: .planning/phases/*-*/*-VERIFICATION.md
+        min_phase: 22
         needles: ["independent: true", "verifier_model", "commands:", "read_only_inputs:", "exit:"]
         require: all
-      - kind: file_contains
-        path: .planning/phases/23-legal-fixture-reconnaissance/23-VERIFICATION.md
-        needles: ["independent: true", "verifier_model", "commands:", "read_only_inputs:", "exit:"]
-        require: all
-      - kind: file_contains
-        path: .planning/phases/24-fold-indexes-for-ingest/24-VERIFICATION.md
-        needles: ["independent: true", "verifier_model", "commands:", "read_only_inputs:", "exit:"]
-        require: all
-      - kind: file_contains
-        path: .planning/phases/25-genesis-log/25-VERIFICATION.md
-        needles: ["independent: true", "verifier_model", "commands:", "read_only_inputs:", "exit:"]
-        require: all
-      - kind: file_contains
-        path: .planning/phases/26-dictionary-entries-as-facts/26-VERIFICATION.md
-        needles: ["independent: true", "verifier_model", "commands:", "read_only_inputs:", "exit:"]
-        require: all
-      - kind: file_contains
-        path: .planning/phases/27-one-write-path-and-facade/27-VERIFICATION.md
-        needles: ["independent: true", "verifier_model", "commands:", "read_only_inputs:", "exit:"]
-        require: all
+      - kind: frontmatter_paths_exist
+        glob: .planning/phases/*-*/*-VERIFICATION.md
+        min_phase: 22
+        field: read_only_inputs
 
   - id: id-map-cite
     description: >-

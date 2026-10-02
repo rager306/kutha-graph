@@ -269,7 +269,10 @@ invariants:
     check: artifact-budget
 
   - id: I-verification-independent
-    claim: "v0.06 VERIFICATION files do not list plan or summary artifact paths and carry independent frontmatter with commands and read_only_inputs"
+    claim: >-
+      v0.06 VERIFICATION files from phase 22 onward do not list plan or summary
+      artifact paths, carry independent frontmatter, and list only existing
+      read_only_inputs paths
     source: ".planning/phases/28-independent-verification-and-artifact-budget/28-CONTEXT.md"
     disposition: check
     check: verification-independent

@@ -41,6 +41,7 @@ ALLOWED_KINDS: frozenset[str] = frozenset(
         "refs_resolve",
         "file_max_lines",
         "glob_max_lines",
+        "frontmatter_paths_exist",
     }
 )
 
@@ -161,14 +162,8 @@ def _kind_file_equals(check: str, step: Step, ctx: Context, result: CheckResult)
         )
 
 
-def _kind_file_contains(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
-    path = _str(step, "path")
+def _file_contains_one(check: str, step: Step, path: str, text: str, result: CheckResult) -> None:
     needles = _str_list(step, "needles")
-    result.scanned += 1
-    text = ctx.read(path)
-    if text is None:
-        _high_missing(check, path, result)
-        return
     haystack = _casefold(step, text)
     folded = [_casefold(step, needle) for needle in needles]
     require = _str(step, "require", "all").lower()
@@ -193,6 +188,38 @@ def _kind_file_contains(check: str, step: Step, ctx: Context, result: CheckResul
         result.findings.append(
             Finding(check, _severity(step), _category(step, "contains"), message, path)
         )
+
+
+def _kind_file_contains(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
+    pattern = _str(step, "glob")
+    if pattern:
+        hits = _glob_max_lines_hits(step, ctx.root)
+        if not hits:
+            result.scanned += 1
+            message = _fmt(
+                _str(step, "message", "glob {glob} matched no files"),
+                glob=pattern,
+            )
+            result.findings.append(
+                Finding(check, Severity.HIGH, _category(step, "glob-empty"), message, pattern)
+            )
+            return
+        for path in hits:
+            rel = path.relative_to(ctx.root).as_posix()
+            result.scanned += 1
+            text = ctx.read(rel)
+            if text is None:
+                _high_missing(check, rel, result)
+                continue
+            _file_contains_one(check, step, rel, text, result)
+        return
+    path = _str(step, "path")
+    result.scanned += 1
+    text = ctx.read(path)
+    if text is None:
+        _high_missing(check, path, result)
+        return
+    _file_contains_one(check, step, path, text, result)
 
 
 def _kind_file_absent(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
@@ -256,12 +283,17 @@ def _kind_concat_contains_any(check: str, step: Step, ctx: Context, result: Chec
 def _kind_glob_absent(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
     pattern = _str(step, "glob")
     needles = _str_list(step, "needles")
+    min_phase = _int(step, "min_phase", 0)
     for path in sorted(ctx.root.glob(pattern)):
         if not path.is_file():
             continue
+        rel = path.relative_to(ctx.root).as_posix()
+        if min_phase > 0:
+            nn = _planning_phase_nn(rel)
+            if nn is None or nn < min_phase:
+                continue
         text = _casefold(step, path.read_text(encoding="utf-8"))
         result.scanned += 1
-        rel = str(path.relative_to(ctx.root))
         for needle in needles:
             if _casefold(step, needle) in text:
                 message = _fmt(
@@ -1748,6 +1780,136 @@ def _wc_lines(text: str) -> int:
     return text.count("\n")
 
 
+_FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
+
+
+def _frontmatter_block(text: str) -> str | None:
+    match = _FRONTMATTER_RE.match(text)
+    return match.group(1) if match else None
+
+
+def _frontmatter_list_field(block: str, field: str) -> list[str] | None:
+    lines = block.splitlines()
+    for index, line in enumerate(lines):
+        if line.strip() != f"{field}:":
+            continue
+        items: list[str] = []
+        for rest in lines[index + 1 :]:
+            if rest.startswith("  - "):
+                items.append(rest[4:].strip())
+            elif rest.strip() and not rest.startswith(" "):
+                break
+        return items
+    return None
+
+
+def frontmatter_paths_exist_mutation_target(step: Step, root: Path) -> tuple[str, str, str] | None:
+    field = _str(step, "field", "read_only_inputs")
+    for path in _glob_max_lines_hits(step, root):
+        rel = path.relative_to(root).as_posix()
+        text = path.read_text(encoding="utf-8")
+        block = _frontmatter_block(text)
+        if block is None:
+            continue
+        raw = _frontmatter_list_field(block, field)
+        if not raw:
+            continue
+        first = next((item for item in raw if item.strip()), None)
+        if not first:
+            continue
+        bogus = f"{first}-selftest-missing"
+        new_text = text.replace(f"  - {first}", f"  - {bogus}", 1)
+        if new_text == text:
+            new_text = text.replace(first, bogus, 1)
+        return rel, new_text, bogus
+    return None
+
+
+def _kind_frontmatter_paths_exist(
+    check: str, step: Step, ctx: Context, result: CheckResult
+) -> None:
+    field = _str(step, "field", "read_only_inputs")
+    hits = _glob_max_lines_hits(step, ctx.root)
+    if not hits:
+        result.scanned += 1
+        pattern = _str(step, "glob")
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                _category(step, "glob-empty"),
+                f"glob {pattern!r} matched no verification files",
+                pattern,
+            )
+        )
+        return
+    for path in hits:
+        rel = path.relative_to(ctx.root).as_posix()
+        result.scanned += 1
+        text = ctx.read(rel)
+        if text is None:
+            _high_missing(check, rel, result)
+            continue
+        block = _frontmatter_block(text)
+        if block is None:
+            result.findings.append(
+                Finding(
+                    check,
+                    Severity.HIGH,
+                    _category(step, "frontmatter"),
+                    f"{rel} missing YAML frontmatter",
+                    rel,
+                )
+            )
+            continue
+        raw = _frontmatter_list_field(block, field)
+        if raw is None:
+            result.findings.append(
+                Finding(
+                    check,
+                    Severity.HIGH,
+                    _category(step, "frontmatter"),
+                    f"{rel} missing frontmatter key {field!r}",
+                    rel,
+                )
+            )
+            continue
+        for item in raw:
+            if not item.strip():
+                result.findings.append(
+                    Finding(
+                        check,
+                        Severity.HIGH,
+                        _category(step, "frontmatter-path"),
+                        f"{rel} {field!r} has an empty entry",
+                        rel,
+                    )
+                )
+                continue
+            rel_path = item.strip()
+            if rel_path.startswith("/"):
+                result.findings.append(
+                    Finding(
+                        check,
+                        Severity.HIGH,
+                        _category(step, "frontmatter-path"),
+                        f"{rel} lists absolute path {rel_path!r}",
+                        rel,
+                    )
+                )
+                continue
+            if not (ctx.root / rel_path).is_file():
+                result.findings.append(
+                    Finding(
+                        check,
+                        Severity.HIGH,
+                        _category(step, "frontmatter-path"),
+                        f"{rel} lists missing file {rel_path!r}",
+                        rel,
+                    )
+                )
+
+
 def _kind_file_max_lines(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
     path = _str(step, "path")
     maximum = _int(step, "max", -1)
@@ -1799,4 +1961,5 @@ RUNNERS: dict[str, Runner] = {
     "refs_resolve": _kind_refs_resolve,
     "file_max_lines": _kind_file_max_lines,
     "glob_max_lines": _kind_glob_max_lines,
+    "frontmatter_paths_exist": _kind_frontmatter_paths_exist,
 }

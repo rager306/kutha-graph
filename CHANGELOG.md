@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Process: glob verification independence and listed input paths
+
+### Process
+
+### Added
+
+- `file_contains` supports `glob` and `min_phase`; new `frontmatter_paths_exist` kind requires listed `read_only_inputs` files to exist under the repo root.
+- `verification-independent` uses phase-22+ globs instead of per-phase hardcoded paths; removed non-repo path from `23-VERIFICATION.md`.
+
+### Trajectory
+
+- No lease change. Cells remain **Proposed**.
+
 ## 2026-10-02 — Process: fail closed on check-budget truncation and empty budget globs
 
 ### Process

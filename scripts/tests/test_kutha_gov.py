@@ -1237,6 +1237,59 @@ class VerificationIndependentTests(unittest.TestCase):
         )
         self.assertEqual(["contains"], _rust_highs(result))
 
+    def test_verification_independent_glob_file_contains_zero_hits_high(self) -> None:
+        root = _rust_tree({})
+        result = _rust_run(
+            root,
+            {
+                "kind": "file_contains",
+                "glob": ".planning/phases/*-*/*-VERIFICATION.md",
+                "min_phase": 22,
+                "needles": ["independent: true"],
+                "require": "all",
+            },
+        )
+        self.assertEqual(["glob-empty"], _rust_highs(result))
+
+    def test_frontmatter_paths_exist_high_on_missing_input(self) -> None:
+        body = "---\nindependent: true\nread_only_inputs:\n  - docs/missing.md\n---\n# verify\n"
+        root = _rust_tree({".planning/phases/22-x/22-VERIFICATION.md": body})
+        result = _rust_run(
+            root,
+            {
+                "kind": "frontmatter_paths_exist",
+                "glob": ".planning/phases/*-*/*-VERIFICATION.md",
+                "min_phase": 22,
+                "field": "read_only_inputs",
+            },
+        )
+        self.assertEqual(["frontmatter-path"], _rust_highs(result))
+
+    def test_frontmatter_paths_exist_passes_when_inputs_exist(self) -> None:
+        body = (
+            "---\n"
+            "independent: true\n"
+            "read_only_inputs:\n"
+            "  - docs/process/governor-intake.md\n"
+            "---\n"
+            "# verify\n"
+        )
+        root = _rust_tree(
+            {
+                ".planning/phases/22-x/22-VERIFICATION.md": body,
+                "docs/process/governor-intake.md": "# intake\n",
+            }
+        )
+        result = _rust_run(
+            root,
+            {
+                "kind": "frontmatter_paths_exist",
+                "glob": ".planning/phases/*-*/*-VERIFICATION.md",
+                "min_phase": 22,
+            },
+        )
+        self.assertEqual([], _rust_highs(result))
+
 
 if __name__ == "__main__":
     unittest.main()
