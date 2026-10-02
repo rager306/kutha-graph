@@ -12,6 +12,10 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `rule_definition_hash` of an identifier is the canonical `Named` body hash. `emit_rule` stores tagged AST bytes, not raw UTF-8. Non-canonical names fail closed (`UnknownRuleVersion`). `blob_digest_matches` accepts a rule-domain digest only for exact-canonical bodies.
 
+### Added
+
+- Named tests: JSON/`emit_rule` reject; stored blob `from_canonical` equals `Named`; Horn `emit_rule_ast` pin equals body hash.
+
 ### Trajectory
 
 - Cells remain **Proposed**. M016 S02 lease unchanged; no SemVer tag.
