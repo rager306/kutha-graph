@@ -5,14 +5,14 @@ milestone_name: Typed clocks and as-known-on
 current_phase: 31
 current_phase_name: Clock newtypes
 status: planning
-stopped_at: M014 S01 leased; ready to plan Phase 31
-last_updated: "2026-10-02T07:00:00.000Z"
+stopped_at: Phase 31 plans written; ready to execute
+last_updated: "2026-10-02T13:53:00.000Z"
 last_activity: 2026-10-02
-last_activity_desc: M014 S01 leased; Phase 31 CONTEXT present
+last_activity_desc: Phase 31 PLAN.md Wave 1–2 written (CLK-01..03)
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 0
+  total_plans: 2
   completed_plans: 0
 ---
 
@@ -31,10 +31,10 @@ See: `.planning/PROJECT.md`
 
 ## Current Position
 
-Phase: 31 — Clock newtypes (CONTEXT present)
-Plan: Not started
-Status: Ready to plan (S01 leased)
-Last activity: 2026-10-02 — M014 S01 leased
+Phase: 31 — Clock newtypes (plans written)
+Plan: 31-01 (Wave 1)
+Status: Ready to execute (S01 leased)
+Last activity: 2026-10-02 — Phase 31 31-01/31-02 PLAN.md written
 
 ## Performance Metrics
 
@@ -54,5 +54,5 @@ Last activity: 2026-10-02 — M014 S01 leased
 
 ## Session Continuity
 
-Stopped at: M014 S01 leased; Phase 31 CONTEXT present
-Next: `/gsd-plan-phase 31` / `/gsd-autonomous --only 31`
+Stopped at: Phase 31 plans written (31-01, 31-02)
+Next: `/gsd-execute-phase 31` / `/gsd-autonomous --only 31`
