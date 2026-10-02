@@ -79,7 +79,7 @@ invariants:
     check: docs-entry
 
   - id: I-state-readme
-    claim: "README shows the same Active Milestone and Phase as STATE"
+    claim: "README shows the same Active Milestone and Phase as STATE (selftest mutates current lease id)"
     source: ".kutha/STATE.md"
     disposition: check
     check: state-readme

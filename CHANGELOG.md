@@ -24,6 +24,17 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Cells remain **Proposed**. M014 S01 lease unchanged; no SemVer tag.
 
+## 2026-10-02 — Trajectory: M014 S01 CLOSED (Phase 31)
+
+### Trajectory
+
+- Phase 31 clock newtypes verified; Active Slice cleared. `L_delivery=M014-S01-done`. Next: lease S02 alone.
+- Governor selftest `state-readme` mutation pattern updated to `M014` (was `M013`).
+
+### Product
+
+- Distinct `ValidTime` / `TransactionTime` / `WallTime` newtypes; query cuts take `Into`; `compile_fail` mix proof; named oracles green (TIME-01 wraps only).
+
 ## 2026-10-02 — Trajectory: M014 S01 leased
 
 ### Trajectory

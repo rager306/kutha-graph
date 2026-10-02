@@ -676,7 +676,7 @@ checks:
         # README must show STATE's Active Milestone.
         - op: replace_regex
           path: README.md
-          pattern: 'M013'
+          pattern: 'M014'
           with: "M999"
         # README must show STATE's Phase.
         - op: replace_regex

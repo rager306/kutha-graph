@@ -187,11 +187,11 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 ## M014: Typed clocks and as-known-on — LEASED (GSD v0.07)
 
-**Leased:** Active Milestone M014; **S01** active (clock newtypes); S02–S03 unleased.
+**Progress:** S01 CLOSED (Phase 31 verified). S02–S03 unleased until separately leased.
 
 **Success:** valid time, transaction time, and wall time are distinct types; mixing them without a conversion does not compile; `tt_anchor` facts map transaction time to wall time; “as known on date D” is an anchor lookup; FF5 stays green with explicit clocks. Closes F13. Needs a lease; do not start before M013 closes.
 
-- [ ] **S01: Clock newtypes** `risk:high` `depends:[]`
+- [x] **S01: Clock newtypes** `risk:high` `depends:[]`
   > After this: `Vt`, `Tt`, and a wall clock are separate types; a `compile_fail` doctest proves a silent mix is rejected.
 - [ ] **S02: `tt_anchor` facts and `as_known_on`** `risk:medium` `depends:[S01]`
   > After this: anchors are log facts; `as_known_on(date)` resolves through the greatest anchor at or before the date; a named test separates “true on D” from “known on D”.
