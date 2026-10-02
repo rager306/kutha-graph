@@ -4,18 +4,18 @@ milestone: v0.07
 milestone_name: Typed clocks and as-known-on
 current_phase: 32
 current_phase_name: tt_anchor and as_known_on
-current_plan: 0
-status: planning
-stopped_at: Wrote 32-01-PLAN.md and 32-02-PLAN.md
-last_updated: "2026-10-02T08:00:00.000Z"
+current_plan: 2
+status: ready to execute 32-02
+stopped_at: Completed 32-01-PLAN.md
+last_updated: "2026-10-02T08:11:45.176Z"
 last_activity: 2026-10-02
-last_activity_desc: Phase 32 PLAN.md Wave 1–2 written (ANK-01..03)
-state_head: 820d7accca574fd8ad22285480390577a0718b8a
+last_activity_desc: "Completed 32-01 (Op::TtAnchor, as_known_on); next 32-02"
+state_head: fe1be90a27b30dc9ac0e75b916c755989049ce53
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 0
+  total_plans: 4
+  completed_plans: 3
 ---
 
 # Project State
@@ -34,10 +34,10 @@ See: `.planning/PROJECT.md`
 ## Current Position
 
 Phase: 32 — tt_anchor and as_known_on
-Current Plan: 0 (plans written, not executed)
+Current Plan: 2
 Total Plans in Phase: 2
 Plan: 32-01 / 32-02 written
-Status: ready to execute 32-01
+Status: ready to execute 32-02
 Last activity: 2026-10-02 — Phase 32 plans written (Op::TtAnchor, as_known_on, named test)
 Prior last activity: 2026-10-02 — Phase 31 verified; M014 S01 closed
 
@@ -50,6 +50,7 @@ Prior last activity: 2026-10-02 — Phase 31 verified; M014 S01 closed
 |------|----------|-------|-------|
 | Phase 31 P01 | 7 min | 3 tasks | 7 files |
 | Phase 31 P02 | 3 min | 3 tasks | 8 files |
+| Phase 32 P01 | 7min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -60,6 +61,8 @@ Prior last activity: 2026-10-02 — Phase 31 verified; M014 S01 closed
 - [Phase 31]: Op/Event/Fact clocks stay u64 so FF5 literals compile; query API uses impl Into ValidTime/TransactionTime
 - [Phase 31]: TIME-01 YearCe lets wrap ValidTime::from only; FF5/FF6 assertion bodies unchanged
 - [Phase 32]: Op::TtAnchor { wall: u64 }; mapped tt = Event.ingested_at; as_known_on returns Option (None = miss); not kutha: Assert
+- [Phase 32]: Op::TtAnchor { wall: u64 }; mapped tt = Event.ingested_at; no Fact minted
+- [Phase 32]: as_known_on returns Option (None = miss); hydrate rebuilds tt_anchors from the log
 
 ### Blockers/Concerns
 
@@ -69,8 +72,8 @@ Prior last activity: 2026-10-02 — Phase 31 verified; M014 S01 closed
 
 ## Session Continuity
 
-**Last session:** 2026-10-02T08:00:00.000Z
+**Last session:** 2026-10-02T08:11:06.492Z
 **Resume file:** None
 
-Stopped at: Wrote 32-01-PLAN.md and 32-02-PLAN.md
+Stopped at: Completed 32-01-PLAN.md
 Next: execute 32-01 (`/gsd-execute-phase 32` or autonomous `--only 32`); independent verifier after both plans (`32-VERIFICATION.md`, D-05)

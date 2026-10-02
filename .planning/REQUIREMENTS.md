@@ -16,8 +16,8 @@ Closes F13 from `docs/architecture/semantic-gap-review.md`. Cells stay Proposed.
 
 ### Anchors and as-known-on (F13)
 
-- [ ] **ANK-01**: `tt_anchor` facts on the event log map transaction time to wall time
-- [ ] **ANK-02**: `as_known_on(date)` resolves through the greatest anchor at or before the date
+- [x] **ANK-01**: `tt_anchor` facts on the event log map transaction time to wall time
+- [x] **ANK-02**: `as_known_on(date)` resolves through the greatest anchor at or before the date
 - [ ] **ANK-03**: A named test separates “true on D” (`as_of` / valid-time window) from “known on D” (`as_known_on`); FF5 stays green
 
 ### Fixture migration
