@@ -552,9 +552,7 @@ impl Runtime {
     /// [`Self::live_at`] at that event's transaction time and `vt = u64::MAX`.
     /// `None` means no anchor at or before the date.
     pub fn as_known_on(&self, wall: impl Into<WallTime>) -> Option<Vec<(TermId, TermId, TermId)>> {
-        let wall = wall.into().as_u64();
-        let tt = *self.fold.tt_anchors.range(..=wall).next_back()?.1;
-        Some(self.live_at(tt, u64::MAX))
+        self.fold.as_known_on(wall)
     }
 
     pub fn live_at(

@@ -359,6 +359,15 @@ impl GraphFold {
         }
     }
 
+    pub(crate) fn rebuild_tt_anchors(&mut self, events: &[Event]) {
+        self.tt_anchors.clear();
+        for e in events {
+            if let Op::TtAnchor { wall } = &e.op {
+                self.tt_anchors.insert(*wall, e.ingested_at);
+            }
+        }
+    }
+
     pub fn index_mode(&self) -> FoldIndexMode {
         self.index_mode
     }

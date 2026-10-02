@@ -37,6 +37,7 @@ impl Runtime {
         }
         self.outcomes = outcomes;
         self.fold.rebuild_blobs(self.log.as_slice());
+        self.fold.rebuild_tt_anchors(self.log.as_slice());
         self.fold.bind_reserved(&self.dict);
         self.rebuild_log_indexes();
     }

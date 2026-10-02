@@ -297,6 +297,21 @@ fn as_known_on_after_anchor_is_some_earlier_wall_is_none() {
     assert!(rt.as_known_on(kutha_common::WallTime::from(2015)).is_some());
 }
 
+#[test]
+fn as_known_on_survives_persist_open_and_matches_fold() {
+    let mut rt = Runtime::default();
+    rt.emit_tt_anchor(2015).unwrap();
+    assert_eq!(rt.as_known_on(2015), rt.fold().as_known_on(2015));
+    let dir = std::path::Path::new("tmp/p32-01-store");
+    let _ = std::fs::remove_dir_all(dir);
+    std::fs::create_dir_all(dir).unwrap();
+    rt.persist(dir).unwrap();
+    let opened = Runtime::open(dir).unwrap();
+    assert!(opened.as_known_on(2015).is_some());
+    assert_eq!(opened.as_known_on(2015), opened.fold().as_known_on(2015));
+    let _ = std::fs::remove_dir_all(dir);
+}
+
 fn uuid_like() -> u64 {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)

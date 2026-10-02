@@ -1,5 +1,5 @@
 //! Fold query surface: as_of / live_at / dictionary / fingerprint / registry cuts.
-use kutha_common::{EventId, SupportPolarity, TermId, TransactionTime, ValidTime};
+use kutha_common::{EventId, SupportPolarity, TermId, TransactionTime, ValidTime, WallTime};
 use sha2::{Digest, Sha256};
 
 use crate::fold::{Fact, GraphFold, LiveFactFilter};
@@ -81,6 +81,17 @@ impl GraphFold {
     /// Product picture: dictionary (`kutha:`) relations are excluded (D-05).
     pub fn as_of(&self, vt: impl Into<ValidTime>) -> Vec<(TermId, TermId, TermId)> {
         self.live_at(u64::MAX, vt)
+    }
+
+    /// Product triples as known on a wall date.
+    ///
+    /// Greatest `Op::TtAnchor` with `wall` at or before `wall`, then
+    /// [`Self::live_at`] at that transaction time and `vt = u64::MAX`.
+    /// `None` means no anchor at or before the date.
+    pub fn as_known_on(&self, wall: impl Into<WallTime>) -> Option<Vec<(TermId, TermId, TermId)>> {
+        let wall = wall.into().as_u64();
+        let tt = *self.tt_anchors.range(..=wall).next_back()?.1;
+        Some(self.live_at(tt, u64::MAX))
     }
 
     /// Dictionary entries at a valid-time cut (kutha: relations only).
