@@ -4,7 +4,7 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
-## 2026-10-02 — Product: trybuild E0308 clock mix (Phase 36)
+## 2026-10-02 — Product: test hardening T2–T6 (Phase 36)
 
 ### Product
 
@@ -13,6 +13,10 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - `kutha-common` trybuild UI crate proves `TransactionTime` and `WallTime` cannot be passed where `ValidTime` is required (`E0308`). The rustdoc `compile_fail` example stays as a secondary check.
 - Named test: stored `JustificationCite` `tt`/`vt` stay distinct; a swapped-field clone is not equal to the stored row.
 - Named tests: Eager vs Lazy `as_known_on`; `fork_at` before a later `TtAnchor`; mid-cut snapshot plus tail Assert/`TtAnchor`; `GraphFold::replay` known-on.
+
+### Changed
+
+- `snapshot_plus_tail_matches_full_replay` uses a mid-cut snapshot, a non-empty Assert+`TtAnchor` tail, and `as_known_on` (fingerprint remains facts-only).
 
 ### Trajectory
 

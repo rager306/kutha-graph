@@ -169,7 +169,7 @@ fn replay_time_vs_log_length() {
 fn snapshot_plus_tail_matches_full_replay() {
     let mut rt = Runtime::default();
     let rel = rt.intern("relatedTo");
-    for i in 0..10u32 {
+    for i in 0..4u32 {
         let s = rt.intern(&format!("s{i}"));
         let o = rt.intern(&format!("o{i}"));
         rt.emit(Op::Assert {
@@ -178,7 +178,6 @@ fn snapshot_plus_tail_matches_full_replay() {
             object: o,
             valid_from: 0,
             valid_to: None,
-
             claim: None,
             delivery_key: None,
             polarity: None,
@@ -186,8 +185,27 @@ fn snapshot_plus_tail_matches_full_replay() {
         .unwrap();
     }
     let snap = rt.snapshot();
+    let offset = snap.log_offset;
+    for i in 4..10u32 {
+        let s = rt.intern(&format!("s{i}"));
+        let o = rt.intern(&format!("o{i}"));
+        rt.emit(Op::Assert {
+            subject: s,
+            relation: rel,
+            object: o,
+            valid_from: 0,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
+    }
+    rt.emit_tt_anchor(2014).unwrap();
+    assert!(rt.graph_len() > offset, "non-empty fold-affecting tail");
     let events = rt.log().as_slice().to_vec();
     let restored = Runtime::from_snapshot(snap, events);
+    assert_eq!(restored.as_known_on(2014), rt.as_known_on(2014));
     assert_eq!(restored.fold().fingerprint(), rt.fold().fingerprint());
     restored.replay_check().unwrap();
 }
