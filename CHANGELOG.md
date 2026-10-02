@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: dual-mode FF5 oracle (Phase 30-02)
+
+### Product
+
+### Added
+
+- `m013_dual_mode`: Eager vs Lazy agreement on FF5 `as_of`, `live_at`, retract, correct, and `claim_supported_at` without warming Lazy leases before reads (HARD-03).
+
+### Trajectory
+
+- Cells remain **Proposed**. M013 S09 lease unchanged; no SemVer tag.
+
 ## 2026-10-02 — Product: write-path admit origin and keyed correct identity
 
 ### Product
