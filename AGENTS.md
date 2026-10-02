@@ -98,4 +98,6 @@ Every `Task` that needs the graph must name **`codebase-memory-mcp`** (`list_pro
 
 Disjoint file ownership. Only the integrator touches shared lockfiles, `.kutha/events.jsonl`, tenant data, or graph indexes, and runs `uv run kutha-gov ci` when required.
 
+**rg vs ast-grep:** `rg` = text/regex (counts, path sets, YAML; may hit comments/strings — M013 arbiter). `ast-grep` = AST (skips comments/strings; “fn that contains X”). Do not replace `rg` for D-07 path sets. Skill: `~/.agents/skills/ast-grep/SKILL.md`. Examples: `rg -n 'facts\(\)\.iter\(\)\.(any|find)' crates/kutha-runtime/src` · `ast-grep run -p '$X.claim_known($$$)' -l rust crates/kutha-runtime/src` · `ast-grep scan --inline-rules $'id: log-iter\nlanguage: rust\nrule: {kind: function_item, has: {pattern: $X.log.iter(), stopBy: end}}' crates/kutha-runtime/src`.
+
 CE remains for commit/PR/changelog/handoff skills and the closed literature store; it is not the primary planning SoT. `ce-setup` does not author `README.md`.

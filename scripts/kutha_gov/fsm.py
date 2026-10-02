@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -59,6 +60,7 @@ class QuantumOutcome:
     findings: list[Finding] = field(default_factory=list)
     observations: list[tuple[str, str]] = field(default_factory=list)
     evidence: list[tuple[str, str]] = field(default_factory=list)
+    phase_ms: list[tuple[str, int]] = field(default_factory=list)
 
 
 def load_machine(root: Path) -> Machine:
@@ -144,6 +146,16 @@ def _run_one(check: Check, ctx: Context) -> CheckResult:
     return result
 
 
+def _high_so_far(outcome: QuantumOutcome) -> bool:
+    return any(r.high_count for r in outcome.results) or any(
+        f.severity is Severity.HIGH for f in outcome.findings
+    )
+
+
+def _skip_heavy_observe(ctx: Context, outcome: QuantumOutcome) -> bool:
+    return ctx.skip_cargo or _high_so_far(outcome)
+
+
 def run_quantum(ctx: Context, *, budget: int, start_event: str = "start") -> QuantumOutcome:
     outcome = QuantumOutcome(terminal="fail", trace=[])
     try:
@@ -190,7 +202,9 @@ def run_quantum(ctx: Context, *, budget: int, start_event: str = "start") -> Qua
             state = "fail"
             outcome.trace.append(state)
             break
+        started = time.monotonic()
         event = _execute(kind, spec, ctx, outcome, budget=budget)
+        outcome.phase_ms.append((kind, int((time.monotonic() - started) * 1000)))
 
     outcome.terminal = state if state in machine.terminal else "fail"
     outcome.high += sum(r.high_count for r in outcome.results)
@@ -246,6 +260,8 @@ def _execute(
             )
         return "done"
     if kind == "observe_cargo":
+        if _skip_heavy_observe(ctx, outcome):
+            return "done"
         from kutha_gov.observe import run_cargo_observation
 
         code, seen_ok, findings = run_cargo_observation(ctx.root, spec)
@@ -290,6 +306,8 @@ def _execute(
             )
         return "ok"
     if kind == "emit_tenant":
+        if _skip_heavy_observe(ctx, outcome):
+            return "done"
         from kutha_gov.tenant import run_tenant_observation
 
         code, findings, _text = run_tenant_observation(ctx.root, spec)

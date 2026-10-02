@@ -39,7 +39,7 @@ class FsmTests(unittest.TestCase):
         )
 
     def test_ci_quantum_reaches_ok_on_this_tree(self) -> None:
-        ctx = Context(root=ROOT)
+        ctx = Context(root=ROOT, skip_cargo=True)
         machine = load_machine(ROOT)
         budget = machine.budget_default
         self.assertGreaterEqual(budget, 48)
@@ -67,15 +67,82 @@ class FsmTests(unittest.TestCase):
             outcome.trace,
         )
         self.assertEqual(0, outcome.high)
-        self.assertIn(("cargo", "ok"), outcome.observations)
-        self.assertIn(("tenant", "ok"), outcome.observations)
-        self.assertIn(("ff5_as_of_t1_differs_from_as_of_t2_on_statute_log", "ok"), outcome.evidence)
         self.assertTrue(
             any(rel == "h5_selftest" for rel, _obj in outcome.evidence),
             msg=outcome.evidence,
         )
         self.assertEqual(0, outcome.skipped)
         self.assertEqual(len(get_checks(ROOT)), len(outcome.results))
+
+    def test_skip_cargo_does_not_call_cargo_or_tenant(self) -> None:
+        from unittest.mock import patch
+
+        from kutha_gov.protocol import Check, CheckResult
+        from kutha_gov.selftest import OK, SelftestRow
+
+        class QuietCheck(Check):
+            name = "quiet"
+            description = "quiet"
+
+            def run(self, ctx: Context) -> CheckResult:
+                return CheckResult(check=self.name)
+
+        ctx = Context(root=ROOT, skip_cargo=True)
+        with (
+            patch("kutha_gov.observe.run_cargo_observation") as cargo,
+            patch("kutha_gov.tenant.run_tenant_observation") as tenant,
+            patch(
+                "kutha_gov.selftest.run_selftest",
+                return_value=([SelftestRow(OK, "probe", 1)], 0),
+            ) as selftest,
+            patch("kutha_gov.fsm.get_checks", return_value={"quiet": QuietCheck()}),
+        ):
+            outcome = run_quantum(ctx, budget=48, start_event="start")
+        cargo.assert_not_called()
+        tenant.assert_not_called()
+        selftest.assert_called()
+        self.assertEqual("ok", outcome.terminal)
+        self.assertEqual([], outcome.observations)
+        self.assertTrue(any(rel == "h5_selftest" for rel, _obj in outcome.evidence))
+        self.assertIn("observe_cargo", outcome.trace)
+        self.assertIn("emit_tenant", outcome.trace)
+        self.assertIn("run_selftest", outcome.trace)
+
+    def test_high_from_checks_skips_cargo_after_selftest(self) -> None:
+        from unittest.mock import patch
+
+        from kutha_gov.protocol import Check, CheckResult, Finding
+        from kutha_gov.selftest import OK, SelftestRow
+
+        class HighCheck(Check):
+            name = "forced-high"
+            description = "forced"
+
+            def run(self, ctx: Context) -> CheckResult:
+                result = CheckResult(check=self.name)
+                result.findings.append(Finding(self.name, Severity.HIGH, "forced", "forced HIGH"))
+                return result
+
+        ctx = Context(root=ROOT)
+        with (
+            patch("kutha_gov.observe.run_cargo_observation") as cargo,
+            patch("kutha_gov.tenant.run_tenant_observation") as tenant,
+            patch(
+                "kutha_gov.selftest.run_selftest",
+                return_value=([SelftestRow(OK, "probe", 1)], 0),
+            ) as selftest,
+            patch("kutha_gov.fsm.get_checks", return_value={"forced-high": HighCheck()}),
+        ):
+            outcome = run_quantum(ctx, budget=48, start_event="start")
+        cargo.assert_not_called()
+        tenant.assert_not_called()
+        selftest.assert_called()
+        self.assertEqual("fail", outcome.terminal)
+        self.assertGreater(outcome.high, 0)
+        self.assertEqual([], outcome.observations)
+        self.assertTrue(any(rel == "h5_selftest" for rel, _obj in outcome.evidence))
+        self.assertIn("run_selftest", outcome.trace)
+        self.assertIn("observe_cargo", outcome.trace)
 
     def test_cui_budget_truncates_tail_checks_when_v_is_short(self) -> None:
         checks = get_checks(ROOT)

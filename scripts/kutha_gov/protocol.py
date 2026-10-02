@@ -57,6 +57,7 @@ class Context:
     fail_on_warn: bool = False
     git_against: str = "auto"
     changed_paths: frozenset[str] | None = None
+    skip_cargo: bool = False
 
     def read(self, rel_path: str) -> str | None:
         path = self.root / rel_path

@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Process: ci --skip-cargo and phase timings
+
+### Process
+
+### Added
+
+- `uv run kutha-gov ci --skip-cargo` skips `observe_cargo` and `emit_tenant` (selftest still runs); a HIGH from checks also skips cargo and tenant after selftest. The ci report prints `observe: cargo skipped (not evidence)` and per-phase `phase_ms`. `--skip-cargo` is rejected for commands other than `ci`. Not closeout evidence; one full `ci` at close (`docs/process/kutha-harness.md`).
+- `AGENTS.md`: one short `rg` vs `ast-grep` note (text/regex arbiter vs AST). Still under the `agents-lean` line budget.
+
+### Trajectory
+
+- No lease change. Active Slice **None**. Cells remain **Proposed**.
+
 ## 2026-10-02 — Process: FSM check budget above the check count
 
 ### Process

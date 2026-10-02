@@ -157,9 +157,14 @@ def cmd_ci(ctx: Context, *, budget: int) -> int:
     if outcome.evidence:
         joined = ", ".join(f"{rel}={obj}" for rel, obj in outcome.evidence)
         print(f"evidence: {joined}  (named tests, not SoT)")
+    cargo_observed = any(rel == "cargo" for rel, _obj in outcome.observations)
+    if ctx.skip_cargo or (outcome.high and not cargo_observed):
+        print("observe: cargo skipped (not evidence)")
     if outcome.observations:
         joined = ", ".join(f"{rel}={obj}" for rel, obj in outcome.observations)
         print(f"observe: {joined}  (evidence, not SoT)")
+    if outcome.phase_ms:
+        print("phase_ms: " + " ".join(f"{kind}={ms}" for kind, ms in outcome.phase_ms))
     for finding in outcome.findings:
         if finding.severity is Severity.HIGH or ctx.fail_on_warn:
             print(f"     {finding.format()}")
@@ -323,6 +328,11 @@ def main(argv: list[str] | None = None) -> int:
         help="Run one check id (json/precommit/selftest; law-nexus --check)",
     )
     parser.add_argument(
+        "--skip-cargo",
+        action="store_true",
+        help="Skip cargo and tenant observation (ci only; not closeout evidence)",
+    )
+    parser.add_argument(
         "--format",
         choices=("text", "json"),
         default="text",
@@ -350,7 +360,10 @@ def main(argv: list[str] | None = None) -> int:
     root = _detect_root(args.root or Path.cwd())
     load_dotenv(root)
     fail_on_warn = args.fail_on_warn or env_flag(ENV_FAIL_ON_WARN)
-    ctx = Context(root=root, fail_on_warn=fail_on_warn)
+    if args.skip_cargo and args.command != "ci":
+        print("--skip-cargo is only valid with ci", file=sys.stderr)
+        return 2
+    ctx = Context(root=root, fail_on_warn=fail_on_warn, skip_cargo=args.skip_cargo)
     if args.check and args.command not in {"json", "precommit", "selftest"}:
         print("--check is only valid with json, precommit, or selftest", file=sys.stderr)
         return 2
