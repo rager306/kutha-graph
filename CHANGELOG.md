@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: policy body eval and Horn execution replay (Phase 39)
+
+### Product
+
+### Added
+
+- Live policy blob `deny` fails `check_admission` (`reason: policy`); other live bodies including `leased-policy` still admit. Prior admission remains queryable AS OF after a later pin.
+- `replay_check` re-derives Horn-pinned Behaviors at `ingested_at`; empty-pin inverse fails closed without changing the facts-only fingerprint.
+
+### Trajectory
+
+- Cells remain **Proposed**. M016 S04 lease unchanged; no SemVer tag.
+
 ## 2026-10-02 — Trajectory: M016 S04 leased
 
 ### Trajectory

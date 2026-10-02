@@ -98,6 +98,10 @@ pub enum RuntimeError {
         wall: u64,
         max_wall: Option<u64>,
     },
+    /// Horn-pinned Behavior cannot be re-derived at its ingested_at (RULE-04).
+    ExecutionReplayFailed {
+        event_id: EventId,
+    },
 }
 
 impl fmt::Display for RuntimeError {
@@ -138,6 +142,9 @@ impl fmt::Display for RuntimeError {
                 Some(max) => write!(f, "tt_anchor rejected wall {wall} max {max}"),
                 None => write!(f, "tt_anchor rejected wall {wall}"),
             },
+            RuntimeError::ExecutionReplayFailed { event_id } => {
+                write!(f, "execution replay failed for {event_id}")
+            }
         }
     }
 }

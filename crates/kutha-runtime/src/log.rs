@@ -36,4 +36,19 @@ impl EventLog {
     pub fn from_events(events: Vec<Event>) -> Self {
         Self { events }
     }
+
+    #[cfg(test)]
+    pub(crate) fn tamper_inverse_pin(&mut self, pin: String) {
+        for e in &mut self.events {
+            if let kutha_common::Op::Behavior {
+                name, rule_version, ..
+            } = &mut e.op
+            {
+                if name == "inverse_knows" {
+                    *rule_version = pin;
+                    return;
+                }
+            }
+        }
+    }
 }

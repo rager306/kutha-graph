@@ -336,3 +336,36 @@ fn uuid_like() -> u64 {
         .unwrap()
         .as_nanos() as u64
 }
+
+#[test]
+fn replay_empty_inverse_pin_fails_execution_replay() {
+    let mut rt = Runtime::default();
+    let a = rt.intern("A");
+    let b = rt.intern("B");
+    let r = rt.intern("knows");
+    rt.emit(Op::Assert {
+        subject: a,
+        relation: r,
+        object: b,
+        valid_from: 0,
+        valid_to: None,
+        claim: None,
+        delivery_key: None,
+        polarity: None,
+    })
+    .unwrap();
+    rt.replay_check().unwrap();
+    let expected = rt.fold().fingerprint();
+    rt.tamper_inverse_pin("");
+    let rebuilt = GraphFold::replay(rt.log().as_slice());
+    assert_eq!(
+        expected,
+        rebuilt.fingerprint(),
+        "facts-only fingerprint must ignore empty pin"
+    );
+    let err = rt.replay_check().unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::ExecutionReplayFailed { .. }),
+        "{err:?}"
+    );
+}

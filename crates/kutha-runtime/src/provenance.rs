@@ -21,6 +21,9 @@ impl Runtime {
                         caused_by: *caused_by,
                     });
                 }
+                if !self.horn_behavior_reproducible(e) {
+                    return Err(RuntimeError::ExecutionReplayFailed { event_id: e.id });
+                }
             }
             seen.insert(e.id);
         }
@@ -141,5 +144,10 @@ impl Runtime {
     #[cfg(test)]
     pub(crate) fn tamper_fold(&mut self) {
         self.fold.tamper_invalidate_first();
+    }
+
+    #[cfg(test)]
+    pub(crate) fn tamper_inverse_pin(&mut self, pin: &str) {
+        self.log.tamper_inverse_pin(pin.to_string());
     }
 }

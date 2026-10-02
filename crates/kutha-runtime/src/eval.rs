@@ -120,7 +120,7 @@ impl Runtime {
                 if !unify_term(&prem.object, object, &self.dict, &mut bind) {
                     continue;
                 }
-                if let Some(bind) = search_prems(self, &premises, i, bind, valid_from) {
+                if let Some(bind) = search_prems(self, &premises, i, bind, valid_from, u64::MAX) {
                     if let Some(ev) = self.head_event(
                         &head,
                         &pin,
@@ -198,6 +198,53 @@ impl Runtime {
             ingested_at,
         ))
     }
+
+    /// Horn-pinned Behavior is reproducible from premises live at `ingested_at`.
+    /// Named bodies skip. Missing blob or unmatched Horn fails closed (RULE-04).
+    pub(crate) fn horn_behavior_reproducible(&self, e: &Event) -> bool {
+        let Op::Behavior {
+            rule_version,
+            subject,
+            relation,
+            object,
+            valid_from,
+            ..
+        } = &e.op
+        else {
+            return true;
+        };
+        let Some(bytes) = self.fold.blobs.get(rule_version) else {
+            return false;
+        };
+        let Some(ast) = RuleAst::from_canonical(bytes) else {
+            return false;
+        };
+        let RuleAst::Horn { head, premises } = ast else {
+            return true;
+        };
+        let Some(head_rel) = self.dict.id(&head.relation) else {
+            return false;
+        };
+        if head_rel != *relation {
+            return false;
+        }
+        let mut bind = [None; MAX_VAR];
+        if !unify_term(&head.subject, *subject, &self.dict, &mut bind) {
+            return false;
+        }
+        if !unify_term(&head.object, *object, &self.dict, &mut bind) {
+            return false;
+        }
+        search_prems(
+            self,
+            &premises,
+            premises.len(),
+            bind,
+            *valid_from,
+            e.ingested_at,
+        )
+        .is_some()
+    }
 }
 
 fn unify_term(term: &RuleTerm, id: TermId, dict: &TermDictionary, bind: &mut Bind) -> bool {
@@ -232,8 +279,9 @@ fn search_prems(
     skip: usize,
     bind: Bind,
     vt: u64,
+    tt: u64,
 ) -> Option<Bind> {
-    search_at(rt, premises, 0, skip, bind, vt)
+    search_at(rt, premises, 0, skip, bind, vt, tt)
 }
 
 fn search_at(
@@ -243,16 +291,17 @@ fn search_at(
     skip: usize,
     bind: Bind,
     vt: u64,
+    tt: u64,
 ) -> Option<Bind> {
     if idx >= premises.len() {
         return Some(bind);
     }
     if idx == skip {
-        return search_at(rt, premises, idx + 1, skip, bind, vt);
+        return search_at(rt, premises, idx + 1, skip, bind, vt, tt);
     }
     let prem = &premises[idx];
     let rel = rt.dict.id(&prem.relation)?;
-    for f in rt.fold.live_facts_at(u64::MAX, vt) {
+    for f in rt.fold.live_facts_at(tt, vt) {
         if f.relation != rel {
             continue;
         }
@@ -263,7 +312,7 @@ fn search_at(
         if !unify_term(&prem.object, f.object(), &rt.dict, &mut next) {
             continue;
         }
-        if let Some(ok) = search_at(rt, premises, idx + 1, skip, next, vt) {
+        if let Some(ok) = search_at(rt, premises, idx + 1, skip, next, vt, tt) {
             return Some(ok);
         }
     }

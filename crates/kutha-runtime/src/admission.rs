@@ -53,6 +53,24 @@ impl Runtime {
                 reason: "rule_version",
             });
         }
+        let Some(policy_pin) = self.fold.live_policy_pin_at(row.tt, row.vt) else {
+            return Err(RuntimeError::AdmissionDenied {
+                justification_id: row.justification_id.clone(),
+                reason: "policy",
+            });
+        };
+        let Some(bytes) = self.fold.blobs.get(&policy_pin) else {
+            return Err(RuntimeError::AdmissionDenied {
+                justification_id: row.justification_id.clone(),
+                reason: "policy",
+            });
+        };
+        if std::str::from_utf8(bytes).is_ok_and(|s| s.trim() == "deny") {
+            return Err(RuntimeError::AdmissionDenied {
+                justification_id: row.justification_id.clone(),
+                reason: "policy",
+            });
+        }
         Ok(())
     }
 
