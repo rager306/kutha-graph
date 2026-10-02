@@ -104,6 +104,17 @@ impl Runtime {
                 }
             }
         }
+        if let Op::TtAnchor { wall } = op {
+            if let Some((&max_wall, _)) = self.fold.tt_anchors.last_key_value() {
+                if *wall <= max_wall {
+                    return Err(RuntimeError::TtAnchorRejected {
+                        wall: *wall,
+                        max_wall: Some(max_wall),
+                    });
+                }
+            }
+            return Ok(());
+        }
         let Some(rel) = op_relation(op) else {
             return Ok(());
         };

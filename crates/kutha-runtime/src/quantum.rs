@@ -93,6 +93,11 @@ pub enum RuntimeError {
     StoreIo {
         message: String,
     },
+    /// Duplicate or backwards `TtAnchor` wall (ANK-ADM-01).
+    TtAnchorRejected {
+        wall: u64,
+        max_wall: Option<u64>,
+    },
 }
 
 impl fmt::Display for RuntimeError {
@@ -129,6 +134,10 @@ impl fmt::Display for RuntimeError {
                 write!(f, "unknown admission {justification_id}")
             }
             RuntimeError::StoreIo { message } => write!(f, "store io {message}"),
+            RuntimeError::TtAnchorRejected { wall, max_wall } => match max_wall {
+                Some(max) => write!(f, "tt_anchor rejected wall {wall} max {max}"),
+                None => write!(f, "tt_anchor rejected wall {wall}"),
+            },
         }
     }
 }
