@@ -3,18 +3,18 @@ gsd_state_version: "1.0"
 milestone: v0.08
 milestone_name: Known-on honesty and M014 residuals
 current_phase: 34
-current_phase_name: Known-on cut and anchor admission
+current_phase_name: Living docs and governor honesty
 current_plan: 2
 status: ready_for_verification
 stopped_at: Completed 34-02-PLAN.md
-last_updated: "2026-10-02T09:38:00Z"
+last_updated: "2026-10-02T09:53:50.753Z"
 last_activity: 2026-10-02
 last_activity_desc: Phase 34 executor complete; awaiting independent 34-VERIFICATION
-state_head: f829f4b5c8605c19e122d4a77b44bf31e8919493
+state_head: aa0291075d6cda81438d116e48d427e848811d85
 progress:
   total_phases: 2
   completed_phases: 0
-  total_plans: 2
+  total_plans: 3
   completed_plans: 2
 ---
 
@@ -27,7 +27,7 @@ progress:
 **Last activity:** 2026-10-02 — 34-01 TT-only known-on + 34-02 fail-closed TtAnchor
 
 Current Plan: 2
-Total Plans in Phase: 2
+Total Plans in Phase: 1
 
 ## Active work
 
