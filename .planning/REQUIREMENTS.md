@@ -15,8 +15,8 @@ Audit follow-up after M014 close. Cells stay Proposed. Not F9/F16 rules (M016). 
 
 ### Anchor admission (H2)
 
-- [ ] **ANK-ADM-01**: Emitting a `TtAnchor` with a wall earlier than a prior anchor, or a duplicate wall, fails closed at admit (or documented fail-closed policy with a named test)
-- [ ] **ANK-ADM-02**: Greatest-anchor-≤D still holds for monotone unique walls; persist/open rebuild agrees
+- [x] **ANK-ADM-01**: Emitting a `TtAnchor` with a wall earlier than a prior anchor, or a duplicate wall, fails closed at admit (or documented fail-closed policy with a named test)
+- [x] **ANK-ADM-02**: Greatest-anchor-≤D still holds for monotone unique walls; persist/open rebuild agrees
 
 ### Living docs and governor (DOC / GOV)
 
@@ -53,7 +53,7 @@ Audit follow-up after M014 close. Cells stay Proposed. Not F9/F16 rules (M016). 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | KNOWN-01, KNOWN-02 | Phase 34 | Complete (34-01) |
-| ANK-ADM-01, ANK-ADM-02 | Phase 34 | Pending |
+| ANK-ADM-01, ANK-ADM-02 | Phase 34 | Complete (34-02) |
 | DOC-01, GOV-01 | Phase 35 | Pending |
 
 **Coverage:** v0.08 requirements: 6 total; mapped: 6; unmapped: 0.

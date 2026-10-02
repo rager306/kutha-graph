@@ -41,14 +41,14 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
   3. Duplicate or backwards `TtAnchor` walls are rejected at admit with a named test.
   4. Persist/open rebuild agrees on anchors and known-on.
 
-**Plans**: 1/2 plans executed max
+**Plans**: 2/2 plans executed max
 
 Plans:
 **Wave 1**
 - [x] 34-01-PLAN.md — TT-only as_known_on (KNOWN-01/02); RED closed-VT oracle first
 
 **Wave 2**
-- [ ] 34-02-PLAN.md — fail-closed TtAnchor admit (ANK-ADM-01/02)
+- [x] 34-02-PLAN.md — fail-closed TtAnchor admit (ANK-ADM-01/02)
 
 ### Phase 35: Living docs and governor honesty
 
@@ -73,4 +73,4 @@ Plans:
 | v0.01–v0.07 | 1–33 | shipped |
 | v0.08 | 34–35 | active (M015) |
 
-**Next:** Execute Phase 34 (34-01 then 34-02). Independent verifier writes `34-VERIFICATION.md` (D-05). Do not start Phase 35.
+**Next:** Phase 34 executor complete. Independent verifier writes `34-VERIFICATION.md` (D-05). Do not start Phase 35.
