@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Process: FSM check budget above the check count
+
+### Process
+
+### Fixed
+
+- `defaults.budget` and `KUTHA_GOV_BUDGET` were 48 while the governor had 49 checks after Phase 28, so the default `ci` quantum silently truncated the tail check (`version-freeze`) and `test_ci_quantum_reaches_ok_on_this_tree` / `test_cui_budget_truncates_tail_checks_when_v_is_short` failed. Budget is now 64 (headroom). Fail-closed on any truncation is planned in Phase 29.
+
+### Trajectory
+
+- No lease change. Active Slice **None**. Cells remain **Proposed**.
+
 ## 2026-10-02 — Process: close M013 S07 after independent verification
 
 ### Process
