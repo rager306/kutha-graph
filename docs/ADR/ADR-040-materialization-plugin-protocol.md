@@ -4,6 +4,10 @@
 
 **Proposed** (Data-band protocol — reversible views/leases; CSR/HNSW are instances, not this cell’s kernels)
 
+### Evidence (2026-10-02; Proposed)
+
+Fold-internal ingest leases include `allows_by_name`, delivery-key, and EventId maps (`fold.rs`). Oracles: `green_ingest_visits_constant_in_n`, `lazy_as_of_matches_eager_after_same_ingest` (`m013_fold_indexes.rs`, `m013_fold_index_mode.rs`).
+
 ## Date
 
 2026-08-18

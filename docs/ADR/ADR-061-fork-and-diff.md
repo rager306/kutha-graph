@@ -4,6 +4,10 @@
 
 **Proposed** (Verify — named refs on the log; counterfactuals without CRDT merge)
 
+### Evidence (2026-10-02; Proposed)
+
+`Runtime::fork_at` isolates a log prefix (`hydrate.rs`; `fork_at_parent_indexes_untouched`). GED-style `diff` is still absent from the public API (F8 remainder).
+
 ## Date
 
 2026-08-18

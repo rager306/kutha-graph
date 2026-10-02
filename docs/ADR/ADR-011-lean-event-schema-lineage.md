@@ -4,6 +4,10 @@
 
 **Proposed** (Time/Data encoding cell — Kutha record shape, intern map, how-provenance; not a new literature noun)
 
+### Evidence (2026-10-02; Proposed)
+
+Product writes use live `Op` variants; Retract/Correct/justification cite `EventId` (`m012a_stable_refs.rs`, `m013_write_path.rs`). Public consumer oracle: `statute_as_of_via_facade` (`facade_statute.rs`).
+
 ## Date
 
 2026-08-18

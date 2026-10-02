@@ -4,6 +4,10 @@
 
 **Proposed** (Time-band physics — log as SoT and one emit→idle quantum; not product runtime)
 
+### Evidence (2026-10-02; Proposed)
+
+M013 routes Assert/Retract/Correct/Behavior and dictionary constructors through `pipeline` (`pipeline.rs`). `rg append_meta crates/` is empty. Oracle: `unknown_relation_rejected_for_assert_justification_and_action` (`m013_write_path.rs`).
+
 ## Date
 
 2026-08-18

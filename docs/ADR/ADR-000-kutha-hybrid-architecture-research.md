@@ -4,6 +4,10 @@
 
 **Proposed** (foundation ADR — D1–D10 locked; honeycomb Proposed; P0 heartbeat+snapshot spike exists; not Accepted product runtime)
 
+### Clarification (2026-10-02; Proposed)
+
+`ValidTime` and `TransactionTime` are still `u64` type aliases in product code (`event.rs`; F7/F13). Typed clocks are M014 scope — this pointer does not rewrite the lock bodies above.
+
 ## Date
 
 2026-08-15

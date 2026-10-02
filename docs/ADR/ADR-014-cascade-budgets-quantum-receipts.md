@@ -4,6 +4,10 @@
 
 **Proposed** (Time/Composition/Verify — bound the quantum; constant-size evidence per emit→idle)
 
+### Evidence (2026-10-02; Proposed)
+
+Same persist story as ADR-012: `events.jsonl` rename-atomic; `snapshot.json` truncating create; `OUTCOMES_REL` / `JUSTIFICATIONS_REL` sidecars still written on `persist` (`store.rs`). Receipt stays on the in-log quantum path via `pipeline`.
+
 ## Date
 
 2026-08-18

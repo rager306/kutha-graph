@@ -4,6 +4,10 @@
 
 **Proposed** (Verify — D9 test class; fold-from-log is the proof, not a debugger sidecar)
 
+### Evidence (2026-10-02; Proposed)
+
+Behavior lineage and provenance oracles remain (`replay_rejects_behavior_without_prior_cause`, provenance fingerprint tests). Full execution replay and log-native quantum outcomes are still partial (sidecars; F1/F9).
+
 ## Date
 
 2026-08-18

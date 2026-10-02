@@ -172,3 +172,32 @@ Each remedy is falsifiable by a named oracle in `.kutha/ROADMAP.md` M013–M015.
 5. **Indexes and one facade** (F12, F15): EventId→fact and delivery-key→event fold indexes; one public write path (propose, admit, commit, receipt) consumed by one example and one integration test.
 
 Sequencing and gates: `.kutha/ROADMAP.md` (M013 → M014 → M015 → M002) and `docs/process/gsd-auto-contract.md`.
+
+## Addendum 2026-10-02: post-M013 S01–S07 (honest close-out)
+
+**Proposed review, not an ADR.** After M013 refactor slices S03–S07 (Phases 24–27) and Phase 28 verification. Honeycomb stays **Proposed**. Evidence: named cargo tests (`rg 'fn <name>' crates/`) and source reads on 2026-10-02.
+
+### Closed (named oracles)
+
+| ID | Oracle / evidence |
+|----|-------------------|
+| F10 | `m013_genesis_log.rs` (`retract_seeded_related_to_fails_closed_after`, genesis persist/replay tests) |
+| F11 | Single `pipeline` path; `append_meta` absent from `crates/` |
+| F12 | `statute_as_of_via_facade` (`facade_statute.rs`; `examples/statute_as_of.rs`) |
+| F14 | Retract/Correct/justification use `EventId` (`m012a_stable_refs.rs`, `m013_write_path.rs`) |
+| F15 | `green_ingest_visits_constant_in_n` (`m013_fold_indexes.rs`); lazy/eager parity: `lazy_as_of_matches_eager_after_same_ingest` |
+
+### Still open
+
+| ID | Note |
+|----|------|
+| F1 | `events.jsonl` rename-atomic; `snapshot.json` truncating create and outcome/justification sidecars remain |
+| F7 | `ValidTime` / `TransactionTime` still `u64` aliases (M014) |
+| F8 remainder | Typed CSR via `from_fold`; no public fork `diff` API |
+| F9 | Policy/rule bodies not evaluated on admit (M015) |
+| F13 | No typed clocks or `as_known_on` anchor (M014) |
+| F16 | Caller-emitted `Behavior`; no execution replay re-derive (M015) |
+
+### FF5 scope (not “as known on D”)
+
+FF5 compares **two valid-time windows** on the same log using the fold at **transaction-time max** (`as_of(vt)` → `live_at(u64::MAX, vt)` in `fold_query.rs`). It does **not** implement “as known on calendar date D” (that needs `tt_anchor` / M014).

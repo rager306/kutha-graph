@@ -4,6 +4,10 @@
 
 **Proposed** (Time/Query fact semantics — Graphiti *semantics* native, without Graphiti runtime)
 
+### Evidence (2026-10-02; Proposed)
+
+FF5 (`ff5_as_of_t1_differs_from_as_of_t2_on_statute_log`) compares two valid-time windows on the fold at transaction-time max (`GraphFold::as_of` → `live_at(u64::MAX, vt)`), not an “as known on D” anchor (F13 stays open for M014).
+
 ## Date
 
 2026-08-18

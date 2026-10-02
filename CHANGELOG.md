@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Trajectory: post-M013 addendum and ADR evidence notes
+
+### Trajectory
+
+### Changed
+
+- Dated Evidence/Clarification blocks on ADR-000, 010–014, 040–041, 050, 060–061 (Status stays **Proposed**; lock bodies unchanged).
+- `semantic-gap-review.md` post-M013 addendum: F10–F12, F14–F15 closed with named oracles; F1/F7–F9/F13/F16 open; FF5 scope at TT max.
+- `honeycomb.yaml` M013 test names restaged (`statute_as_of_via_facade`, genesis, ingest/fold oracles).
+
+### Process
+
+- `docs/ADR/README.md` status vocabulary note (map/delivery/capability vs Accepted).
+
 ## 2026-10-02 — Process: align v0.06 bookkeeping with 28-VERIFICATION
 
 ### Process

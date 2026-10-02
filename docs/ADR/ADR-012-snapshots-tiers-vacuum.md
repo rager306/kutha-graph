@@ -4,6 +4,10 @@
 
 **Proposed** (Time/Data placement vs policy GC of the log; not product storage runtime)
 
+### Evidence (2026-10-02; Proposed)
+
+`events.jsonl` persist replaces via same-directory temp file + `rename` (`store.rs`). `snapshot.json` still uses truncating `File::create`; quantum outcome and justification sidecars remain separate files (F1 encoding: log atomic, snapshot/sidecars not).
+
 ## Date
 
 2026-08-18

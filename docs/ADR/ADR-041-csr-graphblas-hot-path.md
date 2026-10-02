@@ -4,6 +4,10 @@
 
 **Proposed** (Data/Query kernel — Kutha-owned frozen adjacency + WCOJ; vendor trees are evidence, not SoT)
 
+### Evidence (2026-10-02; Proposed)
+
+`leapfrog_intersect` is the sorted-key multiway intersect helper (`leapfrog.rs` unit tests). Hot CSR cut still builds via `CsrLease::from_fold` beside the `Materializer` trait (F8 remainder).
+
 ## Date
 
 2026-08-18

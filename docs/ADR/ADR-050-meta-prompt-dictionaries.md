@@ -4,6 +4,10 @@
 
 **Proposed** (Agent control plane — design graduation of ADR-000 D3; not a dedicated literature noun; not runtime)
 
+### Evidence (2026-10-02; Proposed)
+
+`relations.yaml` is read only when bootstrapping a new log; `admit` consults `fold.relation_allowed_at` for product names (`admission.rs`, `m013_genesis_log.rs`). Five reserved `kutha:` dictionary relations in the spike — not the frozen six-dictionary product model.
+
 ## Date
 
 2026-08-18

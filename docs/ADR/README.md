@@ -23,6 +23,10 @@ Architecture decisions for **Kutha** (`kutha-graph`): self-contained Rust tempor
             Data / Agent / Verify / Query / Security / Vertical
 ```
 
+## Status vocabulary (harness vs product)
+
+ADR files keep **`## Status: Proposed`** until the cell is implemented in the running engine (**Accepted**). The compact L_map index (`.kutha/dictionaries/honeycomb.yaml`) adds orthogonal **`map`** (document status), **`delivery`** (`map-only` / `frozen` / `spike`), and **`capability`** (`none` / `named` test evidence). Governor green and honeycomb **Proposed** do not promote a cell to Accepted.
+
 ## Template
 
 ```markdown
