@@ -1,23 +1,38 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v0.08 — Known-on honesty and M014 residuals",
+  "milestone": "v0.09 — Test hardening + executable rules",
   "phases": [
     {
-      "number": "34",
-      "name": "Known-on cut and anchor admission",
-      "status": "complete"
+      "number": "36",
+      "name": "Test hardening T2–T6",
+      "status": "in_progress"
     },
     {
-      "number": "35",
-      "name": "Living docs and governor honesty",
-      "status": "in_progress"
+      "number": "37",
+      "name": "Rule AST and hash",
+      "status": "pending"
+    },
+    {
+      "number": "38",
+      "name": "Rule evaluator and support counting",
+      "status": "pending"
+    },
+    {
+      "number": "39",
+      "name": "Policy evaluation and execution replay",
+      "status": "pending"
+    },
+    {
+      "number": "40",
+      "name": "Legal golden fixture and verdict",
+      "status": "pending"
     }
   ],
   "next": {
-    "command": "/gsd-verify-work 35",
-    "label": "Independent 35-VERIFICATION",
-    "reason": "Phase 35 executor complete; D-05 verifier writes 35-VERIFICATION.md"
+    "command": "/gsd-progress --next",
+    "label": "Advance to the next step (plan phase 36)",
+    "reason": "Phase 36 of 5 — needs a plan"
   },
-  "updated_at": "2026-10-02T09:59:30Z"
+  "updated_at": "2026-10-02T10:57:45.708Z"
 }

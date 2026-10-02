@@ -17,7 +17,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 ## Phases
 
-- [ ] **Phase 36: Test hardening T2–T6** — trybuild mix, cite tt/vt, known-on Eager/Lazy/fork, snapshot+tail anchors, replay applies TtAnchor
+- [x] **Phase 36: Test hardening T2–T6** — trybuild mix, cite tt/vt, known-on Eager/Lazy/fork, snapshot+tail anchors, replay applies TtAnchor
 - [ ] **Phase 37: Rule AST and hash** — canonical encoding; `rule_version` hash; fail-closed unknown bodies
 - [ ] **Phase 38: Rule evaluator and support counting** — cascade → rules; retract maintains supports
 - [ ] **Phase 39: Policy evaluation and execution replay** — pinned policy; replay re-derives

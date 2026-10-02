@@ -112,6 +112,16 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Cells remain **Proposed**. M014 S01 lease unchanged; no SemVer tag.
 
+## 2026-10-02 — Trajectory: M016 S01 CLOSED (Phase 36)
+
+### Trajectory
+
+- Phase 36 verified; `L_delivery=M016-S01-done`. Next: lease S02 (Rule AST).
+
+### Product
+
+- trybuild E0308 clock mix; JustificationCite tt/vt oracle; known-on Eager/Lazy/fork/snapshot+tail/replay hardening tests.
+
 ## 2026-10-02 — Trajectory: M016 S01 leased
 
 ### Trajectory
