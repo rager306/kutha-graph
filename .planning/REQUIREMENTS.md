@@ -55,7 +55,7 @@ Closes F13 from `docs/architecture/semantic-gap-review.md`. Cells stay Proposed.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | CLK-01, CLK-02, CLK-03 | Phase 31 | Complete |
-| ANK-01, ANK-02, ANK-03 | Phase 32 | Pending |
+| ANK-01, ANK-02, ANK-03 | Phase 32 | Complete |
 | FIX-01, FIX-02 | Phase 33 | Pending |
 
 **Coverage:** v0.07 requirements: 8 total; mapped to phases: 8; unmapped: 0.

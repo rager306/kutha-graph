@@ -38,6 +38,16 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Cells remain **Proposed**. M014 S01 lease unchanged; no SemVer tag.
 
+## 2026-10-02 — Trajectory: M014 S02 CLOSED (Phase 32)
+
+### Trajectory
+
+- Phase 32 verified; Active Slice cleared. `L_delivery=M014-S02-done`. Next: lease S03 alone.
+
+### Product
+
+- `Op::TtAnchor` + `as_known_on(WallTime)`; named true-on-D vs known-on-D; FF5 unchanged and green.
+
 ## 2026-10-02 — Trajectory: M014 S02 leased
 
 ### Trajectory

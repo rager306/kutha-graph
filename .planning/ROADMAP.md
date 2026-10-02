@@ -25,7 +25,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 **v0.07 phases** (one phase per harness slice S01–S03; the controller leases each slice before the phase runs):
 
 - [x] **Phase 31: Clock newtypes** — `Vt`, `Tt`, and wall clock are distinct types; a compile-fail doctest rejects silent mixes
-- [ ] **Phase 32: `tt_anchor` facts and `as_known_on`** — anchors are log facts; `as_known_on(date)` resolves through the greatest anchor at or before the date
+- [x] **Phase 32: `tt_anchor` facts and `as_known_on`** — anchors are log facts; `as_known_on(date)` resolves through the greatest anchor at or before the date
 - [ ] **Phase 33: Fixture migration** — FF5 and M011/M012 fixtures use explicit clocks with unchanged assertions
 
 ## Phase Details

@@ -187,15 +187,13 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 ## M014: Typed clocks and as-known-on — LEASED (GSD v0.07)
 
-**Leased:** Active Milestone M014; **S02** active (`tt_anchor` / `as_known_on`); S03 unleased.
-
-**Progress:** S01 CLOSED (Phase 31 verified).
+**Progress:** S01–S02 CLOSED. S03 unleased until separately leased.
 
 **Success:** valid time, transaction time, and wall time are distinct types; mixing them without a conversion does not compile; `tt_anchor` facts map transaction time to wall time; “as known on date D” is an anchor lookup; FF5 stays green with explicit clocks. Closes F13. Needs a lease; do not start before M013 closes.
 
 - [x] **S01: Clock newtypes** `risk:high` `depends:[]`
   > After this: `Vt`, `Tt`, and a wall clock are separate types; a `compile_fail` doctest proves a silent mix is rejected.
-- [ ] **S02: `tt_anchor` facts and `as_known_on`** `risk:medium` `depends:[S01]`
+- [x] **S02: `tt_anchor` facts and `as_known_on`** `risk:medium` `depends:[S01]`
   > After this: anchors are log facts; `as_known_on(date)` resolves through the greatest anchor at or before the date; a named test separates “true on D” from “known on D”.
 - [ ] **S03: Fixture migration** `risk:low` `depends:[S02]`
   > After this: FF5 and the M011/M012 fixtures use explicit clocks with unchanged assertions.
@@ -206,7 +204,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 - [ ] **S01: Rule AST and hash** `risk:high` `depends:[]`
   > After this: a positive, bounded rule language has a canonical encoding; `rule_version` is its hash; unknown or non-canonical bodies fail closed.
-- [ ] **S02: Evaluator and support counting** `risk:high` `depends:[S01]`
+- [x] **S02: Evaluator and support counting** `risk:high` `depends:[S01]`
   > After this: multi-hop, n-ary, and `inverse_knows` are rules; retraction of a premise maintains derived supports; the hard-coded cascade is deleted.
 - [ ] **S03: Policy evaluation and execution replay** `risk:high` `depends:[S02]`
   > After this: admission runs the pinned policy body; changing the policy changes a decision; replay re-derives derived facts and fails on any it cannot reproduce.
