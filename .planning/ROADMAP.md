@@ -38,7 +38,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 **Plans**: 2 max
 - [x] 36-01-PLAN.md
-- [ ] 36-02-PLAN.md
+- [x] 36-02-PLAN.md
 
 ### Phase 37: Rule AST and hash
 

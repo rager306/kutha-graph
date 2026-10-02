@@ -12,9 +12,9 @@ Closes test-audit T2–T6 and F9/F16. Cells stay Proposed. Not M002. Run: `docs/
 
 - [x] **TH-01**: trybuild (or equivalent) proves `TransactionTime`/`WallTime`→`ValidTime` mix is E0308 — not a syntax-error `compile_fail`
 - [x] **TH-02**: Named test that swapping `tt`/`vt` on `JustificationCite` (or Op cite path) fails an oracle; fields stay distinguishable at the public cut
-- [ ] **TH-03**: `as_known_on` agrees across Eager vs Lazy and survives `fork_at` + persist/open
-- [ ] **TH-04**: Mid-cut snapshot + non-empty tail (Assert + TtAnchor) recovers `as_known_on` equal to full replay; fingerprint or replay includes anchors
-- [ ] **TH-05**: `GraphFold::replay` applies `TtAnchor` so `replayed.as_known_on ==` live fold
+- [x] **TH-03**: `as_known_on` agrees across Eager vs Lazy and survives `fork_at` + persist/open
+- [x] **TH-04**: Mid-cut snapshot + non-empty tail (Assert + TtAnchor) recovers `as_known_on` equal to full replay; fingerprint or replay includes anchors
+- [x] **TH-05**: `GraphFold::replay` applies `TtAnchor` so `replayed.as_known_on ==` live fold
 
 ### Rule AST and hash (F9)
 
@@ -51,7 +51,7 @@ Closes test-audit T2–T6 and F9/F16. Cells stay Proposed. Not M002. Run: `docs/
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TH-01..TH-05 | Phase 36 | Pending |
+| TH-01..TH-05 | Phase 36 | Complete (executor; verify D-05 open) |
 | RULE-01 | Phase 37 | Pending |
 | RULE-02 | Phase 38 | Pending |
 | RULE-03, RULE-04 | Phase 39 | Pending |
