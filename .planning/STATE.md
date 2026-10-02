@@ -5,15 +5,16 @@ milestone_name: Typed clocks and as-known-on
 current_phase: 31
 current_phase_name: Clock newtypes
 status: planning
-stopped_at: Phase 31 plans written; ready to execute
-last_updated: "2026-10-02T13:53:00.000Z"
+stopped_at: Completed 31-01-PLAN.md
+last_updated: "2026-10-02T07:17:54.206Z"
 last_activity: 2026-10-02
 last_activity_desc: Phase 31 PLAN.md Wave 1–2 written (CLK-01..03)
+state_head: 6898e6d28b9739396c8051db7771c1224441ec43
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 2
-  completed_plans: 0
+  completed_plans: 1
 ---
 
 # Project State
@@ -31,14 +32,21 @@ See: `.planning/PROJECT.md`
 
 ## Current Position
 
-Phase: 31 — Clock newtypes (plans written)
-Plan: 31-01 (Wave 1)
-Status: Ready to execute (S01 leased)
-Last activity: 2026-10-02 — Phase 31 31-01/31-02 PLAN.md written
+Phase: 31 — Clock newtypes
+Current Plan: 2
+Total Plans in Phase: 2
+Plan: 31-02 (Wave 2)
+Status: executing 31-02
+Last activity: 2026-10-02 — 31-01 complete (clock newtypes + as_of Into)
 
 ## Performance Metrics
 
 **By Phase:** v0.01–v0.06 shipped · v0.07 planned
+**Per-Plan Metrics:**
+
+| Plan | Duration | Tasks | Files |
+|------|----------|-------|-------|
+| Phase 31 P01 | 7 min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -46,6 +54,7 @@ Last activity: 2026-10-02 — Phase 31 31-01/31-02 PLAN.md written
 
 - [v0.06]: M013 S01–S09 delivered; archive+tag authorized 2026-10-02; residual audit debt acknowledged (SUMMARY frontmatter, bench overrides, Nyquist skip, CBM freshness)
 - [v0.07]: Closes F13 only; two axes + `tt_anchor`; five-legal-clocks sufficiency stays ADR-013 open question
+- [Phase 31]: Op/Event/Fact clocks stay u64 so FF5 literals compile; query API uses impl Into ValidTime/TransactionTime
 
 ### Blockers/Concerns
 
@@ -54,5 +63,8 @@ Last activity: 2026-10-02 — Phase 31 31-01/31-02 PLAN.md written
 
 ## Session Continuity
 
-Stopped at: Phase 31 plans written (31-01, 31-02)
+**Last session:** 2026-10-02T07:17:54.119Z
+**Resume file:** None
+
+Stopped at: Completed 31-01-PLAN.md
 Next: `/gsd-execute-phase 31` / `/gsd-autonomous --only 31`

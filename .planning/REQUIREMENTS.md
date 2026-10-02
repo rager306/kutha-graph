@@ -11,7 +11,7 @@ Closes F13 from `docs/architecture/semantic-gap-review.md`. Cells stay Proposed.
 ### Clock newtypes (F13)
 
 - [ ] **CLK-01**: Public temporal API uses distinct newtypes for valid time (`Vt`), transaction time (`Tt`), and wall time (not bare `u64` aliases that compile interchangeably)
-- [ ] **CLK-02**: A `compile_fail` doctest or trybuild proves a silent mix of those types is rejected
+- [x] **CLK-02**: A `compile_fail` doctest or trybuild proves a silent mix of those types is rejected
 - [ ] **CLK-03**: Named oracles (FF5, FF6, M010–M013) stay green; only mechanical renames, recorded in the phase SUMMARY
 
 ### Anchors and as-known-on (F13)
