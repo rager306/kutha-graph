@@ -1192,39 +1192,39 @@ checks:
 
   - id: artifact-budget
     description: >-
-      v0.06 planning artifacts from phase 22 onward stay within declared
-      line and per-directory file budgets (D-02, D-04).
+      Live-phase planning artifacts (v0.06 onward, including v0.07/v0.08)
+      stay within declared line and per-directory file budgets (D-02, D-04).
     selftest:
       skip: "derivable only when live .planning/phases artifacts exist"
     steps:
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-PLAN.md
         min_phase: 22
-        min_hits: 0
+        min_hits: 1
         max: 150
         max_files_per_dir: 2
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-SUMMARY.md
         min_phase: 22
-        min_hits: 0
+        min_hits: 1
         max: 60
         max_files_per_dir: 2
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-VERIFICATION.md
         min_phase: 22
-        min_hits: 0
+        min_hits: 1
         max: 60
         max_files_per_dir: 1
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-CONTEXT.md
         min_phase: 22
-        min_hits: 0
+        min_hits: 1
         max: 80
         max_files_per_dir: 1
 
   - id: verification-independent
     description: >-
-      v0.06 VERIFICATION files must not list plan or summary artifact paths
+      Live-phase VERIFICATION files must not list plan or summary artifact paths
       and must carry independence frontmatter (D-05).
     selftest:
       skip: "derivable only when live VERIFICATION files exist"
@@ -1254,7 +1254,7 @@ checks:
     steps:
       - kind: file_contains
         path: docs/process/gsd-auto-contract.md
-        needles: ["## Id map", "GSD version", "v0.06"]
+        needles: ["## Id map", "GSD version", "v0.06", "v0.07", "v0.08"]
         require: all
       - kind: file_contains
         path: .planning/ROADMAP.md

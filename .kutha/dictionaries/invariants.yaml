@@ -263,14 +263,14 @@ invariants:
     kind: run_checks
 
   - id: I-artifact-budget
-    claim: "v0.06 planning PLAN/SUMMARY/VERIFICATION/CONTEXT files stay within line and per-directory file budgets from phase 22 onward"
+    claim: "Live-phase PLAN/SUMMARY/VERIFICATION/CONTEXT files stay within line and per-directory file budgets from phase 22 onward (min_hits 1 when phases are live)"
     source: ".planning/phases/28-independent-verification-and-artifact-budget/28-CONTEXT.md"
     disposition: check
     check: artifact-budget
 
   - id: I-verification-independent
     claim: >-
-      v0.06 VERIFICATION files from phase 22 onward do not list plan or summary
+      Live-phase VERIFICATION files from phase 22 onward do not list plan or summary
       artifact paths, carry independent frontmatter, and list only existing
       read_only_inputs paths
     source: ".planning/phases/28-independent-verification-and-artifact-budget/28-CONTEXT.md"

@@ -20,7 +20,7 @@ pub enum TimeScale {
 pub const VALID_TIME_SCALE: TimeScale = TimeScale::YearCe;
 
 /// Transaction-time scale used by fixtures: log sequence, not wall-clock.
-/// TT-to-wall mapping is out of M012a S05.
+/// TT-to-wall mapping is a stream of `tt_anchor` facts (M014); known-on honesty is M015.
 pub const TRANSACTION_TIME_SCALE: TimeScale = TimeScale::LogSequence;
 
 macro_rules! define_clock {
@@ -106,7 +106,7 @@ define_clock! {
     ///
     /// Fixtures use [`TRANSACTION_TIME_SCALE`] (`TimeScale::LogSequence`): assigned
     /// at ingest (`Runtime` next_tt), not wall-clock. A TT-to-wall calendar map is
-    /// out of M012a S05.
+    /// `Op::TtAnchor` on the log (M014); closed-interval known-on is M015.
     pub struct TransactionTime;
 }
 

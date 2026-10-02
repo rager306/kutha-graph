@@ -10,6 +10,7 @@ process: docs/process/governor-intake.md
 # 2026-09-30 restage (10-02 open questions): ADR-010, ADR-011, ADR-013, ADR-040, ADR-041, ADR-050, ADR-051, ADR-061; map/delivery/capability unchanged.
 # 2026-10-01 restage (post-M012 review F9–F16): ADR-010, ADR-011, ADR-013, ADR-014, ADR-040, ADR-041, ADR-050, ADR-051, ADR-060, ADR-090; map/delivery/capability unchanged.
 # 2026-10-02 restage (M013 S03–S07 evidence): ADR-000, 010–014, 040–041, 050, 060–061; map/delivery/capability unchanged.
+# 2026-10-02 restage (M015 S02 ANK + known-on oracles): ADR-013 evidence; map/delivery/capability unchanged.
 
 locks:
   - id: D1
@@ -130,6 +131,9 @@ cells:
       - conflict_report_at_partitions_by_stored_polarity
       - fixture_years_map_to_year_ce_scale
       - transaction_time_is_log_sequence
+      - true_on_d_differs_from_known_on_d
+      - closed_vt_interval_survives_as_known_on
+      - duplicate_tt_anchor_wall_is_rejected
 
   - id: ADR-014
     axis: Time

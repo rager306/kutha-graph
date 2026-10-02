@@ -93,6 +93,8 @@ Artifact-budget glob with non-vacuous match (`artifact-budget` in `checks.yaml`)
   max_files_per_dir: 2
 ```
 
+`min_hits` is idle vs live: `0` (and `allow_empty` on glob `file_contains`) when `.planning/phases/` is empty after a milestone archive, so an empty glob is not a vacuous HIGH. When live phase files exist, set `min_hits: 1` so a missing PLAN/SUMMARY/VERIFICATION/CONTEXT glob is HIGH again. Keep `allow_empty` on `verification-independent` when the independent verifier has not yet written `NN-VERIFICATION.md`.
+
 Verification independence (`verification-independent` check): `file_contains` with `glob` + `min_phase` on `NN-VERIFICATION.md`, plus `frontmatter_paths_exist` on `read_only_inputs` (paths must exist; plan/summary artifacts forbidden).
 
 ## What these ledgers are not

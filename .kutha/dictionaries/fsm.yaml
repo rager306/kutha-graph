@@ -90,6 +90,7 @@ states:
       - admission_and_policy_visible_on_as_of_after_later_pin
       - green_ingest_visits_constant_in_n
       - lazy_as_of_matches_eager_after_same_ingest
+      - true_on_d_differs_from_known_on_d
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant

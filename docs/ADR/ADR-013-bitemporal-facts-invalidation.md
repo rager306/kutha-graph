@@ -6,7 +6,7 @@
 
 ### Evidence (2026-10-02; Proposed)
 
-FF5 (`ff5_as_of_t1_differs_from_as_of_t2_on_statute_log`) compares two valid-time windows on the fold at transaction-time max (`GraphFold::as_of` → `live_at(u64::MAX, vt)`), not an “as known on D” anchor (F13 stays open for M014).
+M014 shipped typed clocks (`ValidTime` / `TransactionTime` / `WallTime`) and `as_known_on` via `tt_anchor` (`true_on_d_differs_from_known_on_d`). Phase 34 (M015 S01) made the known-on cut TT-only (`closed_vt_interval_survives_as_known_on`) and fail-closed duplicate/backwards walls. FF5 still compares two valid-time windows at transaction-time max; it is not the known-on query. F13 clock/anchor ship is in crates; the five-clock / transitional-rule question stays open (M016 golden fixture). Cell remains Proposed.
 
 ## Date
 
@@ -131,4 +131,4 @@ Target contract, from docs/architecture/semantic-gap-review.md (F13): each clock
 
 ### Open question (2026-10-01)
 
-Open, from docs/architecture/semantic-gap-review.md (F13): whether two axes plus typed annotations and anchors are sufficient for effective-date, promulgation, and transitional-rule semantics (`tempus regit actum`). The test is a real-text golden fixture with one transitional rule (M015); this question is not answered by argument. This question does not rewrite D013-1…D013-4 and does not mark this cell Accepted.
+Open, from docs/architecture/semantic-gap-review.md (F13): whether two axes plus typed annotations and anchors are sufficient for effective-date, promulgation, and transitional-rule semantics (`tempus regit actum`). The test is a real-text golden fixture with one transitional rule (M016); this question is not answered by argument. This question does not rewrite D013-1…D013-4 and does not mark this cell Accepted.
