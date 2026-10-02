@@ -48,3 +48,73 @@ fn true_on_d_differs_from_known_on_d() {
         "as_known_on(2020) uses the later anchor and sees the statute"
     );
 }
+
+fn seed_statute_between_anchors(
+    rt: &mut Runtime,
+) -> (
+    kutha_common::TermId,
+    kutha_common::TermId,
+    kutha_common::TermId,
+) {
+    let article = rt.intern("art-12-speed");
+    let in_force = rt.intern("inForceAs");
+    let limit_50 = rt.intern("50-kmh");
+    rt.emit_tt_anchor(W1).unwrap();
+    rt.emit(Op::Assert {
+        subject: article,
+        relation: in_force,
+        object: limit_50,
+        valid_from: VF,
+        valid_to: None,
+        claim: None,
+        delivery_key: None,
+        polarity: None,
+    })
+    .unwrap();
+    rt.emit_tt_anchor(W2).unwrap();
+    (article, in_force, limit_50)
+}
+
+#[test]
+fn as_known_on_miss_without_anchor() {
+    let rt = Runtime::default();
+    assert!(
+        rt.as_known_on(D).is_none(),
+        "without an anchor at or before D, as_known_on is None"
+    );
+}
+
+#[test]
+fn as_known_on_uses_greatest_anchor_at_or_before() {
+    let mut rt = Runtime::default();
+    let statute = seed_statute_between_anchors(&mut rt);
+    let known_d = rt
+        .as_known_on(D)
+        .expect("A1@2014 is at or before D=2015 (W1 < D ≤ W2)");
+    assert!(
+        !known_d.contains(&statute),
+        "W1 < D ≤ W2 resolves A1 tt, before the statute"
+    );
+    assert!(
+        rt.as_known_on(2013).is_none(),
+        "no anchor at or before 2013"
+    );
+}
+
+#[test]
+fn as_known_on_persist_open_preserves_answers() {
+    let mut rt = Runtime::default();
+    assert!(rt.as_known_on(D).is_none());
+    let statute = seed_statute_between_anchors(&mut rt);
+    let dir = std::path::Path::new("tmp/p32-02-store");
+    let _ = std::fs::remove_dir_all(dir);
+    std::fs::create_dir_all(dir).unwrap();
+    rt.persist(dir).unwrap();
+    let opened = Runtime::open(dir).unwrap();
+    assert!(opened.as_known_on(2013).is_none());
+    let known_d = opened.as_known_on(D).expect("A1 rebuilt on open");
+    assert!(!known_d.contains(&statute));
+    let known_w2 = opened.as_known_on(W2).expect("A2 rebuilt on open");
+    assert!(known_w2.contains(&statute));
+    let _ = std::fs::remove_dir_all(dir);
+}
