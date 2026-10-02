@@ -5,7 +5,7 @@ milestone_name: Honest baseline and one write path
 current_phase: 30
 current_phase_name: Write-path integrity hardening
 status: planning
-stopped_at: Phase 29 verified and closed; wait S09 lease
+stopped_at: Phase 29 verified and closed; S09 leased; planning Phase 30
 last_updated: "2026-10-02T02:00:00.000Z"
 last_activity: 2026-10-02
 last_activity_desc: Phase 29 verified; L_delivery=M013-S08-done
@@ -28,13 +28,13 @@ See: `.planning/PROJECT.md`
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M013**; Active Slice **None**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M013-S08-done`; `L_capability=ff5-green`.
+**Harness lease (cite only):** Active Milestone **M013**; Active Slice **S09**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M013-S08-done`; `L_capability=ff5-green`.
 
 ## Current Position
 
 Phase: 30 — Write-path integrity hardening (CONTEXT only; not leased)
 Plan: Not started
-Status: Ready to plan after S09 lease
+Status: Ready to plan (S09 leased)
 Last activity: 2026-10-02 — Phase 29 verified; S08 closed
 
 ## Performance Metrics
@@ -59,7 +59,7 @@ Last activity: 2026-10-02 — Phase 29 verified; S08 closed
 
 ### Blockers/Concerns
 
-- Phase 30 needs a controller S09 lease before `/gsd-autonomous --only 30`. Do not start M014/M015/M002. No SemVer product tag.
+- Phase 30 runs under the S09 lease. Do not start M014/M015/M002. No SemVer product tag.
 - Review warnings (WR-01 zero-match fail-open; WR-02 no file_contains for 28-VERIFICATION) are non-blocking.
 
 ## Session Continuity
