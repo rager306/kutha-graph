@@ -2,19 +2,19 @@
 gsd_state_version: "1.0"
 milestone: v0.07
 milestone_name: Typed clocks and as-known-on
-current_phase: 32
-current_phase_name: tt_anchor and as_known_on
-current_plan: 2
-status: ready for independent verification (D-05); do not start Phase 33
-stopped_at: Completed 32-02-PLAN.md; Phase 32 awaiting independent verifier (D-05)
-last_updated: "2026-10-02T08:16:22.122Z"
+current_phase: 33
+current_phase_name: Fixture migration
+current_plan: 1
+status: planning complete; ready to execute 33-01
+stopped_at: Wrote 33-01-PLAN.md (FIX-01/FIX-02 constructor wraps)
+last_updated: "2026-10-02T08:30:00.000Z"
 last_activity: 2026-10-02
-last_activity_desc: Completed 32-01 and 32-02; awaiting independent 32-VERIFICATION (D-05)
-state_head: 90fb5bf15cbda838888c9b2cf6c5a168a8339704
+last_activity_desc: Phase 33 planned (one plan); Phase 32 verified
+state_head: 24c7f87
 progress:
   total_phases: 3
-  completed_phases: 1
-  total_plans: 4
+  completed_phases: 2
+  total_plans: 5
   completed_plans: 4
 ---
 
@@ -29,21 +29,21 @@ See: `.planning/PROJECT.md`
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M014**; Active Slice **S02**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M014-S01-done`; `L_capability=ff5-green`.
+**Harness lease (cite only):** Active Milestone **M014**; Active Slice **S03**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M014-S02-done`; `L_capability=ff5-green`.
 
 ## Current Position
 
-Phase: 32 — tt_anchor and as_known_on
-Current Plan: 2
-Total Plans in Phase: 2
-Plan: 32-01 / 32-02 written
-Status: ready for independent verification (D-05); do not start Phase 33
-Last activity: 2026-10-02 — Phase 32 plans written (Op::TtAnchor, as_known_on, named test)
-Prior last activity: 2026-10-02 — Phase 31 verified; M014 S01 closed
+Phase: 33 — Fixture migration
+Current Plan: 1
+Total Plans in Phase: 1
+Plan: 33-01 written
+Status: planning complete; ready to execute 33-01
+Last activity: 2026-10-02 — Phase 33 planned (FF5 tracer then M011/M012/M013 wraps)
+Prior last activity: 2026-10-02 — Phase 32 verified; M014 S03 leased
 
 ## Performance Metrics
 
-**By Phase:** v0.01–v0.06 shipped · v0.07 Phase 31 complete, Phase 32 planned
+**By Phase:** v0.01–v0.06 shipped · v0.07 Phase 31–32 complete, Phase 33 planned
 **Per-Plan Metrics:**
 
 | Plan | Duration | Tasks | Files |
@@ -65,17 +65,18 @@ Prior last activity: 2026-10-02 — Phase 31 verified; M014 S01 closed
 - [Phase 32]: Op::TtAnchor { wall: u64 }; mapped tt = Event.ingested_at; no Fact minted
 - [Phase 32]: as_known_on returns Option (None = miss); hydrate rebuilds tt_anchors from the log
 - [Phase 32]: Named test true_on_d_differs_from_known_on_d; FF5/FF6 file bytes unchanged
+- [Phase 33]: One plan; wrap public clock API only; Op valid_from stays u64; WallTime unused in FIX-01 files
 
 ### Blockers/Concerns
 
 - Do not start M015/M002. No SemVer product tag of crates (`0.0.0` stays). GSD process tag `v0.06` is the archive tag.
 - User Retract of reserved `kutha:` remains admitted (M013 residual); retract-by-EventId is out of M014 scope.
-- CBM `root-kutha-graph` indexed 2026-10-02T05:50:18Z; Phase 31 paths `metadata_changed` (integrator reindex). Do not start Phase 33.
+- CBM `root-kutha-graph` indexed 2026-10-02T05:50:18Z; Phase 31/32 paths `metadata_changed` (integrator reindex).
 
 ## Session Continuity
 
-**Last session:** 2026-10-02T08:16:01.852Z
+**Last session:** 2026-10-02T08:30:00.000Z
 **Resume file:** None
 
-Stopped at: Completed 32-02-PLAN.md; Phase 32 awaiting independent verifier (D-05)
-Next: execute 32-01 (`/gsd-execute-phase 32` or autonomous `--only 32`); independent verifier after both plans (`32-VERIFICATION.md`, D-05)
+Stopped at: Wrote 33-01-PLAN.md
+Next: execute 33-01; independent verifier writes `33-VERIFICATION.md` (D-05). Do not start M015.

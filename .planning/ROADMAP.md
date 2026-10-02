@@ -78,10 +78,11 @@ Plans:
   2. Oracle assertions are unchanged (D-07 style); renames only, tabled in SUMMARY.
   3. `uv run kutha-gov ci` is 0 HIGH (controller at close).
 
-**Plans**: 1–2 plans max
+**Plans**: 1/1 planned
 
 Plans:
-- [ ] 33-01-PLAN.md — (written by planner)
+**Wave 1**
+- [ ] 33-01-PLAN.md — Constructor wraps on FF5/M011/M012/M013 public clock API
 
 ## Progress
 
@@ -90,4 +91,4 @@ Plans:
 | v0.01–v0.06 | 1–30 | shipped |
 | v0.07 | 31–33 | active (M014) |
 
-**Next:** Phase 32 plans written (32-01 Wave 1, 32-02 Wave 2). Execute 32-01; independent verifier writes `32-VERIFICATION.md` (D-05) after both plans. Do not start Phase 33.
+**Next:** Phase 33 plan written (33-01). Execute 33-01; independent verifier writes `33-VERIFICATION.md` (D-05). Do not start M015.
