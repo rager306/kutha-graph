@@ -12,6 +12,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `kutha-common` trybuild UI crate proves `TransactionTime` and `WallTime` cannot be passed where `ValidTime` is required (`E0308`). The rustdoc `compile_fail` example stays as a secondary check.
 - Named test: stored `JustificationCite` `tt`/`vt` stay distinct; a swapped-field clone is not equal to the stored row.
+- Named tests: Eager vs Lazy `as_known_on`; `fork_at` before a later `TtAnchor`; mid-cut snapshot plus tail Assert/`TtAnchor`; `GraphFold::replay` known-on.
 
 ### Trajectory
 
