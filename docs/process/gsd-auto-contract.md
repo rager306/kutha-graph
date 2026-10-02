@@ -54,7 +54,7 @@ Executor-written tests and governor observations are evidence, not verification.
 - The verifier receives the phase requirements and the public API only. It does not read the PLAN or SUMMARY files.
 - It writes kill-tests: inputs that would pass a lazy implementation and fail a correct one (for example: retract a seeded relation, then admit; re-emit the same keyed Assert at large N and check the scan count; two runs of the same log give the same fingerprint).
 - Output is one `NN-VERIFICATION.md` with frontmatter `independent: true`, `verifier_model`, `commands:` (with exit statuses), and `read_only_inputs:` (requirement and public-API files only, never a PLAN or SUMMARY path). Phase 28 turns the structure into a governor check. `/gsd-verify-work` is the interactive form for the same gate.
-- Different model family or at least a fresh context from the executor. A phase does not close on its own author's check.
+- Different model family or at least a fresh context from the executor. A phase does not close on its own author's check. Model-family independence is **honor-system**: `independent: true` frontmatter and the governor's path checks prove structure, not that the verifier used a different model family.
 
 ## Refactor safety (S03–S06, S09)
 

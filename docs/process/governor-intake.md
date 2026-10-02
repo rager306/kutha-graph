@@ -69,6 +69,32 @@ Presence is not meaning. A needle that still matches after the claimed property 
 
 A green governor is **not** ADR **Accepted**, not L_capability, and not product correctness. Checks keep the harness honest about its own dictionaries, citations, and named-test evidence. They do not close F1–F8, accept honeycomb cells, or lease M012a.
 
+## Example intake rows (current)
+
+Control-loop kind obligation (Phase 29 GOV-01):
+
+```yaml
+# invariants.yaml
+- id: I-cui-budget
+  claim: "FSM run_checks must not silently truncate the checks dictionary when budget is below the check count"
+  source: "docs/process/governor-intake.md"
+  disposition: kind
+  kind: run_checks
+```
+
+Artifact-budget glob with non-vacuous match (`artifact-budget` in `checks.yaml`):
+
+```yaml
+- kind: glob_max_lines
+  glob: .planning/phases/*-*/*-PLAN.md
+  min_phase: 22
+  min_hits: 1
+  max: 150
+  max_files_per_dir: 2
+```
+
+Verification independence (`verification-independent` check): `file_contains` with `glob` + `min_phase` on `NN-VERIFICATION.md`, plus `frontmatter_paths_exist` on `read_only_inputs` (paths must exist; plan/summary artifacts forbidden).
+
 ## What these ledgers are not
 
 - Not a clone of law-nexus ADR frontmatter, D098 tags, or `document-freshness-triggers.json` catalogs.

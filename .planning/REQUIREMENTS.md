@@ -57,15 +57,15 @@ Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semant
 
 Source: `.planning/v0.06-MILESTONE-AUDIT.md` and the 2026-10-02 project review (roadmap, ADR, code, tests, harness). Harness plane and documents only; no `crates/` change.
 
-- [ ] **DOC-01**: v0.06 bookkeeping is consistent: `.kutha/ROADMAP.md`, `.planning/ROADMAP.md`, `PROJECT.md`, `STATE.md`, the id map, REQUIREMENTS checkboxes (BASE, REC with evidence), and the milestone audit body agree with `.kutha/STATE.md`; M013 stays leased until S09 closes
-- [ ] **DOC-02**: `docs/architecture/semantic-gap-review.md` has a dated post-M013 addendum: F10, F11, F12, F14, F15 closed with their oracles; F1 encoding, F7, F8 remainder, F9, F13, F16 open; FF5 is stated as two valid-time windows at current knowledge, not “as known on D”
-- [ ] **DOC-03**: Proposed ADR cells (000, 010, 011, 012, 013, 014, 040, 041, 050, 060, 061) carry a dated Evidence or Clarification note that matches the code; `honeycomb.yaml` evidence names point at the real tests; `docs/ADR/README.md` has one status-vocabulary note; no cell is promoted and D1–D10 are not rewritten
-- [ ] **DOC-04**: Process docs match behavior: `ci` includes selftest and `--skip-cargo` does not skip it; `glob_max_lines` zero-match rule; `codex-subagents.md` and `governor-intake.md` examples are current
+- [x] **DOC-01**: v0.06 bookkeeping is consistent: `.kutha/ROADMAP.md`, `.planning/ROADMAP.md`, `PROJECT.md`, `STATE.md`, the id map, REQUIREMENTS checkboxes (BASE, REC with evidence), and the milestone audit body agree with `.kutha/STATE.md`; M013 stays leased until S09 closes
+- [x] **DOC-02**: `docs/architecture/semantic-gap-review.md` has a dated post-M013 addendum: F10, F11, F12, F14, F15 closed with their oracles; F1 encoding, F7, F8 remainder, F9, F13, F16 open; FF5 is stated as two valid-time windows at current knowledge, not “as known on D”
+- [x] **DOC-03**: Proposed ADR cells (000, 010, 011, 012, 013, 014, 040, 041, 050, 060, 061) carry a dated Evidence or Clarification note that matches the code; `honeycomb.yaml` evidence names point at the real tests; `docs/ADR/README.md` has one status-vocabulary note; no cell is promoted and D1–D10 are not rewritten
+- [x] **DOC-04**: Process docs match behavior: `ci` includes selftest and `--skip-cargo` does not skip it; `glob_max_lines` zero-match rule; `codex-subagents.md` and `governor-intake.md` examples are current
 
-- [ ] **GOV-01**: The FSM fails closed when the check budget truncates any check, and a test pins budget at or above the check count
-- [ ] **GOV-02**: `glob_max_lines` fails closed when a scoped glob matches nothing; its selftest mutation is not vacuous
-- [ ] **GOV-03**: The independence check covers every `NN-VERIFICATION.md` from phase 22 (including the current phase) and verifies that listed `read_only_inputs` exist and are not plan or summary artifacts; model-family independence stays documented as honor-system
-- [ ] **GOV-04**: `observe_cargo.required` names the M013 oracles (facade, write path, genesis, dictionary facts, fold indexes, fold index mode); `deferred` invariants whose `until` milestone has shipped are restaged without losing their bridge or test evidence
+- [x] **GOV-01**: The FSM fails closed when the check budget truncates any check, and a test pins budget at or above the check count
+- [x] **GOV-02**: `glob_max_lines` fails closed when a scoped glob matches nothing; its selftest mutation is not vacuous
+- [x] **GOV-03**: The independence check covers every `NN-VERIFICATION.md` from phase 22 (including the current phase) and verifies that listed `read_only_inputs` exist and are not plan or summary artifacts; model-family independence stays documented as honor-system
+- [x] **GOV-04**: `observe_cargo.required` names the M013 oracles (facade, write path, genesis, dictionary facts, fold indexes, fold index mode); `deferred` invariants whose `until` milestone has shipped are restaged without losing their bridge or test evidence
 
 ### Write-path integrity (audit tail, Phase 30)
 
@@ -117,7 +117,7 @@ Source: code and test review 2026-10-02. Named oracles keep their assertions; no
 | SUB-01, SUB-02, SUB-03, SUB-04 | Phase 26 | complete |
 | PIPE-01, PIPE-02, PIPE-03, PIPE-04 | Phase 27 | complete |
 | PROC-01, PROC-02, PROC-03, PROC-04 | Phase 28 | complete |
-| DOC-01, DOC-02, DOC-03, DOC-04, GOV-01, GOV-02, GOV-03, GOV-04 | Phase 29 | Pending |
+| DOC-01, DOC-02, DOC-03, DOC-04, GOV-01, GOV-02, GOV-03, GOV-04 | Phase 29 | complete |
 | HARD-01, HARD-02, HARD-03, HARD-04 | Phase 30 | Pending |
 
 **Coverage:** v0.06 requirements: 36 total; mapped to phases: 36; unmapped: 0. BASE and REC traceability complete (DOC-01, 2026-10-02).

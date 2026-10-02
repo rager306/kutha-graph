@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Process: honor-system verify and process doc alignment
+
+### Process
+
+### Changed
+
+- `kutha-harness.md` and `.kutha/META.md` document `ci` as run_checks → run_selftest → observe_cargo; `--skip-cargo` leaves selftest on; `glob_max_lines` `min_hits` zero-match rule.
+- `codex-subagents.md` Cursor role map for phases 22–30; `governor-intake.md` current I-cui-budget / glob / frontmatter examples.
+- `gsd-auto-contract.md` states model-family independence is honor-system, not governor-provable.
+
+### Trajectory
+
+- No lease change. Cells remain **Proposed**.
+
 ## 2026-10-02 — Trajectory: post-M013 addendum and ADR evidence notes
 
 ### Trajectory

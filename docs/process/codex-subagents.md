@@ -27,6 +27,8 @@ Keep ambiguous architecture, temporal truth changes, and difficult correctness r
 
 Cursor `Task` types do not use these Codex role names. Map briefs in `AGENTS.md` § Code graph (Cursor). Structural graph there is CBM; GitNexus stays secondary.
 
+GSD phases **24–30** on Cursor use that map: `explore` for narrow scout passes, `generalPurpose` for verify/heavier spans, `code-reviewer` for diff review. Phases **24–27** and **30** pair CBM with GitNexus per `docs/process/gsd-auto-contract.md`; phases **22, 23, 28, 29** are CBM-only (harness/docs).
+
 The parent owns the steel thread, freeze, integration, and the final Russian reply. Pass `.kutha/STATE.md` freeze and lifecycle constraints into every helper. Parallelism does not lease a new milestone. Every Cursor `Task` that needs the graph must name **`codebase-memory-mcp`** (`list_projects` first; graph before Grep; `check_index_coverage` on cited paths). Children do not inherit Cursor always-on rules. A child without MCP must read source and must not claim graph verification.
 
 ## Delegation contract
