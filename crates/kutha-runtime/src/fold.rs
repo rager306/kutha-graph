@@ -259,6 +259,9 @@ pub struct GraphFold {
     /// Content-addressed bodies from `Op::StoreBlob` (store-once). Not fingerprint input.
     #[serde(skip)]
     pub(crate) blobs: HashMap<String, Vec<u8>>,
+    /// Wall date → transaction time (`Event.ingested_at`) from `Op::TtAnchor`. Not fingerprint.
+    #[serde(skip)]
+    pub(crate) tt_anchors: BTreeMap<u64, u64>,
 }
 
 impl Default for GraphFold {
@@ -311,6 +314,7 @@ impl GraphFold {
             rel_admission: None,
             rel_action: None,
             blobs: HashMap::new(),
+            tt_anchors: BTreeMap::new(),
         }
     }
 
@@ -645,6 +649,9 @@ impl GraphFold {
             }
             Op::StoreBlob { digest, bytes } => {
                 self.store_blob_once(digest, bytes);
+            }
+            Op::TtAnchor { wall } => {
+                self.tt_anchors.insert(*wall, event.ingested_at);
             }
             Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
         }

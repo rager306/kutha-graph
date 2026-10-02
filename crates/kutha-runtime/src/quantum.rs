@@ -6,7 +6,7 @@ use crate::materializer::{CsrMaterializer, Materializer};
 use crate::receipt::QuantumReceipt;
 use kutha_common::{
     rule_definition_hash, Event, EventId, Op, TermDictionary, TermId, TransactionTime, ValidTime,
-    KUTHA_RESERVED_RELS,
+    WallTime, KUTHA_RESERVED_RELS,
 };
 use rustc_hash::FxHashMap;
 use std::fmt;
@@ -197,12 +197,13 @@ pub(crate) fn op_relation(op: &Op) -> Option<TermId> {
         | Op::Define { .. }
         | Op::QuantumOutcome { .. }
         | Op::JustificationCite { .. }
-        | Op::StoreBlob { .. } => None,
+        | Op::StoreBlob { .. }
+        | Op::TtAnchor { .. } => None,
     }
 }
 
-/// Fold-affecting ops only. `Define`, `QuantumOutcome`, `JustificationCite`, and `StoreBlob`
-/// stay on the log as meta (LOG-01 / D-02). Dictionary `Assert`s are fold facts.
+/// Fold-affecting ops only. `Define`, `QuantumOutcome`, `JustificationCite`, `StoreBlob`,
+/// and `TtAnchor` stay on the log as meta (LOG-01 / D-02). Dictionary `Assert`s are fold facts.
 pub(crate) fn op_affects_fold(op: &Op) -> bool {
     !matches!(
         op,
@@ -210,6 +211,7 @@ pub(crate) fn op_affects_fold(op: &Op) -> bool {
             | Op::QuantumOutcome { .. }
             | Op::JustificationCite { .. }
             | Op::StoreBlob { .. }
+            | Op::TtAnchor { .. }
     )
 }
 
@@ -542,6 +544,17 @@ impl Runtime {
 
     pub fn as_of(&self, vt: impl Into<ValidTime>) -> Vec<(TermId, TermId, TermId)> {
         self.fold.as_of(vt)
+    }
+
+    /// Product triples as known on a wall date.
+    ///
+    /// Greatest `Op::TtAnchor` with `wall` at or before `wall`, then
+    /// [`Self::live_at`] at that event's transaction time and `vt = u64::MAX`.
+    /// `None` means no anchor at or before the date.
+    pub fn as_known_on(&self, wall: impl Into<WallTime>) -> Option<Vec<(TermId, TermId, TermId)>> {
+        let wall = wall.into().as_u64();
+        let tt = *self.fold.tt_anchors.range(..=wall).next_back()?.1;
+        Some(self.live_at(tt, u64::MAX))
     }
 
     pub fn live_at(

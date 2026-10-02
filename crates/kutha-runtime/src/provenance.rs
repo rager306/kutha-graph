@@ -122,7 +122,8 @@ impl Runtime {
             | Op::Define { .. }
             | Op::QuantumOutcome { .. }
             | Op::JustificationCite { .. }
-            | Op::StoreBlob { .. } => return false,
+            | Op::StoreBlob { .. }
+            | Op::TtAnchor { .. } => return false,
         };
         if !self.fold.rule_hash_live_at(&rule_version, tt, vt) {
             return false;

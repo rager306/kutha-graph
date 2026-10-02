@@ -111,9 +111,9 @@ define_clock! {
 }
 
 define_clock! {
-    /// Wall-clock instant (same shape as the other clocks). Unused on the query
-    /// API until `as_known_on` (Phase 32). No `From` into [`ValidTime`] or
-    /// [`TransactionTime`].
+    /// Wall-clock instant (same shape as the other clocks). Date axis for
+    /// `as_known_on` / `Op::TtAnchor` (Phase 32). No `From` into [`ValidTime`]
+    /// or [`TransactionTime`].
     pub struct WallTime;
 }
 
@@ -236,6 +236,10 @@ pub enum Op {
         digest: String,
         bytes: Vec<u8>,
     },
+    /// Maps this event's `ingested_at` (tt) to a wall date. Fold lease only; not a Fact.
+    TtAnchor {
+        wall: u64,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -266,7 +270,8 @@ impl Event {
             | Op::Define { .. }
             | Op::QuantumOutcome { .. }
             | Op::JustificationCite { .. }
-            | Op::StoreBlob { .. } => vec![],
+            | Op::StoreBlob { .. }
+            | Op::TtAnchor { .. } => vec![],
             Op::Correct { object, .. } | Op::CorrectInterval { object, .. } => vec![*object],
         };
         Self {
@@ -441,6 +446,10 @@ impl Event {
                 h.update(digest.as_bytes());
                 h.update((bytes.len() as u64).to_le_bytes());
                 h.update(bytes);
+            }
+            Op::TtAnchor { wall } => {
+                h.update(b"tt-anchor");
+                h.update(wall.to_le_bytes());
             }
         }
         h.finalize().into()

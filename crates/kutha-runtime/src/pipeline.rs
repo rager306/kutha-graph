@@ -3,7 +3,7 @@ use crate::quantum::{disposition, PersistedQuantumOutcome, QuantumOutcome, Runti
 use crate::receipt::{digest_to_hex, QuantumReceipt};
 use kutha_common::{
     blob_digest_matches, policy_version_hash, rule_definition_hash, Event, Op, OutcomeDisposition,
-    KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE,
+    WallTime, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE,
 };
 
 /// How the shared pipeline finishes a committed quantum (D-01 / D-07).
@@ -191,7 +191,7 @@ impl Runtime {
             self.gate_user_op(&op)?;
         }
         self.admit(&op, mode)?;
-        if mode == ReceiptMode::User && matches!(&op, Op::StoreBlob { .. }) {
+        if mode == ReceiptMode::User && matches!(&op, Op::StoreBlob { .. } | Op::TtAnchor { .. }) {
             return self.pipeline_kind(op, ReceiptMode::Dictionary);
         }
         if mode == ReceiptMode::User {
@@ -282,6 +282,19 @@ impl Runtime {
             });
         }
         Ok(())
+    }
+
+    /// Record a wall-date → transaction-time anchor on the log (not a graph Fact).
+    pub fn emit_tt_anchor(
+        &mut self,
+        wall: impl Into<WallTime>,
+    ) -> Result<QuantumOutcome, RuntimeError> {
+        self.pipeline_kind(
+            Op::TtAnchor {
+                wall: wall.into().as_u64(),
+            },
+            ReceiptMode::Dictionary,
+        )
     }
 
     /// Allow a product relation name as a `kutha:allows` fact (D-01).

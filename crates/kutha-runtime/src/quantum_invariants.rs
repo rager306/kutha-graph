@@ -285,6 +285,18 @@ fn fork_at_isolates_prefix() {
     fork.replay_check().unwrap();
 }
 
+#[test]
+fn as_known_on_after_anchor_is_some_earlier_wall_is_none() {
+    let mut rt = Runtime::default();
+    let facts_before = rt.fold().facts().len();
+    rt.emit_tt_anchor(2015).unwrap();
+    assert_eq!(rt.fold().facts().len(), facts_before);
+    assert!(rt.as_known_on(2015).is_some());
+    assert!(rt.as_known_on(2014).is_none());
+    let _as_of: Vec<_> = rt.as_of(kutha_common::ValidTime::from(2015));
+    assert!(rt.as_known_on(kutha_common::WallTime::from(2015)).is_some());
+}
+
 fn uuid_like() -> u64 {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
