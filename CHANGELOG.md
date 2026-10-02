@@ -38,6 +38,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Cells remain **Proposed**. M014 S01 lease unchanged; no SemVer tag.
 
+## 2026-10-02 — Trajectory: M014 S03 leased
+
+### Trajectory
+
+- Active Slice **S03** (GSD Phase 33, fixture migration). `L_delivery=M014-S02-done`.
+
 ## 2026-10-02 — Trajectory: M014 S02 CLOSED (Phase 32)
 
 ### Trajectory
