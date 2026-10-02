@@ -2,16 +2,16 @@
 gsd_state_version: "1.0"
 milestone: v0.06
 milestone_name: Honest baseline and one write path
-current_phase: 28
-current_phase_name: Independent verification and artifact budget
-status: complete
-stopped_at: Phase 28 / S07 closed; M013 delivery done; wait next lease
+current_phase: 29
+current_phase_name: Close-out honesty
+status: planning
+stopped_at: Phases 29–30 added (audit tail); wait S08 lease
 last_updated: "2026-10-02T02:00:00.000Z"
 last_activity: 2026-10-02
 last_activity_desc: Phase 28 verified; L_delivery=M013-S07-done
 state_head: 24ca0c6
 progress:
-  total_phases: 7
+  total_phases: 9
   completed_phases: 7
   total_plans: 13
   completed_plans: 13
@@ -24,7 +24,7 @@ progress:
 See: `.planning/PROJECT.md`
 
 **Core value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Current focus:** v0.06 / M013 complete (Phases 22–28). Next milestone needs a controller lease (M014 proposed).
+**Current focus:** v0.06 / M013 audit tail: Phase 29 (S08 close-out honesty) then Phase 30 (S09 write-path hardening). Each needs a controller lease; M014 waits for M013 to close.
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
@@ -32,14 +32,14 @@ See: `.planning/PROJECT.md`
 
 ## Current Position
 
-Phase: 28 — Independent verification and artifact budget — complete
-Plan: All plans done
-Status: Milestone delivery complete; archive/tag remain controller decisions
-Last activity: 2026-10-02 — Phase 28 verified; S07 closed
+Phase: 29 — Close-out honesty (CONTEXT only; not leased)
+Plan: Not started
+Status: Ready to plan after S08 lease
+Last activity: 2026-10-02 — Phases 29–30 added to the roadmap
 
 ## Performance Metrics
 
-**By Phase:** v0.01–v0.05 shipped · v0.06 Phase 22–28 complete
+**By Phase:** v0.01–v0.05 shipped · v0.06 Phase 22–28 complete · 29–30 planned
 
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
@@ -56,10 +56,10 @@ Last activity: 2026-10-02 — Phase 28 verified; S07 closed
 
 ### Blockers/Concerns
 
-- Do not start M014/M015/M002 until controller leases. No SemVer product tag.
+- Phase 29 needs controller S08 lease before `/gsd-autonomous --only 29`; Phase 30 needs S09 after S08 closes. Do not start M014/M015/M002. No SemVer product tag.
 - Review warnings (WR-01 zero-match fail-open; WR-02 no file_contains for 28-VERIFICATION) are non-blocking.
 
 ## Session Continuity
 
-Stopped at: Phase 28 / S07 closed (`L_delivery=M013-S07-done`)
-Next: Controller decides archive / next milestone lease (M014 proposed)
+Stopped at: Phase 28 / S07 closed (`L_delivery=M013-S07-done`); Phases 29–30 planned in ROADMAP
+Next: Controller leases S08, then `/gsd-plan-phase 29` / `/gsd-autonomous --only 29`

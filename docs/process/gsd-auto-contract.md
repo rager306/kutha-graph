@@ -13,12 +13,12 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.03 | 9–11 | harness H5 | — | lean context, semantic governor | shipped |
 | v0.04 | 12–16 | M012a | S01–S06 | F1–F3, F6–F8 | shipped |
 | v0.05 | 17–21 | M012 | S01–S05 | F4, F5 | shipped |
-| v0.06 | 22–28 | M013 | S01–S07 | F10–F12, F14, F15, R2, R4–R6 | leased |
+| v0.06 | 22–30 | M013 | S01–S09 | F10–F12, F14, F15, R2, R4–R6; S08–S09 close review follow-ups | leased |
 | v0.07 | next | M014 | S01–S03 | F13 | proposed |
 | v0.08 | next | M015 | S01–S04 | F9, F16 | proposed |
 | v0.09 | next | M002 | tbd | durability, commit marker | frozen |
 
-v0.06 phases: 22 baseline, 23 legal fixture reconnaissance, 24 fold indexes, 25 genesis log, 26 dictionary entries as facts, 27 one write path and facade, 28 independent verification and artifact budget. Phase N maps to slice S(N-21).
+v0.06 phases: 22 baseline, 23 legal fixture reconnaissance, 24 fold indexes, 25 genesis log, 26 dictionary entries as facts, 27 one write path and facade, 28 independent verification and artifact budget, 29 close-out honesty (documents and governor), 30 write-path integrity hardening. Phase N maps to slice S(N-21). Phases 29–30 are the M013 tail added after the v0.06 audit and the 2026-10-02 project review.
 
 ## Controller protocol
 
@@ -32,7 +32,7 @@ GSD must not edit `.kutha/STATE.md`. The controller (the parent session, not a G
 
 ## Code-graph tool pair
 
-Refactor phases (24–27) use CBM and GitNexus together. Phases 22, 23, 28 use CBM only where code is read. This supersedes “GitNexus is secondary” for M013; outside M013 the secondary rule stands.
+Phases that edit product code (24–27, 30) use CBM and GitNexus together. Phases 22, 23, 28, 29 use CBM only where code is read. This supersedes “GitNexus is secondary” for M013; outside M013 the secondary rule stands.
 
 | Moment | CBM (`root-kutha-graph`) | GitNexus (`kutha-graph`) |
 |--------|--------------------------|--------------------------|
@@ -45,7 +45,7 @@ Refactor phases (24–27) use CBM and GitNexus together. Phases 22, 23, 28 use C
 
 Known limits (2026-10-01): GitNexus `impact` on `Runtime::emit` found 15 callers and none under `crates/*/tests/`; CBM fan-in is 76. GitNexus resolves 0 usage edges for enum `Op`, so `Op::RecordAction`-style questions need `search_code` or `rg`. CBM `common→runtime` call edges on names like `intern` and `id` are resolver noise. The plan's blast-radius section records both counts and the `rg` count; when they differ, `rg` wins. Neither tool proves a test oracle: tests do.
 
-Every `Task` prompt that needs the graph names `codebase-memory-mcp` and, in phases 24–27, the GitNexus `impact` / `context` / `detect_changes` calls above, plus `list_projects` first and `check_index_coverage` on cited paths. Only the controller runs `index_repository` or `gitnexus analyze`. Never `delete_project` or `manage_adr`. A child without MCP reads source and says so.
+Every `Task` prompt that needs the graph names `codebase-memory-mcp` and, in phases 24–27 and 30, the GitNexus `impact` / `context` / `detect_changes` calls above, plus `list_projects` first and `check_index_coverage` on cited paths. Only the controller runs `index_repository` or `gitnexus analyze`. Never `delete_project` or `manage_adr`. A child without MCP reads source and says so.
 
 ## Independent verification
 
@@ -56,12 +56,12 @@ Executor-written tests and governor observations are evidence, not verification.
 - Output is one `NN-VERIFICATION.md` with frontmatter `independent: true`, `verifier_model`, `commands:` (with exit statuses), and `read_only_inputs:` (requirement and public-API files only, never a PLAN or SUMMARY path). Phase 28 turns the structure into a governor check. `/gsd-verify-work` is the interactive form for the same gate.
 - Different model family or at least a fresh context from the executor. A phase does not close on its own author's check.
 
-## Refactor safety (S03–S06)
+## Refactor safety (S03–S06, S09)
 
 - **RED first:** the oracle for the finding fails on current code and the failure is recorded before the change.
 - **Oracle preservation:** named tests (FF5, FF6, M010, M011, M012a, M012 files) keep their assertions. Allowed mechanical edits are constructor and helper renames, recorded as an old-to-new table in the phase SUMMARY. Any changed assertion stops the phase for a decision.
 - **No new feature:** a refactor slice adds no public capability beyond its “After this” line.
-- **Benchmarks:** phase 22's harness is re-run at the end of phases 24 and 27; a regression over 10 percent in ingest or `as_of` is a stop.
+- **Benchmarks:** phase 22's harness is re-run at the end of phases 24, 27, and 30; a regression over 10 percent in ingest or `as_of` is a stop.
 
 ## Artifact budget
 

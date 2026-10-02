@@ -152,7 +152,7 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 
 **Success:** a declared target N and a re-runnable measured baseline exist; a real-text legal fixture has been mapped on paper against the current model; ingest, retract, correct, and claim-admit use fold indexes, not log scans; the initial relation allowance is genesis events in the log and a seeded relation can be retracted; dictionary entries are ordinary facts in a reserved namespace (the five meta side tables are gone); every record kind enters through one propose, admit, commit, receipt path and is consumed through a public facade by one example and one integration test; references are `EventId` or hash; the milestone closes only with an independent verification artifact and a planning-artifact budget check. Not rules, not typed clocks, not M002, not ADR Accepted.
 
-**Leased:** Active Milestone M013; Active Slice None until a GSD phase leases one. Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semantic-gap-review.md` (addendum 2026-10-01). No new features: S03–S06 are refactors under the existing named oracles (FF5, FF6, M010–M012). Thawed subset: bench harness, fold indexes, genesis, substrate refactor, facade. Still frozen: RocksDB, Cypher, HNSW, six dictionaries, legal pack, M002.
+**Leased:** Active Milestone M013; Active Slice None until a GSD phase leases one (S01–S07 delivered; tail S08–S09 below). Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semantic-gap-review.md` (addendum 2026-10-01). No new features: S03–S06 are refactors under the existing named oracles (FF5, FF6, M010–M012). Thawed subset: bench harness, fold indexes, genesis, substrate refactor, facade. Still frozen: RocksDB, Cypher, HNSW, six dictionaries, legal pack, M002.
 
 - [x] **S01: Benchmark baseline and size target** `risk:medium` `depends:[]`
   > After this: a bench harness with no new dependencies measures ingest, `as_of`, retract, persist, open, and replay at three sizes, reports bytes per fact, and states a target N; one command re-runs it; numbers land in a dated note, not in an ADR.
@@ -168,6 +168,15 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
   > After this: every record kind goes through one propose, admit, commit, receipt pipeline; justification and policy references are `EventId` or hash; the runtime is split by concern; a public facade is driven by one example and one integration test that use nothing else.
 - [x] **S07: Independent verification and artifact budget** `risk:medium` `depends:[S06]`
   > After this: a governor check enforces the planning-artifact budget; milestone close requires a verification artifact from a verifier that did not write the code; the id map (GSD version, harness milestone, ADR) is one table.
+
+### M013 tail — S08–S09 (review follow-ups)
+
+Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project review of roadmap, ADR, code, tests, and harness. M013 stays leased until S09 closes; no archive, no SemVer tag. Each slice needs its own lease.
+
+- [ ] **S08: Close-out honesty — documents and governor** `risk:medium` `depends:[S07]`
+  > After this: stale M013/v0.06 bookkeeping is consistent across ROADMAP, PROJECT, REQUIREMENTS, id map, and the milestone audit; a post-M013 addendum records which semantic-gap findings are closed and which stay open; Proposed ADR cells carry dated Evidence notes that match the code; the governor fails closed on FSM budget truncation and on an empty budget glob, and the independence check covers every phase VERIFICATION. No file under `crates/` changes.
+- [ ] **S09: Write-path integrity hardening** `risk:high` `depends:[S08]`
+  > After this: dictionary-namespace writes fail closed outside the typed constructors; `correct` keeps `delivery_key`; one oracle runs FF5, retract, correct, and claim support under both Eager and Lazy fold index modes; the facade test asserts exact live triples after assert, correct, retract, persist/open, and fork. Named oracles keep their assertions; no typed clocks, no rules.
 
 ### Process gates (apply from S01, harness plane)
 

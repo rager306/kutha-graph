@@ -17,11 +17,11 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 - ✅ **v0.03 Lean context + semantic governor** — Phases 9–11 (shipped 2026-09-30) — [archive](./milestones/v0.03-ROADMAP.md)
 - ✅ **v0.04 Single-log SoT + stable references** — Phases 12–16 (shipped 2026-10-01) — [archive](./milestones/v0.04-ROADMAP.md)
 - ✅ **v0.05 Dictionaries as facts** — Phases 17–21 (shipped 2026-10-01) — [archive](./milestones/v0.05-ROADMAP.md)
-- 🚧 **v0.06 Honest baseline and one write path** — Phases 22–28 (harness M013; in planning)
+- 🚧 **v0.06 Honest baseline and one write path** — Phases 22–30 (harness M013; Phases 22–28 shipped, 29–30 are the audit tail)
 
 ## Phases
 
-**v0.06 phases** (one phase per harness slice S01–S07; the controller leases each slice before the phase runs):
+**v0.06 phases** (one phase per harness slice S01–S09; the controller leases each slice before the phase runs):
 
 - [x] **Phase 22: Benchmark baseline and size target** — re-runnable bench harness, target N, memory budget
 - [x] **Phase 23: Legal fixture reconnaissance** — law-nexus real text mapped against the current model; no product code
@@ -30,6 +30,8 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 - [x] **Phase 26: Dictionary entries as facts** — reserved-namespace facts replace five meta side tables (completed 2026-10-01)
 - [x] **Phase 27: One write path and facade** — one pipeline, typed references, public facade with example and integration test (completed 2026-10-02)
 - [x] **Phase 28: Independent verification and artifact budget** — governor check, id map, milestone audit
+- [ ] **Phase 29: Close-out honesty** — documents and governor follow-ups from the audit and project review; no product code
+- [ ] **Phase 30: Write-path integrity hardening** — fail-closed dictionary writes, keyed correct, dual-mode oracle, strong facade test
 
 ## Phase Details
 
@@ -157,6 +159,32 @@ Plans:
 - [x] 28-01-PLAN.md — glob_max_lines, artifact-budget, conform 22–27 VERIFICATION
 - [x] 28-02-PLAN.md — id map, milestone audit
 
+### Phase 29: Close-out honesty
+
+**Goal**: The v0.06 bookkeeping, semantic review, ADR evidence, and governor say what the repository actually does.
+**Depends on**: Phase 28
+**Requirements**: DOC-01, DOC-02, DOC-03, DOC-04, GOV-01, GOV-02, GOV-03, GOV-04
+**Success Criteria** (what must be TRUE):
+  1. No planning or process document calls M013 delivered work leased-in-progress or cites a stale `L_delivery`; the milestone audit body matches its status and `28-VERIFICATION`.
+  2. The semantic-gap review has a dated post-M013 addendum separating closed from open findings, and FF5 scope is stated honestly.
+  3. Every touched ADR cell is still Proposed and carries a dated Evidence or Clarification note; D1–D10 are untouched.
+  4. A scratch copy with budget below the check count, an empty budget glob, or a VERIFICATION missing `independent: true` makes the governor fail.
+
+**Plans**: 2 plans max
+
+### Phase 30: Write-path integrity hardening
+
+**Goal**: The one write path cannot be bypassed or silently lose identity, in either fold index mode, before typed clocks change the facade.
+**Depends on**: Phase 29
+**Requirements**: HARD-01, HARD-02, HARD-03, HARD-04
+**Success Criteria** (what must be TRUE):
+  1. A public write of a `kutha:` relation outside the typed constructors is refused; a RED oracle failed before the change.
+  2. Keyed assert, correct, then retry of the same key leaves support count 1.
+  3. FF5, retract, correct, and claim support agree under Eager and Lazy.
+  4. The facade test asserts live triples at each step, including after persist/open and fork.
+
+**Plans**: 2 plans max
+
 <details>
 <summary>✅ v0.01 GSD foundation (Phases 1–3) — SHIPPED 2026-09-29</summary>
 
@@ -210,4 +238,4 @@ Full detail: [milestones/v0.05-ROADMAP.md](./milestones/v0.05-ROADMAP.md) · req
 
 ## Next
 
-v0.06 is the active GSD milestone (harness M013, leased 2026-10-01, Active Slice None). Run one phase at a time with `/gsd-autonomous --only N` after the controller leases that slice (`docs/process/gsd-auto-contract.md`). Proposed next, each needing its own lease: M014 typed clocks (v0.07), M015 executable rules and the legal golden fixture (v0.08), then M002 durability. Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.
+v0.06 is the active GSD milestone (harness M013, leased 2026-10-01, Active Slice None; Phases 22–28 shipped, 29–30 are the audit tail). Run one phase at a time with `/gsd-autonomous --only N` after the controller leases that slice (`docs/process/gsd-auto-contract.md`). Proposed next, each needing its own lease: M014 typed clocks (v0.07), M015 executable rules and the legal golden fixture (v0.08), then M002 durability. Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.

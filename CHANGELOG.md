@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Process: M013 tail S08–S09 from the audit and project review
+
+### Process
+
+### Added
+
+- `.kutha/ROADMAP.md` M013 tail: S08 close-out honesty (documents and governor) and S09 write-path integrity hardening. GSD Phases 29 and 30 with CONTEXT; requirements DOC, GOV, HARD in `.planning/REQUIREMENTS.md`.
+
+### Changed
+
+- `docs/process/gsd-auto-contract.md` § Id map: v0.06 is Phases 22–30 and slices S01–S09; tool pair applies to Phase 30 (product code), CBM only for Phase 29. M013 stays leased until S09 closes. No archive, no SemVer tag.
+
+### Trajectory
+
+- No lease change in this commit. Active Slice **None**; S08 is leased in the next commit alone. Cells remain **Proposed**.
+
 ## 2026-10-02 — Process: ci --skip-cargo and phase timings
 
 ### Process
