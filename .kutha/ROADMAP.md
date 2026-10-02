@@ -152,7 +152,7 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 
 **Success:** a declared target N and a re-runnable measured baseline exist; a real-text legal fixture has been mapped on paper against the current model; ingest, retract, correct, and claim-admit use fold indexes, not log scans; the initial relation allowance is genesis events in the log and a seeded relation can be retracted; dictionary entries are ordinary facts in a reserved namespace (the five meta side tables are gone); every record kind enters through one propose, admit, commit, receipt path and is consumed through a public facade by one example and one integration test; references are `EventId` or hash; the milestone closes only with an independent verification artifact and a planning-artifact budget check. Not rules, not typed clocks, not M002, not ADR Accepted.
 
-**Closed:** Active Milestone M013 delivered S01–S09 (2026-10-02); GSD tag `v0.06`. Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semantic-gap-review.md` (addendum 2026-10-01). M013 does not archive or tag until S09 closes. No new features in S03–S06: refactors under named oracles (FF5, FF6, M010–M012). Thawed subset: bench harness, fold indexes, genesis, substrate refactor, facade. Still frozen: RocksDB, Cypher, HNSW, six dictionaries, legal pack, M002.
+**Closed:** Active Milestone M013 delivered S01–S09 (2026-10-02); GSD tag `v0.06`; archive `.planning/milestones/v0.06-*`. Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semantic-gap-review.md` (addendum 2026-10-01). No new features in S03–S06: refactors under named oracles (FF5, FF6, M010–M012). Thawed subset was scoped and freeze restored. Still frozen: RocksDB, Cypher, HNSW, six dictionaries, legal pack, M002.
 
 - [x] **S01: Benchmark baseline and size target** `risk:medium` `depends:[]`
   > After this: a bench harness with no new dependencies measures ingest, `as_of`, retract, persist, open, and replay at three sizes, reports bytes per fact, and states a target N; one command re-runs it; numbers land in a dated note, not in an ADR.
@@ -171,7 +171,7 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 
 ### M013 tail — S08–S09 (review follow-ups)
 
-Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project review of roadmap, ADR, code, tests, and harness. M013 stays leased until S09 closes; no archive, no SemVer tag. Each slice needs its own lease.
+Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project review of roadmap, ADR, code, tests, and harness. M013 CLOSED after S09; process tag `v0.06`; no product SemVer. Each later slice needs its own lease.
 
 - [x] **S08: Close-out honesty — documents and governor** `risk:medium` `depends:[S07]`
   > After this: stale M013/v0.06 bookkeeping is consistent across ROADMAP, PROJECT, REQUIREMENTS, id map, and the milestone audit; a post-M013 addendum records which semantic-gap findings are closed and which stay open; Proposed ADR cells carry dated Evidence notes that match the code; the governor fails closed on FSM budget truncation and on an empty budget glob, and the independence check covers every phase VERIFICATION. No file under `crates/` changes.
@@ -202,7 +202,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 **Leased:** Active Milestone M015; **S02** active (Phase 35); S01 CLOSED.
 
-**Success:** `as_known_on(D)` does not drop closed VT intervals; duplicate/backwards `TtAnchor` walls fail closed; living docs and governor match post-M014 (ANK required; budget min_hits when phases live). Closes audit H1/H2. Needs a lease.
+**Success:** `as_known_on(D)` does not drop closed VT intervals; duplicate/backwards `TtAnchor` walls fail closed; living docs and governor match post-M014 (ANK required; budget min_hits when phases live). Closes audit H1/H2.
 
 - [x] **S01: Known-on cut and anchor admission** `risk:high` `depends:[]`
   > After this: FF5-shaped closed-interval + anchors RED→GREEN; monotone unique walls only; FF5 `as_of` unchanged.
@@ -224,7 +224,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 (honesty residuals) needs its own lease; M016 is rules. M002+ stay frozen until leased.
+Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 is LEASED (honesty residuals). M016 is rules and needs its own lease. M002+ stay frozen until leased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 

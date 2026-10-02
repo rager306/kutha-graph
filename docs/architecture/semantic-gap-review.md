@@ -192,12 +192,31 @@ Sequencing and gates: `.kutha/ROADMAP.md` (M013 → M014 → M015 → M002) and 
 | ID | Note |
 |----|------|
 | F1 | `events.jsonl` rename-atomic; `snapshot.json` truncating create and outcome/justification sidecars remain |
-| F7 | `ValidTime` / `TransactionTime` still `u64` aliases (M014) |
+| F7 remainder | Five legal clocks / calendar scale beyond YearCe + LogSequence + Wall (see post-M014 addendum) |
 | F8 remainder | Typed CSR via `from_fold`; no public fork `diff` API |
-| F9 | Policy/rule bodies not evaluated on admit (M015) |
-| F13 | No typed clocks or `as_known_on` anchor (M014) |
-| F16 | Caller-emitted `Behavior`; no execution replay re-derive (M015) |
+| F9 | Policy/rule bodies not evaluated on admit (M016) |
+| F13 remainder | Sufficiency of two axes + typed annotations for transitional rules (golden fixture → M016) |
+| F16 | Caller-emitted `Behavior`; no execution replay re-derive (M016) |
 
 ### FF5 scope (not “as known on D”)
 
-FF5 compares **two valid-time windows** on the same log using the fold at **transaction-time max** (`as_of(vt)` → `live_at(u64::MAX, vt)` in `fold_query.rs`). It does **not** implement “as known on calendar date D” (that needs `tt_anchor` / M014).
+FF5 compares **two valid-time windows** on the same log using the fold at **transaction-time max** (`as_of(vt)` → `live_at(u64::MAX, vt)` in `fold_query.rs`). It is not “as known on calendar date D”. That query is `as_known_on` via `tt_anchor` (M014; Phase 34 made the cut TT-only).
+
+## Addendum 2026-10-02: post-M014 + Phase 34 (known-on residual)
+
+**Proposed review, not an ADR.** After M014 (v0.07 typed clocks / `as_known_on`) and Phase 34 (M015 S01 TT-only known-on + fail-closed anchors). Honeycomb stays **Proposed**. Evidence: named cargo tests and `event.rs` newtypes, read 2026-10-02.
+
+### Closed (named oracles)
+
+| ID | Oracle / evidence |
+|----|-------------------|
+| F7 alias half | `ValidTime` / `TransactionTime` / `WallTime` newtypes in `event.rs`; compile_fail mix |
+| F13 clock + known-on | `Op::TtAnchor`; `as_known_on`; `true_on_d_differs_from_known_on_d`; Phase 34 `closed_vt_interval_survives_as_known_on`; `duplicate_tt_anchor_wall_is_rejected` |
+
+### Still open (this addendum)
+
+| ID | Note |
+|----|------|
+| F7 remainder | Promulgation / effective / application / edition are not distinct core types |
+| F13 remainder | Whether two axes plus typed annotations suffice (`tempus regit actum`) — M016 golden fixture |
+| F9, F16 | Executable rules — M016 |

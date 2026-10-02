@@ -4,7 +4,7 @@ This is the **crates** P0 spike, **not** Accepted product. Live lease and freeze
 
 ## In spike
 
-log, fold, quantum emit→idle, receipt, snapshot, WAL-cousin, CSR lease, leapfrog intersect, `Materializer` trait, `fork_at`, named `as_of`/`live_at`, FF6 relation allowlist.
+log, fold, quantum emit→idle, receipt, snapshot, WAL-cousin, CSR lease, leapfrog intersect, `Materializer` trait, `fork_at`, named `as_of`/`live_at`, FF6 relation allowlist, typed clocks (`ValidTime` / `TransactionTime` / `WallTime`), `Op::TtAnchor`, `as_known_on`, `known_at`.
 
 ## Not in spike
 

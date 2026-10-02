@@ -61,6 +61,11 @@ GSD overlay v0.02 (Phases 4–8 — M011 semantic core close):
 - ✓ FIX-01…03 end-to-end fixture: supports/conflict, justification admission, incremental≡reconstruct — v0.02
 - ✓ GATE-01/02/03 named cargo + governor; lease-gated execute; freeze + honeycomb Proposed — v0.02
 
+GSD overlay v0.07 (Phases 31–33 — M014 typed clocks):
+
+- ✓ `ValidTime` / `TransactionTime` / `WallTime` newtypes; `Op::TtAnchor`; `as_known_on` greatest-anchor lookup — v0.07 (`event.rs`, `m014_as_known_on.rs`)
+- ✓ Phase 34 residual: TT-only `known_at` / `is_known_at`; fail-closed duplicate or backwards `TtAnchor` walls — M015 S01 (`m015_known_on.rs`, `m015_anchor_admit.rs`)
+
 ### Active
 
 - [x] **v0.06 Honest baseline and one write path (M013 S01–S09):** shipped 2026-10-02 — archive `.planning/milestones/v0.06-*`, tag `v0.06`
@@ -161,11 +166,11 @@ Harness compact index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov m
 
 ## Current State
 
-Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), **v0.04 — Single-log SoT + stable references** (2026-10-01, M012a S01–S06), and **v0.05 — Dictionaries as facts** (2026-10-01, M012 S01–S05). M011 tail S04–S08 is in crates and harness GATE needles; one e2e fixture separates preserved history, current evidence, and allowed action. v0.03 (harness/docs only) delivered H5: lean `AGENTS.md`, Proposed-only ADR corrections for F1–F8 (`docs/architecture/semantic-gap-review.md`), and a semantic governor (`kutha-gov selftest`, assertion-proving kinds, cited-lease and reference checks). Honeycomb cells stay Proposed. Product stays `0.0.0`.
+Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), **v0.04 — Single-log SoT + stable references** (2026-10-01, M012a S01–S06), **v0.05 — Dictionaries as facts** (2026-10-01, M012 S01–S05), **v0.06 — Honest baseline and one write path** (2026-10-02, M013 S01–S09), and **v0.07 — Typed clocks and as-known-on** (2026-10-02, M014 S01–S03). Current overlay is **v0.08** (M015). Honeycomb cells stay Proposed. Product stays `0.0.0`.
 
 ## Next Milestone Goals
 
-Now: v0.07 (M014 typed clocks). After it: M015 executable rules plus the real-text legal golden fixture, then M002 (segmented log, hash chain, manifest, commit-marker framing; Rocks for indexes only). Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.
+Now: v0.08 (M015 known-on honesty). After it: M016 executable rules plus the real-text legal golden fixture, then M002 (segmented log, hash chain, manifest, commit-marker framing; Rocks for indexes only). Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.
 
 ## Context
 
@@ -173,11 +178,11 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 
 **Harness lease** (process intent, not GSD memory, not product SoT): `.kutha/STATE.md`
 
-- Active Milestone: **None** (M014 CLOSED) (leased; S01 active — cite `.kutha/STATE.md`)
+- Active Milestone: **M015** (leased; S02 active — cite `.kutha/STATE.md`)
 - Active Slice: cite `.kutha/STATE.md` only (do not edit here)
 - Phase: **H5**
 - Lifecycles: `L_map=honeycomb-proposed` · `L_delivery` / Active Slice — cite `.kutha/STATE.md` · `L_capability=ff5-green`
-- Next: M013 slices only, one phase at a time (`docs/process/gsd-auto-contract.md`). Freeze holds beyond the M013 thawed subset. Do not start a legal pack. Green governor ≠ ADR Accepted ≠ L_capability.
+- Next: M015 S02 living docs + governor (`docs/process/gsd-auto-contract.md`). Do not start M016. Freeze holds. Green governor ≠ ADR Accepted ≠ L_capability.
 
 GSD files live under `.planning/`. **Never overwrite** `.kutha/STATE.md` with GSD STATE.
 
@@ -232,4 +237,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-02 after v0.06 archive (M013 CLOSED) and v0.07 start*
+*Last updated: 2026-10-02 after M015 S02 lease (v0.08 living docs + governor)*
