@@ -2,16 +2,16 @@
 gsd_state_version: "1.0"
 milestone: v0.09
 milestone_name: Test hardening + executable rules
-current_plan: 1
+current_plan: 2
 status: executing
-stopped_at: Executing 37-01-PLAN.md
-last_updated: "2026-10-02T11:25:00.000Z"
-state_head: 55b662f
+stopped_at: Completed 37-01-PLAN.md
+last_updated: "2026-10-02T11:26:48.733Z"
+state_head: 598ee7401740b7fe0204bca00ee037c69ce493b7
 progress:
   total_phases: 5
   completed_phases: 0
-  total_plans: 2
-  completed_plans: 0
+  total_plans: 4
+  completed_plans: 3
 current_phase: 37
 current_phase_name: rule-ast-and-hash
 ---
@@ -25,7 +25,7 @@ current_phase_name: rule-ast-and-hash
 
 ## Current Position
 
-**Current Plan:** 1
+**Current Plan:** 2
 **Total Plans in Phase:** 2
 
 ## Performance Metrics
@@ -34,6 +34,7 @@ current_phase_name: rule-ast-and-hash
 |------|----------|-------|-------|
 | Phase 36 P01 | 3min | 2 tasks | 6 files |
 | Phase 36 P02 | 6min | 2 tasks | 3 files |
+| Phase 37 P01 | 1 | 1 tasks | 4 files |
 
 ## Decisions
 
@@ -43,9 +44,10 @@ current_phase_name: rule-ast-and-hash
 - [Phase 37]: D-01: RuleAst Named+Horn tagged LE bytes; hash is SHA-256(kutha-rule-def || canonical)
 - [Phase 37]: D-02: non-canonical bodies fail closed at emit_rule / blob_digest_matches
 - [Phase 37]: D-03: no evaluator; inverse_knows cascade stays
+- [Phase 37]: D-01: Named tag 0x01 / Horn 0x02; u16 LE lengths; exact-consume from_canonical
 
 ## Session
 
-**Last session:** 2026-10-02T11:25:00.000Z
-**Stopped at:** Executing 37-01-PLAN.md
+**Last session:** 2026-10-02T11:26:48.673Z
+**Stopped at:** Completed 37-01-PLAN.md
 **Resume file:** None

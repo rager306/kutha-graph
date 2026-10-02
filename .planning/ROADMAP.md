@@ -50,7 +50,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
   3. Non-canonical register is `UnknownRuleVersion`; M012/FF5/FF6 oracles stay green.
 
 **Plans**: 2 max
-- [ ] 37-01-PLAN.md
+- [x] 37-01-PLAN.md
 - [ ] 37-02-PLAN.md
 
 ### Phase 38: Rule evaluator and support counting
