@@ -1,0 +1,28 @@
+{
+  "contract": "1.0.0",
+  "flavor": "core",
+  "milestone": "v0.07 — Typed clocks and as-known-on",
+  "phases": [
+    {
+      "number": "31",
+      "name": "Clock newtypes",
+      "status": "complete"
+    },
+    {
+      "number": "32",
+      "name": "`tt_anchor` facts and `as_known_on`",
+      "status": "in_progress"
+    },
+    {
+      "number": "33",
+      "name": "Fixture migration",
+      "status": "pending"
+    }
+  ],
+  "next": {
+    "command": "/gsd-progress --next",
+    "label": "Advance to the next step (plan phase 32)",
+    "reason": "Phase 32 of 3 — needs a plan"
+  },
+  "updated_at": "2026-10-02T08:11:03.926Z"
+}

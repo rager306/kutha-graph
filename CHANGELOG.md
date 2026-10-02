@@ -51,6 +51,17 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Cells remain **Proposed**. M014 S01 lease unchanged; no SemVer tag.
 
+## 2026-10-02 — Trajectory: M014 CLOSED (GSD v0.07 archive and tag)
+
+### Trajectory
+
+- M014 S01–S03 delivered; Active Milestone cleared. GSD archive under `.planning/milestones/v0.07-*`; process tag `v0.07`. Crate SemVer stays `0.0.0`.
+- Governor: `artifact-budget` / `verification-independent` selftest skip when live phases empty; `idle-delivery-closed` mutates `L_delivery`; `state-readme` selftest mutates Phase only at idle.
+
+### Product
+
+- F13: typed clocks, `tt_anchor`/`as_known_on`, fixture clock wraps. Cells remain **Proposed**.
+
 ## 2026-10-02 — Trajectory: M014 S03 leased
 
 ### Trajectory

@@ -117,3 +117,7 @@
 - Phase 3 GOV-03/NEXT requirements batched after green VERIFICATION and pre-verify ci+explain+cargo; GSD closeout complete; harness lease untouched (D-L4 None).
 
 ---
+
+## v0.07 — Typed clocks and as-known-on (2026-10-02)
+
+M014 S01–S03 / Phases 31–33. Process tag `v0.07`. F13 closed.

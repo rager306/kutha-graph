@@ -14,7 +14,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.04 | 12–16 | M012a | S01–S06 | F1–F3, F6–F8 | shipped |
 | v0.05 | 17–21 | M012 | S01–S05 | F4, F5 | shipped |
 | v0.06 | 22–30 | M013 | S01–S09 | F10–F12, F14, F15, R2, R4–R6; S08–S09 close review follow-ups | shipped |
-| v0.07 | 31–33 | M014 | S01–S03 | F13 | leased |
+| v0.07 | 31–33 | M014 | S01–S03 | F13 | shipped |
 | v0.08 | next | M015 | S01–S04 | F9, F16 | proposed |
 | v0.09 | next | M002 | tbd | durability, commit marker | frozen |
 

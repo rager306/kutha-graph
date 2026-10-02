@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M014
-**Active Slice:** S03
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M014-S02-done
+L_delivery=M014-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M014 S03 active (fixture migration) | Capability proven / Rocks started / M002 leased / rules or typed clocks started / ADR-050 six dictionaries |
+| L_delivery | M014 CLOSED (S01–S03); next milestone unleased | Capability proven / Rocks started / M002 leased / rules or typed clocks started / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M014 S03 leased** (`L_delivery=M014-S02-done`, Active Milestone **M014**, Active Slice **S03**, 2026-10-02). GSD Phase 33 only: fixture migration to explicit clocks; oracle assertions unchanged. Do **not** start M015, ADR-050 six dictionaries, Cypher/HNSW, or M002 Rocks. Honeycomb stays Proposed. No SemVer product tag.
+**M014 CLOSED** (`L_delivery=M014-closed`, Active Milestone **None**, Active Slice **None**, 2026-10-02). GSD v0.07 archived; process tag `v0.07`. Do **not** start M015 until leased. Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
 
 
 ## Freeze (until explicit M002 lease)

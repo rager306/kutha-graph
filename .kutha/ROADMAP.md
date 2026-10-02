@@ -185,11 +185,9 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 - **Tool pair:** CBM and GitNexus are both used on every phase that edits product code (`docs/process/gsd-auto-contract.md`).
 - **RED first:** each slice that closes a finding starts with an oracle that fails on current code, recorded before the change.
 
-## M014: Typed clocks and as-known-on — LEASED (GSD v0.07)
+## M014: Typed clocks and as-known-on — CLOSED (GSD v0.07)
 
-**Leased:** Active Milestone M014; **S03** active (fixture migration).
-
-**Progress:** S01–S02 CLOSED.
+**Closed:** 2026-10-02. Process tag `v0.07`. S01–S03 complete.
 
 **Success:** valid time, transaction time, and wall time are distinct types; mixing them without a conversion does not compile; `tt_anchor` facts map transaction time to wall time; “as known on date D” is an anchor lookup; FF5 stays green with explicit clocks. Closes F13. Needs a lease; do not start before M013 closes.
 
@@ -197,7 +195,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
   > After this: `Vt`, `Tt`, and a wall clock are separate types; a `compile_fail` doctest proves a silent mix is rejected.
 - [x] **S02: `tt_anchor` facts and `as_known_on`** `risk:medium` `depends:[S01]`
   > After this: anchors are log facts; `as_known_on(date)` resolves through the greatest anchor at or before the date; a named test separates “true on D” from “known on D”.
-- [ ] **S03: Fixture migration** `risk:low` `depends:[S02]`
+- [x] **S03: Fixture migration** `risk:low` `depends:[S02]`
   > After this: FF5 and the M011/M012 fixtures use explicit clocks with unchanged assertions.
 
 ## M015: Executable rules and the legal golden fixture — PROPOSED (GSD v0.08)
@@ -215,7 +213,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is leased (S03 active). M015 needs its own lease. M002+ stay frozen until leased.
+Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 needs its own lease. M002+ stay frozen until leased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -223,7 +221,7 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 2. **M012a** — CLOSED (S01–S06). Detail above.
 3. **M012** — CLOSED (S01–S05). Detail above.
 4. **M013** — CLOSED (S01–S09, GSD v0.06 tagged). Detail above.
-5. **M014** — LEASED. Typed clocks and as-known-on. Detail above.
+5. **M014** — CLOSED. Typed clocks and as-known-on. Detail above.
 6. **M015** — PROPOSED. Executable rules and the real-text legal golden fixture. Its S04 verdict gates M002: if the model cannot express the fixture, re-plan before any durability work. Detail above.
 7. **M002** — Log durability protocol: segmented append-only log, hash chain, atomic manifest, replay parity across stores, with the quantum outcome as a commit marker in segment framing (ADR-010/014 open question). “Lease identity verified on open” is already done (v0.04 Phase 15). Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity.
 8. **M003** — Cypher skin over the already-correct AS OF cut.

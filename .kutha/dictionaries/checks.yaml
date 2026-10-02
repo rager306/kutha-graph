@@ -91,11 +91,11 @@ checks:
     description: Active Milestone None requires L_delivery token ending in -closed
     selftest:
       mutations:
-        # Idle STATE (Active Milestone None) while L_delivery is not *-closed.
+        # Break *-closed while idle (Active Milestone None requires L_delivery=*-closed).
         - op: replace_regex
           path: .kutha/STATE.md
-          pattern: '(?m)^\*\*Active Milestone:\*\*\s*\S+\s*$'
-          with: "**Active Milestone:** None"
+          pattern: '(?m)^L_delivery=\S+-closed\s*$'
+          with: "L_delivery=open"
     steps:
       - kind: when_match_then_match
         path: .kutha/STATE.md
@@ -673,12 +673,7 @@ checks:
     description: README shows the same Active Milestone and Phase as STATE
     selftest:
       mutations:
-        # README must show STATE's Active Milestone.
-        - op: replace_regex
-          path: README.md
-          pattern: 'M014'
-          with: "M999"
-        # README must show STATE's Phase.
+        # README must show STATE's Phase (Milestone may be None and is skip_values).
         - op: replace_regex
           path: README.md
           pattern: 'H5'
@@ -1194,6 +1189,8 @@ checks:
     description: >-
       v0.06 planning artifacts from phase 22 onward stay within declared
       line and per-directory file budgets (D-02, D-04).
+    selftest:
+      skip: "derivable only when live .planning/phases artifacts exist"
     steps:
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-PLAN.md
@@ -1224,6 +1221,8 @@ checks:
     description: >-
       v0.06 VERIFICATION files must not list plan or summary artifact paths
       and must carry independence frontmatter (D-05).
+    selftest:
+      skip: "derivable only when live VERIFICATION files exist"
     steps:
       - kind: glob_absent
         glob: .planning/phases/*-*/*-VERIFICATION.md

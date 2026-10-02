@@ -172,7 +172,7 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 
 **Harness lease** (process intent, not GSD memory, not product SoT): `.kutha/STATE.md`
 
-- Active Milestone: **M014** (leased; S01 active — cite `.kutha/STATE.md`)
+- Active Milestone: **None** (M014 CLOSED) (leased; S01 active — cite `.kutha/STATE.md`)
 - Active Slice: **S01** (Phase 31 clock newtypes; cite `.kutha/STATE.md` — do not edit here)
 - Phase: **H5**
 - Lifecycles: `L_map=honeycomb-proposed` · `L_delivery` / Active Slice — cite `.kutha/STATE.md` · `L_capability=ff5-green`
