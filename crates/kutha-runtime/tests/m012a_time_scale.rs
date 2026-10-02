@@ -7,9 +7,9 @@ use kutha_runtime::Runtime;
 #[test]
 fn fixture_years_map_to_year_ce_scale() {
     assert_eq!(VALID_TIME_SCALE, TimeScale::YearCe);
-    let y2015: ValidTime = 2015;
-    let y2017: ValidTime = 2017;
-    let y2021: ValidTime = 2021;
+    let y2015: ValidTime = ValidTime::from(2015);
+    let y2017: ValidTime = ValidTime::from(2017);
+    let y2021: ValidTime = ValidTime::from(2021);
     assert_eq!(y2015, 2015);
     assert_eq!(y2017, 2017);
     assert_eq!(y2021, 2021);

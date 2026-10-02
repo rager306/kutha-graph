@@ -18,6 +18,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - `Runtime::as_of` / `live_at` match the fold (`impl Into` clocks). Write helpers (`assert` / `retract` / `correct` / `derive` / `emit_allow` / `emit_rule` / `emit_policy`) take `u64` so named oracle literals still compile.
 - `Runtime::csr_lease_at` / `typed_csr_lease_at`, `CsrLease::from_fold` / `TypedCsrLease::from_fold`, and `Materializer::build` take `impl Into` clocks and convert with `as_u64` before the integer CSR picture.
 - Justification/action/admission/policy/derivation/conflict cuts take `impl Into` clocks; `Op::JustificationCite` `tt`/`vt` stay `u64`.
+- TIME-01 fixture year bindings wrap `ValidTime::from(...)`; `assert_eq!(y2015, 2015)` bodies unchanged.
 
 ### Trajectory
 
