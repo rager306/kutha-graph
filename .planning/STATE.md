@@ -2,51 +2,34 @@
 gsd_state_version: "1.0"
 milestone: v0.09
 milestone_name: Test hardening + executable rules
-current_plan: 2
-status: phase_complete
-stopped_at: Phase 38 verified; M016-S03 closing
-last_updated: "2026-10-02T12:30:00.000Z"
-state_head: 58a33cb
+current_plan: 1
+status: ready_for_planning
+stopped_at: M016-S04 leased; plan Phase 39
+last_updated: "2026-10-02T12:45:00.000Z"
+state_head: fc76f065c82bb219a8f06c8ec1c55f235837cdf7
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 6
   completed_plans: 6
-current_phase: 38
-current_phase_name: rule-evaluator
+current_phase: 39
+current_phase_name: policy-and-replay
 ---
 
 # Project State
 
 **Milestone:** v0.09 Test hardening + executable rules (harness M016)
-**Phase:** 38 — Rule evaluator and support counting
-**Status:** Phase 38 verification complete
-**Next:** Lease M016 S04, then Phase 39. Executors do not edit `.kutha/STATE.md`.
+**Phase:** 39 — Policy evaluation and execution replay
+**Status:** S04 leased; awaiting plans
+**Next:** Plan+execute Phase 39. Do not write 39-VERIFICATION. Never edit `.kutha/STATE.md`.
 
 ## Current Position
 
-**Current Plan:** 2
-**Total Plans in Phase:** 2
-
-## Performance Metrics
-
-| Plan | Duration | Tasks | Files |
-|------|----------|-------|-------|
-| Phase 36 P01 | 3min | 2 tasks | 6 files |
-| Phase 36 P02 | 6min | 2 tasks | 3 files |
-| Phase 37 P01 | 1 | 1 tasks | 4 files |
-| Phase 37 P02 | 2 | 2 tasks | 4 files |
-| Phase 38 P01 | 12min | 1 tasks | 7 files |
-| Phase 38 P02 | 4min | 1 tasks | 2 files |
-
-## Decisions
-
-- [Phase 38]: D-01: genesis Horn replaces follow_ons knows special-case
-- [Phase 38]: D-03: retract only Horn-derived Behaviors; Named two-hop facts stay live
-- [Phase 38]: D-04: residual-spike pin is Horn hash
+**Current Plan:** 1
+**Total Plans in Phase:** 2 (max)
 
 ## Session
 
-**Last session:** 2026-10-02T12:30:00.000Z
-**Stopped at:** Phase 38 verified; M016-S03 closing
+**Last session:** 2026-10-02T12:45:00.000Z
+**Stopped at:** M016-S04 leased; plan Phase 39
 **Resume file:** None

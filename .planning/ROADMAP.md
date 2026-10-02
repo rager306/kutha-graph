@@ -72,4 +72,4 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 | v0.01–v0.08 | 1–35 | shipped |
 | v0.09 | 36–40 | active (M016) |
 
-**Next:** Lease M016 S04, then Phase 39 (policy + execution replay). Do not start 39 until leased.
+**Next:** Phase 39 under M016 S04 lease (policy + replay). Do not start 40 until S05 is leased.
