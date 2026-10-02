@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: independent RULE-02 kill-tests (Phase 38)
+
+### Product
+
+### Added
+
+- Independent kill-test: inverse pin is genesis Horn hash; relatedTo does not mint inverse; retract of knows drops live knownBy.
+
+### Trajectory
+
+- Cells remain **Proposed**. M016 S03 lease unchanged; no SemVer tag.
+
 ## 2026-10-02 — Product: n-ary Horn and derived retract (Phase 38)
 
 ### Product
