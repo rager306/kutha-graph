@@ -6,9 +6,9 @@ tags: [as_known_on, as_of, ANK-03, FF5]
 requires: [{ phase: 32-tt-anchor-and-as-known-on, provides: ANK-01 Op::TtAnchor log facts }]
 provides: ["ANK-03 true-on-D vs known-on-D named test", "ANK-02 miss and greatest-anchor kill-tests"]
 affects: [33-fixture-migration]
-actuals: { tokens: 1188, tasks: 3, commits: 2 }
+actuals: { tokens: 1188, tasks: 3, commits: 3 }
 plan_head_before: a0a3c3704717ee78ad20ce5524db2fda0618ab9f
-plan_head_after: 6de41761d9a67e26fe0c7cab6cd5793b755162b9
+plan_head_after: 90fb5bf15cbda838888c9b2cf6c5a168a8339704
 tech-stack: { added: [], patterns: ["named as_of vs as_known_on oracle", "gitignored tmp persist store"] }
 key-files: { created: [crates/kutha-runtime/tests/m014_as_known_on.rs], modified: [CHANGELOG.md] }
 key-decisions: ["Named test seeds statute between anchors 2014 and 2020", "FF5/FF6 assertion bodies and file bytes unchanged"]
@@ -43,7 +43,7 @@ status: complete
 ## Task Commits
 1. **Named true-on-D vs known-on-D** - `beff81c` (test)
 2. **Miss and greatest-anchor** - `6de4176` (test)
-3. **FF5 green + SUMMARY** - (this commit) (test)
+3. **FF5 green + SUMMARY** - `90fb5bf` (test)
 
 ## Deviations from Plan
 None - plan executed exactly as written.
@@ -52,4 +52,4 @@ None - plan executed exactly as written.
 Phase 32 code+oracles complete. Independent verifier writes `32-VERIFICATION.md` (D-05). Do not start Phase 33.
 
 ## Self-Check: PASSED
-FOUND: m014_as_known_on.rs, 32-01-SUMMARY.md, 32-02-SUMMARY.md; commits beff81c, 6de4176
+FOUND: m014_as_known_on.rs, 32-01-SUMMARY.md, 32-02-SUMMARY.md; commits beff81c, 6de4176, 90fb5bf

@@ -5,17 +5,17 @@ milestone_name: Typed clocks and as-known-on
 current_phase: 32
 current_phase_name: tt_anchor and as_known_on
 current_plan: 2
-status: ready to execute 32-02
-stopped_at: Completed 32-01-PLAN.md
-last_updated: "2026-10-02T08:11:45.176Z"
+status: ready for independent verification (D-05); do not start Phase 33
+stopped_at: Completed 32-02-PLAN.md; Phase 32 awaiting independent verifier (D-05)
+last_updated: "2026-10-02T08:16:22.122Z"
 last_activity: 2026-10-02
-last_activity_desc: "Completed 32-01 (Op::TtAnchor, as_known_on); next 32-02"
-state_head: fe1be90a27b30dc9ac0e75b916c755989049ce53
+last_activity_desc: Completed 32-01 and 32-02; awaiting independent 32-VERIFICATION (D-05)
+state_head: 90fb5bf15cbda838888c9b2cf6c5a168a8339704
 progress:
   total_phases: 3
   completed_phases: 1
   total_plans: 4
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State
@@ -37,7 +37,7 @@ Phase: 32 — tt_anchor and as_known_on
 Current Plan: 2
 Total Plans in Phase: 2
 Plan: 32-01 / 32-02 written
-Status: ready to execute 32-02
+Status: ready for independent verification (D-05); do not start Phase 33
 Last activity: 2026-10-02 — Phase 32 plans written (Op::TtAnchor, as_known_on, named test)
 Prior last activity: 2026-10-02 — Phase 31 verified; M014 S01 closed
 
@@ -51,6 +51,7 @@ Prior last activity: 2026-10-02 — Phase 31 verified; M014 S01 closed
 | Phase 31 P01 | 7 min | 3 tasks | 7 files |
 | Phase 31 P02 | 3 min | 3 tasks | 8 files |
 | Phase 32 P01 | 7min | 3 tasks | 8 files |
+| Phase 32 P02 | 3min | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -63,6 +64,7 @@ Prior last activity: 2026-10-02 — Phase 31 verified; M014 S01 closed
 - [Phase 32]: Op::TtAnchor { wall: u64 }; mapped tt = Event.ingested_at; as_known_on returns Option (None = miss); not kutha: Assert
 - [Phase 32]: Op::TtAnchor { wall: u64 }; mapped tt = Event.ingested_at; no Fact minted
 - [Phase 32]: as_known_on returns Option (None = miss); hydrate rebuilds tt_anchors from the log
+- [Phase 32]: Named test true_on_d_differs_from_known_on_d; FF5/FF6 file bytes unchanged
 
 ### Blockers/Concerns
 
@@ -72,8 +74,8 @@ Prior last activity: 2026-10-02 — Phase 31 verified; M014 S01 closed
 
 ## Session Continuity
 
-**Last session:** 2026-10-02T08:11:06.492Z
+**Last session:** 2026-10-02T08:16:01.852Z
 **Resume file:** None
 
-Stopped at: Completed 32-01-PLAN.md
+Stopped at: Completed 32-02-PLAN.md; Phase 32 awaiting independent verifier (D-05)
 Next: execute 32-01 (`/gsd-execute-phase 32` or autonomous `--only 32`); independent verifier after both plans (`32-VERIFICATION.md`, D-05)

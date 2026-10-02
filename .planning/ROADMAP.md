@@ -59,14 +59,14 @@ Plans:
   2. `as_known_on(date)` resolves through the greatest anchor at or before the date.
   3. A named test separates “true on D” from “known on D”; FF5 stays green with explicit clocks.
 
-**Plans**: 1/2 plans executed
+**Plans**: 2/2 plans executed
 
 Plans:
 **Wave 1**
 - [x] 32-01-PLAN.md — Op::TtAnchor log facts and as_known_on lookup
 
 **Wave 2**
-- [ ] 32-02-PLAN.md — true-on-D vs known-on-D named test; FF5 green
+- [x] 32-02-PLAN.md — true-on-D vs known-on-D named test; FF5 green
 
 ### Phase 33: Fixture migration
 
