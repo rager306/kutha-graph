@@ -19,7 +19,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 - [x] **Phase 36: Test hardening T2–T6** — trybuild mix, cite tt/vt, known-on Eager/Lazy/fork, snapshot+tail anchors, replay applies TtAnchor
 - [x] **Phase 37: Rule AST and hash** — canonical encoding; `rule_version` hash; fail-closed unknown bodies
-- [ ] **Phase 38: Rule evaluator and support counting** — cascade → rules; retract maintains supports
+- [x] **Phase 38: Rule evaluator and support counting** — cascade → rules; retract maintains supports
 - [ ] **Phase 39: Policy evaluation and execution replay** — pinned policy; replay re-derives
 - [ ] **Phase 40: Legal golden fixture and verdict** — transitional rule + as_known_on; ADR-013 dated note
 
@@ -72,4 +72,4 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 | v0.01–v0.08 | 1–35 | shipped |
 | v0.09 | 36–40 | active (M016) |
 
-**Next:** Phase 38 under M016 S03 lease (evaluator). Do not start 39 until S04 is leased.
+**Next:** Lease M016 S04, then Phase 39 (policy + execution replay). Do not start 39 until leased.

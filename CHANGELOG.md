@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Trajectory: M016 S03 CLOSED (Phase 38)
+
+### Trajectory
+
+- Phase 38 verified; `L_delivery=M016-S03-done`. Next: lease S04 (Policy + execution replay).
+
+### Product
+
+- Horn evaluator; genesis inverse_knows; n-ary Horn; premise retract drops Horn-derived supports.
+
 ## 2026-10-02 — Product: independent RULE-02 kill-tests (Phase 38)
 
 ### Product

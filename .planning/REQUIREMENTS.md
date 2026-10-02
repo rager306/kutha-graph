@@ -22,7 +22,7 @@ Closes test-audit T2–T6 and F9/F16. Cells stay Proposed. Not M002. Run: `docs/
 
 ### Evaluator (F9)
 
-- [ ] **RULE-02**: Multi-hop / n-ary / `inverse_knows` expressed as rules; premise retract maintains derived supports; hard-coded cascade deleted or reduced to rule eval
+- [x] **RULE-02**: Multi-hop / n-ary / `inverse_knows` expressed as rules; premise retract maintains derived supports; hard-coded cascade deleted or reduced to rule eval
 
 ### Policy + execution replay (F16)
 
@@ -53,7 +53,7 @@ Closes test-audit T2–T6 and F9/F16. Cells stay Proposed. Not M002. Run: `docs/
 |-------------|-------|--------|
 | TH-01..TH-05 | Phase 36 | Complete (verified) |
 | RULE-01 | Phase 37 | Complete (verified) |
-| RULE-02 | Phase 38 | Pending |
+| RULE-02 | Phase 38 | Complete (verified) |
 | RULE-03, RULE-04 | Phase 39 | Pending |
 | FIXG-01 | Phase 40 | Pending |
 

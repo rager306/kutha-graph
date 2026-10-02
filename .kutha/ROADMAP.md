@@ -211,7 +211,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 ## M016: Test hardening + executable rules — LEASED (GSD v0.09)
 
-**Leased:** Active Milestone M016; **S03** active (Phase 38); S01–S02 CLOSED; S04–S05 unleased.
+**Progress:** S01–S03 CLOSED. S04–S05 unleased.
 
 **Success:** T2–T6 test holes closed; canonical rule AST hashed into `rule_version`; rule bodies evaluated over the CSR lease with support counting; admission evaluates the pinned policy; execution replay re-derives; a golden fixture answers the ADR-013 open question (or records fail-closed). Closes T2–T6, F9, F16. Needs a lease.
 
@@ -219,7 +219,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
   > After this: trybuild E0308 clock mix; cite tt/vt oracle; Eager/Lazy/fork known-on; snapshot+tail anchors; `GraphFold::replay` applies TtAnchor.
 - [x] **S02: Rule AST and hash** `risk:high` `depends:[S01]`
   > After this: a positive, bounded rule language has a canonical encoding; `rule_version` is its hash; unknown or non-canonical bodies fail closed.
-- [ ] **S03: Evaluator and support counting** `risk:high` `depends:[S02]`
+- [x] **S03: Evaluator and support counting** `risk:high` `depends:[S02]`
   > After this: multi-hop, n-ary, and `inverse_knows` are rules; retraction of a premise maintains derived supports; the hard-coded cascade is deleted.
 - [ ] **S04: Policy evaluation and execution replay** `risk:high` `depends:[S03]`
   > After this: admission runs the pinned policy body; changing the policy changes a decision; replay re-derives derived facts and fails on any it cannot reproduce.
