@@ -1,6 +1,6 @@
 //! M011 S06: typed CSR lease preserves relation labels and support multiplicity.
 
-use kutha_common::Op;
+use kutha_common::{Op, TransactionTime, ValidTime};
 use kutha_runtime::Runtime;
 
 #[test]
@@ -48,7 +48,7 @@ fn typed_csr_preserves_relation_labels_and_support_multiplicity() {
     })
     .unwrap();
 
-    let typed = rt.typed_csr_lease_at(u64::MAX, 0);
+    let typed = rt.typed_csr_lease_at(TransactionTime::MAX, ValidTime::from(0));
     let edges = typed.edges_out(s);
     assert!(
         edges.len() >= 3,
@@ -82,7 +82,7 @@ fn typed_csr_preserves_relation_labels_and_support_multiplicity() {
     assert_ne!(knows_edges[0].claim_id, knows_edges[1].claim_id);
 
     // Same cut: untyped neighbor-set collapses to a single object.
-    let untyped = rt.csr_lease_at(u64::MAX, 0);
+    let untyped = rt.csr_lease_at(TransactionTime::MAX, ValidTime::from(0));
     assert_eq!(untyped.neighbors(s), &[o]);
 
     // Empty subject with no live Facts → empty edges_out.
@@ -114,7 +114,7 @@ fn untyped_csr_neighbor_set_and_ff5_still_hold() {
     let fact_count = rt.fold().facts().len();
 
     {
-        let lease = rt.csr_lease_at(u64::MAX, 0);
+        let lease = rt.csr_lease_at(TransactionTime::MAX, ValidTime::from(0));
         assert_eq!(
             lease.neighbors(s),
             &[o],
@@ -130,11 +130,11 @@ fn untyped_csr_neighbor_set_and_ff5_still_hold() {
     assert_eq!(log_len, rt.log().len());
     assert_eq!(fact_count, rt.fold().facts().len());
 
-    let rebuilt = rt.csr_lease_at(u64::MAX, 0);
+    let rebuilt = rt.csr_lease_at(TransactionTime::MAX, ValidTime::from(0));
     assert_eq!(rebuilt.neighbors(s), &[o]);
 
     // Independent typed rebuild on the same cut must not panic.
-    let typed = rt.typed_csr_lease_at(u64::MAX, 0);
+    let typed = rt.typed_csr_lease_at(TransactionTime::MAX, ValidTime::from(0));
     assert_eq!(typed.edges_out(s).len(), 1);
     assert_eq!(typed.edges_out(s)[0].object, o);
     assert_eq!(typed.edges_out(s)[0].relation, knows);

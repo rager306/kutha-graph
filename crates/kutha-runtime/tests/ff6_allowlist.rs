@@ -1,7 +1,7 @@
 //! FF6 stub: one relation allowlist. Unknown relation does not append.
 //! Not ADR-050's six dictionary kinds.
 
-use kutha_common::Op;
+use kutha_common::{Op, TransactionTime, ValidTime};
 use kutha_runtime::{Runtime, RuntimeError};
 
 #[test]
@@ -31,7 +31,11 @@ fn ff6_unknown_relation_does_not_append() {
         "{err:?}"
     );
     assert_eq!(n, rt.log().len(), "fail-closed: log must not grow");
-    assert_eq!(0, rt.fold().live_count(u64::MAX, 2010));
+    assert_eq!(
+        0,
+        rt.fold()
+            .live_count(TransactionTime::MAX, ValidTime::from(2010))
+    );
 }
 
 #[test]

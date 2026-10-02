@@ -1,6 +1,6 @@
 //! M012a S01 / LOG-01: quantum outcomes are log records; the outcomes file is a lease.
 
-use kutha_common::{rule_definition_hash, Op};
+use kutha_common::{rule_definition_hash, Op, TransactionTime, ValidTime};
 use kutha_runtime::{store, OutcomeDisposition, Runtime};
 
 #[test]
@@ -209,8 +209,8 @@ fn derive_pq_with_justification() -> (Runtime, String) {
             vec![claim_p],
             vec![event_a, event_b],
             pin.clone(),
-            t1,
-            2017,
+            TransactionTime::from(t1),
+            ValidTime::from(2017),
         )
         .expect("record_justification");
     (rt, jid)

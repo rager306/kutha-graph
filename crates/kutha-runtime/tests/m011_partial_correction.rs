@@ -1,7 +1,7 @@
 //! M011 S04: explicit interval patch leaves residual VT versions of source `a`.
 //! Whole-version `Op::Correct` still invalidates the entire live fact (CORR-02).
 
-use kutha_common::{Event, EventId, Op};
+use kutha_common::{Event, EventId, Op, TransactionTime, ValidTime};
 use kutha_runtime::{Runtime, RuntimeError};
 
 /// Year-like valid-time instants for the residual oracle (not wall-clock).
@@ -52,9 +52,9 @@ fn interval_patch_leaves_vt_2012_and_2021_residuals() {
     })
     .unwrap();
 
-    let as_left = rt.fold().as_of(VT_LEFT);
-    let as_right = rt.fold().as_of(VT_RIGHT);
-    let as_mid = rt.fold().as_of(VT_INTERIOR);
+    let as_left = rt.fold().as_of(ValidTime::from(VT_LEFT));
+    let as_right = rt.fold().as_of(ValidTime::from(VT_RIGHT));
+    let as_mid = rt.fold().as_of(ValidTime::from(VT_INTERIOR));
     assert!(
         as_left.contains(&(a, related, p)),
         "VT 2012 residual of source a must keep P"
@@ -93,7 +93,10 @@ fn interval_patch_leaves_vt_2012_and_2021_residuals() {
     assert_eq!(loser.valid_from, VF_WIDE);
     assert_eq!(loser.valid_to, None);
 
-    let old_tt = rt.fold().live_at(orig_ingested, VT_INTERIOR);
+    let old_tt = rt.fold().live_at(
+        TransactionTime::from(orig_ingested),
+        ValidTime::from(VT_INTERIOR),
+    );
     assert!(
         old_tt.contains(&(a, related, p)),
         "old TT must still see P; original VT bounds are not clipped"
@@ -154,9 +157,9 @@ fn whole_version_correct_does_not_invent_residuals() {
     })
     .unwrap();
 
-    let as_left = rt.fold().as_of(VT_LEFT);
-    let as_right = rt.fold().as_of(VT_RIGHT);
-    let as_mid = rt.fold().as_of(VT_INTERIOR);
+    let as_left = rt.fold().as_of(ValidTime::from(VT_LEFT));
+    let as_right = rt.fold().as_of(ValidTime::from(VT_RIGHT));
+    let as_mid = rt.fold().as_of(ValidTime::from(VT_INTERIOR));
     assert!(
         !as_left.contains(&(a, related, p)),
         "whole-version Correct must not leave live P at VT 2012"

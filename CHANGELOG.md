@@ -11,6 +11,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Changed
 
 - FF5 public clock cuts wrap `ValidTime::from` / `TransactionTime::MAX`; `Op` `valid_from`/`valid_to` stay `u64`. Oracle assertion predicates unchanged.
+- M011/M012/M013 fixtures and FF6 `live_count` wrap the same constructors at `as_of` / `live_at` / CSR / justification / derivation / admission cuts.
 
 ### Trajectory
 

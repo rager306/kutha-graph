@@ -1,6 +1,8 @@
 //! M011 S08 candidate fixture; semantic-contract observations at named cuts.
 
-use kutha_common::{rule_definition_hash, EventId, Op, SupportPolarity, TermId};
+use kutha_common::{
+    rule_definition_hash, EventId, Op, SupportPolarity, TermId, TransactionTime, ValidTime,
+};
 use kutha_runtime::{store, GraphFold, Runtime, RuntimeError};
 
 /// Year-like valid-time instants (same as S04).
@@ -163,12 +165,12 @@ impl Fixture {
                 vec![self.claim_p],
                 vec![self.event_a, self.event_b],
                 rule_definition_hash("derive_pq"),
-                self.t1,
-                VT_INTERIOR,
+                TransactionTime::from(self.t1),
+                ValidTime::from(VT_INTERIOR),
             )
             .expect("record_justification");
         self.rt
-            .record_action(&jid, u64::MAX, VT_INTERIOR)
+            .record_action(&jid, TransactionTime::MAX, ValidTime::from(VT_INTERIOR))
             .expect("record_action");
         jid
     }
@@ -198,8 +200,16 @@ fn e2e_fixture_supports_and_conflict_at_named_cuts() {
             .fold()
             .live_support_count(fx.claim_p, fx.t1, VT_INTERIOR)
     );
-    assert!(fx.rt.derivation_eligible_at(fx.claim_q, fx.t1, VT_INTERIOR));
-    let t1_report = fx.rt.conflict_report_at(fx.claim_p, fx.t1, VT_INTERIOR);
+    assert!(fx.rt.derivation_eligible_at(
+        fx.claim_q,
+        TransactionTime::from(fx.t1),
+        ValidTime::from(VT_INTERIOR)
+    ));
+    let t1_report = fx.rt.conflict_report_at(
+        fx.claim_p,
+        TransactionTime::from(fx.t1),
+        ValidTime::from(VT_INTERIOR),
+    );
     assert!(!t1_report.positive_supports.is_empty());
     assert!(t1_report.negative_supports.is_empty());
 
@@ -219,48 +229,60 @@ fn e2e_fixture_supports_and_conflict_at_named_cuts() {
     assert!(fx
         .rt
         .fold()
-        .live_at(t2, VT_INTERIOR)
+        .live_at(TransactionTime::from(t2), ValidTime::from(VT_INTERIOR))
         .contains(&(fx.b, fx.related, fx.p)));
     assert!(fx
         .rt
         .fold()
-        .live_at(t2, VT_INTERIOR)
+        .live_at(TransactionTime::from(t2), ValidTime::from(VT_INTERIOR))
         .contains(&(fx.a, fx.related, fx.not_p)));
-    let t2_report = fx.rt.conflict_report_at(fx.claim_p, t2, VT_INTERIOR);
+    let t2_report = fx.rt.conflict_report_at(
+        fx.claim_p,
+        TransactionTime::from(t2),
+        ValidTime::from(VT_INTERIOR),
+    );
     assert!(!t2_report.positive_supports.is_empty());
     assert!(!t2_report.negative_supports.is_empty());
     assert!(
         fx.rt
             .fold()
-            .live_at(t2, VT_LEFT)
+            .live_at(TransactionTime::from(t2), ValidTime::from(VT_LEFT))
             .contains(&(fx.a, fx.related, fx.p)),
         "VT 2012 residual of a must keep P"
     );
     assert!(
         fx.rt
             .fold()
-            .live_at(t2, VT_RIGHT)
+            .live_at(TransactionTime::from(t2), ValidTime::from(VT_RIGHT))
             .contains(&(fx.a, fx.related, fx.p)),
         "VT 2021 residual of a must keep P"
     );
 
     fx.apply_t3_withdraw_b();
     let t3 = fx.t3.expect("t3");
-    let t3_report = fx.rt.conflict_report_at(fx.claim_p, t3, VT_INTERIOR);
+    let t3_report = fx.rt.conflict_report_at(
+        fx.claim_p,
+        TransactionTime::from(t3),
+        ValidTime::from(VT_INTERIOR),
+    );
     assert!(
         t3_report.positive_supports.is_empty(),
         "last positive-P support withdrawn"
     );
-    assert!(fx.rt.fold().claim_supported_at(fx.claim_q, t3, VT_INTERIOR));
+    assert!(fx.rt.fold().claim_supported_at(
+        fx.claim_q,
+        TransactionTime::from(t3),
+        ValidTime::from(VT_INTERIOR)
+    ));
     assert!(fx
         .rt
         .fold()
-        .live_at(t3, VT_LEFT)
+        .live_at(TransactionTime::from(t3), ValidTime::from(VT_LEFT))
         .contains(&(fx.a, fx.related, fx.p)));
     assert!(fx
         .rt
         .fold()
-        .live_at(t3, VT_RIGHT)
+        .live_at(TransactionTime::from(t3), ValidTime::from(VT_RIGHT))
         .contains(&(fx.a, fx.related, fx.p)));
     fx.rt.replay_check().unwrap();
 }
@@ -280,7 +302,11 @@ fn assert_stale(rt: &Runtime, jid: &str) {
 }
 
 fn assert_cut_agrees(rt: &Runtime, replayed: &GraphFold, fx: &Fixture, tt: u64, vt: u64) {
-    assert_eq!(rt.fold().live_at(tt, vt), replayed.live_at(tt, vt));
+    assert_eq!(
+        rt.fold()
+            .live_at(TransactionTime::from(tt), ValidTime::from(vt)),
+        replayed.live_at(TransactionTime::from(tt), ValidTime::from(vt))
+    );
     assert_eq!(
         rt.fold().live_support_count(fx.claim_p, tt, vt),
         replayed.live_support_count(fx.claim_p, tt, vt)
@@ -289,7 +315,7 @@ fn assert_cut_agrees(rt: &Runtime, replayed: &GraphFold, fx: &Fixture, tt: u64, 
         rt.fold().live_support_count(fx.claim_q, tt, vt),
         replayed.live_support_count(fx.claim_q, tt, vt)
     );
-    let report = rt.conflict_report_at(fx.claim_p, tt, vt);
+    let report = rt.conflict_report_at(fx.claim_p, TransactionTime::from(tt), ValidTime::from(vt));
     let mut pos = Vec::new();
     let mut neg = Vec::new();
     for f in replayed.live_supports(fx.claim_p, tt, vt) {
@@ -338,8 +364,8 @@ fn e2e_justification_cites_sources_and_rejects_stale_admission() {
             vec![fx.claim_p],
             vec![fx.event_b],
             rule_definition_hash("derive_pq"),
-            t2,
-            VT_INTERIOR,
+            TransactionTime::from(t2),
+            ValidTime::from(VT_INTERIOR),
         )
         .expect("record_justification");
     fx.rt.check_admission(&jid2).unwrap();
@@ -374,8 +400,8 @@ fn e2e_incremental_matches_reconstruct_after_discarding_leases() {
             vec![fx.claim_p],
             vec![fx.event_b],
             rule_definition_hash("derive_pq"),
-            t2,
-            VT_INTERIOR,
+            TransactionTime::from(t2),
+            ValidTime::from(VT_INTERIOR),
         )
         .expect("record_justification");
     fx.apply_t3_withdraw_b();
@@ -394,11 +420,19 @@ fn e2e_incremental_matches_reconstruct_after_discarding_leases() {
         (t3, VT_RIGHT),
     ] {
         assert_cut_agrees(&fx.rt, &replayed, &fx, tt, vt);
-        let eligible = fx.rt.derivation_eligible_at(fx.claim_q, tt, vt);
+        let eligible = fx.rt.derivation_eligible_at(
+            fx.claim_q,
+            TransactionTime::from(tt),
+            ValidTime::from(vt),
+        );
         assert_eq!(
             eligible,
-            replayed.claim_supported_at(fx.claim_q, tt, vt)
-                && replayed.claim_supported_at(fx.claim_p, tt, vt)
+            replayed.claim_supported_at(fx.claim_q, TransactionTime::from(tt), ValidTime::from(vt))
+                && replayed.claim_supported_at(
+                    fx.claim_p,
+                    TransactionTime::from(tt),
+                    ValidTime::from(vt)
+                )
         );
     }
 
@@ -415,25 +449,46 @@ fn e2e_incremental_matches_reconstruct_after_discarding_leases() {
     assert_stale(&opened, &jid2);
     for (tt, vt) in [(fx.t1, VT_INTERIOR), (t2, VT_INTERIOR), (t3, VT_INTERIOR)] {
         assert_eq!(
-            opened.conflict_report_at(fx.claim_p, tt, vt),
-            fx.rt.conflict_report_at(fx.claim_p, tt, vt)
+            opened.conflict_report_at(fx.claim_p, TransactionTime::from(tt), ValidTime::from(vt)),
+            fx.rt
+                .conflict_report_at(fx.claim_p, TransactionTime::from(tt), ValidTime::from(vt))
         );
         assert_eq!(
-            opened.derivation_eligible_at(fx.claim_q, tt, vt),
-            fx.rt.derivation_eligible_at(fx.claim_q, tt, vt)
+            opened.derivation_eligible_at(
+                fx.claim_q,
+                TransactionTime::from(tt),
+                ValidTime::from(vt)
+            ),
+            fx.rt.derivation_eligible_at(
+                fx.claim_q,
+                TransactionTime::from(tt),
+                ValidTime::from(vt)
+            )
         );
     }
     let _ = std::fs::remove_dir_all(&dir);
 
-    let untyped_before = fx.rt.csr_lease_at(t3, VT_INTERIOR);
-    let typed_before = fx.rt.typed_csr_lease_at(t3, VT_INTERIOR);
+    let untyped_before = fx
+        .rt
+        .csr_lease_at(TransactionTime::from(t3), ValidTime::from(VT_INTERIOR));
+    let typed_before = fx
+        .rt
+        .typed_csr_lease_at(TransactionTime::from(t3), ValidTime::from(VT_INTERIOR));
     let fp_before = fx.rt.fold().fingerprint();
     {
-        let _drop_u = fx.rt.csr_lease_at(t3, VT_INTERIOR);
-        let _drop_t = fx.rt.typed_csr_lease_at(t3, VT_INTERIOR);
+        let _drop_u = fx
+            .rt
+            .csr_lease_at(TransactionTime::from(t3), ValidTime::from(VT_INTERIOR));
+        let _drop_t = fx
+            .rt
+            .typed_csr_lease_at(TransactionTime::from(t3), ValidTime::from(VT_INTERIOR));
     }
-    let untyped_after = fx.rt.csr_lease_at(t3, VT_INTERIOR);
-    let typed_after = fx.rt.typed_csr_lease_at(t3, VT_INTERIOR);
+    let untyped_after = fx
+        .rt
+        .csr_lease_at(TransactionTime::from(t3), ValidTime::from(VT_INTERIOR));
+    let typed_after = fx
+        .rt
+        .typed_csr_lease_at(TransactionTime::from(t3), ValidTime::from(VT_INTERIOR));
     assert_eq!(
         untyped_before.neighbors(fx.a),
         untyped_after.neighbors(fx.a)

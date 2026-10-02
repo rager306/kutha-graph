@@ -2,7 +2,7 @@
 //! justification/action constructors (pipeline receipt). Never edit named
 //! m012_*/m012a_*/m011_*/ff5/ff6 expects. Never edit `.kutha/STATE.md`.
 
-use kutha_common::{rule_definition_hash, Op, KUTHA_ALLOWS};
+use kutha_common::{rule_definition_hash, Op, TransactionTime, ValidTime, KUTHA_ALLOWS};
 use kutha_runtime::{Runtime, RuntimeError};
 
 #[test]
@@ -22,8 +22,15 @@ fn unknown_relation_rejected_for_assert_justification_and_action() {
     let outcomes_before = rt.outcome_records().len();
 
     let dummy = kutha_common::EventId::nil();
-    let _ = rt.record_justification(dummy, Vec::new(), Vec::new(), "", u64::MAX, 2010);
-    let _ = rt.record_action("missing", u64::MAX, 2010);
+    let _ = rt.record_justification(
+        dummy,
+        Vec::new(),
+        Vec::new(),
+        "",
+        TransactionTime::MAX,
+        ValidTime::from(2010),
+    );
+    let _ = rt.record_action("missing", TransactionTime::MAX, ValidTime::from(2010));
 
     assert!(
         rt.outcome_records().len() > outcomes_before,
@@ -119,7 +126,11 @@ fn public_emit_correct_kutha_allow_is_refused() {
         })
         .unwrap_err();
     assert!(matches!(err, RuntimeError::MetaOpRejected), "{err:?}");
-    assert_eq!(n, rt.log().len(), "User Correct of kutha:allows must not append");
+    assert_eq!(
+        n,
+        rt.log().len(),
+        "User Correct of kutha:allows must not append"
+    );
 
     let interval = rt.emit_allow("leasedInterval", 2010, Some(2020)).unwrap();
     let interval_event = interval.receipt.event_ids[0];
@@ -133,7 +144,10 @@ fn public_emit_correct_kutha_allow_is_refused() {
             patch_to: Some(2020),
         })
         .unwrap_err();
-    assert!(matches!(err_interval, RuntimeError::MetaOpRejected), "{err_interval:?}");
+    assert!(
+        matches!(err_interval, RuntimeError::MetaOpRejected),
+        "{err_interval:?}"
+    );
     assert_eq!(
         n2,
         rt.log().len(),
@@ -248,7 +262,9 @@ fn keyed_correct_interval_preserves_delivery_key_and_retry() {
         rt.fold()
             .facts()
             .iter()
-            .filter(|f| f.is_live_at(u64::MAX, vt) && f.delivery_key.as_deref() == Some(key.as_str()))
+            .filter(|f| {
+                f.is_live_at(u64::MAX, vt) && f.delivery_key.as_deref() == Some(key.as_str())
+            })
             .count()
     };
     for vt in [2012, 2017, 2021] {

@@ -1,6 +1,6 @@
 //! M012a S03 / ING-01: identical Assert retry under one delivery key does not mint a second support.
 
-use kutha_common::{Op, SupportPolarity};
+use kutha_common::{Op, SupportPolarity, TransactionTime, ValidTime};
 use kutha_runtime::{store, Runtime, RuntimeError};
 
 #[test]
@@ -284,7 +284,7 @@ fn conflict_report_at_partitions_by_stored_polarity() {
         polarity: Some(SupportPolarity::Negative),
     })
     .unwrap();
-    let report = rt.conflict_report_at(claim, u64::MAX, 2017);
+    let report = rt.conflict_report_at(claim, TransactionTime::MAX, ValidTime::from(2017));
     assert!(!report.positive_supports.is_empty());
     assert!(!report.negative_supports.is_empty());
     rt.replay_check().unwrap();

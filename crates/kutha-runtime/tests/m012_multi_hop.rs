@@ -1,7 +1,7 @@
 //! M012 S05: two-hop derivation eligibility (DER-01, DER-02).
 //! Walks `caused_by`; not a MATCH compiler or provenance-polynomial evaluator.
 
-use kutha_common::{rule_definition_hash, EventId, Op};
+use kutha_common::{rule_definition_hash, EventId, Op, TransactionTime, ValidTime};
 use kutha_runtime::{store, Runtime};
 
 fn register_rule_id(rt: &Runtime, definition: &str) -> EventId {
@@ -80,11 +80,11 @@ fn two_hop_derivation_eligible_when_chain_live() {
     let (_cause_p, hop1, hop2) = emit_two_hop_chain(&mut rt);
 
     assert!(
-        rt.derivation_eligible_at(hop1, u64::MAX, 2017),
+        rt.derivation_eligible_at(hop1, TransactionTime::MAX, ValidTime::from(2017)),
         "hop1 must be eligible while the root Assert is live"
     );
     assert!(
-        rt.derivation_eligible_at(hop2, u64::MAX, 2017),
+        rt.derivation_eligible_at(hop2, TransactionTime::MAX, ValidTime::from(2017)),
         "hop2 must be eligible while every hop is live (DER-02)"
     );
     assert!(
@@ -102,7 +102,7 @@ fn two_hop_ineligible_when_root_assert_retracted() {
     let (cause_p, hop1, hop2) = emit_two_hop_chain(&mut rt);
 
     assert!(
-        rt.derivation_eligible_at(hop2, u64::MAX, 2017),
+        rt.derivation_eligible_at(hop2, TransactionTime::MAX, ValidTime::from(2017)),
         "hop2 must start eligible"
     );
 
@@ -116,11 +116,11 @@ fn two_hop_ineligible_when_root_assert_retracted() {
         "hop2 fact may still be live after retracting the root Assert"
     );
     assert!(
-        !rt.derivation_eligible_at(hop1, u64::MAX, 2017),
+        !rt.derivation_eligible_at(hop1, TransactionTime::MAX, ValidTime::from(2017)),
         "hop1 must lose eligibility when the root Assert is withdrawn"
     );
     assert!(
-        !rt.derivation_eligible_at(hop2, u64::MAX, 2017),
+        !rt.derivation_eligible_at(hop2, TransactionTime::MAX, ValidTime::from(2017)),
         "hop2 eligibility must walk caused_by and be false after root retract (DER-01)"
     );
 }
@@ -132,7 +132,7 @@ fn two_hop_ineligible_when_parent_rule_retracted() {
     let rule_pq = register_rule_id(&rt, "derive_pq");
 
     assert!(
-        rt.derivation_eligible_at(hop2, u64::MAX, 2017),
+        rt.derivation_eligible_at(hop2, TransactionTime::MAX, ValidTime::from(2017)),
         "hop2 must start eligible"
     );
 
@@ -153,11 +153,11 @@ fn two_hop_ineligible_when_parent_rule_retracted() {
         "hop2 fact may still be live after retracting derive_pq"
     );
     assert!(
-        !rt.derivation_eligible_at(hop1, u64::MAX, 2017),
+        !rt.derivation_eligible_at(hop1, TransactionTime::MAX, ValidTime::from(2017)),
         "hop1 must lose eligibility when its registry pin is retracted"
     );
     assert!(
-        !rt.derivation_eligible_at(hop2, u64::MAX, 2017),
+        !rt.derivation_eligible_at(hop2, TransactionTime::MAX, ValidTime::from(2017)),
         "hop2 must walk the parent pin and be ineligible (DER-01)"
     );
 }
@@ -287,11 +287,11 @@ fn persist_open_reconstructs_two_hop_eligibility() {
     store::persist(&rt, &live_dir).unwrap();
     let opened = store::open(&live_dir).unwrap();
     assert!(
-        opened.derivation_eligible_at(hop1, u64::MAX, 2017),
+        opened.derivation_eligible_at(hop1, TransactionTime::MAX, ValidTime::from(2017)),
         "opened hop1 must stay eligible"
     );
     assert!(
-        opened.derivation_eligible_at(hop2, u64::MAX, 2017),
+        opened.derivation_eligible_at(hop2, TransactionTime::MAX, ValidTime::from(2017)),
         "opened hop2 must stay eligible (DER-01, DER-02)"
     );
     let _ = std::fs::remove_dir_all(&live_dir);
@@ -311,7 +311,7 @@ fn persist_open_reconstructs_two_hop_eligibility() {
         "opened hop2 fact must still be live"
     );
     assert!(
-        !opened.derivation_eligible_at(hop2, u64::MAX, 2017),
+        !opened.derivation_eligible_at(hop2, TransactionTime::MAX, ValidTime::from(2017)),
         "opened hop2 must be ineligible after persisted root Retract (T-21-04)"
     );
     let _ = std::fs::remove_dir_all(&retract_dir);

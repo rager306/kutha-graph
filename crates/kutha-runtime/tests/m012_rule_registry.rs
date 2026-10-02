@@ -1,13 +1,17 @@
 //! M012 S02: rule registry as log facts (RULE-01..03).
 //! Not ADR-050's six dictionary kinds.
 
-use kutha_common::{rule_definition_hash, Op};
+use kutha_common::{rule_definition_hash, Op, TransactionTime, ValidTime};
 use kutha_runtime::{store, Runtime, RuntimeError};
 
 #[test]
 fn register_rule_pins_behavior_to_definition_hash() {
     let mut rt = Runtime::default();
-    assert_eq!(0, rt.fold().live_count(u64::MAX, 0));
+    assert_eq!(
+        0,
+        rt.fold()
+            .live_count(TransactionTime::MAX, ValidTime::from(0))
+    );
 
     let p = rt.intern("P");
     let q = rt.intern("Q");
@@ -33,8 +37,12 @@ fn register_rule_pins_behavior_to_definition_hash() {
         "{:?}",
         last.op
     );
-    assert_eq!(0, rt.fold().live_count(u64::MAX, 2010));
-    assert_eq!(0, rt.fold().as_of(2010).len());
+    assert_eq!(
+        0,
+        rt.fold()
+            .live_count(TransactionTime::MAX, ValidTime::from(2010))
+    );
+    assert_eq!(0, rt.fold().as_of(ValidTime::from(2010)).len());
     assert_eq!(64, pin.len());
     assert!(
         pin.chars().all(|c| matches!(c, '0'..='9' | 'a'..='f')),
@@ -77,7 +85,7 @@ fn register_rule_pins_behavior_to_definition_hash() {
         "facts() must hold a live Q claim"
     );
     assert!(
-        rt.derivation_eligible_at(claim_q, u64::MAX, 2017),
+        rt.derivation_eligible_at(claim_q, TransactionTime::MAX, ValidTime::from(2017)),
         "hashed derive_pq must be eligible at the named cut"
     );
 }
@@ -245,7 +253,7 @@ fn retract_register_rule_drops_eligibility_at_later_cut() {
         })
         .unwrap();
     let claim_q = derived.receipt.event_ids[0];
-    assert!(rt.derivation_eligible_at(claim_q, u64::MAX, 2017));
+    assert!(rt.derivation_eligible_at(claim_q, TransactionTime::MAX, ValidTime::from(2017)));
 
     rt.emit(Op::Retract { event_id: rule_id }).unwrap();
 
@@ -268,7 +276,7 @@ fn retract_register_rule_drops_eligibility_at_later_cut() {
     );
     assert_eq!(after, rt.log().len(), "fail-closed: log must not grow");
     assert!(
-        !rt.derivation_eligible_at(claim_q, u64::MAX, 2017),
+        !rt.derivation_eligible_at(claim_q, TransactionTime::MAX, ValidTime::from(2017)),
         "retracted registry hash must drop eligibility"
     );
 

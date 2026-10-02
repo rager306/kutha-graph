@@ -30,11 +30,15 @@ fn fixture_years_map_to_year_ce_scale() {
     })
     .unwrap();
     assert!(
-        rt.fold().as_of(2017).contains(&(a, rel, b)),
+        rt.fold()
+            .as_of(ValidTime::from(2017))
+            .contains(&(a, rel, b)),
         "as_of(2017) must include the YearCe 2017 triple"
     );
     assert!(
-        !rt.fold().as_of(2016).contains(&(a, rel, b)),
+        !rt.fold()
+            .as_of(ValidTime::from(2016))
+            .contains(&(a, rel, b)),
         "as_of(2016) must not include a fact valid_from 2017"
     );
 }

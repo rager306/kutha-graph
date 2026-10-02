@@ -1,6 +1,6 @@
 //! M012a S02 / REF-01: Retract targets the minting EventId, not fold-local seq.
 
-use kutha_common::{rule_definition_hash, Event, EventId, Op};
+use kutha_common::{rule_definition_hash, Event, EventId, Op, TransactionTime, ValidTime};
 use kutha_runtime::{Runtime, RuntimeError};
 
 #[test]
@@ -117,7 +117,14 @@ fn justification_cites_source_event_ids_survive_fork() {
         .unwrap()
         .ingested_at;
     let jid = rt
-        .record_justification(claim_q, vec![minting], vec![minting], pin.clone(), t1, 0)
+        .record_justification(
+            claim_q,
+            vec![minting],
+            vec![minting],
+            pin.clone(),
+            TransactionTime::from(t1),
+            ValidTime::from(0),
+        )
         .expect("record_justification");
     rt.check_admission(&jid).unwrap();
 
@@ -204,7 +211,14 @@ fn rebuilt_fold_renumbered_seqs_apply_same_retract_and_cite_payloads() {
         .unwrap()
         .ingested_at;
     let jid = rt
-        .record_justification(claim_q, vec![minting], vec![minting], pin.clone(), t1, 0)
+        .record_justification(
+            claim_q,
+            vec![minting],
+            vec![minting],
+            pin.clone(),
+            TransactionTime::from(t1),
+            ValidTime::from(0),
+        )
         .expect("record_justification");
     rt.emit(Op::Retract { event_id: minting }).unwrap();
 

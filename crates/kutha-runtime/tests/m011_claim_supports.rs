@@ -1,6 +1,6 @@
 //! M011 S01: independent supports share a claim_id; retract one, the other remains.
 
-use kutha_common::{rule_definition_hash, EventId, Op};
+use kutha_common::{rule_definition_hash, EventId, Op, TransactionTime, ValidTime};
 use kutha_runtime::Runtime;
 
 #[test]
@@ -45,12 +45,15 @@ fn retracting_one_support_leaves_claim_supported() {
     })
     .unwrap();
     assert_eq!(2, rt.fold().live_support_count(claim, u64::MAX, 2017));
-    assert!(rt.fold().claim_supported_at(claim, u64::MAX, 2017));
+    assert!(rt
+        .fold()
+        .claim_supported_at(claim, TransactionTime::MAX, ValidTime::from(2017)));
 
     rt.emit(Op::Retract { event_id: event_a }).unwrap();
     assert_eq!(1, rt.fold().live_support_count(claim, u64::MAX, 2017));
     assert!(
-        rt.fold().claim_supported_at(claim, u64::MAX, 2017),
+        rt.fold()
+            .claim_supported_at(claim, TransactionTime::MAX, ValidTime::from(2017)),
         "independent support must survive withdrawal of the other"
     );
     rt.replay_check().unwrap();
@@ -182,7 +185,11 @@ fn derived_q_loses_eligibility_when_last_premise_support_withdrawn() {
         .ingested_at;
 
     assert!(
-        rt.derivation_eligible_at(claim_q, tt_after_derive, 2017),
+        rt.derivation_eligible_at(
+            claim_q,
+            TransactionTime::from(tt_after_derive),
+            ValidTime::from(2017)
+        ),
         "Q must be eligible while P still has live supports"
     );
     assert_eq!(
@@ -193,22 +200,35 @@ fn derived_q_loses_eligibility_when_last_premise_support_withdrawn() {
     rt.emit(Op::Retract { event_id: event_a }).unwrap();
     let tt_one_left = u64::MAX;
     assert!(
-        rt.derivation_eligible_at(claim_q, tt_one_left, 2017),
+        rt.derivation_eligible_at(
+            claim_q,
+            TransactionTime::from(tt_one_left),
+            ValidTime::from(2017)
+        ),
         "withdrawing one support must not drop Q while another remains"
     );
-    assert!(rt.fold().claim_supported_at(claim_p, tt_one_left, 2017));
+    assert!(rt.fold().claim_supported_at(
+        claim_p,
+        TransactionTime::from(tt_one_left),
+        ValidTime::from(2017)
+    ));
 
     rt.emit(Op::Retract { event_id: event_b }).unwrap();
     assert!(
-        !rt.derivation_eligible_at(claim_q, u64::MAX, 2017),
+        !rt.derivation_eligible_at(claim_q, TransactionTime::MAX, ValidTime::from(2017)),
         "last positive support gone: Q loses eligibility through this derivation"
     );
     assert!(
-        rt.fold().claim_supported_at(claim_q, u64::MAX, 2017),
+        rt.fold()
+            .claim_supported_at(claim_q, TransactionTime::MAX, ValidTime::from(2017)),
         "withdrawal of P must not erase historical Q fact"
     );
     assert!(
-        rt.derivation_eligible_at(claim_q, tt_after_derive, 2017),
+        rt.derivation_eligible_at(
+            claim_q,
+            TransactionTime::from(tt_after_derive),
+            ValidTime::from(2017)
+        ),
         "earlier TT cut must keep Q eligible"
     );
     rt.replay_check().unwrap();

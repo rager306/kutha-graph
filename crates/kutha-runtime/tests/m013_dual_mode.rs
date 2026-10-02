@@ -1,6 +1,6 @@
 //! HARD-03: FF5 statute under Eager vs Lazy (cold scan, no ensure_fold_indexes before reads).
 
-use kutha_common::{EventId, Op};
+use kutha_common::{EventId, Op, TransactionTime, ValidTime};
 use kutha_runtime::{FoldIndexMode, Runtime};
 
 const T_OLD: u64 = 2015;
@@ -48,8 +48,8 @@ fn assert_ff5_shape(rt: &mut Runtime) {
     let limit_50 = rt.intern("50-kmh");
     let limit_30 = rt.intern("30-kmh");
 
-    let old = rt.as_of(T_OLD);
-    let new = rt.as_of(T_NEW);
+    let old = rt.as_of(ValidTime::from(T_OLD));
+    let new = rt.as_of(ValidTime::from(T_NEW));
     assert!(old.contains(&(article, in_force, limit_50)));
     assert!(!old.contains(&(article, in_force, limit_30)));
     assert!(new.contains(&(article, in_force, limit_30)));
@@ -57,23 +57,18 @@ fn assert_ff5_shape(rt: &mut Runtime) {
 }
 
 fn sorted_as_of(rt: &Runtime, vt: u64) -> Vec<(u32, u32, u32)> {
-    let mut v = rt.as_of(vt);
+    let mut v = rt.as_of(ValidTime::from(vt));
     v.sort_unstable();
     v
 }
 
 fn sorted_live_at(rt: &Runtime, tt: u64, vt: u64) -> Vec<(u32, u32, u32)> {
-    let mut v = rt.live_at(tt, vt);
+    let mut v = rt.live_at(TransactionTime::from(tt), ValidTime::from(vt));
     v.sort_unstable();
     v
 }
 
-fn assert_modes_agree(
-    eager: &Runtime,
-    lazy: &Runtime,
-    eager_mint: EventId,
-    lazy_mint: EventId,
-) {
+fn assert_modes_agree(eager: &Runtime, lazy: &Runtime, eager_mint: EventId, lazy_mint: EventId) {
     for &vt in &[T_OLD, T_NEW] {
         assert_eq!(
             sorted_as_of(eager, vt),
@@ -88,8 +83,11 @@ fn assert_modes_agree(
     }
     for &vt in &[T_OLD, T_NEW, VF_FIRST, VF_SECOND] {
         assert_eq!(
-            eager.fold().claim_supported_at(eager_mint, u64::MAX, vt),
-            lazy.fold().claim_supported_at(lazy_mint, u64::MAX, vt),
+            eager
+                .fold()
+                .claim_supported_at(eager_mint, TransactionTime::MAX, ValidTime::from(vt)),
+            lazy.fold()
+                .claim_supported_at(lazy_mint, TransactionTime::MAX, ValidTime::from(vt)),
             "claim_supported_at mint at vt={vt}"
         );
     }
@@ -108,11 +106,7 @@ fn second_open_interval_fact(rt: &Runtime) -> EventId {
     rt.fold()
         .facts()
         .iter()
-        .find(|f| {
-            f.valid_from == VF_SECOND
-                && f.valid_to.is_none()
-                && f.invalidated_at.is_none()
-        })
+        .find(|f| f.valid_from == VF_SECOND && f.valid_to.is_none() && f.invalidated_at.is_none())
         .expect("2020 open interval fact")
         .event_id
 }
@@ -162,7 +156,7 @@ fn dual_mode_ff5_retract_correct_claim_agree() {
     let in_force = eager.intern("inForceAs");
     let limit_30 = eager.intern("30-kmh");
     for (rt, limit_40) in [(&eager, corrected_eager), (&lazy, corrected_lazy)] {
-        let at_new = rt.as_of(T_NEW);
+        let at_new = rt.as_of(ValidTime::from(T_NEW));
         assert!(
             at_new.contains(&(article, in_force, limit_40)),
             "Correct must surface 40-kmh at AS OF {T_NEW}"

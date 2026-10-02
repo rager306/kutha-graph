@@ -1,13 +1,17 @@
 //! M012 S01: relation allowlist entries as log facts (ALL-01..03).
 //! Not ADR-050's six dictionary kinds.
 
-use kutha_common::{Op, KUTHA_ALLOWS};
+use kutha_common::{Op, TransactionTime, ValidTime, KUTHA_ALLOWS};
 use kutha_runtime::{store, Runtime, RuntimeError};
 
 #[test]
 fn allow_relation_appends_as_log_fact() {
     let mut rt = Runtime::default();
-    assert_eq!(0, rt.fold().live_count(u64::MAX, 0));
+    assert_eq!(
+        0,
+        rt.fold()
+            .live_count(TransactionTime::MAX, ValidTime::from(0))
+    );
 
     let leased = rt.intern("leasedRel");
     let n = rt.log().len();
@@ -29,8 +33,12 @@ fn allow_relation_appends_as_log_fact() {
         "{:?}",
         last.op
     );
-    assert_eq!(0, rt.fold().live_count(u64::MAX, 2017));
-    assert_eq!(0, rt.fold().as_of(2017).len());
+    assert_eq!(
+        0,
+        rt.fold()
+            .live_count(TransactionTime::MAX, ValidTime::from(2017))
+    );
+    assert_eq!(0, rt.fold().as_of(ValidTime::from(2017)).len());
     assert!(rt.fold().relation_allowed_at("leasedRel", u64::MAX, 2017));
 
     let subject = rt.intern("alice-lease");
@@ -46,7 +54,11 @@ fn allow_relation_appends_as_log_fact() {
         polarity: None,
     })
     .unwrap();
-    assert_eq!(1, rt.fold().live_count(u64::MAX, 2017));
+    assert_eq!(
+        1,
+        rt.fold()
+            .live_count(TransactionTime::MAX, ValidTime::from(2017))
+    );
 
     let bogus = rt.intern("notALegalRelation");
     let n = rt.log().len();
@@ -86,7 +98,11 @@ fn yaml_seed_still_admits_in_force_as() {
         polarity: None,
     })
     .unwrap();
-    assert_eq!(1, rt.fold().live_count(u64::MAX, 2017));
+    assert_eq!(
+        1,
+        rt.fold()
+            .live_count(TransactionTime::MAX, ValidTime::from(2017))
+    );
 }
 
 #[test]

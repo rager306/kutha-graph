@@ -2,13 +2,18 @@
 //! Not ADR-050's six dictionary kinds. Not n-ary derivation.
 
 use kutha_common::{
-    policy_version_hash, rule_definition_hash, EventId, Op, KUTHA_ACTION, KUTHA_ADMISSION,
+    policy_version_hash, rule_definition_hash, EventId, Op, TransactionTime, ValidTime,
+    KUTHA_ACTION, KUTHA_ADMISSION,
 };
 use kutha_runtime::{store, Runtime, RuntimeError};
 
 fn leased_pin_and_derive() -> (Runtime, EventId, EventId) {
     let mut rt = Runtime::default();
-    assert_eq!(0, rt.fold().live_count(u64::MAX, 0));
+    assert_eq!(
+        0,
+        rt.fold()
+            .live_count(TransactionTime::MAX, ValidTime::from(0))
+    );
 
     let p = rt.intern("P");
     let q = rt.intern("Q");
@@ -57,14 +62,16 @@ fn action_binds_args_to_admission_and_policy() {
             vec![cause],
             vec![cause],
             rule_definition_hash("derive_pq"),
-            u64::MAX,
-            2017,
+            TransactionTime::MAX,
+            ValidTime::from(2017),
         )
         .expect("record_justification");
     let log_before = rt.log().len();
-    let facts_before = rt.fold().live_count(u64::MAX, 2017);
+    let facts_before = rt
+        .fold()
+        .live_count(TransactionTime::MAX, ValidTime::from(2017));
 
-    let action_id = rt.record_action(&jid, u64::MAX, 2017);
+    let action_id = rt.record_action(&jid, TransactionTime::MAX, ValidTime::from(2017));
     assert!(
         action_id.is_ok(),
         "record_action must bind after justification: {action_id:?}"
@@ -89,9 +96,13 @@ fn action_binds_args_to_admission_and_policy() {
         "{:?}",
         last_op
     );
-    assert_eq!(facts_before, rt.fold().live_count(u64::MAX, 2017));
+    assert_eq!(
+        facts_before,
+        rt.fold()
+            .live_count(TransactionTime::MAX, ValidTime::from(2017))
+    );
 
-    let rec = rt.action_record_at(&jid, u64::MAX, 2017);
+    let rec = rt.action_record_at(&jid, TransactionTime::MAX, ValidTime::from(2017));
     assert!(rec.is_some(), "action_record_at at live cut");
     let rec = rec.unwrap();
     assert_eq!(jid, rec.justification_id);
@@ -101,8 +112,14 @@ fn action_binds_args_to_admission_and_policy() {
     assert_eq!(rule_definition_hash("derive_pq"), rec.rule_version);
     assert!(rec.admitted);
     assert_eq!(policy_version_hash("leased-policy"), rec.policy_version);
-    assert_eq!(Some(true), rt.admission_status_at(&jid, u64::MAX, 2017));
-    assert_eq!(None, rt.action_record_at(&jid, 0, 2017));
+    assert_eq!(
+        Some(true),
+        rt.admission_status_at(&jid, TransactionTime::MAX, ValidTime::from(2017))
+    );
+    assert_eq!(
+        None,
+        rt.action_record_at(&jid, TransactionTime::from(0), ValidTime::from(2017))
+    );
 }
 
 #[test]
@@ -114,11 +131,11 @@ fn action_cites_admission_pin_and_rejects_public_emit() {
             vec![cause],
             vec![cause],
             rule_definition_hash("derive_pq"),
-            u64::MAX,
-            2017,
+            TransactionTime::MAX,
+            ValidTime::from(2017),
         )
         .expect("record_justification");
-    rt.record_action(&jid, u64::MAX, 2017)
+    rt.record_action(&jid, TransactionTime::MAX, ValidTime::from(2017))
         .expect("record_action");
 
     let policy = policy_version_hash("leased-policy");
@@ -135,7 +152,7 @@ fn action_cites_admission_pin_and_rejects_public_emit() {
         _ => None,
     });
     let rec_pin = rt
-        .action_record_at(&jid, u64::MAX, 2017)
+        .action_record_at(&jid, TransactionTime::MAX, ValidTime::from(2017))
         .expect("action_record_at");
     assert_eq!(Some(policy.clone()), admission_pin);
     assert_eq!(policy, rec_pin.policy_version);
@@ -159,7 +176,11 @@ fn action_cites_admission_pin_and_rejects_public_emit() {
     assert_eq!(n, rt.log().len());
 
     let err = rt
-        .record_action("j:never-recorded", u64::MAX, 2017)
+        .record_action(
+            "j:never-recorded",
+            TransactionTime::MAX,
+            ValidTime::from(2017),
+        )
         .unwrap_err();
     assert!(
         matches!(err, RuntimeError::UnknownAdmission { ref justification_id } if justification_id == "j:never-recorded"),
@@ -173,7 +194,9 @@ fn action_cites_admission_pin_and_rejects_public_emit() {
     })
     .unwrap();
     let n = rt.log().len();
-    let err = rt.record_action(&jid, u64::MAX, 2017).unwrap_err();
+    let err = rt
+        .record_action(&jid, TransactionTime::MAX, ValidTime::from(2017))
+        .unwrap_err();
     assert!(
         matches!(err, RuntimeError::UnknownAdmission { ref justification_id } if justification_id == &jid),
         "{err:?}"
@@ -190,12 +213,12 @@ fn action_and_admission_as_of_prior_cut_after_policy_change() {
             vec![cause],
             vec![cause],
             rule_definition_hash("derive_pq"),
-            u64::MAX,
-            2017,
+            TransactionTime::MAX,
+            ValidTime::from(2017),
         )
         .expect("record_justification");
     let action_id = rt
-        .record_action(&jid, u64::MAX, 2017)
+        .record_action(&jid, TransactionTime::MAX, ValidTime::from(2017))
         .expect("record_action");
     let prior_tt = rt
         .log()
@@ -205,24 +228,30 @@ fn action_and_admission_as_of_prior_cut_after_policy_change() {
         .ingested_at;
     let first = policy_version_hash("leased-policy");
     let rec = rt
-        .action_record_at(&jid, prior_tt, 2017)
+        .action_record_at(&jid, TransactionTime::from(prior_tt), ValidTime::from(2017))
         .expect("action at prior cut");
     assert_eq!(first, rec.policy_version);
-    assert_eq!(Some(true), rt.admission_status_at(&jid, prior_tt, 2017));
+    assert_eq!(
+        Some(true),
+        rt.admission_status_at(&jid, TransactionTime::from(prior_tt), ValidTime::from(2017))
+    );
 
     rt.emit_policy("later-policy", 2010, None).unwrap();
     assert_eq!(
         Some(policy_version_hash("later-policy")),
-        rt.live_policy_pin_at(u64::MAX, 2017)
+        rt.live_policy_pin_at(TransactionTime::MAX, ValidTime::from(2017))
     );
     let rec = rt
-        .action_record_at(&jid, prior_tt, 2017)
+        .action_record_at(&jid, TransactionTime::from(prior_tt), ValidTime::from(2017))
         .expect("action still at prior cut");
     assert_eq!(first, rec.policy_version);
     assert!(rec.admitted);
-    assert_eq!(Some(true), rt.admission_status_at(&jid, prior_tt, 2017));
+    assert_eq!(
+        Some(true),
+        rt.admission_status_at(&jid, TransactionTime::from(prior_tt), ValidTime::from(2017))
+    );
     let tip = rt
-        .action_record_at(&jid, u64::MAX, 2017)
+        .action_record_at(&jid, TransactionTime::MAX, ValidTime::from(2017))
         .expect("action at tip");
     assert_eq!(first, tip.policy_version);
 }
@@ -236,11 +265,11 @@ fn persist_open_reconstructs_action_record() {
             vec![cause],
             vec![cause],
             rule_definition_hash("derive_pq"),
-            u64::MAX,
-            2017,
+            TransactionTime::MAX,
+            ValidTime::from(2017),
         )
         .expect("record_justification");
-    rt.record_action(&jid, u64::MAX, 2017)
+    rt.record_action(&jid, TransactionTime::MAX, ValidTime::from(2017))
         .expect("record_action");
     let first = policy_version_hash("leased-policy");
 
@@ -254,12 +283,15 @@ fn persist_open_reconstructs_action_record() {
     store::persist(&rt, &dir).unwrap();
     let mut opened = store::open(&dir).unwrap();
     let rec = opened
-        .action_record_at(&jid, u64::MAX, 2017)
+        .action_record_at(&jid, TransactionTime::MAX, ValidTime::from(2017))
         .expect("opened action_record_at");
     assert_eq!(first, rec.policy_version);
     assert!(rec.admitted);
     assert_eq!(claim_q, rec.target_claim);
-    assert_eq!(Some(true), opened.admission_status_at(&jid, u64::MAX, 2017));
+    assert_eq!(
+        Some(true),
+        opened.admission_status_at(&jid, TransactionTime::MAX, ValidTime::from(2017))
+    );
     assert!(
         opened.log().iter().any(|e| matches!(
             &e.op,

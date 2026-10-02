@@ -1,6 +1,6 @@
 //! FoldIndexMode: Eager (accept write-cost) vs Lazy (thin write / lazy lease).
 
-use kutha_common::Op;
+use kutha_common::{Op, TransactionTime, ValidTime};
 use kutha_runtime::{FoldIndexMode, Runtime};
 
 fn fill(rt: &mut Runtime, n: u32) {
@@ -23,7 +23,7 @@ fn fill(rt: &mut Runtime, n: u32) {
 }
 
 fn live_sorted(rt: &Runtime) -> Vec<(u32, u32, u32)> {
-    let mut v = rt.fold().as_of(2010);
+    let mut v = rt.fold().as_of(ValidTime::from(2010));
     v.sort_unstable();
     v
 }
@@ -43,8 +43,11 @@ fn lazy_as_of_matches_eager_after_same_ingest() {
     // EventIds differ across independent runtimes — compare shape, not fingerprint.
     assert_eq!(eager.fold().facts().len(), lazy.fold().facts().len());
     assert_eq!(
-        eager.fold().live_count(u64::MAX, 2010),
-        lazy.fold().live_count(u64::MAX, 2010)
+        eager
+            .fold()
+            .live_count(TransactionTime::MAX, ValidTime::from(2010)),
+        lazy.fold()
+            .live_count(TransactionTime::MAX, ValidTime::from(2010))
     );
 
     lazy.ensure_fold_indexes();

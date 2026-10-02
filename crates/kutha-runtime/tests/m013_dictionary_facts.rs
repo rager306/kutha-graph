@@ -1,12 +1,16 @@
 //! M013 S05 / Phase 26: D-08 GREEN — dictionary entries on `dictionary_as_of`.
 //! Product `as_of` excludes `kutha:`. Never edit `.kutha/STATE.md`.
 
-use kutha_common::{rule_definition_hash, EventId, Op, KUTHA_ALLOWS};
+use kutha_common::{rule_definition_hash, EventId, Op, TransactionTime, ValidTime, KUTHA_ALLOWS};
 use kutha_runtime::{Runtime, RuntimeError};
 
 fn leased_pin_and_derive() -> (Runtime, EventId, EventId, EventId) {
     let mut rt = Runtime::default();
-    assert_eq!(0, rt.fold().live_count(u64::MAX, 0));
+    assert_eq!(
+        0,
+        rt.fold()
+            .live_count(TransactionTime::MAX, ValidTime::from(0))
+    );
 
     let p = rt.intern("P");
     let q = rt.intern("Q");
@@ -56,8 +60,8 @@ fn admission_and_policy_visible_on_as_of_after_later_pin() {
             vec![cause],
             vec![cause],
             rule_definition_hash("derive_pq"),
-            u64::MAX,
-            2010,
+            TransactionTime::MAX,
+            ValidTime::from(2010),
         )
         .expect("record_justification");
     let cut_a = rt.log().len();
@@ -70,7 +74,7 @@ fn admission_and_policy_visible_on_as_of_after_later_pin() {
 
     let policy = rt.intern("kutha:policy");
     let admission = rt.intern("kutha:admission");
-    let triples = rt.fold().dictionary_as_of(2010);
+    let triples = rt.fold().dictionary_as_of(ValidTime::from(2010));
     assert!(
         triples.iter().any(|&(_, rel, _)| rel == policy),
         "dictionary_as_of(2010) after later PinPolicy must contain a kutha:policy triple (cut A={cut_a})"
@@ -85,13 +89,13 @@ fn admission_and_policy_visible_on_as_of_after_later_pin() {
         event_id: admission_id,
     })
     .unwrap();
-    let later = rt.fold().dictionary_as_of(2010);
+    let later = rt.fold().dictionary_as_of(ValidTime::from(2010));
     assert!(
         !later.iter().any(|&(_, rel, _)| rel == admission),
         "dictionary_as_of after Retract must lack kutha:admission"
     );
     let fork = rt.fork_at(cut_a);
-    let fork_triples = fork.fold().dictionary_as_of(2010);
+    let fork_triples = fork.fold().dictionary_as_of(ValidTime::from(2010));
     assert!(
         fork_triples.iter().any(|&(_, rel, _)| rel == admission),
         "fork_at(cut A) must still contain kutha:admission"
@@ -102,7 +106,7 @@ fn admission_and_policy_visible_on_as_of_after_later_pin() {
 fn genesis_allow_visible_on_as_of() {
     let mut rt = Runtime::default();
     let allows = rt.intern("kutha:allows");
-    let triples = rt.fold().dictionary_as_of(0);
+    let triples = rt.fold().dictionary_as_of(ValidTime::from(0));
     assert!(
         triples.iter().any(|&(_, rel, _)| rel == allows),
         "dictionary_as_of(0) must contain a kutha:allows triple (genesis allow is a live fact)"

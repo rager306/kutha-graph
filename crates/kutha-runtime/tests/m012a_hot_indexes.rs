@@ -1,6 +1,6 @@
 //! M012a S06 / HOT-01: fold-internal as_of and claim_supported_at skip non-overlapping facts.
 
-use kutha_common::{EventId, Op, TermId, KUTHA_RESERVED_RELS};
+use kutha_common::{EventId, Op, TermId, TransactionTime, ValidTime, KUTHA_RESERVED_RELS};
 use kutha_runtime::{store, CsrLease, CsrMaterializer, Materializer, Runtime, TypedCsrLease};
 use std::fs;
 use std::path::PathBuf;
@@ -72,7 +72,7 @@ fn as_of_and_claim_supported_at_skip_non_overlapping_facts() {
         "decoy-heavy log must have more facts than the slack bound"
     );
 
-    let mut got = fold.as_of(2017);
+    let mut got = fold.as_of(ValidTime::from(2017));
     got.sort_unstable();
     let expected = brute_force_as_of(&rt, 2017);
     assert_eq!(
@@ -91,7 +91,7 @@ fn as_of_and_claim_supported_at_skip_non_overlapping_facts() {
         .count() as u64;
 
     fold.reset_hot_examine_count();
-    let _ = fold.as_of(2017);
+    let _ = fold.as_of(ValidTime::from(2017));
     let as_of_examined = fold.hot_examine_count();
     assert!(
         as_of_examined < fact_len as u64,
@@ -103,11 +103,11 @@ fn as_of_and_claim_supported_at_skip_non_overlapping_facts() {
     );
 
     assert!(
-        fold.claim_supported_at(live_claim, u64::MAX, 2017),
+        fold.claim_supported_at(live_claim, TransactionTime::MAX, ValidTime::from(2017)),
         "minting Event.id of a 2017 Assert must be supported at as_of(2017)"
     );
     assert!(
-        !fold.claim_supported_at(EventId::nil(), u64::MAX, 2017),
+        !fold.claim_supported_at(EventId::nil(), TransactionTime::MAX, ValidTime::from(2017)),
         "nil claim must not be supported"
     );
 
@@ -118,7 +118,8 @@ fn as_of_and_claim_supported_at_skip_non_overlapping_facts() {
         .count() as u64;
 
     fold.reset_hot_examine_count();
-    let supported = fold.claim_supported_at(live_claim, u64::MAX, 2017);
+    let supported =
+        fold.claim_supported_at(live_claim, TransactionTime::MAX, ValidTime::from(2017));
     let claim_examined = fold.hot_examine_count();
     assert!(supported);
     assert!(
@@ -161,28 +162,34 @@ fn hot_as_of_matches_brute_force_after_retract() {
     let event_id = emit_related_to(&mut rt, a, rel, b, 2017);
     let triple = (a, rel, b);
 
-    let mut live = rt.fold().as_of(2017);
+    let mut live = rt.fold().as_of(ValidTime::from(2017));
     live.sort_unstable();
     assert!(live.contains(&triple));
-    assert!(rt.fold().claim_supported_at(event_id, u64::MAX, 2017));
+    assert!(rt
+        .fold()
+        .claim_supported_at(event_id, TransactionTime::MAX, ValidTime::from(2017)));
     assert_eq!(live, brute_force_as_of(&rt, 2017));
     assert_eq!(
-        rt.fold().claim_supported_at(event_id, u64::MAX, 2017),
+        rt.fold()
+            .claim_supported_at(event_id, TransactionTime::MAX, ValidTime::from(2017)),
         brute_force_claim_supported(&rt, event_id, u64::MAX, 2017)
     );
 
     rt.emit(Op::Retract { event_id }).unwrap();
 
-    let mut after = rt.fold().as_of(2017);
+    let mut after = rt.fold().as_of(ValidTime::from(2017));
     after.sort_unstable();
     assert!(
         !after.contains(&triple),
         "retracted 2017 triple must leave as_of(2017)"
     );
-    assert!(!rt.fold().claim_supported_at(event_id, u64::MAX, 2017));
+    assert!(!rt
+        .fold()
+        .claim_supported_at(event_id, TransactionTime::MAX, ValidTime::from(2017)));
     assert_eq!(after, brute_force_as_of(&rt, 2017));
     assert_eq!(
-        rt.fold().claim_supported_at(event_id, u64::MAX, 2017),
+        rt.fold()
+            .claim_supported_at(event_id, TransactionTime::MAX, ValidTime::from(2017)),
         brute_force_claim_supported(&rt, event_id, u64::MAX, 2017)
     );
 }
@@ -191,7 +198,7 @@ fn hot_as_of_matches_brute_force_after_retract() {
 fn snapshot_fold_rebuilds_hot_maps_from_facts() {
     let (rt, _live_claim, a, rel, b) = tracer_runtime();
     let before = {
-        let mut triples = rt.fold().as_of(2017);
+        let mut triples = rt.fold().as_of(ValidTime::from(2017));
         triples.sort_unstable();
         triples
     };
@@ -215,7 +222,7 @@ fn snapshot_fold_rebuilds_hot_maps_from_facts() {
     );
 
     let opened = store::open(&dir).expect("persist then open");
-    let mut opened_as_of = opened.fold().as_of(2017);
+    let mut opened_as_of = opened.fold().as_of(ValidTime::from(2017));
     opened_as_of.sort_unstable();
     assert_eq!(opened_as_of, before);
     assert_eq!(opened.fold().fingerprint(), fp);
@@ -223,7 +230,7 @@ fn snapshot_fold_rebuilds_hot_maps_from_facts() {
 
     let fact_len = opened.fold().facts().len();
     opened.fold().reset_hot_examine_count();
-    let _ = opened.fold().as_of(2017);
+    let _ = opened.fold().as_of(ValidTime::from(2017));
     let examined = opened.fold().hot_examine_count();
     assert!(
         examined < fact_len as u64,
@@ -250,22 +257,26 @@ fn decoy_heavy_runtime(decoys: u32) -> (Runtime, EventId, TermId, TermId, TermId
 #[test]
 fn discard_csr_lease_and_snapshot_rebuild_keeps_as_of() {
     let (rt, live_claim, a, rel, b) = decoy_heavy_runtime(32);
-    let mut before = rt.fold().as_of(2017);
+    let mut before = rt.fold().as_of(ValidTime::from(2017));
     before.sort_unstable();
     let fp = rt.fold().fingerprint();
-    assert!(rt.fold().claim_supported_at(live_claim, u64::MAX, 2017));
+    assert!(rt
+        .fold()
+        .claim_supported_at(live_claim, TransactionTime::MAX, ValidTime::from(2017)));
     assert!(before.contains(&(a, rel, b)));
 
     {
-        let _csr = rt.csr_lease_at(u64::MAX, 2017);
-        let _typed = rt.typed_csr_lease_at(u64::MAX, 2017);
+        let _csr = rt.csr_lease_at(TransactionTime::MAX, ValidTime::from(2017));
+        let _typed = rt.typed_csr_lease_at(TransactionTime::MAX, ValidTime::from(2017));
     }
 
-    let mut after_drop = rt.fold().as_of(2017);
+    let mut after_drop = rt.fold().as_of(ValidTime::from(2017));
     after_drop.sort_unstable();
     assert_eq!(after_drop, before);
     assert_eq!(rt.fold().fingerprint(), fp);
-    assert!(rt.fold().claim_supported_at(live_claim, u64::MAX, 2017));
+    assert!(rt
+        .fold()
+        .claim_supported_at(live_claim, TransactionTime::MAX, ValidTime::from(2017)));
 
     let dir = temp_dir("discard-csr");
     store::persist(&rt, &dir).unwrap();
@@ -287,7 +298,7 @@ fn discard_csr_lease_and_snapshot_rebuild_keeps_as_of() {
     );
 
     let opened = store::open(&dir).expect("persist then open");
-    let mut opened_as_of = opened.fold().as_of(2017);
+    let mut opened_as_of = opened.fold().as_of(ValidTime::from(2017));
     opened_as_of.sort_unstable();
     assert_eq!(opened_as_of, before);
     assert_eq!(opened.fold().fingerprint(), fp);
@@ -314,7 +325,7 @@ fn csr_lease_at_builds_via_materializer() {
         2017,
         rt.log().len(),
     );
-    let via_runtime = rt.csr_lease_at(u64::MAX, 2017);
+    let via_runtime = rt.csr_lease_at(TransactionTime::MAX, ValidTime::from(2017));
     let via_from_fold = CsrLease::from_fold(rt.fold(), u64::MAX, 2017, rt.dictionary().len());
     assert_eq!(
         via_runtime.neighbors(a),
@@ -329,7 +340,7 @@ fn csr_lease_at_builds_via_materializer() {
         "Runtime must not retain a mounted CSR after csr_lease_at returns"
     );
 
-    let typed = rt.typed_csr_lease_at(u64::MAX, 2017);
+    let typed = rt.typed_csr_lease_at(TransactionTime::MAX, ValidTime::from(2017));
     let typed_from_fold =
         TypedCsrLease::from_fold(rt.fold(), u64::MAX, 2017, rt.dictionary().len());
     assert_eq!(
