@@ -31,7 +31,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 - [x] **Phase 27: One write path and facade** — one pipeline, typed references, public facade with example and integration test (completed 2026-10-02)
 - [x] **Phase 28: Independent verification and artifact budget** — governor check, id map, milestone audit
 - [x] **Phase 29: Close-out honesty** — documents and governor follow-ups from the audit and project review; no product code
-- [ ] **Phase 30: Write-path integrity hardening** — fail-closed dictionary writes, keyed correct, dual-mode oracle, strong facade test
+- [x] **Phase 30: Write-path integrity hardening** — fail-closed dictionary writes, keyed correct, dual-mode oracle, strong facade test
 
 ## Phase Details
 
@@ -190,7 +190,13 @@ Plans:
   3. FF5, retract, correct, and claim support agree under Eager and Lazy.
   4. The facade test asserts live triples at each step, including after persist/open and fork.
 
-**Plans**: 2 plans max
+**Plans**: 2 plans (budget: `docs/process/gsd-auto-contract.md`)
+
+Plans:
+**Wave 1**
+- [x] 30-01-PLAN.md — HARD-01/HARD-02 RED then admit write-origin + keyed correct
+**Wave 2**
+- [x] 30-02-PLAN.md — HARD-03 dual-mode oracle, HARD-04 facade exactness, bench vs Phase 27
 
 <details>
 <summary>✅ v0.01 GSD foundation (Phases 1–3) — SHIPPED 2026-09-29</summary>

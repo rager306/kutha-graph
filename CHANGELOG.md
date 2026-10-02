@@ -58,6 +58,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Cells remain **Proposed**. M013 S09 lease unchanged; no SemVer tag.
 
+## 2026-10-02 — Trajectory: M013 S09 closed
+
+### Trajectory
+
+- Phase 30 verified independently (`30-VERIFICATION` passed, Grok 4.6 xhigh). Active Slice cleared; `L_delivery=M013-S09-done`; M013 S01–S09 delivered. No archive, no SemVer tag. Cells remain **Proposed**.
+
 ## 2026-10-02 — Trajectory: M013 S09 leased
 
 ### Trajectory

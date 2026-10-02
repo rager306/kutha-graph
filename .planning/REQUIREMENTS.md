@@ -71,10 +71,10 @@ Source: `.planning/v0.06-MILESTONE-AUDIT.md` and the 2026-10-02 project review (
 
 Source: code and test review 2026-10-02. Named oracles keep their assertions; no typed clocks (M014), no rules (M015), no durability (M002).
 
-- [ ] **HARD-01**: A public write of a reserved `kutha:` relation outside the typed constructors (genesis allow, rule, policy, admission, action) is refused; a RED oracle failed before the change
-- [ ] **HARD-02**: `correct` and `correct_interval` preserve `delivery_key`; a keyed assert, correct, then retry of the same key leaves support count 1
-- [ ] **HARD-03**: One oracle runs FF5, retract, correct, and claim support under both `FoldIndexMode::Eager` and `Lazy` with identical results
-- [ ] **HARD-04**: The facade integration test asserts the exact live triples after assert, correct, retract, persist/open, and `fork_at`
+- [x] **HARD-01**: A public write of a reserved `kutha:` relation outside the typed constructors (genesis allow, rule, policy, admission, action) is refused; a RED oracle failed before the change
+- [x] **HARD-02**: `correct` and `correct_interval` preserve `delivery_key`; a keyed assert, correct, then retry of the same key leaves support count 1
+- [x] **HARD-03**: One oracle runs FF5, retract, correct, and claim support under both `FoldIndexMode::Eager` and `Lazy` with identical results
+- [x] **HARD-04**: The facade integration test asserts the exact live triples after assert, correct, retract, persist/open, and `fork_at`
 
 ## Future Requirements (not v0.06)
 
@@ -118,7 +118,7 @@ Source: code and test review 2026-10-02. Named oracles keep their assertions; no
 | PIPE-01, PIPE-02, PIPE-03, PIPE-04 | Phase 27 | complete |
 | PROC-01, PROC-02, PROC-03, PROC-04 | Phase 28 | complete |
 | DOC-01, DOC-02, DOC-03, DOC-04, GOV-01, GOV-02, GOV-03, GOV-04 | Phase 29 | complete |
-| HARD-01, HARD-02, HARD-03, HARD-04 | Phase 30 | Pending |
+| HARD-01, HARD-02, HARD-03, HARD-04 | Phase 30 | complete |
 
 **Coverage:** v0.06 requirements: 36 total; mapped to phases: 36; unmapped: 0. BASE and REC traceability complete (DOC-01, 2026-10-02).
 
