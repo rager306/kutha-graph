@@ -59,11 +59,14 @@ Plans:
   2. `as_known_on(date)` resolves through the greatest anchor at or before the date.
   3. A named test separates “true on D” from “known on D”; FF5 stays green with explicit clocks.
 
-**Plans**: 2 plans max
+**Plans**: 2 plans
 
 Plans:
-- [ ] 32-01-PLAN.md — (written by planner)
-- [ ] 32-02-PLAN.md — (written by planner)
+**Wave 1**
+- [ ] 32-01-PLAN.md — Op::TtAnchor log facts and as_known_on lookup
+
+**Wave 2**
+- [ ] 32-02-PLAN.md — true-on-D vs known-on-D named test; FF5 green
 
 ### Phase 33: Fixture migration
 
@@ -87,4 +90,4 @@ Plans:
 | v0.01–v0.06 | 1–30 | shipped |
 | v0.07 | 31–33 | active (M014) |
 
-**Next:** Phase 31 plans executed; independent verifier (`31-VERIFICATION.md`, D-05). Do not start Phase 32.
+**Next:** Phase 32 plans written (32-01 Wave 1, 32-02 Wave 2). Execute 32-01; independent verifier writes `32-VERIFICATION.md` (D-05) after both plans. Do not start Phase 33.
