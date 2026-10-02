@@ -10,15 +10,15 @@ Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semant
 
 ### Benchmark baseline (R2)
 
-- [ ] **BASE-01**: A bench harness with no new dependencies measures ingest, `as_of`, claim support, retract, persist, open, and replay at three log sizes, and reports bytes per fact
-- [ ] **BASE-02**: A target N and a memory budget are declared in a dated note (not an ADR), with the measured numbers beside them
-- [ ] **BASE-03**: One documented command re-runs the harness; its output has a stable, diffable shape
+- [x] **BASE-01**: A bench harness with no new dependencies measures ingest, `as_of`, claim support, retract, persist, open, and replay at three log sizes, and reports bytes per fact
+- [x] **BASE-02**: A target N and a memory budget are declared in a dated note (not an ADR), with the measured numbers beside them
+- [x] **BASE-03**: One documented command re-runs the harness; its output has a stable, diffable shape
 
 ### Legal fixture reconnaissance (R1)
 
-- [ ] **REC-01**: A note maps at least ten real-text cases from law-nexus (FZ-44 snippets, consultant sources with editions, the synthetic sunset clause) against the current two-axis model
-- [ ] **REC-02**: Each case is marked expressible or not with the reason; the inexpressible set is named and carried into M014/M015 as input, not solved here
-- [ ] **REC-03**: No file under `crates/` changes in this phase
+- [x] **REC-01**: A note maps at least ten real-text cases from law-nexus (FZ-44 snippets, consultant sources with editions, the synthetic sunset clause) against the current two-axis model
+- [x] **REC-02**: Each case is marked expressible or not with the reason; the inexpressible set is named and carried into M014/M015 as input, not solved here
+- [x] **REC-03**: No file under `crates/` changes in this phase
 
 ### Fold indexes (F15)
 
@@ -110,8 +110,8 @@ Source: code and test review 2026-10-02. Named oracles keep their assertions; no
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BASE-01, BASE-02, BASE-03 | Phase 22 | Pending |
-| REC-01, REC-02, REC-03 | Phase 23 | Pending |
+| BASE-01, BASE-02, BASE-03 | Phase 22 | complete |
+| REC-01, REC-02, REC-03 | Phase 23 | complete |
 | IDX-01, IDX-02, IDX-03 | Phase 24 | complete |
 | GEN-01, GEN-02, GEN-03 | Phase 25 | complete |
 | SUB-01, SUB-02, SUB-03, SUB-04 | Phase 26 | complete |
@@ -120,7 +120,7 @@ Source: code and test review 2026-10-02. Named oracles keep their assertions; no
 | DOC-01, DOC-02, DOC-03, DOC-04, GOV-01, GOV-02, GOV-03, GOV-04 | Phase 29 | Pending |
 | HARD-01, HARD-02, HARD-03, HARD-04 | Phase 30 | Pending |
 
-**Coverage:** v0.06 requirements: 36 total; mapped to phases: 36; unmapped: 0. BASE and REC rows flip to complete in Phase 29 (DOC-01).
+**Coverage:** v0.06 requirements: 36 total; mapped to phases: 36; unmapped: 0. BASE and REC traceability complete (DOC-01, 2026-10-02).
 
 ---
 *Requirements defined: 2026-10-01*

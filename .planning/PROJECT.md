@@ -14,7 +14,7 @@ A developer can prove **legal point-in-time** on a named statute-shaped fixture 
 
 **Goal:** Close the post-M012 findings that block the legal wedge: no declared size target or baseline, scan-based ingest, a YAML root of trust, five parallel meta-record kinds, four write paths, no public consumer, and a verification process that checks itself.
 
-**Harness lease:** M013 (leased 2026-10-01; Active Slice None until a phase leases one). Source: `docs/architecture/semantic-gap-review.md` addendum F9–F16 and R1–R6; contract: `docs/process/gsd-auto-contract.md`.
+**Harness lease:** M013 (leased 2026-10-01; Active Slice **S08** per `.kutha/STATE.md`; `L_delivery=M013-S07-done`). Source: `docs/architecture/semantic-gap-review.md` addendum F9–F16 and R1–R6; contract: `docs/process/gsd-auto-contract.md`.
 
 **Target (phases 22–28):**
 - Baseline and target N with a re-runnable bench harness (BASE)
@@ -67,11 +67,10 @@ GSD overlay v0.02 (Phases 4–8 — M011 semantic core close):
 
 ### Active
 
-- [ ] Keep FF5/FF6/H2/H4/M010/M011 named fitness **green** (L_capability)
+- [ ] **v0.06 tail (M013 S08–S09):** Phase 29 close-out honesty (DOC-01..04, GOV-01..04) and Phase 30 write-path hardening (HARD-01..04); no `crates/` in Phase 29
+- [ ] Keep FF5/FF6/H2/H4/M010/M011 named fitness **green** (`L_capability=ff5-green` per `.kutha/STATE.md`)
 - [ ] Keep governor CI honest; three lifecycles uncollapsed; freeze until STATE names otherwise
 - [ ] Start only the next delivery `.kutha/STATE.md` names — do **not** assume M002, legal pack, or honeycomb Accepted
-- [ ] Optional formal `/gsd-audit-milestone` for v0.02 (closeout used override for stale verification digests)
-- [ ] v0.03: lean `AGENTS.md`, ADR + proposed-roadmap corrections, semantic governor kinds (see `.planning/REQUIREMENTS.md`)
 
 ### Out of Scope
 
@@ -176,10 +175,10 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 
 **Harness lease** (process intent, not GSD memory, not product SoT): `.kutha/STATE.md`
 
-- Active Milestone: **M013** (leased; Active Slice None until a phase leases one)
-- Active Slice: **None**
+- Active Milestone: **M013** (leased; S01–S07 delivered)
+- Active Slice: **S08** (Phase 29 close-out honesty; cite `.kutha/STATE.md` — do not edit here)
 - Phase: **H5**
-- Lifecycles: `L_map=honeycomb-proposed` · `L_delivery=M013-leased` · `L_capability=ff5-green`
+- Lifecycles: `L_map=honeycomb-proposed` · `L_delivery=M013-S07-done` · `L_capability=ff5-green`
 - Next: M013 slices only, one phase at a time (`docs/process/gsd-auto-contract.md`). Freeze holds beyond the M013 thawed subset. Do not start a legal pack. Green governor ≠ ADR Accepted ≠ L_capability.
 
 GSD files live under `.planning/`. **Never overwrite** `.kutha/STATE.md` with GSD STATE.
@@ -213,7 +212,7 @@ Literature bound is closed (163 cards). Do not mint aggregator waves.
 | GSD overlay annotated tags (`v0.01`, `v0.02`) | Milestone archival; not product SemVer / GitHub Release | ⚠️ Revisit (process tags only) |
 | M002/Rocks/Cypher/HNSW frozen | `.kutha/STATE.md` | — Pending (lease) |
 | Refactor and legal-fixture reconnaissance before durability (M013 before M002) | Post-M012 review R1: riskiest assumption last | — Pending (v0.06) |
-| Independent verification and planning-artifact budget as gates | Post-M012 review R4/R5 | — Pending (v0.06) |
+| Independent verification and planning-artifact budget as gates | Post-M012 review R4/R5; Phase 28 `28-VERIFICATION.md` | ✓ Good (v0.06 PROC) |
 | CBM and GitNexus used together on M013 refactor phases | Measured tool limits; `rg` is arbiter | — Pending (v0.06) |
 | License / rename (ADR-092) | Undecided | — Pending |
 
@@ -235,4 +234,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-01 after starting v0.06 / M013 leased*
+*Last updated: 2026-10-02 after Phase 28 verification and M013 S08 lease*

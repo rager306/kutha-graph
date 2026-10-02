@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Process: align v0.06 bookkeeping with 28-VERIFICATION
+
+### Process
+
+### Changed
+
+- BASE/REC requirement checkboxes and traceability marked complete (evidence: 22-VERIFICATION, 23-VERIFICATION, `legal-fixture-recon.md`).
+- `v0.06-MILESTONE-AUDIT.md` YAML and body agree: Phase 28 passed; PROC-02 satisfied; `gaps_found` only for audit-tail and tracking debt.
+- `PROJECT.md` and `.kutha/ROADMAP.md` cite `L_delivery=M013-S07-done` and M013 S08–S09 tail without closing the milestone.
+
+### Trajectory
+
+- M013 stays leased until S09; no archive or tag. Cells remain **Proposed**.
+
 ## 2026-10-02 — Process: restage shipped I-F oracles and require M013 tests
 
 ### Process
