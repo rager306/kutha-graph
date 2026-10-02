@@ -12,6 +12,10 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `ValidTime`, `TransactionTime`, and `WallTime` are distinct `#[serde(transparent)]` tuple structs (`Vt` / `Tt` aliases). Mixing clocks without conversion does not type-check (`compile_fail` doctest on `ValidTime`). `Op` clock fields and `Event.ingested_at` stay `u64` so named oracle literals compile.
 
+### Changed
+
+- `GraphFold` query cuts (`as_of`, `live_at`, dictionary/admission/policy pins, `live_supports`, `claim_supported_at`) take `impl Into` clocks and compare `as_u64` against `Fact` integer fields. `as_of(2015u64)` and `as_of(ValidTime::from(2015))` type-check; `as_of(TransactionTime::from(1))` does not.
+
 ### Trajectory
 
 - Cells remain **Proposed**. M014 S01 lease unchanged; no SemVer tag.

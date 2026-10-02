@@ -43,11 +43,11 @@ fn nil_claim() -> EventId {
 /// Half-open intersection of `[a_from, a_to)` and `[b_from, b_to)`. `None` end is +∞.
 /// Empty when `from` is not strictly less than `to` after substituting infinity (D-C7).
 pub(crate) fn vt_intersect(
-    a_from: ValidTime,
-    a_to: Option<ValidTime>,
-    b_from: ValidTime,
-    b_to: Option<ValidTime>,
-) -> Option<(ValidTime, Option<ValidTime>)> {
+    a_from: u64,
+    a_to: Option<u64>,
+    b_from: u64,
+    b_to: Option<u64>,
+) -> Option<(u64, Option<u64>)> {
     let from = a_from.max(b_from);
     let a_end = a_to.unwrap_or(u64::MAX);
     let b_end = b_to.unwrap_or(u64::MAX);
@@ -65,14 +65,11 @@ pub(crate) fn vt_intersect(
 
 /// Leftover halves of fact VT minus a non-empty intersection (prefix, suffix). Skip empty halves.
 fn leftover_halves(
-    fact_from: ValidTime,
-    fact_to: Option<ValidTime>,
-    inter_from: ValidTime,
-    inter_to: Option<ValidTime>,
-) -> (
-    Option<(ValidTime, Option<ValidTime>)>,
-    Option<(ValidTime, Option<ValidTime>)>,
-) {
+    fact_from: u64,
+    fact_to: Option<u64>,
+    inter_from: u64,
+    inter_to: Option<u64>,
+) -> (Option<(u64, Option<u64>)>, Option<(u64, Option<u64>)>) {
     let prefix = if fact_from < inter_from {
         Some((fact_from, Some(inter_from)))
     } else {
@@ -119,10 +116,10 @@ pub struct Fact {
     pub subject: TermId,
     pub relation: TermId,
     object: TermId,
-    pub valid_from: ValidTime,
-    pub valid_to: Option<ValidTime>,
-    pub ingested_at: TransactionTime,
-    pub invalidated_at: Option<TransactionTime>,
+    pub valid_from: u64,
+    pub valid_to: Option<u64>,
+    pub ingested_at: u64,
+    pub invalidated_at: Option<u64>,
     /// Portable claim / proposition identity (ADR-011, ING-02). Multiple Facts may share one
     /// `claim_id` as independent supports. Not the support slot and not `delivery_key`.
     #[serde(default = "nil_claim")]
@@ -143,7 +140,9 @@ impl Fact {
         self.object
     }
 
-    pub fn is_live_at(&self, tt: TransactionTime, vt: ValidTime) -> bool {
+    pub fn is_live_at(&self, tt: impl Into<TransactionTime>, vt: impl Into<ValidTime>) -> bool {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
         if self.ingested_at > tt {
             return false;
         }
@@ -227,7 +226,7 @@ pub struct GraphFold {
     pub(crate) hot_maps_warm: bool,
     /// Fact indices grouped by `valid_from` so a cut can skip future-start decoys.
     #[serde(skip)]
-    pub(crate) vt_by_from: BTreeMap<ValidTime, Vec<usize>>,
+    pub(crate) vt_by_from: BTreeMap<u64, Vec<usize>>,
     /// Fact indices grouped by portable `claim_id`.
     #[serde(skip)]
     pub(crate) claim_facts: IngestMap<EventId, FactIdxList>,
@@ -618,7 +617,7 @@ impl GraphFold {
                 let prior_key = old.delivery_key.clone();
                 self.invalidate_fact_at(idx, event.ingested_at);
 
-                let mut push_row = |obj: TermId, vf: ValidTime, vt: Option<ValidTime>| {
+                let mut push_row = |obj: TermId, vf: u64, vt: Option<u64>| {
                     let seq = self.next_seq;
                     self.next_seq += 1;
                     self.push_fact(Fact {

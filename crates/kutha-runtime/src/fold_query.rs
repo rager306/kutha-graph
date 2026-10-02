@@ -5,25 +5,39 @@ use sha2::{Digest, Sha256};
 use crate::fold::{Fact, GraphFold, LiveFactFilter};
 
 impl GraphFold {
-    pub(crate) fn live_facts_at(&self, tt: TransactionTime, vt: ValidTime) -> Vec<&Fact> {
+    pub(crate) fn live_facts_at(
+        &self,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> Vec<&Fact> {
         self.collect_live_facts_at(tt, vt, LiveFactFilter::Product)
     }
 
     /// All live facts including dictionary relations (fingerprint/replay walks `facts` directly).
-    fn all_live_facts_at(&self, tt: TransactionTime, vt: ValidTime) -> Vec<&Fact> {
+    fn all_live_facts_at(
+        &self,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> Vec<&Fact> {
         self.collect_live_facts_at(tt, vt, LiveFactFilter::All)
     }
 
-    fn dictionary_live_facts_at(&self, tt: TransactionTime, vt: ValidTime) -> Vec<&Fact> {
+    fn dictionary_live_facts_at(
+        &self,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> Vec<&Fact> {
         self.collect_live_facts_at(tt, vt, LiveFactFilter::Dictionary)
     }
 
     fn collect_live_facts_at(
         &self,
-        tt: TransactionTime,
-        vt: ValidTime,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
         filter: LiveFactFilter,
     ) -> Vec<&Fact> {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
         let keep = |f: &Fact| filter.keep(self, f);
         if !self.hot_maps_warm {
             return self
@@ -46,13 +60,17 @@ impl GraphFold {
             .collect()
     }
 
-    pub fn live_count(&self, tt: TransactionTime, vt: ValidTime) -> usize {
+    pub fn live_count(&self, tt: impl Into<TransactionTime>, vt: impl Into<ValidTime>) -> usize {
         self.live_at(tt, vt).len()
     }
 
     /// Live interned triples at an explicit transaction-time × valid-time cut.
     /// There is no “now” default (FF5 / MemStrata).
-    pub fn live_at(&self, tt: TransactionTime, vt: ValidTime) -> Vec<(TermId, TermId, TermId)> {
+    pub fn live_at(
+        &self,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> Vec<(TermId, TermId, TermId)> {
         self.live_facts_at(tt, vt)
             .into_iter()
             .map(|f| (f.subject, f.relation, f.object()))
@@ -61,19 +79,19 @@ impl GraphFold {
 
     /// AS OF valid-time on the current transaction picture (`tt = MAX`).
     /// Product picture: dictionary (`kutha:`) relations are excluded (D-05).
-    pub fn as_of(&self, vt: ValidTime) -> Vec<(TermId, TermId, TermId)> {
+    pub fn as_of(&self, vt: impl Into<ValidTime>) -> Vec<(TermId, TermId, TermId)> {
         self.live_at(u64::MAX, vt)
     }
 
     /// Dictionary entries at a valid-time cut (kutha: relations only).
-    pub fn dictionary_as_of(&self, vt: ValidTime) -> Vec<(TermId, TermId, TermId)> {
+    pub fn dictionary_as_of(&self, vt: impl Into<ValidTime>) -> Vec<(TermId, TermId, TermId)> {
         self.dictionary_live_at(u64::MAX, vt)
     }
 
     pub fn dictionary_live_at(
         &self,
-        tt: TransactionTime,
-        vt: ValidTime,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
     ) -> Vec<(TermId, TermId, TermId)> {
         self.dictionary_live_facts_at(tt, vt)
             .into_iter()
@@ -167,8 +185,8 @@ impl GraphFold {
     }
 
     /// Mark a fact slot invalidated and drop it from the live-triple lease.
-    pub(crate) fn invalidate_fact_at(&mut self, idx: usize, at: TransactionTime) {
-        self.facts[idx].invalidated_at = Some(at);
+    pub(crate) fn invalidate_fact_at(&mut self, idx: usize, at: impl Into<TransactionTime>) {
+        self.facts[idx].invalidated_at = Some(at.into().as_u64());
         let fact = &self.facts[idx];
         let key = (fact.subject, fact.relation, fact.object());
         if self.live_triples.get(&key) == Some(&idx) {
@@ -177,7 +195,14 @@ impl GraphFold {
     }
 
     /// Live Facts that support `claim` at an explicit cut (product facts only, D-05).
-    pub fn live_supports(&self, claim: EventId, tt: TransactionTime, vt: ValidTime) -> Vec<&Fact> {
+    pub fn live_supports(
+        &self,
+        claim: EventId,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> Vec<&Fact> {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
         if !self.hot_maps_warm {
             return self
                 .facts
@@ -202,17 +227,34 @@ impl GraphFold {
             .collect()
     }
 
-    pub fn live_support_count(&self, claim: EventId, tt: TransactionTime, vt: ValidTime) -> usize {
+    pub fn live_support_count(
+        &self,
+        claim: EventId,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> usize {
         self.live_supports(claim, tt, vt).len()
     }
 
-    pub fn claim_supported_at(&self, claim: EventId, tt: TransactionTime, vt: ValidTime) -> bool {
+    pub fn claim_supported_at(
+        &self,
+        claim: EventId,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> bool {
         self.live_support_count(claim, tt, vt) > 0
     }
 
     /// Fold-cut allowlist: a live `kutha:allows` fact whose delivery_key is `name`.
     /// Warm path is O(facts for that name), not O(live product facts).
-    pub fn relation_allowed_at(&self, name: &str, tt: TransactionTime, vt: ValidTime) -> bool {
+    pub fn relation_allowed_at(
+        &self,
+        name: &str,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> bool {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
         let Some(rel) = self.rel_allows else {
             return false;
         };
@@ -234,7 +276,12 @@ impl GraphFold {
     }
 
     /// Fold-cut rule registry: a live `kutha:rule` fact whose delivery_key is `pin`.
-    pub fn rule_hash_live_at(&self, pin: &str, tt: TransactionTime, vt: ValidTime) -> bool {
+    pub fn rule_hash_live_at(
+        &self,
+        pin: &str,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> bool {
         let Some(rel) = self.rel_rule else {
             return false;
         };
@@ -244,7 +291,12 @@ impl GraphFold {
     }
 
     /// Fold-cut policy pin: a live `kutha:policy` fact whose delivery_key is `pin`.
-    pub fn policy_hash_live_at(&self, pin: &str, tt: TransactionTime, vt: ValidTime) -> bool {
+    pub fn policy_hash_live_at(
+        &self,
+        pin: &str,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> bool {
         let Some(rel) = self.rel_policy else {
             return false;
         };
@@ -254,7 +306,11 @@ impl GraphFold {
     }
 
     /// Latest ingested live policy hash at `(tt, vt)`.
-    pub fn live_policy_pin_at(&self, tt: TransactionTime, vt: ValidTime) -> Option<String> {
+    pub fn live_policy_pin_at(
+        &self,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> Option<String> {
         let rel = self.rel_policy?;
         self.all_live_facts_at(tt, vt)
             .into_iter()
@@ -267,8 +323,8 @@ impl GraphFold {
     pub fn admission_status_at(
         &self,
         justification_id: &str,
-        tt: TransactionTime,
-        vt: ValidTime,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
     ) -> Option<bool> {
         self.live_admission_fact(justification_id, tt, vt)
             .map(|f| f.polarity == Some(SupportPolarity::Positive))
@@ -277,8 +333,8 @@ impl GraphFold {
     pub(crate) fn live_admission_at(
         &self,
         justification_id: &str,
-        tt: TransactionTime,
-        vt: ValidTime,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
     ) -> Option<(bool, String)> {
         let f = self.live_admission_fact(justification_id, tt, vt)?;
         let admitted = f.polarity == Some(SupportPolarity::Positive);
@@ -289,9 +345,11 @@ impl GraphFold {
     fn live_admission_fact(
         &self,
         justification_id: &str,
-        tt: TransactionTime,
-        vt: ValidTime,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
     ) -> Option<&Fact> {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
         let rel = self.rel_admission?;
         if let Ok(eid) = justification_id.parse::<EventId>() {
             if let Some(idx) = self.fact_index_by_event_id(eid) {
@@ -310,8 +368,8 @@ impl GraphFold {
     pub(crate) fn live_action_fact(
         &self,
         justification_id: &str,
-        tt: TransactionTime,
-        vt: ValidTime,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
     ) -> Option<&Fact> {
         let rel = self.rel_action?;
         self.all_live_facts_at(tt, vt)
