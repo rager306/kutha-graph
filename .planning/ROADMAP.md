@@ -45,9 +45,9 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 Plans:
 **Wave 1**
-- [ ] 34-01-PLAN.md — (written by planner)
+- [ ] 34-01-PLAN.md — TT-only as_known_on (KNOWN-01/02); RED closed-VT oracle first
 **Wave 2**
-- [ ] 34-02-PLAN.md — (written by planner)
+- [ ] 34-02-PLAN.md — fail-closed TtAnchor admit (ANK-ADM-01/02)
 
 ### Phase 35: Living docs and governor honesty
 
@@ -72,4 +72,4 @@ Plans:
 | v0.01–v0.07 | 1–33 | shipped |
 | v0.08 | 34–35 | active (M015) |
 
-**Next:** Controller leases M015 S01, then `/gsd-plan-phase 34` / `/gsd-autonomous --only 34`.
+**Next:** Execute Phase 34 (34-01 then 34-02). Independent verifier writes `34-VERIFICATION.md` (D-05). Do not start Phase 35.
