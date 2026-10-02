@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: Horn evaluator replaces inverse_knows cascade (Phase 38)
+
+### Product
+
+### Changed
+
+- `knows` Assert derives `inverse_knows` from a genesis Horn body (`knownBy(Y,X) :- knows(X,Y)`). The pin is the canonical body hash. The hard-coded `follow_ons` special-case is gone.
+
+### Trajectory
+
+- Cells remain **Proposed**. M016 S03 lease unchanged; no SemVer tag.
+
 ## 2026-10-02 — Trajectory: M016 S03 leased
 
 ### Trajectory

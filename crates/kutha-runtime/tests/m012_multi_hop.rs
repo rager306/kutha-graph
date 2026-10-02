@@ -1,8 +1,26 @@
 //! M012 S05: two-hop derivation eligibility (DER-01, DER-02).
 //! Walks `caused_by`; not a MATCH compiler or provenance-polynomial evaluator.
 
-use kutha_common::{rule_definition_hash, EventId, Op, TransactionTime, ValidTime};
+use kutha_common::{
+    rule_definition_hash, EventId, Op, RuleAst, RuleAtom, RuleTerm, TransactionTime, ValidTime,
+};
 use kutha_runtime::{store, Runtime};
+
+fn inverse_knows_pin() -> String {
+    let head = RuleAtom::new(
+        "knownBy",
+        RuleTerm::var(1).unwrap(),
+        RuleTerm::var(0).unwrap(),
+    )
+    .unwrap();
+    let prem = RuleAtom::new(
+        "knows",
+        RuleTerm::var(0).unwrap(),
+        RuleTerm::var(1).unwrap(),
+    )
+    .unwrap();
+    RuleAst::horn(head, vec![prem]).unwrap().hash()
+}
 
 fn register_rule_id(rt: &Runtime, definition: &str) -> EventId {
     rt.log()
@@ -172,6 +190,7 @@ fn inverse_knows_rows(rt: &Runtime) -> Vec<&kutha_common::Event> {
 #[test]
 fn inverse_knows_cascade_is_residual_spike() {
     let mut rt = Runtime::default();
+    let pin_inverse = inverse_knows_pin();
     let alice = rt.intern("Alice");
     let bob = rt.intern("Bob");
     let knows = rt.intern("knows");
@@ -199,9 +218,9 @@ fn inverse_knows_cascade_is_residual_spike() {
         } => {
             assert_eq!("inverse_knows", name);
             assert_eq!(cause, *caused_by);
-            assert!(
-                rule_version.is_empty(),
-                "residual cascade keeps an empty pin: {rule_version}"
+            assert_eq!(
+                pin_inverse, *rule_version,
+                "inverse_knows pin is genesis Horn hash"
             );
         }
         other => panic!("expected inverse_knows Behavior, got {other:?}"),

@@ -3,6 +3,7 @@
 mod admission;
 mod allow;
 mod csr;
+mod eval;
 mod fold;
 mod fold_query;
 mod hydrate;

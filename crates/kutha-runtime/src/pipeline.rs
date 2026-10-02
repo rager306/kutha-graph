@@ -242,7 +242,7 @@ impl Runtime {
 
     fn commit_user_cascade(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
         let first = Event::new(op, self.next_tt());
-        for follow in self.follow_ons(&first) {
+        for follow in self.rule_follow_ons(&first) {
             self.admit(&follow.op, ReceiptMode::User)?;
         }
         let mut ids = Vec::new();
@@ -259,7 +259,7 @@ impl Runtime {
             used += 1;
             ids.push(event.id);
             digests.push(event.digest_bytes());
-            let follow = self.follow_ons(&event);
+            let follow = self.rule_follow_ons(&event);
             self.commit_event(event);
             for e in follow {
                 pending.push(e);
@@ -438,46 +438,9 @@ impl Runtime {
         Ok(())
     }
 
-    /// Admit a user op, append, fold, cascade inverse-`knows` until idle or budget.
+    /// Admit a user op, append, fold, and apply Horn follow-ons until idle or budget.
     pub fn emit(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
         self.reject_forged_meta(&op)?;
         self.pipeline(op)
-    }
-
-    /// Residual automatic Assert cascade: when `relation` equals interned
-    /// `knows`, emit `inverse_knows` with an empty pin. This is knows-only
-    /// and is not the leased multi-hop follow-on; hashed user Behavior chains
-    /// are. Do not mint `inverse_knows` for other relations.
-    fn follow_ons(&self, event: &Event) -> Vec<Event> {
-        match &event.op {
-            Op::Assert {
-                subject,
-                relation,
-                object,
-                valid_from,
-                valid_to,
-                ..
-            } if *relation == self.knows => {
-                self.ingest_examine.bump();
-                let exists = self.fold.has_live_triple(*object, self.known_by, *subject);
-                if exists {
-                    return vec![];
-                }
-                vec![Event::new(
-                    Op::Behavior {
-                        name: "inverse_knows".into(),
-                        caused_by: event.id,
-                        rule_version: String::new(),
-                        subject: *object,
-                        relation: self.known_by,
-                        object: *subject,
-                        valid_from: *valid_from,
-                        valid_to: *valid_to,
-                    },
-                    event.ingested_at,
-                )]
-            }
-            _ => vec![],
-        }
     }
 }

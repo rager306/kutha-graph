@@ -51,7 +51,7 @@ fn retract_keeps_loser() {
         .expect("knows fact")
         .event_id;
     rt.emit(Op::Retract { event_id: minting }).unwrap();
-    assert_eq!(rt.fold().live_count(u64::MAX, 0), 1); // inverse still live
+    assert_eq!(rt.fold().live_count(u64::MAX, 0), 0); // inverse Horn retracts with premise
     assert!(!rt
         .fold()
         .facts()

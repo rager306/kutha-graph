@@ -297,6 +297,8 @@ impl Runtime {
         for name in names {
             rt.emit_allow(name, 0, None).expect("genesis kutha:allows");
         }
+        rt.emit_rule_ast(&crate::eval::inverse_knows_rule(), 0, None)
+            .expect("genesis inverse_knows Horn");
         rt
     }
 
