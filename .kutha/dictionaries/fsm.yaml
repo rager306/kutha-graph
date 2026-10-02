@@ -84,6 +84,12 @@ states:
       - two_hop_derivation_eligible_when_chain_live
       - two_hop_ineligible_when_root_assert_retracted
       - inverse_knows_cascade_is_residual_spike
+      - statute_as_of_via_facade
+      - unknown_relation_rejected_for_assert_justification_and_action
+      - retract_seeded_related_to_fails_closed_after
+      - admission_and_policy_visible_on_as_of_after_later_pin
+      - green_ingest_visits_constant_in_n
+      - lazy_as_of_matches_eager_after_same_ingest
   emit: { kind: emit_log }
   emit_tenant:
     kind: emit_tenant

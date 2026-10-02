@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Process: restage shipped I-F oracles and require M013 tests
+
+### Process
+
+### Added
+
+- Six M013 `observe_cargo.required` test names; eleven `i-f*` `rust_test_asserts` checks restage shipped semantic-gap rows (I-F1–F6, F10–F12, F14–F15).
+
+### Changed
+
+- I-F7/I-F8 `until` strings name M014 / remaining fork-diff honestly; I-F9, F13, F16 stay deferred.
+
+### Trajectory
+
+- No lease change. Cells remain **Proposed**.
+
 ## 2026-10-02 — Process: glob verification independence and listed input paths
 
 ### Process
