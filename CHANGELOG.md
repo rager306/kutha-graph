@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: independent RULE-01 kill-tests (Phase 37)
+
+### Product
+
+### Added
+
+- Independent kill-tests: big-endian length and truncation are not canonical; crafted Horn is rejected; `StoreBlob` JSON with a Named pin does not append.
+
+### Trajectory
+
+- Cells remain **Proposed**. M016 S02 lease unchanged; no SemVer tag.
+
 ## 2026-10-02 — Product: rule body hash is rule_version (Phase 37)
 
 ### Product
