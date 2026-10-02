@@ -59,7 +59,8 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 ### Phase 39: Policy evaluation and execution replay
 
-**Goal**: RULE-03, RULE-04. **Plans**: 2 max
+**Plans**: 2 max
+- [x] 39-01-PLAN.md
 
 ### Phase 40: Legal golden fixture and verdict
 
@@ -72,4 +73,4 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 | v0.01–v0.08 | 1–35 | shipped |
 | v0.09 | 36–40 | active (M016) |
 
-**Next:** Lease M016 S05 then Phase 40 (golden fixture).
+**Next:** Phase 40 under M016 S05 lease (golden fixture).

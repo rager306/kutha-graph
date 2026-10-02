@@ -211,7 +211,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 ## M016: Test hardening + executable rules — LEASED (GSD v0.09)
 
-**Leased:** Active Milestone M016; S01–S04 CLOSED; **S05** unleased.
+**Leased:** Active Milestone M016; **S05** active (Phase 40); S01–S04 CLOSED.
 
 **Success:** T2–T6 test holes closed; canonical rule AST hashed into `rule_version`; rule bodies evaluated over the CSR lease with support counting; admission evaluates the pinned policy; execution replay re-derives; a golden fixture answers the ADR-013 open question (or records fail-closed). Closes T2–T6, F9, F16. Needs a lease.
 

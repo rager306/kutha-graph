@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Trajectory: M016 S05 leased
+
+### Trajectory
+
+- Active Slice **S05** (GSD Phase 40, Legal golden fixture). `L_delivery=M016-S04-done`.
+
 ## 2026-10-02 — Trajectory: M016 S04 CLOSED (Phase 39)
 
 ### Trajectory
