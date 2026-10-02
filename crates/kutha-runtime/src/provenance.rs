@@ -1,7 +1,7 @@
 //! Replay and provenance (ADR-060). Not a MATCH compiler.
 use crate::fold::GraphFold;
 use crate::quantum::{Runtime, RuntimeError};
-use kutha_common::{EventId, Op};
+use kutha_common::{EventId, Op, TransactionTime, ValidTime};
 use sha2::{Digest, Sha256};
 use std::collections::HashSet;
 
@@ -77,7 +77,14 @@ impl Runtime {
     /// with a visited [`EventId`] set (already-seen id is ineligible).
     ///
     /// This is not a provenance-polynomial evaluator and is not a MATCH compiler.
-    pub fn derivation_eligible_at(&self, derived: EventId, tt: u64, vt: u64) -> bool {
+    pub fn derivation_eligible_at(
+        &self,
+        derived: EventId,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> bool {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
         let mut visited = HashSet::new();
         self.derivation_eligible_at_walk(derived, tt, vt, &mut visited)
     }

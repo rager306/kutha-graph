@@ -4,7 +4,9 @@ use crate::quantum::{
     op_relation, ConflictReport, Justification, QuantumOutcome, Runtime, RuntimeError,
 };
 use crate::receipt::QuantumReceipt;
-use kutha_common::{blob_digest_matches, EventId, Op, KUTHA_RESERVED_RELS, TermId};
+use kutha_common::{
+    blob_digest_matches, EventId, Op, TermId, TransactionTime, ValidTime, KUTHA_RESERVED_RELS,
+};
 
 impl Runtime {
     pub fn check_admission(&self, justification_id: &str) -> Result<(), RuntimeError> {
@@ -56,7 +58,14 @@ impl Runtime {
 
     /// Partition live supports of `claim` by stored `Fact.polarity` (ING-03 / D-03).
     /// `None` polarity is in neither bucket. Caller TermIds are not the polarity source.
-    pub fn conflict_report_at(&self, claim: EventId, tt: u64, vt: u64) -> ConflictReport {
+    pub fn conflict_report_at(
+        &self,
+        claim: EventId,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> ConflictReport {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
         let mut positive_supports = Vec::new();
         let mut negative_supports = Vec::new();
         for f in self.fold.live_supports(claim, tt, vt) {

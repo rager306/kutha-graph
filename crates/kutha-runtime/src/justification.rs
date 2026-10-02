@@ -1,7 +1,9 @@
 //! Justification and Action constructors (typed records → pipeline).
 use crate::pipeline::ReceiptMode;
 use crate::quantum::{ActionRecord, Justification, Runtime, RuntimeError};
-use kutha_common::{Event, EventId, Op, SupportPolarity, KUTHA_ACTION, KUTHA_ADMISSION};
+use kutha_common::{
+    Event, EventId, Op, SupportPolarity, TransactionTime, ValidTime, KUTHA_ACTION, KUTHA_ADMISSION,
+};
 
 impl Runtime {
     pub(crate) fn cite_from_log(&self, justification_id: &str) -> Option<Justification> {
@@ -60,9 +62,11 @@ impl Runtime {
         source_claim_ids: Vec<EventId>,
         source_event_ids: Vec<EventId>,
         rule_version: impl Into<String>,
-        tt: u64,
-        vt: u64,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
     ) -> Result<String, RuntimeError> {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
         let Some(policy_version) = self.fold.live_policy_pin_at(tt, vt) else {
             return Err(RuntimeError::UnknownPolicyVersion { pin: String::new() });
         };
@@ -126,7 +130,12 @@ impl Runtime {
     }
 
     /// AS OF admission status for a justification (ADM-01). Delegates to the fold.
-    pub fn admission_status_at(&self, justification_id: &str, tt: u64, vt: u64) -> Option<bool> {
+    pub fn admission_status_at(
+        &self,
+        justification_id: &str,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> Option<bool> {
         self.fold.admission_status_at(justification_id, tt, vt)
     }
 
@@ -134,9 +143,11 @@ impl Runtime {
     pub fn record_action(
         &mut self,
         justification_id: &str,
-        tt: u64,
-        vt: u64,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
     ) -> Result<EventId, RuntimeError> {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
         let cite =
             self.cite_from_log(justification_id)
                 .ok_or_else(|| RuntimeError::UnknownAdmission {
@@ -179,9 +190,11 @@ impl Runtime {
     pub fn action_record_at(
         &self,
         justification_id: &str,
-        tt: u64,
-        vt: u64,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
     ) -> Option<ActionRecord> {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
         let fact = self.fold.live_action_fact(justification_id, tt, vt)?;
         let cite = self.cite_from_log(justification_id)?;
         let (admitted, policy_version) = self.fold.live_admission_at(justification_id, tt, vt)?;
@@ -198,12 +211,21 @@ impl Runtime {
     }
 
     /// Fold-cut policy pin liveness (ADM-02).
-    pub fn policy_hash_live_at(&self, pin: &str, tt: u64, vt: u64) -> bool {
+    pub fn policy_hash_live_at(
+        &self,
+        pin: &str,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> bool {
         self.fold.policy_hash_live_at(pin, tt, vt)
     }
 
     /// Latest ingested live policy hash at `(tt, vt)` (ADM-02 / ACT-02).
-    pub fn live_policy_pin_at(&self, tt: u64, vt: u64) -> Option<String> {
+    pub fn live_policy_pin_at(
+        &self,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> Option<String> {
         self.fold.live_policy_pin_at(tt, vt)
     }
 }

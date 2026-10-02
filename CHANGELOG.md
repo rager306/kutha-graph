@@ -17,6 +17,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - `GraphFold` query cuts (`as_of`, `live_at`, dictionary/admission/policy pins, `live_supports`, `claim_supported_at`) take `impl Into` clocks and compare `as_u64` against `Fact` integer fields. `as_of(2015u64)` and `as_of(ValidTime::from(2015))` type-check; `as_of(TransactionTime::from(1))` does not.
 - `Runtime::as_of` / `live_at` match the fold (`impl Into` clocks). Write helpers (`assert` / `retract` / `correct` / `derive` / `emit_allow` / `emit_rule` / `emit_policy`) take `u64` so named oracle literals still compile.
 - `Runtime::csr_lease_at` / `typed_csr_lease_at`, `CsrLease::from_fold` / `TypedCsrLease::from_fold`, and `Materializer::build` take `impl Into` clocks and convert with `as_u64` before the integer CSR picture.
+- Justification/action/admission/policy/derivation/conflict cuts take `impl Into` clocks; `Op::JustificationCite` `tt`/`vt` stay `u64`.
 
 ### Trajectory
 
