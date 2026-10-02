@@ -3,7 +3,7 @@ use crate::quantum::{disposition, PersistedQuantumOutcome, QuantumOutcome, Runti
 use crate::receipt::{digest_to_hex, QuantumReceipt};
 use kutha_common::{
     blob_digest_matches, policy_version_hash, rule_definition_hash, Event, Op, OutcomeDisposition,
-    ValidTime, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE,
+    KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE,
 };
 
 /// How the shared pipeline finishes a committed quantum (D-01 / D-07).
@@ -288,8 +288,8 @@ impl Runtime {
     pub fn emit_allow(
         &mut self,
         name: impl Into<String>,
-        valid_from: ValidTime,
-        valid_to: Option<ValidTime>,
+        valid_from: u64,
+        valid_to: Option<u64>,
     ) -> Result<QuantumOutcome, RuntimeError> {
         let name = name.into();
         if name.is_empty() {
@@ -318,8 +318,8 @@ impl Runtime {
     pub fn emit_rule(
         &mut self,
         definition: impl Into<String>,
-        valid_from: ValidTime,
-        valid_to: Option<ValidTime>,
+        valid_from: u64,
+        valid_to: Option<u64>,
     ) -> Result<QuantumOutcome, RuntimeError> {
         let definition = definition.into();
         if definition.is_empty() {
@@ -355,8 +355,8 @@ impl Runtime {
     pub fn emit_policy(
         &mut self,
         definition: impl Into<String>,
-        valid_from: ValidTime,
-        valid_to: Option<ValidTime>,
+        valid_from: u64,
+        valid_to: Option<u64>,
     ) -> Result<QuantumOutcome, RuntimeError> {
         let definition = definition.into();
         if definition.is_empty() {

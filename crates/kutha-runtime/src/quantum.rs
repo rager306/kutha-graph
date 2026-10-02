@@ -413,8 +413,8 @@ impl Runtime {
         subject: impl AsRef<str>,
         relation: impl AsRef<str>,
         object: impl AsRef<str>,
-        valid_from: ValidTime,
-        valid_to: Option<ValidTime>,
+        valid_from: u64,
+        valid_to: Option<u64>,
     ) -> Result<QuantumOutcome, RuntimeError> {
         let subject = self.intern(subject.as_ref());
         let relation = self.intern(relation.as_ref());
@@ -435,7 +435,7 @@ impl Runtime {
     pub fn retract(
         &mut self,
         subject: impl AsRef<str>,
-        valid_from: ValidTime,
+        valid_from: u64,
     ) -> Result<QuantumOutcome, RuntimeError> {
         let subject = self.intern(subject.as_ref());
         let event_id = self
@@ -462,7 +462,7 @@ impl Runtime {
         subject: impl AsRef<str>,
         relation: impl AsRef<str>,
         object: impl AsRef<str>,
-        valid_from: ValidTime,
+        valid_from: u64,
     ) -> Result<QuantumOutcome, RuntimeError> {
         let subject = self.intern(subject.as_ref());
         let relation = self.intern(relation.as_ref());
@@ -496,7 +496,7 @@ impl Runtime {
         &mut self,
         name: impl AsRef<str>,
         subject: impl AsRef<str>,
-        valid_from: ValidTime,
+        valid_from: u64,
     ) -> Result<QuantumOutcome, RuntimeError> {
         let name = name.as_ref();
         let pin = rule_definition_hash(name);
@@ -528,11 +528,15 @@ impl Runtime {
         })
     }
 
-    pub fn as_of(&self, vt: ValidTime) -> Vec<(TermId, TermId, TermId)> {
+    pub fn as_of(&self, vt: impl Into<ValidTime>) -> Vec<(TermId, TermId, TermId)> {
         self.fold.as_of(vt)
     }
 
-    pub fn live_at(&self, tt: TransactionTime, vt: ValidTime) -> Vec<(TermId, TermId, TermId)> {
+    pub fn live_at(
+        &self,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> Vec<(TermId, TermId, TermId)> {
         self.fold.live_at(tt, vt)
     }
 
