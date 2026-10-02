@@ -9,3 +9,6 @@ description = "Lean events, UUID v7 ids, interned term map (ADR-011)"
 uuid.workspace = true
 sha2.workspace = true
 serde.workspace = true
+
+[dev-dependencies]
+trybuild = "1.0"
