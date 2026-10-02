@@ -1198,25 +1198,25 @@ checks:
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-PLAN.md
         min_phase: 22
-        min_hits: 1
+        min_hits: 0
         max: 150
         max_files_per_dir: 2
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-SUMMARY.md
         min_phase: 22
-        min_hits: 1
+        min_hits: 0
         max: 60
         max_files_per_dir: 2
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-VERIFICATION.md
         min_phase: 22
-        min_hits: 1
+        min_hits: 0
         max: 60
         max_files_per_dir: 1
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-CONTEXT.md
         min_phase: 22
-        min_hits: 1
+        min_hits: 0
         max: 80
         max_files_per_dir: 1
 
@@ -1234,11 +1234,13 @@ checks:
       - kind: file_contains
         glob: .planning/phases/*-*/*-VERIFICATION.md
         min_phase: 22
+        allow_empty: true
         needles: ["independent: true", "verifier_model", "commands:", "read_only_inputs:", "exit:"]
         require: all
       - kind: frontmatter_paths_exist
         glob: .planning/phases/*-*/*-VERIFICATION.md
         min_phase: 22
+        allow_empty: true
         field: read_only_inputs
 
   - id: id-map-cite

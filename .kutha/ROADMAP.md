@@ -152,7 +152,7 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 
 **Success:** a declared target N and a re-runnable measured baseline exist; a real-text legal fixture has been mapped on paper against the current model; ingest, retract, correct, and claim-admit use fold indexes, not log scans; the initial relation allowance is genesis events in the log and a seeded relation can be retracted; dictionary entries are ordinary facts in a reserved namespace (the five meta side tables are gone); every record kind enters through one propose, admit, commit, receipt path and is consumed through a public facade by one example and one integration test; references are `EventId` or hash; the milestone closes only with an independent verification artifact and a planning-artifact budget check. Not rules, not typed clocks, not M002, not ADR Accepted.
 
-**Leased:** Active Milestone M013; S08 closed (close-out honesty); S09 closed (write-path hardening). S01–S09 delivered. Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semantic-gap-review.md` (addendum 2026-10-01). M013 does not archive or tag until S09 closes. No new features in S03–S06: refactors under named oracles (FF5, FF6, M010–M012). Thawed subset: bench harness, fold indexes, genesis, substrate refactor, facade. Still frozen: RocksDB, Cypher, HNSW, six dictionaries, legal pack, M002.
+**Closed:** Active Milestone M013 delivered S01–S09 (2026-10-02); GSD tag `v0.06`. Closes F10, F11, F12, F14, F15 and R2, R4, R5, R6 from `docs/architecture/semantic-gap-review.md` (addendum 2026-10-01). M013 does not archive or tag until S09 closes. No new features in S03–S06: refactors under named oracles (FF5, FF6, M010–M012). Thawed subset: bench harness, fold indexes, genesis, substrate refactor, facade. Still frozen: RocksDB, Cypher, HNSW, six dictionaries, legal pack, M002.
 
 - [x] **S01: Benchmark baseline and size target** `risk:medium` `depends:[]`
   > After this: a bench harness with no new dependencies measures ingest, `as_of`, retract, persist, open, and replay at three sizes, reports bytes per fact, and states a target N; one command re-runs it; numbers land in a dated note, not in an ADR.
@@ -185,7 +185,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 - **Tool pair:** CBM and GitNexus are both used on every phase that edits product code (`docs/process/gsd-auto-contract.md`).
 - **RED first:** each slice that closes a finding starts with an oracle that fails on current code, recorded before the change.
 
-## M014: Typed clocks and as-known-on — PROPOSED (GSD v0.07)
+## M014: Typed clocks and as-known-on — PROPOSED until leased (GSD v0.07)
 
 **Success:** valid time, transaction time, and wall time are distinct types; mixing them without a conversion does not compile; `tt_anchor` facts map transaction time to wall time; “as known on date D” is an anchor lookup; FF5 stays green with explicit clocks. Closes F13. Needs a lease; do not start before M013 closes.
 
@@ -211,14 +211,14 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is leased. M014 and M015 are proposed and need their own lease. M002+ stay frozen until leased.
+Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 and M015 need their own lease. M002+ stay frozen until leased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
 1. **M011** — CLOSED (S01–S08). Historical record above.
 2. **M012a** — CLOSED (S01–S06). Detail above.
 3. **M012** — CLOSED (S01–S05). Detail above.
-4. **M013** — LEASED. Benchmark baseline with a target N, legal fixture reconnaissance, fold indexes, genesis log, dictionary entries as facts, one write path and facade, independent verification gate. Detail above. (Replaces the unnumbered “benchmark baseline” waypoint.)
+4. **M013** — CLOSED (S01–S09, GSD v0.06 tagged). Detail above.
 5. **M014** — PROPOSED. Typed clocks and as-known-on. Detail above.
 6. **M015** — PROPOSED. Executable rules and the real-text legal golden fixture. Its S04 verdict gates M002: if the model cannot express the fixture, re-plan before any durability work. Detail above.
 7. **M002** — Log durability protocol: segmented append-only log, hash chain, atomic manifest, replay parity across stores, with the quantum outcome as a commit marker in segment framing (ADR-010/014 open question). “Lease identity verified on open” is already done (v0.04 Phase 15). Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity.

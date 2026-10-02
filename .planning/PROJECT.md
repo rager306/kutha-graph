@@ -10,22 +10,18 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.06 Honest baseline and one write path
+## Current Milestone: v0.07 Typed clocks and as-known-on
 
-**Goal:** Close the post-M012 findings that block the legal wedge: no declared size target or baseline, scan-based ingest, a YAML root of trust, five parallel meta-record kinds, four write paths, no public consumer, and a verification process that checks itself.
+**Goal:** Close F13 — valid time, transaction time, and wall time are distinct types; `tt_anchor` facts map TT to wall time; `as_known_on(date)` is an anchor lookup distinct from “true on D”. FF5 stays green with explicit clocks.
 
-**Harness lease:** M013 (leased 2026-10-01; Active Slice **None** per `.kutha/STATE.md`; `L_delivery=M013-S09-done`). Source: `docs/architecture/semantic-gap-review.md` addendum F9–F16 and R1–R6; contract: `docs/process/gsd-auto-contract.md`.
+**Harness lease:** M014 (cite `.kutha/STATE.md`). Prior: M013 CLOSED (`L_delivery=M013-closed`, tag `v0.06`). Source: `docs/architecture/semantic-gap-review.md` F13; contract: `docs/process/gsd-auto-contract.md`.
 
-**Target (phases 22–28):**
-- Baseline and target N with a re-runnable bench harness (BASE)
-- Real-text legal fixture reconnaissance on law-nexus data, no product code (REC)
-- Fold indexes: no log or fact-vector scans on ingest (IDX)
-- Genesis log: relation allowance is log events; a seeded relation is retractable (GEN)
-- Dictionary entries as reserved-namespace facts; five meta side tables gone (SUB)
-- One write path, typed references, public facade with one example and one integration test (PIPE)
-- Independent verification gate, planning-artifact budget check, one id map (PROC)
+**Target (phases 31–33):**
+- Clock newtypes `Vt` / `Tt` / wall with compile-fail mix rejection (CLK)
+- `tt_anchor` facts and `as_known_on(date)` (ANK)
+- Fixture migration with unchanged oracle assertions (FIX)
 
-**Next after v0.06 (proposed, need their own lease):** M014 typed clocks (v0.07), M015 executable rules and legal golden fixture (v0.08), then M002 durability with commit-marker framing.
+**Next after v0.07 (proposed, need their own lease):** M015 executable rules and legal golden fixture (v0.08), then M002 durability with commit-marker framing.
 
 
 ## Business Context
@@ -67,7 +63,8 @@ GSD overlay v0.02 (Phases 4–8 — M011 semantic core close):
 
 ### Active
 
-- [x] **v0.06 tail (M013 S08–S09):** Phase 29 close-out honesty (DOC-01..04, GOV-01..04) and Phase 30 write-path hardening (HARD-01..04); no `crates/` in Phase 29
+- [x] **v0.06 Honest baseline and one write path (M013 S01–S09):** shipped 2026-10-02 — archive `.planning/milestones/v0.06-*`, tag `v0.06`
+- [ ] **v0.07 Typed clocks and as-known-on (M014 S01–S03):** CLK/ANK/FIX requirements; closes F13
 - [ ] Keep FF5/FF6/H2/H4/M010/M011 named fitness **green** (`L_capability=ff5-green` per `.kutha/STATE.md`)
 - [ ] Keep governor CI honest; three lifecycles uncollapsed; freeze until STATE names otherwise
 - [ ] Start only the next delivery `.kutha/STATE.md` names — do **not** assume M002, legal pack, or honeycomb Accepted
@@ -167,7 +164,7 @@ Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), **v0.04 
 
 ## Next Milestone Goals
 
-Now: v0.06 (M013), see Current Milestone above. After it: M014 typed clocks, M015 executable rules plus the real-text legal golden fixture, then M002 (segmented log, hash chain, manifest, commit-marker framing; Rocks for indexes only). Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.
+Now: v0.07 (M014 typed clocks). After it: M015 executable rules plus the real-text legal golden fixture, then M002 (segmented log, hash chain, manifest, commit-marker framing; Rocks for indexes only). Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.
 
 ## Context
 
@@ -175,10 +172,10 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 
 **Harness lease** (process intent, not GSD memory, not product SoT): `.kutha/STATE.md`
 
-- Active Milestone: **M013** (leased; S01–S09 delivered; awaiting controller closeout)
-- Active Slice: **None** (S09 closed; cite `.kutha/STATE.md` — do not edit here)
+- Active Milestone: **M014** (lease pending / in progress — cite `.kutha/STATE.md`)
+- Active Slice: cite `.kutha/STATE.md` only (do not edit here)
 - Phase: **H5**
-- Lifecycles: `L_map=honeycomb-proposed` · `L_delivery=M013-S09-done` · `L_capability=ff5-green`
+- Lifecycles: `L_map=honeycomb-proposed` · `L_delivery` / Active Slice — cite `.kutha/STATE.md` · `L_capability=ff5-green`
 - Next: M013 slices only, one phase at a time (`docs/process/gsd-auto-contract.md`). Freeze holds beyond the M013 thawed subset. Do not start a legal pack. Green governor ≠ ADR Accepted ≠ L_capability.
 
 GSD files live under `.planning/`. **Never overwrite** `.kutha/STATE.md` with GSD STATE.
@@ -234,4 +231,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-02 after Phase 30 verification and M013 S09 close*
+*Last updated: 2026-10-02 after v0.06 archive (M013 CLOSED) and v0.07 start*

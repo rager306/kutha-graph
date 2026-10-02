@@ -196,6 +196,8 @@ def _kind_file_contains(check: str, step: Step, ctx: Context, result: CheckResul
         hits = _glob_max_lines_hits(step, ctx.root)
         if not hits:
             result.scanned += 1
+            if step.get("allow_empty"):
+                return
             message = _fmt(
                 _str(step, "message", "glob {glob} matched no files"),
                 glob=pattern,
@@ -1832,6 +1834,8 @@ def _kind_frontmatter_paths_exist(
     hits = _glob_max_lines_hits(step, ctx.root)
     if not hits:
         result.scanned += 1
+        if step.get("allow_empty"):
+            return
         pattern = _str(step, "glob")
         result.findings.append(
             Finding(

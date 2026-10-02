@@ -1,5 +1,28 @@
 # Milestones
 
+## v0.06 Honest baseline and one write path (Shipped: 2026-10-02)
+
+**Phases completed:** 9 phases, 17 plans, 9 independent VERIFICATIONs
+**Closeout type:** override_closeout (residual tech debt acknowledged; all HARD/DOC/GOV requirements satisfied)
+**Known verification overrides:** SUMMARY `requirements-completed` gaps on early phases; IDX-03/D-07 bench overrides recorded; Nyquist skipped; CBM coverage freshness. Not product blockers.
+
+**Key accomplishments:**
+- Re-runnable bench harness + dated baseline note with target N (Phase 22)
+- Legal fixture reconnaissance: ≥10 law-nexus cases mapped; crates untouched (Phase 23)
+- Fold indexes: O(1) ingest/retract/correct/claim paths; FoldIndexMode Eager/Lazy (Phase 24)
+- Genesis log owns relation allowance; YAML not read at admit (Phase 25)
+- Dictionary entries as reserved-namespace facts; one write pipeline + public facade (Phases 26–27)
+- Governor artifact budget + verification independence + id-map cite (Phase 28)
+- Close-out honesty: documents, ADR evidence notes, budget fail-closed, I-F restage (Phase 29)
+- Write-path hardening: User emit refuses reserved kutha: Assert/Correct/CorrectInterval/Behavior; keyed Correct keeps delivery_key; dual-mode oracle; exact facade triples (Phase 30)
+- `uv run kutha-gov ci` 0 HIGH (60 checks / budget 64); honeycomb stays Proposed; M013 CLOSED
+
+**Delivered:** M013 S01–S09 under lease discipline. Harness Active Slice cleared (`L_delivery=M013-S09-done`). Archive + GSD process tag `v0.06`. No crate SemVer bump.
+
+**Git range:** `v0.05..v0.06` · Timeline: 2026-10-01 → 2026-10-02
+
+---
+
 ## v0.05 Dictionaries as facts (Shipped: 2026-10-01)
 
 **Phases completed:** 5 phases, 15 plans, 34 tasks

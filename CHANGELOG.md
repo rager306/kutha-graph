@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Trajectory: M013 CLOSED (GSD v0.06 archive and tag)
+
+### Trajectory
+
+- M013 S01–S09 delivered; Active Milestone cleared. GSD archive under `.planning/milestones/v0.06-*`; process tag `v0.06`. Crate SemVer stays `0.0.0`. Residual audit debt acknowledged. Cells remain **Proposed**.
+
+### Process
+
+- Governor: `artifact-budget` `min_hits` 0 so an empty live `.planning/phases/` is allowed between milestones; `verification-independent` accepts `allow_empty` on its globs. `L_delivery=M013-closed` with Active Milestone None.
+- Id map: v0.06 → shipped; v0.07 (M014, phases 31–33) is next and needs a lease.
+
 ## 2026-10-02 — Product: facade exact triples and dual-mode bench (Phase 30-02)
 
 ### Product
