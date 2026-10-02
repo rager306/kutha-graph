@@ -23,18 +23,104 @@ pub const VALID_TIME_SCALE: TimeScale = TimeScale::YearCe;
 /// TT-to-wall mapping is out of M012a S05.
 pub const TRANSACTION_TIME_SCALE: TimeScale = TimeScale::LogSequence;
 
-/// Valid-time instant.
-///
-/// Fixtures use [`VALID_TIME_SCALE`] (`TimeScale::YearCe`): one integer unit is
-/// one Gregorian year CE. `2017` means year 2017 CE, not Unix seconds.
-pub type ValidTime = u64;
+macro_rules! define_clock {
+    (
+        $(#[$attr:meta])*
+        $vis:vis struct $name:ident;
+    ) => {
+        $(#[$attr])*
+        #[derive(
+            Copy,
+            Clone,
+            Debug,
+            PartialEq,
+            Eq,
+            PartialOrd,
+            Ord,
+            Hash,
+            serde::Serialize,
+            serde::Deserialize,
+        )]
+        #[serde(transparent)]
+        $vis struct $name(u64);
 
-/// Transaction-time.
-///
-/// Fixtures use [`TRANSACTION_TIME_SCALE`] (`TimeScale::LogSequence`): assigned
-/// at ingest (`Runtime` next_tt), not wall-clock. A TT-to-wall calendar map is
-/// out of M012a S05.
-pub type TransactionTime = u64;
+        impl $name {
+            pub const MAX: Self = Self(u64::MAX);
+
+            #[inline]
+            pub const fn as_u64(self) -> u64 {
+                self.0
+            }
+
+            #[inline]
+            pub const fn to_le_bytes(self) -> [u8; 8] {
+                self.0.to_le_bytes()
+            }
+        }
+
+        impl From<u64> for $name {
+            fn from(value: u64) -> Self {
+                Self(value)
+            }
+        }
+
+        impl From<$name> for u64 {
+            fn from(value: $name) -> Self {
+                value.0
+            }
+        }
+
+        impl std::fmt::Display for $name {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                std::fmt::Display::fmt(&self.0, f)
+            }
+        }
+
+        impl PartialEq<u64> for $name {
+            fn eq(&self, other: &u64) -> bool {
+                self.0 == *other
+            }
+        }
+    };
+}
+
+define_clock! {
+    /// Valid-time instant.
+    ///
+    /// Fixtures use [`VALID_TIME_SCALE`] (`TimeScale::YearCe`): one integer unit is
+    /// one Gregorian year CE. `2017` means year 2017 CE, not Unix seconds.
+    ///
+    /// Distinct from [`TransactionTime`]: mixing clocks without an explicit
+    /// conversion does not type-check.
+    ///
+    /// ```compile_fail
+    /// use kutha_common::{TransactionTime, ValidTime};
+    /// fn takes_valid_time(_vt: ValidTime) {}
+    /// takes_valid_time(TransactionTime::from(0));
+    /// ```
+    pub struct ValidTime;
+}
+
+define_clock! {
+    /// Transaction-time.
+    ///
+    /// Fixtures use [`TRANSACTION_TIME_SCALE`] (`TimeScale::LogSequence`): assigned
+    /// at ingest (`Runtime` next_tt), not wall-clock. A TT-to-wall calendar map is
+    /// out of M012a S05.
+    pub struct TransactionTime;
+}
+
+define_clock! {
+    /// Wall-clock instant (same shape as the other clocks). Unused on the query
+    /// API until `as_known_on` (Phase 32). No `From` into [`ValidTime`] or
+    /// [`TransactionTime`].
+    pub struct WallTime;
+}
+
+/// Conceptual valid-time name from the M014 roadmap (CLK-01).
+pub type Vt = ValidTime;
+/// Conceptual transaction-time name from the M014 roadmap (CLK-01).
+pub type Tt = TransactionTime;
 
 /// Durable progress encoding for a quantum (OUT-01 / D-O2). Call `Ok` is not completion.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -82,8 +168,8 @@ pub enum Op {
         subject: TermId,
         relation: TermId,
         object: TermId,
-        valid_from: ValidTime,
-        valid_to: Option<ValidTime>,
+        valid_from: u64,
+        valid_to: Option<u64>,
         #[serde(default)]
         claim: Option<EventId>,
         #[serde(default)]
@@ -97,15 +183,15 @@ pub enum Op {
     Correct {
         event_id: EventId,
         object: TermId,
-        valid_from: ValidTime,
-        valid_to: Option<ValidTime>,
+        valid_from: u64,
+        valid_to: Option<u64>,
     },
     /// Explicit interval patch (M011 S04). Does not change whole-version `Correct`.
     CorrectInterval {
         event_id: EventId,
         object: TermId,
-        patch_from: ValidTime,
-        patch_to: Option<ValidTime>,
+        patch_from: u64,
+        patch_to: Option<u64>,
     },
     /// Behavior-emitted follow-on (still a log event; never LLM narrative).
     Behavior {
@@ -118,8 +204,8 @@ pub enum Op {
         subject: TermId,
         relation: TermId,
         object: TermId,
-        valid_from: ValidTime,
-        valid_to: Option<ValidTime>,
+        valid_from: u64,
+        valid_to: Option<u64>,
     },
     /// Logged term definition (ADR-011 / M010 S02). Fold no-op; not a graph fact.
     Define {
@@ -156,12 +242,13 @@ pub enum Op {
 pub struct Event {
     pub id: EventId,
     pub op: Op,
-    pub ingested_at: TransactionTime,
+    pub ingested_at: u64,
     pub object_ids: Vec<TermId>,
 }
 
 impl Event {
-    pub fn new(op: Op, ingested_at: TransactionTime) -> Self {
+    pub fn new(op: Op, ingested_at: impl Into<TransactionTime>) -> Self {
+        let ingested_at = ingested_at.into().as_u64();
         let object_ids = match &op {
             Op::Assert {
                 subject,
@@ -194,7 +281,8 @@ impl Event {
     ///
     /// Id is the first 16 bytes of SHA-256(`kutha-define-id` || term bytes).
     /// Live [`Event::new`] intern still mints UUID v7.
-    pub fn stable_define(name: impl Into<String>, ingested_at: TransactionTime) -> Self {
+    pub fn stable_define(name: impl Into<String>, ingested_at: impl Into<TransactionTime>) -> Self {
+        let ingested_at = ingested_at.into().as_u64();
         let name = name.into();
         let mut h = Sha256::new();
         h.update(b"kutha-define-id");

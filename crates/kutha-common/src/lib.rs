@@ -6,8 +6,8 @@ mod intern;
 
 pub use event::{
     blob_digest_matches, policy_version_hash, rule_definition_hash, sha256_hex, Event, EventId, Op,
-    OutcomeDisposition, SupportPolarity, TermId, TimeScale, TransactionTime, ValidTime,
-    KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RESERVED_RELS, KUTHA_RULE,
-    TRANSACTION_TIME_SCALE, VALID_TIME_SCALE,
+    OutcomeDisposition, SupportPolarity, TermId, TimeScale, TransactionTime, Tt, ValidTime, Vt,
+    WallTime, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RESERVED_RELS,
+    KUTHA_RULE, TRANSACTION_TIME_SCALE, VALID_TIME_SCALE,
 };
 pub use intern::TermDictionary;

@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: typed clock newtypes (Phase 31)
+
+### Product
+
+### Added
+
+- `ValidTime`, `TransactionTime`, and `WallTime` are distinct `#[serde(transparent)]` tuple structs (`Vt` / `Tt` aliases). Mixing clocks without conversion does not type-check (`compile_fail` doctest on `ValidTime`). `Op` clock fields and `Event.ingested_at` stay `u64` so named oracle literals compile.
+
+### Trajectory
+
+- Cells remain **Proposed**. M014 S01 lease unchanged; no SemVer tag.
+
 ## 2026-10-02 — Trajectory: M014 S01 leased
 
 ### Trajectory
