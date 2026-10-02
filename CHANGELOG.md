@@ -94,6 +94,18 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Cells remain **Proposed**. M014 S01 lease unchanged; no SemVer tag.
 
+## 2026-10-02 — Trajectory: M016 S01 leased
+
+### Trajectory
+
+- Active Milestone **M016**, Active Slice **S01** (GSD Phase 36, T2–T6). `L_delivery=M015-closed`.
+
+## 2026-10-02 — Process: v0.09 milestone authored
+
+### Process
+
+- GSD v0.09 / harness M016: Phase 36 test-hardening T2–T6, then Phases 37–40 rules (F9/F16). Not leased yet.
+
 ## 2026-10-02 — Trajectory: M015 CLOSED (GSD v0.08 archive and tag)
 
 ### Trajectory

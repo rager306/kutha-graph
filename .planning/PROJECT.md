@@ -10,7 +10,7 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: (none — v0.08 shipped)
+## Current Milestone: v0.09 Test hardening + executable rules
 
 **Goal:** Make `as_known_on` honest for closed VT intervals; fail-closed anchors; align living docs and governor with post-M014 reality.
 

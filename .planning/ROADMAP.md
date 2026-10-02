@@ -2,9 +2,9 @@
 
 ## Overview
 
-GSD overlay tracks the steel thread already in crates — not honeycomb waterfall. Harness delivery stays in `.kutha/STATE.md` / `.kutha/ROADMAP.md`.
+GSD overlay tracks the steel thread already in crates. Harness delivery stays in `.kutha/STATE.md` / `.kutha/ROADMAP.md`.
 
-v0.01–v0.08 are shipped. Next harness milestone needs a lease before GSD phases are planned.
+v0.01–v0.08 are shipped. **v0.09** (harness M016) closes test-audit T2–T6 then F9/F16 executable rules + golden fixture. Honeycomb stays Proposed. Run: `docs/process/gsd-auto-contract.md`.
 
 ## Id map
 
@@ -12,23 +12,52 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 ## Milestones
 
-- ✅ **v0.01 GSD foundation** — Phases 1–3 (shipped 2026-09-29) — [archive](./milestones/v0.01-ROADMAP.md)
-- ✅ **v0.02 Semantic core close** — Phases 4–8 (shipped 2026-09-30) — [archive](./milestones/v0.02-ROADMAP.md)
-- ✅ **v0.03 Lean context + semantic governor** — Phases 9–11 (shipped 2026-09-30) — [archive](./milestones/v0.03-ROADMAP.md)
-- ✅ **v0.04 Single-log SoT + stable references** — Phases 12–16 (shipped 2026-10-01) — [archive](./milestones/v0.04-ROADMAP.md)
-- ✅ **v0.05 Dictionaries as facts** — Phases 17–21 (shipped 2026-10-01) — [archive](./milestones/v0.05-ROADMAP.md)
-- ✅ **v0.06 Honest baseline and one write path** — Phases 22–30 (shipped 2026-10-02) — [archive](./milestones/v0.06-ROADMAP.md)
-- ✅ **v0.07 Typed clocks and as-known-on** — Phases 31–33 (shipped 2026-10-02) — [archive](./milestones/v0.07-ROADMAP.md)
-- ✅ **v0.08 Known-on honesty and M014 residuals** — Phases 34–35 (shipped 2026-10-02) — [archive](./milestones/v0.08-ROADMAP.md)
+- ✅ **v0.01–v0.08** — shipped — see `./milestones/`
+- 🚧 **v0.09 Test hardening + executable rules** — Phases 36–40 (harness M016)
 
 ## Phases
 
-No live phases. Next milestone unleased (M016 rules proposed).
+- [ ] **Phase 36: Test hardening T2–T6** — trybuild mix, cite tt/vt, known-on Eager/Lazy/fork, snapshot+tail anchors, replay applies TtAnchor
+- [ ] **Phase 37: Rule AST and hash** — canonical encoding; `rule_version` hash; fail-closed unknown bodies
+- [ ] **Phase 38: Rule evaluator and support counting** — cascade → rules; retract maintains supports
+- [ ] **Phase 39: Policy evaluation and execution replay** — pinned policy; replay re-derives
+- [ ] **Phase 40: Legal golden fixture and verdict** — transitional rule + as_known_on; ADR-013 dated note
+
+## Phase Details
+
+### Phase 36: Test hardening T2–T6
+
+**Goal**: Close audit holes T2–T6 without new product features beyond replay/anchor correctness required by TH-04/05.
+**Requirements**: TH-01..TH-05
+**Success Criteria**:
+  1. trybuild E0308 for clock mix (Tt/Wall → Vt).
+  2. Swapped cite tt/vt fails a named oracle.
+  3. Eager==Lazy `as_known_on`; fork_at + persist/open agree.
+  4. Mid-cut snapshot + non-empty tail recovers known-on; anchors in replay path.
+  5. `GraphFold::replay` applies TtAnchor.
+**Plans**: 2 max
+
+### Phase 37: Rule AST and hash
+
+**Goal**: RULE-01. **Plans**: 2 max
+
+### Phase 38: Rule evaluator and support counting
+
+**Goal**: RULE-02. **Plans**: 2 max
+
+### Phase 39: Policy evaluation and execution replay
+
+**Goal**: RULE-03, RULE-04. **Plans**: 2 max
+
+### Phase 40: Legal golden fixture and verdict
+
+**Goal**: FIXG-01. **Plans**: 1–2 max
 
 ## Progress
 
 | Milestone | Phases | Status |
 |-----------|--------|--------|
 | v0.01–v0.08 | 1–35 | shipped |
+| v0.09 | 36–40 | active (M016) |
 
-**Next:** Controller leases M016 (executable rules) before planning GSD phases.
+**Next:** Controller leases M016 S01, then `/gsd-autonomous --only 36`.

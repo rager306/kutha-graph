@@ -1,23 +1,20 @@
 ---
 gsd_state_version: 1.0
-milestone: v0.08
-milestone_name: Known-on honesty and M014 residuals
-status: complete
-stopped_at: v0.08 archived and tagged; M015 CLOSED; next unleased
+milestone: v0.09
+milestone_name: Test hardening + executable rules
+status: planning
+stopped_at: M016 S01 leased; ready to plan Phase 36
 last_updated: 2026-10-02T00:00:00Z
 progress:
-  total_phases: 2
-  completed_phases: 2
-  total_plans: 3
-  completed_plans: 3
+  total_phases: 5
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
 
-**Milestone:** v0.08 shipped (M015 CLOSED)
-**Phase:** none live
-**Status:** Complete — archive under `.planning/milestones/v0.08-*`
-**Last activity:** 2026-10-02 — Phase 35 verified; M015 closed; tag v0.08
-
-Stopped at: v0.08 archived; wait next lease
-Next: Controller leases M016 (or other) before planning
+**Milestone:** v0.09 Test hardening + executable rules (harness M016)
+**Phase:** 36 — Test hardening T2–T6 (CONTEXT pending)
+**Status:** Ready to plan after M016 S01 lease
+**Next:** Lease M016 S01 → `/gsd-plan-phase 36`

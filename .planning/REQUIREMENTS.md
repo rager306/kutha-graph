@@ -1,26 +1,60 @@
 # Requirements: Kutha
 
 **Defined:** 2026-10-02
-**Milestone:** (none live — v0.08 shipped)
+**Core Value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
+**Milestone:** v0.09 Test hardening + executable rules (harness lease M016)
 
-## Future Requirements (not leased)
+## v0.09 Requirements
 
-### M016 — executable rules and legal golden fixture
+Closes test-audit T2–T6 and F9/F16. Cells stay Proposed. Not M002. Run: `docs/process/gsd-auto-contract.md`.
 
-- **RULEX-01**: Canonical rule AST hashed into `rule_version`; evaluator over CSR lease; policy evaluation; golden fixture verdict (F9, F16)
+### Test hardening (T2–T6)
 
-### M002 — log durability protocol
+- [ ] **TH-01**: trybuild (or equivalent) proves `TransactionTime`/`WallTime`→`ValidTime` mix is E0308 — not a syntax-error `compile_fail`
+- [ ] **TH-02**: Named test that swapping `tt`/`vt` on `JustificationCite` (or Op cite path) fails an oracle; fields stay distinguishable at the public cut
+- [ ] **TH-03**: `as_known_on` agrees across Eager vs Lazy and survives `fork_at` + persist/open
+- [ ] **TH-04**: Mid-cut snapshot + non-empty tail (Assert + TtAnchor) recovers `as_known_on` equal to full replay; fingerprint or replay includes anchors
+- [ ] **TH-05**: `GraphFold::replay` applies `TtAnchor` so `replayed.as_known_on ==` live fold
 
-- **ROCK-01**: Segmented append-only log, hash chain, atomic manifest; Rocks only for indexes
-- **WRITE-01**: `intern` admit path; WAL vs JSONL open preference
+### Rule AST and hash (F9)
+
+- [ ] **RULE-01**: Bounded positive rule language with canonical encoding; `rule_version` is its hash; unknown/non-canonical bodies fail closed
+
+### Evaluator (F9)
+
+- [ ] **RULE-02**: Multi-hop / n-ary / `inverse_knows` expressed as rules; premise retract maintains derived supports; hard-coded cascade deleted or reduced to rule eval
+
+### Policy + execution replay (F16)
+
+- [ ] **RULE-03**: Admission runs pinned policy body; changing policy changes a decision
+- [ ] **RULE-04**: Replay re-derives derived facts and fails on any it cannot reproduce
+
+### Legal golden fixture (F16 / ADR-013 Q)
+
+- [ ] **FIXG-01**: Real-text (or law-nexus-shaped) transitional rule + `as_known_on` query is green, or fail-closed verdict is dated in ADR-013 Evidence before M002
+
+## Future Requirements (not v0.09)
+
+### M002 — log durability
+
+- **ROCK-01** / **WRITE-01**: segmented log; `intern` admit; WAL vs JSONL
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Promoting honeycomb to Accepted | L_map stays Proposed |
-| Five legal clocks claimed solved | ADR-013 open question |
+| Five clock newtypes as product claim | ADR-013 open Q answered only by FIXG-01 verdict |
+| Cypher / HNSW / Rocks / ADR-050 six dicts | Freeze |
+| Honeycomb Accepted | L_map stays Proposed |
 
 ## Traceability
 
-v0.08 (KNOWN/ANK-ADM/DOC/GOV) shipped — see `.planning/milestones/v0.08-REQUIREMENTS.md`.
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| TH-01..TH-05 | Phase 36 | Pending |
+| RULE-01 | Phase 37 | Pending |
+| RULE-02 | Phase 38 | Pending |
+| RULE-03, RULE-04 | Phase 39 | Pending |
+| FIXG-01 | Phase 40 | Pending |
+
+**Coverage:** v0.09 requirements: 10 total; mapped: 10; unmapped: 0.
