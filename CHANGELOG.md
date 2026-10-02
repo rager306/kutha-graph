@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: known-on closed VT (Phase 34)
+
+### Product
+
+### Fixed
+
+- `as_known_on` evaluates TT-only product at the resolved anchor (`known_at` / `is_known_at`). Facts with finite `valid_to` stay visible at a knowledge cut. `as_of` still uses `live_at(MAX, vt)`; `is_live_at` is unchanged.
+
+### Trajectory
+
+- Cells remain **Proposed**. M015 S01 lease unchanged; no SemVer tag.
+
 ## 2026-10-02 — Product: fixture clock wraps (Phase 33)
 
 ### Product

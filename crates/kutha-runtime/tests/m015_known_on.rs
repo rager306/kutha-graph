@@ -41,3 +41,45 @@ fn closed_vt_interval_survives_as_known_on() {
         "as_known_on(2015) must keep the closed VT interval that as_of sees in-window"
     );
 }
+
+fn seed_closed_interval(
+    rt: &mut Runtime,
+) -> (
+    kutha_common::TermId,
+    kutha_common::TermId,
+    kutha_common::TermId,
+) {
+    let article = rt.intern("art-12-speed");
+    let in_force = rt.intern("inForceAs");
+    let limit_50 = rt.intern("50-kmh");
+    rt.emit(Op::Assert {
+        subject: article,
+        relation: in_force,
+        object: limit_50,
+        valid_from: VF_FIRST,
+        valid_to: Some(VF_SECOND),
+        claim: None,
+        delivery_key: None,
+        polarity: None,
+    })
+    .unwrap();
+    rt.emit_tt_anchor(T_OLD).unwrap();
+    (article, in_force, limit_50)
+}
+
+#[test]
+fn closed_vt_known_on_persist_open() {
+    let mut rt = Runtime::default();
+    let statute = seed_closed_interval(&mut rt);
+    let dir = std::path::Path::new("tmp/p34-01-store");
+    let _ = std::fs::remove_dir_all(dir);
+    std::fs::create_dir_all(dir).unwrap();
+    rt.persist(dir).unwrap();
+    let opened = Runtime::open(dir).unwrap();
+    let known = opened.as_known_on(T_OLD).expect("anchor rebuilt on open");
+    assert!(
+        known.contains(&statute),
+        "persist/open must keep the closed-interval speed fact on as_known_on"
+    );
+    let _ = std::fs::remove_dir_all(dir);
+}
