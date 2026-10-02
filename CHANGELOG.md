@@ -12,6 +12,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `Op::TtAnchor { wall: u64 }` maps `Event.ingested_at` (transaction time) to a wall date. The fold keeps a skip-serialized `BTreeMap` lease rebuilt from the log; no `Fact` is minted.
 - `Runtime::as_known_on` / `GraphFold::as_known_on` take `impl Into<WallTime>` and return `Option` of product triples: greatest wall at or before the date, then `live_at(tt, u64::MAX)`. `None` means no such anchor (miss, not empty-as-of).
+- Named test `true_on_d_differs_from_known_on_d` (`crates/kutha-runtime/tests/m014_as_known_on.rs`): `as_of(2015)` sees a statute that `as_known_on(2015)` does not; `as_known_on(2020)` sees it after the later anchor.
 
 ### Trajectory
 
