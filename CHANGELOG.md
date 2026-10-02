@@ -51,6 +51,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Cells remain **Proposed**. M014 S01 lease unchanged; no SemVer tag.
 
+## 2026-10-02 — Process: v0.08 milestone authored
+
+### Process
+
+- GSD v0.08 / harness M015: known-on honesty and M014 residuals (phases 34–35). Executable rules renumbered to **M016** / v0.09. Id map updated. Not leased yet.
+
 ## 2026-10-02 — Trajectory: M014 CLOSED (GSD v0.07 archive and tag)
 
 ### Trajectory

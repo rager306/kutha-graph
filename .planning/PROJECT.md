@@ -10,18 +10,18 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.07 Typed clocks and as-known-on
+## Current Milestone: v0.08 Known-on honesty and M014 residuals
 
-**Goal:** Close F13 — valid time, transaction time, and wall time are distinct types; `tt_anchor` facts map TT to wall time; `as_known_on(date)` is an anchor lookup distinct from “true on D”. FF5 stays green with explicit clocks.
+**Goal:** Make `as_known_on` honest for closed VT intervals; fail-closed anchors; align living docs and governor with post-M014 reality.
 
-**Harness lease:** M014 (cite `.kutha/STATE.md`). Prior: M013 CLOSED (`L_delivery=M013-closed`, tag `v0.06`). Source: `docs/architecture/semantic-gap-review.md` F13; contract: `docs/process/gsd-auto-contract.md`.
+**Harness lease:** M015 (cite `.kutha/STATE.md`). Prior: M014 CLOSED (`L_delivery=M014-closed`, tag `v0.07`). Source: post-M014 audit (H1/H2); contract: `docs/process/gsd-auto-contract.md`.
 
-**Target (phases 31–33):**
-- Clock newtypes `Vt` / `Tt` / wall with compile-fail mix rejection (CLK)
-- `tt_anchor` facts and `as_known_on(date)` (ANK)
-- Fixture migration with unchanged oracle assertions (FIX)
+**Target (phases 34–35):**
+- Known-on cut that does not drop finite `valid_to` (KNOWN)
+- Anchor admission fail-closed for duplicate/backwards walls (ANK-ADM)
+- Living docs + ANK in observe_cargo + budget min_hits when phases live (DOC/GOV)
 
-**Next after v0.07 (proposed, need their own lease):** M015 executable rules and legal golden fixture (v0.08), then M002 durability with commit-marker framing.
+**Next after v0.08 (proposed, need their own lease):** M016 executable rules and legal golden fixture (v0.09), then M002 durability.
 
 
 ## Business Context
@@ -64,7 +64,8 @@ GSD overlay v0.02 (Phases 4–8 — M011 semantic core close):
 ### Active
 
 - [x] **v0.06 Honest baseline and one write path (M013 S01–S09):** shipped 2026-10-02 — archive `.planning/milestones/v0.06-*`, tag `v0.06`
-- [ ] **v0.07 Typed clocks and as-known-on (M014 S01–S03):** CLK/ANK/FIX requirements; closes F13
+- [x] **v0.07 Typed clocks and as-known-on (M014 S01–S03):** shipped 2026-10-02 — archive `.planning/milestones/v0.07-*`, tag `v0.07`
+- [ ] **v0.08 Known-on honesty and M014 residuals (M015 S01–S02):** KNOWN/ANK-ADM/DOC/GOV
 - [ ] Keep FF5/FF6/H2/H4/M010/M011 named fitness **green** (`L_capability=ff5-green` per `.kutha/STATE.md`)
 - [ ] Keep governor CI honest; three lifecycles uncollapsed; freeze until STATE names otherwise
 - [ ] Start only the next delivery `.kutha/STATE.md` names — do **not** assume M002, legal pack, or honeycomb Accepted
@@ -173,7 +174,7 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 **Harness lease** (process intent, not GSD memory, not product SoT): `.kutha/STATE.md`
 
 - Active Milestone: **None** (M014 CLOSED) (leased; S01 active — cite `.kutha/STATE.md`)
-- Active Slice: **S01** (Phase 31 clock newtypes; cite `.kutha/STATE.md` — do not edit here)
+- Active Slice: cite `.kutha/STATE.md` only (do not edit here)
 - Phase: **H5**
 - Lifecycles: `L_map=honeycomb-proposed` · `L_delivery` / Active Slice — cite `.kutha/STATE.md` · `L_capability=ff5-green`
 - Next: M013 slices only, one phase at a time (`docs/process/gsd-auto-contract.md`). Freeze holds beyond the M013 thawed subset. Do not start a legal pack. Green governor ≠ ADR Accepted ≠ L_capability.

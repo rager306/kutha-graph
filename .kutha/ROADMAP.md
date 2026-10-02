@@ -148,7 +148,7 @@ Consumes: S01 supports; S02 `caused_by` lineage; candidate fixture in `docs/arch
 - [x] **S05: Multi-hop / n-ary derivation eligibility** `risk:medium` `depends:[S02]`
   > After this: eligibility is not only one-hop `caused_by`; a two-hop (or n-ary) fixture is named and green — without claiming full provenance polynomials.
 
-## M013: Honest baseline and one write path — LEASED
+## M013: Honest baseline and one write path — CLOSED (GSD v0.06)
 
 **Success:** a declared target N and a re-runnable measured baseline exist; a real-text legal fixture has been mapped on paper against the current model; ingest, retract, correct, and claim-admit use fold indexes, not log scans; the initial relation allowance is genesis events in the log and a seeded relation can be retracted; dictionary entries are ordinary facts in a reserved namespace (the five meta side tables are gone); every record kind enters through one propose, admit, commit, receipt path and is consumed through a public facade by one example and one integration test; references are `EventId` or hash; the milestone closes only with an independent verification artifact and a planning-artifact budget check. Not rules, not typed clocks, not M002, not ADR Accepted.
 
@@ -189,22 +189,31 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 **Closed:** 2026-10-02. Process tag `v0.07`. S01–S03 complete.
 
-**Success:** valid time, transaction time, and wall time are distinct types; mixing them without a conversion does not compile; `tt_anchor` facts map transaction time to wall time; “as known on date D” is an anchor lookup; FF5 stays green with explicit clocks. Closes F13. Needs a lease; do not start before M013 closes.
+**Success:** valid time, transaction time, and wall time are distinct types; mixing them without a conversion does not compile; `tt_anchor` facts map transaction time to wall time; “as known on date D” is an anchor lookup; FF5 stays green with explicit clocks. Closes F13 (clock/anchor ship). Residual known-on cut → M015 / v0.08.
 
 - [x] **S01: Clock newtypes** `risk:high` `depends:[]`
   > After this: `Vt`, `Tt`, and a wall clock are separate types; a `compile_fail` doctest proves a silent mix is rejected.
 - [x] **S02: `tt_anchor` facts and `as_known_on`** `risk:medium` `depends:[S01]`
-  > After this: anchors are log facts; `as_known_on(date)` resolves through the greatest anchor at or before the date; a named test separates “true on D” from “known on D”.
+  > After this: anchors are `Op::TtAnchor` log records (fold lease `tt_anchors`); `as_known_on(date)` resolves through the greatest anchor at or before the date; a named test separates “true on D” from “known on D”.
 - [x] **S03: Fixture migration** `risk:low` `depends:[S02]`
   > After this: FF5 and the M011/M012 fixtures use explicit clocks with unchanged assertions.
 
-## M015: Executable rules and the legal golden fixture — PROPOSED (GSD v0.08)
+## M015: Known-on honesty and M014 residuals — PROPOSED until leased (GSD v0.08)
 
-**Success:** a canonical rule AST hashed into `rule_version`; rule bodies evaluated by the existing leapfrog over the CSR lease with support counting; admission evaluates the pinned policy; execution replay re-derives and compares; a golden fixture over real law-nexus text with one transitional rule answers the ADR-013 open question (are two axes plus typed clocks enough). Closes F9, F16. Needs a lease; do not start before M014 closes.
+**Success:** `as_known_on(D)` does not drop closed VT intervals; duplicate/backwards `TtAnchor` walls fail closed; living docs and governor match post-M014 (ANK required; budget min_hits when phases live). Closes audit H1/H2. Needs a lease.
+
+- [ ] **S01: Known-on cut and anchor admission** `risk:high` `depends:[]`
+  > After this: FF5-shaped closed-interval + anchors RED→GREEN; monotone unique walls only; FF5 `as_of` unchanged.
+- [ ] **S02: Living docs and governor honesty** `risk:medium` `depends:[S01]`
+  > After this: living docs/PROJECT/semantic-gap/ADR-013 Evidence aligned; `true_on_d_differs_from_known_on_d` in observe_cargo; artifact-budget `min_hits: 1` when live phases exist.
+
+## M016: Executable rules and the legal golden fixture — PROPOSED (GSD v0.09)
+
+**Success:** a canonical rule AST hashed into `rule_version`; rule bodies evaluated by the existing leapfrog over the CSR lease with support counting; admission evaluates the pinned policy; execution replay re-derives and compares; a golden fixture over real law-nexus text with one transitional rule answers the ADR-013 open question (are two axes plus typed clocks enough). Closes F9, F16. Needs a lease; do not start before M015 closes.
 
 - [ ] **S01: Rule AST and hash** `risk:high` `depends:[]`
   > After this: a positive, bounded rule language has a canonical encoding; `rule_version` is its hash; unknown or non-canonical bodies fail closed.
-- [x] **S02: Evaluator and support counting** `risk:high` `depends:[S01]`
+- [ ] **S02: Evaluator and support counting** `risk:high` `depends:[S01]`
   > After this: multi-hop, n-ary, and `inverse_knows` are rules; retraction of a premise maintains derived supports; the hard-coded cascade is deleted.
 - [ ] **S03: Policy evaluation and execution replay** `risk:high` `depends:[S02]`
   > After this: admission runs the pinned policy body; changing the policy changes a decision; replay re-derives derived facts and fails on any it cannot reproduce.
@@ -213,7 +222,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 needs its own lease. M002+ stay frozen until leased.
+Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 (honesty residuals) needs its own lease; M016 is rules. M002+ stay frozen until leased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -222,17 +231,18 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 3. **M012** — CLOSED (S01–S05). Detail above.
 4. **M013** — CLOSED (S01–S09, GSD v0.06 tagged). Detail above.
 5. **M014** — CLOSED. Typed clocks and as-known-on. Detail above.
-6. **M015** — PROPOSED. Executable rules and the real-text legal golden fixture. Its S04 verdict gates M002: if the model cannot express the fixture, re-plan before any durability work. Detail above.
-7. **M002** — Log durability protocol: segmented append-only log, hash chain, atomic manifest, replay parity across stores, with the quantum outcome as a commit marker in segment framing (ADR-010/014 open question). “Lease identity verified on open” is already done (v0.04 Phase 15). Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity.
-8. **M003** — Cypher skin over the already-correct AS OF cut.
-9. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
-10. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
-11. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
-12. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
-13. *(unnumbered)* Packaging, naming and license decision (ADR-092) before any publish.
+6. **M015** — PROPOSED. Known-on honesty and M014 residuals (v0.08). Detail above.
+7. **M016** — PROPOSED. Executable rules and the real-text legal golden fixture (v0.09). Its S04 verdict gates M002. Detail above.
+8. **M002** — Log durability protocol: segmented append-only log, hash chain, atomic manifest, replay parity across stores, with the quantum outcome as a commit marker in segment framing (ADR-010/014 open question). “Lease identity verified on open” is already done (v0.04 Phase 15). Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity.
+9. **M003** — Cypher skin over the already-correct AS OF cut.
+10. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
+11. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
+12. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
+13. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
+14. *(unnumbered)* Packaging, naming and license decision (ADR-092) before any publish.
 
 P4 (Raft/multi-node, learned indexes) is not planned until single-node hybrid evidence exists.
 
 ## Freeze until explicit M002 lease
 
-RocksDB crate, Cypher parser, HNSW, ABAC rewrite, RVF as hot store, bulk honeycomb Accepted, Consensus 103+. M001 is closed; freeze still holds. M013 thaws only the subset named in its section.
+RocksDB crate, Cypher parser, HNSW, ABAC rewrite, RVF as hot store, bulk honeycomb Accepted, Consensus 103+. M001 is closed; freeze still holds. M013 thaw was scoped and freeze restored; do not treat M013 as a live thaw.
