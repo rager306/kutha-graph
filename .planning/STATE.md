@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v0.08
 milestone_name: Known-on honesty and M014 residuals
 status: planning
-stopped_at: v0.08 authored; M015 S01 not yet leased
+stopped_at: M015 S01 leased; ready to plan Phase 34
 last_updated: 2026-10-02T00:00:00Z
 last_activity: 2026-10-02
 last_activity_desc: v0.08 milestone authored from post-M014 audit
@@ -24,7 +24,7 @@ progress:
 
 ## Active work
 
-Active Milestone **M015** (pending lease); Active Slice **None** until S01 leased; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M014-closed` until M015 lease.
+Active Milestone **M015**; Active Slice **S01**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M014-closed` until M015 lease.
 
-Stopped at: wait M015 S01 lease
-Next: Controller leases M015 S01, then `/gsd-plan-phase 34`
+Stopped at: M015 S01 leased; Phase 34 CONTEXT present
+Next: `/gsd-plan-phase 34` / `/gsd-autonomous --only 34`

@@ -198,7 +198,9 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 - [x] **S03: Fixture migration** `risk:low` `depends:[S02]`
   > After this: FF5 and the M011/M012 fixtures use explicit clocks with unchanged assertions.
 
-## M015: Known-on honesty and M014 residuals — PROPOSED until leased (GSD v0.08)
+## M015: Known-on honesty and M014 residuals — LEASED (GSD v0.08)
+
+**Leased:** Active Milestone M015; **S01** active (Phase 34); S02 unleased.
 
 **Success:** `as_known_on(D)` does not drop closed VT intervals; duplicate/backwards `TtAnchor` walls fail closed; living docs and governor match post-M014 (ANK required; budget min_hits when phases live). Closes audit H1/H2. Needs a lease.
 
@@ -231,7 +233,7 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 3. **M012** — CLOSED (S01–S05). Detail above.
 4. **M013** — CLOSED (S01–S09, GSD v0.06 tagged). Detail above.
 5. **M014** — CLOSED. Typed clocks and as-known-on. Detail above.
-6. **M015** — PROPOSED. Known-on honesty and M014 residuals (v0.08). Detail above.
+6. **M015** — LEASED. Known-on honesty and M014 residuals (v0.08). Detail above.
 7. **M016** — PROPOSED. Executable rules and the real-text legal golden fixture (v0.09). Its S04 verdict gates M002. Detail above.
 8. **M002** — Log durability protocol: segmented append-only log, hash chain, atomic manifest, replay parity across stores, with the quantum outcome as a commit marker in segment framing (ADR-010/014 open question). “Lease identity verified on open” is already done (v0.04 Phase 15). Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity.
 9. **M003** — Cypher skin over the already-correct AS OF cut.
