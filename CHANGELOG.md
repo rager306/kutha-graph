@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: fail-closed TtAnchor admit (Phase 34)
+
+### Product
+
+### Fixed
+
+- `emit_tt_anchor` rejects a duplicate wall or a wall earlier than the max prior wall (`RuntimeError::TtAnchorRejected`). The log and fold stay unchanged. Monotone unique walls still resolve greatest-anchor-≤D after persist/open.
+
+### Trajectory
+
+- Cells remain **Proposed**. M015 S01 lease unchanged; no SemVer tag.
+
 ## 2026-10-02 — Product: known-on closed VT (Phase 34)
 
 ### Product
