@@ -200,7 +200,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 ## M015: Known-on honesty and M014 residuals — LEASED (GSD v0.08)
 
-**Progress:** S01 CLOSED (Phase 34 verified). S02 unleased.
+**Leased:** Active Milestone M015; **S02** active (Phase 35); S01 CLOSED.
 
 **Success:** `as_known_on(D)` does not drop closed VT intervals; duplicate/backwards `TtAnchor` walls fail closed; living docs and governor match post-M014 (ANK required; budget min_hits when phases live). Closes audit H1/H2. Needs a lease.
 
