@@ -42,7 +42,16 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 ### Phase 37: Rule AST and hash
 
-**Goal**: RULE-01. **Plans**: 2 max
+**Goal**: RULE-01. Canonical `RuleAst` encoding; `rule_version` is body hash; fail-closed unknown bodies.
+**Requirements**: RULE-01
+**Success Criteria**:
+  1. Named/Horn canonical tagged bytes round-trip; JSON/trailing/raw utf8 fail `from_canonical`.
+  2. `rule_definition_hash(ident)` equals Named body hash; `emit_rule` stores those bytes.
+  3. Non-canonical register is `UnknownRuleVersion`; M012/FF5/FF6 oracles stay green.
+
+**Plans**: 2 max
+- [ ] 37-01-PLAN.md
+- [ ] 37-02-PLAN.md
 
 ### Phase 38: Rule evaluator and support counting
 
