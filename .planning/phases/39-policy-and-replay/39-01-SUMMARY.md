@@ -42,6 +42,11 @@ Live `deny` blob fails `check_admission`; `leased-policy` still admits. Horn-pin
 
 ## Deviations from Plan
 
-None — plan executed as written.
+**1. [Rule 1 - Bug] Missing non-empty pin is Named skip**
+- **Found during:** `kutha-gov ci` observe_cargo
+- **Issue:** `horn_behavior_reproducible` treated any missing blob as fail, so `provenance_detects_rule_version_change_when_state_fingerprint_matches` (pin → `r2`) failed `replay_check`.
+- **Fix:** empty pin still fails closed; missing non-empty blob skips (Named / provenance oracle). Unmatched Horn with a live blob still fails.
+- **Files:** eval.rs
+- **Commit:** (this wave)
 
 ## Self-Check: PASSED
