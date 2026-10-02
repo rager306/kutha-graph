@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: Phase 30-01 RED oracles (write-path integrity)
+
+### Product
+
+### Added
+
+- `m013_write_path` RED tests: public `emit` Assert on `kutha:allows` must be refused (HARD-01); keyed `Correct` / `CorrectInterval` must preserve `delivery_key` through retry (HARD-02). Implementation follows in the same phase.
+
+### Trajectory
+
+- Cells remain **Proposed**. M013 S09 lease unchanged; no SemVer tag.
+
 ## 2026-10-02 — Trajectory: M013 S09 leased
 
 ### Trajectory
