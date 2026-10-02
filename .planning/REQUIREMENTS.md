@@ -26,8 +26,8 @@ Closes test-audit T2–T6 and F9/F16. Cells stay Proposed. Not M002. Run: `docs/
 
 ### Policy + execution replay (F16)
 
-- [ ] **RULE-03**: Admission runs pinned policy body; changing policy changes a decision
-- [ ] **RULE-04**: Replay re-derives derived facts and fails on any it cannot reproduce
+- [x] **RULE-03**: Admission runs pinned policy body; changing policy changes a decision
+- [x] **RULE-04**: Replay re-derives derived facts and fails on any it cannot reproduce
 
 ### Legal golden fixture (F16 / ADR-013 Q)
 
@@ -54,7 +54,7 @@ Closes test-audit T2–T6 and F9/F16. Cells stay Proposed. Not M002. Run: `docs/
 | TH-01..TH-05 | Phase 36 | Complete (verified) |
 | RULE-01 | Phase 37 | Complete (verified) |
 | RULE-02 | Phase 38 | Complete (verified) |
-| RULE-03, RULE-04 | Phase 39 | Pending |
+| RULE-03, RULE-04 | Phase 39 | Complete (verified) |
 | FIXG-01 | Phase 40 | Pending |
 
 **Coverage:** v0.09 requirements: 10 total; mapped: 10; unmapped: 0.

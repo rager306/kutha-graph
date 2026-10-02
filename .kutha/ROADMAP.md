@@ -211,7 +211,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 ## M016: Test hardening + executable rules — LEASED (GSD v0.09)
 
-**Leased:** Active Milestone M016; **S04** active (Phase 39); S01–S03 CLOSED; S05 unleased.
+**Leased:** Active Milestone M016; S01–S04 CLOSED; **S05** unleased.
 
 **Success:** T2–T6 test holes closed; canonical rule AST hashed into `rule_version`; rule bodies evaluated over the CSR lease with support counting; admission evaluates the pinned policy; execution replay re-derives; a golden fixture answers the ADR-013 open question (or records fail-closed). Closes T2–T6, F9, F16. Needs a lease.
 
@@ -221,7 +221,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
   > After this: a positive, bounded rule language has a canonical encoding; `rule_version` is its hash; unknown or non-canonical bodies fail closed.
 - [x] **S03: Evaluator and support counting** `risk:high` `depends:[S02]`
   > After this: multi-hop, n-ary, and `inverse_knows` are rules; retraction of a premise maintains derived supports; the hard-coded cascade is deleted.
-- [ ] **S04: Policy evaluation and execution replay** `risk:high` `depends:[S03]`
+- [x] **S04: Policy evaluation and execution replay** `risk:high` `depends:[S03]`
   > After this: admission runs the pinned policy body; changing the policy changes a decision; replay re-derives derived facts and fails on any it cannot reproduce.
 - [ ] **S05: Legal golden fixture and verdict** `risk:high` `depends:[S04]`
   > After this: a real-text fixture with one transitional rule and an as-known-on query is green, or the failing case is recorded and the plan stops before M002. The verdict is written into ADR-013 as a dated clarification.
