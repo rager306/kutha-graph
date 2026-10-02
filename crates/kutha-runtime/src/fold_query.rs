@@ -83,15 +83,30 @@ impl GraphFold {
         self.live_at(u64::MAX, vt)
     }
 
+    /// Product triples ingested (and not invalidated) at `tt`, ignoring valid-time.
+    ///
+    /// Closed VT intervals remain visible. Dictionary (`kutha:`) relations are excluded.
+    pub fn known_at(&self, tt: impl Into<TransactionTime>) -> Vec<(TermId, TermId, TermId)> {
+        let tt = tt.into().as_u64();
+        self.facts
+            .iter()
+            .filter(|f| {
+                self.hot_examine.bump();
+                f.is_known_at(tt) && LiveFactFilter::Product.keep(self, f)
+            })
+            .map(|f| (f.subject, f.relation, f.object()))
+            .collect()
+    }
+
     /// Product triples as known on a wall date.
     ///
     /// Greatest `Op::TtAnchor` with `wall` at or before `wall`, then
-    /// [`Self::live_at`] at that transaction time and `vt = u64::MAX`.
+    /// [`Self::known_at`] at that transaction time (TT-only; no ValidTime cut).
     /// `None` means no anchor at or before the date.
     pub fn as_known_on(&self, wall: impl Into<WallTime>) -> Option<Vec<(TermId, TermId, TermId)>> {
         let wall = wall.into().as_u64();
         let tt = *self.tt_anchors.range(..=wall).next_back()?.1;
-        Some(self.live_at(tt, u64::MAX))
+        Some(self.known_at(tt))
     }
 
     /// Dictionary entries at a valid-time cut (kutha: relations only).

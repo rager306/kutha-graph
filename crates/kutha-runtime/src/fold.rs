@@ -157,6 +157,20 @@ impl Fact {
         }
         true
     }
+
+    /// Transaction-time liveness only (no `valid_from` / `valid_to`).
+    ///
+    /// Used by `as_known_on` so closed VT intervals stay visible at a knowledge cut.
+    pub fn is_known_at(&self, tt: impl Into<TransactionTime>) -> bool {
+        let tt = tt.into().as_u64();
+        if self.ingested_at > tt {
+            return false;
+        }
+        if self.invalidated_at.is_some_and(|inv| inv <= tt) {
+            return false;
+        }
+        true
+    }
 }
 
 /// How fold secondary index leases are maintained on the write path.
