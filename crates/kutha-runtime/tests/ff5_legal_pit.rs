@@ -1,7 +1,7 @@
 //! FF5: same log, two valid-times, different live triples.
 //! Cosine/RAG is not the oracle. Named `as_of` has no “now” default.
 
-use kutha_common::Op;
+use kutha_common::{Op, TransactionTime, ValidTime};
 use kutha_runtime::Runtime;
 
 /// YearCe valid-time instants (`VALID_TIME_SCALE` = `TimeScale::YearCe`); not Unix epoch.
@@ -43,8 +43,8 @@ fn ff5_as_of_t1_differs_from_as_of_t2_on_statute_log() {
     })
     .unwrap();
 
-    let old = rt.as_of(T_OLD);
-    let new = rt.as_of(T_NEW);
+    let old = rt.as_of(ValidTime::from(T_OLD));
+    let new = rt.as_of(ValidTime::from(T_NEW));
     assert_ne!(
         old, new,
         "AS OF T1 must differ from AS OF T2 on the same log"
@@ -57,8 +57,8 @@ fn ff5_as_of_t1_differs_from_as_of_t2_on_statute_log() {
 
     rt.replay_check().unwrap();
 
-    let csr_old = rt.csr_lease_at(u64::MAX, T_OLD);
-    let csr_new = rt.csr_lease_at(u64::MAX, T_NEW);
+    let csr_old = rt.csr_lease_at(TransactionTime::MAX, ValidTime::from(T_OLD));
+    let csr_new = rt.csr_lease_at(TransactionTime::MAX, ValidTime::from(T_NEW));
     assert_ne!(
         csr_old.neighbors(article),
         csr_new.neighbors(article),
@@ -89,7 +89,7 @@ fn ff3_csr_lease_drop_does_not_change_log_or_fold() {
     let fp = rt.fold().fingerprint();
     let n = rt.log().len();
     {
-        let lease = rt.csr_lease_at(u64::MAX, T_OLD);
+        let lease = rt.csr_lease_at(TransactionTime::MAX, ValidTime::from(T_OLD));
         assert_eq!(lease.neighbors(article), &[limit_50]);
     }
     assert_eq!(fp, rt.fold().fingerprint());

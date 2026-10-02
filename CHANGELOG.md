@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: fixture clock wraps (Phase 33)
+
+### Product
+
+### Changed
+
+- FF5 public clock cuts wrap `ValidTime::from` / `TransactionTime::MAX`; `Op` `valid_from`/`valid_to` stay `u64`. Oracle assertion predicates unchanged.
+
+### Trajectory
+
+- Cells remain **Proposed**. M014 S03 lease unchanged; no SemVer tag.
+
 ## 2026-10-02 — Product: tt_anchor and as_known_on (Phase 32)
 
 ### Product
