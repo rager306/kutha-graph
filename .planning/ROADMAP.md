@@ -30,7 +30,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 - [x] **Phase 26: Dictionary entries as facts** — reserved-namespace facts replace five meta side tables (completed 2026-10-01)
 - [x] **Phase 27: One write path and facade** — one pipeline, typed references, public facade with example and integration test (completed 2026-10-02)
 - [x] **Phase 28: Independent verification and artifact budget** — governor check, id map, milestone audit
-- [ ] **Phase 29: Close-out honesty** — documents and governor follow-ups from the audit and project review; no product code
+- [x] **Phase 29: Close-out honesty** — documents and governor follow-ups from the audit and project review; no product code
 - [ ] **Phase 30: Write-path integrity hardening** — fail-closed dictionary writes, keyed correct, dual-mode oracle, strong facade test
 
 ## Phase Details
@@ -174,10 +174,10 @@ Plans:
 
 Plans:
 **Wave 1**
-- [ ] 29-01-PLAN.md — governor honesty (budget truncation, min_hits, independence glob, I-F restage)
+- [x] 29-01-PLAN.md — governor honesty (budget truncation, min_hits, independence glob, I-F restage)
 
 **Wave 2**
-- [ ] 29-02-PLAN.md — documents (bookkeeping, semantic addendum, ADR notes, process docs)
+- [x] 29-02-PLAN.md — documents (bookkeeping, semantic addendum, ADR notes, process docs)
 
 ### Phase 30: Write-path integrity hardening
 

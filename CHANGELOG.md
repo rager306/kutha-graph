@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Trajectory: M013 S08 closed
+
+### Trajectory
+
+- Phase 29 verified independently (`29-VERIFICATION` passed, Grok 4.6 xhigh). Active Slice cleared; `L_delivery=M013-S08-done`; S09 (Phase 30) unleased. M013 stays open; no archive, no SemVer tag. Cells remain **Proposed**.
+
+### Process
+
+- Governor: budget truncation and empty budget globs fail closed; verification independence covers phases 22+; 60 checks within budget 64.
+
 ## 2026-10-02 — Process: Phase 29 review follow-ups
 
 ### Process

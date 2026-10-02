@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M013
-**Active Slice:** S08
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M013-S07-done
+L_delivery=M013-S08-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M013 S01–S07 done; S08 active (close-out honesty: documents and governor); S09 unleased | Capability proven / Rocks started / M002 leased / rules or typed clocks started / ADR-050 six dictionaries |
+| L_delivery | M013 S01–S08 done; S09 unleased (write-path hardening) | Capability proven / Rocks started / M002 leased / rules or typed clocks started / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M013 S08 leased** (`L_delivery=M013-S07-done`, Active Slice **S08**, 2026-10-02). GSD Phase 29 only: documents and governor follow-ups from the v0.06 audit and the project review (DOC-01..04, GOV-01..04); no `crates/` change. S09 (Phase 30, write-path hardening) stays unleased until S08 closes. Do **not** start M014/M015, ADR-050 six dictionaries, Cypher/HNSW, or M002 Rocks. Honeycomb stays Proposed (GATE-03). Controller protocol: `docs/process/gsd-auto-contract.md`. No SemVer tag.
+**M013 S08 closed** (`L_delivery=M013-S08-done`, Active Slice **None**, 2026-10-02). Phase 29: governor fails closed on budget truncation and empty budget globs; verification independence globs phases 22+; shipped I-F oracles restaged; bookkeeping, post-M013 addendum and ADR evidence notes aligned. Independent `29-VERIFICATION` passed. S09 (Phase 30, write-path hardening) stays unleased until a controller lease. Do **not** start M014/M015, ADR-050 six dictionaries, Cypher/HNSW, or M002 Rocks. Honeycomb stays Proposed (GATE-03). No SemVer tag.
 
 
 ## Freeze (until explicit M002 lease)
