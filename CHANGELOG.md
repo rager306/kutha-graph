@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Trajectory: M016 S02 CLOSED (Phase 37)
+
+### Trajectory
+
+- Phase 37 verified; `L_delivery=M016-S02-done`. Next: lease S03 (Rule evaluator).
+
+### Product
+
+- Canonical Named/Horn `RuleAst`; `rule_version` is body hash; non-canonical bodies fail closed.
+
 ## 2026-10-02 — Product: independent RULE-01 kill-tests (Phase 37)
 
 ### Product

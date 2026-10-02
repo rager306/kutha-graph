@@ -6,12 +6,12 @@
     {
       "number": "36",
       "name": "Test hardening T2–T6",
-      "status": "in_progress"
+      "status": "complete"
     },
     {
       "number": "37",
       "name": "Rule AST and hash",
-      "status": "pending"
+      "status": "complete"
     },
     {
       "number": "38",
@@ -31,8 +31,8 @@
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Advance to the next step (plan phase 36)",
-    "reason": "Phase 36 of 5 — needs a plan"
+    "label": "Lease M016 S03 then plan phase 38",
+    "reason": "Phase 37 of 5 verified · S02 closed"
   },
-  "updated_at": "2026-10-02T10:57:45.708Z"
+  "updated_at": "2026-10-02T12:00:00.000Z"
 }

@@ -51,8 +51,8 @@ Closes test-audit T2–T6 and F9/F16. Cells stay Proposed. Not M002. Run: `docs/
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TH-01..TH-05 | Phase 36 | Complete (executor; verify D-05 open) |
-| RULE-01 | Phase 37 | Complete |
+| TH-01..TH-05 | Phase 36 | Complete (verified) |
+| RULE-01 | Phase 37 | Complete (verified) |
 | RULE-02 | Phase 38 | Pending |
 | RULE-03, RULE-04 | Phase 39 | Pending |
 | FIXG-01 | Phase 40 | Pending |

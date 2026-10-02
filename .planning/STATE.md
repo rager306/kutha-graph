@@ -3,13 +3,13 @@ gsd_state_version: "1.0"
 milestone: v0.09
 milestone_name: Test hardening + executable rules
 current_plan: 2
-status: ready_for_verification
-stopped_at: Completed 37-02-PLAN.md
-last_updated: "2026-10-02T11:29:55.247Z"
-state_head: 8a138ec08ca4aa83faa71532f383ea83cb0ea507
+status: phase_complete
+stopped_at: Phase 37 verified; M016-S02 closing
+last_updated: "2026-10-02T12:00:00.000Z"
+state_head: c784361
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 2
   total_plans: 4
   completed_plans: 4
 current_phase: 37
@@ -20,8 +20,8 @@ current_phase_name: rule-ast-and-hash
 
 **Milestone:** v0.09 Test hardening + executable rules (harness M016)
 **Phase:** 37 — Rule AST and hash
-**Status:** Plans executed; independent verify (D-05) is a different agent
-**Next:** Independent kill-tests / `/gsd-verify-work` (do not use executor-written 37-VERIFICATION)
+**Status:** Phase 37 verification complete
+**Next:** Lease M016 S03, then Phase 38 (evaluator). Do not edit `.kutha/STATE.md` from GSD executors.
 
 ## Current Position
 
@@ -50,6 +50,6 @@ current_phase_name: rule-ast-and-hash
 
 ## Session
 
-**Last session:** 2026-10-02T11:29:55.195Z
-**Stopped at:** Completed 37-02-PLAN.md
+**Last session:** 2026-10-02T12:00:00.000Z
+**Stopped at:** Phase 37 verified; M016-S02 closing
 **Resume file:** None
