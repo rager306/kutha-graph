@@ -157,6 +157,21 @@ fn dual_mode_ff5_retract_correct_claim_agree() {
         valid_to: None,
     })
     .unwrap();
+
+    let article = eager.intern("art-12-speed");
+    let in_force = eager.intern("inForceAs");
+    let limit_30 = eager.intern("30-kmh");
+    for (rt, limit_40) in [(&eager, corrected_eager), (&lazy, corrected_lazy)] {
+        let at_new = rt.as_of(T_NEW);
+        assert!(
+            at_new.contains(&(article, in_force, limit_40)),
+            "Correct must surface 40-kmh at AS OF {T_NEW}"
+        );
+        assert!(
+            !at_new.contains(&(article, in_force, limit_30)),
+            "Correct must drop 30-kmh at AS OF {T_NEW}"
+        );
+    }
     assert_modes_agree(&eager, &lazy, eager_mint, lazy_mint);
 
     eager.replay_check().unwrap();

@@ -30,6 +30,7 @@ tags: [admit, delivery_key, kutha-reserved, m013]
 
 - **Retract exception:** User `Retract` on reserved dictionary facts remains admitted so M012/M013 oracles that retract `kutha:allows` / rules / policies through public `emit` stay green; only Assert/Correct/CorrectInterval are blocked at User origin.
 - **Retry payload:** After Correct, keyed Assert retry matches the original minted Assert op (ING-01 map still points at first event id).
+- **Snapshot replay:** Pre-change snapshots whose logs contain keyed Correct/CorrectInterval need rebuild before `replay_check` passes (fold fingerprint now hashes copied keys).
 
 ## Commits
 

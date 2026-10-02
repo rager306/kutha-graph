@@ -2,7 +2,7 @@
 //! justification/action constructors (pipeline receipt). Never edit named
 //! m012_*/m012a_*/m011_*/ff5/ff6 expects. Never edit `.kutha/STATE.md`.
 
-use kutha_common::{Op, KUTHA_ALLOWS};
+use kutha_common::{rule_definition_hash, Op, KUTHA_ALLOWS};
 use kutha_runtime::{Runtime, RuntimeError};
 
 #[test]
@@ -59,6 +59,86 @@ fn public_emit_assert_kutha_allows_is_refused() {
     assert_eq!(n, rt.log().len(), "forged kutha:allows must not append");
 
     rt.emit_allow("leasedRel", 2010, None).unwrap();
+}
+
+#[test]
+fn public_emit_behavior_kutha_relation_is_refused() {
+    let mut rt = Runtime::default();
+    rt.emit_rule("derive_pq", 2010, None).unwrap();
+    let pin = rule_definition_hash("derive_pq");
+    let p = rt.intern("P");
+    let rel = rt.intern("relatedTo");
+    let true_ = rt.intern("true");
+    let cause = rt
+        .emit(Op::Assert {
+            subject: p,
+            relation: rel,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap()
+        .receipt
+        .event_ids[0];
+    let kutha_allows = rt.intern(KUTHA_ALLOWS);
+    let forged = rt.intern("forged-subject");
+    let n = rt.log().len();
+
+    let err = rt
+        .emit(Op::Behavior {
+            name: "derive_pq".into(),
+            caused_by: cause,
+            rule_version: pin,
+            subject: forged,
+            relation: kutha_allows,
+            object: forged,
+            valid_from: 2010,
+            valid_to: None,
+        })
+        .unwrap_err();
+    assert!(matches!(err, RuntimeError::MetaOpRejected), "{err:?}");
+    assert_eq!(n, rt.log().len(), "forged kutha: Behavior must not append");
+}
+
+#[test]
+fn public_emit_correct_kutha_allow_is_refused() {
+    let mut rt = Runtime::default();
+    let allow = rt.emit_allow("leasedRel", 2010, None).unwrap();
+    let allow_event = allow.receipt.event_ids[0];
+    let other = rt.intern("other");
+    let n = rt.log().len();
+    let err = rt
+        .emit(Op::Correct {
+            event_id: allow_event,
+            object: other,
+            valid_from: 2010,
+            valid_to: None,
+        })
+        .unwrap_err();
+    assert!(matches!(err, RuntimeError::MetaOpRejected), "{err:?}");
+    assert_eq!(n, rt.log().len(), "User Correct of kutha:allows must not append");
+
+    let interval = rt.emit_allow("leasedInterval", 2010, Some(2020)).unwrap();
+    let interval_event = interval.receipt.event_ids[0];
+    let patched = rt.intern("patched");
+    let n2 = rt.log().len();
+    let err_interval = rt
+        .emit(Op::CorrectInterval {
+            event_id: interval_event,
+            object: patched,
+            patch_from: 2015,
+            patch_to: Some(2020),
+        })
+        .unwrap_err();
+    assert!(matches!(err_interval, RuntimeError::MetaOpRejected), "{err_interval:?}");
+    assert_eq!(
+        n2,
+        rt.log().len(),
+        "User CorrectInterval of kutha:allows must not append"
+    );
 }
 
 #[test]
@@ -164,16 +244,24 @@ fn keyed_correct_interval_preserves_delivery_key_and_retry() {
     })
     .unwrap();
 
-    let live_keyed = rt
-        .fold()
-        .facts()
-        .iter()
-        .filter(|f| f.is_live_at(u64::MAX, 2017) && f.delivery_key.as_deref() == Some(key.as_str()))
-        .count();
-    assert_eq!(1, live_keyed, "interval replacement rows must keep delivery_key");
+    let keyed_live_at = |vt: u64| {
+        rt.fold()
+            .facts()
+            .iter()
+            .filter(|f| f.is_live_at(u64::MAX, vt) && f.delivery_key.as_deref() == Some(key.as_str()))
+            .count()
+    };
+    for vt in [2012, 2017, 2021] {
+        assert_eq!(
+            1,
+            keyed_live_at(vt),
+            "interval replacement must keep delivery_key live at vt={vt}"
+        );
+    }
     assert_eq!(1, rt.fold().live_support_count(claim_id, u64::MAX, 2017));
 
     let n = rt.log().len();
+    // ING-01: retry idempotence is log `by_delivery_key` on the minting Assert, not fold copy proof.
     let retry = rt
         .emit(Op::Assert {
             subject: s,

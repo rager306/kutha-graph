@@ -38,8 +38,9 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Changed
 
-- User `emit` cannot Assert, Correct, or CorrectInterval reserved `kutha:` relations (`MetaOpRejected`); dictionary constructors (`emit_allow` / rule / policy) and typed justification/action paths unchanged; user Retract of dictionary facts still admitted (D-07 oracles).
-- `GraphFold::apply` copies the prior fact `delivery_key` onto Correct and CorrectInterval replacement rows so keyed ingest retry stays idempotent after correction.
+- User `emit` cannot Assert, Behavior, Correct, or CorrectInterval on reserved `kutha:` relations (`MetaOpRejected`); dictionary constructors (`emit_allow` / rule / policy) and typed justification/action paths unchanged; user Retract of dictionary facts still admitted (D-07 oracles).
+- `GraphFold::apply` copies the prior fact `delivery_key` onto Correct and CorrectInterval replacement rows so replacement identity survives keyed correction; keyed ingest retry idempotence remains the log `by_delivery_key` map on the minting Assert (ING-01). Snapshots written before this change whose logs contain keyed Correct/CorrectInterval will fail `replay_check` fingerprint until rebuilt (research stage; no migration).
+- Phase 30 bench `as_of` delta vs Phase 27 in `benchmark-baseline.md` is single-run variance, not a query-path change in this slice.
 
 ### Trajectory
 

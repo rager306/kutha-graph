@@ -81,7 +81,7 @@ impl Runtime {
             return Ok(());
         }
         if mode == ReceiptMode::User {
-            if let Op::Assert { relation, .. } = op {
+            if let Op::Assert { relation, .. } | Op::Behavior { relation, .. } = op {
                 if self.relation_name_reserved(*relation) {
                     return Err(RuntimeError::MetaOpRejected);
                 }

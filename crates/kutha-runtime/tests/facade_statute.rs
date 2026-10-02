@@ -30,6 +30,7 @@ fn triple(rt: &mut Runtime, s: &str, r: &str, o: &str) -> (u32, u32, u32) {
 fn statute_as_of_via_facade() -> Result<(), RuntimeError> {
     let mut rt = Runtime::default();
     let t50 = triple(&mut rt, "art-12-speed", "inForceAs", "50-kmh");
+    let t40 = triple(&mut rt, "art-12-speed", "inForceAs", "40-kmh");
     let t30 = triple(&mut rt, "art-12-speed", "inForceAs", "30-kmh");
 
     let first = rt.assert(
@@ -53,13 +54,21 @@ fn statute_as_of_via_facade() -> Result<(), RuntimeError> {
     let _action = rt.record_action(&jid, u64::MAX, T_OLD)?;
     rt.derive("statute-fold", "art-12-speed", T_OLD)?;
 
-    rt.correct("art-12-speed", "inForceAs", "50-kmh", VF_FIRST)?;
-    let after_correct_2015 = vec![t50, t30];
+    rt.correct("art-12-speed", "inForceAs", "40-kmh", VF_FIRST)?;
+    let after_correct_2015 = vec![t40, t30];
     let after_correct_2021 = vec![t30, t30];
     assert_eq!(sorted_as_of(&rt, T_OLD), after_correct_2015);
     assert_eq!(sorted_as_of(&rt, T_NEW), after_correct_2021);
     assert_eq!(sorted_live_at(&rt, u64::MAX, T_OLD), after_correct_2015);
     assert_eq!(sorted_live_at(&rt, u64::MAX, T_NEW), after_correct_2021);
+    assert!(
+        !sorted_as_of(&rt, T_OLD).contains(&t50),
+        "Correct must replace 50-kmh at AS OF 2015"
+    );
+    assert!(
+        sorted_as_of(&rt, T_OLD).contains(&t40),
+        "Correct must surface 40-kmh at AS OF 2015"
+    );
 
     rt.retract("art-12-speed", VF_FIRST)?;
     let after_retract_2015 = vec![t30];
