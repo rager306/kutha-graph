@@ -2,34 +2,22 @@
 gsd_state_version: "1.0"
 milestone: v0.09
 milestone_name: Test hardening + executable rules
-current_plan: 1
-status: ready_for_planning
-stopped_at: M016-S05 leased; plan Phase 40
-last_updated: "2026-10-02T13:15:00.000Z"
-state_head: 187a8b0
+status: complete
+stopped_at: v0.09 archived and tagged; M016 CLOSED; next unleased
+last_updated: "2026-10-02T13:45:00.000Z"
 progress:
   total_phases: 5
-  completed_phases: 4
-  total_plans: 7
-  completed_plans: 7
-current_phase: 40
-current_phase_name: legal-golden-fixture
+  completed_phases: 5
+  total_plans: 8
+  completed_plans: 8
 ---
 
 # Project State
 
-**Milestone:** v0.09 Test hardening + executable rules (harness M016)
-**Phase:** 40 — Legal golden fixture and verdict
-**Status:** S05 leased; awaiting plans
-**Next:** Plan+execute Phase 40. Do not write 40-VERIFICATION. Never edit `.kutha/STATE.md`.
+**Milestone:** v0.09 shipped (M016 CLOSED)
+**Phase:** none live
+**Status:** Complete — archive under `.planning/milestones/v0.09-*`
+**Last activity:** 2026-10-02 — Phase 40 verified; M016 closed; tag v0.09
 
-## Current Position
-
-**Current Plan:** 1
-**Total Plans in Phase:** 2 (max)
-
-## Session
-
-**Last session:** 2026-10-02T13:15:00.000Z
-**Stopped at:** M016-S05 leased; plan Phase 40
-**Resume file:** None
+Stopped at: v0.09 archived; wait next lease
+Next: Controller leases M002 (or other) before planning

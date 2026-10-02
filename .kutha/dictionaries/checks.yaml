@@ -91,12 +91,10 @@ checks:
     description: Active Milestone None requires L_delivery token ending in -closed
     selftest:
       mutations:
-        # Leased proof: force Milestone None while L_delivery is not *-closed.
-        # At full idle (already None + *-closed), selftest is skipped via skip.
         - op: replace_regex
           path: .kutha/STATE.md
-          pattern: '(?m)^\*\*Active Milestone:\*\*\s*(?!None\b)\S+\s*$'
-          with: '**Active Milestone:** None'
+          pattern: '(?m)^L_delivery=\S+-closed\s*$'
+          with: 'L_delivery=open'
     steps:
       - kind: when_match_then_match
         path: .kutha/STATE.md
@@ -1250,7 +1248,7 @@ checks:
     steps:
       - kind: file_contains
         path: docs/process/gsd-auto-contract.md
-        needles: ["## Id map", "GSD version", "v0.06", "v0.07", "v0.08"]
+        needles: ["## Id map", "GSD version", "v0.06", "v0.07", "v0.08", "v0.09"]
         require: all
       - kind: file_contains
         path: .planning/ROADMAP.md

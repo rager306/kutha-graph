@@ -209,11 +209,11 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 - [x] **S02: Living docs and governor honesty** `risk:medium` `depends:[S01]`
   > After this: living docs/PROJECT/semantic-gap/ADR-013 Evidence aligned; `true_on_d_differs_from_known_on_d` in observe_cargo; artifact-budget `min_hits: 1` when live phases exist.
 
-## M016: Test hardening + executable rules — LEASED (GSD v0.09)
+## M016: Test hardening + executable rules — CLOSED (GSD v0.09)
 
-**Leased:** Active Milestone M016; **S05** active (Phase 40); S01–S04 CLOSED.
+**Closed:** Active Milestone M016; S01–S05 done. Process tag `v0.09`. Crate SemVer stays 0.0.0. Honeycomb stays Proposed.
 
-**Success:** T2–T6 test holes closed; canonical rule AST hashed into `rule_version`; rule bodies evaluated over the CSR lease with support counting; admission evaluates the pinned policy; execution replay re-derives; a golden fixture answers the ADR-013 open question (or records fail-closed). Closes T2–T6, F9, F16. Needs a lease.
+**Success:** T2–T6 test holes closed; canonical rule AST hashed into `rule_version`; rule bodies evaluated over the CSR lease with support counting; admission evaluates the pinned policy; execution replay re-derives; FIXG-01 fail-closed (C01 sunset is not a Horn; ADR-013 Evidence dated). Closes T2–T6, F9, F16.
 
 - [x] **S01: Test hardening T2–T6** `risk:medium` `depends:[]`
   > After this: trybuild E0308 clock mix; cite tt/vt oracle; Eager/Lazy/fork known-on; snapshot+tail anchors; `GraphFold::replay` applies TtAnchor.
@@ -223,12 +223,12 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
   > After this: multi-hop, n-ary, and `inverse_knows` are rules; retraction of a premise maintains derived supports; the hard-coded cascade is deleted.
 - [x] **S04: Policy evaluation and execution replay** `risk:high` `depends:[S03]`
   > After this: admission runs the pinned policy body; changing the policy changes a decision; replay re-derives derived facts and fails on any it cannot reproduce.
-- [ ] **S05: Legal golden fixture and verdict** `risk:high` `depends:[S04]`
+- [x] **S05: Legal golden fixture and verdict** `risk:high` `depends:[S04]`
   > After this: a real-text fixture with one transitional rule and an as-known-on query is green, or the failing case is recorded and the plan stops before M002. The verdict is written into ADR-013 as a dated clarification.
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 is CLOSED. M016 needs its own lease. M002+ stay frozen until leased.
+Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 is CLOSED. M016 is CLOSED. M002+ stay frozen until leased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -238,7 +238,7 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 4. **M013** — CLOSED (S01–S09, GSD v0.06 tagged). Detail above.
 5. **M014** — CLOSED. Typed clocks and as-known-on. Detail above.
 6. **M015** — CLOSED. Known-on honesty and M014 residuals (v0.08). Detail above.
-7. **M016** — LEASED. Test hardening T2–T6 then executable rules + golden fixture (v0.09). Its S05 verdict gates M002. Detail above.
+7. **M016** — CLOSED (S01–S05, GSD v0.09 tagged). Detail above.
 8. **M002** — Log durability protocol: segmented append-only log, hash chain, atomic manifest, replay parity across stores, with the quantum outcome as a commit marker in segment framing (ADR-010/014 open question). “Lease identity verified on open” is already done (v0.04 Phase 15). Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity.
 9. **M003** — Cypher skin over the already-correct AS OF cut.
 10. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).

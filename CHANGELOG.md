@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Trajectory: M016 CLOSED (v0.09 archived)
+
+### Trajectory
+
+- `L_delivery=M016-closed`. Active Milestone **None**. Process tag `v0.09`. Crate SemVer stays `0.0.0`. Honeycomb stays **Proposed**. Next: lease M002 before durability work.
+
+### Product
+
+- FIXG-01 fail-closed: C01 sunset is not a Horn; ADR-013 Evidence dated. No fifth clock.
+
 ## 2026-10-02 — Product: C01 sunset fail-closed FIXG-01 verdict (Phase 40)
 
 ### Product

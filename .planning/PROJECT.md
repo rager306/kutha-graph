@@ -10,18 +10,14 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.09 Test hardening + executable rules
+## Current Milestone: none live (v0.09 shipped)
 
-**Goal:** Make `as_known_on` honest for closed VT intervals; fail-closed anchors; align living docs and governor with post-M014 reality.
+**Last shipped:** v0.09 Test hardening + executable rules (harness M016, phases 36–40, tag `v0.09`). Crate SemVer stays `0.0.0`.
 
-**Harness lease:** M015 (cite `.kutha/STATE.md`). Prior: M014 CLOSED (`L_delivery=M014-closed`, tag `v0.07`). Source: post-M014 audit (H1/H2); contract: `docs/process/gsd-auto-contract.md`.
+**Harness lease:** Active Milestone **None** (`L_delivery=M016-closed`). Cite `.kutha/STATE.md`.
 
-**Target (phases 34–35):**
-- Known-on cut that does not drop finite `valid_to` (KNOWN)
-- Anchor admission fail-closed for duplicate/backwards walls (ANK-ADM)
-- Living docs + ANK in observe_cargo + budget min_hits when phases live (DOC/GOV)
+**Next (frozen until leased):** M002 durability. Honeycomb stays Proposed. FIXG-01 fail-closed: C01 sunset is not a Horn; do not invent five clocks.
 
-**Next after v0.08 (proposed, need their own lease):** M016 executable rules and legal golden fixture (v0.09), then M002 durability.
 
 
 ## Business Context
@@ -70,7 +66,7 @@ GSD overlay v0.07 (Phases 31–33 — M014 typed clocks):
 
 - [x] **v0.06 Honest baseline and one write path (M013 S01–S09):** shipped 2026-10-02 — archive `.planning/milestones/v0.06-*`, tag `v0.06`
 - [x] **v0.07 Typed clocks and as-known-on (M014 S01–S03):** shipped 2026-10-02 — archive `.planning/milestones/v0.07-*`, tag `v0.07`
-- [x] **v0.08 Known-on honesty and M014 residuals (M015 S01–S02):** shipped 2026-10-02 — archive `.planning/milestones/v0.08-*`, tag `v0.08`
+- [x] **v0.09 Test hardening + executable rules (M016 S01–S05):** shipped 2026-10-02 — archive `.planning/milestones/v0.09-*`, tag `v0.09`
 - [ ] Keep FF5/FF6/H2/H4/M010/M011 named fitness **green** (`L_capability=ff5-green` per `.kutha/STATE.md`)
 - [ ] Keep governor CI honest; three lifecycles uncollapsed; freeze until STATE names otherwise
 - [ ] Start only the next delivery `.kutha/STATE.md` names — do **not** assume M002, legal pack, or honeycomb Accepted

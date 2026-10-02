@@ -26,13 +26,13 @@
     {
       "number": "40",
       "name": "Legal golden fixture and verdict",
-      "status": "in_progress"
+      "status": "complete"
     }
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Plan phase 40",
-    "reason": "Phase 40 of 5 · S05 leased"
+    "label": "Wait next lease (M002 frozen)",
+    "reason": "v0.09 shipped · M016-closed"
   },
-  "updated_at": "2026-10-02T13:15:00.000Z"
+  "updated_at": "2026-10-02T13:45:00.000Z"
 }

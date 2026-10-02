@@ -1,3 +1,10 @@
+## v0.09 Test hardening + executable rules (Shipped: 2026-10-02)
+
+**Phases:** 36–40. Process tag `v0.09`. T2–T6, F9, F16. FIXG-01 fail-closed (C01 sunset is not a Horn).
+**Git range:** `v0.08..v0.09`
+
+---
+
 ## v0.08 Known-on honesty and M014 residuals (Shipped: 2026-10-02)
 
 **Phases:** 34–35. Process tag `v0.08`. H1/H2 closed; ANK in observe_cargo; living docs aligned.
