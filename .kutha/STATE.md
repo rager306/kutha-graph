@@ -5,7 +5,7 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M016
-**Active Slice:** None
+**Active Slice:** S03
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M016 S02 done; S03 unleased | Capability proven / Rocks started / M002 leased / rules or typed clocks started / ADR-050 six dictionaries |
+| L_delivery | M016 S03 active (Rule evaluator) | Capability proven / Rocks started / M002 leased / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M016 S02 CLOSED** (`L_delivery=M016-S02-done`, Active Milestone **M016**, Active Slice **None**, 2026-10-02). Phase 37 verified. Next lease **S03** (Rule evaluator). Honeycomb stays Proposed. No SemVer tag.
+**M016 S03 leased** (`L_delivery=M016-S02-done`, Active Milestone **M016**, Active Slice **S03**, 2026-10-02). GSD Phase 38 only: rule evaluator and support counting. Do **not** start 39–40 until leased. Honeycomb stays Proposed. No SemVer tag.
 
 
 ## Freeze (until explicit M002 lease)

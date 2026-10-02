@@ -16,7 +16,7 @@
     {
       "number": "38",
       "name": "Rule evaluator and support counting",
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "number": "39",
@@ -31,8 +31,8 @@
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Lease M016 S03 then plan phase 38",
-    "reason": "Phase 37 of 5 verified · S02 closed"
+    "label": "Plan phase 38",
+    "reason": "Phase 38 of 5 · S03 leased"
   },
   "updated_at": "2026-10-02T12:00:00.000Z"
 }
