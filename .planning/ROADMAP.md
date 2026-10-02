@@ -35,7 +35,10 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
   3. Eager==Lazy `as_known_on`; fork_at + persist/open agree.
   4. Mid-cut snapshot + non-empty tail recovers known-on; anchors in replay path.
   5. `GraphFold::replay` applies TtAnchor.
+
 **Plans**: 2 max
+- [x] 36-01-PLAN.md
+- [ ] 36-02-PLAN.md
 
 ### Phase 37: Rule AST and hash
 
