@@ -10,7 +10,7 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.08 Known-on honesty and M014 residuals
+## Current Milestone: (none — v0.08 shipped)
 
 **Goal:** Make `as_known_on` honest for closed VT intervals; fail-closed anchors; align living docs and governor with post-M014 reality.
 
@@ -70,7 +70,7 @@ GSD overlay v0.07 (Phases 31–33 — M014 typed clocks):
 
 - [x] **v0.06 Honest baseline and one write path (M013 S01–S09):** shipped 2026-10-02 — archive `.planning/milestones/v0.06-*`, tag `v0.06`
 - [x] **v0.07 Typed clocks and as-known-on (M014 S01–S03):** shipped 2026-10-02 — archive `.planning/milestones/v0.07-*`, tag `v0.07`
-- [ ] **v0.08 Known-on honesty and M014 residuals (M015 S01–S02):** KNOWN/ANK-ADM/DOC/GOV
+- [x] **v0.08 Known-on honesty and M014 residuals (M015 S01–S02):** shipped 2026-10-02 — archive `.planning/milestones/v0.08-*`, tag `v0.08`
 - [ ] Keep FF5/FF6/H2/H4/M010/M011 named fitness **green** (`L_capability=ff5-green` per `.kutha/STATE.md`)
 - [ ] Keep governor CI honest; three lifecycles uncollapsed; freeze until STATE names otherwise
 - [ ] Start only the next delivery `.kutha/STATE.md` names — do **not** assume M002, legal pack, or honeycomb Accepted

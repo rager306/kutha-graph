@@ -94,6 +94,17 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Cells remain **Proposed**. M014 S01 lease unchanged; no SemVer tag.
 
+## 2026-10-02 — Trajectory: M015 CLOSED (GSD v0.08 archive and tag)
+
+### Trajectory
+
+- M015 S01–S02 delivered; Active Milestone cleared.
+- Governor: artifact-budget `min_hits` returned to 0 for empty live phases between milestones. Archive `.planning/milestones/v0.08-*`; process tag `v0.08`. Crate SemVer stays `0.0.0`.
+
+### Product
+
+- TT-only `as_known_on` (closed VT survives); fail-closed `TtAnchor` walls; ANK required in governor.
+
 ## 2026-10-02 — Trajectory: M015 S02 leased
 
 ### Trajectory

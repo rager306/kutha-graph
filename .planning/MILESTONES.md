@@ -1,3 +1,10 @@
+## v0.08 Known-on honesty and M014 residuals (Shipped: 2026-10-02)
+
+**Phases:** 34–35. Process tag `v0.08`. H1/H2 closed; ANK in observe_cargo; living docs aligned.
+**Git range:** `v0.07..v0.08`
+
+---
+
 # Milestones
 
 ## v0.06 Honest baseline and one write path (Shipped: 2026-10-02)

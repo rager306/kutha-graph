@@ -95,8 +95,8 @@ checks:
         # break *-closed when already idle — second unit covers idle boundary.
         - op: replace_regex
           path: .kutha/STATE.md
-          pattern: '(?m)^\*\*Active Milestone:\*\*\s*(?!None\b)\S+\s*$'
-          with: '**Active Milestone:** None'
+          pattern: '(?m)^L_delivery=\S+-closed\s*$'
+          with: 'L_delivery=open'
         - op: replace_regex
           path: .kutha/STATE.md
           pattern: '(?m)^L_delivery=\S+-closed\s*$'
@@ -1200,25 +1200,25 @@ checks:
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-PLAN.md
         min_phase: 22
-        min_hits: 1
+        min_hits: 0
         max: 150
         max_files_per_dir: 2
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-SUMMARY.md
         min_phase: 22
-        min_hits: 1
+        min_hits: 0
         max: 60
         max_files_per_dir: 2
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-VERIFICATION.md
         min_phase: 22
-        min_hits: 1
+        min_hits: 0
         max: 60
         max_files_per_dir: 1
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-CONTEXT.md
         min_phase: 22
-        min_hits: 1
+        min_hits: 0
         max: 80
         max_files_per_dir: 1
 
