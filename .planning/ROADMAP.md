@@ -41,11 +41,12 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
   3. Duplicate or backwards `TtAnchor` walls are rejected at admit with a named test.
   4. Persist/open rebuild agrees on anchors and known-on.
 
-**Plans**: 2 plans max
+**Plans**: 1/2 plans executed max
 
 Plans:
 **Wave 1**
-- [ ] 34-01-PLAN.md — TT-only as_known_on (KNOWN-01/02); RED closed-VT oracle first
+- [x] 34-01-PLAN.md — TT-only as_known_on (KNOWN-01/02); RED closed-VT oracle first
+
 **Wave 2**
 - [ ] 34-02-PLAN.md — fail-closed TtAnchor admit (ANK-ADM-01/02)
 

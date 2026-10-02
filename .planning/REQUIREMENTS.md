@@ -10,8 +10,8 @@ Audit follow-up after M014 close. Cells stay Proposed. Not F9/F16 rules (M016). 
 
 ### Known-on semantics (H1)
 
-- [ ] **KNOWN-01**: `as_known_on(D)` returns the product picture at the resolved TT **without** forcing `vt = u64::MAX` in a way that drops facts whose `valid_to` is finite (closed VT intervals remain visible when they were live at the knowledge cut)
-- [ ] **KNOWN-02**: A named RED→GREEN oracle uses an FF5-shaped statute (`valid_to: Some(..)`) plus anchors; before the fix the oracle fails; after it passes; FF5 `as_of` stays green
+- [x] **KNOWN-01**: `as_known_on(D)` returns the product picture at the resolved TT **without** forcing `vt = u64::MAX` in a way that drops facts whose `valid_to` is finite (closed VT intervals remain visible when they were live at the knowledge cut)
+- [x] **KNOWN-02**: A named RED→GREEN oracle uses an FF5-shaped statute (`valid_to: Some(..)`) plus anchors; before the fix the oracle fails; after it passes; FF5 `as_of` stays green
 
 ### Anchor admission (H2)
 
@@ -52,7 +52,8 @@ Audit follow-up after M014 close. Cells stay Proposed. Not F9/F16 rules (M016). 
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| KNOWN-01, KNOWN-02, ANK-ADM-01, ANK-ADM-02 | Phase 34 | Pending |
+| KNOWN-01, KNOWN-02 | Phase 34 | Complete (34-01) |
+| ANK-ADM-01, ANK-ADM-02 | Phase 34 | Pending |
 | DOC-01, GOV-01 | Phase 35 | Pending |
 
 **Coverage:** v0.08 requirements: 6 total; mapped: 6; unmapped: 0.
