@@ -3,6 +3,7 @@
 
 mod event;
 mod intern;
+mod rule;
 
 pub use event::{
     blob_digest_matches, policy_version_hash, rule_definition_hash, sha256_hex, Event, EventId, Op,
@@ -11,3 +12,4 @@ pub use event::{
     KUTHA_RULE, TRANSACTION_TIME_SCALE, VALID_TIME_SCALE,
 };
 pub use intern::TermDictionary;
+pub use rule::{is_rule_ident, rule_body_hash, RuleAst, RuleAtom, RuleTerm};

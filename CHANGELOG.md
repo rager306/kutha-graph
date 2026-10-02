@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Product: rule AST canonical encoding (Phase 37)
+
+### Product
+
+### Added
+
+- Bounded positive `RuleAst` (`Named`, `Horn`) with tagged little-endian canonical bytes. Body hash is SHA-256 of `kutha-rule-def` plus those bytes. JSON, trailing junk, and raw UTF-8 names are not canonical. Evaluation is not in this slice.
+
+### Trajectory
+
+- Cells remain **Proposed**. M016 S02 lease unchanged; no SemVer tag.
+
 ## 2026-10-02 — Product: test hardening T2–T6 (Phase 36)
 
 ### Product
