@@ -22,8 +22,8 @@ Closes F13 from `docs/architecture/semantic-gap-review.md`. Cells stay Proposed.
 
 ### Fixture migration
 
-- [ ] **FIX-01**: FF5 and M011/M012/M013 fixtures use the explicit clock types
-- [ ] **FIX-02**: Oracle assertions are unchanged (rename-only); SUMMARY carries an old-to-new table
+- [x] **FIX-01**: FF5 and M011/M012/M013 fixtures use the explicit clock types
+- [x] **FIX-02**: Oracle assertions are unchanged (rename-only); SUMMARY carries an old-to-new table
 
 ## Future Requirements (not v0.07)
 
@@ -56,6 +56,6 @@ Closes F13 from `docs/architecture/semantic-gap-review.md`. Cells stay Proposed.
 |-------------|-------|--------|
 | CLK-01, CLK-02, CLK-03 | Phase 31 | Complete |
 | ANK-01, ANK-02, ANK-03 | Phase 32 | Complete |
-| FIX-01, FIX-02 | Phase 33 | Pending |
+| FIX-01, FIX-02 | Phase 33 | Complete |
 
 **Coverage:** v0.07 requirements: 8 total; mapped to phases: 8; unmapped: 0.

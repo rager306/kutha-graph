@@ -6,9 +6,9 @@ tags: [clocks, FIX-01, FIX-02, FF5]
 requires: [{ phase: 32-tt-anchor-and-as-known-on, provides: ANK-01 Op::TtAnchor log facts }]
 provides: ["FIX-01 explicit clock constructors on fixtures", "FIX-02 old-to-new wrap table"]
 affects: [m014-close]
-actuals: { tokens: 11874, tasks: 3, commits: 2 }
+actuals: { tokens: 11874, tasks: 3, commits: 3 }
 plan_head_before: 8d6513a489539928fd59778fa1e300d76807301a
-plan_head_after: 7546274e5c774ecb02e28876d05123fbf9d73455
+plan_head_after: 58b3bc99b60e6e1d0a5aeeb1b14a3120c0603c0b
 tech-stack: { added: [], patterns: ["ValidTime::from / TransactionTime::MAX at public cuts"] }
 key-files: { created: [], modified: [crates/kutha-runtime/tests/ff5_legal_pit.rs, crates/kutha-runtime/tests/ff6_allowlist.rs, crates/kutha-runtime/tests/m011_e2e_fixture.rs, CHANGELOG.md] }
 key-decisions: ["Wrap public clock API only; Op valid_from stays u64", "WallTime unused in FIX-01 files"]
@@ -41,7 +41,7 @@ status: complete
 ## Task Commits
 1. **FF5 wraps** - `0e07ca1` (test)
 2. **M011/M012/M013 + FF6** - `7546274` (test)
-3. **SUMMARY** - (this commit)
+3. **SUMMARY** - `58b3bc9` (docs)
 
 ## Old-to-new (FIX-02)
 

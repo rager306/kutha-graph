@@ -26,7 +26,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 - [x] **Phase 31: Clock newtypes** — `Vt`, `Tt`, and wall clock are distinct types; a compile-fail doctest rejects silent mixes
 - [x] **Phase 32: `tt_anchor` facts and `as_known_on`** — anchors are log facts; `as_known_on(date)` resolves through the greatest anchor at or before the date
-- [ ] **Phase 33: Fixture migration** — FF5 and M011/M012 fixtures use explicit clocks with unchanged assertions
+- [x] **Phase 33: Fixture migration** — FF5 and M011/M012 fixtures use explicit clocks with unchanged assertions
 
 ## Phase Details
 
@@ -78,11 +78,11 @@ Plans:
   2. Oracle assertions are unchanged (D-07 style); renames only, tabled in SUMMARY.
   3. `uv run kutha-gov ci` is 0 HIGH (controller at close).
 
-**Plans**: 1/1 planned
+**Plans**: 1/1 executed
 
 Plans:
 **Wave 1**
-- [ ] 33-01-PLAN.md — Constructor wraps on FF5/M011/M012/M013 public clock API
+- [x] 33-01-PLAN.md — Constructor wraps on FF5/M011/M012/M013 public clock API
 
 ## Progress
 
@@ -91,4 +91,4 @@ Plans:
 | v0.01–v0.06 | 1–30 | shipped |
 | v0.07 | 31–33 | active (M014) |
 
-**Next:** Phase 33 plan written (33-01). Execute 33-01; independent verifier writes `33-VERIFICATION.md` (D-05). Do not start M015.
+**Next:** Phase 33 executed (33-01). Independent verifier writes `33-VERIFICATION.md` (D-05). Do not start M015.
