@@ -51,7 +51,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 **Plans**: 2 max
 - [x] 37-01-PLAN.md
-- [ ] 37-02-PLAN.md
+- [x] 37-02-PLAN.md
 
 ### Phase 38: Rule evaluator and support counting
 
@@ -72,4 +72,4 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 | v0.01–v0.08 | 1–35 | shipped |
 | v0.09 | 36–40 | active (M016) |
 
-**Next:** Controller leases M016 S01, then `/gsd-autonomous --only 36`.
+**Next:** Independent verify Phase 37 (D-05). Do not start 38 until M016 S03 is leased.
