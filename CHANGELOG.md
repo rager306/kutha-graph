@@ -75,6 +75,17 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Cells remain **Proposed**. M014 S01 lease unchanged; no SemVer tag.
 
+## 2026-10-02 — Trajectory: M015 S01 CLOSED (Phase 34)
+
+### Trajectory
+
+- Phase 34 verified; Active Slice cleared. `L_delivery=M015-S01-done`. Next: lease S02 alone.
+- Governor: `idle-delivery-closed` selftest forces Milestone None + non-closed `L_delivery` (works leased or idle).
+
+### Product
+
+- `as_known_on` uses TT-only `known_at` (closed VT intervals survive); duplicate/backwards `TtAnchor` fail closed at admit.
+
 ## 2026-10-02 — Trajectory: M015 S01 leased
 
 ### Trajectory

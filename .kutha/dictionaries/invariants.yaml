@@ -85,7 +85,7 @@ invariants:
     check: state-readme
 
   - id: I-idle-delivery-closed
-    claim: "Active Milestone None requires L_delivery token ending in -closed"
+    claim: "Active Milestone None requires L_delivery token ending in -closed (selftest forces None+broken delivery)"
     source: ".kutha/STATE.md"
     disposition: check
     check: idle-delivery-closed

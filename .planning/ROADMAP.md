@@ -25,7 +25,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 **v0.08 phases** (one phase per harness slice S01–S02; controller leases each slice before the phase runs):
 
-- [ ] **Phase 34: Known-on cut and anchor admission** — closed VT intervals survive `as_known_on`; non-monotone/duplicate anchors fail closed
+- [x] **Phase 34: Known-on cut and anchor admission** — closed VT intervals survive `as_known_on`; non-monotone/duplicate anchors fail closed
 - [ ] **Phase 35: Living docs and governor honesty** — docs match M014 ship + residual; ANK oracle required; budget min_hits restored when phases live
 
 ## Phase Details

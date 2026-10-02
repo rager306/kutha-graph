@@ -200,11 +200,11 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 ## M015: Known-on honesty and M014 residuals — LEASED (GSD v0.08)
 
-**Leased:** Active Milestone M015; **S01** active (Phase 34); S02 unleased.
+**Progress:** S01 CLOSED (Phase 34 verified). S02 unleased.
 
 **Success:** `as_known_on(D)` does not drop closed VT intervals; duplicate/backwards `TtAnchor` walls fail closed; living docs and governor match post-M014 (ANK required; budget min_hits when phases live). Closes audit H1/H2. Needs a lease.
 
-- [ ] **S01: Known-on cut and anchor admission** `risk:high` `depends:[]`
+- [x] **S01: Known-on cut and anchor admission** `risk:high` `depends:[]`
   > After this: FF5-shaped closed-interval + anchors RED→GREEN; monotone unique walls only; FF5 `as_of` unchanged.
 - [ ] **S02: Living docs and governor honesty** `risk:medium` `depends:[S01]`
   > After this: living docs/PROJECT/semantic-gap/ADR-013 Evidence aligned; `true_on_d_differs_from_known_on_d` in observe_cargo; artifact-budget `min_hits: 1` when live phases exist.

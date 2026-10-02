@@ -91,11 +91,16 @@ checks:
     description: Active Milestone None requires L_delivery token ending in -closed
     selftest:
       mutations:
-        # Break *-closed while idle (Active Milestone None requires L_delivery=*-closed).
+        # Set Milestone to None while L_delivery stays non-*-closed (leased) or
+        # break *-closed when already idle — second unit covers idle boundary.
+        - op: replace_regex
+          path: .kutha/STATE.md
+          pattern: '(?m)^\*\*Active Milestone:\*\*\s*(?!None\b)\S+\s*$'
+          with: '**Active Milestone:** None'
         - op: replace_regex
           path: .kutha/STATE.md
           pattern: '(?m)^L_delivery=\S+-closed\s*$'
-          with: "L_delivery=open"
+          with: 'L_delivery=open'
     steps:
       - kind: when_match_then_match
         path: .kutha/STATE.md
