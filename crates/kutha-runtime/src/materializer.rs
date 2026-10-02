@@ -1,10 +1,18 @@
 use crate::csr::CsrLease;
 use crate::fold::GraphFold;
+use kutha_common::{TransactionTime, ValidTime};
 
 /// Reversible view contract (ADR-040). Pack install is ADR-021, not this trait.
 pub trait Materializer {
     fn name(&self) -> &'static str;
-    fn build(&mut self, fold: &GraphFold, vertex_count: usize, tt: u64, vt: u64, log_offset: usize);
+    fn build(
+        &mut self,
+        fold: &GraphFold,
+        vertex_count: usize,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+        log_offset: usize,
+    );
     fn unload(&mut self);
     fn is_mounted(&self) -> bool;
 }
@@ -34,10 +42,12 @@ impl Materializer for CsrMaterializer {
         &mut self,
         fold: &GraphFold,
         vertex_count: usize,
-        tt: u64,
-        vt: u64,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
         log_offset: usize,
     ) {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
         self.lease = Some(CsrLease::from_fold(fold, tt, vt, vertex_count));
         self.log_offset = Some(log_offset);
     }

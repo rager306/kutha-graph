@@ -391,7 +391,13 @@ impl Runtime {
     }
     /// CSR lease at an explicit cut. Callers must name valid-time (no silent “now”).
     /// Built through [`CsrMaterializer`] then unloaded so Runtime does not keep a mounted view.
-    pub fn csr_lease_at(&self, tt: u64, vt: u64) -> CsrLease {
+    pub fn csr_lease_at(
+        &self,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> CsrLease {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
         let mut materializer = CsrMaterializer::default();
         materializer.build(&self.fold, self.dict.len(), tt, vt, self.log.len());
         let lease = materializer
@@ -403,7 +409,13 @@ impl Runtime {
     }
 
     /// Typed CSR lease at an explicit cut (labels + support multiplicity). Droppable; not SoT.
-    pub fn typed_csr_lease_at(&self, tt: u64, vt: u64) -> TypedCsrLease {
+    pub fn typed_csr_lease_at(
+        &self,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> TypedCsrLease {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
         TypedCsrLease::from_fold(&self.fold, tt, vt, self.dict.len())
     }
 
