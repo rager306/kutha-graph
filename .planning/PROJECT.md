@@ -172,8 +172,8 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 
 **Harness lease** (process intent, not GSD memory, not product SoT): `.kutha/STATE.md`
 
-- Active Milestone: **M014** (lease pending / in progress — cite `.kutha/STATE.md`)
-- Active Slice: cite `.kutha/STATE.md` only (do not edit here)
+- Active Milestone: **M014** (leased; S01 active — cite `.kutha/STATE.md`)
+- Active Slice: **S01** (Phase 31 clock newtypes; cite `.kutha/STATE.md` — do not edit here)
 - Phase: **H5**
 - Lifecycles: `L_map=honeycomb-proposed` · `L_delivery` / Active Slice — cite `.kutha/STATE.md` · `L_capability=ff5-green`
 - Next: M013 slices only, one phase at a time (`docs/process/gsd-auto-contract.md`). Freeze holds beyond the M013 thawed subset. Do not start a legal pack. Green governor ≠ ADR Accepted ≠ L_capability.

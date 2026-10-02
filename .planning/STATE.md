@@ -5,10 +5,10 @@ milestone_name: Typed clocks and as-known-on
 current_phase: 31
 current_phase_name: Clock newtypes
 status: planning
-stopped_at: v0.06 archived and tagged; M014 not yet leased
+stopped_at: M014 S01 leased; ready to plan Phase 31
 last_updated: "2026-10-02T07:00:00.000Z"
 last_activity: 2026-10-02
-last_activity_desc: v0.06 archived (M013 CLOSED); preparing M014 lease
+last_activity_desc: M014 S01 leased; Phase 31 CONTEXT present
 progress:
   total_phases: 3
   completed_phases: 0
@@ -27,14 +27,14 @@ See: `.planning/PROJECT.md`
 
 **Not this file:** Kutha harness lease is `.kutha/STATE.md`. Do not overwrite it.
 
-**Harness lease (cite only):** Active Milestone **M014** (pending lease commit); Active Slice **None** until S01 is leased; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M013-closed` until M014 lease; `L_capability=ff5-green`.
+**Harness lease (cite only):** Active Milestone **M014**; Active Slice **S01**; Phase **H5**; `L_map=honeycomb-proposed`; `L_delivery=M013-closed`; `L_capability=ff5-green`.
 
 ## Current Position
 
-Phase: 31 — Clock newtypes (CONTEXT pending; not leased)
+Phase: 31 — Clock newtypes (CONTEXT present)
 Plan: Not started
-Status: Ready to plan after M014 S01 lease
-Last activity: 2026-10-02 — v0.06 archived and tagged; M013 CLOSED
+Status: Ready to plan (S01 leased)
+Last activity: 2026-10-02 — M014 S01 leased
 
 ## Performance Metrics
 
@@ -54,5 +54,5 @@ Last activity: 2026-10-02 — v0.06 archived and tagged; M013 CLOSED
 
 ## Session Continuity
 
-Stopped at: v0.06 archived; wait M014 S01 lease
-Next: Controller leases M014 S01, writes Phase 31 CONTEXT, then `/gsd-autonomous --only 31`
+Stopped at: M014 S01 leased; Phase 31 CONTEXT present
+Next: `/gsd-plan-phase 31` / `/gsd-autonomous --only 31`

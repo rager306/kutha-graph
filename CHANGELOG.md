@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-02 — Trajectory: M014 S01 leased
+
+### Trajectory
+
+- Active Milestone **M014**, Active Slice **S01** (GSD Phase 31, clock newtypes). `L_delivery=M013-closed`. `README.md` shows Active Milestone **M014**. Cells remain **Proposed**.
+
 ## 2026-10-02 — Trajectory: M013 CLOSED (GSD v0.06 archive and tag)
 
 ### Trajectory
