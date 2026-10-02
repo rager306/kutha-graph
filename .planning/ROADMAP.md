@@ -40,14 +40,14 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
   2. A `compile_fail` doctest (or trybuild) proves a silent mix is rejected.
   3. Named oracles (FF5, FF6, M010–M013) stay green; mechanical renames only, recorded in SUMMARY.
 
-**Plans**: 1/2 plans executed
+**Plans**: 2/2 plans executed
 
 Plans:
 **Wave 1**
 - [x] 31-01-PLAN.md — Clock newtypes, WallTime, compile_fail mix, as_of/live_at Into
 
 **Wave 2**
-- [ ] 31-02-PLAN.md — CSR/justification cuts typed; TIME-01 rename-only; named oracles green
+- [x] 31-02-PLAN.md — CSR/justification cuts typed; TIME-01 rename-only; named oracles green
 
 ### Phase 32: tt_anchor facts and as_known_on
 
@@ -87,4 +87,4 @@ Plans:
 | v0.01–v0.06 | 1–30 | shipped |
 | v0.07 | 31–33 | active (M014) |
 
-**Next:** Controller leases M014 S01, then `/gsd-plan-phase 31` / `/gsd-autonomous --only 31`.
+**Next:** Phase 31 plans executed; independent verifier (`31-VERIFICATION.md`, D-05). Do not start Phase 32.

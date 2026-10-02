@@ -4,17 +4,18 @@ milestone: v0.07
 milestone_name: Typed clocks and as-known-on
 current_phase: 31
 current_phase_name: Clock newtypes
+current_plan: 2
 status: planning
-stopped_at: Completed 31-01-PLAN.md
-last_updated: "2026-10-02T07:17:54.206Z"
+stopped_at: Completed 31-02-PLAN.md
+last_updated: "2026-10-02T07:22:32.874Z"
 last_activity: 2026-10-02
 last_activity_desc: Phase 31 PLAN.md Wave 1–2 written (CLK-01..03)
-state_head: 6898e6d28b9739396c8051db7771c1224441ec43
+state_head: 820d7accca574fd8ad22285480390577a0718b8a
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -35,9 +36,9 @@ See: `.planning/PROJECT.md`
 Phase: 31 — Clock newtypes
 Current Plan: 2
 Total Plans in Phase: 2
-Plan: 31-02 (Wave 2)
-Status: executing 31-02
-Last activity: 2026-10-02 — 31-01 complete (clock newtypes + as_of Into)
+Plan: 31-02 complete
+Status: ready for independent verification (D-05)
+Last activity: 2026-10-02 — 31-01 and 31-02 executed; do not start Phase 32
 
 ## Performance Metrics
 
@@ -47,6 +48,7 @@ Last activity: 2026-10-02 — 31-01 complete (clock newtypes + as_of Into)
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | Phase 31 P01 | 7 min | 3 tasks | 7 files |
+| Phase 31 P02 | 3 min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -55,6 +57,7 @@ Last activity: 2026-10-02 — 31-01 complete (clock newtypes + as_of Into)
 - [v0.06]: M013 S01–S09 delivered; archive+tag authorized 2026-10-02; residual audit debt acknowledged (SUMMARY frontmatter, bench overrides, Nyquist skip, CBM freshness)
 - [v0.07]: Closes F13 only; two axes + `tt_anchor`; five-legal-clocks sufficiency stays ADR-013 open question
 - [Phase 31]: Op/Event/Fact clocks stay u64 so FF5 literals compile; query API uses impl Into ValidTime/TransactionTime
+- [Phase 31]: TIME-01 YearCe lets wrap ValidTime::from only; FF5/FF6 assertion bodies unchanged
 
 ### Blockers/Concerns
 
@@ -63,8 +66,8 @@ Last activity: 2026-10-02 — 31-01 complete (clock newtypes + as_of Into)
 
 ## Session Continuity
 
-**Last session:** 2026-10-02T07:17:54.119Z
+**Last session:** 2026-10-02T07:22:32.819Z
 **Resume file:** None
 
-Stopped at: Completed 31-01-PLAN.md
-Next: `/gsd-execute-phase 31` / `/gsd-autonomous --only 31`
+Stopped at: Completed 31-02-PLAN.md
+Next: independent verifier for Phase 31 (`31-VERIFICATION.md`); do not start Phase 32

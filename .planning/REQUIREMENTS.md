@@ -10,9 +10,9 @@ Closes F13 from `docs/architecture/semantic-gap-review.md`. Cells stay Proposed.
 
 ### Clock newtypes (F13)
 
-- [ ] **CLK-01**: Public temporal API uses distinct newtypes for valid time (`Vt`), transaction time (`Tt`), and wall time (not bare `u64` aliases that compile interchangeably)
+- [x] **CLK-01**: Public temporal API uses distinct newtypes for valid time (`Vt`), transaction time (`Tt`), and wall time (not bare `u64` aliases that compile interchangeably)
 - [x] **CLK-02**: A `compile_fail` doctest or trybuild proves a silent mix of those types is rejected
-- [ ] **CLK-03**: Named oracles (FF5, FF6, M010–M013) stay green; only mechanical renames, recorded in the phase SUMMARY
+- [x] **CLK-03**: Named oracles (FF5, FF6, M010–M013) stay green; only mechanical renames, recorded in the phase SUMMARY
 
 ### Anchors and as-known-on (F13)
 
@@ -54,7 +54,7 @@ Closes F13 from `docs/architecture/semantic-gap-review.md`. Cells stay Proposed.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CLK-01, CLK-02, CLK-03 | Phase 31 | Pending |
+| CLK-01, CLK-02, CLK-03 | Phase 31 | Complete |
 | ANK-01, ANK-02, ANK-03 | Phase 32 | Pending |
 | FIX-01, FIX-02 | Phase 33 | Pending |
 
