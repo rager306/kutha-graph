@@ -12,6 +12,7 @@ process: docs/process/governor-intake.md
 # 2026-10-02 restage (M013 S03–S07 evidence): ADR-000, 010–014, 040–041, 050, 060–061; map/delivery/capability unchanged.
 # 2026-10-02 restage (M015 S02 ANK + known-on oracles): ADR-013 evidence; map/delivery/capability unchanged.
 # 2026-10-03 restage (M017 S01 audit clarifications): ADR-000, 013, 014, 041, 050, 060, 070; map/delivery/capability unchanged.
+# 2026-10-03 restage (M017 S02 replay-integrity D-04 evidence): ADR-010; map/delivery/capability unchanged.
 
 locks:
   - id: D1

@@ -8,6 +8,10 @@
 
 M013 routes Assert/Retract/Correct/Behavior and dictionary constructors through `pipeline` (`pipeline.rs`). `rg append_meta crates/` is empty. Oracle: `unknown_relation_rejected_for_assert_justification_and_action` (`m013_write_path.rs`).
 
+### Evidence (2026-10-03; Proposed)
+
+D-04 open policy (M017 S02): jsonl is SoT; WAL is a lease. Prefer WAL only when recover yields magic `KUTHAWAL` + version 1 and recovered ids cover jsonl ids in order (WAL may be longer). Header-only, magic-only, empty, short, or recover-err plus readable jsonl → jsonl (never an empty log). Both parse and neither sequence covers the other → InvalidData. Snapshot pins `tt_anchors` (replay-visible, not fingerprint) and `FoldIndexMode`. Oracle: `m017_replay_integrity.rs`. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

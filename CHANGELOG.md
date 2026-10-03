@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Product: replay integrity (M017 S02)
+
+### Product
+
+### Fixed
+
+- `open` prefers a covering WAL, falls back to intact `events.jsonl`, and fails closed when event ids diverge. Tampered persisted `TtAnchor` walls fail `replay_check` / `open`. `snapshot.json` and `events.wal` replace via temp + sync + rename. A present outcomes or justifications sidecar must equal log rows; an absent sidecar stays Ok. Snapshot JSON pins `FoldIndexMode` (missing field → Eager).
+
+### Changed
+
+- `Runtime::as_known_on` rustdoc is TT-only (`GraphFold::known_at`), not `live_at(tt, MAX)`.
+
+### Trajectory
+
+- ADR-010 Evidence (2026-10-03) records the D-04 open policy. Honeycomb comment restage only; cell stays **Proposed**. Active Milestone **M017**, Active Slice **S02**.
+
 ## 2026-10-03 — Process: M017 S02 leased (replay integrity)
 
 ### Process
