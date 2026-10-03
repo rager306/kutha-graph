@@ -265,3 +265,21 @@ Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p52-head-target`
 
 D-10 ≤10% vs `bd5fa4b`: **met** (no median regression). Ingest/`as_of` sources were not edited. New metric `persist_append.n` (after `persist.n`, append 1% more events via `Persister`): HEAD median persist.n 5940191937 ns vs persist_append.n 48907222 ns. Mechanical: `expected` key list gained `persist_append.n`; factor-1 `events_per_assert` now includes that 1% tail.
 
+### Phase 52 follow-up — Define-on-open (2026-10-03)
+
+Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p52-head-target-gap` for HEAD, `tmp/p52-base-target-gap` for `bd5fa4b` in `tmp/p52-base-wt`). Binaries run from each worktree's `crates/kutha-runtime`. Interleaved `base, head` × 4 pairs after the snapshot-open Define intern change. Host noise: pair 1 HEAD ingest 158.1M vs later HEAD 101.7–109.3M. Compare interleaved medians.
+
+| run | bd5fa4b ingest_plain.n | HEAD ingest_plain.n | Δ ingest | bd5fa4b as_of.n | HEAD as_of.n | Δ as_of |
+|-----|-----------------------:|--------------------:|---------:|----------------:|-------------:|--------:|
+| 1 | 108684580 | 158095140 | +45.5% | 229858 | 267960 | +16.6% |
+| 2 | 105347002 | 105975292 | +0.6% | 312712 | 282697 | −9.6% |
+| 3 | 114167702 | 109254023 | −4.3% | 280424 | 295943 | +5.5% |
+| 4 | 135904907 | 101747410 | −25.1% | 295953 | 285363 | −3.6% |
+
+| metric | median bd5fa4b | median HEAD | Δ median |
+|--------|---------------:|------------:|---------:|
+| ingest_plain.n | 111426141 | 107614657 | −3.4% |
+| as_of.n | 288188 | 284030 | −1.4% |
+
+D-10 ≤10% vs `bd5fa4b` after the open-path fix: **met**. HEAD persist.n median 5957761678 ns vs persist_append.n 48742410 ns.
+

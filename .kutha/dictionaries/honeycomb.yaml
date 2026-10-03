@@ -20,6 +20,7 @@ process: docs/process/governor-intake.md
 # 2026-10-03 restage (M002 S02 Phase 50: SNAP-01 closed — atomic sidecars, dir fsync, log-ahead anchors, fail-closed WAL open): ADR-012, ADR-014, ADR-060; map/delivery/capability unchanged.
 # 2026-10-03 restage (M002 S03 Phase 51: ROCK-00 RocksDB EventId-offset spike, optional feature, no wiring): ADR-010, ADR-012; map/delivery/capability unchanged.
 # 2026-10-03 restage (M002 S04 Phase 52: APPEND-01 incremental framed append; O(N) persist closed on the append path): ADR-010, ADR-012, ADR-014, ADR-060; map/delivery/capability unchanged.
+# 2026-10-03 restage (M002 S04 Phase 52 follow-up: snapshot open interns log Defines beyond snap.dict_strings): ADR-012; map/delivery/capability unchanged.
 
 locks:
   - id: D1

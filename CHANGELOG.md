@@ -12,9 +12,13 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `store::Persister` (`attach` / `append` / `checkpoint` / `close`): jsonl lines then WAL frames, one log `sync_data` per non-checkpoint quantum; prefix bytes of `events.jsonl` / `events.wal` stay. Torn jsonl tails without a newline are dropped; a complete malformed line still fails `InvalidData`. `CHECKPOINT_EVERY` (4096) and `close` refresh snapshot and sidecars; full `persist` remains the atomic rewrite. Oracles: `crates/kutha-runtime/tests/m002_append01.rs`. Bench key `persist_append.n` (1% tail after `persist.n`).
 
+### Fixed
+
+- Snapshot `open` was dropping log `Op::Define` events and hydrating the dictionary only from `snap.dict_strings`, so terms interned after the last checkpoint vanished on reopen even though the Defines were durable (replay_check still passed). `from_snapshot` now interns those extra names in log order. Intern-only appends (Define tail, no new graph events) no longer fail `attach`/`append` (`InvalidData` from encoded-log last-frame vs on-disk Define). Persist/open parity is event-id and dictionary/`TermId`s, not encoded-log byte equality.
+
 ### Trajectory
 
-- ADR-010/012/014/060 dated Evidence 2026-10-03 Phase 52: O(N) persist rewrite closed for the append path. Cells stay **Proposed**. `honeycomb.yaml` restaged (map/delivery/capability unchanged). Bench vs `bd5fa4b` (interleaved medians): ingest_plain.n −6.4%, as_of.n −1.5% — D-10 met. HEAD persist.n median 5.94 s vs persist_append.n 48.9 ms.
+- ADR-010/012/014/060 dated Evidence 2026-10-03 Phase 52: O(N) persist rewrite closed for the append path. Cells stay **Proposed**. `honeycomb.yaml` restaged (map/delivery/capability unchanged). Bench vs `bd5fa4b` (interleaved medians): ingest_plain.n −6.4%, as_of.n −1.5% — D-10 met. HEAD persist.n median 5.94 s vs persist_append.n 48.9 ms. After the Define-on-open fix, re-run medians: ingest −3.4%, as_of −1.4% (still D-10). Snapshot open now interns log Defines beyond `snap.dict_strings`.
 
 ## 2026-10-03 — Product: ROCK-00 RocksDB EventId-offset spike
 

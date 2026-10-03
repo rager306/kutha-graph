@@ -8,25 +8,27 @@ Executor Phase 52 / M002 S04. Not verification. Honeycomb stays Proposed. Did no
 - `758ba43` fix(52-02): drop torn jsonl tails without a newline
 - `3d01a1f` feat(52-02): Persister framed append with tail guard and checkpoint
 - `eb314b6` feat(52-02): add persist_append.n to the baseline bench
-- this commit: ADR evidence, honeycomb restage, CHANGELOG, bench table, SUMMARY
+- `7840062` docs(52): APPEND-01 evidence, bench table, and changelog
+- `df8da47` test(52-01): RED oracles for intern-after-append and tail-guard mutations
+- `f08ac15` fix(52-02): restore interned terms from log Defines on snapshot open
+- this commit: Define-on-open evidence, mutation oracles, CHANGELOG, bench re-run
 
-## RED (`cargo test -p kutha-runtime --offline --test m002_append01`)
+## RED (`m002_append01`)
 
-Failed (10): `append_keeps_prefix_bytes_of_jsonl_and_wal`, `append_one_log_sync_per_quantum`, `append_nothing_new_does_no_io`, `append_torn_jsonl_tail_without_newline_is_dropped`, `append_replay_parity_with_full_persist`, `append_tail_guard_mismatch_fails_closed_without_writing`, `append_crash_matrix_reopens_to_prefix`, `open_between_checkpoints_uses_stale_leases`, `checkpoint_every_threshold_refreshes_snapshot`, `append_after_open_resumes`.
-Passed (preservation): `append_torn_wal_tail_drops_only_tail`, `complete_malformed_jsonl_line_still_fails`.
+Wave 1 failed 10 / preserved 2. Wave 2 failed 4: intern-between-appends, intern-only reattach, twice-then-open dict parity, checkpoint abort-before-rename. Guard length/id and checkpoint dir-fsync already green.
 
 ## Blast radius (CBM `root-kutha-graph`; rg arbiter)
 
-`persist` inbound ~51 (M010–M017 tests, `Runtime::persist`, `kutha-tenant`, `benches/baseline`). `open` inbound ~54. `read_jsonl_events` → `load_events_d04` → `open` (test-local jsonl helpers unchanged). `recover_events` → `load_events_d04` + wal unit test. Coverage after edits: store/wal/lib/baseline `metadata_changed`; `persist_append.rs` / `m002_append01.rs` `not_tracked` (no `index_repository`). FF5/FF6/M010–M017 assertions untouched.
+`open` inbound ~69 (M010–M017, benches). Coverage: store/hydrate `metadata_changed`; `persist_append.rs` / `m002_append01.rs` `not_tracked` (no `index_repository`). M010/M012 Define oracles unchanged.
 
 ## old → new
 
-`write_wal` body → `write_frames` + `sync_all` + log-sync counter. `encoded_log` / sidecar writers / `sync_dir` / `json_err` are `pub(crate)` for `persist_append.rs`. Bench `expected` keys 28→29 (`persist_append.n`). Factor-1 retract live_count allows the 1% append tail. No FF5/FF6/M010–M017 assertion edits.
+`from_snapshot` interns log `Op::Define` names not in `snap.dict_strings` (log order) then still drops Defines from the fold log. `open` passes unfiltered events. `attach` last `EventId`/frame_len come from the on-disk jsonl tail (Define-safe). Checkpoint abort: thread-local `replace_snapshot(..., false)`. **D-01 deviation:** `hydrate.rs` `from_snapshot` only, for this gap.
 
 ## Bench (D-10)
 
-Interleaved `bd5fa4b` vs HEAD, 4 pairs, `KUTHA_BENCH_N=10000`, own target dirs. Medians: ingest_plain.n 119.7M → 112.1M (−6.4%); as_of.n 305280 → 300691 (−1.5%). **No ≥10% median regression.** HEAD persist.n median 5.940s vs persist_append.n 48.9 ms.
+Original vs `bd5fa4b`: ingest −6.4%, as_of −1.5%. Re-run after open-path fix (4 interleaved pairs, `tmp/p52-*-target-gap`): ingest 111.4M → 107.6M (−3.4%); as_of 288188 → 284030 (−1.4%). **No ≥10% median regression.** HEAD persist.n median 5.96 s vs persist_append.n 48.7 ms.
 
-## Residual (D-12)
+## Residual (D-12) + mutations
 
-WAL still duplicates jsonl until S06 segments. `append` is single-writer (no lock file). Acknowledged-vs-unacknowledged is `append` `Ok`, not the quantum-outcome sidecar (COMMIT-01). In-memory tail check uses `durable_graph_count` because `encoded_log` re-prefixes `stable_define`; file guard is lengths + last `EventId` from the end. Full `persist` still rewrites.
+WAL duplicates jsonl (S06). Single-writer. `durable_graph_count` tracks encoded non-Define prefix; file guard is lengths + last on-disk `EventId`. Mutations (c)(d)(i)(f) killed in-tree then `git checkout -- persist_append.rs` (clean).
