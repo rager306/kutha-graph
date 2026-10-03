@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Product: ingest Horn-visit RED oracle (M017 S04)
+
+### Product
+
+### Added
+
+- `GraphFold` `horn_examine` counter (`serde skip`, not fingerprint) with `reset_horn_examine_count` / `horn_examine_count`. `live_horns` and `search_at` bump once per row. Integration oracle `extra_relatedto_horn_visits_constant_in_n` in `crates/kutha-runtime/tests/m017_ingest_scaling.rs` (RED on HEAD: visits grow with N). No ingest-path repair.
+
+### Trajectory
+
+- Lease and honeycomb cells unchanged. Active Milestone **M017**, Active Slice **S04**.
+
 ## 2026-10-03 — Product: KNOWN-04 fixture hygiene
 
 ### Product

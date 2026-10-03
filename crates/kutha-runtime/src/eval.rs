@@ -144,6 +144,7 @@ impl Runtime {
         };
         let mut out = Vec::new();
         for f in self.fold.facts() {
+            self.fold.horn_examine.bump();
             if f.relation != rel || !f.is_live_at(u64::MAX, vt) {
                 continue;
             }
@@ -302,6 +303,7 @@ fn search_at(
     let prem = &premises[idx];
     let rel = rt.dict.id(&prem.relation)?;
     for f in rt.fold.live_facts_at(tt, vt) {
+        rt.fold.horn_examine.bump();
         if f.relation != rel {
             continue;
         }

@@ -232,6 +232,9 @@ pub struct GraphFold {
     /// Hot-path examine count. Not SoT; skipped in snapshot JSON.
     #[serde(skip)]
     pub(crate) hot_examine: ExamineCounter,
+    /// Horn-eval row visits (`live_horns` / `search_at`). Not SoT; skipped in snapshot JSON.
+    #[serde(skip)]
+    pub(crate) horn_examine: ExamineCounter,
     /// Ingest index policy. Pinned in snapshot JSON (REPL-04); not fingerprint input.
     pub(crate) index_mode: FoldIndexMode,
     /// Whether secondary maps match `facts` (Lazy may leave this false).
@@ -323,6 +326,7 @@ impl GraphFold {
             facts: Vec::new(),
             next_seq: 0,
             hot_examine: ExamineCounter::default(),
+            horn_examine: ExamineCounter::default(),
             index_mode,
             hot_maps_warm: true,
             vt_by_from: BTreeMap::new(),
@@ -433,6 +437,18 @@ impl GraphFold {
     /// Facts (or index slots) considered for liveness on the last hot reads since reset.
     pub fn hot_examine_count(&self) -> u64 {
         self.hot_examine.get()
+    }
+
+    /// Reset Horn-eval row visit counter (integration tests; not fingerprint input).
+    #[doc(hidden)]
+    pub fn reset_horn_examine_count(&self) {
+        self.horn_examine.reset();
+    }
+
+    /// `live_horns` / `search_at` rows visited since reset (integration tests).
+    #[doc(hidden)]
+    pub fn horn_examine_count(&self) -> u64 {
+        self.horn_examine.get()
     }
 
     /// Hint capacity for ingest index leases (bulk load / bench). Not SoT.
