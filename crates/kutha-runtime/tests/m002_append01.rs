@@ -23,6 +23,7 @@ fn persist_dir(label: &str) -> PathBuf {
         .join(format!("p52-store-{label}-{nanos}"));
     let _ = fs::remove_dir_all(&dir);
     fs::create_dir_all(&dir).unwrap();
+    store::ensure_legacy_dir(&dir).unwrap();
     dir
 }
 

@@ -2,6 +2,7 @@
 
 use crate::hydrate::outcomes_from_events;
 use crate::quantum::Runtime;
+use crate::segment::{self, SealedMeta, HEADER_LEN, MANIFEST_REL};
 use crate::store::{
     encoded_log, json_err, replace_snapshot, sync_dir, write_justifications, write_outcomes,
     write_terms, EVENTS_JSONL, EVENTS_WAL,
@@ -49,11 +50,19 @@ pub struct Persister {
     last_graph_id: Option<EventId>,
     last_frame_len: u64,
     events_since_checkpoint: usize,
+    segmented: bool,
+    active_name: String,
+    active_events: usize,
+    active_first: Option<EventId>,
+    chain: [u8; 32],
 }
 
 impl Persister {
     /// Attach to `dir` after a full persist or open.
     pub fn attach(runtime: &Runtime, dir: &Path) -> std::io::Result<Self> {
+        if dir.join(MANIFEST_REL).exists() {
+            return attach_segmented(runtime, dir);
+        }
         let jsonl_path = dir.join(EVENTS_JSONL);
         let wal_path = dir.join(EVENTS_WAL);
         let jsonl_len = fs::metadata(&jsonl_path)?.len();
@@ -94,6 +103,11 @@ impl Persister {
             last_graph_id: graph.last().map(|e| e.id),
             last_frame_len,
             events_since_checkpoint: 0,
+            segmented: false,
+            active_name: String::new(),
+            active_events: 0,
+            active_first: None,
+            chain: [0u8; 32],
         })
     }
 
@@ -128,38 +142,42 @@ impl Persister {
         let n = write_n.min(new_events.len());
         let batch = &new_events[..n];
 
-        let jsonl_path = self.dir.join(EVENTS_JSONL);
-        let wal_path = self.dir.join(EVENTS_WAL);
+        if self.segmented {
+            self.append_segmented(batch, stop_after)?;
+        } else {
+            let jsonl_path = self.dir.join(EVENTS_JSONL);
+            let wal_path = self.dir.join(EVENTS_WAL);
 
-        {
-            let mut f = OpenOptions::new()
-                .create(true)
-                .append(true)
-                .open(&jsonl_path)?;
-            for e in batch {
-                serde_json::to_writer(&mut f, e).map_err(json_err)?;
-                f.write_all(b"\n")?;
+            {
+                let mut f = OpenOptions::new()
+                    .create(true)
+                    .append(true)
+                    .open(&jsonl_path)?;
+                for e in batch {
+                    serde_json::to_writer(&mut f, e).map_err(json_err)?;
+                    f.write_all(b"\n")?;
+                }
             }
-        }
-        after_step(stop_after, AppendStep::Jsonl)?;
+            after_step(stop_after, AppendStep::Jsonl)?;
 
-        {
-            let mut f = OpenOptions::new()
-                .create(true)
-                .append(true)
-                .open(&wal_path)?;
-            wal::write_frames(&mut f, batch)?;
-            after_step(stop_after, AppendStep::WalWrite)?;
-            f.sync_data()?;
-            wal::note_log_file_sync();
+            {
+                let mut f = OpenOptions::new()
+                    .create(true)
+                    .append(true)
+                    .open(&wal_path)?;
+                wal::write_frames(&mut f, batch)?;
+                after_step(stop_after, AppendStep::WalWrite)?;
+                f.sync_data()?;
+                wal::note_log_file_sync();
+            }
+            after_step(stop_after, AppendStep::WalSync)?;
         }
-        after_step(stop_after, AppendStep::WalSync)?;
 
         if stop_after_events.is_some_and(|want| want < new_events.len()) {
             return Err(injected_event_failpoint());
         }
 
-        remember_appended(self, runtime, batch, &jsonl_path, &wal_path)?;
+        remember_appended(self, runtime, batch)?;
 
         if self.events_since_checkpoint >= CHECKPOINT_EVERY {
             self.checkpoint_until(runtime, stop_after)?;
@@ -172,12 +190,14 @@ impl Persister {
         runtime: &Runtime,
         stop_after: Option<AppendStep>,
     ) -> std::io::Result<()> {
-        {
-            let f = OpenOptions::new()
-                .write(true)
-                .open(self.dir.join(EVENTS_JSONL))?;
-            f.sync_data()?;
-            wal::note_log_file_sync();
+        if !self.segmented {
+            {
+                let f = OpenOptions::new()
+                    .write(true)
+                    .open(self.dir.join(EVENTS_JSONL))?;
+                f.sync_data()?;
+                wal::note_log_file_sync();
+            }
         }
         after_step(stop_after, AppendStep::CheckpointJsonl)?;
 
@@ -202,6 +222,25 @@ impl Persister {
     }
 
     fn tail_guard(&self) -> std::io::Result<()> {
+        if self.segmented {
+            let path = self.dir.join(&self.active_name);
+            let len = fs::metadata(&path)?.len();
+            if len != self.wal_len {
+                return Err(invalid(
+                    "log file length mismatch (recover with full persist)",
+                ));
+            }
+            if self.active_events == 0 {
+                return Ok(());
+            }
+            let wid = wal::last_event_id_at_end(&path, self.wal_len, self.last_frame_len)?;
+            if wid != self.last_id {
+                return Err(invalid(
+                    "log tail EventId mismatch (recover with full persist)",
+                ));
+            }
+            return Ok(());
+        }
         let jsonl_path = self.dir.join(EVENTS_JSONL);
         let wal_path = self.dir.join(EVENTS_WAL);
         let jsonl_len = fs::metadata(&jsonl_path)?.len();
@@ -220,14 +259,170 @@ impl Persister {
         }
         Ok(())
     }
+
+    fn needs_rollover(&self, next_frame_len: u64) -> bool {
+        if self.active_events == 0 {
+            return false;
+        }
+        self.active_events >= segment::effective_max_events()
+            || self.wal_len.saturating_add(next_frame_len) > segment::effective_max_bytes()
+    }
+
+    fn append_segmented(
+        &mut self,
+        batch: &[Event],
+        stop_after: Option<AppendStep>,
+    ) -> std::io::Result<()> {
+        let mut i = 0usize;
+        let mut f = OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(self.dir.join(&self.active_name))?;
+        while i < batch.len() {
+            let frame = wal::frame_bytes(&batch[i])?;
+            let flen = frame.len() as u64;
+            if self.needs_rollover(flen) {
+                drop(f);
+                self.rollover(stop_after)?;
+                f = OpenOptions::new()
+                    .create(true)
+                    .append(true)
+                    .open(self.dir.join(&self.active_name))?;
+                continue;
+            }
+            f.write_all(&frame)?;
+            self.chain = segment::chain_absorb(self.chain, &frame);
+            if self.active_events == 0 {
+                self.active_first = Some(batch[i].id);
+            }
+            self.active_events = self.active_events.saturating_add(1);
+            self.wal_len = self.wal_len.saturating_add(flen);
+            self.last_id = batch[i].id;
+            self.last_frame_len = flen;
+            i += 1;
+        }
+        after_step(stop_after, AppendStep::WalWrite)?;
+        f.sync_data()?;
+        wal::note_log_file_sync();
+        after_step(stop_after, AppendStep::WalSync)?;
+        Ok(())
+    }
+
+    fn rollover(&mut self, stop_after: Option<AppendStep>) -> std::io::Result<()> {
+        if self.active_events == 0 {
+            return Err(invalid("cannot seal an empty active segment"));
+        }
+        let first = self
+            .active_first
+            .ok_or_else(|| invalid("active segment missing first EventId"))?;
+        let last = self.last_id;
+        let body_len = self.wal_len;
+        let chain = segment::hex32(self.chain);
+        let trailer =
+            segment::seal_frame(self.active_events as u64, first, last, body_len, &chain)?;
+        {
+            let mut f = OpenOptions::new()
+                .append(true)
+                .open(self.dir.join(&self.active_name))?;
+            f.write_all(&trailer)?;
+            f.sync_data()?;
+            wal::note_log_file_sync();
+        }
+        after_step(stop_after, AppendStep::RolloverTrailer)?;
+
+        let old_name = self.active_name.clone();
+        let old_seq = segment::parse_seg_seq(&old_name)?;
+        let new_name = segment::segment_name(old_seq.saturating_add(1));
+        {
+            let mut f = File::create(self.dir.join(&new_name))?;
+            segment::write_header(&mut f)?;
+            f.sync_data()?;
+            wal::note_log_file_sync();
+        }
+        after_step(stop_after, AppendStep::RolloverNewHeader)?;
+
+        let mut manifest = segment::read_manifest(&self.dir)?;
+        manifest.sealed.push(SealedMeta {
+            name: old_name,
+            first,
+            last,
+            count: self.active_events as u64,
+            bytes: body_len.saturating_add(trailer.len() as u64),
+            chain,
+        });
+        manifest.active = new_name.clone();
+        segment::write_manifest(&self.dir, &manifest)?;
+        after_step(stop_after, AppendStep::RolloverManifest)?;
+
+        self.active_name = new_name;
+        self.wal_len = HEADER_LEN;
+        self.active_events = 0;
+        self.active_first = None;
+        self.chain = [0u8; 32];
+        Ok(())
+    }
+}
+
+fn attach_segmented(runtime: &Runtime, dir: &Path) -> std::io::Result<Persister> {
+    let manifest = segment::read_manifest(dir)?;
+    let active_path = dir.join(&manifest.active);
+    let encoded = encoded_log(runtime);
+    let last_event = encoded
+        .last()
+        .ok_or_else(|| invalid("attach requires a persisted encoded log (dictionary or events)"))?;
+    let last_id = last_event.id;
+    let last_frame_len = wal::frame_bytes(last_event)?.len() as u64;
+    let tip = segment::inspect_active(&active_path)?;
+    let mut sealed_n = 0usize;
+    for s in &manifest.sealed {
+        sealed_n = sealed_n.saturating_add(s.count as usize);
+    }
+    if sealed_n.saturating_add(tip.events) != encoded.len() {
+        return Err(invalid(
+            "segment event count disagrees with runtime encoded log (recover with full persist)",
+        ));
+    }
+    if tip.events > 0 {
+        let wid = wal::last_event_id_at_end(&active_path, tip.file_len, last_frame_len)?;
+        if last_id != wid {
+            return Err(invalid(
+                "active last EventId disagrees (recover with full persist)",
+            ));
+        }
+    } else if let Some(s) = manifest.sealed.last() {
+        if s.last != last_id {
+            return Err(invalid(
+                "sealed last EventId disagrees (recover with full persist)",
+            ));
+        }
+    }
+    let graph: Vec<&Event> = encoded
+        .iter()
+        .filter(|e| !matches!(e.op, Op::Define { .. }))
+        .collect();
+    Ok(Persister {
+        dir: dir.to_path_buf(),
+        durable_count: encoded.len(),
+        durable_graph_count: graph.len(),
+        dict_len: runtime.dictionary().strings().len(),
+        jsonl_len: 0,
+        wal_len: tip.file_len,
+        last_id,
+        last_graph_id: graph.last().map(|e| e.id),
+        last_frame_len,
+        events_since_checkpoint: 0,
+        segmented: true,
+        active_name: manifest.active,
+        active_events: tip.events,
+        active_first: tip.first_id,
+        chain: tip.chain,
+    })
 }
 
 fn remember_appended(
     p: &mut Persister,
     runtime: &Runtime,
     new_events: &[Event],
-    jsonl_path: &Path,
-    wal_path: &Path,
 ) -> std::io::Result<()> {
     let last = new_events
         .last()
@@ -246,8 +441,13 @@ fn remember_appended(
         .filter(|e| !matches!(e.op, Op::Define { .. }))
         .count();
     p.dict_len = runtime.dictionary().strings().len();
-    p.jsonl_len = fs::metadata(jsonl_path)?.len();
-    p.wal_len = fs::metadata(wal_path)?.len();
+    if p.segmented {
+        p.wal_len = fs::metadata(p.dir.join(&p.active_name))?.len();
+        p.jsonl_len = 0;
+    } else {
+        p.jsonl_len = fs::metadata(p.dir.join(EVENTS_JSONL))?.len();
+        p.wal_len = fs::metadata(p.dir.join(EVENTS_WAL))?.len();
+    }
     p.events_since_checkpoint += new_events.len();
     Ok(())
 }

@@ -24,6 +24,7 @@ fn persist_dir(label: &str) -> PathBuf {
         .join(format!("p42-store-{label}-{nanos}"));
     let _ = fs::remove_dir_all(&dir);
     fs::create_dir_all(&dir).unwrap();
+    store::ensure_legacy_dir(&dir).unwrap();
     dir
 }
 
@@ -389,5 +390,8 @@ fn known_at_equals_is_known_at_filter() {
         })
         .map(|f| (f.subject, f.relation, f.object()))
         .collect();
-    assert_eq!(known, brute, "KNOWN-03: known_at equals is_known_at + product keep");
+    assert_eq!(
+        known, brute,
+        "KNOWN-03: known_at equals is_known_at + product keep"
+    );
 }

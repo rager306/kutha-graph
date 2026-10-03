@@ -129,10 +129,16 @@ fn persist_until(
 ) -> std::io::Result<()> {
     fs::create_dir_all(dir)?;
     let events = encoded_log(runtime);
-    replace_events_wal(dir, &events, true)?;
-    after_persist_step(stop_after, PersistStep::Wal)?;
-    replace_events_jsonl(dir, &events)?;
-    after_persist_step(stop_after, PersistStep::Jsonl)?;
+    if writes_legacy_layout(dir) {
+        replace_events_wal(dir, &events, true)?;
+        after_persist_step(stop_after, PersistStep::Wal)?;
+        replace_events_jsonl(dir, &events)?;
+        after_persist_step(stop_after, PersistStep::Jsonl)?;
+    } else {
+        crate::segment::persist_log(dir, &events)?;
+        after_persist_step(stop_after, PersistStep::Wal)?;
+        after_persist_step(stop_after, PersistStep::Jsonl)?;
+    }
     write_terms(dir, runtime.dictionary().strings())?;
     after_persist_step(stop_after, PersistStep::Terms)?;
     replace_snapshot(dir, &runtime.snapshot(), true)?;
@@ -151,6 +157,13 @@ fn persist_until(
         sync_dir(dir)?;
     }
     Ok(())
+}
+
+/// Legacy writer: `events.jsonl` or `events.wal` present and no `manifest.json`.
+/// Empty dir (none of the three) and segmented dirs write KUTHASEG.
+fn writes_legacy_layout(dir: &Path) -> bool {
+    !dir.join(crate::segment::MANIFEST_REL).exists()
+        && (dir.join(EVENTS_JSONL).exists() || dir.join(EVENTS_WAL).exists())
 }
 
 pub(crate) const EVENTS_JSONL: &str = "events.jsonl";

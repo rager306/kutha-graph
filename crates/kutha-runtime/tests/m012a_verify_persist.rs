@@ -87,6 +87,7 @@ fn open_rejects_tampered_snapshot() {
 fn persist_replaces_events_jsonl_atomically() {
     let rt = seed_runtime();
     let dir = temp_dir("atomic");
+    store::ensure_legacy_dir(&dir).unwrap();
     store::persist(&rt, &dir).unwrap();
 
     let jsonl = dir.join("events.jsonl");
@@ -131,6 +132,7 @@ fn define_name_ids(path: &Path) -> Vec<(String, EventId)> {
 fn define_ids_stable_across_persist_open() {
     let rt = seed_runtime();
     let dir = temp_dir("define-ids");
+    store::ensure_legacy_dir(&dir).unwrap();
     store::persist(&rt, &dir).unwrap();
     let jsonl = dir.join("events.jsonl");
     let first = define_name_ids(&jsonl);

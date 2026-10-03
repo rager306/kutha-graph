@@ -201,17 +201,6 @@ fn persist_expect_segmented(rt: &Runtime, dir: &Path) {
     assert_no_legacy_log(dir);
 }
 
-fn copy_store(src: &Path, dst: &Path) {
-    let _ = fs::remove_dir_all(dst);
-    fs::create_dir_all(dst).unwrap();
-    for ent in fs::read_dir(src).unwrap() {
-        let ent = ent.unwrap();
-        if ent.file_type().unwrap().is_file() {
-            fs::copy(ent.path(), dst.join(ent.file_name())).unwrap();
-        }
-    }
-}
-
 fn snap_log_offset(dir: &Path) -> usize {
     let snap: kutha_runtime::Snapshot =
         serde_json::from_reader(fs::File::open(dir.join("snapshot.json")).unwrap()).unwrap();
@@ -553,6 +542,7 @@ fn manifest_wins_over_disagreeing_jsonl() {
 fn legacy_dir_still_opens_and_appends_as_before() {
     let mut rt = seed_runtime();
     let dir = persist_dir("legacy");
+    store::ensure_legacy_dir(&dir).unwrap();
     store::persist(&rt, &dir).unwrap();
     assert!(
         !manifest_path(&dir).exists(),
@@ -701,7 +691,10 @@ fn append_nothing_new_does_no_io_on_segmented() {
     let mut p = store::Persister::attach(&rt, &dir).unwrap();
     let sync_before = store::persist_log_sync_count();
     p.append(&rt).unwrap();
-    assert_eq!(store::persist_log_sync_count().saturating_sub(sync_before), 0);
+    assert_eq!(
+        store::persist_log_sync_count().saturating_sub(sync_before),
+        0
+    );
     assert_eq!(fs::read(&active).unwrap(), before);
     assert_no_legacy_log(&dir);
 
@@ -781,18 +774,21 @@ fn tail_guard_same_length_different_last_record_writes_nothing() {
 #[test]
 fn rollover_crash_matrix_reopens_to_prefix() {
     let _limits = tiny_limits();
-    let mut rt = seed_runtime();
-    let template = persist_dir("roll-crash-a");
-    overlay_segmented(&rt, &template);
-    let committed = log_ids(&rt);
     let steps = [
         store::AppendStep::RolloverTrailer,
         store::AppendStep::RolloverNewHeader,
         store::AppendStep::RolloverManifest,
     ];
     for step in steps {
+        let mut rt = seed_runtime();
         let dir = persist_dir(&format!("roll-crash-{step:?}"));
-        copy_store(&template, &dir);
+        overlay_segmented(&rt, &dir);
+        let committed = log_ids(&rt);
+        let active_before = active_path(&dir)
+            .file_name()
+            .expect("active")
+            .to_string_lossy()
+            .into_owned();
         let mut p = store::Persister::attach(&rt, &dir).unwrap();
         emit_one_more(&mut rt, T_NEW);
         store::append_with_failpoint(&mut p, &rt, step)
@@ -815,20 +811,14 @@ fn rollover_crash_matrix_reopens_to_prefix() {
         if step == store::AppendStep::RolloverNewHeader {
             let man: serde_json::Value =
                 serde_json::from_str(&fs::read_to_string(manifest_path(&dir)).unwrap()).unwrap();
-            let template_man: serde_json::Value =
-                serde_json::from_str(&fs::read_to_string(manifest_path(&template)).unwrap())
-                    .unwrap();
             assert_eq!(
-                man["active"], template_man["active"],
+                man["active"].as_str(),
+                Some(active_before.as_str()),
                 "manifest must still name the old active after RolloverNewHeader"
             );
         }
         let _ = fs::remove_dir_all(&dir);
-        rt = seed_runtime();
-        overlay_segmented(&rt, &template);
     }
-
-    let _ = fs::remove_dir_all(&template);
 }
 
 #[test]
@@ -837,21 +827,37 @@ fn rollover_manifest_flip_fsyncs_dir() {
     let mut rt = seed_runtime();
     let dir = persist_dir("roll-fsync");
     overlay_segmented(&rt, &dir);
+    let old_active = active_path(&dir);
+    let old_name = old_active
+        .file_name()
+        .expect("active name")
+        .to_string_lossy()
+        .into_owned();
+    let old_len = fs::metadata(&old_active).unwrap().len();
     let mut p = store::Persister::attach(&rt, &dir).unwrap();
     emit_one_more(&mut rt, T_NEW);
     let before = store::persist_dir_fsync_count();
     p.append(&rt).unwrap();
     let delta = store::persist_dir_fsync_count().saturating_sub(before);
+    assert!(delta >= 1, "manifest flip must dir-fsync; count={delta}");
+    let newly = dir.join(&old_name);
+    let sealed = fs::read(&newly).unwrap();
     assert!(
-        delta >= 1,
-        "manifest flip must dir-fsync; count={delta}"
+        sealed.len() as u64 > old_len,
+        "rollover must append a seal trailer without rewriting the prefix"
     );
-    let sealed = fs::read(first_sealed_path(&dir)).unwrap();
     let ranges = event_frame_ranges(&sealed);
     let trailer_off = ranges.last().map(|r| r.1).unwrap_or(12);
     assert!(
-        is_seal_payload(&sealed[trailer_off + 8..]) || sealed.len() > trailer_off,
-        "rollover must write a seal trailer"
+        trailer_off + 8 < sealed.len() && is_seal_payload(&sealed[trailer_off + 8..]),
+        "rollover must write a seal trailer on the former active"
+    );
+    assert_ne!(
+        active_path(&dir)
+            .file_name()
+            .map(|n| n.to_string_lossy().into_owned()),
+        Some(old_name),
+        "manifest active must advance"
     );
 
     let _ = fs::remove_dir_all(&dir);

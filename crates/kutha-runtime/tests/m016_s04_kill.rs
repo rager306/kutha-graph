@@ -113,6 +113,7 @@ fn empty_pin_inverse_fails_replay_fingerprint_unchanged() {
             .unwrap()
             .as_nanos()
     ));
+    store::ensure_legacy_dir(&dir).unwrap();
     store::persist(&rt, &dir).unwrap();
     let _ = fs::remove_file(dir.join("events.wal"));
     let jsonl = dir.join("events.jsonl");

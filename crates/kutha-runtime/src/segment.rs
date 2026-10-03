@@ -45,14 +45,16 @@ pub fn reset_test_segment_limits() {
     set_test_segment_limits(None, None);
 }
 
-#[allow(dead_code)] // persist_log / Persister rollover in 54-02 GREEN
 pub(crate) fn effective_max_bytes() -> u64 {
-    TEST_MAX_BYTES.with(|c| c.get()).unwrap_or(SEGMENT_MAX_BYTES)
+    TEST_MAX_BYTES
+        .with(|c| c.get())
+        .unwrap_or(SEGMENT_MAX_BYTES)
 }
 
-#[allow(dead_code)] // persist_log / Persister rollover in 54-02 GREEN
 pub(crate) fn effective_max_events() -> usize {
-    TEST_MAX_EVENTS.with(|c| c.get()).unwrap_or(SEGMENT_MAX_EVENTS)
+    TEST_MAX_EVENTS
+        .with(|c| c.get())
+        .unwrap_or(SEGMENT_MAX_EVENTS)
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -86,7 +88,7 @@ fn invalid(msg: impl Into<String>) -> std::io::Error {
     std::io::Error::new(std::io::ErrorKind::InvalidData, msg.into())
 }
 
-fn hex32(digest: [u8; 32]) -> String {
+pub(crate) fn hex32(digest: [u8; 32]) -> String {
     let mut out = String::with_capacity(64);
     for b in digest {
         out.push_str(&format!("{b:02x}"));
@@ -94,7 +96,7 @@ fn hex32(digest: [u8; 32]) -> String {
     out
 }
 
-fn chain_absorb(h: [u8; 32], frame: &[u8]) -> [u8; 32] {
+pub(crate) fn chain_absorb(h: [u8; 32], frame: &[u8]) -> [u8; 32] {
     let mut hasher = Sha256::new();
     hasher.update(h);
     hasher.update(frame);
@@ -116,7 +118,7 @@ pub(crate) fn segment_name(seq: u32) -> String {
     format!("seg-{seq:08}.log")
 }
 
-fn write_header(f: &mut impl Write) -> std::io::Result<()> {
+pub(crate) fn write_header(f: &mut impl Write) -> std::io::Result<()> {
     f.write_all(MAGIC)?;
     f.write_all(&VERSION.to_le_bytes())?;
     Ok(())
@@ -140,7 +142,7 @@ fn seal_payload(
     .map_err(json_err)
 }
 
-fn seal_frame(
+pub(crate) fn seal_frame(
     n: u64,
     first: EventId,
     last: EventId,
@@ -393,7 +395,7 @@ fn scan_segment(bytes: &[u8], sealed: bool) -> std::io::Result<Scan> {
     })
 }
 
-fn parse_seg_seq(name: &str) -> std::io::Result<u32> {
+pub(crate) fn parse_seg_seq(name: &str) -> std::io::Result<u32> {
     let rest = name
         .strip_prefix("seg-")
         .and_then(|s| s.strip_suffix(".log"))
@@ -405,7 +407,7 @@ fn parse_seg_seq(name: &str) -> std::io::Result<u32> {
         .map_err(|_| invalid(format!("invalid segment name {name}")))
 }
 
-fn read_manifest(dir: &Path) -> std::io::Result<Manifest> {
+pub(crate) fn read_manifest(dir: &Path) -> std::io::Result<Manifest> {
     let f = File::open(dir.join(MANIFEST_REL))?;
     let m: Manifest = serde_json::from_reader(f).map_err(json_err)?;
     if m.v != 1 {
@@ -491,4 +493,77 @@ pub(crate) fn load_events(dir: &Path) -> std::io::Result<Vec<Event>> {
     let active_evs = read_active(&dir.join(&manifest.active))?;
     all.extend(active_evs);
     Ok(all)
+}
+
+pub(crate) struct ActiveTip {
+    pub events: usize,
+    pub chain: [u8; 32],
+    pub first_id: Option<EventId>,
+    pub file_len: u64,
+}
+
+pub(crate) fn inspect_active(path: &Path) -> std::io::Result<ActiveTip> {
+    let bytes = fs::read(path)?;
+    let scan = scan_segment(&bytes, false)?;
+    Ok(ActiveTip {
+        events: scan.events.len(),
+        chain: scan.chain,
+        first_id: scan.events.first().map(|e| e.id),
+        file_len: bytes.len() as u64,
+    })
+}
+
+fn split_events(events: &[Event]) -> std::io::Result<Vec<Vec<Event>>> {
+    if events.is_empty() {
+        return Ok(vec![Vec::new()]);
+    }
+    let max_bytes = effective_max_bytes();
+    let max_events = effective_max_events();
+    let mut chunks = Vec::new();
+    let mut cur = Vec::new();
+    let mut bytes = HEADER_LEN;
+    for e in events {
+        let flen = wal::frame_bytes(e)?.len() as u64;
+        let overflow =
+            !cur.is_empty() && (cur.len() >= max_events || bytes.saturating_add(flen) > max_bytes);
+        if overflow {
+            chunks.push(std::mem::take(&mut cur));
+            bytes = HEADER_LEN;
+        }
+        cur.push(e.clone());
+        bytes = bytes.saturating_add(flen);
+    }
+    if !cur.is_empty() {
+        chunks.push(cur);
+    }
+    Ok(chunks)
+}
+
+/// Rewrite `dir` as sealed segments + one active + `manifest.json`. Does not touch jsonl/WAL.
+pub(crate) fn persist_log(dir: &Path, events: &[Event]) -> std::io::Result<()> {
+    fs::create_dir_all(dir)?;
+    let chunks = split_events(events)?;
+    let mut seq = 1u32;
+    let mut sealed = Vec::new();
+    let last_i = chunks.len().saturating_sub(1);
+    let mut active = segment_name(seq);
+    for (i, chunk) in chunks.iter().enumerate() {
+        let name = segment_name(seq);
+        seq = seq.saturating_add(1);
+        let is_sealed = i != last_i;
+        if let Some(meta) = write_segment_file(&dir.join(&name), chunk, is_sealed)? {
+            sealed.push(meta);
+        }
+        if i == last_i {
+            active = name;
+        }
+    }
+    write_manifest(
+        dir,
+        &Manifest {
+            v: 1,
+            sealed,
+            active,
+        },
+    )
 }

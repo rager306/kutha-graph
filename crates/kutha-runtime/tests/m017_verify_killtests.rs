@@ -1,11 +1,7 @@
 //! Independent Phase 42 kill-tests (verifier). Public API only; not the executor oracles.
 
-use kutha_common::{
-    Event, EventId, Op, OutcomeDisposition, TransactionTime, ValidTime,
-};
-use kutha_runtime::{
-    store, FoldIndexMode, Justification, PersistedQuantumOutcome, Runtime,
-};
+use kutha_common::{Event, EventId, Op, OutcomeDisposition, TransactionTime, ValidTime};
+use kutha_runtime::{store, FoldIndexMode, Justification, PersistedQuantumOutcome, Runtime};
 use serde_json::{json, Value};
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, Write};
@@ -50,6 +46,7 @@ fn temp_dir(label: &str) -> PathBuf {
     let dir = std::env::temp_dir().join(format!("kutha-m017-verify-{label}-{}", uuid_like()));
     let _ = fs::remove_dir_all(&dir);
     fs::create_dir_all(&dir).unwrap();
+    store::ensure_legacy_dir(&dir).unwrap();
     dir
 }
 
@@ -97,11 +94,7 @@ fn load_snapshot(dir: &Path) -> Value {
 }
 
 fn save_snapshot(dir: &Path, snap: &Value) {
-    fs::write(
-        dir.join("snapshot.json"),
-        serde_json::to_vec(snap).unwrap(),
-    )
-    .unwrap();
+    fs::write(dir.join("snapshot.json"), serde_json::to_vec(snap).unwrap()).unwrap();
 }
 
 fn tamper_snapshot_wall(dir: &Path, from: u64, to: u64) {
@@ -111,9 +104,7 @@ fn tamper_snapshot_wall(dir: &Path, from: u64, to: u64) {
         .and_then(|f| f.get_mut("tt_anchors"))
         .and_then(|a| a.as_object_mut())
         .expect("fold.tt_anchors");
-    let val = anchors
-        .remove(&from.to_string())
-        .expect("anchor wall key");
+    let val = anchors.remove(&from.to_string()).expect("anchor wall key");
     anchors.insert(to.to_string(), val);
     save_snapshot(dir, &snap);
 }
@@ -152,11 +143,7 @@ fn tamper_jsonl_anchor_wall(dir: &Path, from: u64, to: u64) {
 fn assert_open_err(dir: &Path, why: &str) {
     match store::open(dir) {
         Ok(_) => panic!("{why}: store::open must Err"),
-        Err(e) => assert_eq!(
-            e.kind(),
-            std::io::ErrorKind::InvalidData,
-            "{why}: {e}"
-        ),
+        Err(e) => assert_eq!(e.kind(), std::io::ErrorKind::InvalidData, "{why}: {e}"),
     }
     match Runtime::open(dir) {
         Ok(_) => panic!("{why}: Runtime::open must Err"),
@@ -231,7 +218,10 @@ fn b_truncated_wal_never_yields_shorter_log() {
         .filter(|e| !matches!(e.op, Op::Define { .. }))
         .map(|e| e.id)
         .collect();
-    assert!(jsonl_ids.len() >= 2, "jsonl graph must keep product+anchor events");
+    assert!(
+        jsonl_ids.len() >= 2,
+        "jsonl graph must keep product+anchor events"
+    );
     let wal = dir.join("events.wal");
     let full = fs::read(&wal).unwrap();
     assert!(full.len() > 16, "WAL must contain framed records");
@@ -391,10 +381,7 @@ fn g_closed_vt_as_known_on_differs_live_at_max() {
         })
         .expect("2015 anchor");
     let known = rt.as_known_on(2015).expect("TT-only cut");
-    assert!(
-        known.contains(&statute),
-        "as_known_on ignores closed VT"
-    );
+    assert!(known.contains(&statute), "as_known_on ignores closed VT");
     let live_tt_max = rt.live_at(tt, ValidTime::MAX);
     assert!(
         !live_tt_max.contains(&statute),
