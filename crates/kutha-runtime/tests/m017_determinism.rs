@@ -219,3 +219,43 @@ fn assert_replay_and_views(seed: u32, persist_label: &str) {
 fn det01_seed1_replay_eager_lazy_persist_open() {
     assert_replay_and_views(SEEDS[0], "s1");
 }
+
+#[test]
+fn det01_all_seeds_replay_eager_lazy_persist_open() {
+    for seed in SEEDS {
+        assert_replay_and_views(seed, &format!("s{seed}"));
+    }
+}
+
+#[test]
+fn det01_delivery_key_retry_identical_log() {
+    let mut rt = Runtime::with_index_mode(32, FoldIndexMode::Eager);
+    let s = rt.intern("S-retry");
+    let rel = rt.intern("relatedTo");
+    let o = rt.intern("O-retry");
+    let key = "det01-retry".to_string();
+    let op = Op::Assert {
+        subject: s,
+        relation: rel,
+        object: o,
+        valid_from: 2010,
+        valid_to: None,
+        claim: None,
+        delivery_key: Some(key),
+        polarity: None,
+    };
+    rt.emit(op.clone()).unwrap();
+    let n = rt.log().len();
+    let fp = rt.fold().fingerprint();
+    rt.emit(op).unwrap();
+    assert_eq!(n, rt.log().len(), "delivery-key retry must not append");
+    assert_eq!(
+        fp,
+        rt.fold().fingerprint(),
+        "delivery-key retry must leave replay fingerprint unchanged"
+    );
+    assert_eq!(
+        GraphFold::replay(rt.log().as_slice()).fingerprint(),
+        rt.fold().fingerprint()
+    );
+}

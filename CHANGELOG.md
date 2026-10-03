@@ -10,7 +10,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Added
 
-- Seeded LCG properties in `crates/kutha-runtime/tests/m017_determinism.rs`: `replay(log).fingerprint == fold.fingerprint`, Eager vs Lazy equality on sorted `as_of` / `as_known_on` / `live_at` triples (not fingerprints), persist+open round trip under `tmp/p43-01-*`, and identical-log delivery-key retry. No new Cargo test crates.
+- Seeded LCG properties in `crates/kutha-runtime/tests/m017_determinism.rs`: all listed seeds (`1, 7, 13, 42, 99, 12345, 0xA5A5_A5A5, 0xC0FFEE`, N=24) prove `replay(log).fingerprint == fold.fingerprint`, Eager vs Lazy equality on sorted `as_of` / `as_known_on` / `live_at` triples (not fingerprints), persist+open round trip under `tmp/p43-01-*`, and identical-log delivery-key retry. No new Cargo test crates.
 
 ### Trajectory
 
