@@ -111,9 +111,43 @@ fn manifest_path(dir: &Path) -> PathBuf {
 }
 
 fn first_sealed_path(dir: &Path) -> PathBuf {
+    sealed_path(dir, 0)
+}
+
+fn sealed_path(dir: &Path, i: usize) -> PathBuf {
     let v: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(manifest_path(dir)).unwrap()).unwrap();
-    dir.join(v["sealed"][0]["name"].as_str().expect("sealed[0].name"))
+    dir.join(
+        v["sealed"][i]["name"]
+            .as_str()
+            .unwrap_or_else(|| panic!("sealed[{i}].name")),
+    )
+}
+
+fn sealed_len(dir: &Path) -> usize {
+    let v: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(manifest_path(dir)).unwrap()).unwrap();
+    v["sealed"].as_array().expect("sealed array").len()
+}
+
+fn trailer_json(bytes: &[u8]) -> serde_json::Value {
+    let ranges = event_frame_ranges(bytes);
+    let start = ranges.last().expect("event frames").1;
+    let tlen = u32::from_le_bytes(bytes[start..start + 4].try_into().unwrap()) as usize;
+    serde_json::from_slice(&bytes[start + 8..start + 8 + tlen]).expect("seal trailer JSON")
+}
+
+fn retarget_manifest_sealed_from_file(dir: &Path, i: usize, path: &Path) {
+    let bytes = fs::read(path).unwrap();
+    let t = trailer_json(&bytes);
+    let mut man: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(manifest_path(dir)).unwrap()).unwrap();
+    man["sealed"][i]["first"] = t["first"].clone();
+    man["sealed"][i]["last"] = t["last"].clone();
+    man["sealed"][i]["count"] = t["n"].clone();
+    man["sealed"][i]["bytes"] = serde_json::json!(bytes.len() as u64);
+    man["sealed"][i]["chain"] = t["chain"].clone();
+    fs::write(manifest_path(dir), serde_json::to_vec(&man).unwrap()).unwrap();
 }
 
 fn active_path(dir: &Path) -> PathBuf {
@@ -1485,4 +1519,99 @@ fn migrate_verify_failure_after_manifest_flip_unflips() {
     assert!(dir.join("events.wal").exists());
     expect_round_trip(&dir, &rt);
     let _ = fs::remove_dir_all(&dir);
+}
+
+fn persist_many_sealed(rt: &Runtime, dir: &Path, max_events: usize) {
+    store::set_test_segment_limits(Some(10_000_000), Some(max_events));
+    let _g = LimitGuard;
+    persist_expect_segmented(rt, dir);
+}
+
+#[test]
+fn swapped_sealed_files_with_matching_meta_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("swap-files");
+    persist_with_sealed(&rt, &dir);
+    assert!(sealed_len(&dir) >= 2, "need two sealed files");
+    let p0 = sealed_path(&dir, 0);
+    let p1 = sealed_path(&dir, 1);
+    let a = fs::read(&p0).unwrap();
+    let b = fs::read(&p1).unwrap();
+    fs::write(&p0, &b).unwrap();
+    fs::write(&p1, &a).unwrap();
+    retarget_manifest_sealed_from_file(&dir, 0, &p0);
+    retarget_manifest_sealed_from_file(&dir, 1, &p1);
+    assert_invalid_data(&dir, "chain link");
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn replaced_sealed_from_other_store_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("repl-sealed");
+    persist_with_sealed(&rt, &dir);
+    let mut other = seed_runtime();
+    other.intern("other-store-term");
+    let dir_b = persist_dir("repl-sealed-b");
+    persist_with_sealed(&other, &dir_b);
+    let src = sealed_path(&dir_b, 0);
+    let dst = sealed_path(&dir, 0);
+    fs::copy(&src, &dst).unwrap();
+    retarget_manifest_sealed_from_file(&dir, 0, &dst);
+    assert_invalid_data(&dir, "chain link");
+    let _ = fs::remove_dir_all(&dir);
+    let _ = fs::remove_dir_all(&dir_b);
+}
+
+#[test]
+fn deleted_middle_sealed_with_contiguous_manifest_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("del-mid");
+    persist_many_sealed(&rt, &dir, 3);
+    assert!(sealed_len(&dir) >= 3, "need three sealed files");
+    let mid = sealed_path(&dir, 1);
+    let last = sealed_path(&dir, 2);
+    fs::remove_file(&mid).unwrap();
+    fs::rename(&last, &mid).unwrap();
+    let mut man: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(manifest_path(&dir)).unwrap()).unwrap();
+    let keep_name = man["sealed"][1]["name"].clone();
+    man["sealed"].as_array_mut().unwrap().remove(1);
+    man["sealed"][1]["name"] = keep_name;
+    fs::write(manifest_path(&dir), serde_json::to_vec(&man).unwrap()).unwrap();
+    retarget_manifest_sealed_from_file(&dir, 1, &mid);
+    assert_invalid_data(&dir, "chain link");
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn reordered_manifest_sealed_entries_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("reord-man");
+    persist_with_sealed(&rt, &dir);
+    assert!(sealed_len(&dir) >= 2);
+    let mut man: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(manifest_path(&dir)).unwrap()).unwrap();
+    let a = man["sealed"][0].clone();
+    let b = man["sealed"][1].clone();
+    man["sealed"][0] = b;
+    man["sealed"][1] = a;
+    fs::write(manifest_path(&dir), serde_json::to_vec(&man).unwrap()).unwrap();
+    assert_invalid_data(&dir, "not contiguous");
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn active_segment_from_other_store_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("act-other");
+    persist_with_sealed(&rt, &dir);
+    let mut other = seed_runtime();
+    other.intern("active-from-elsewhere");
+    let dir_b = persist_dir("act-other-b");
+    persist_with_sealed(&other, &dir_b);
+    fs::copy(active_path(&dir_b), active_path(&dir)).unwrap();
+    assert_invalid_data(&dir, "chain link");
+    let _ = fs::remove_dir_all(&dir);
+    let _ = fs::remove_dir_all(&dir_b);
 }
