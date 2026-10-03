@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Product: SNAP-01 atomic sidecars and fail-closed WAL open
+
+### Product
+
+### Fixed
+
+- `persist` writes `terms.jsonl` / `quantum_outcomes.jsonl` / `justifications.jsonl` through tmp+`sync_all`+rename; parent-directory fsync after each rename and at end of persist. Unparseable, mid-line, or proper-prefix sidecars are treated as absent; well-formed non-prefix still fails `InvalidData`.
+- Open-path `check_tt_anchors_range` allows log `TtAnchor`s with `ingested_at >= snap.next_tt`; `replay_check` stays exact. `recover_events` returns `InvalidData` ("truncated WAL header") when shorter than magic+version; `load_events_d04` does not mask non-`InvalidData` WAL I/O. Crash-matrix failpoint seam `persist_with_failpoint`. Oracles: `crates/kutha-runtime/tests/m002_snap01.rs`.
+
+### Trajectory
+
+- ADR-012/014/060 dated Evidence 2026-10-03 Phase 50 (SNAP-01 closed in evidence; incremental append S04; COMMIT-01 S05). `semantic-gap-review.md` F1/F6 status. `honeycomb.yaml` restaged (capability and `freeze_as` unchanged). Cells stay **Proposed**.
+- Bench gate vs `7e31784` (`KUTHA_BENCH_N=10000`): ingest_plain.n +15.9% / +23.7% — **STOP**; as_of.n +2.5% / +11.3%. Controller must not close on this gate.
+
 ## 2026-10-03 — Process: lease M002 S02 (GSD Phase 50)
 
 ### Trajectory

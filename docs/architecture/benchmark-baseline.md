@@ -212,3 +212,15 @@ Same host as 44-01, Eager, `KUTHA_BENCH_N=10000`, two runs of `cargo bench -p ku
 | b | 105460301 | −8.6% | −65.0% | 290851 |
 
 D-06 ≤10% ingest vs same-host v0.08: **met** (both runs under cap; faster than 115.3M). as_of.n stays in Phase 42 host noise (~0.25–0.40 ms). Per-fact ingest ~11.1 / 10.5 µs vs v0.08 ~11.5 µs. No ADR-010/013 edit.
+
+## Phase 50 (M002 S02) — SNAP-01 / fail-closed WAL open (2026-10-03)
+
+Same host, Eager, `KUTHA_BENCH_N=10000`, isolated `CARGO_TARGET_DIR`. Pre-phase `7e31784` vs HEAD after SNAP-01 (sidecar `replace_via_tmp`, `sync_dir`, `check_tt_anchors_range`, fail-closed WAL header). Persist is not the D-06 pair (Phase 52). Two consecutive runs:
+
+| run | 7e31784 ingest_plain.n | HEAD ingest_plain.n | Δ ingest | 7e31784 as_of.n | HEAD as_of.n | Δ as_of |
+|-----|-----------------------:|--------------------:|---------:|----------------:|-------------:|--------:|
+| a | 88490215 | 109468422 | +23.7% | 227344 | 252921 | +11.3% |
+| b | 101718878 | 117933202 | +15.9% | 284070 | 291312 | +2.5% |
+
+D-06 ≤10% vs `7e31784`: **STOP** — ingest_plain.n exceeds 10% on both runs. as_of.n is over cap on run a and inside cap on run b. Ingest/`as_of` code was not edited; `bytes_per_fact` (RSS over the whole bench including persist) moved 17218 B → 25200 B. Controller must not close Phase 50 on this gate.
+

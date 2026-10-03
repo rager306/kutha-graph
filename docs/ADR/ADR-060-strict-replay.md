@@ -12,6 +12,10 @@ Behavior lineage and provenance oracles remain (`replay_rejects_behavior_without
 
 Shipped: lineage (`Op::Behavior.caused_by` must name an earlier event) and Horn execution replay (`Runtime::replay_check` → `horn_behavior_reproducible` in `eval.rs`, called from `provenance.rs`). `replay_check` also calls `check_tt_anchors`: snapshot-held `TtAnchor` walls are compared to the log-derived map (oracle `tampered_tt_anchor_wall_fails_replay_check`). `GraphFold::fingerprint` stays facts-only (`fold_query.rs`); `provenance_fingerprint` is a separate hash. Persist of `snapshot.json` / `events.wal` is tmp+`sync_all`+rename (`replace_via_tmp`). Not shipped: D014-1 cryptographic ADS/authenticator receipts (`QuantumReceipt` is SHA-256 of event digests), an `Unavailable` outcome, and sidecar atomicity (gap-review F1: `write_terms` / `write_outcomes` / `write_justifications` still `File::create` in place — SNAP-01). No parent-directory fsync. M002 is thawed and planned as GSD v0.12 (slices S01–S07, `.kutha/ROADMAP.md` § M002): SNAP-01, parent-dir fsync, partial-sidecar-as-absent, `check_tt_anchors` log-ahead tolerance, and fail-closed WAL open are scheduled in S02. This subsection does not rewrite D060-1…D060-3.
 
+### Evidence (2026-10-03, Phase 50 / M002 S02; Proposed)
+
+SNAP-01 closed by Phase 50: sidecar atomic replace + parent-dir fsync; open-path `check_tt_anchors_range` keyed on `snap.next_tt` (`replay_check` exact equality unchanged); fail-closed WAL header and non-`InvalidData` I/O. ADS receipts and `Unavailable` remain unshipped. This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18
