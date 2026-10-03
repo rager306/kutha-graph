@@ -4,6 +4,14 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-04 — Process: durable freeze-rocks (optional rocksdb)
+
+### Process
+
+### Changed
+
+- `glob_absent` accepts optional `unless_line_contains` (a needle on a comment line, or on a line that also contains that substring, is ignored). `freeze-rocks` allows `rocksdb =` in `crates/*/Cargo.toml` only when the same line has `optional = true`, regardless of Active Milestone; a plain or non-optional assignment fails. Feature lines (`dep:rocksdb`) are not assignments. The workspace `Cargo.toml` must not contain `rocksdb =`. `unless_file_contains` stays in the kind and its tests. `freeze-cypher-deps` and `freeze-hnsw-dep` stay unconditional. Selftest still appends `rocksdb =` on a new line so the check fails closed.
+
 ## 2026-10-04 — Product: migrate, jsonl export, and sealed tamper (SEG-01 / 54-03)
 
 ### Product

@@ -73,27 +73,23 @@ checks:
 
   - id: freeze-rocks
     description: >-
-      Cargo members and workspace Cargo.toml may name rocksdb only while
-      .kutha/STATE.md names Active Milestone M002
+      Cargo members may name rocksdb only as an optional dependency
+      (`optional = true` on the same line); the workspace Cargo.toml must not
+      name rocksdb
     steps:
       - kind: glob_absent
         glob: crates/*/Cargo.toml
-        needles: [rocksdb]
+        needles: ["rocksdb ="]
         case: lower
         category: frozen-dep
-        unless_file_contains:
-          file: .kutha/STATE.md
-          needle: "**Active Milestone:** M002"
-        message: "found {needle}; freeze-rocks allows rocksdb only while .kutha/STATE.md names **Active Milestone:** M002"
+        unless_line_contains: "optional = true"
+        message: "found {needle}; freeze-rocks allows rocksdb in crates/*/Cargo.toml only as an optional dependency (`optional = true`)"
       - kind: glob_absent
         glob: Cargo.toml
-        needles: [rocksdb]
+        needles: ["rocksdb ="]
         case: lower
         category: frozen-dep
-        unless_file_contains:
-          file: .kutha/STATE.md
-          needle: "**Active Milestone:** M002"
-        message: "found {needle}; freeze-rocks allows rocksdb only while .kutha/STATE.md names **Active Milestone:** M002"
+        message: "found {needle}; freeze-rocks forbids a rocksdb entry in the workspace Cargo.toml (optional crate dependency only)"
 
   - id: freeze-cypher-deps
     description: Cargo members and workspace Cargo.toml do not add neo4j/graphiti/falkordb until M003

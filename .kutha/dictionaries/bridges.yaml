@@ -7,7 +7,7 @@ process: docs/process/governor-intake.md
 
 bridges:
   - id: B-freeze-rocks
-    claim: "Cargo members and workspace Cargo.toml may name rocksdb only while STATE names Active Milestone M002"
+    claim: "Cargo members may name rocksdb only as optional = true; workspace Cargo.toml must not"
     cites: ".kutha/STATE.md"
     check: freeze-rocks
 

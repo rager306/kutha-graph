@@ -299,6 +299,16 @@ def _unless_file_contains_skip(step: Step, ctx: Context) -> bool:
     return needle in text
 
 
+def _line_has_needle_without_allow(line: str, needle: str, allow: str) -> bool:
+    """True when `needle` appears on a non-comment line that lacks `allow`."""
+    stripped = line.lstrip()
+    if stripped.startswith("#"):
+        return False
+    if needle not in line:
+        return False
+    return not allow or allow not in line
+
+
 def _kind_glob_absent(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
     if _unless_file_contains_skip(step, ctx):
         result.note = "unless_file_contains matched; glob_absent skipped"
@@ -306,6 +316,8 @@ def _kind_glob_absent(check: str, step: Step, ctx: Context, result: CheckResult)
     pattern = _str(step, "glob")
     needles = _str_list(step, "needles")
     min_phase = _int(step, "min_phase", 0)
+    allow = _str(step, "unless_line_contains")
+    allow_folded = _casefold(step, allow) if allow else ""
     for path in sorted(ctx.root.glob(pattern)):
         if not path.is_file():
             continue
@@ -317,7 +329,15 @@ def _kind_glob_absent(check: str, step: Step, ctx: Context, result: CheckResult)
         text = _casefold(step, path.read_text(encoding="utf-8"))
         result.scanned += 1
         for needle in needles:
-            if _casefold(step, needle) in text:
+            folded = _casefold(step, needle)
+            if allow:
+                hit = any(
+                    _line_has_needle_without_allow(line, folded, allow_folded)
+                    for line in text.splitlines()
+                )
+            else:
+                hit = folded in text
+            if hit:
                 message = _fmt(
                     _str(step, "message", "found {needle}"),
                     needle=needle,

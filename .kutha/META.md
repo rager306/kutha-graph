@@ -55,7 +55,7 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 | `file_absent` | file contains none of the needles |
 | `concat_absent` | concatenated files contain none of the needles |
 | `concat_contains_any` | concatenated files contain at least one needle |
-| `glob_absent` | no glob match contains any needle; optional `unless_file_contains: {file, needle}` skips the step when that file contains the exact needle (missing file → do not skip) |
+| `glob_absent` | no glob match contains any needle; optional `unless_file_contains: {file, needle}` skips the step when that file contains the exact needle (missing file → do not skip); optional `unless_line_contains` skips a needle that appears only on comment lines or on a line that also contains that substring |
 | `glob_none` | glob must match no files (build artifacts) |
 | `markdown_heading_tag` | files matching glob have `## Status` + allowed tag |
 | `pointer_in_other_file` | exactly one regex capture in A must appear in B |
