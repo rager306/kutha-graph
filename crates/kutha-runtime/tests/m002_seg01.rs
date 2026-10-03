@@ -453,7 +453,8 @@ fn swapped_adjacent_sealed_frames_is_invalid_data() {
     rebuilt.extend_from_slice(&bytes[ranges[ranges.len() - 1].1..]);
     fs::write(&path, &rebuilt).unwrap();
 
-    assert_invalid_data(&dir, "chain");
+    // Intra-segment hash chain is checked before a later segment's chain-link.
+    assert_invalid_data(&dir, "hash chain");
 
     let _ = fs::remove_dir_all(&dir);
 }
@@ -1196,7 +1197,8 @@ fn writer_swapped_adjacent_sealed_frames_is_invalid_data() {
     }
     rebuilt.extend_from_slice(&bytes[ranges[ranges.len() - 1].1..]);
     fs::write(&path, &rebuilt).unwrap();
-    assert_invalid_data(&dir, "chain");
+    // Intra-segment hash chain is checked before a later segment's chain-link.
+    assert_invalid_data(&dir, "hash chain");
     let _ = fs::remove_dir_all(&dir);
 }
 
