@@ -5,7 +5,7 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M002
-**Active Slice:** None
+**Active Slice:** S06
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M002 S05 done (COMMIT-01, option A: QuantumOutcome stays the marker); S06 unleased; M018 paused at its S02 decision gate | Capability proven / Rocks started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M002 S06 active (segments, manifest, hash chain); M018 paused at its S02 decision gate | Capability proven / Rocks started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M002 S05 closed** (`L_delivery=M002-S05-done`, Active Milestone **M002**, Active Slice **None**, 2026-10-04). GSD Phase 53 verified independently (7/7): `open` hides an uncommitted suffix (option A), `open_for_append` heals it, an exhaustive `op_commit_class` classifies every `Op`; residual: Typed/Dictionary multi-event groups carry no outcome by design. Next: S06 (segments, manifest, hash chain, Phase 54) needs a lease. M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
+**M002 S06 leased** (`L_delivery=M002-S05-done`, Active Milestone **M002**, Active Slice **S06**, 2026-10-04). GSD Phase 54 only: SEG-01 in three plans (format + manifest + open; Persister + rollover + default writer; tamper oracles + migrate + export + docs). The event log stays the source of truth; its physical encoding becomes manifest + sealed segments + active segment, and `events.jsonl` becomes an export (owner to be told). M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
 
 ## Thaw map
 
