@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-04 — Product: sealed segment reader on open (SEG-01 / 54-01)
+
+### Product
+
+### Added
+
+- `KUTHASEG` v1 (`segment.rs`): WAL-identical event frames plus a CRC'd seal trailer and a SHA-256 per-frame chain (`sha2` already in `kutha-runtime`). `manifest.json` lists sealed files and the named active segment. When the manifest is present, `store::open` loads that layout (full sealed verify; torn active tail dropped) and never reads `events.jsonl` / `events.wal`. `persist` and `Persister` still write the legacy jsonl+WAL layout. Test-only writer builds byte-valid fixtures. Oracles: `crates/kutha-runtime/tests/m002_seg01.rs`.
+
+### Trajectory
+
+- ADR-000 Clarification 2026-10-04: D1 still names the event log as SoT; only the physical encoding gained a reader. ADR-010/012/060 Evidence 2026-10-04 Phase 54-01. Cells stay **Proposed**. `honeycomb.yaml` restaged (map/delivery/capability unchanged). Bench vs `3c469fe` (interleaved medians): ingest_plain.n +0.6%, as_of.n +3.1%, open.n −5.2% — D-09 met. Segmented vs legacy open of a ~10k-assert fixture: −1.1%.
+
 ## 2026-10-04 — Product: QuantumOutcome commit marker on open (COMMIT-01)
 
 ### Product

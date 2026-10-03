@@ -23,6 +23,7 @@ process: docs/process/governor-intake.md
 # 2026-10-03 restage (M002 S04 Phase 52 follow-up: snapshot open interns log Defines beyond snap.dict_strings): ADR-012; map/delivery/capability unchanged.
 # 2026-10-04 restage (M002 S05 Phase 53: COMMIT-01 option A — QuantumOutcome stays the marker; open hides uncommitted suffix): ADR-010, ADR-012, ADR-014, ADR-060; map/delivery/capability unchanged.
 # 2026-10-04 restage (M002 S05 Phase 53 second-round: ADR-010 Evidence names Typed/Dictionary partial-group residual; later-SelfCommit oracles): ADR-010; map/delivery/capability unchanged.
+# 2026-10-04 restage (M002 S06 Phase 54-01: KUTHASEG reader + manifest; persist still jsonl+WAL): ADR-000, ADR-010, ADR-012, ADR-060; map/delivery/capability unchanged.
 
 locks:
   - id: D1

@@ -302,4 +302,24 @@ Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p53-head-target`
 
 D-10 ≤10% vs `187d4c7`: **met**. Pair 4 as_of is host noise (base 227k vs 295–344k). Worktrees and target dirs removed after the run.
 
+## Phase 54-01 (M002 S06) — KUTHASEG reader (2026-10-04)
+
+Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p54-head-target` for HEAD, `tmp/p54-base-target` for `3c469fe`). Binaries run from each worktree's `crates/kutha-runtime`. Interleaved `base, head` × 4 pairs. Writer path unchanged; `open` branches only when `manifest.json` is present. Compare interleaved medians.
+
+| run | 3c469fe ingest_plain.n | HEAD ingest_plain.n | Δ ingest | 3c469fe as_of.n | HEAD as_of.n | Δ as_of |
+|-----|-----------------------:|--------------------:|---------:|----------------:|-------------:|--------:|
+| 1 | 104288907 | 101075166 | −3.1% | 298487 | 276234 | −7.5% |
+| 2 | 108934689 | 113534153 | +4.2% | 292855 | 289940 | −1.0% |
+| 3 | 108809710 | 105623220 | −2.9% | 231812 | 388745 | +67.7% |
+| 4 | 112671069 | 120560577 | +7.0% | 267878 | 288396 | +7.7% |
+
+| metric | median 3c469fe | median HEAD | Δ median |
+|--------|---------------:|------------:|---------:|
+| ingest_plain.n | 108872200 | 109578686 | +0.6% |
+| as_of.n | 280366 | 289168 | +3.1% |
+| open.n | 3010978112 | 2853330595 | −5.2% |
+
+Segmented vs legacy `open` of the same ~10k-assert persist (encoded 30025 events, 4 timed opens, HEAD binary): legacy median 3085905705 ns, segmented median 3053446425 ns (−1.1%). D-09 ≤10% vs `3c469fe`: **met**. Pair 3 as_of is host noise (base 232k vs 268–298k). Worktrees and target dirs removed after the run.
+
+
 

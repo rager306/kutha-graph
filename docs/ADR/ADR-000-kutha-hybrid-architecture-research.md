@@ -12,6 +12,10 @@
 
 `ValidTime`, `TransactionTime`, and `WallTime` are newtypes in `crates/kutha-common/src/event.rs` (`Vt` / `Tt` aliases). There is no `crates/kutha-runtime/src/event.rs`. `Op` variants, `Event.ingested_at`, and `Snapshot.next_tt` still carry raw `u64`; typed `Op` clocks are not shipped. The 2026-10-02 “u64 type aliases” line is historical. This pointer does not rewrite D1–D10.
 
+### Clarification (2026-10-04, Phase 54-01 / M002 S06; Proposed)
+
+D1 still names the **event log** as SoT. Plan 54-01 adds a reader for a physical encoding `manifest.json` + `KUTHASEG` files; `persist` / `Persister` still write `events.jsonl` + covering `KUTHAWAL`. This pointer does not rewrite D1–D10.
+
 ## Date
 
 2026-08-15

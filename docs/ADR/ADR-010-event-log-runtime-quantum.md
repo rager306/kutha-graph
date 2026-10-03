@@ -24,6 +24,10 @@ APPEND-01: `store::Persister` (`attach` / `append` / `checkpoint` / `close`) wri
 
 COMMIT-01 option A: `Op::QuantumOutcome` stays the User-quantum commit marker (no WAL/jsonl format change, no env switch). `store::open` applies `committed_prefix` after `load_events_d04` and before sidecar load, hydrate, and `replay_check`. Self-commit: `Define`, `TtAnchor`, `StoreBlob`, `JustificationCite`, `QuantumOutcome`, dictionary `kutha:*` Assert. NeedsOutcome: product `Assert`/`Retract`/`Correct`/`CorrectInterval`/`Behavior`. Commit frame (B) and quantum envelope (C) wait for S06. Residual: Typed/Dictionary multi-event groups have no outcome by design, so a crash inside such a group can still expose a partial group (`Define`-level atomicity only; ADR-014). Oracles: `m002_commit01.rs`. Status stays **Proposed**.
 
+### Evidence (2026-10-04, Phase 54-01 / M002 S06; Proposed)
+
+SEG-01 reader: when `manifest.json` is present, `open` loads `KUTHASEG` v1 sealed files (full verify: magic, trailer, count/first/last/bytes/SHA-256 chain, stitch order) then the active segment (torn last frame dropped; a seal trailer on a still-named-active file ends the stream). `events.jsonl` / `events.wal` are not read. Absent manifest keeps `load_events_d04`. Then `committed_prefix` → hydrate/`replay_check` unchanged. `persist` / `Persister` still write jsonl+WAL. Oracles: `m002_seg01.rs`. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18
