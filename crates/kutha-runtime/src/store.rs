@@ -328,16 +328,17 @@ pub fn open(dir: &Path) -> std::io::Result<Runtime> {
     let justifications = load_justifications(&dir.join(JUSTIFICATIONS_REL))?;
     if snap_path.exists() {
         let snap: Snapshot = serde_json::from_reader(File::open(&snap_path)?).map_err(json_err)?;
-        let graph: Vec<Event> = events
-            .into_iter()
-            .filter(|e| !matches!(e.op, Op::Define { .. }))
-            .collect();
-        // Hydrate trap: compare snapshot-held walls before from_snapshot rebuilds from the log.
         if snap.fold.tt_anchors_pinned {
+            let graph: Vec<Event> = events
+                .iter()
+                .filter(|e| !matches!(e.op, Op::Define { .. }))
+                .cloned()
+                .collect();
+            // Hydrate trap: compare snapshot-held walls before from_snapshot rebuilds from the log.
             Runtime::check_tt_anchors_range(&snap.fold.tt_anchors, &graph, Some(snap.next_tt))
                 .map_err(runtime_err)?;
         }
-        let rt = Runtime::from_snapshot(snap, graph);
+        let rt = Runtime::from_snapshot(snap, events);
         rt.replay_check().map_err(runtime_err)?;
         return finish_open(rt, outcomes, justifications);
     }

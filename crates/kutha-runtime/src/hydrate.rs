@@ -70,7 +70,12 @@ impl Runtime {
     }
 
     pub fn from_snapshot(snap: Snapshot, all_events: Vec<Event>) -> Self {
-        let dict = TermDictionary::from_strings(snap.dict_strings);
+        let mut dict = TermDictionary::from_strings(snap.dict_strings);
+        for e in &all_events {
+            if let Op::Define { name } = &e.op {
+                let _ = dict.intern(name);
+            }
+        }
         // Snapshot offset indexes fold-affecting ops. Keep QuantumOutcome on the log (LOG-01).
         let graph: Vec<Event> = all_events
             .into_iter()

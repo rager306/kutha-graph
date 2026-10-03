@@ -8,9 +8,14 @@ use crate::store::{
 };
 use crate::wal;
 use kutha_common::{Event, EventId, Op};
+use std::cell::Cell;
 use std::fs::{self, File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::{Path, PathBuf};
+
+thread_local! {
+    static ABORT_CHECKPOINT_SNAPSHOT_RENAME: Cell<bool> = const { Cell::new(false) };
+}
 
 /// Automatic sidecar/snapshot refresh after this many appended events (D-06).
 pub const CHECKPOINT_EVERY: usize = 4096;
@@ -51,16 +56,18 @@ impl Persister {
         let jsonl_len = fs::metadata(&jsonl_path)?.len();
         let wal_len = fs::metadata(&wal_path)?.len();
         let encoded = encoded_log(runtime);
-        let last = encoded.last().ok_or_else(|| {
-            invalid("attach requires a persisted encoded log (dictionary or events)")
-        })?;
-        let last_id = last.id;
-        let last_frame_len = wal::frame_bytes(last)?.len() as u64;
-        let jid = last_jsonl_event_id(&jsonl_path, jsonl_len)?;
-        let wid = wal::last_event_id_at_end(&wal_path, wal_len, last_frame_len)?;
-        if jid != last_id || wid != last_id {
+        if encoded.is_empty() {
             return Err(invalid(
-                "attach tail does not match runtime encoded log (recover with full persist)",
+                "attach requires a persisted encoded log (dictionary or events)",
+            ));
+        }
+        let last_event = last_jsonl_event(&jsonl_path, jsonl_len)?;
+        let last_id = last_event.id;
+        let last_frame_len = wal::frame_bytes(&last_event)?.len() as u64;
+        let wid = wal::last_event_id_at_end(&wal_path, wal_len, last_frame_len)?;
+        if last_id != wid {
+            return Err(invalid(
+                "jsonl/WAL last EventId disagree (recover with full persist)",
             ));
         }
         let graph: Vec<&Event> = encoded
@@ -153,7 +160,8 @@ impl Persister {
         }
         after_step(stop_after, AppendStep::CheckpointJsonl)?;
 
-        replace_snapshot(&self.dir, &runtime.snapshot(), true)?;
+        let commit_snapshot = !ABORT_CHECKPOINT_SNAPSHOT_RENAME.with(|c| c.replace(false));
+        replace_snapshot(&self.dir, &runtime.snapshot(), commit_snapshot)?;
         after_step(stop_after, AppendStep::CheckpointSnapshot)?;
 
         write_terms(&self.dir, runtime.dictionary().strings())?;
@@ -257,7 +265,7 @@ fn collect_new(p: &Persister, runtime: &Runtime) -> std::io::Result<Vec<Event>> 
     Ok(out)
 }
 
-fn last_jsonl_event_id(path: &Path, file_len: u64) -> std::io::Result<EventId> {
+fn last_jsonl_event(path: &Path, file_len: u64) -> std::io::Result<Event> {
     if file_len == 0 {
         return Err(invalid("empty events.jsonl"));
     }
@@ -285,8 +293,11 @@ fn last_jsonl_event_id(path: &Path, file_len: u64) -> std::io::Result<EventId> {
     f.read_exact(&mut buf)?;
     let text = std::str::from_utf8(&buf)
         .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
-    let event: Event = serde_json::from_str(text).map_err(json_err)?;
-    Ok(event.id)
+    serde_json::from_str(text).map_err(json_err)
+}
+
+fn last_jsonl_event_id(path: &Path, file_len: u64) -> std::io::Result<EventId> {
+    Ok(last_jsonl_event(path, file_len)?.id)
 }
 
 fn invalid(msg: &str) -> std::io::Error {
@@ -336,11 +347,14 @@ pub fn checkpoint_with_failpoint(
     persister.checkpoint_until(runtime, Some(stop_after))
 }
 
-/// RED stub: stops *after* snapshot replace (GREEN will abort before rename).
+/// Test seam: checkpoint jsonl-sync then abort snapshot replace before rename.
 #[doc(hidden)]
 pub fn abort_checkpoint_snapshot_before_rename(
     persister: &mut Persister,
     runtime: &Runtime,
 ) -> std::io::Result<()> {
-    persister.checkpoint_until(runtime, Some(AppendStep::CheckpointSnapshot))
+    ABORT_CHECKPOINT_SNAPSHOT_RENAME.with(|c| c.set(true));
+    let result = persister.checkpoint(runtime);
+    ABORT_CHECKPOINT_SNAPSHOT_RENAME.with(|c| c.set(false));
+    result
 }

@@ -627,7 +627,10 @@ fn append_tail_guard_rejects_truncated_or_garbage_logs() {
     let template = persist_dir("guard-len-a");
     store::persist(&rt, &template).unwrap();
 
-    let cases: [(&str, Box<dyn Fn(&[u8], &[u8], &Event) -> (Vec<u8>, Vec<u8>)>); 6] = [
+    let cases: [(
+        &str,
+        Box<dyn Fn(&[u8], &[u8], &Event) -> (Vec<u8>, Vec<u8>)>,
+    ); 6] = [
         (
             "jsonl-truncate-record",
             Box::new(|j, w, _| {
