@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Process: thaw M002 and plan GSD v0.12; lease S01
+
+### Process
+
+### Added
+
+- Harness milestone **M002** thawed and planned as GSD **v0.12** (Phases 49–55, slices S01–S07: thaw map and governor honesty; SNAP-01 with fail-closed WAL open; RocksDB build spike; incremental framed append; commit-marker decision; segments, manifest and hash chain; droppable RocksDB index lease). Requirements in `.planning/REQUIREMENTS.md`; Phase 49 CONTEXT under `.planning/phases/49-thaw-map-and-freeze-governor-honesty/`. Re-verification at `f4af544` (provenance, governor freeze map, durability design research) found that the freeze list and its "until explicit M002 lease" gate came from earlier AI agents (`1ee5942`, `85db1f7`, 2026-08-18) and not from the owner or ADR-000 D1–D10; the real defects are the O(N) `persist` rewrite, in-place sidecar writes, missing parent-directory fsync, exact-equality `check_tt_anchors`, and fail-open WAL magic reads.
+
+### Changed
+
+- `.kutha/STATE.md` § Freeze becomes § Thaw map: RocksDB crate thaws at Phase 51; Cypher (M003), HNSW (M005), six dictionaries (SIX-01), ADR-080/081, ADR-090, ADR-093 and Consensus 103+ keep their own gates. M018 is paused after S01 at the S02 decision gate; OPEN-01 and the crash seam moved from M018 S04 to M002 S02.
+
+### Trajectory
+
+- Active Milestone **M002**, Active Slice **S01** (`L_delivery=M018-S01-done`). No `crates/` change in S01; the `rocksdb` dependency stays banned by the governor until Phase 51. Honeycomb stays Proposed.
+
 ## 2026-10-03 — Process: doc truth round 2 (M018 S01)
 
 ### Process

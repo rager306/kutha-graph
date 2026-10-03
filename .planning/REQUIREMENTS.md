@@ -1,7 +1,7 @@
 # Requirements: Kutha
 
 **Core Value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Milestone:** v0.11 / harness M018 "Wedge unblock" (Phases 45–48). Source: 2026-10-03 post-v0.10 review. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.11 / harness M018 "Wedge unblock" (Phases 45–48; paused after Phase 45 at the S02 decision gate) and v0.12 / harness M002 "Log durability protocol" (Phases 49–55; thawed 2026-10-03). Lease: `.kutha/STATE.md`.
 
 ## v0.11 Requirements
 
@@ -25,25 +25,48 @@
 - **HORN-CORR-01**: `Correct` and `CorrectInterval` re-derive; stale derived rows do not stay live
 - **CASC-01**: every cascade hop passes `admit`; commit order is stable; unknown head or premise relation in a rule fails closed
 
-### Open and tests (Phase 48, S04)
+### Differential tests (Phase 48, S04)
 
-- **OPEN-01**: failed WAL magic read or empty WAL without jsonl never yields an empty log; a WAL error is not hidden behind jsonl
 - **DIFF-01**: fold, CSR lease and clean rebuild agree on seeded random logs (no new dependency)
-- **CRASH-01**: crash seam between jsonl and sidecars is characterized by a named test (repair stays SNAP-01)
 - **ORACLE-01**: I-F15 measures time or a bound that fails under the O(N) regression; I-F16 fails when rules do not re-derive
 - **GATE-01**: bench gate (`ingest_plain.n`, `as_of.n`) is a governor row or a recorded controller step with a selftest
 
+## v0.12 Requirements (M002, thawed; leased one slice at a time)
+
+### Thaw map (Phase 49, S01)
+
+- **THAW-01**: `.kutha/STATE.md` carries a per-item thaw map; RocksDB crate thaws in S03; Cypher (M003), HNSW (M005), six dictionaries (SIX-01), ADR-080/081, ADR-090, ADR-093 and Consensus 103+ keep their own gates
+- **GOV-03**: the `freeze` governor check is split per dependency, each message names its real thaw gate, the tautological message check is gone, the workspace root `Cargo.toml` is scanned, and selftest plus pytest prove it
+
+### SNAP-01 and fail-closed open (Phase 50, S02)
+
+- **SNAP-01**: sidecars (`terms`, `quantum_outcomes`, `justifications`) replace via temp + sync + rename; a parent-directory fsync follows every rename; an unreadable or partial sidecar is treated as absent while an intact log opens; `check_tt_anchors` tolerates a log ahead of the snapshot
+- **OPEN-01**: a failed WAL magic read or an empty WAL without jsonl never yields an empty log; a WAL error is not hidden behind jsonl
+- **CRASH-01**: a failpoint after each persist step reopens to the last durable prefix or fails closed
+
+### Rocks spike (Phase 51, S03)
+
+- **ROCK-00**: `rocksdb` builds offline on this host in an isolated module; `EventId` to offset round-trips; not wired into `Runtime`; the governor permits the dependency only in the leased slice
+
+### Log protocol (Phases 52–54, S04–S06)
+
+- **APPEND-01**: `persist` appends framed records; the prefix bytes are unchanged; one `fdatasync` per quantum; torn tail dropped
+- **COMMIT-01**: one durable encoding of the quantum outcome (commit frame or `Op::QuantumOutcome`), recorded in ADR-010/014 (decision gate)
+- **SEG-01**: sealed segments, atomically replaced manifest, hash chain; recovery from manifest plus active segment; tampered sealed segment fails closed
+
+### Rocks index lease (Phase 55, S07)
+
+- **ROCK-01**: `EventId` to offset and `delivery_key` indexes in RocksDB are a lease rebuilt from the log; deleting the Rocks directory changes no answer; Rocks never stores an event payload, commit frame, disposition or term meaning
+- **PERF-GATE**: bench re-run (`ingest_plain.n`, `as_of.n`, same host, vs previous tag) at every product slice that edits `crates/`
+
 ## Future Requirements (not leased)
 
-### M002 — log durability protocol (frozen until leased; v0.12 slot)
+### Deferred inside M002 horizon
 
-- **ROCK-01**: Segmented append-only log, hash chain, atomic manifest; Rocks only for indexes
-- **COMMIT-01**: Quantum outcome as segment-framing commit marker vs `Op::QuantumOutcome` in the log (ADR-010/014 A-F11) — one encoding decision
-- **SNAP-01**: Sidecars (`outcomes`, `justifications`, `terms`) replaced via temp + sync + rename and parent-directory fsync; an unreadable or partial sidecar is treated as absent, not as a reason to reject an intact log; `check_tt_anchors` tolerates a log that is ahead of the snapshot after a crash between renames
-- **WRITE-01**: `intern` admit path (WAL vs JSONL open preference shipped in v0.10)
+- **WRITE-01**: `intern` admit path (WAL vs JSONL preference shipped in v0.10)
 - **IO-01** (intake only): kernel flusher/dirty-throttle on cloud block storage — `docs/architecture/m002-cloud-kernel-io-intake.md` (arXiv:2609.12597)
+- **VAC-01**: vacuum policy and litigation hold (ADR-012)
 - **R3 exclusion**: do not re-ship "lease identity verified on open" (v0.04) as M002 identity
-- **PERF-GATE**: bench re-run at every product milestone close (M018 GATE-01 may automate it)
 
 ### Candidate slots (need a controller decision)
 
@@ -60,6 +83,6 @@
 
 | Feature | Reason |
 |---------|--------|
-| Segments, hash chain, Rocks, Cypher, HNSW | Freeze; M002+ |
-| Sidecar rename and parent fsync | SNAP-01, M002 |
+| Cypher (M003), HNSW (M005) | Own thaw gates; not M002 |
+| RocksDB as a second SoT or event store | ADR-000 clarification: index lease only |
 | Promoting honeycomb to Accepted | L_map stays Proposed |

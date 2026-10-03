@@ -1,33 +1,48 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v0.11 \u2014 Wedge unblock",
+  "milestone": "v0.12 \u2014 Log durability protocol",
   "phases": [
     {
-      "number": "45",
-      "name": "Doc truth round 2",
-      "status": "complete"
+      "number": "49",
+      "name": "Thaw map and freeze governor honesty",
+      "status": "executing"
     },
     {
-      "number": "46",
-      "name": "C01 and knowledge-cut decision",
+      "number": "50",
+      "name": "SNAP-01 and fail-closed WAL open",
       "status": "planned"
     },
     {
-      "number": "47",
-      "name": "Horn determinism and closure",
+      "number": "51",
+      "name": "RocksDB build spike",
       "status": "planned"
     },
     {
-      "number": "48",
-      "name": "Fail-closed open and differential tests",
+      "number": "52",
+      "name": "Incremental framed append",
+      "status": "planned"
+    },
+    {
+      "number": "53",
+      "name": "Commit marker decision (COMMIT-01)",
+      "status": "planned"
+    },
+    {
+      "number": "54",
+      "name": "Segments, manifest and hash chain",
+      "status": "planned"
+    },
+    {
+      "number": "55",
+      "name": "Droppable RocksDB index lease",
       "status": "planned"
     }
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Decision gate for Phase 46 (C01, Horn vs knowledge cut)",
-    "reason": "Phase 45 verified \u00b7 M018-S01-done"
+    "label": "Phase 49 verify, then lease S02",
+    "reason": "v0.12 planned \u00b7 M002 S01 leased \u00b7 v0.11 paused at Phase 46 gate"
   },
   "updated_at": "2026-10-03T07:00:00.000Z"
 }

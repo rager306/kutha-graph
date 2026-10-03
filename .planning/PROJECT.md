@@ -10,15 +10,15 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.11 Wedge unblock (planned; lease in STATE)
+## Current Milestone: v0.12 Log durability protocol (thawed; lease in STATE); v0.11 paused
 
 **Last shipped:** v0.10 Docs honesty and replay integrity (harness M017, phases 41–44, tag `v0.10`). Crate SemVer stays `0.0.0`.
 
 **Harness lease:** read `.kutha/STATE.md` (slice, `L_delivery` and Freeze live only there).
 
-**Plan:** Phases 45–48 (doc truth, C01 and knowledge-cut decision, Horn determinism, fail-closed open). One slice leased at a time.
+**Plan:** v0.12 Phases 49–55 (thaw map, SNAP-01, RocksDB spike, framed append, commit marker, segments, Rocks index lease). v0.11 Phases 46–48 wait for the owner's C01 and Horn decision. One slice leased at a time.
 
-**Frozen until leased:** M002 durability. Honeycomb stays Proposed. FIXG-01 fail-closed: C01 sunset is not a Horn; do not invent five clocks.
+**Thawed:** M002 durability (2026-10-03, owner's request; the earlier freeze was agent-made). Honeycomb stays Proposed. FIXG-01 fail-closed: C01 sunset is not a Horn; do not invent five clocks.
 
 
 ## Business Context
