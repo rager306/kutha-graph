@@ -6,7 +6,11 @@
 
 ### Evidence (2026-10-02; Proposed)
 
-`events.jsonl` persist replaces via same-directory temp file + `rename` (`store.rs`). `snapshot.json` still uses truncating `File::create`; quantum outcome and justification sidecars remain separate files (F1 encoding: log atomic, snapshot/sidecars not).
+`events.jsonl` persist replaces via same-directory temp file + `rename` (`store.rs` `replace_events_jsonl`). Quantum outcome and justification sidecars remain separate files (gap-review F1: log atomic, sidecars not). **2026-10-03 note:** snapshot/WAL in-place truncate is false; see Evidence 2026-10-03.
+
+### Evidence (2026-10-03; Proposed)
+
+M017 S02: `persist` replaces `snapshot.json` and `events.wal` via tmp+`sync_all`+rename (`replace_via_tmp`, `replace_snapshot`, `replace_events_wal`). `events.jsonl` is SoT; `events.wal` is a covering lease (`load_events_d04`, magic `KUTHAWAL`). `replay_check` calls `check_tt_anchors` (`provenance.rs`) so snapshot `TtAnchor` walls are compared to the log copy. `GraphFold::fingerprint` stays facts-only (`fold_query.rs`); `provenance_fingerprint` is a separate hash. Sidecars `terms.jsonl` / `quantum_outcomes.jsonl` / `justifications.jsonl` are written with `File::create` in place without sync or parent-dir fsync (`write_terms` / `write_outcomes` / `write_justifications`) — SNAP-01, frozen M002. No parent-directory fsync anywhere. Oracles: `wal_valid_covering_preferred`, `tampered_tt_anchor_wall_fails_replay_check`, `abort_snapshot_replace_keeps_previous_bytes`, `abort_wal_replace_keeps_previous_bytes`. Status stays **Proposed**.
 
 ## Date
 

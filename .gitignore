@@ -23,3 +23,19 @@ uv.toml.bak
 
 # Repo-local scratch (one-shot temp files; not SoT)
 /tmp/
+
+# Scratch and vendored trees (Phase 45 hygiene; D-07).
+# Do not ignore tracked Cursor skills (kutha-changelog, codebase-memory) or `.cursor/rules/`.
+# Curated CE handoffs under `.compound-engineering/artifacts/handoffs/` stay trackable.
+crates/**/tmp/
+.gsd/
+.claude/skills/
+.cursor/skills/gsd-*/
+.cursor/gsd-core/
+.cursor/gsd-*.json
+.cursor/gsd-migration-journal/
+.cursor/.gsd-profile
+.cursor/agents/
+.cursor/hooks/
+.cursor/hooks.json
+.cursor/scripts/

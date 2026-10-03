@@ -17,9 +17,11 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.07 | 31–33 | M014 | S01–S03 | F13 | shipped |
 | v0.08 | 34–35 | M015 | S01–S02 | known-on honesty, M014 residuals (H1/H2) | shipped |
 | v0.09 | 36–40 | M016 | S01–S05 | T2–T6, F9, F16 | shipped |
-| v0.10 | 41–44 | M017 | S01–S04 | docs honesty, replay integrity, ingest regression (audit 2026-10-02) | shipped |
+| v0.10 | 41–44 | M017 | S01–S04 | docs honesty, replay integrity, ingest regression (A-F01.. register; 2026-10-02 audit) | shipped |
 | v0.11 | 45–48 | M018 | S01–S04 | doc truth, C01 and knowledge cut, Horn determinism, fail-closed open (review 2026-10-03) | planned |
 | v0.12 | next | M002 | tbd | durability, commit marker | frozen |
+
+F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
 v0.06 phases: 22 baseline, 23 legal fixture reconnaissance, 24 fold indexes, 25 genesis log, 26 dictionary entries as facts, 27 one write path and facade, 28 independent verification and artifact budget, 29 close-out honesty (documents and governor), 30 write-path integrity hardening. Phase N maps to slice S(N-21). Phases 29–30 are the M013 tail added after the v0.06 audit and the 2026-10-02 project review.
 

@@ -6,7 +6,7 @@
 
 ### Evidence (2026-10-02; Proposed)
 
-M014 shipped typed clocks (`ValidTime` / `TransactionTime` / `WallTime`) and `as_known_on` via `tt_anchor` (`true_on_d_differs_from_known_on_d`). Phase 34 (M015 S01) made the known-on cut TT-only (`closed_vt_interval_survives_as_known_on`) and fail-closed duplicate/backwards walls. FF5 still compares two valid-time windows at transaction-time max; it is not the known-on query. F13 clock/anchor ship is in crates.
+M014 shipped typed clocks (`ValidTime` / `TransactionTime` / `WallTime`) and `as_known_on` via `tt_anchor` (`true_on_d_differs_from_known_on_d`). Phase 34 (M015 S01) made the known-on cut TT-only (`closed_vt_interval_survives_as_known_on`) and fail-closed duplicate/backwards walls. FF5 still compares two valid-time windows at transaction-time max; it is not the known-on query. Gap-review F13 clock/anchor ship is in crates.
 
 **FIXG-01 / M016 S05 (2026-10-02; fail-closed):** C01 sunset («пункт 15.1 действует до 01.01.2028») cannot be a Named/Horn body distinct from valid-time. `RuleTerm::Const` is rule-ident only (no calendar tokens); RuleAst has no temporal atoms. Folding the sunset into `valid_to` is VT, not an application clock. Two axes + typed annotations + `as_known_on` remain sufficient for known-on vs true-on; they are **not** sufficient for transitional-rule / application-end semantics without a fifth core axis. This verdict **stops** before inventing five clocks. Cell remains **Proposed**. Named oracle: `fixg01_c01_sunset_inexpressible_as_horn`.
 
@@ -145,6 +145,10 @@ FIXG-01 remains **OPEN**. C01 sunset («пункт 15.1 действует до 
 
 `GraphFold::as_known_on` takes the greatest `Op::TtAnchor` with `wall` ≤ D, then TT-only `known_at` (ignores valid-time). `Runtime::as_known_on` delegates to that fold method.
 
-### Evidence (2026-10-03; KNOWN-04 / F05; Proposed)
+### Evidence (2026-10-03; KNOWN-04 / A-F05; Proposed)
 
 Characterization (`known04_horn_fires_when_premise_hidden_on_early_cut`): a two-premise Horn `relatedTo(A,C) :- relatedTo(A,B), relatedTo(B,C)` mints a derived support while remaining-premise lookup uses `TT = u64::MAX` (`horn_fires` → `search_prems(..., u64::MAX)`; `live_horns` uses `is_live_at(u64::MAX, vt)`). Fixture: `TtAnchor` 2014, then Assert A–B and B–C (`valid_from` 2010), then `TtAnchor` 2020. Observed today: derived `relatedTo(A,C)` is live on the current fold; `as_known_on(2014)` hides A–B and the derived row; `as_known_on(2020)` shows A–B. Decision pending whether Horn should honour the knowledge cut. D013-1 unchanged. Cell remains **Proposed**.
+
+### Clarification (2026-10-03; Proposed)
+
+(a) `as_of(vt)` = `live_at(u64::MAX, vt)` (`fold_query.rs`) is **SUPPORT-LIVE**: a Horn-derived fact is not retracted when its premise support is retracted. `rule_follow_ons` (`eval.rs`) handles `Assert` / `Behavior` / `Retract` only; `Correct` / `CorrectInterval` do not trigger Horn re-derivation. Derivation eligibility is a separate API `derivation_eligible_at` (`provenance.rs`). (b) Horn fires at TT=`u64::MAX` (`search_prems` / `live_horns`); `as_known_on` never re-derives. (a) and (b) stay open for M018 S02/S03 (HORN-KC-01, ASOF-ELIG-01, HORN-CORR-01) — **no option chosen**. (c) Gap-review F2 EventId targeting: `Retract` / `Correct` on a missing or already-invalidated `event_id` is a silent no-op in `GraphFold::apply` (`fold.rs`); fail-closed is not claimed. C01 remains open; no option chosen. This subsection does not rewrite D013-1…D013-4 and does not mark this cell Accepted.

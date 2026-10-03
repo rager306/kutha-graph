@@ -6,11 +6,11 @@
 
 ### Evidence (2026-10-02; Proposed)
 
-Same persist story as ADR-012: `events.jsonl` rename-atomic; `snapshot.json` truncating create; `OUTCOMES_REL` / `JUSTIFICATIONS_REL` sidecars still written on `persist` (`store.rs`). Receipt stays on the in-log quantum path via `pipeline`.
+Same persist story as ADR-012: `events.jsonl` rename-atomic; `OUTCOMES_REL` / `JUSTIFICATIONS_REL` sidecars still written on `persist` (`store.rs`). Receipt stays on the in-log quantum path via `pipeline`. **2026-10-03 note:** snapshot/WAL in-place truncate is false; see Evidence 2026-10-03.
 
 ### Evidence (2026-10-03; Proposed)
 
-Outcomes are `Op::QuantumOutcome` log records (`Runtime::persist_outcome_event` → `outcome_op` in `pipeline.rs`). `store::persist` still writes `OUTCOMES_REL` / `JUSTIFICATIONS_REL` sidecars as leases. `snapshot.json` is a truncating `File::create`, not temp+sync+rename (open for M017 S02 / M002). Commit-marker vs `Op::QuantumOutcome` encoding stays open for M002 (COMMIT-01). This subsection does not rewrite D014-1…D014-5.
+Outcomes are `Op::QuantumOutcome` log records (`Runtime::persist_outcome_event` → `outcome_op` in `pipeline.rs`). `store::persist` still writes `OUTCOMES_REL` / `JUSTIFICATIONS_REL` sidecars as leases (`write_outcomes` / `write_justifications`: `File::create` in place, no file sync or parent-dir fsync — SNAP-01, frozen M002). **2026-10-03:** `snapshot.json` and `events.wal` use tmp+`sync_all`+rename (`replace_snapshot`, `replace_events_wal`); persist atomicity for those files closed in M017 S02. `replay_check` calls `check_tt_anchors`; `GraphFold::fingerprint` is facts-only; `provenance_fingerprint` is a separate hash. Commit-marker vs `Op::QuantumOutcome` encoding stays M002 (COMMIT-01; gap-review F11). This subsection does not rewrite D014-1…D014-5.
 
 ## Date
 

@@ -18,25 +18,25 @@
 
 ## Context
 
-### Проблема
+### Problem
 
-Нужен графовый движок, в котором:
+A graph engine is needed in which:
 
-1. **агенты и GenAI-обогащение живут внутри runtime**, а не как надстройка над storage;
-2. **время и аудит** — first-class (bi-temporal, lineage, point-in-time, fork);
-3. **производительность** на multi-hop / vector / analytics сопоставима с state-first graph-vector СУБД (ориентир: Samyama / FalkorDB-класс);
-4. **расширяемость** — плагины с обратимыми эффектами, без переписывания ядра.
+1. **agents and GenAI enrichment live inside the runtime**, not as an add-on on top of storage;
+2. **time and audit** are first-class (bi-temporal, lineage, point-in-time, fork);
+3. **performance** on multi-hop / vector / analytics is comparable to a state-first graph-vector DBMS (reference: Samyama / FalkorDB-class);
+4. **extensibility** — plugins with reversible effects, without rewriting the core.
 
-Классические варианты не закрывают всё сразу:
+Classic options do not cover everything at once:
 
-| Подход | Сильная сторона | Слабость для цели |
+| Approach | Strength | Weakness for the goal |
 |--------|-----------------|-------------------|
-| State-first graph DB (Samyama-like) | Throughput, CSR, MVCC, HNSW | Agents / full history / fork — надстройка |
-| Чистый event-sourced reactive graph (ActiveGraph) | Lineage, replay, behaviors | Write amp, latency multi-hop, storage bloat |
-| Memory frameworks (Graphiti/Zep, Mem0) | Temporal agent memory | Не СУБД; зависят от внешнего графа |
-| Document + in-DB GenAI (RavenDB) | Agents inside DB | Слабый native graph |
+| State-first graph DB (Samyama-like) | Throughput, CSR, MVCC, HNSW | Agents / full history / fork — add-on |
+| Pure event-sourced reactive graph (ActiveGraph) | Lineage, replay, behaviors | Write amp, latency multi-hop, storage bloat |
+| Memory frameworks (Graphiti/Zep, Mem0) | Temporal agent memory | Not a DBMS; depend on an external graph |
+| Document + in-DB GenAI (RavenDB) | Agents inside DB | Weak native graph |
 
-### Источники синтеза (research inputs)
+### Synthesis sources (research inputs)
 
 - **ActiveGraph**: event log = SoT; graph = deterministic projection; behaviors.
 - **Cordis**: Everything is a Plugin; spatiotemporal composability; reversible effects.
@@ -49,7 +49,7 @@
 - **HelixDB**: indexes as access paths; tiered storage.
 - **Tarantool**: compute-close-to-data; hot in-mem / cold disk.
 
-### Целевые вертикали (порядок приоритета)
+### Target verticals (priority order)
 
 1. Legal temporal agents (bi-temporal norms, deterministic audit)
 2. Regulated finance / compliance
@@ -57,21 +57,21 @@
 4. Horizontal agent runtime (shared temporal memory)
 5. Enterprise knowledge + security plane
 
-### Именование
+### Naming
 
-Рабочее имя продукта/репо: **Kutha** / **kutkha** (камчатский Ворон-творец; tech-пространство относительно чистое). Домены `.com/.io/.ai` заняты; `.dev` — кандидат. Финальный бренд — отдельный ADR.
+Working name of the product/repo: **Kutha** / **kutkha** (the Kamchatkan creator-raven; the tech namespace is relatively clean). The `.com/.io/.ai` domains are taken; `.dev` is a candidate. The final brand is a separate ADR.
 
 ---
 
 ## Decision
 
-**Принятая исследовательская гипотеза (working architecture):**
+**Adopted research hypothesis (working architecture):**
 
-> Kutha — гибридный AI-native graph engine на Rust: **event-sourced reactive core** (control / agent / lineage plane) + **pluggable high-performance materializations** (data plane) + **meta-prompt + external dictionaries** как универсальный управляющий слой агентов.
+> Kutha is a hybrid AI-native graph engine on Rust: **event-sourced reactive core** (control / agent / lineage plane) + **pluggable high-performance materializations** (data plane) + **meta-prompt + external dictionaries** as the universal agent control layer.
 
-Это **не** «Samyama поверх ActiveGraph» и **не** чистая замена Samyama. Это дифференцированный продукт в квадранте *high temporal × high hybrid × in-DB agents*.
+This is **not** “Samyama on top of ActiveGraph” and **not** a pure replacement for Samyama. It is a differentiated product in the *high temporal × high hybrid × in-DB agents* quadrant.
 
-### D1. Двухплоскостная модель
+### D1. Two-plane model
 
 ```
 Client / Cypher + Hybrid + Temporal AS OF + Agent API
@@ -94,13 +94,13 @@ Client / Cypher + Hybrid + Temporal AS OF + Agent API
         Storage: RocksDB / object store + WAL (+ optional Raft)
 ```
 
-| Плоскость | SoT / роль | Не является |
+| Plane | SoT / role | Is not |
 |-----------|------------|-------------|
 | **Control** | Event log + behaviors | Hot adjacency layout |
-| **Data** | Materializations | Источник истины |
-| **Agent** | Meta-prompt + dictionaries + memory packs | Свободный LLM без валидации |
+| **Data** | Materializations | Source of truth |
+| **Agent** | Meta-prompt + dictionaries + memory packs | A free LLM without validation |
 
-### D2. Формальная модель реактивности
+### D2. Formal reactivity model
 
 \[
 L = [e_1,\ldots,e_n],\quad
@@ -115,17 +115,17 @@ G(L)=\mathrm{foldl}(\mathrm{apply\_event}, G_0, L)
 B:(e,G)\to \mathrm{Option}(Patch)
 \]
 
-- Прямой mutate графа запрещён; только patch → validate → `patch.proposed` / `patch.applied`.
-- **Relation Behaviors** инкапсулируют координацию на рёбрах.
-- Модуль/pack ≈ **обобщённый предмет Cui** \(h_i\); глобальная логика — композиция локальных функций (max-convolution / аналог).
-- Runtime quantum: emit → log+project → trigger \(B\)/\(R_B\) → каскад до стабилизации.
-- Идентификаторы: **UUID v7** (монотонность + индексность).
+- Direct mutate of the graph is forbidden; only patch → validate → `patch.proposed` / `patch.applied`.
+- **Relation Behaviors** encapsulate coordination on edges.
+- A module/pack ≈ **Cui generalized item** \(h_i\); global logic is a composition of local functions (max-convolution / analog).
+- Runtime quantum: emit → log+project → trigger \(B\)/\(R_B\) → cascade until stabilization.
+- Identifiers: **UUID v7** (monotonicity + indexability).
 
-### D3. Управление агентами: meta-prompt + dictionaries (не hard FSM)
+### D3. Agent control: meta-prompt + dictionaries (not hard FSM)
 
-Отклонён жёсткий FSM как единственная модель. Принят универсальный слой:
+A hard FSM as the sole model is rejected. A universal layer is adopted:
 
-1. **Meta-prompt** — версионируемая «конституция» (режимы, tool policy, temporal semantics, conflict handling); сама temporal.
+1. **Meta-prompt** — a versioned “constitution” (modes, tool policy, temporal semantics, conflict handling); itself temporal.
 2. **External dictionaries** (first-class temporal graph entities):
    - Controlled vocabulary
    - Action dictionary
@@ -134,61 +134,67 @@ B:(e,G)\to \mathrm{Option}(Patch)
    - Policy dictionary
    - Domain ontology / schema
 
-**Цикл:** request → load meta-prompt@T → load dictionaries@T → propose → validate(dicts+security) → execute → event log.
+**Cycle:** request → load meta-prompt@T → load dictionaries@T → propose → validate(dicts+security) → execute → event log.
 
-FSM / statecharts **выводимы** из State+Action dictionaries (для аудита/визуализации), не захардкожены в коде.
+FSM / statecharts are **derivable** from the State+Action dictionaries (for audit/visualization), not hardcoded in code.
 
-Enterprise: ABAC + temporal policies + capability sandbox агентов; policy-as-graph.
+Enterprise: ABAC + temporal policies + agent capability sandbox; policy-as-graph.
 
-### D4. Bi-temporal как семантика фактов
+Clarification (2026-10-03): five reserved facts kutha:allows|rule|policy|admission|action exist in the spike; the six agent dictionaries are frozen (see ADR-050).
 
-Каждый факт/ребро: `valid_from`, `valid_to`, `ingested_at`, `invalidated_at` (+ provenance).  
-Invalidation — behavior, не silent overwrite. Query: `AS OF`, temporal filters — native.
+### D4. Bi-temporal as fact semantics
+
+Every fact/edge: `valid_from`, `valid_to`, `ingested_at`, `invalidated_at` (+ provenance).  
+Invalidation is a behavior, not a silent overwrite. Query: `AS OF`, temporal filters — native.
 
 ### D5. Materializations as plugins
 
 CSR/HNSW/temporal slices/memory views:
 
-- инкрементально поддерживаются behaviors;
-- **reversible** (unload → откат побочных эффектов);
-- допускают конкурирующие проекции.
+- incrementally maintained by behaviors;
+- **reversible** (unload → rollback of side effects);
+- allow competing projections.
 
-RVF-подобные контейнеры: portable agent memory, sealed knowledge units, checkpoint/fork с witness chain — **transport / packaging layer**, не замена hot RocksDB/CSR path.
+RVF-like containers: portable agent memory, sealed knowledge units, checkpoint/fork with a witness chain — **transport / packaging layer**, not a replacement for the hot RocksDB/CSR path.
 
-### D6. Язык и runtime ядра
+### D6. Core language and runtime
 
-| Слой | Выбор | Почему |
+| Layer | Choice | Why |
 |------|--------|--------|
-| Core engine | **Rust + Tokio + RocksDB (event store)** | No GC, workspaces=границы, serde, channels |
-| Agent I/O / early composition | TS/Cordis-like SDK допустим | I/O-bound LLM; не materializer |
-| Java / C# | Обвязка enterprise apps | Не ядро движка |
+| Core engine | **Rust + Tokio + RocksDB (event store)** | No GC, workspaces=boundaries, serde, channels |
+| Agent I/O / early composition | A TS/Cordis-like SDK is admissible | I/O-bound LLM; not a materializer |
+| Java / C# | Enterprise app wrapping | Not the engine core |
 
-Compile-time hexagon: crates + `pub(crate)`. Ошибки behavior → `behavior.failed` (`Result`), не panic. Content-addressed cache внешних tool/LLM вызовов — обязателен для cheap replay/fork.
+Compile-time hexagon: crates + `pub(crate)`. Behavior errors → `behavior.failed` (`Result`), not panic. A content-addressed cache of external tool/LLM calls is mandatory for cheap replay/fork.
 
-### D7. Профили нагрузки (один продукт — три режима)
+### Clarification (2026-10-03; Proposed)
 
-| Профиль | RAM | CPU | Disk | Следствие для дизайна |
+The implemented spike stores `events.jsonl` as SoT with `events.wal` (magic `KUTHAWAL`) as a covering lease (`crates/kutha-runtime/src/store.rs` `load_events_d04`). `snapshot.json` and `events.wal` are replaced via tmp+sync+rename. RocksDB is NOT a dependency (`crates/kutha-runtime/Cargo.toml`) and stays an optional index store behind the frozen M002 durability protocol. This pointer does not rewrite D1–D10.
+
+### D7. Load profiles (one product — three modes)
+
+| Profile | RAM | CPU | Disk | Design implication |
 |---------|-----|-----|------|------------------------|
-| **A OLTP** | низкая (агрегаты) | serde / outbox | **WAL IOPS** | lean events, hot entity cache |
-| **B Temporal KG** | **критична** (граф in-mem) | fold / Cypher / as-of | read-heavy + temporal idx | CSR projection residency |
-| **C Agents** | средняя | низкая на хосте | **объём lineage** | tiered archive, compression |
+| **A OLTP** | low (aggregates) | serde / outbox | **WAL IOPS** | lean events, hot entity cache |
+| **B Temporal KG** | **critical** (in-mem graph) | fold / Cypher / as-of | read-heavy + temporal idx | CSR projection residency |
+| **C Agents** | medium | low on the host | **lineage volume** | tiered archive, compression |
 
-### D8. Обязательные антипаттерн-контроллеры
+### D8. Mandatory antipattern controllers
 
 1. **Replay tax \(O(N)\)** → snapshots + log segmentation.  
 2. **Single-writer bottleneck** → RocksDB/SQLite WAL, batching.  
-3. **Fat events** → lean deltas + ids; blobs через object store / read ports.
+3. **Fat events** → lean deltas + ids; blobs via object store / read ports.
 
-### D9. Тестирование как first-class capability
+### D9. Testing as a first-class capability
 
-| Класс | Назначение |
+| Class | Purpose |
 |-------|------------|
-| Sociable unit + in-memory ports | Use-cases без мок-зоопарка |
+| Sociable unit + in-memory ports | Use-cases without a mock zoo |
 | Strict replay | `ReplayDivergenceError` |
 | Fork & diff | Counterfactual |
-| Adapter + Testcontainers | SQLx/Postgres и т.д. |
+| Adapter + Testcontainers | SQLx/Postgres etc. |
 
-### D10. Позиционирование (value prop)
+### D10. Positioning (value prop)
 
 > Event-sourced bi-temporal graph engine on Rust where agents are first-class citizens, governed by meta-prompts and external dictionaries, with performance delivered by pluggable materializations — not agents bolted onto storage.
 
@@ -198,72 +204,72 @@ White space vs Graphiti/Zep (memory layer), FalkorDB (perf, weak agents/temporal
 
 ## Consequences
 
-### Становится проще
+### Becomes easier
 
 - Audit, PITR, fork, legal/finance explainability.
-- Добавление indexes / enrichment / solvers как packs.
-- Replay/fork-тесты вместо тяжёлых стендов.
-- Универсальный agent control across verticals (меняются словари, не runtime).
+- Adding indexes / enrichment / solvers as packs.
+- Replay/fork tests instead of heavy testbeds.
+- Universal agent control across verticals (dictionaries change, not the runtime).
 
-### Становится сложнее
+### Becomes harder
 
-- Две плоскости (log + materializers) — больше семантики consistency.
-- Incremental materialization и conflict detection — R&D cost.
-- In-DB agents → жёсткий security plane (иначе unshippable for enterprise).
-- Найм/скорость разработки на Rust выше по людям, ниже по infra TCO.
+- Two planes (log + materializers) — more consistency semantics.
+- Incremental materialization and conflict detection — R&D cost.
+- In-DB agents → a hard security plane (otherwise unshippable for enterprise).
+- Hiring/development speed on Rust is higher in people, lower in infra TCO.
 
-### Оценки fit (research)
+### Fit assessments (research)
 
-| Направление | Оценка |
+| Direction | Assessment |
 |-------------|--------|
-| Чистая замена Samyama по сырому throughput | 5–6/10 |
+| Pure Samyama replacement on raw throughput | 5–6/10 |
 | AI-native / agentic KG + GraphRAG + multi-agent memory | 8.5–9.5/10 |
 | Temporal / auditable / regulated | 9/10 |
-| Гибрид (этот ADR) | 8–9/10 |
+| Hybrid (this ADR) | 8–9/10 |
 
 ---
 
 ## Alternatives Considered
 
-| Альтернатива | Вердикт |
+| Alternative | Verdict |
 |--------------|---------|
-| Чистый state-first Samyama + bolted agents | Отвергнуто как продукт; заимствовать materializers |
-| Чистый ActiveGraph без hot projections | Отвергнуто для B/C scale |
-| Hard FSM как единственный agent control | Отвергнуто; FSM выводим из dictionaries |
-| TS/Node как ядро графа | Отвергнуто для B; допустим для agent I/O |
-| Внешний ETL + внешний agent orchestrator | Отвергнуто как целевая идеология; ingestion = reactive packs |
-| RVF как primary storage | Отвергнуто; RVF = portable/cognitive packaging |
+| Pure state-first Samyama + bolted agents | Rejected as a product; borrow the materializers |
+| Pure ActiveGraph without hot projections | Rejected for B/C scale |
+| Hard FSM as the sole agent control | Rejected; FSM is derivable from dictionaries |
+| TS/Node as the graph core | Rejected for B; admissible for agent I/O |
+| External ETL + external agent orchestrator | Rejected as the target ideology; ingestion = reactive packs |
+| RVF as primary storage | Rejected; RVF = portable/cognitive packaging |
 
 ---
 
 ## Open Research Questions
 
-Вопросы, которые **обязаны** породить follow-on ADR или spike до Accepted статуса соответствующих решений.
+Questions that **must** spawn a follow-on ADR or spike before Accepted status of the corresponding decisions.
 
 ### R1. Consistency & concurrency
 
-- Какая модель между log append и projection apply? (single-writer serial / sharded logs / causal)
-- Как детектировать конфликты patch при параллельных behaviors?
-- Эквивалент MVCC на versioned events vs arena-MVCC только в projection?
+- Which model between log append and projection apply? (single-writer serial / sharded logs / causal)
+- How to detect patch conflicts under parallel behaviors?
+- MVCC equivalent on versioned events vs arena-MVCC only in the projection?
 
 ### R2. Materialization protocol
 
 - API reversible plugin: mount / apply_delta / snapshot / unload / rollback.
-- Инкрементальный CSR/HNSW update cost vs periodic rebuild.
-- Несколько конкурирующих projections одного типа — семантика query routing.
+- Incremental CSR/HNSW update cost vs periodic rebuild.
+- Several competing projections of one type — query routing semantics.
 
 ### R3. Bi-temporal query & storage
 
-- Физическая раскладка: edge versions vs separate temporal index.
+- Physical layout: edge versions vs separate temporal index.
 - AS OF + multi-hop cost model.
-- Invalidation cascade bounds (не взрывать reactive fan-out).
+- Invalidation cascade bounds (do not explode reactive fan-out).
 
 ### R4. Agent control plane
 
-- Схема сущностей: `MetaPrompt`, `Dictionary`, `DictionaryEntry`, `AgentInstance`.
-- Кто главный: LLM propose vs dictionary validate (fail-closed).
+- Entity schema: `MetaPrompt`, `Dictionary`, `DictionaryEntry`, `AgentInstance`.
+- Who is in charge: LLM propose vs dictionary validate (fail-closed).
 - Capability model vs RBAC; policy-as-graph schema.
-- Связь meta-prompt@version с witness/provenance решения.
+- Link of meta-prompt@version to the decision's witness/provenance.
 
 ### R5. Event schema & storage
 
@@ -279,19 +285,19 @@ White space vs Graphiti/Zep (memory layer), FalkorDB (perf, weak agents/temporal
 ### R7. Security & multi-tenancy
 
 - ABAC attributes on node/edge/temporal slice/agent action/container.
-- Sandbox для in-DB agents (WASM? process? crate-level?).
+- Sandbox for in-DB agents (WASM? process? crate-level?).
 - Shared public knowledge (law corpus) + private tenant data.
 
 ### R8. RVF / portable units
 
-- Какой subset сегментов нужен в v1 (WITNESS, VEC, GRAPH, META, WASM)?
+- Which subset of segments is needed in v1 (WITNESS, VEC, GRAPH, META, WASM)?
 - Mapping: graph fork ↔ RVCOW; event segment ↔ RVF file.
 
 ### R9. Benchmarks & success metrics
 
 - Legal PIT: correctness + latency for norm@date.
 - Agent replay: divergence rate; fork cost.
-- Graph: hops/s and ingest vs Samyama/FalkorDB baselines (не цель обогнать всегда — цель «близко на hot path»).
+- Graph: hops/s and ingest vs Samyama/FalkorDB baselines (the goal is not to always outrun — the goal is “close on the hot path”).
 
 ### R10. Branding & licensing
 
@@ -306,9 +312,9 @@ Pointer only, from docs/architecture/semantic-gap-review.md (F7, D4): D4 names `
 
 ## Research & Detailing Backlog
 
-Порядок детализации (каждое → отдельный ADR или spike report).
+Detailing order (each → a separate ADR or spike report).
 
-| Phase | Тема | Выход | Depends |
+| Phase | Topic | Output | Depends |
 |-------|------|-------|---------|
 | **P0** | Event log + apply + behavior quantum (Rust spike) | Working mini-runtime; **ADR-010** (+ Vision/STCA ADR-001/002) | — |
 | **P0** | Lean event schema + UUID v7 + caused_by | **ADR-011** | P0 runtime |
@@ -325,13 +331,13 @@ Pointer only, from docs/architecture/semantic-gap-review.md (F7, D4): D4 names `
 | **P4** | Raft / multi-node (optional) | ADR Distribution | storage mature |
 | **P4** | GNN learned index (ruVector-inspired) | ADR Learned Indexes | P2 HNSW |
 
-### Критерии выхода из Research → Proposed для этого ADR
+### Exit criteria from Research → Proposed for this ADR
 
-- [x] Spike P0 runtime демонстрирует emit → cascade → stable graph + replay.
-- [x] Зафиксированы lean event types и snapshot story. *(lean events: `kutha-common`; snapshot = fold+dict+offset lease, JSONL semantic log; Rocks WAL still crash cousin, not SoT)*
-- [x] Написаны черновики ADR Temporal + Materialization API + Agent Control. *(honeycomb 010–014, 040–043, 050 Proposed)*
-- [x] Явно измерены: replay time vs log length; cascade depth bounds. *(2026-08-18: `replay_check` log_len=200 elapsed_ms≈2.0; `max_cascade` abort covered)*
-- [x] Security threats для in-DB agents перечислены и имеют mitigation sketch. *(ADR-051/080/081 Proposed — sketch, not kernel)*
+- [x] Spike P0 runtime demonstrates emit → cascade → stable graph + replay.
+- [x] Lean event types and snapshot story are recorded. *(lean events: `kutha-common`; snapshot = fold+dict+offset lease, JSONL semantic log; Rocks WAL still crash cousin, not SoT)*
+- [x] Draft ADRs Temporal + Materialization API + Agent Control are written. *(honeycomb 010–014, 040–043, 050 Proposed)*
+- [x] Explicitly measured: replay time vs log length; cascade depth bounds. *(2026-08-18: `replay_check` log_len=200 elapsed_ms≈2.0; `max_cascade` abort covered)*
+- [x] Security threats for in-DB agents are listed and have a mitigation sketch. *(ADR-051/080/081 Proposed — sketch, not kernel)*
 
 ---
 
@@ -387,7 +393,7 @@ Graphiti/Zep, FalkorDB, HelixDB, Samyama, ruVector/RVF, RavenDB GenAI, Tarantool
 ## Related Decisions
 
 - None yet (root research ADR).
-- Supersedes: informal notes from Grok share «DeepSeek Harness: Plugin Paradigm for AI».
+- Supersedes: informal notes from Grok share “DeepSeek Harness: Plugin Paradigm for AI”.
 
 ---
 

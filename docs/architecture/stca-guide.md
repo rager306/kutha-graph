@@ -1,87 +1,87 @@
-# Руководство: Spatiotemporal Compositional Architecture (STCA) на Rust
+# Guide: Spatiotemporal Compositional Architecture (STCA) in Rust
 
-**Статус:** рабочий манифест-спецификация для Kutha / kutha-graph  
-**Связь:** нормативная опора **ADR-002 (STCA)**; видение продукта — **ADR-001**; фундамент D1–D10 — **ADR-000**; детализация — соты ADR-010+  
-**Дата:** 2026-08-16
+**Status:** working manifesto-specification for Kutha / kutha-graph  
+**Relation:** normative support **ADR-002 (STCA)**; product vision — **ADR-001**; D1–D10 foundation — **ADR-000**; detailing — honeycomb ADR-010+  
+**Date:** 2026-08-16
 
-Каждая концепция заземлена на исходные материалы. Ссылки на авторов — в тексте; номера пассажей из исходного синтеза помечены как `[i]` там, где нужна трассировка к Studio-источнику.
+Every concept is grounded in the source materials. Author citations are in the text; passage numbers from the original synthesis are marked `[i]` where a trace back to the Studio source is needed.
 
 ---
 
-## 1. Синтетическая архитектурная парадигма (STCA)
+## 1. Synthetic architectural paradigm (STCA)
 
-Парадигма **Spatiotemporal Compositional Architecture (STCA)** объединяет:
+The **Spatiotemporal Compositional Architecture (STCA)** paradigm unites:
 
-1. **Пространственный контур** — статическое доменное разделение (вертикальные срезы, порты).
-2. **Временной контур** — событийно-порождённый граф (append-only event log → детерминированная проекция).
-3. **Композиционный мост** — математика обобщённых предметов и max-свёртки (Cui).
+1. **Spatial contour** — static domain separation (vertical slices, ports).
+2. **Temporal contour** — event-generated graph (append-only event log → deterministic projection).
+3. **Compositional bridge** — mathematics of generalized items and max-convolution (Cui).
 
 ```
-  [ ПРОСТРАНСТВО (Space) ]              [ ВРЕМЯ (Temporal) ]
-  Вертикальные доменные срезы            Append-only Event Log
+  [ SPACE (Space) ]                     [ TIME (Temporal) ]
+  Vertical domain slices                 Append-only Event Log
   Cockburn / Palermo / Martin            ActiveGraph (Nakajima)
   + Vertical Slices (Drotbohm)           arXiv:2605.21997
            │                                      │
            ▼                                      ▼
-  Свободный домен + Ports               Детерминированный fold
-  (адаптеры снаружи)                    (граф = проекция лога)
+  Free domain + Ports                   Deterministic fold
+  (adapters outside)                    (graph = log projection)
            │                                      │
            └──────────────────┬───────────────────┘
                               ▼
-                   [ ЯДРО STCA ]
+                   [ STCA CORE ]
               Spatiotemporal Context
                               ▲
                               │
-                   [ Маппинг и свёртка ]
+                   [ Mapping and convolution ]
                  Cui «背包问题九讲» (max-convolution)
 ```
 
-**Формула Kutha:** STCA-ядро + pluggable hot materializations (CSR/HNSW/…) + dict-first агенты + нативная bi-temporal семантика (референс Graphiti, без Graphiti runtime).
+**Kutha formula:** STCA core + pluggable hot materializations (CSR/HNSW/…) + dict-first agents + native bi-temporal semantics (Graphiti reference, without Graphiti runtime).
 
-### 1.1. Пространственная изоляция (Space)
+### 1.1. Spatial isolation (Space)
 
-- **Классика:** гексагональная архитектура (Alistair Cockburn, 2005), onion (Jeffrey Palermo, 2008), clean architecture (Robert C. Martin, 2012) — зависимости направлены к чистому домену.
-- **Эволюция 2025–2026:** техническая нарезка на папки `ports` / `adapters` / `domain` даёт низкую cohesion при смене требований. По Oliver Drotbohm (Spring I/O / CodeCrafts 2026) — **функциональная декомпозиция на вертикальные срезы (Vertical Slices / Sliced Onion)**. Гексагон живёт *внутри* доменного модуля; модули общаются только через **Ports**.
-- **Метафреймворк:** spatiotemporal composability (Cordis / DeepSeek Harness) — компоненты как автономные плагины (Pack), взаимодействие через контекст; эффекты обратимы.
+- **Classics:** hexagonal architecture (Alistair Cockburn, 2005), onion (Jeffrey Palermo, 2008), clean architecture (Robert C. Martin, 2012) — dependencies point toward the pure domain.
+- **Evolution 2025–2026:** a technical cut into `ports` / `adapters` / `domain` folders yields low cohesion when requirements change. Per Oliver Drotbohm (Spring I/O / CodeCrafts 2026) — **functional decomposition into vertical slices (Vertical Slices / Sliced Onion)**. The hexagon lives *inside* the domain module; modules communicate only through **Ports**.
+- **Metaframework:** spatiotemporal composability (Cordis / DeepSeek Harness) — components as autonomous plugins (Pack), interaction through context; effects are reversible.
 
-### 1.2. Временная изоляция (Time)
+### 1.2. Temporal isolation (Time)
 
-- Состояние **не** перезаписывается на месте (не State-on-Write).
-- По ActiveGraph (Yohei Nakajima, 2026, “The Log is the Agent”, arXiv:2605.21997): **единственный SoT — упорядоченный append-only Event Log**.
-- Граф \(G_t = \mathrm{foldl}(\mathrm{apply}, G_0, L_t)\) — детерминированная проекция.
-- **Behaviors** и **Relation Behaviors** реагируют на топологию/события, предлагают **Patches**; рантайм валидирует и пишет в лог.
-- Принцип: «Граф — мир. Поведения — физика. Лог — доказательство» (Nakajima, 2026).
+- State is **not** overwritten in place (not State-on-Write).
+- Per ActiveGraph (Yohei Nakajima, 2026, “The Log is the Agent”, arXiv:2605.21997): **the sole SoT is an ordered append-only Event Log**.
+- The graph \(G_t = \mathrm{foldl}(\mathrm{apply}, G_0, L_t)\) is a deterministic projection.
+- **Behaviors** and **Relation Behaviors** react to topology/events, propose **Patches**; the runtime validates and writes to the log.
+- Principle: “The graph is the world. Behaviors are the physics. The log is the proof” (Nakajima, 2026).
 
-### 1.3. Алгоритмический мост (Cui)
+### 1.3. Algorithmic bridge (Cui)
 
-- Модуль \(M_i\) ≈ **обобщённый предмет**: локальная \(h_i(v)\) при бюджете ресурса \(v\).
-- Глобальное состояние — **max-convolution** локальных функций (Tianyi Cui, «Nine Lectures on the Knapsack Problem», лекция 8).
-- В Kutha: распределение cascade-бюджетов, лимитов агентов, конкуренции плагинов материализаций — без жёсткого workflow-engine.
+- Module \(M_i\) ≈ **generalized item**: local \(h_i(v)\) at resource budget \(v\).
+- Global state is the **max-convolution** of local functions (Tianyi Cui, “Nine Lectures on the Knapsack Problem”, lecture 8).
+- In Kutha: allocation of cascade budgets, agent limits, competition among materialization plugins — without a hard workflow-engine.
 
 ---
 
-## 2. Математическая и алгоритмическая спецификация
+## 2. Mathematical and algorithmic specification
 
-### Алгоритм 1. Детерминированный fold (проекция графа)
+### Algorithm 1. Deterministic fold (graph projection)
 
-**Вход:** \(G_0 = \emptyset\), \(L_t = [e_1,\ldots,e_t]\).  
-**Выход:** \(G_t\).
+**Input:** \(G_0 = \emptyset\), \(L_t = [e_1,\ldots,e_t]\).  
+**Output:** \(G_t\).
 
 1. \(G \leftarrow G_0\).
-2. Для каждого \(e_k \in L_t\): применить `object.created` / `relation.created` / `object.patched` (JSON merge-patch) и т.д.
-3. Вернуть \(G\).
+2. For each \(e_k \in L_t\): apply `object.created` / `relation.created` / `object.patched` (JSON merge-patch), etc.
+3. Return \(G\).
 
-### Алгоритм 2. Relation Behaviors
+### Algorithm 2. Relation Behaviors
 
-**Вход:** событие \(e\), граф \(G\), реестр реберных поведений.  
-**Выход:** список порождённых событий.
+**Input:** event \(e\), graph \(G\), registry of edge behaviors.  
+**Output:** list of produced events.
 
-Для каждого поведения с совпадающим trigger и типом ребра: если событие инцидентно концам ребра — `execute(rel, e, G)`.
+For each behavior with a matching trigger and edge type: if the event is incident to the edge endpoints — `execute(rel, e, G)`.
 
-### Алгоритм 3. Cui Max-Convolution
+### Algorithm 3. Cui Max-Convolution
 
-**Вход:** бюджет \(V\), плагины \(M_1..M_n\) с \(h_i(v)\).  
-**Выход:** вектор \(H\), где \(H[V]\) — оптимальная композиция.
+**Input:** budget \(V\), plugins \(M_1..M_n\) with \(h_i(v)\).  
+**Output:** vector \(H\), where \(H[V]\) is the optimal composition.
 
 \[
 H_{\mathrm{next}}[W] = \max_{0 \le v \le W}\{ h_i(v) + H[W-v] \}
@@ -89,71 +89,71 @@ H_{\mathrm{next}}[W] = \max_{0 \le v \le W}\{ h_i(v) + H[W-v] \}
 
 ---
 
-## 3. Структура в Rust (Cargo Workspace)
+## 3. Structure in Rust (Cargo Workspace)
 
 ```
 [workspace]
- ├── app-shell/          # Composition Root (единственный бинарь)
+ ├── app-shell/          # Composition Root (the only binary)
  ├── common/             # Event, Patch, UuidV7, …
- └── modules/           # Вертикальные срезы (packs)
+ └── modules/           # Vertical slices (packs)
       └── <domain>-module/
-           ├── domain/      # чистый домен (без sqlx/ORM)
+           ├── domain/      # pure domain (no sqlx/ORM)
            ├── internal/    # pub(crate)
-           ├── adapters/    # исходящие порты
-           └── lib.rs       # публичные Ports (traits)
+           ├── adapters/    # outgoing ports
+           └── lib.rs       # public Ports (traits)
 ```
 
-### Законы изоляции (AI-Compiler Gates)
+### Isolation laws (AI-Compiler Gates)
 
-1. **Domain Ignorance** — `domain/` без инфраструктуры.
-2. **Private-by-Default** — наружу только Ports.
-3. **Единственный Composition Root** — только `app-shell` знает конкретные адаптеры.
+1. **Domain Ignorance** — `domain/` without infrastructure.
+2. **Private-by-Default** — only Ports go outward.
+3. **Single Composition Root** — only `app-shell` knows concrete adapters.
 
-Для Kutha-engine: `common` + runtime-крейт + materializer packs + dictionary/agent packs; hot path без обязательных сетевых адаптеров (см. ideation идея-21).
+For the Kutha-engine: `common` + runtime crate + materializer packs + dictionary/agent packs; hot path without mandatory network adapters (see ideation idea-21).
 
 ---
 
-## 4. Стратегия тестирования
+## 4. Testing strategy
 
 ### 4.1. Strict Replay
 
-Проигрыш исторического лога; внешние I/O — content-addressed cache (`SHA256(prompt…)`); расхождение → `ReplayDivergenceError`.
+Replay of the historical log; external I/O — content-addressed cache (`SHA256(prompt…)`); divergence → `ReplayDivergenceError`.
 
 ### 4.2. Fork-and-Diff
 
-`fork_at(event_id)` → изменить поведение → стабилизация → структурный diff графов.
+`fork_at(event_id)` → change a behavior → stabilization → structural graph diff.
 
 ### 4.3. Regimes Gated Loop (Nakajima, arXiv:2606.10241)
 
-Diagnose → Route на Action Seam → Static / Sandbox / In-Sample / Held-Out gates; падение held-out → discard (анти-overfit).
+Diagnose → Route onto the Action Seam → Static / Sandbox / In-Sample / Held-Out gates; held-out failure → discard (anti-overfit).
 
 ---
 
-## 5. Эталонный каркас (сводка)
+## 5. Reference scaffold (summary)
 
-Полный типизированный каркас ActiveRuntime (Event, Patch, MaterializedGraph::apply_event, BehaviorFn, RelationBehaviorFn, emit-цикл до стабилизации) — в исходном Studio-артефакте и в прототипных набросках ADR-000 §Prototype. Идентификаторы: **UUID v7**.
-
----
-
-## 6. Протокол для кодового агента
-
-1. Менять только на швах: Behavior / Relation Behavior / Port.
-2. Жёсткая схема payload события в `common/`.
-3. Домен — чистые unit-тесты без сети.
-4. Для адаптеров — replay-фикстуры с CA-кэшем.
+The full typed ActiveRuntime scaffold (Event, Patch, MaterializedGraph::apply_event, BehaviorFn, RelationBehaviorFn, emit-cycle until stabilization) is in the original Studio artifact and in the prototype sketches in ADR-000 §Prototype. Identifiers: **UUID v7**.
 
 ---
 
-## 7. Связь с продуктовыми уточнениями Kutha (2026-08-16)
+## 6. Protocol for a coding agent
 
-| Уточнение | Место в STCA |
+1. Change only at the seams: Behavior / Relation Behavior / Port.
+2. Strict event payload schema in `common/`.
+3. Domain — pure unit tests without the network.
+4. For adapters — replay fixtures with a CA-cache.
+
+---
+
+## 7. Relation to Kutha product refinements (2026-08-16)
+
+| Refinement | Place in STCA |
 |-----------|----------------|
-| Самодостаточный Rust-движок, без обязательных внешних API | Space: адаптеры опциональны; Time: SoT локальный лог (RocksDB) |
-| Bi-temporal семантика «как Graphiti», нативно | Time: поля фактов + invalidation behaviors; не Graphiti runtime |
-| Quantum Receipt / cascade budgets | Time + Cui: квант emit и бюджеты свёртки |
-| Dict-first агенты | Space pack + control plane поверх STCA |
-| Hot CSR/HNSW | Data-plane materializations *поверх* fold (D5 ADR-000) |
+| Self-contained Rust engine, without mandatory external APIs | Space: adapters optional; Time: SoT is the local log (RocksDB) |
+| Bi-temporal semantics “like Graphiti”, natively | Time: fact fields + invalidation behaviors; not Graphiti runtime |
+| Quantum Receipt / cascade budgets | Time + Cui: emit quantum and convolution budgets |
+| Dict-first agents | Space pack + control plane on top of STCA |
+| Hot CSR/HNSW | Data-plane materializations *on top of* the fold (D5 ADR-000) |
 
 ---
 
-*Документ очищен от «воды» для чтения архитектором и парсинга LLM-агентом. Полный эталонный Rust-листинг ActiveRuntime — при необходимости восстановить из Studio `stca-guide` / ADR-000 prototype appendix.*
+*The document is stripped of filler for architect reading and LLM-agent parsing. The full reference Rust listing of ActiveRuntime — restore if needed from Studio `stca-guide` / ADR-000 prototype appendix.*

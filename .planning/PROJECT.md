@@ -65,14 +65,18 @@ GSD overlay v0.07 (Phases 31–33 — M014 typed clocks):
 
 GSD overlay v0.09 (Phases 36–40 — M016 executable rules):
 
-- ✓ `RuleAst` canonical encoding hashed into `rule_version`; evaluator `live_horns` scans `fold.facts()` (`eval.rs`); thin `deny` policy body eval (`admission.rs`); execution replay `horn_behavior_reproducible` (`eval.rs`, called from `provenance.rs` `replay_check`); FIXG-01 C01 sunset inexpressible as Horn (`fixg01_c01_sunset_inexpressible_as_horn`) — v0.09
+- ✓ `RuleAst` canonical encoding hashed into `rule_version`; evaluator `live_horns` is lease-first via `GraphFold.horns_by_premise` (`eval.rs`; M017 S04; scan fallback `live_horns_scan`); thin `deny` policy body eval (`admission.rs`); execution replay `horn_behavior_reproducible` (`eval.rs`, called from `provenance.rs` `replay_check`); FIXG-01 C01 sunset inexpressible as Horn (`fixg01_c01_sunset_inexpressible_as_horn`) — v0.09
 
-### Active
+### Shipped
 
 - [x] **v0.06 Honest baseline and one write path (M013 S01–S09):** shipped 2026-10-02 — archive `.planning/milestones/v0.06-*`, tag `v0.06`
 - [x] **v0.07 Typed clocks and as-known-on (M014 S01–S03):** shipped 2026-10-02 — archive `.planning/milestones/v0.07-*`, tag `v0.07`
+- [x] **v0.08 Known-on honesty (M015 S01–S02):** shipped 2026-10-02 — archive `.planning/milestones/v0.08-*`, tag `v0.08`
 - [x] **v0.09 Test hardening + executable rules (M016 S01–S05):** shipped 2026-10-02 — archive `.planning/milestones/v0.09-*`, tag `v0.09`
 - [x] **v0.10 Docs honesty and replay integrity (M017 S01–S04):** shipped 2026-10-03 — archive `.planning/milestones/v0.10-*`, tag `v0.10`
+
+### Standing
+
 - [ ] Keep FF5/FF6/H2/H4/M010/M011 named fitness **green** (`L_capability=ff5-green` per `.kutha/STATE.md`)
 - [ ] Keep governor CI honest; three lifecycles uncollapsed; freeze until STATE names otherwise
 - [ ] Start only the slice `.kutha/STATE.md` names — do **not** assume M002, legal pack, or honeycomb Accepted
@@ -80,8 +84,8 @@ GSD overlay v0.09 (Phases 36–40 — M016 executable rules):
 ### Out of Scope
 
 - Honeycomb ADR-010–093 as a delivery backlog — map only; Status Proposed ≠ Accepted
-- Legal / science product packs, ADR-090 ontology, ADR-093 — freeze; FF5 is a fixture, not a corpus
-- RocksDB crate, Cypher/GPML parser, HNSW, ADR-050 six dictionaries, ADR-080/081, Consensus Query 103+ — until `.kutha/STATE.md` names them (today: freeze until explicit **M002**)
+- Legal / science product packs — FF5 is a fixture, not a corpus
+- Freeze items: `.kutha/STATE.md` Freeze only (do not copy the list here)
 - TypeScript as graph core; Python inside `kutha-runtime`; repo-root `ports/` / `adapters/` / `domain/`
 - STCA-guide §5 JSON merge-patch / `object.created` as the product write surface
 - Mandatory Neo4j / FalkorDB / Graphiti / cloud LLM for assert → invalidate → AS OF
@@ -168,11 +172,11 @@ Harness compact index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov m
 
 ## Current State
 
-Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), **v0.04 — Single-log SoT + stable references** (2026-10-01, M012a S01–S06), **v0.05 — Dictionaries as facts** (2026-10-01, M012 S01–S05), **v0.06 — Honest baseline and one write path** (2026-10-02, M013 S01–S09), **v0.07 — Typed clocks and as-known-on** (2026-10-02, M014 S01–S03), **v0.08 — Known-on honesty** (2026-10-02, M015), **v0.09 — Test hardening + executable rules** (2026-10-02, M016 S01–S05), and **v0.10 — Docs honesty and replay integrity** (2026-10-03, M017 S01–S04). No live milestone. Honeycomb cells stay Proposed. Product stays `0.0.0`. Lease and freeze: `.kutha/STATE.md`.
+Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), **v0.04 — Single-log SoT + stable references** (2026-10-01, M012a S01–S06), **v0.05 — Dictionaries as facts** (2026-10-01, M012 S01–S05), **v0.06 — Honest baseline and one write path** (2026-10-02, M013 S01–S09), **v0.07 — Typed clocks and as-known-on** (2026-10-02, M014 S01–S03), **v0.08 — Known-on honesty** (2026-10-02, M015), **v0.09 — Test hardening + executable rules** (2026-10-02, M016 S01–S05), and **v0.10 — Docs honesty and replay integrity** (2026-10-03, M017 S01–S04). Honeycomb cells stay Proposed. Product stays `0.0.0`. Lease and freeze: `.kutha/STATE.md`.
 
 ## Next Milestone Goals
 
-None leased. M002 (segmented log, hash chain, manifest, commit-marker framing, sidecar atomicity SNAP-01; Rocks for indexes only) stays frozen until `.kutha/STATE.md` names it. Candidates needing a decision: C01 sunset, typed `Op` clocks, Horn vs knowledge cut. Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack.
+Next slice: `.kutha/STATE.md` only. M002 (segmented log, hash chain, manifest, commit-marker framing, sidecar atomicity SNAP-01; Rocks for indexes only) stays frozen until STATE names it. Candidates needing a decision: C01 sunset, typed `Op` clocks, Horn vs knowledge cut. Freeze: `.kutha/STATE.md` Freeze.
 
 ## Context
 
@@ -188,7 +192,7 @@ GSD files live under `.planning/`. **Never overwrite** `.kutha/STATE.md` with GS
 
 Chat with the human is Russian; this file and all other docs stay English (`AGENTS.md`).
 
-Literature bound is closed (163 cards). Do not mint aggregator waves.
+Literature bound is closed (164 files in `cards/`: 163 original matrix rows + M002 intake `paper-kernel-io-dirty-throttle-cloud-oltp.md`, not a matrix row). Do not mint aggregator waves.
 
 ## Constraints
 
@@ -214,9 +218,9 @@ Literature bound is closed (163 cards). Do not mint aggregator waves.
 | Compose S08 (justifications + conflict_report) without rewriting fold/CSR/provenance | D-F1…D-F7 | ✓ Good (v0.02) |
 | GSD overlay annotated tags (`v0.01`, `v0.02`) | Milestone archival; not product SemVer / GitHub Release | ⚠️ Revisit (process tags only) |
 | M002/Rocks/Cypher/HNSW frozen | `.kutha/STATE.md` | — Pending (lease) |
-| Refactor and legal-fixture reconnaissance before durability (M013 before M002) | Post-M012 review R1: riskiest assumption last | — Pending (v0.06) |
+| Refactor and legal-fixture reconnaissance before durability (M013 before M002) | Post-M012 review R1: riskiest assumption last | ✓ Done (v0.06; `.planning/MILESTONES.md`) |
 | Independent verification and planning-artifact budget as gates | Post-M012 review R4/R5; Phase 28 `28-VERIFICATION.md` | ✓ Good (v0.06 PROC) |
-| CBM and GitNexus used together on M013 refactor phases | Measured tool limits; `rg` is arbiter | — Pending (v0.06) |
+| CBM and GitNexus used together on M013 refactor phases | Measured tool limits; `rg` is arbiter | ✓ Done (v0.06; `.planning/MILESTONES.md`) |
 | License / rename (ADR-092) | Undecided | — Pending |
 
 ## Evolution

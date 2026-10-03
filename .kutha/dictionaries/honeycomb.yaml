@@ -13,7 +13,9 @@ process: docs/process/governor-intake.md
 # 2026-10-02 restage (M015 S02 ANK + known-on oracles): ADR-013 evidence; map/delivery/capability unchanged.
 # 2026-10-03 restage (M017 S01 audit clarifications): ADR-000, 013, 014, 041, 050, 060, 070; map/delivery/capability unchanged.
 # 2026-10-03 restage (M017 S02 replay-integrity D-04 evidence): ADR-010; map/delivery/capability unchanged.
-# 2026-10-03 restage (M017 S03 KNOWN-04 / F05 characterization): ADR-013 evidence; map/delivery/capability unchanged.
+# 2026-10-03 restage (M017 S03 KNOWN-04 / A-F05 characterization): ADR-013 evidence; map/delivery/capability unchanged.
+# 2026-10-03 restage (M018 S01 doc-truth: wal_valid_covering_preferred, tampered_tt_anchor_wall_fails_replay_check, abort_snapshot_replace_keeps_previous_bytes, abort_wal_replace_keeps_previous_bytes): ADR-012, ADR-013, ADR-014, ADR-050, ADR-060; map/delivery/capability unchanged.
+# 2026-10-03 restage (M018 S01 doc-truth: extra_relatedto_horn_visits_constant_in_n / m017_ingest_scaling): ADR-041; map/delivery/capability unchanged.
 
 locks:
   - id: D1

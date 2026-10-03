@@ -1,10 +1,10 @@
 # Semantic contract validation
 
-> **Status 2026-10-03:** Snapshot of 2026-09-13 reasoning. Live state is `.kutha/STATE.md` plus `semantic-gap-review.md` addenda.
+> **Status:** 2026-09-13 snapshot (banner dated 2026-10-03). Counts in this file (`163-card`, `26 tests`) are historical, not current. Live state is `.kutha/STATE.md` plus `semantic-gap-review.md` addenda.
 
 Date: 2026-09-13. **Proposed validation design, not implemented capability or delivery authorization.**
 
-This note connects existing honeycomb contracts; it is not another ADR, research wave, or milestone list. The normative homes remain the linked ADRs. Historical snapshot as of 2026-09-13, M011 S03; live lease: `.kutha/STATE.md`. H3/H4 dogfood, M010 semantic recovery, and M011 S01–S03 claim/lineage/P→Q eligibility are in. Nothing here starts M002, a legal/science pack, a query parser, or new dictionaries. ADR-000/001/002 and the 163-card literature boundary are unchanged.
+This note connects existing honeycomb contracts; it is not another ADR, research wave, or milestone list. The normative homes remain the linked ADRs. Historical snapshot as of 2026-09-13, M011 S03; live lease: `.kutha/STATE.md`. H3/H4 dogfood, M010 semantic recovery, and M011 S01–S03 claim/lineage/P→Q eligibility are in. Nothing here starts M002, a legal/science pack, a query parser, or new dictionaries. ADR-000/001/002 and the then-163-card literature boundary are unchanged **as of that date** (card counts below are historical).
 
 ## What needs strengthening
 
@@ -77,7 +77,7 @@ Stop expanding the design when one authorized end-to-end fixture can distinguish
 
 The 2026-09-13 review used Tier 2 graph discovery for `kutha-graph` (index generation `2026-08-18T12:44:42Z`) and direct source verification. Relevant pre-edit coverage reported no recorded gaps; that is best-effort evidence, not an exhaustive correctness proof. Edited documentation is newer than that index. Runtime observations above are limited to the named source paths; the proposed probes are not executable capability claims.
 
-Validation of this documentation change:
+Validation of this documentation change (historical, 2026-09-13 — not a current census):
 
 - Independent review corrected path-objective terminology, exact versus approximate lease equivalence, and the fixture's explicit withdrawal premise.
 - Existing Rust suite: 26 tests passed with `cargo --config 'build.rustc-wrapper=""' test --workspace`.

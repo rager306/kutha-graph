@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M018
-**Active Slice:** S01
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M017-closed
+L_delivery=M018-S01-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M018 S01 active (doc truth round 2); M017 closed | Capability proven / Rocks started / M002 leased / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M018 S01 done (doc truth round 2); S02 unleased (decision gate) | Capability proven / Rocks started / M002 leased / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M018 S01 leased** (`L_delivery=M017-closed`, Active Milestone **M018**, Active Slice **S01**, 2026-10-03). GSD Phase 45 only: documents, no `crates/` change. Phases 46–48 stay unleased; S02 is a decision gate (C01, Horn vs knowledge cut). Do **not** start M002 until leased. Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
+**M018 S01 closed** (`L_delivery=M018-S01-done`, Active Milestone **M018**, Active Slice **None**, 2026-10-03). GSD Phase 45 verified independently (5/5). Next: S02 is a decision gate (C01 option, Horn vs knowledge cut, `as_of` vs eligibility) and needs the user's choice before it is leased. Do **not** start M002 until leased. Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
 
 ## Freeze (until explicit M002 lease)
 

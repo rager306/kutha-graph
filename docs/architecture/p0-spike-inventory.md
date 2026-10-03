@@ -6,7 +6,7 @@ This is the **crates** P0 spike, **not** Accepted product. Live lease and freeze
 
 ## In spike
 
-log, fold, quantum emit→idle, receipt, snapshot, WAL-cousin, CSR lease, leapfrog intersect, `Materializer` trait, `fork_at`, named `as_of`/`live_at`, FF6 relation allowlist, typed clocks (`ValidTime` / `TransactionTime` / `WallTime`), `Op::TtAnchor`, `as_known_on`, `known_at`, `RuleAst` / evaluator (`eval.rs` `live_horns`), genesis log (`kutha:allows`), public `Runtime` facade, portable `claim_id`, `Op::Define`.
+log, fold, quantum emit→idle, receipt, snapshot, WAL-cousin, CSR lease, leapfrog intersect, `Materializer` trait, `fork_at`, named `as_of`/`live_at`, FF6 relation allowlist, typed clocks (`ValidTime` / `TransactionTime` / `WallTime`), `Op::TtAnchor`, `as_known_on`, `known_at`, `RuleAst` / evaluator (`eval.rs` `live_horns`), genesis log (`kutha:allows`), public `Runtime` facade, portable `claim_id`, `Op::Define`. **2026-10-03:** `events.jsonl` SoT + covering `KUTHAWAL` WAL (`load_events_d04`); snapshot and WAL replace via tmp+sync+rename (`store.rs` `replace_via_tmp`); Horn lookup lease-first via `GraphFold.horns_by_premise`.
 
 ## Not in spike
 

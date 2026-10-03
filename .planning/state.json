@@ -6,7 +6,7 @@
     {
       "number": "45",
       "name": "Doc truth round 2",
-      "status": "executing"
+      "status": "complete"
     },
     {
       "number": "46",
@@ -26,8 +26,8 @@
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Phase 45 verify, then lease S02 (decision gate)",
-    "reason": "v0.11 planned \u00b7 M018 S01 leased"
+    "label": "Decision gate for Phase 46 (C01, Horn vs knowledge cut)",
+    "reason": "Phase 45 verified \u00b7 M018-S01-done"
   },
   "updated_at": "2026-10-03T07:00:00.000Z"
 }

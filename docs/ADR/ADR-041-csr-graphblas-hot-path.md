@@ -10,7 +10,7 @@
 
 ### Evidence (2026-10-03; Proposed)
 
-M016's evaluator (`crates/kutha-runtime/src/eval.rs`) runs Horn bodies over live facts (`live_horns` / `search_at` scan `fold.facts()` / `fold.live_facts_at`), not over the CSR lease. `leapfrog_intersect` is not used by rules. The 2026-10-01 F9/F16 evaluator question is answered for the shipped Horn path. This subsection does not rewrite D041-1…D041-4.
+M016's evaluator (`crates/kutha-runtime/src/eval.rs`) runs Horn bodies, not over the CSR lease. **2026-10-03:** `live_horns` is lease-first via `GraphFold.horns_by_premise`, falling back to `live_horns_scan` (`fold.facts()`) when the lease is not ready (`horn_lease_ready` false). Remaining-premise walk `search_at` / `search_prems` still scans `live_facts_at(tt, vt)` at `tt = u64::MAX`. `leapfrog_intersect` is not used by rules. Oracle: `extra_relatedto_horn_visits_constant_in_n` (`m017_ingest_scaling.rs`). The 2026-10-01 gap-review F9/F16 evaluator question is answered for the shipped Horn path. This subsection does not rewrite D041-1…D041-4.
 
 ## Date
 

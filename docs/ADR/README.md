@@ -94,12 +94,14 @@ YYYY-MM-DD
 
 All coordinate-band working titles listed in this README are **opened** as Proposed cells. Numbers remain bands, not a waterfall. Clarifications belong in the existing cell without silently rewriting D1–D10. New ADR-100+ cells remain frozen under `.kutha/STATE.md`; this index does not authorize opening them.
 
+This index lists **31** ADR files; all are **Proposed**.
+
 | Band | Axis | Notes |
 |------|------|--------|
 | **010–019** | Time | Opened 010–014 |
 | **020–029** | Space | Opened 020–022 |
 | **030–039** | Composition | Opened 030–031 |
-| **040–049** | Data | Opened 040–043 |
+| **040–049** | Data | Opened 040–043. **ADR-043 is Query-primary** (`honeycomb.yaml` `axis: Query`) though numbered in this Data band |
 | **050–059** | Agent | Opened 050–052 |
 | **060–069** | Verify | Opened 060–062 (062 optional, default off) |
 | **070–079** | Query | Opened 070–071 |

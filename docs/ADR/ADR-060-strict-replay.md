@@ -6,11 +6,11 @@
 
 ### Evidence (2026-10-02; Proposed)
 
-Behavior lineage and provenance oracles remain (`replay_rejects_behavior_without_prior_cause`, provenance fingerprint tests). Full execution replay and log-native quantum outcomes are still partial (sidecars; F1/F9).
+Behavior lineage and provenance oracles remain (`replay_rejects_behavior_without_prior_cause`, provenance fingerprint tests). Full execution replay and log-native quantum outcomes are still partial (sidecars; gap-review F1/F9). **2026-10-03 note:** Horn execution replay shipped in M016; ADS receipts and `Unavailable` did not — see Evidence 2026-10-03.
 
 ### Evidence (2026-10-03; Proposed)
 
-Shipped: lineage (`Op::Behavior.caused_by` must name an earlier event) and Horn execution replay (`Runtime::replay_check` → `horn_behavior_reproducible` in `eval.rs`, called from `provenance.rs`). Not shipped: D014-1 cryptographic ADS/authenticator receipts (`QuantumReceipt` is SHA-256 of event digests) and sidecar/snapshot atomicity (F1: `store::persist` uses truncating `File::create` for `snapshot.json` and sidecars). `Op::TtAnchor` is not part of the replay oracle (`GraphFold.tt_anchors` is not fingerprint input; audit finding, M017 S02 / REPL-01). This subsection does not rewrite D060-1…D060-3.
+Shipped: lineage (`Op::Behavior.caused_by` must name an earlier event) and Horn execution replay (`Runtime::replay_check` → `horn_behavior_reproducible` in `eval.rs`, called from `provenance.rs`). `replay_check` also calls `check_tt_anchors`: snapshot-held `TtAnchor` walls are compared to the log-derived map (oracle `tampered_tt_anchor_wall_fails_replay_check`). `GraphFold::fingerprint` stays facts-only (`fold_query.rs`); `provenance_fingerprint` is a separate hash. Persist of `snapshot.json` / `events.wal` is tmp+`sync_all`+rename (`replace_via_tmp`). Not shipped: D014-1 cryptographic ADS/authenticator receipts (`QuantumReceipt` is SHA-256 of event digests), an `Unavailable` outcome, and sidecar atomicity (gap-review F1: `write_terms` / `write_outcomes` / `write_justifications` still `File::create` in place — SNAP-01, M002). No parent-directory fsync. This subsection does not rewrite D060-1…D060-3.
 
 ## Date
 
@@ -81,7 +81,7 @@ Target contract, from docs/architecture/semantic-gap-review.md (F9, F16): execut
 
 ### Negative / risks
 
-- P0 has fold replay checks; provenance and execution replay remain unimplemented contracts.
+- P0 has fold fingerprint plus lineage; Horn execution replay (re-running pinned rules in `replay_check` via `horn_behavior_reproducible`) shipped in M016. Cryptographic ADS receipts and an `Unavailable` outcome remain unimplemented.
 
 ### Non-goals
 

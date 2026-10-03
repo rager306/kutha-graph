@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Process: doc truth round 2 (M018 S01)
+
+### Process
+
+### Changed
+
+- ADR-010/012/013/014/041/050/060 and `docs/ADR/README.md` carry dated 2026-10-03 clarifications: `snapshot.json` and `events.wal` replace via tmp+sync+rename, `events.jsonl` is SoT with `KUTHAWAL` as covering lease, `replay_check` compares `TtAnchor` (`check_tt_anchors`), `live_horns` is lease-first (`horns_by_premise`); sidecars stay in-place `File::create` (SNAP-01, M002). ADR-013 states `as_of` is support-live (derivation eligibility is `derivation_eligible_at`), Horn fires at `TT=MAX`, `Correct` does not re-derive, and a missing `event_id` target is a silent no-op; none of these is decided. `honeycomb.yaml` restaged (capability unchanged).
+- `semantic-gap-review.md`, `p0-spike-inventory.md`, `semantic-contract-validation.md`, `PROJECT.md`, `.kutha/ROADMAP.md`, `gsd-auto-contract.md`: v0.10 reality, audit ids `A-F01`–`A-F14` separate from gap-review `F1`–`F16`, A-F05 stays open, one freeze table (STATE), applicability card count 164 (163 matrix + M002 intake card).
+- `ADR-000` and `docs/architecture/stca-guide.md` translated to English (no decision text changed; ADR-000 gains a D3 pointer and a D6 clarification).
+- `.gitignore` ignores crate scratch and vendored agent trees (`crates/**/tmp/`, `.gsd/`, `.claude/skills/`, `.cursor/skills/gsd-*/`, GSD install state, hooks, agents).
+
+### Trajectory
+
+- No `crates/` change. Honeycomb cells stay Proposed. **M018 S01 closed** (`L_delivery=M018-S01-done`, Active Slice **None**); Phase 45 verified independently 5/5 after one reopen (stale F1/F6 claims in `semantic-gap-review.md` marked historical with a current status). S02 is a decision gate and is not leased.
+
 ## 2026-10-03 — Process: plan M018 (GSD v0.11) and lease S01
 
 ### Process

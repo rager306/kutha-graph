@@ -64,7 +64,7 @@ Proposed close-out of the semantic core (source: `docs/architecture/semantic-con
 
 **Success:** Outcomes, justifications, and resume survive as log records (sidecars are leases); Retract/Correct/justification cites use stable EventId / proposition ids; identical re-delivery does not mint a second support; `open` verifies snapshot identity against the log; persist is atomic for the log file; `Define` ids are stable across persist; VT/TT carry a declared scale; fold-hot reads use fold-internal indexes. Not M012 dictionaries-as-facts; not M002 Rocks; not ADR Accepted.
 
-**Leased:** Active Milestone M012a; Active Slice None until a GSD phase leases one. Closing F1–F3, F6 (verify/atomic/stable Define), F7, F8 from `docs/architecture/semantic-gap-review.md`. F4/F5 wait for M012. Durability protocol waits for M002.
+**Closed.** Historical lease was M012a. Closing F1–F3, F6 (verify/atomic/stable Define), F7, F8 from `docs/architecture/semantic-gap-review.md`. F4/F5 wait for M012. Durability protocol waits for M002.
 
 - [x] **S01: Log-native outcomes and justifications** `risk:high` `depends:[]`
   > After this: quantum outcomes / justifications / resume are appendable log records; sidecars are droppable leases; provenance includes those records.
@@ -213,7 +213,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 **Closed:** Active Milestone M016; S01–S05 done. Process tag `v0.09`. Crate SemVer stays 0.0.0. Honeycomb stays Proposed.
 
-**Success:** T2–T6 test holes closed; canonical rule AST hashed into `rule_version`; rule bodies evaluated over live facts (`fold.facts()`) with support counting; CSR is not used by rules; admission evaluates the pinned policy; execution replay re-derives; FIXG-01 fail-closed (C01 sunset is not a Horn; ADR-013 Evidence dated). Closes T2–T6, F9, F16.
+**Success:** T2–T6 test holes closed; canonical rule AST hashed into `rule_version`; rule bodies evaluated over live facts (`fold.facts()`) with support counting; eager path uses `horns_by_premise` since M017 S04; CSR is not used by rules; admission evaluates the pinned policy; execution replay re-derives; FIXG-01 fail-closed (C01 sunset is not a Horn; ADR-013 Evidence dated). Closes T2–T6, F9, F16.
 
 - [x] **S01: Test hardening T2–T6** `risk:medium` `depends:[]`
   > After this: trybuild E0308 clock mix; cite tt/vt oracle; Eager/Lazy/fork known-on; snapshot+tail anchors; `GraphFold::replay` applies TtAnchor.
@@ -232,7 +232,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 **Source:** 2026-10-02 audit at `c702d71` (ADR/roadmap, code/tests, process docs). Closes the doc drift and the replay/durability holes that M002 would otherwise inherit. Not M002 segments or Rocks; not typed `Op` clocks; not a C01 decision; not ADR Accepted.
 
-**Success:** living docs, ADR Evidence and the governor agree with the code; a tampered `TtAnchor`, a truncated WAL or snapshot, a disagreeing sidecar, or an environment-dependent index mode cannot silently change an answer; replay determinism and the Horn-vs-known-on behaviour are named oracles. Closes audit findings G02–G12, F01, F02, F04, F06–F10 and the ingest regression found by the Phase 42 bisect (S04).
+**Success:** living docs, ADR Evidence and the governor agree with the code (restaged 2026-10-03, Phase 45); a tampered `TtAnchor`, a truncated WAL or snapshot, a disagreeing sidecar, or an environment-dependent index mode cannot silently change an answer; replay determinism and the Horn-vs-known-on behaviour are named oracles. Closes audit findings G02–G12, A-F01, A-F02, A-F04, A-F06–A-F10 and the ingest regression found by the Phase 42 bisect (S04).
 
 - [x] **S01: Living docs and governor honesty** `risk:low` `depends:[]`
   > After this: PROJECT carries no stale lease and `cite-lease` covers it; gap-review addendum and invariants ledger match M014–M016; ADR-000/013/014/041/050/060/070 and README carry dated clarifications (three AS OF cuts, Horn over live facts, C01 open with options); no file under `crates/` changes.
@@ -249,7 +249,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 **Success:** living docs and ADR Evidence agree with the code (one F-register, English spine); ADR-013 records one C01 option and the Horn-vs-knowledge-cut rule, with a named oracle; derived facts have deterministic identity and follow `Correct`; every cascade hop is admitted; a bad WAL read cannot silently shorten or empty the log; fold, CSR and rebuild agree on seeded random logs.
 
-- [ ] **S01: Doc truth round 2** `risk:low` `depends:[]`
+- [x] **S01: Doc truth round 2** `risk:low` `depends:[]`
   > After this: ADR-010/012/014/041/060 Evidence and `semantic-gap-review.md` match v0.10 code (snapshot and WAL atomic, `horns_by_premise`, sidecars still in place); audit ids carry the `A-F` prefix; ADR-000 D6 and ADR-010 D010-4 no longer name Rocks WAL as shipped; ADR-013 states `as_of` is support-live, not eligibility; ADR-000 and `stca-guide.md` spine is English; CHANGELOG head, `PROJECT.md`, `.kutha/ROADMAP.md` closed-milestone wording and `.gitignore` hygiene are fixed; no file under `crates/` changes.
 - [ ] **S02: C01 and knowledge-cut decision** `risk:high` `depends:[S01]` `gate:controller+user decision`
   > After this: ADR-013 records one C01 option (pack stamp, fifth axis, or stop) with a named oracle or an explicit out-of-wedge note; the Horn-vs-`as_known_on` rule (HORN-KC-01) and the `as_of` vs derivation-eligibility rule are decided; if behaviour changes, the oracle is RED first and `m017_known_on_horn.rs` is inverted or re-pinned by the decision.
