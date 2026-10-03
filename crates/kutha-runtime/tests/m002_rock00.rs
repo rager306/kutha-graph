@@ -75,7 +75,10 @@ fn rocks_roundtrips_event_id_to_offset() {
     let log_path = dir.join("events.jsonl");
     let rocks_dir = dir.join("rocks");
     let expected = jsonl_id_offsets(&log_path);
-    assert!(!expected.is_empty(), "seeded persist must write events.jsonl");
+    assert!(
+        !expected.is_empty(),
+        "seeded persist must write events.jsonl"
+    );
 
     let n = rocks_spike::build_index(&log_path, &rocks_dir).unwrap();
     assert_eq!(n, expected.len());
@@ -113,9 +116,6 @@ fn rocks_dir_is_droppable() {
     let n = rocks_spike::build_index(&log_path, &rocks_dir).unwrap();
     assert_eq!(n, expected.len());
     for (id, offset) in expected {
-        assert_eq!(
-            rocks_spike::lookup(&rocks_dir, id).unwrap(),
-            Some(offset)
-        );
+        assert_eq!(rocks_spike::lookup(&rocks_dir, id).unwrap(), Some(offset));
     }
 }
