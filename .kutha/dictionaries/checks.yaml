@@ -471,7 +471,7 @@ checks:
         message: "M012a S03 idempotent-ingest tests missing {missing}"
 
   - id: m012a-s04-verify-persist
-    description: M012a S04 — verify-on-open, atomic events.jsonl persist, stable Define ids
+    description: M012a S04 — verify-on-open, atomic events.jsonl persist on a legacy dir (no manifest; this check does not claim segmented persist), stable Define ids
     steps:
       - kind: rust_test_asserts
         path: crates/kutha-runtime/tests/m012a_verify_persist.rs

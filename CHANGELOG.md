@@ -4,6 +4,24 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-04 — Product: migrate, jsonl export, and sealed tamper (SEG-01 / 54-03)
+
+### Product
+
+### Added
+
+- `store::migrate`: load via `load_events_d04` then `committed_prefix`; write segments + manifest; verify reopen (ids + fold fingerprint); leave `events.jsonl` as an unread export; remove `events.wal` only after that flip. Idempotent when a manifest already exists. Crash matrix reopens to legacy or segmented without loss. `store::export_jsonl` writes jsonl via `replace_via_tmp` and is never consulted by `open` when a manifest exists. Real-writer open-level tamper (flip payload/length/trailer/manifest chain, swap/delete frame or sealed file, older copy, truncate at a frame boundary, extra sealed frame) is `InvalidData`. Oracles: `crates/kutha-runtime/tests/m002_seg01.rs`.
+
+### Process
+
+### Changed
+
+- Governor `m012a-s04-verify-persist` / `B-m012a-s04`: YAML-only clarification that atomic `events.jsonl` persist is the **legacy** oracle (no manifest). Segmented dirs write `KUTHASEG`.
+
+### Trajectory
+
+- ADR-000 Clarification 2026-10-04 Phase 54-03: D1 still names the event log as SoT; migrate is explicit. ADR-010/012/060 Evidence 2026-10-04 Phase 54-03. Cells stay **Proposed**. Residuals: Typed/Dictionary group hole, no multi-writer lock, WAL duplication gone only for segmented dirs, `rocks_spike` still on jsonl until S07. `honeycomb.yaml` restaged (map/delivery/capability unchanged). Bench vs `be57466` (interleaved medians): ingest_plain.n +7.1%, as_of.n +8.6%, open.n +0.3% (+1.5% vs 54-02 open.n) — D-09 met.
+
 ## 2026-10-04 — Product: segmented persist, Persister, and rollover (SEG-01 / 54-02)
 
 ### Product

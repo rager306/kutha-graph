@@ -20,6 +20,10 @@ D1 still names the **event log** as SoT. Plan 54-01 adds a reader for a physical
 
 D1 still names the **event log** as SoT. Plan 54-02 writes `manifest.json` + `KUTHASEG` on empty and already-segmented dirs; a legacy dir (`events.jsonl` or `events.wal`, no manifest) keeps jsonl+WAL until explicit `store::migrate`. Empty-dir detection is: no manifest, no `events.jsonl`, no `events.wal`. This pointer does not rewrite D1–D10.
 
+### Clarification (2026-10-04, Phase 54-03 / M002 S06; Proposed)
+
+D1 still names the **event log** as SoT. Plan 54-03 adds `store::migrate` (committed prefix only; uncommitted suffix dropped and counted; `events.jsonl` left as an unread export; `events.wal` removed after a verified reopen) and `store::export_jsonl`. Persist never auto-migrates. This pointer does not rewrite D1–D10.
+
 ## Date
 
 2026-08-15

@@ -36,6 +36,10 @@ COMMIT-01 option A: a snapshot whose `log_offset` counts fold ops beyond the com
 
 Segmented checkpoint refreshes snapshot + sidecars only (no jsonl rewrite). Pointer: ADR-010 2026-10-04 Phase 54-02. Status stays **Proposed**.
 
+### Evidence (2026-10-04, Phase 54-03 / M002 S06; Proposed)
+
+`migrate` / `export_jsonl` do not change snapshot hydrate. Jsonl after migrate is an unread export. Pointer: ADR-010 2026-10-04 Phase 54-03. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

@@ -342,5 +342,26 @@ Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p54-02-head-targ
 
 D-09 ≤10% vs `39af84b` on ingest/`as_of`/`open.n`: **met**. persist.n is empty-dir segmented vs legacy. persist_append.n dropped (no jsonl). Pair 4 ingest is host noise (HEAD 165M vs later/other HEAD 100–116M). Worktrees and target dirs removed after the run.
 
+## Phase 54-03 (M002 S06) — migrate, export, sealed tamper (2026-10-04)
+
+Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p54-03-head-target` for HEAD `e695d98`, `tmp/p54-03-base-target` for `be57466`). Binaries run from each worktree's `crates/kutha-runtime`. Interleaved `base, head` × 4 pairs. Ingest/`as_of`/`open`/`persist` paths unchanged vs 54-02 (migrate/export are explicit APIs). Compare interleaved medians. `open.n` vs 54-02 HEAD median 2726309838.
+
+| run | be57466 ingest_plain.n | HEAD ingest_plain.n | Δ ingest | be57466 as_of.n | HEAD as_of.n | Δ as_of |
+|-----|-----------------------:|--------------------:|---------:|----------------:|-------------:|--------:|
+| 1 | 107644870 | 139934250 | +30.0% | 287526 | 356765 | +24.1% |
+| 2 | 104112838 | 118099611 | +13.4% | 304898 | 267679 | −12.2% |
+| 3 | 109735737 | 103697224 | −5.5% | 289429 | 330405 | +14.2% |
+| 4 | 118564645 | 114679176 | −3.3% | 309687 | 315057 | +1.7% |
+
+| metric | median be57466 | median HEAD | Δ median |
+|--------|---------------:|------------:|---------:|
+| ingest_plain.n | 108690304 | 116389394 | +7.1% |
+| as_of.n | 297164 | 322731 | +8.6% |
+| open.n | 2759184936 | 2766741940 | +0.3% |
+| persist.n | 2346903716 | 2334421877 | −0.5% |
+| persist_append.n | 15918808 | 15560351 | −2.3% |
+
+D-09 ≤10% vs `be57466` on ingest/`as_of`: **met**. `open.n` vs 54-02 HEAD +1.5% (within 10%). Pair 1 HEAD ingest 140M vs later HEAD 104–118M is host noise. Worktrees and target dirs removed after the run.
+
 
 

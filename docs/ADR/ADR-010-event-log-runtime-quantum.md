@@ -32,6 +32,10 @@ SEG-01 reader: when `manifest.json` is present, `open` loads `KUTHASEG` v1 seale
 
 Empty and already-segmented dirs persist `KUTHASEG` + manifest. `Persister` appends to the named active file only (one `sync_data` per quantum; rollover trailer then header then manifest flip). Checkpoint does not regenerate jsonl. `open_for_append` heals with a full segmented persist. Legacy jsonl+WAL writer unchanged. Oracles: `m002_seg01.rs`. Status stays **Proposed**.
 
+### Evidence (2026-10-04, Phase 54-03 / M002 S06; Proposed)
+
+SEG-01: `store::migrate` loads `load_events_d04` then `committed_prefix`, writes segments + manifest, verifies reopen (ids + fold fingerprint), leaves `events.jsonl` as an export, removes `events.wal` only after that flip. `store::export_jsonl` is on-demand (`replace_via_tmp`); `open` never reads jsonl when a manifest exists. Real-writer tamper at open is `InvalidData`. Residuals: Typed/Dictionary group hole (COMMIT-01); no multi-writer lock; WAL duplication gone only for segmented dirs; `rocks_spike` still indexes jsonl offsets until S07. Oracles: `m002_seg01.rs`. Status stays **Proposed**. D1 event log = SoT unchanged.
+
 ## Date
 
 2026-08-18
