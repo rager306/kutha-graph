@@ -40,6 +40,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `glob_absent` accepts optional `unless_file_contains: {file, needle}` (missing file does not skip). `freeze-rocks` allows the string `rocksdb` in `crates/*/Cargo.toml` and the workspace `Cargo.toml` only while `.kutha/STATE.md` names `**Active Milestone:** M002`. `freeze-cypher-deps` and `freeze-hnsw-dep` stay unconditional. Selftest disables the unless needle on the copy before inserting `rocksdb` so the check still fails closed.
 
+## 2026-10-03 — Process: close M002 S04 (GSD Phase 52)
+
+### Process
+
+- `L_delivery=M002-S04-done`, Active Slice **None**. `52-VERIFICATION.md` is independent (8/8). The first verification found a real defect (terms interned between appends were dropped on open) and four surviving mutations; the executor fixed `from_snapshot`, `attach` and added oracles, and the second verification killed every mutation. Bench on interleaved medians stays within the 10% gate. Next: S05 (COMMIT-01) is a decision gate; M018 stays paused.
+
 ## 2026-10-03 — Process: lease M002 S04 (GSD Phase 52)
 
 ### Process

@@ -274,7 +274,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
   > After this: sidecars replace via tmp+sync+rename and every rename is followed by a parent-directory fsync; an unreadable or partial sidecar is treated as absent while an intact log still opens; `check_tt_anchors` tolerates a log ahead of the snapshot; a failed WAL magic read or an empty WAL without jsonl never yields an empty log; a WAL error is not hidden behind jsonl; a crash-matrix test (failpoint after each persist step) reopens to the last durable prefix or fails closed.
 - [x] **S03: RocksDB build spike** `risk:low` `depends:[S01]`
   > After this: a thin isolated module compiles `rocksdb` offline on this host and round-trips `EventId` to file offset; it is not wired into `Runtime`; the governor allows the dependency only in the leased slice; build prerequisites are recorded; if it cannot build, the failure and the fallback (pure-Rust index) are written down.
-- [ ] **S04: Incremental framed append** `risk:high` `depends:[S02]`
+- [x] **S04: Incremental framed append** `risk:high` `depends:[S02]`
   > After this: a second `persist` appends length+CRC framed records and does not rewrite the prefix bytes; one `fdatasync` per quantum; a crash mid-append drops only the incomplete tail; replay parity with the jsonl path; bench gate (`ingest_plain.n`, `as_of.n`) within 10 percent.
 - [ ] **S05: Commit marker decision (COMMIT-01)** `risk:high` `depends:[S04]` `gate:controller+user decision`
   > After this: one durable encoding of the quantum outcome is chosen (commit frame in the segment, or `Op::QuantumOutcome` kept) and recorded in ADR-010/014; a crash between payload events and the commit leaves no uncommitted prefix visible; named oracles unchanged.
