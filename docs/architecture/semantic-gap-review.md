@@ -220,3 +220,36 @@ FF5 compares **two valid-time windows** on the same log using the fold at **tran
 | F7 remainder | Promulgation / effective / application / edition are not distinct core types |
 | F13 remainder | Whether two axes plus typed annotations suffice (`tempus regit actum`) — M016 golden fixture |
 | F9, F16 | Executable rules — M016 |
+
+## Addendum 2026-10-03: post-M016 (executable rules + FIXG-01)
+
+**Proposed review, not an ADR.** After M016 (v0.09 `RuleAst` / evaluator / policy eval / execution replay) and FIXG-01. Honeycomb stays **Proposed**. Evidence: named cargo tests and source, read 2026-10-03 (CBM `root-kutha-graph` + `rg`).
+
+### Closed (named oracles)
+
+| ID | Oracle / evidence |
+|----|-------------------|
+| F9 | Thin `deny` policy body eval in `admission.rs` `check_admission_row` (live blob `deny` → `AdmissionDenied { reason: "policy" }`); `deny_policy_fails_admission_leased_policy_admits` |
+| F16 | `horn_behavior_reproducible` in `eval.rs` (Horn over `fold.facts()` via `live_horns`); called from `provenance.rs` `replay_check`; `empty_pin_inverse_fails_replay_fingerprint_unchanged` |
+
+### Still open (this addendum)
+
+| ID | Note |
+|----|------|
+| F13 remainder | Clock half closed v0.07 (`ValidTime` / `TransactionTime` / `WallTime`, `Op::TtAnchor`). Remainder = FIXG-01: C01 sunset is not expressible as Horn; decision open (pack stamp / fifth axis / stop) in ADR-013; none chosen |
+| F1 / F6 | `snapshot.json` is written with `File::create` (not atomic); `events.wal` is truncate-in-place; outcome/justification sidecars still written. They block M002 and are scheduled M017 S02 |
+| F8 remainder | No public fork-diff API (cosmetic) |
+
+### Audit code findings (2026-10-02) → M017 slices
+
+| ID | Residual | Target |
+|----|----------|--------|
+| F01 | `snapshot.json` `File::create` (not atomic replace) | S02 REPL-02 |
+| F02 | `events.wal` truncate-in-place | S02 REPL-02 |
+| F04 | Tampered persisted `Op::TtAnchor` not fail-closed on `replay_check` / `open` | S02 REPL-01 |
+| F06 | Sidecars still written; `open` can attach outcomes when the log has none | S02 REPL-03 |
+| F07 | `FoldIndexMode::from_env` on new/open; snapshot does not pin mode | S02 REPL-04 |
+| F08 | WAL preferred whenever the file exists (empty/magic-only can beat intact `events.jsonl`) | S02 REPL-02 |
+| F10 | `as_known_on` rustdoc/oracle honesty (TT-only vs `live_at(tt, MAX)` on a closed interval) | S02 KNOWN-03 |
+
+S03 (DET-01 / KNOWN-04) targets audit F05 / F09 / F11 / F12 of the same wave, not the rows above.

@@ -177,10 +177,10 @@ invariants:
     check: i-f6-persist-open
 
   - id: I-F7-time-scale
-    claim: "Valid time has a declared scale and transaction time has a wall-clock mapping"
+    claim: "Five legal clocks (promulgation / effective / application / edition) remain beyond YearCe + LogSequence + Wall"
     source: docs/architecture/semantic-gap-review.md
     disposition: deferred
-    until: "STATE names M014"
+    until: "FIXG-01 C01 decision"
 
   - id: I-F8-hot-reads
     claim: "Hot reads use fold-internal indexes and a materializer lease on the CSR path, with a benchmark baseline and a fork-diff half, not an undeclared linear scan of the fact vector"
@@ -188,13 +188,14 @@ invariants:
     disposition: deferred
     until: "remaining fork-diff (typed CSR still from_fold)"
 
-  # I-F9…I-F16 record post-M012 gaps (semantic-gap-review addendum 2026-10-01). Rows with disposition deferred are not enforced; restaged check rows are.
-  # until names the milestone that closes each gap; none is Accepted by this ledger.
+  # I-F9…I-F16 record post-M012 gaps (semantic-gap-review addenda). Rows with
+  # disposition deferred are not enforced; restaged check rows are. until names
+  # the residual, not a closed milestone. None is Accepted by this ledger.
   - id: I-F9-policy-semantics
     claim: "A pinned policy or rule definition is executed by admission and derivation; identity without evaluation does not close the gap"
     source: docs/architecture/semantic-gap-review.md
-    disposition: deferred
-    until: "STATE names M015"
+    disposition: check
+    check: i-f9-policy-semantics
 
   - id: I-F10-genesis
     claim: "The log owns relation admission from its first event; a seeded relation can be retracted; no file is consulted at admit time"
@@ -215,10 +216,10 @@ invariants:
     check: i-f12-consumer
 
   - id: I-F13-typed-clocks
-    claim: "Valid, transaction, and wall clocks are distinct types; as-known-on-date is an anchor lookup on the log"
+    claim: "C01 application-end is not expressible as Horn; ADR-013 records options and none is chosen"
     source: docs/architecture/semantic-gap-review.md
     disposition: deferred
-    until: "STATE names M014"
+    until: "FIXG-01 C01 decision"
 
   - id: I-F14-typed-refs
     claim: "References between records are EventId or content hash, not formatted strings, and no RAM buffer shadows the log"
@@ -235,8 +236,8 @@ invariants:
   - id: I-F16-derivable
     claim: "A derived fact is reproducible by re-running registered rules over logged premises"
     source: docs/architecture/semantic-gap-review.md
-    disposition: deferred
-    until: "STATE names M015"
+    disposition: check
+    check: i-f16-derivable
 
   - id: I-cite-lease
     claim: "Docs that cite a delivery token must match the STATE assignment"

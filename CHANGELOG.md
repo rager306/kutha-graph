@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Process: M017 S01 living docs and cite-lease
+
+### Process
+
+- GSD v0.10 / M017 authored; S01 leased (living docs and governor honesty). `.planning/PROJECT.md` cites `.kutha/STATE.md` for lease and freeze; `cite-lease` covers PROJECT (stale `Active Milestone` token fails). Semantic-gap addendum 2026-10-03, I-F7/I-F9/I-F13/I-F16 restaged, architecture and planning banners, ROADMAP M016 Success (Horn over live facts) and Freeze pointer. ADR-000/013/014/041/050/060/070 and README carry 2026-10-03 clarifications (honeycomb restage line added). `idle-delivery-closed` selftest mutation now bites both idle and leased STATE; the cite-lease Python test allows PROJECT.md.
+
+### Trajectory
+
+- M017 S01 closed (`L_delivery=M017-S01-done`), Active Slice **None**; independent verification `41-VERIFICATION.md` passed. Honeycomb stays **Proposed**. No `crates/` change.
+
+## 2026-10-02 — Process: M002 intake note (kernel I/O stalls)
+
+### Process
+
+- Captured arXiv:2609.12597 / SteelDB companion for frozen M002: `docs/architecture/m002-cloud-kernel-io-intake.md` and applicability card `paper-kernel-io-dirty-throttle-cloud-oltp`. No lease; freeze unchanged.
+
 ## 2026-10-02 — Trajectory: M016 CLOSED (v0.09 archived)
 
 ### Trajectory

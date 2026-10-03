@@ -39,6 +39,10 @@ Surface binds valid-time and transaction-time cuts (013). Interval index is an a
 
 Native fold cut (not the Cypher skin): `GraphFold::as_of(vt)` and `Runtime::csr_lease_at(tt, vt)` exist in P0. Cypher/GPML grammar remains Proposed and frozen under the current `.kutha/STATE.md`; completion of S03 did not authorize it.
 
+### Clarification (2026-10-03; Proposed)
+
+Three distinct cuts exist: `GraphFold::as_of(vt)` (= `live_at(tt=MAX, vt)`), `GraphFold::live_at(tt, vt)`, and `Runtime::as_known_on(wall)` (TT-only via `known_at`). This cell's P0 text names only `as_of` / `csr_lease_at`. Cypher AS OF does not cover `as_known_on`. No Cypher/GPML parser exists (frozen until STATE names it). This subsection does not rewrite D070-1…D070-4 and does not mark this cell Accepted.
+
 ### D070-3. Writes are typed operators, not free MERGE-as-truth
 
 Assert/retract/correct (010/TGMS) may have Cypher-shaped syntax later; they still validate through dictionaries (050) and grants (080). LLM-produced Cypher is a proposal.

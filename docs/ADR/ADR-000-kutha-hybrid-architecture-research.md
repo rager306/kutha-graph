@@ -8,6 +8,10 @@
 
 `ValidTime` and `TransactionTime` are still `u64` type aliases in product code (`event.rs`; F7/F13). Typed clocks are M014 scope — this pointer does not rewrite the lock bodies above.
 
+### Clarification (2026-10-03; Proposed)
+
+`ValidTime`, `TransactionTime`, and `WallTime` are newtypes in `crates/kutha-common/src/event.rs` (`Vt` / `Tt` aliases). There is no `crates/kutha-runtime/src/event.rs`. `Op` variants, `Event.ingested_at`, and `Snapshot.next_tt` still carry raw `u64`; typed `Op` clocks are not shipped. The 2026-10-02 “u64 type aliases” line is historical. This pointer does not rewrite D1–D10.
+
 ## Date
 
 2026-08-15

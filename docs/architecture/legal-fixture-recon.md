@@ -1,5 +1,7 @@
 # Legal fixture reconnaissance (2026-10-01)
 
+> **Status 2026-10-03:** FIXG-01 verdict: C01 is inexpressible as Horn; the decision is open in ADR-013. Lines that say a case needs an M016 transitional rule are historical.
+
 **Proposed review, not an ADR**, not delivery authorization. Honeycomb stays **Proposed**. Sister corpus is read in place under `LAW_NEXUS_ROOT` (default `/root/law-nexus`); nothing is copied into kutha-graph.
 
 Purpose: probe whether today's two axes (`ValidTime` / `TransactionTime` / `WallTime` newtypes, Assert / Retract / Correct / CorrectInterval / claim supports / `as_of` / `live_at` / `as_known_on` / `derivation_eligible_at`) can express real normative text before durability work (F13 remainder / R1).

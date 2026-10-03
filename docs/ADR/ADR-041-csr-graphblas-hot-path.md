@@ -8,6 +8,10 @@
 
 `leapfrog_intersect` is the sorted-key multiway intersect helper (`leapfrog.rs` unit tests). Hot CSR cut still builds via `CsrLease::from_fold` beside the `Materializer` trait (F8 remainder).
 
+### Evidence (2026-10-03; Proposed)
+
+M016's evaluator (`crates/kutha-runtime/src/eval.rs`) runs Horn bodies over live facts (`live_horns` / `search_at` scan `fold.facts()` / `fold.live_facts_at`), not over the CSR lease. `leapfrog_intersect` is not used by rules. The 2026-10-01 F9/F16 evaluator question is answered for the shipped Horn path. This subsection does not rewrite D041-1…D041-4.
+
 ## Date
 
 2026-08-18

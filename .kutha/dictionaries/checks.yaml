@@ -91,10 +91,11 @@ checks:
     description: Active Milestone None requires L_delivery token ending in -closed
     selftest:
       mutations:
+        # Valid both idle and leased: force Active Milestone to None and L_delivery to a non-closed token.
         - op: replace_regex
           path: .kutha/STATE.md
-          pattern: '(?m)^L_delivery=\S+-closed\s*$'
-          with: 'L_delivery=open'
+          pattern: '(?s)(\*\*Active Milestone:\*\*\s*)\S+(.*?L_delivery=)\S+'
+          with: '\1None\2open'
     steps:
       - kind: when_match_then_match
         path: .kutha/STATE.md
@@ -1076,13 +1077,21 @@ checks:
       "Read STATE.md" stay silent). A concrete token, including one inside
       backticks, is a cite — stale L_delivery=M011-S03-done is HIGH.
       Active Milestone cites are status phrasing (is/stays/colon), not
-      "names M002" thaw language. CHANGELOG.md and .planning/ are out of scope.
+      "names M002" thaw language. CHANGELOG.md is out of scope. `.planning/`
+      is out of scope except PROJECT.md.
+    selftest:
+      mutations:
+        - op: append_text
+          path: .planning/PROJECT.md
+          text: "\nActive Milestone: M015\n"
     steps:
       - kind: cite_equals
         source:
           path: .kutha/STATE.md
           pattern: '(?m)^L_delivery=([A-Za-z0-9][A-Za-z0-9._-]*)\s*$'
         cites:
+          - path: .planning/PROJECT.md
+            pattern: 'L_delivery=([A-Za-z0-9][A-Za-z0-9._-]*)'
           - path: AGENTS.md
             pattern: 'L_delivery=([A-Za-z0-9][A-Za-z0-9._-]*)'
           - path: README.md
@@ -1100,6 +1109,8 @@ checks:
           path: .kutha/STATE.md
           pattern: '(?m)^L_map=([A-Za-z0-9][A-Za-z0-9._-]*)\s*$'
         cites:
+          - path: .planning/PROJECT.md
+            pattern: 'L_map=([A-Za-z0-9][A-Za-z0-9._-]*)'
           - path: AGENTS.md
             pattern: 'L_map=([A-Za-z0-9][A-Za-z0-9._-]*)'
           - path: README.md
@@ -1117,6 +1128,8 @@ checks:
           path: .kutha/STATE.md
           pattern: '(?m)^L_capability=([A-Za-z0-9][A-Za-z0-9._-]*)\s*$'
         cites:
+          - path: .planning/PROJECT.md
+            pattern: 'L_capability=([A-Za-z0-9][A-Za-z0-9._-]*)'
           - path: AGENTS.md
             pattern: 'L_capability=([A-Za-z0-9][A-Za-z0-9._-]*)'
           - path: README.md
@@ -1134,6 +1147,8 @@ checks:
           path: .kutha/STATE.md
           pattern: '(?m)^\*\*Active Milestone:\*\*\s*(M\d{3}[a-z]?|None)\s*$'
         cites:
+          - path: .planning/PROJECT.md
+            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3}[a-z]?)\b'
           - path: AGENTS.md
             pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3}[a-z]?)\b'
           - path: README.md
@@ -1325,6 +1340,16 @@ checks:
         category: i-f-oracle
         message: "I-F6 persist-open oracle missing {missing}"
 
+  - id: i-f9-policy-semantics
+    description: I-F9 — pinned policy body evaluated at admission (M016)
+    steps:
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m016_policy_replay.rs
+        tests:
+          - deny_policy_fails_admission_leased_policy_admits
+        category: i-f-oracle
+        message: "I-F9 policy-semantics oracle missing {missing}"
+
   - id: i-f10-genesis
     description: I-F10 — genesis log owns relation admission
     steps:
@@ -1378,4 +1403,14 @@ checks:
           - green_ingest_visits_constant_in_n
         category: i-f-oracle
         message: "I-F15 ingest-o1 oracle missing {missing}"
+
+  - id: i-f16-derivable
+    description: I-F16 — Horn execution replay re-derives from logged premises (M016)
+    steps:
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m016_s04_kill.rs
+        tests:
+          - empty_pin_inverse_fails_replay_fingerprint_unchanged
+        category: i-f-oracle
+        message: "I-F16 derivable oracle missing {missing}"
 

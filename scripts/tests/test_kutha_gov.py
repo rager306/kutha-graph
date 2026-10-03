@@ -862,7 +862,11 @@ class CiteEqualsTests(unittest.TestCase):
         cite = next(row for row in rows if isinstance(row, dict) and row.get("id") == "cite-lease")
         blob = yaml.safe_dump(cite.get("steps"))
         self.assertNotIn("CHANGELOG.md", blob)
-        self.assertNotIn(".planning", blob)
+        # .planning/ is out of scope except PROJECT.md (GOV-02).
+        self.assertIn(".planning/PROJECT.md", blob)
+        self.assertNotIn(".planning/STATE.md", blob)
+        self.assertNotIn(".planning/ROADMAP.md", blob)
+        self.assertNotIn(".planning/phases", blob)
 
     def test_cite_equals_live_precommit_is_green(self) -> None:
         self.assertEqual(0, main(["--root", str(ROOT), "precommit", "--check", "cite-lease"]))

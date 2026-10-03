@@ -1,5 +1,7 @@
 # Semantic contract validation
 
+> **Status 2026-10-03:** Snapshot of 2026-09-13 reasoning. Live state is `.kutha/STATE.md` plus `semantic-gap-review.md` addenda.
+
 Date: 2026-09-13. **Proposed validation design, not implemented capability or delivery authorization.**
 
 This note connects existing honeycomb contracts; it is not another ADR, research wave, or milestone list. The normative homes remain the linked ADRs. Historical snapshot as of 2026-09-13, M011 S03; live lease: `.kutha/STATE.md`. H3/H4 dogfood, M010 semantic recovery, and M011 S01–S03 claim/lineage/P→Q eligibility are in. Nothing here starts M002, a legal/science pack, a query parser, or new dictionaries. ADR-000/001/002 and the 163-card literature boundary are unchanged.

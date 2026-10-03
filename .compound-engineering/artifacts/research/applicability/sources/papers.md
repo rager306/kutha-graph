@@ -2,6 +2,13 @@
 
 Consensus batch 2026-08-17: three queries, then **no further Consensus**. Jina follows on selected URLs.
 
+## Deferred — M002 durability / cloud I/O
+
+| paper | url | capability seed | card id |
+|-------|-----|-----------------|---------|
+| Invisible Yet Dominant: Big Stalls of Kernel I/O Mechanisms in Cloud OLTP Databases | https://arxiv.org/abs/2609.12597 | Kernel flusher / dirty-throttle on cloud block; multi-drain > bandwidth | paper-kernel-io-dirty-throttle-cloud-oltp |
+| SteelDB: Diagnosing Kernel-Space Bottlenecks in Cloud OLTP Databases | https://arxiv.org/abs/2603.29052 | Zero-patch multi-volume placement companion | (see card above) |
+
 ## Query 1 — temporal graph SoT
 
 | paper | url | capability seed | card id |

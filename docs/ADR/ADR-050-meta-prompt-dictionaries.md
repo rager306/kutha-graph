@@ -8,6 +8,10 @@
 
 `relations.yaml` is read only when bootstrapping a new log; `admit` consults `fold.relation_allowed_at` for product names (`admission.rs`, `m013_genesis_log.rs`). Five reserved `kutha:` dictionary relations in the spike — not the frozen six-dictionary product model.
 
+### Evidence (2026-10-03; Proposed)
+
+Since M013 S04, `Runtime::admit` consults fold `kutha:allows` facts (`GraphFold::relation_allowed_at`). YAML (`load_allowed_names` / `Runtime::new` genesis `emit_allow`) seeds a **new** log only. Six-dictionary freeze unchanged. This subsection does not rewrite D050-1…D050-6.
+
 ## Date
 
 2026-08-18
@@ -167,4 +171,4 @@ Open, from docs/architecture/semantic-gap-review.md (F9): how the six dictionari
 
 ## Implementation note (2026-08-18)
 
-P0 FF6 stub: one Relation list at `crates/kutha-runtime/dictionaries/relations.yaml`. Unknown relation → no log append. Intern map remains ADR-011. This is **not** the six dictionary kinds, not SMO, not Accepted. Adding a legal edge type is a YAML row (override path `KUTHA_RELATIONS_PATH`). H2 tenant rows `runStatus` and `observed` are **delivery facts** on that same list (harness as a tenant of the engine), not a second dictionary kind and not legal norms. H3 process twin: `.kutha/dictionaries/relations.yaml` (`schema: kutha-harness-relations/v1`) fail-closes the harness JSONL the same way; it is still not six kinds. The two files must not mix schemas (`kutha-relations/v1` vs `kutha-harness-relations/v1`). Tenant `last_valid_from` is the chained emitted cut, not the source unix second.
+P0 FF6 stub: `load_allowed_names` reads `crates/kutha-runtime/dictionaries/relations.yaml` only when bootstrapping a **new** log (`Runtime::new` genesis `emit_allow`). Unknown product relation → no log append, because `Runtime::admit` consults live `kutha:allows` facts (`GraphFold::relation_allowed_at`), not a YAML row at admit. Intern map remains ADR-011. This is **not** the six dictionary kinds, not SMO, not Accepted. `KUTHA_RELATIONS_PATH` still overrides the genesis seed only. H2 tenant rows `runStatus` and `observed` are **delivery facts** on that same list (harness as a tenant of the engine), not a second dictionary kind and not legal norms. H3 process twin: `.kutha/dictionaries/relations.yaml` (`schema: kutha-harness-relations/v1`) fail-closes the harness JSONL the same way; it is still not six kinds. The two files must not mix schemas (`kutha-relations/v1` vs `kutha-harness-relations/v1`). Tenant `last_valid_from` is the chained emitted cut, not the source unix second.

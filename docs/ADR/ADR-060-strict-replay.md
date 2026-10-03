@@ -8,6 +8,10 @@
 
 Behavior lineage and provenance oracles remain (`replay_rejects_behavior_without_prior_cause`, provenance fingerprint tests). Full execution replay and log-native quantum outcomes are still partial (sidecars; F1/F9).
 
+### Evidence (2026-10-03; Proposed)
+
+Shipped: lineage (`Op::Behavior.caused_by` must name an earlier event) and Horn execution replay (`Runtime::replay_check` → `horn_behavior_reproducible` in `eval.rs`, called from `provenance.rs`). Not shipped: D014-1 cryptographic ADS/authenticator receipts (`QuantumReceipt` is SHA-256 of event digests) and sidecar/snapshot atomicity (F1: `store::persist` uses truncating `File::create` for `snapshot.json` and sidecars). `Op::TtAnchor` is not part of the replay oracle (`GraphFold.tt_anchors` is not fingerprint input; audit finding, M017 S02 / REPL-01). This subsection does not rewrite D060-1…D060-3.
+
 ## Date
 
 2026-08-18
@@ -49,7 +53,7 @@ R3-style “what if this behavior were different” over a recorded cut belongs 
 2. **Provenance/integrity verification:** validate event references, dependency links, input digests, and quantum outcomes. Mutating a cause while keeping the triple unchanged must not pass this check.
 3. **Execution replay:** reproduce derivations with pinned code/rules, policy versions, input cuts, cached observations, and controlled nondeterminism. Declare which IDs/timestamps are recorded inputs and which fields are compared; never assume fresh UUIDs or signatures reproduce byte-for-byte.
 
-`Runtime::replay_check` currently checks a fold fingerprint **and** that every `Op::Behavior.caused_by` names an earlier event in the same log (M011 S02). It still does not rerun behaviors or compare receipts. The passing check does not prove execution-replay obligation 3. An explicit unavailable outcome for missing code/cache/history remains a **proposed** requirement: today's API returns `Ok(rebuilt)` or `RuntimeError::ReplayDivergence` / `BrokenLineage` (and I/O errors from `store::open`).
+`Runtime::replay_check` currently checks a fold fingerprint **and** that every `Op::Behavior.caused_by` names an earlier event in the same log (M011 S02). Historical (pre-M016): it still does not rerun behaviors or compare receipts. As of M016, Horn-pinned Behaviors are re-derived via `horn_behavior_reproducible` (obligation 3 for Horn; see Evidence 2026-10-03). An explicit unavailable outcome for missing code/cache/history remains a **proposed** requirement: today's API returns `Ok(rebuilt)` or `RuntimeError::ReplayDivergence` / `BrokenLineage` / `ExecutionReplayFailed` (and I/O errors from `store::open`).
 
 ### Clarification (2026-09-30; Proposed)
 

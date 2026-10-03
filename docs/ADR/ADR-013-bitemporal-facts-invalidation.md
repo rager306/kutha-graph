@@ -138,3 +138,9 @@ Open, from docs/architecture/semantic-gap-review.md (F13): whether two axes plus
 ### Verdict (2026-10-02; Proposed)
 
 Answered fail-closed by FIXG-01 (`fixg01_c01_sunset_inexpressible_as_horn`): two axes plus typed annotations and `as_known_on` are **not** sufficient for C01 application-end / transitional-rule semantics. Do not add five peer clocks. This subsection does not rewrite D013-1…D013-4 and does not mark this cell Accepted.
+
+### Evidence (2026-10-03; Proposed)
+
+FIXG-01 remains **OPEN**. C01 sunset («пункт 15.1 действует до 01.01.2028») is not a Horn (`fixg01_c01_sunset_inexpressible_as_horn`; `RuleTerm::Const` is rule-ident only) and is not `valid_to`. Options: (a) application stamp in a pack, (b) a fifth core axis (conflicts with D013-1), (c) stop / out of wedge scope. **No option is chosen.** This blocks the legal pack, not M002. D013-1 is unchanged.
+
+`GraphFold::as_known_on` takes the greatest `Op::TtAnchor` with `wall` ≤ D, then TT-only `known_at` (ignores valid-time). `Runtime::as_known_on` delegates to that fold method.

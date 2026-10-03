@@ -8,6 +8,10 @@
 
 Same persist story as ADR-012: `events.jsonl` rename-atomic; `snapshot.json` truncating create; `OUTCOMES_REL` / `JUSTIFICATIONS_REL` sidecars still written on `persist` (`store.rs`). Receipt stays on the in-log quantum path via `pipeline`.
 
+### Evidence (2026-10-03; Proposed)
+
+Outcomes are `Op::QuantumOutcome` log records (`Runtime::persist_outcome_event` → `outcome_op` in `pipeline.rs`). `store::persist` still writes `OUTCOMES_REL` / `JUSTIFICATIONS_REL` sidecars as leases. `snapshot.json` is a truncating `File::create`, not temp+sync+rename (open for M017 S02 / M002). Commit-marker vs `Op::QuantumOutcome` encoding stays open for M002 (COMMIT-01). This subsection does not rewrite D014-1…D014-5.
+
 ## Date
 
 2026-08-18
@@ -59,7 +63,7 @@ The proposed contract permits prefix commit; it does not promise rollback on bud
 
 Completion evidence and enough information to reconstruct or explicitly reject continuation must be authoritative, not available only in a dropped receipt/cache. If a crash leaves no terminal evidence, recovery reports incomplete/unknown, never inferred success. Resumption must identify the original quantum and prevent duplicate delivery/effects (ADR-011/062); exact record encoding remains a future implementation choice.
 
-Current `Runtime::emit` returns `Ok(QuantumOutcome)` even when its receipt says budget-aborted, may retain a committed prefix, and `store::persist` does not persist that receipt. Call success is therefore not quantum completion. Future budget-0/1/2 and crash-boundary fixtures must test this distinction before stronger guarantees are claimed.
+Current `Runtime::emit` returns `Ok(QuantumOutcome)` even when its receipt says budget-aborted and may retain a committed prefix. Call success is therefore not quantum completion. Historical (pre-M012a): `store::persist` does not persist that receipt — superseded by log-native `Op::QuantumOutcome` (see Evidence 2026-10-03). Future budget-0/1/2 and crash-boundary fixtures must still test this distinction before stronger guarantees are claimed.
 
 ### Clarification (2026-09-30; Proposed)
 

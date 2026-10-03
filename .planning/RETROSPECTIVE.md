@@ -1,5 +1,7 @@
 # Project Retrospective
 
+> **Status 2026-10-03:** This file stops at v0.02. Later retrospectives live in `.planning/milestones/*-MILESTONE-AUDIT.md`.
+
 *A living document updated after each milestone. Lessons feed forward into future planning.*
 
 ## Milestone: v0.02 — Semantic core close

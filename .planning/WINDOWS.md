@@ -9,6 +9,8 @@ last_updated: 2026-10-01T18:41:41.282Z
 
 # Broken Windows Ledger
 
+> **Status 2026-10-03:** Windows 2, 4, 7, and 12 are archaeology. Window 11 (PROC-02) passed in v0.06. `workflow.windows_enforce` is not set. Rows are not deleted.
+
 > Cross-phase defect register. With `workflow.windows_enforce` enabled, `/gsd-ship` blocks while `open_count > 0`.
 > Waive with `gsd-tools windows waive <id> "<reason>"` (reason required).
 > Mark fixed with `gsd-tools windows fixed <id>`.

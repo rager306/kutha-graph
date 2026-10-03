@@ -213,7 +213,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 **Closed:** Active Milestone M016; S01–S05 done. Process tag `v0.09`. Crate SemVer stays 0.0.0. Honeycomb stays Proposed.
 
-**Success:** T2–T6 test holes closed; canonical rule AST hashed into `rule_version`; rule bodies evaluated over the CSR lease with support counting; admission evaluates the pinned policy; execution replay re-derives; FIXG-01 fail-closed (C01 sunset is not a Horn; ADR-013 Evidence dated). Closes T2–T6, F9, F16.
+**Success:** T2–T6 test holes closed; canonical rule AST hashed into `rule_version`; rule bodies evaluated over live facts (`fold.facts()`) with support counting; CSR is not used by rules; admission evaluates the pinned policy; execution replay re-derives; FIXG-01 fail-closed (C01 sunset is not a Horn; ADR-013 Evidence dated). Closes T2–T6, F9, F16.
 
 - [x] **S01: Test hardening T2–T6** `risk:medium` `depends:[]`
   > After this: trybuild E0308 clock mix; cite tt/vt oracle; Eager/Lazy/fork known-on; snapshot+tail anchors; `GraphFold::replay` applies TtAnchor.
@@ -226,9 +226,22 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 - [x] **S05: Legal golden fixture and verdict** `risk:high` `depends:[S04]`
   > After this: a real-text fixture with one transitional rule and an as-known-on query is green, or the failing case is recorded and the plan stops before M002. The verdict is written into ADR-013 as a dated clarification.
 
+## M017: Docs honesty and replay integrity (GSD v0.10)
+
+**Source:** 2026-10-02 audit at `c702d71` (ADR/roadmap, code/tests, process docs). Closes the doc drift and the replay/durability holes that M002 would otherwise inherit. Not M002 segments or Rocks; not typed `Op` clocks; not a C01 decision; not ADR Accepted.
+
+**Success:** living docs, ADR Evidence and the governor agree with the code; a tampered `TtAnchor`, a truncated WAL or snapshot, a disagreeing sidecar, or an environment-dependent index mode cannot silently change an answer; replay determinism and the Horn-vs-known-on behaviour are named oracles. Closes audit findings G02–G12, F01, F02, F04, F06–F10.
+
+- [x] **S01: Living docs and governor honesty** `risk:low` `depends:[]`
+  > After this: PROJECT carries no stale lease and `cite-lease` covers it; gap-review addendum and invariants ledger match M014–M016; ADR-000/013/014/041/050/060/070 and README carry dated clarifications (three AS OF cuts, Horn over live facts, C01 open with options); no file under `crates/` changes.
+- [ ] **S02: Replay integrity** `risk:high` `depends:[S01]`
+  > After this: tampered `TtAnchor` fails replay; `snapshot.json` and `events.wal` replace atomically; open never lets a sidecar or an empty WAL override the log; snapshot pins the fold index mode; `as_known_on` rustdoc and `known_at` oracle are honest.
+- [ ] **S03: Determinism and knowledge-cut characterization** `risk:medium` `depends:[S02]`
+  > After this: seeded replay==fold and Eager==Lazy (persist/open) properties are green with no new dependency; Horn-vs-known-on behaviour is recorded in a named test and ADR-013 Evidence without changing behaviour.
+
 ## Later milestones (not active)
 
-Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 is CLOSED. M016 is CLOSED. M002+ stay frozen until leased.
+Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 is CLOSED. M016 is CLOSED. M017 is authored; only the slice named in STATE runs. M002+ stay frozen until leased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -239,16 +252,17 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 5. **M014** — CLOSED. Typed clocks and as-known-on. Detail above.
 6. **M015** — CLOSED. Known-on honesty and M014 residuals (v0.08). Detail above.
 7. **M016** — CLOSED (S01–S05, GSD v0.09 tagged). Detail above.
-8. **M002** — Log durability protocol: segmented append-only log, hash chain, atomic manifest, replay parity across stores, with the quantum outcome as a commit marker in segment framing (ADR-010/014 open question). “Lease identity verified on open” is already done (v0.04 Phase 15). Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity.
-9. **M003** — Cypher skin over the already-correct AS OF cut.
-10. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
-11. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
-12. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
-13. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
-14. *(unnumbered)* Packaging, naming and license decision (ADR-092) before any publish.
+8. **M017** — Docs honesty and replay integrity (GSD v0.10). Detail above; before M002 so segment framing inherits an honest replay oracle and atomic snapshot.
+9. **M002** — Log durability protocol: segmented append-only log, hash chain, atomic manifest, replay parity across stores, with the quantum outcome as a commit marker in segment framing (ADR-010/014 open question). “Lease identity verified on open” is already done (v0.04 Phase 15). Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity. **Intake (2026-10-02):** cloud kernel writeback / dirty-throttle stalls — `docs/architecture/m002-cloud-kernel-io-intake.md` (arXiv:2609.12597 / SteelDB companion); multi-drain placement beats single-volume bandwidth when buffered I/O is on distributed block storage.
+10. **M003** — Cypher skin over the already-correct AS OF cut.
+11. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
+12. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
+13. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
+14. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
+15. *(unnumbered)* Packaging, naming and license decision (ADR-092) before any publish.
 
 P4 (Raft/multi-node, learned indexes) is not planned until single-node hybrid evidence exists.
 
 ## Freeze until explicit M002 lease
 
-RocksDB crate, Cypher parser, HNSW, ABAC rewrite, RVF as hot store, bulk honeycomb Accepted, Consensus 103+. M001 is closed; freeze still holds. M013 thaw was scoped and freeze restored; do not treat M013 as a live thaw.
+Freeze list lives in `.kutha/STATE.md` Freeze. M013 thaw was scoped and freeze restored; do not treat M013 as a live thaw.

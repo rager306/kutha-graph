@@ -2,7 +2,7 @@
 
 Research-stage **hybrid AI-native temporal graph engine** (Rust). An append-only event log is the source of truth; the working graph is a deterministic fold of that log; CSR / later HNSW / views are droppable leases. LLM proposes; dictionaries and the log own audited fact truth.
 
-Primary wedge: legal / normative temporal agents — a norm **AS OF a date**, without treating the LLM as legal authority.
+Primary wedge: legal / normative temporal agents — a norm **AS OF a date** as three cuts (valid-time `as_of`, bitemporal `live_at`, knowledge-cut `as_known_on`), without treating the LLM as legal authority.
 
 This is not a production graph database and not Graphiti / Samyama / Harvey.
 
@@ -10,13 +10,13 @@ This is not a production graph database and not Graphiti / Samyama / Harvey.
 
 | Plane | Where | Now |
 |-------|--------|-----|
-| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | **None** (M016 closed); harness phase **H5** |
+| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | **M017**; slice and `L_delivery` in that file; harness phase **H5** |
 | Architecture map | [`docs/ADR/README.md`](docs/ADR/README.md) | Spine + honeycomb **Proposed**, not Accepted |
 | Capability | `crates/kutha-runtime` tests | FF5 green (`as_of(2015) ≠ as_of(2021)` on a statute-shaped fixture) |
 
 Governor green ≠ ADR Accepted ≠ capability. Honeycomb cells are a map, not a backlog.
 
-**Frozen until STATE names them:** RocksDB crate, Cypher/GPML parser, HNSW, ADR-050 six dictionaries, full legal/science packs.
+**Frozen until STATE names them:** see [`.kutha/STATE.md`](.kutha/STATE.md) Freeze. Do not duplicate that table here.
 
 ## Quick start
 
