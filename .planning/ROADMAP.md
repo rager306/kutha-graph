@@ -27,7 +27,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 - [x] **Phase 51: RocksDB build spike** — isolated module, offline build, EventId to offset (M002 S03)
 - [x] **Phase 52: Incremental framed append** — no O(N) rewrite per persist (M002 S04)
 - [x] **Phase 53: Commit marker decision (COMMIT-01)** — one encoding of the quantum outcome (M002 S05, decision gate)
-- [ ] **Phase 54: Segments, manifest and hash chain** — (M002 S06)
+- [x] **Phase 54: Segments, manifest and hash chain** — (M002 S06)
 - [ ] **Phase 55: Droppable RocksDB index lease** — (M002 S07)
 
 ## Progress
@@ -36,4 +36,4 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 |-----------|--------|--------|
 | v0.01–v0.10 | 1–44 | shipped |
 | v0.11 | 45–48 | Phase 45 shipped; paused at decision gate |
-| v0.12 | 49–55 | Phases 49–53 shipped; Phase 54 next |
+| v0.12 | 49–55 | Phases 49–54 shipped; Phase 55 next |

@@ -94,6 +94,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `glob_absent` accepts optional `unless_file_contains: {file, needle}` (missing file does not skip). `freeze-rocks` allows the string `rocksdb` in `crates/*/Cargo.toml` and the workspace `Cargo.toml` only while `.kutha/STATE.md` names `**Active Milestone:** M002`. `freeze-cypher-deps` and `freeze-hnsw-dep` stay unconditional. Selftest disables the unless needle on the copy before inserting `rocksdb` so the check still fails closed.
 
+## 2026-10-04 — Process: close M002 S06 (GSD Phase 54)
+
+### Process
+
+- `L_delivery=M002-S06-done`, Active Slice **None**. `54-VERIFICATION.md` is independent (7/7 after a second round: the first found an unverified migrate step, a stitching hole between sealed segments, weak error needles and living jsonl-SoT wording; the chain is now continuous across segments). The event log stays the source of truth; the physical encoding is a manifest plus segments and `events.jsonl` is an export; the owner should note this wording change in `.kutha/ROADMAP.md`. Bench series stays within the 10% gate on unchanged ingest/as_of paths. Next: S07 (Phase 55) needs a lease.
+
 ## 2026-10-04 — Process: lease M002 S06 (GSD Phase 54)
 
 ### Process

@@ -262,7 +262,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 ## M002: Log durability protocol (GSD v0.12) — THAWED, planned
 
-**Thawed 2026-10-03.** The freeze came from agent-assisted commits (`1ee5942`, `85db1f7`, 2026-08-18, Cursor co-authored); the owner states he did not decide it; the owner asked for M002 to be re-verified and run under GSD. Provenance and the per-item thaw map: `.kutha/STATE.md` § Thaw map. ADR-000 D1–D10 are not a lease gate: D6 names a Rust+RocksDB event store, D8.1 asks for log segmentation; the 2026-10-03 clarification keeps `events.jsonl` as SoT and Rocks as an index store.
+**Thawed 2026-10-03.** The freeze came from agent-assisted commits (`1ee5942`, `85db1f7`, 2026-08-18, Cursor co-authored); the owner states he did not decide it; the owner asked for M002 to be re-verified and run under GSD. Provenance and the per-item thaw map: `.kutha/STATE.md` § Thaw map. ADR-000 D1–D10 are not a lease gate: D6 names a Rust+RocksDB event store, D8.1 asks for log segmentation; the 2026-10-03 clarification kept `events.jsonl` as the physical SoT and Rocks as an index store; S06 (2026-10-04) moved the physical encoding to a manifest plus sealed segments, with the event log still the SoT and `events.jsonl` an on-demand export.
 
 **Source:** 2026-10-03 re-verification at `f4af544` (provenance audit, governor freeze map, durability design research; CBM + GitNexus, `rg` arbiter). Current defects: `persist` rewrites the whole log each call (O(N), `store.rs` `encoded_log`, `wal::write_wal`); sidecars `terms`/`quantum_outcomes`/`justifications` use in-place `File::create` without sync; no parent-directory fsync after any rename; `check_tt_anchors` demands exact equality so a log ahead of the snapshot fails open; `recover_events` returns an empty log on a failed magic read; a WAL error is hidden behind jsonl. Not M003 Cypher; not M005 HNSW; not ADR Accepted.
 
@@ -278,7 +278,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
   > After this: a second `persist` appends length+CRC framed records and does not rewrite the prefix bytes; one `fdatasync` per quantum; a crash mid-append drops only the incomplete tail; replay parity with the jsonl path; bench gate (`ingest_plain.n`, `as_of.n`) within 10 percent.
 - [x] **S05: Commit marker decision (COMMIT-01)** `risk:high` `depends:[S04]` `gate:controller+user decision`
   > After this: one durable encoding of the quantum outcome is chosen (commit frame in the segment, or `Op::QuantumOutcome` kept) and recorded in ADR-010/014; a crash between payload events and the commit leaves no uncommitted prefix visible; named oracles unchanged.
-- [ ] **S06: Segments, manifest and hash chain** `risk:high` `depends:[S04,S05]`
+- [x] **S06: Segments, manifest and hash chain** `risk:high` `depends:[S04,S05]`
   > After this: sealed segments with an atomically replaced manifest; recovery from manifest plus the active segment; a flipped byte or swapped records in a sealed segment fails open with `InvalidData`; the jsonl export is no longer the SoT.
 - [ ] **S07: Droppable RocksDB index lease** `risk:medium` `depends:[S03,S06]`
   > After this: `EventId` to offset (and `delivery_key`) indexes live in RocksDB as a lease rebuilt from the log; deleting the Rocks directory changes no answer; Rocks never stores an event payload, a commit frame, a disposition or a term meaning.

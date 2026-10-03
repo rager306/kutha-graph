@@ -31,7 +31,7 @@
     {
       "number": "54",
       "name": "Segments, manifest and hash chain",
-      "status": "executing"
+      "status": "complete"
     },
     {
       "number": "55",
@@ -41,8 +41,8 @@
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Phase 54 execute (three plans), then verify",
-    "reason": "M002-S06 leased"
+    "label": "Lease M002 S07 (Phase 55: droppable Rocks index) after CONTEXT",
+    "reason": "Phase 54 verified \u00b7 M002-S06-done"
   },
   "updated_at": "2026-10-03T07:00:00.000Z"
 }
