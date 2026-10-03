@@ -52,6 +52,16 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - ADR-010 Evidence (2026-10-03) records the D-04 open policy. Honeycomb comment restage only; cell stays **Proposed**. Active Milestone **M017**, Active Slice **S02**.
 
+## 2026-10-03 — Process: M017 S04 leased (ingest regression)
+
+### Process
+
+- Lease M017-S04 for GSD Phase 44 (PERF-01, PERF-02).
+
+### Trajectory
+
+- Active Milestone **M017**, Active Slice **S04**. `L_delivery=M017-S03-done`.
+
 ## 2026-10-03 — Trajectory: M017 S03 CLOSED (Phase 43 verified)
 
 ### Trajectory
