@@ -341,3 +341,53 @@ fn snapshot_index_mode_survives_env_flip() {
 
     let _ = fs::remove_dir_all(&dir);
 }
+
+fn seed_anchor_tt(rt: &Runtime) -> u64 {
+    rt.log()
+        .iter()
+        .find_map(|e| match &e.op {
+            Op::TtAnchor { wall } if *wall == T_OLD => Some(e.ingested_at),
+            _ => None,
+        })
+        .expect("seed emits TtAnchor at T_OLD")
+}
+
+#[test]
+fn as_known_on_differs_from_live_at_max_on_closed_vt() {
+    let mut rt = seed_runtime();
+    let article = rt.intern("art-12-speed");
+    let in_force = rt.intern("inForceAs");
+    let limit_50 = rt.intern("50-kmh");
+    let statute = (article, in_force, limit_50);
+    let tt = seed_anchor_tt(&rt);
+    let known = rt.as_known_on(T_OLD).expect("anchor 2015");
+    let live_max = rt.live_at(tt, u64::MAX);
+    assert_ne!(
+        known, live_max,
+        "KNOWN-03: closed VT stays visible on as_known_on, not live_at(tt, MAX)"
+    );
+    assert!(known.contains(&statute));
+    assert!(!live_max.contains(&statute));
+}
+
+#[test]
+fn known_at_equals_is_known_at_filter() {
+    let rt = seed_runtime();
+    let tt = seed_anchor_tt(&rt);
+    let known = rt.fold().known_at(tt);
+    let strings = rt.dictionary().strings();
+    let brute: Vec<_> = rt
+        .fold()
+        .facts()
+        .iter()
+        .filter(|f| {
+            f.is_known_at(tt)
+                && strings
+                    .get(f.relation as usize)
+                    .map(|n| !n.starts_with("kutha:"))
+                    .unwrap_or(true)
+        })
+        .map(|f| (f.subject, f.relation, f.object()))
+        .collect();
+    assert_eq!(known, brute, "KNOWN-03: known_at equals is_known_at + product keep");
+}

@@ -567,7 +567,7 @@ impl Runtime {
     /// Product triples as known on a wall date.
     ///
     /// Greatest `Op::TtAnchor` with `wall` at or before `wall`, then
-    /// [`Self::live_at`] at that event's transaction time and `vt = u64::MAX`.
+    /// [`GraphFold::known_at`] at that transaction time (TT-only; no ValidTime cut).
     /// `None` means no anchor at or before the date.
     pub fn as_known_on(&self, wall: impl Into<WallTime>) -> Option<Vec<(TermId, TermId, TermId)>> {
         self.fold.as_known_on(wall)
