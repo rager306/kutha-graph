@@ -7,6 +7,7 @@ use kutha_common::{Event, EventId, Op};
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 const TERMS_REL: &str = "terms.jsonl";
 /// Outcomes sidecar lease. SoT is `Op::QuantumOutcome` on the event log (LOG-01 / D-02).
@@ -14,20 +15,117 @@ pub const OUTCOMES_REL: &str = "quantum_outcomes.jsonl";
 /// Justifications sidecar lease. SoT is `Op::JustificationCite` on the event log (LOG-02 / D-02).
 pub const JUSTIFICATIONS_REL: &str = "justifications.jsonl";
 
+/// Named persist steps for the crash-matrix failpoint (D-07). Stop *after* the
+/// named step completes (WAL, jsonl, terms, snapshot, outcomes, justifications).
+#[doc(hidden)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PersistStep {
+    Wal,
+    Jsonl,
+    Terms,
+    Snapshot,
+    Outcomes,
+    Justifications,
+}
+
+static PERSIST_DIR_FSYNC_COUNT: AtomicUsize = AtomicUsize::new(0);
+
+/// Test-visible count of directory `sync_all` calls from [`sync_dir`].
+#[doc(hidden)]
+pub fn persist_dir_fsync_count() -> usize {
+    PERSIST_DIR_FSYNC_COUNT.load(Ordering::Relaxed)
+}
+
+/// Reset the directory fsync counter. Tests that assert a delta should prefer
+/// [`persist_dir_fsync_count`] before/after a single `persist` instead.
+#[doc(hidden)]
+pub fn reset_persist_dir_fsync_count() {
+    PERSIST_DIR_FSYNC_COUNT.store(0, Ordering::Relaxed);
+}
+
+/// Opens `dir` and calls `sync_all` so a rename is durable on the parent.
+///
+/// On platforms where opening a directory fails (non-Unix), returns `Ok`
+/// without syncing — directory file descriptors are a Unix feature.
+#[allow(dead_code)] // SNAP-01 GREEN: replace_via_tmp + end of persist
+fn sync_dir(dir: &Path) -> std::io::Result<()> {
+    #[cfg(unix)]
+    {
+        let f = File::open(dir)?;
+        f.sync_all()?;
+        PERSIST_DIR_FSYNC_COUNT.fetch_add(1, Ordering::Relaxed);
+        Ok(())
+    }
+    #[cfg(not(unix))]
+    {
+        match File::open(dir) {
+            Ok(f) => {
+                f.sync_all()?;
+                PERSIST_DIR_FSYNC_COUNT.fetch_add(1, Ordering::Relaxed);
+                Ok(())
+            }
+            Err(_) => Ok(()),
+        }
+    }
+}
+
+fn injected_persist_failpoint() -> std::io::Error {
+    std::io::Error::new(
+        std::io::ErrorKind::Other,
+        "injected fault: persist failpoint",
+    )
+}
+
+fn after_persist_step(stop_after: Option<PersistStep>, step: PersistStep) -> std::io::Result<()> {
+    if stop_after == Some(step) {
+        Err(injected_persist_failpoint())
+    } else {
+        Ok(())
+    }
+}
+
 /// File-backed semantic log + snapshot lease. WAL file is durability cousin, not Rocks-as-SoT.
 /// `terms.jsonl` is a derived intern picture. Durable term meanings ride `Op::Define` (persist prefix + live intern, M010 S02–S03).
+/// Persist order: WAL, jsonl, terms, snapshot, outcomes, justifications.
 pub fn persist(runtime: &Runtime, dir: &Path) -> std::io::Result<()> {
+    persist_until(runtime, dir, None)
+}
+
+/// Test seam (D-07): run `persist` and return an injected I/O error after `stop_after` completes.
+#[doc(hidden)]
+pub fn persist_with_failpoint(
+    runtime: &Runtime,
+    dir: &Path,
+    stop_after: PersistStep,
+) -> std::io::Result<()> {
+    persist_until(runtime, dir, Some(stop_after))
+}
+
+fn persist_until(
+    runtime: &Runtime,
+    dir: &Path,
+    stop_after: Option<PersistStep>,
+) -> std::io::Result<()> {
     fs::create_dir_all(dir)?;
     let events = encoded_log(runtime);
     replace_events_wal(dir, &events, true)?;
+    after_persist_step(stop_after, PersistStep::Wal)?;
     replace_events_jsonl(dir, &events)?;
+    after_persist_step(stop_after, PersistStep::Jsonl)?;
     write_terms(dir, runtime.dictionary().strings())?;
+    after_persist_step(stop_after, PersistStep::Terms)?;
     replace_snapshot(dir, &runtime.snapshot(), true)?;
+    after_persist_step(stop_after, PersistStep::Snapshot)?;
     // Outcomes sidecar is a lease of log-native rows (D-05); never persist Typed-only buffers.
-    write_outcomes(dir, &crate::hydrate::outcomes_from_events(runtime.log().iter()))?;
+    write_outcomes(
+        dir,
+        &crate::hydrate::outcomes_from_events(runtime.log().iter()),
+    )?;
+    after_persist_step(stop_after, PersistStep::Outcomes)?;
     // Justifications last so a crash cannot leave cites without matching events;
     // missing file on open is empty vec (cannot admit).
     write_justifications(dir, &runtime.justification_records())?;
+    after_persist_step(stop_after, PersistStep::Justifications)?;
     Ok(())
 }
 
