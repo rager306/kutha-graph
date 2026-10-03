@@ -483,3 +483,353 @@ fn append_after_open_resumes() {
 
     let _ = fs::remove_dir_all(&dir);
 }
+
+fn assert_dict_term_parity(src: &Runtime, opened: &Runtime) {
+    assert_eq!(
+        opened.dictionary().strings(),
+        src.dictionary().strings(),
+        "open must restore interned strings in intern order"
+    );
+    for s in src.dictionary().strings() {
+        assert_eq!(
+            opened.dictionary().id(s),
+            src.dictionary().id(s),
+            "TermId for {s} must match the source runtime"
+        );
+    }
+}
+
+fn last_jsonl_line_start(bytes: &[u8]) -> usize {
+    assert!(
+        bytes.last() == Some(&b'\n'),
+        "jsonl must be newline-terminated"
+    );
+    let body = &bytes[..bytes.len() - 1];
+    match body.iter().rposition(|b| *b == b'\n') {
+        Some(i) => i + 1,
+        None => 0,
+    }
+}
+
+fn wal_last_frame_len(wal: &[u8], last: &Event) -> usize {
+    let payload = serde_json::to_vec(last).unwrap();
+    let frame_len = 8 + payload.len();
+    assert!(wal.len() >= frame_len, "WAL shorter than last frame");
+    let start = wal.len() - frame_len;
+    let stored = u32::from_le_bytes(wal[start..start + 4].try_into().unwrap()) as usize;
+    assert_eq!(stored, payload.len(), "WAL last frame length prefix");
+    frame_len
+}
+
+fn assert_append_guard_writes_nothing(
+    p: &mut store::Persister,
+    rt: &Runtime,
+    jsonl_path: &Path,
+    wal_path: &Path,
+    jsonl_before: &[u8],
+    wal_before: &[u8],
+) {
+    match p.append(rt) {
+        Ok(_) => panic!("D-04: tail-guard mismatch must return InvalidData"),
+        Err(e) => assert_eq!(e.kind(), ErrorKind::InvalidData),
+    }
+    assert_eq!(
+        fs::read(jsonl_path).unwrap(),
+        jsonl_before,
+        "D-04: mismatch must write nothing to jsonl"
+    );
+    assert_eq!(
+        fs::read(wal_path).unwrap(),
+        wal_before,
+        "D-04: mismatch must write nothing to WAL"
+    );
+}
+
+fn emit_gap_assert(rt: &mut Runtime, subject: &str, object: &str) {
+    let s = rt.intern(subject);
+    let o = rt.intern(object);
+    let r = rt.intern("inForceAs");
+    rt.emit(Op::Assert {
+        subject: s,
+        relation: r,
+        object: o,
+        valid_from: VF_FIRST,
+        valid_to: None,
+        claim: None,
+        delivery_key: None,
+        polarity: None,
+    })
+    .unwrap();
+}
+
+#[test]
+fn intern_between_appends_survives_open_without_checkpoint() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("gap-a");
+    store::persist(&rt, &dir).unwrap();
+    let offset_a = snap_log_offset(&dir);
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    p.append(&rt).unwrap();
+    emit_gap_assert(&mut rt, "p52-gap-article", "p52-gap-80");
+    p.append(&rt).unwrap();
+    assert_eq!(
+        snap_log_offset(&dir),
+        offset_a,
+        "GAP A: intern-append must not checkpoint"
+    );
+    let opened = store::open(&dir).expect("open after intern-append without checkpoint");
+    assert_dict_term_parity(&rt, &opened);
+    assert_eq!(opened.fold().fingerprint(), rt.fold().fingerprint());
+    assert_eq!(opened.as_of(VF_FIRST), rt.as_of(VF_FIRST));
+    opened.replay_check().unwrap();
+
+    let dir_full = persist_dir("gap-a-full");
+    store::persist(&rt, &dir_full).unwrap();
+    let from_full = store::open(&dir_full).unwrap();
+    assert_eq!(log_ids(&opened), log_ids(&from_full));
+    assert_dict_term_parity(&from_full, &opened);
+
+    let _ = fs::remove_dir_all(&dir);
+    let _ = fs::remove_dir_all(&dir_full);
+}
+
+#[test]
+fn intern_only_append_reattach_and_open() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("intern-only");
+    store::persist(&rt, &dir).unwrap();
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    let t_a = rt.intern("p52-intern-only-a");
+    let t_b = rt.intern("p52-intern-only-b");
+    p.append(&rt)
+        .expect("intern-only quantum must append Define events");
+    drop(p);
+    let mut p = store::Persister::attach(&rt, &dir)
+        .expect("attach after intern-only append must not InvalidData");
+    p.append(&rt).unwrap();
+    emit_gap_assert(&mut rt, "p52-intern-only-c", "p52-intern-only-d");
+    p.append(&rt).unwrap();
+    let opened = store::open(&dir).unwrap();
+    assert_eq!(opened.dictionary().id("p52-intern-only-a"), Some(t_a));
+    assert_eq!(opened.dictionary().id("p52-intern-only-b"), Some(t_b));
+    assert_dict_term_parity(&rt, &opened);
+    assert_eq!(opened.fold().fingerprint(), rt.fold().fingerprint());
+    assert_eq!(opened.as_of(VF_FIRST), rt.as_of(VF_FIRST));
+    opened.replay_check().unwrap();
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn append_tail_guard_rejects_truncated_or_garbage_logs() {
+    let rt = seed_runtime();
+    let template = persist_dir("guard-len-a");
+    store::persist(&rt, &template).unwrap();
+
+    let cases: [(&str, Box<dyn Fn(&[u8], &[u8], &Event) -> (Vec<u8>, Vec<u8>)>); 6] = [
+        (
+            "jsonl-truncate-record",
+            Box::new(|j, w, _| {
+                let start = last_jsonl_line_start(j);
+                (j[..start].to_vec(), w.to_vec())
+            }),
+        ),
+        (
+            "wal-truncate-record",
+            Box::new(|j, w, last| {
+                let fl = wal_last_frame_len(w, last);
+                (j.to_vec(), w[..w.len() - fl].to_vec())
+            }),
+        ),
+        (
+            "jsonl-duplicate-last",
+            Box::new(|j, w, _| {
+                let start = last_jsonl_line_start(j);
+                let mut out = j.to_vec();
+                out.extend_from_slice(&j[start..]);
+                (out, w.to_vec())
+            }),
+        ),
+        (
+            "wal-duplicate-last",
+            Box::new(|j, w, last| {
+                let fl = wal_last_frame_len(w, last);
+                let mut out = w.to_vec();
+                out.extend_from_slice(&w[w.len() - fl..]);
+                (j.to_vec(), out)
+            }),
+        ),
+        (
+            "jsonl-garbage-bytes",
+            Box::new(|j, w, _| {
+                let mut out = j.to_vec();
+                out.extend_from_slice(b"not-a-json-record\n");
+                (out, w.to_vec())
+            }),
+        ),
+        (
+            "wal-garbage-bytes",
+            Box::new(|j, w, _| {
+                let mut out = w.to_vec();
+                out.extend_from_slice(&[0xFF, 0x00, 0xAA, 0xBB]);
+                (j.to_vec(), out)
+            }),
+        ),
+    ];
+    for (label, tamper) in cases {
+        let dir = persist_dir(&format!("guard-len-{label}"));
+        copy_store(&template, &dir);
+        let jsonl_path = dir.join("events.jsonl");
+        let wal_path = dir.join("events.wal");
+        let mut opened = store::open(&dir).unwrap();
+        let mut p = store::Persister::attach(&opened, &dir).unwrap();
+        let jsonl_orig = fs::read(&jsonl_path).unwrap();
+        let wal_orig = fs::read(&wal_path).unwrap();
+        let last = read_jsonl_events(&jsonl_path).pop().expect("jsonl events");
+        let (j2, w2) = tamper(&jsonl_orig, &wal_orig, &last);
+        assert_ne!(
+            (&j2[..], &w2[..]),
+            (&jsonl_orig[..], &wal_orig[..]),
+            "{label}: tamper must change a file"
+        );
+        fs::write(&jsonl_path, &j2).unwrap();
+        fs::write(&wal_path, &w2).unwrap();
+        emit_one_more(&mut opened, T_NEW);
+        assert_append_guard_writes_nothing(&mut p, &opened, &jsonl_path, &wal_path, &j2, &w2);
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    let _ = fs::remove_dir_all(&template);
+}
+
+#[test]
+fn append_tail_guard_rejects_same_length_last_record_swap() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("guard-id");
+    store::persist(&rt, &dir).unwrap();
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    let jsonl_path = dir.join("events.jsonl");
+    let wal_path = dir.join("events.wal");
+    let jsonl_orig = fs::read(&jsonl_path).unwrap();
+    let wal_orig = fs::read(&wal_path).unwrap();
+    let mut events = read_jsonl_events(&jsonl_path);
+    let last = events.last_mut().expect("jsonl last");
+    let old_json = serde_json::to_string(last).unwrap();
+    last.id = EventId::from_u128(last.id.as_u128().wrapping_add(1));
+    let new_json = serde_json::to_string(last).unwrap();
+    assert_eq!(
+        old_json.len(),
+        new_json.len(),
+        "swap must keep jsonl record length"
+    );
+    let start = last_jsonl_line_start(&jsonl_orig);
+    let mut tampered = jsonl_orig[..start].to_vec();
+    tampered.extend_from_slice(new_json.as_bytes());
+    tampered.push(b'\n');
+    assert_eq!(tampered.len(), jsonl_orig.len(), "same total jsonl length");
+    fs::write(&jsonl_path, &tampered).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    assert_append_guard_writes_nothing(&mut p, &rt, &jsonl_path, &wal_path, &tampered, &wal_orig);
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn append_twice_then_noop_keeps_prefix_and_matches_persist() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("append-i");
+    store::persist(&rt, &dir).unwrap();
+    let jsonl0 = fs::read(dir.join("events.jsonl")).unwrap();
+    let wal0 = fs::read(dir.join("events.wal")).unwrap();
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    p.append(&rt).unwrap();
+    let jsonl1 = fs::read(dir.join("events.jsonl")).unwrap();
+    let wal1 = fs::read(dir.join("events.wal")).unwrap();
+    assert!(jsonl1.starts_with(&jsonl0) && jsonl1.len() > jsonl0.len());
+    assert!(wal1.starts_with(&wal0) && wal1.len() > wal0.len());
+    emit_gap_assert(&mut rt, "p52-twice-a", "p52-twice-b");
+    p.append(&rt).unwrap();
+    let jsonl2 = fs::read(dir.join("events.jsonl")).unwrap();
+    let wal2 = fs::read(dir.join("events.wal")).unwrap();
+    assert!(jsonl2.starts_with(&jsonl1) && jsonl2.len() > jsonl1.len());
+    assert!(wal2.starts_with(&wal1) && wal2.len() > wal1.len());
+    p.append(&rt).unwrap();
+    assert_eq!(fs::read(dir.join("events.jsonl")).unwrap(), jsonl2);
+    assert_eq!(fs::read(dir.join("events.wal")).unwrap(), wal2);
+    emit_one_more(&mut rt, T_NEW + 5);
+    p.append(&rt).unwrap();
+    let jsonl3 = fs::read(dir.join("events.jsonl")).unwrap();
+    let wal3 = fs::read(dir.join("events.wal")).unwrap();
+    assert!(jsonl3.starts_with(&jsonl2) && jsonl3.len() > jsonl2.len());
+    assert!(wal3.starts_with(&wal2) && wal3.len() > wal2.len());
+
+    let opened = store::open(&dir).unwrap();
+    let dir_full = persist_dir("append-i-full");
+    store::persist(&rt, &dir_full).unwrap();
+    let from_full = store::open(&dir_full).unwrap();
+    assert_eq!(log_ids(&opened), log_ids(&from_full));
+    assert_dict_term_parity(&from_full, &opened);
+    assert_eq!(opened.fold().fingerprint(), from_full.fold().fingerprint());
+    assert_eq!(opened.as_of(VF_FIRST), from_full.as_of(VF_FIRST));
+    opened.replay_check().unwrap();
+
+    let _ = fs::remove_dir_all(&dir);
+    let _ = fs::remove_dir_all(&dir_full);
+}
+
+#[test]
+fn checkpoint_abort_before_snapshot_rename_keeps_previous_bytes() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("ckpt-abort");
+    store::persist(&rt, &dir).unwrap();
+    let snap = dir.join("snapshot.json");
+    let terms = dir.join("terms.jsonl");
+    let outcomes = dir.join(store::OUTCOMES_REL);
+    let justifications = dir.join(store::JUSTIFICATIONS_REL);
+    let snap_before = fs::read(&snap).unwrap();
+    let terms_before = fs::read(&terms).unwrap();
+    let outcomes_before = fs::read(&outcomes).unwrap();
+    let just_before = fs::read(&justifications).unwrap();
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    p.append(&rt).unwrap();
+    store::abort_checkpoint_snapshot_before_rename(&mut p, &rt)
+        .expect_err("abort before snapshot rename is not checkpoint success");
+    assert_eq!(fs::read(&snap).unwrap(), snap_before);
+    assert_eq!(fs::read(&terms).unwrap(), terms_before);
+    assert_eq!(fs::read(&outcomes).unwrap(), outcomes_before);
+    assert_eq!(fs::read(&justifications).unwrap(), just_before);
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn checkpoint_leaves_no_tmp_and_fsyncs_dir() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("ckpt-fsync");
+    store::persist(&rt, &dir).unwrap();
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    p.append(&rt).unwrap();
+    let before = store::persist_dir_fsync_count();
+    p.checkpoint(&rt).unwrap();
+    let delta = store::persist_dir_fsync_count().saturating_sub(before);
+    let tmp: Vec<_> = fs::read_dir(&dir)
+        .unwrap()
+        .filter_map(|e| e.ok())
+        .map(|e| e.file_name())
+        .filter(|n| n.to_string_lossy().ends_with(".tmp"))
+        .collect();
+    assert!(
+        tmp.is_empty(),
+        "checkpoint Ok must not leave .tmp siblings, found {tmp:?}"
+    );
+    assert_eq!(
+        delta, 5,
+        "D-06: one dir fsync per lease rename (snapshot, terms, outcomes, justifications) plus one at the end; count={delta}"
+    );
+
+    let _ = fs::remove_dir_all(&dir);
+}

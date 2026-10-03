@@ -335,3 +335,12 @@ pub fn checkpoint_with_failpoint(
 ) -> std::io::Result<()> {
     persister.checkpoint_until(runtime, Some(stop_after))
 }
+
+/// RED stub: stops *after* snapshot replace (GREEN will abort before rename).
+#[doc(hidden)]
+pub fn abort_checkpoint_snapshot_before_rename(
+    persister: &mut Persister,
+    runtime: &Runtime,
+) -> std::io::Result<()> {
+    persister.checkpoint_until(runtime, Some(AppendStep::CheckpointSnapshot))
+}
