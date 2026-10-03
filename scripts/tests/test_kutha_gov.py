@@ -536,7 +536,7 @@ class HarnessTests(unittest.TestCase):
         self.assertNotIn("before M001 L_capability is green", yaml_text)
         self.assertNotIn("until Active Milestone names M002", yaml_text)
         gates = {
-            "freeze-rocks": "M002 Phase 51 (S03) thaws the RocksDB crate",
+            "freeze-rocks": "**Active Milestone:** M002",
             "freeze-cypher-deps": "M003",
             "freeze-hnsw-dep": "M005",
         }
@@ -555,6 +555,14 @@ class HarnessTests(unittest.TestCase):
                 self.assertIn(gate, message)
                 self.assertNotIn("until Active Milestone names M002", message)
                 self.assertNotIn("STATE freeze still blocks", message)
+                if check_id == "freeze-rocks":
+                    unless = step.get("unless_file_contains")
+                    self.assertIsInstance(unless, dict)
+                    assert isinstance(unless, dict)
+                    self.assertEqual(".kutha/STATE.md", unless.get("file"))
+                    self.assertEqual("**Active Milestone:** M002", unless.get("needle"))
+                else:
+                    self.assertNotIn("unless_file_contains", step)
 
 
 def _rust_tree(files: dict[str, str]) -> Path:
@@ -581,15 +589,23 @@ def _rust_highs(result: CheckResult) -> list[str]:
 _FREEZE_IDS = ("freeze-rocks", "freeze-cypher-deps", "freeze-hnsw-dep")
 _CLEAN_CRATE_TOML = '[package]\nname = "kutha-common"\nversion = "0.0.0"\n'
 _CLEAN_WORKSPACE_TOML = "[workspace]\nmembers = [\"crates/kutha-common\"]\n"
+_STATE_M002 = "**Active Milestone:** M002\n"
+_STATE_OTHER = "**Active Milestone:** M018\n"
 
 
-def _freeze_tree(*, crate: str = _CLEAN_CRATE_TOML, workspace: str = _CLEAN_WORKSPACE_TOML) -> Path:
-    return _rust_tree(
-        {
-            "crates/kutha-common/Cargo.toml": crate,
-            "Cargo.toml": workspace,
-        }
-    )
+def _freeze_tree(
+    *,
+    crate: str = _CLEAN_CRATE_TOML,
+    workspace: str = _CLEAN_WORKSPACE_TOML,
+    state: str | None = None,
+) -> Path:
+    files = {
+        "crates/kutha-common/Cargo.toml": crate,
+        "Cargo.toml": workspace,
+    }
+    if state is not None:
+        files[".kutha/STATE.md"] = state
+    return _rust_tree(files)
 
 
 def _freeze_highs(root: Path) -> dict[str, list[Finding]]:
@@ -615,7 +631,7 @@ class FreezeDepTests(unittest.TestCase):
         self.assertEqual("frozen-dep", finding.category)
         self.assertEqual("crates/kutha-common/Cargo.toml", finding.file)
         self.assertIn("rocksdb", finding.message)
-        self.assertIn("M002 Phase 51 (S03)", finding.message)
+        self.assertIn("**Active Milestone:** M002", finding.message)
         self.assertEqual([], highs["freeze-cypher-deps"])
         self.assertEqual([], highs["freeze-hnsw-dep"])
 
@@ -627,7 +643,7 @@ class FreezeDepTests(unittest.TestCase):
         finding = highs["freeze-rocks"][0]
         self.assertEqual("Cargo.toml", finding.file)
         self.assertIn("rocksdb", finding.message)
-        self.assertIn("Phase 51", finding.message)
+        self.assertIn("**Active Milestone:** M002", finding.message)
         self.assertEqual([], highs["freeze-cypher-deps"])
         self.assertEqual([], highs["freeze-hnsw-dep"])
 
@@ -661,6 +677,52 @@ class FreezeDepTests(unittest.TestCase):
         self.assertIn("M005", finding.message)
         self.assertEqual([], highs["freeze-rocks"])
         self.assertEqual([], highs["freeze-cypher-deps"])
+
+    def test_rocksdb_in_crate_passes_while_state_names_m002(self) -> None:
+        highs = _freeze_highs(
+            _freeze_tree(
+                crate=_CLEAN_CRATE_TOML + 'rocksdb = "0.22"\n',
+                state=_STATE_M002,
+            )
+        )
+        self.assertEqual([], highs["freeze-rocks"])
+        self.assertEqual([], highs["freeze-cypher-deps"])
+        self.assertEqual([], highs["freeze-hnsw-dep"])
+
+    def test_rocksdb_fails_when_state_names_other_milestone(self) -> None:
+        highs = _freeze_highs(
+            _freeze_tree(
+                crate=_CLEAN_CRATE_TOML + 'rocksdb = "0.22"\n',
+                state=_STATE_OTHER,
+            )
+        )
+        self.assertEqual(1, len(highs["freeze-rocks"]))
+        finding = highs["freeze-rocks"][0]
+        self.assertEqual("frozen-dep", finding.category)
+        self.assertIn("rocksdb", finding.message)
+        self.assertIn("**Active Milestone:** M002", finding.message)
+        self.assertEqual([], highs["freeze-cypher-deps"])
+        self.assertEqual([], highs["freeze-hnsw-dep"])
+
+    def test_cypher_and_hnsw_fail_regardless_of_m002(self) -> None:
+        cases = (
+            ("neo4j", "freeze-cypher-deps", "M003"),
+            ("graphiti", "freeze-cypher-deps", "M003"),
+            ("falkordb", "freeze-cypher-deps", "M003"),
+            ("hnswlib", "freeze-hnsw-dep", "M005"),
+        )
+        for needle, check_id, gate in cases:
+            with self.subTest(needle=needle):
+                highs = _freeze_highs(
+                    _freeze_tree(
+                        crate=_CLEAN_CRATE_TOML + f'{needle} = "0.1"\n',
+                        state=_STATE_M002,
+                    )
+                )
+                self.assertEqual(1, len(highs[check_id]))
+                self.assertIn(needle, highs[check_id][0].message)
+                self.assertIn(gate, highs[check_id][0].message)
+                self.assertEqual([], highs["freeze-rocks"])
 
 
 class RustTestAssertsTests(unittest.TestCase):

@@ -72,20 +72,28 @@ checks:
         forbid_accepted_not_prefix: "ADR-00"
 
   - id: freeze-rocks
-    description: Cargo members and workspace Cargo.toml do not add rocksdb until M002 Phase 51 (S03)
+    description: >-
+      Cargo members and workspace Cargo.toml may name rocksdb only while
+      .kutha/STATE.md names Active Milestone M002
     steps:
       - kind: glob_absent
         glob: crates/*/Cargo.toml
         needles: [rocksdb]
         case: lower
         category: frozen-dep
-        message: "found {needle}; frozen until M002 Phase 51 (S03) thaws the RocksDB crate per .kutha/STATE.md Thaw map"
+        unless_file_contains:
+          file: .kutha/STATE.md
+          needle: "**Active Milestone:** M002"
+        message: "found {needle}; freeze-rocks allows rocksdb only while .kutha/STATE.md names **Active Milestone:** M002"
       - kind: glob_absent
         glob: Cargo.toml
         needles: [rocksdb]
         case: lower
         category: frozen-dep
-        message: "found {needle}; frozen until M002 Phase 51 (S03) thaws the RocksDB crate per .kutha/STATE.md Thaw map"
+        unless_file_contains:
+          file: .kutha/STATE.md
+          needle: "**Active Milestone:** M002"
+        message: "found {needle}; freeze-rocks allows rocksdb only while .kutha/STATE.md names **Active Milestone:** M002"
 
   - id: freeze-cypher-deps
     description: Cargo members and workspace Cargo.toml do not add neo4j/graphiti/falkordb until M003

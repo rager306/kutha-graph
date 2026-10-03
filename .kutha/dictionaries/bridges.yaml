@@ -7,7 +7,7 @@ process: docs/process/governor-intake.md
 
 bridges:
   - id: B-freeze-rocks
-    claim: "Cargo members and workspace Cargo.toml do not add rocksdb until M002 Phase 51 (S03)"
+    claim: "Cargo members and workspace Cargo.toml may name rocksdb only while STATE names Active Milestone M002"
     cites: ".kutha/STATE.md"
     check: freeze-rocks
 

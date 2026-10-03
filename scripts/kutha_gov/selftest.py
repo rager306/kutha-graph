@@ -255,7 +255,7 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
             if hit:
                 unit = _derive_append_needles(hit, needles)
                 if unit:
-                    derived.append(unit)
+                    derived.append(_unless_disable_unit(step) + unit)
         elif kind == "file_equals":
             path = _str(step, "path")
             if path:
@@ -415,6 +415,27 @@ def _derive_file_contains(step: Step, work: Path) -> list[Mutation]:
     if require == "any":
         return [{"op": "remove_text", "path": path, "texts": needles}]
     return [{"op": "remove_text", "path": path, "text": needles[0]}]
+
+
+def _unless_disable_unit(step: Step) -> list[Mutation]:
+    """Turn off `unless_file_contains` on the copy so appending a needle still fails."""
+    raw = step.get("unless_file_contains")
+    if not isinstance(raw, dict):
+        return []
+    path = raw.get("file")
+    needle = raw.get("needle")
+    if not isinstance(path, str) or not path.strip():
+        return []
+    if not isinstance(needle, str) or not needle:
+        return []
+    return [
+        {
+            "op": "replace_regex",
+            "path": path,
+            "pattern": re.escape(needle),
+            "with": "SELFTEST_UNLESS_DISABLED",
+        }
+    ]
 
 
 def _derive_append_needles(path: str, needles: list[str]) -> list[Mutation]:

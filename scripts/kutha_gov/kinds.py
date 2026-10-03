@@ -282,7 +282,27 @@ def _kind_concat_contains_any(check: str, step: Step, ctx: Context, result: Chec
     )
 
 
+def _unless_file_contains_skip(step: Step, ctx: Context) -> bool:
+    """Skip the step when `unless_file_contains.file` contains the exact needle."""
+    raw = step.get("unless_file_contains")
+    if not isinstance(raw, dict):
+        return False
+    path = raw.get("file")
+    needle = raw.get("needle")
+    if not isinstance(path, str) or not path.strip():
+        return False
+    if not isinstance(needle, str) or not needle:
+        return False
+    text = ctx.read(path)
+    if text is None:
+        return False
+    return needle in text
+
+
 def _kind_glob_absent(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
+    if _unless_file_contains_skip(step, ctx):
+        result.note = "unless_file_contains matched; glob_absent skipped"
+        return
     pattern = _str(step, "glob")
     needles = _str_list(step, "needles")
     min_phase = _int(step, "min_phase", 0)
