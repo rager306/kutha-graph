@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-04 — Product: segmented persist, Persister, and rollover (SEG-01 / 54-02)
+
+### Product
+
+### Added
+
+- Empty dirs (no `manifest.json`, no `events.jsonl`, no `events.wal`) and already-segmented dirs persist `KUTHASEG` + `manifest.json` (atomic flip + dir fsync). Legacy dirs (`events.jsonl` or `events.wal` present, no manifest) keep jsonl+WAL. `Persister` on a segmented dir appends frames to the active segment only, one `sync_data` per quantum, O(1) tail guard; rollover at `SEGMENT_MAX_BYTES` / `SEGMENT_MAX_EVENTS` (thread-local test seam) seals trailer+sync → new header+sync → manifest flip. Checkpoint refreshes snapshot+sidecars only. `open_for_append` heals via a full segmented persist. Pin helper `store::ensure_legacy_dir`. Oracles: `crates/kutha-runtime/tests/m002_seg01.rs`.
+
+### Trajectory
+
+- ADR-000 Clarification 2026-10-04 Phase 54-02: D1 still names the event log as SoT; empty/segmented dirs now write the new encoding. ADR-010/012/060 Evidence 2026-10-04 Phase 54-02. Cells stay **Proposed**. `honeycomb.yaml` restaged (map/delivery/capability unchanged). Bench vs `39af84b` (interleaved medians): ingest_plain.n −5.9%, as_of.n +0.0%, open.n −7.8% — D-09 met. persist.n (empty dir now segmented vs legacy) −59.4%; persist_append.n −72.6% (no jsonl).
+
 ## 2026-10-04 — Product: sealed segment reader on open (SEG-01 / 54-01)
 
 ### Product

@@ -28,6 +28,10 @@ COMMIT-01 option A trims the uncommitted suffix before `replay_check`. Pointer: 
 
 Segmented `open` still runs `committed_prefix` then `replay_check`. Pointer: ADR-010 2026-10-04 Phase 54-01. This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
 
+### Evidence (2026-10-04, Phase 54-02 / M002 S06; Proposed)
+
+Segmented persist/`Persister` still feed `committed_prefix` then `replay_check`. Pointer: ADR-010 2026-10-04 Phase 54-02. This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

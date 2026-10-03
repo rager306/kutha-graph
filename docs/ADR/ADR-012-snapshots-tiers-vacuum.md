@@ -32,6 +32,10 @@ COMMIT-01 option A: a snapshot whose `log_offset` counts fold ops beyond the com
 
 `open` may load from `manifest.json` + `KUTHASEG` instead of jsonl/WAL; snapshot hydrate and `replay_check` are unchanged. Persist still writes jsonl+WAL. Pointer: ADR-010 2026-10-04 Phase 54-01. Status stays **Proposed**.
 
+### Evidence (2026-10-04, Phase 54-02 / M002 S06; Proposed)
+
+Segmented checkpoint refreshes snapshot + sidecars only (no jsonl rewrite). Pointer: ADR-010 2026-10-04 Phase 54-02. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

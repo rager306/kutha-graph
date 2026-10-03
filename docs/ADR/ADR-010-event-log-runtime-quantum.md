@@ -28,6 +28,10 @@ COMMIT-01 option A: `Op::QuantumOutcome` stays the User-quantum commit marker (n
 
 SEG-01 reader: when `manifest.json` is present, `open` loads `KUTHASEG` v1 sealed files (full verify: magic, trailer, count/first/last/bytes/SHA-256 chain, stitch order) then the active segment (torn last frame dropped; a seal trailer on a still-named-active file ends the stream). `events.jsonl` / `events.wal` are not read. Absent manifest keeps `load_events_d04`. Then `committed_prefix` → hydrate/`replay_check` unchanged. `persist` / `Persister` still write jsonl+WAL. Oracles: `m002_seg01.rs`. Status stays **Proposed**.
 
+### Evidence (2026-10-04, Phase 54-02 / M002 S06; Proposed)
+
+Empty and already-segmented dirs persist `KUTHASEG` + manifest. `Persister` appends to the named active file only (one `sync_data` per quantum; rollover trailer then header then manifest flip). Checkpoint does not regenerate jsonl. `open_for_append` heals with a full segmented persist. Legacy jsonl+WAL writer unchanged. Oracles: `m002_seg01.rs`. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18
