@@ -354,21 +354,28 @@ pub fn open_report(dir: &Path) -> std::io::Result<(Runtime, OpenReport)> {
 
 /// If the on-disk tail is uncommitted, rewrite files to the committed prefix then attach.
 pub fn open_for_append(dir: &Path) -> std::io::Result<(Runtime, Persister)> {
-    let (rt, report) = open_report(dir)?;
-    if report.dropped_uncommitted > 0 {
-        persist(&rt, dir)?;
-    }
-    let persister = Persister::attach(&rt, dir)?;
-    Ok((rt, persister))
+    open_for_append_until(dir, None)
 }
 
-/// RED stub: ignore the failpoint and delegate (heal crash oracles fail).
+/// Test seam: crash the heal persist after `stop_after`.
 #[doc(hidden)]
 pub fn open_for_append_with_failpoint(
     dir: &Path,
-    _stop_after: PersistStep,
+    stop_after: PersistStep,
 ) -> std::io::Result<(Runtime, Persister)> {
-    open_for_append(dir)
+    open_for_append_until(dir, Some(stop_after))
+}
+
+fn open_for_append_until(
+    dir: &Path,
+    stop_after: Option<PersistStep>,
+) -> std::io::Result<(Runtime, Persister)> {
+    let (rt, report) = open_report(dir)?;
+    if report.dropped_uncommitted > 0 {
+        persist_until(&rt, dir, stop_after)?;
+    }
+    let persister = Persister::attach(&rt, dir)?;
+    Ok((rt, persister))
 }
 
 fn fold_affecting_count(events: &[Event]) -> usize {

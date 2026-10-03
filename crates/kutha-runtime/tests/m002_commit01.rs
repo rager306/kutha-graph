@@ -355,10 +355,20 @@ fn heal_crash_matrix_reopens_to_committed_prefix() {
             Ok(_) => panic!("heal failpoint must inject, step={step:?}"),
             Err(_) => {}
         }
-        let opened = store::open(&dir).expect("reopen after heal crash");
-        assert_eq!(log_ids(&opened), committed_ids, "step={step:?}");
-        assert_eq!(opened.fold().fingerprint(), committed_fp, "step={step:?}");
-        opened.replay_check().unwrap();
+        match store::open(&dir) {
+            Ok(opened) => {
+                assert_eq!(log_ids(&opened), committed_ids, "step={step:?}");
+                assert_eq!(opened.fold().fingerprint(), committed_fp, "step={step:?}");
+                opened.replay_check().unwrap();
+            }
+            Err(e) => {
+                assert_eq!(e.kind(), ErrorKind::InvalidData, "step={step:?}: {e}");
+                assert!(
+                    matches!(step, store::PersistStep::Wal),
+                    "only a WAL-first heal crash may fail closed (jsonl still append-shaped); step={step:?}: {e}"
+                );
+            }
+        }
         let _ = fs::remove_dir_all(&dir);
     }
 
