@@ -20,6 +20,22 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - ADR-010 Evidence (2026-10-03) records the D-04 open policy. Honeycomb comment restage only; cell stays **Proposed**. Active Milestone **M017**, Active Slice **S02**.
 
+## 2026-10-03 — Trajectory: M017 S02 CLOSED (Phase 42 verified)
+
+### Trajectory
+
+- M017 S02 closed (`L_delivery=M017-S02-done`), Active Slice **None**. Phase 44 (ingest regression repair, S04) authored; Phase 43 next.
+
+## 2026-10-03 — Product: M017 S02 verification kill-tests and ingest finding
+
+### Product
+
+- Independent kill-tests `crates/kutha-runtime/tests/m017_verify_killtests.rs` (anchor tamper, truncated WAL, id gap, spurious sidecar, env flip, abort-before-rename, closed-VT known-on) all pass against Phase 42.
+
+### Trajectory
+
+- Same-host bench bisect: ingest_plain.n 106M (v0.06), 108M (v0.08), 301M (post-M016): M016 tripled ingest, Phase 42 does not move it. Scheduled as M017 S04 / Phase 44.
+
 ## 2026-10-03 — Process: M017 S02 leased (replay integrity)
 
 ### Process

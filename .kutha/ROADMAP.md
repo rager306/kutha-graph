@@ -230,14 +230,16 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 **Source:** 2026-10-02 audit at `c702d71` (ADR/roadmap, code/tests, process docs). Closes the doc drift and the replay/durability holes that M002 would otherwise inherit. Not M002 segments or Rocks; not typed `Op` clocks; not a C01 decision; not ADR Accepted.
 
-**Success:** living docs, ADR Evidence and the governor agree with the code; a tampered `TtAnchor`, a truncated WAL or snapshot, a disagreeing sidecar, or an environment-dependent index mode cannot silently change an answer; replay determinism and the Horn-vs-known-on behaviour are named oracles. Closes audit findings G02–G12, F01, F02, F04, F06–F10.
+**Success:** living docs, ADR Evidence and the governor agree with the code; a tampered `TtAnchor`, a truncated WAL or snapshot, a disagreeing sidecar, or an environment-dependent index mode cannot silently change an answer; replay determinism and the Horn-vs-known-on behaviour are named oracles. Closes audit findings G02–G12, F01, F02, F04, F06–F10 and the ingest regression found by the Phase 42 bisect (S04).
 
 - [x] **S01: Living docs and governor honesty** `risk:low` `depends:[]`
   > After this: PROJECT carries no stale lease and `cite-lease` covers it; gap-review addendum and invariants ledger match M014–M016; ADR-000/013/014/041/050/060/070 and README carry dated clarifications (three AS OF cuts, Horn over live facts, C01 open with options); no file under `crates/` changes.
-- [ ] **S02: Replay integrity** `risk:high` `depends:[S01]`
+- [x] **S02: Replay integrity** `risk:high` `depends:[S01]`
   > After this: tampered `TtAnchor` fails replay; `snapshot.json` and `events.wal` replace atomically; open never lets a sidecar or an empty WAL override the log; snapshot pins the fold index mode; `as_known_on` rustdoc and `known_at` oracle are honest.
 - [ ] **S03: Determinism and knowledge-cut characterization** `risk:medium` `depends:[S02]`
   > After this: seeded replay==fold and Eager==Lazy (persist/open) properties are green with no new dependency; Horn-vs-known-on behaviour is recorded in a named test and ADR-013 Evidence without changing behaviour.
+- [ ] **S04: Ingest regression repair** `risk:high` `depends:[S03]`
+  > After this: the M016 commit that tripled `ingest_plain.n` (108M to 301M ns at N=10000, found by the Phase 42 bisect) is named; a scaling oracle is RED then GREEN; ingest is within 10 percent of v0.08 on the same host or the residual is explained; named oracles unchanged.
 
 ## Later milestones (not active)
 

@@ -18,16 +18,21 @@ Source: 2026-10-02 audit (three subagents, CBM + GitNexus at `c702d71`, `rg` arb
 
 ### Replay integrity (Phase 42, product code)
 
-- [ ] **REPL-01**: Tampering a persisted `Op::TtAnchor` (wall or position) makes `replay_check` / `open` fail; named RED→GREEN oracle
-- [ ] **REPL-02**: `snapshot.json` and `events.wal` are replaced by temp-file + sync + rename; an injected abort before rename leaves the previous file intact; open prefers a WAL only when it is valid, else fails closed or falls back to intact `events.jsonl`
-- [ ] **REPL-03**: Outcome/justification sidecars never override the log: a sidecar that disagrees with log records fails closed on `open`
-- [ ] **REPL-04**: `snapshot.json` pins the fold index mode; `open` does not take it from the environment
-- [ ] **KNOWN-03**: `Runtime::as_known_on` rustdoc says TT-only; oracle `as_known_on ≠ live_at(tt, MAX)` on a closed interval; direct `known_at` equals a brute-force `is_known_at` filter
+- [x] **REPL-01**: Tampering a persisted `Op::TtAnchor` (wall or position) makes `replay_check` / `open` fail; named RED→GREEN oracle
+- [x] **REPL-02**: `snapshot.json` and `events.wal` are replaced by temp-file + sync + rename; an injected abort before rename leaves the previous file intact; open prefers a WAL only when it is valid, else fails closed or falls back to intact `events.jsonl`
+- [x] **REPL-03**: Outcome/justification sidecars never override the log: a sidecar that disagrees with log records fails closed on `open`
+- [x] **REPL-04**: `snapshot.json` pins the fold index mode; `open` does not take it from the environment
+- [x] **KNOWN-03**: `Runtime::as_known_on` rustdoc says TT-only; oracle `as_known_on ≠ live_at(tt, MAX)` on a closed interval; direct `known_at` equals a brute-force `is_known_at` filter
 
 ### Determinism and knowledge-cut characterization (Phase 43, tests first)
 
 - [ ] **DET-01**: Seeded (no new dependency) shuffled-ingest and persist/open tests prove `replay(log).fingerprint == fold.fingerprint` and Eager == Lazy after persist/open
 - [ ] **KNOWN-04**: A named characterization test records how Horn-derived supports behave against `as_known_on` (premise visible later than the anchor); result is written into ADR-013 Evidence as current behaviour. No behaviour change without a controller decision
+
+### Ingest regression (Phase 44, product code)
+
+- [ ] **PERF-01**: A same-host bisect names the commit(s) in M016 (Phases 37–40) that raised `ingest_plain.n` from ~108M ns (v0.08) to ~301M ns (post-M016) at N=10000; a scaling oracle (scan counts or ns ratio N vs 2N) is RED on `428f3ff`
+- [ ] **PERF-02**: The regression is repaired without changing any named oracle assertion (FF5, FF6, M010–M016, M017); `ingest_plain.n` is within 10 percent of the v0.08 figure on the same host, or the residual is explained and accepted by the controller in the SUMMARY
 
 ## Future Requirements (not v0.10)
 
@@ -65,7 +70,8 @@ Source: 2026-10-02 audit (three subagents, CBM + GitNexus at `c702d71`, `rg` arb
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | DOC-02, DOC-03, DOC-04, DOC-05, GOV-02 | Phase 41 | Complete (41-VERIFICATION) |
-| REPL-01, REPL-02, REPL-03, REPL-04, KNOWN-03 | Phase 42 | Pending |
+| REPL-01, REPL-02, REPL-03, REPL-04, KNOWN-03 | Phase 42 | Complete (42-VERIFICATION) |
 | DET-01, KNOWN-04 | Phase 43 | Pending |
+| PERF-01, PERF-02 | Phase 44 | Pending |
 
-**Coverage:** v0.10 requirements: 12 total; mapped: 12; unmapped: 0.
+**Coverage:** v0.10 requirements: 14 total; mapped: 14; unmapped: 0.
