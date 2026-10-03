@@ -86,6 +86,25 @@ fn after_persist_step(stop_after: Option<PersistStep>, step: PersistStep) -> std
     }
 }
 
+fn injected_migrate_failpoint() -> std::io::Error {
+    std::io::Error::new(
+        std::io::ErrorKind::Other,
+        "injected fault: migrate failpoint",
+    )
+}
+
+fn after_migrate_step(stop_after: Option<MigrateStep>, step: MigrateStep) -> std::io::Result<()> {
+    if stop_after == Some(step) {
+        Err(injected_migrate_failpoint())
+    } else {
+        Ok(())
+    }
+}
+
+fn io_invalid(msg: &str) -> std::io::Error {
+    std::io::Error::new(ErrorKind::InvalidData, msg)
+}
+
 /// File-backed semantic log + snapshot lease. WAL file is durability cousin, not Rocks-as-SoT.
 /// `terms.jsonl` is a derived intern picture. Durable term meanings ride `Op::Define` (persist prefix + live intern, M010 S02–S03).
 ///
@@ -135,20 +154,66 @@ pub fn migrate_with_failpoint(
     migrate_until(dir, Some(stop_after))
 }
 
-fn migrate_until(_dir: &Path, _stop_after: Option<MigrateStep>) -> std::io::Result<MigrateReport> {
-    Err(std::io::Error::new(
-        std::io::ErrorKind::Other,
-        "migrate not implemented",
-    ))
+fn migrate_until(dir: &Path, stop_after: Option<MigrateStep>) -> std::io::Result<MigrateReport> {
+    fs::create_dir_all(dir)?;
+    if dir.join(crate::segment::MANIFEST_REL).exists() {
+        let wal = dir.join(EVENTS_WAL);
+        if wal.exists() {
+            fs::remove_file(&wal)?;
+        }
+        return Ok(MigrateReport {
+            dropped_uncommitted: 0,
+        });
+    }
+    if !writes_legacy_layout(dir) {
+        return Err(io_invalid(
+            "migrate requires a legacy store (events.jsonl or events.wal, no manifest)",
+        ));
+    }
+    let raw = load_events_d04(dir)?;
+    let before = raw.len();
+    let events = committed_prefix(raw);
+    let dropped_uncommitted = before.saturating_sub(events.len());
+    crate::segment::persist_log(dir, &events)?;
+    after_migrate_step(stop_after, MigrateStep::Segments)?;
+    migrate_verify_reopen(dir, &events)?;
+    after_migrate_step(stop_after, MigrateStep::Verified)?;
+    let wal = dir.join(EVENTS_WAL);
+    if wal.exists() {
+        fs::remove_file(&wal)?;
+    }
+    after_migrate_step(stop_after, MigrateStep::WalRemoved)?;
+    Ok(MigrateReport {
+        dropped_uncommitted,
+    })
+}
+
+/// Reopen the segmented store and require ids + fold fingerprint to match the
+/// committed prefix just written. Do not skip: a crash after this point may
+/// drop `events.wal`.
+fn migrate_verify_reopen(dir: &Path, events: &[Event]) -> std::io::Result<()> {
+    let reopened = crate::segment::load_events(dir)?;
+    if event_ids(&reopened) != event_ids(events) {
+        return Err(io_invalid(
+            "migrate verify: reopened segment ids disagree with committed prefix",
+        ));
+    }
+    let opened = open(dir)?;
+    opened.replay_check().map_err(runtime_err)?;
+    let want = crate::fold::GraphFold::replay(events).fingerprint();
+    if opened.fold().fingerprint() != want {
+        return Err(io_invalid(
+            "migrate verify: fold fingerprint disagrees with committed prefix",
+        ));
+    }
+    Ok(())
 }
 
 /// Write `events.jsonl` from the on-disk log via `replace_via_tmp`.
 /// Never consulted by [`open`] when `manifest.json` exists.
-pub fn export_jsonl(_dir: &Path) -> std::io::Result<()> {
-    Err(std::io::Error::new(
-        std::io::ErrorKind::Other,
-        "export_jsonl not implemented",
-    ))
+pub fn export_jsonl(dir: &Path) -> std::io::Result<()> {
+    let events = load_log_events(dir)?;
+    replace_events_jsonl(dir, &events)
 }
 
 /// Touch `events.jsonl` so [`persist`] keeps the legacy jsonl+WAL writer.
@@ -349,11 +414,18 @@ fn ids_cover(candidate: &[Event], covered: &[Event]) -> bool {
     a.len() >= b.len() && a[..b.len()] == b[..]
 }
 
-/// D-04 / D-06: jsonl is SoT; WAL is a lease. Prefer WAL only when recover yields magic+v1
-/// and recovered ids cover jsonl ids in order. Header-only / magic-only / empty /
-/// short / recover-err(`InvalidData`) + readable jsonl → jsonl. A WAL `Err` of any
+/// D-04 / D-06: jsonl is SoT **for legacy dirs** (no `manifest.json`). WAL is a
+/// lease. Prefer WAL only when recover yields magic+v1 and recovered ids cover
+/// jsonl ids in order. Header-only / magic-only / empty / short /
+/// recover-err(`InvalidData`) + readable jsonl → jsonl. A WAL `Err` of any
 /// other kind is returned (disk failure is not masked). Both parse and neither
 /// covers the other → InvalidData. No jsonl and invalid WAL → InvalidData.
+///
+/// Segmented dirs (`manifest.json` present) never consult this path: [`open`]
+/// and [`export_jsonl`] go through `load_log_events` → `segment::load_events`.
+/// [`migrate`] is the only conversion; it loads here, then `committed_prefix`,
+/// and writes segments. `events.jsonl` left after migrate is an export, unread
+/// on open.
 pub(crate) fn load_events_d04(dir: &Path) -> std::io::Result<Vec<Event>> {
     let wal_path = dir.join(EVENTS_WAL);
     let jsonl_path = dir.join(EVENTS_JSONL);
