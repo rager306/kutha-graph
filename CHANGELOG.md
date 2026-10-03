@@ -4,6 +4,14 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Product: ROCK-00 RocksDB EventId-offset spike
+
+### Product
+
+### Added
+
+- Optional `kutha-runtime` feature `rocks-index-spike` (`rocksdb` 0.22, `default-features = false`: no snappy/lz4/zstd/zlib/bzip2). Module `rocks_spike` and oracles `m002_rock00.rs` are feature-gated; default `cargo test --workspace` does not compile RocksDB. Not wired into `Runtime`, persist, fold, or hydrate.
+
 ## 2026-10-03 — Process: freeze-rocks allows rocksdb during M002
 
 ### Process

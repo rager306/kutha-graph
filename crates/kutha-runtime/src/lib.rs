@@ -20,6 +20,9 @@ pub mod store;
 mod tenant;
 mod wal;
 
+#[cfg(feature = "rocks-index-spike")]
+pub mod rocks_spike;
+
 pub use csr::{CsrLease, TypedCsrLease, TypedEdge};
 pub use fold::{Fact, FoldIndexMode, GraphFold};
 pub use leapfrog::{leapfrog_intersect, AdjacencyIter};

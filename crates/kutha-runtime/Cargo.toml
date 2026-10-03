@@ -5,6 +5,9 @@ edition.workspace = true
 publish.workspace = true
 description = "In-memory event log, fold, quantum, receipts, replay (ADR-010/014/060)"
 
+[features]
+rocks-index-spike = ["dep:rocksdb"]
+
 [dependencies]
 kutha-common.workspace = true
 sha2.workspace = true
@@ -13,6 +16,8 @@ serde_json.workspace = true
 crc32fast = { workspace = true }
 rustc-hash.workspace = true
 smallvec.workspace = true
+# default-features=false: no snappy/lz4/zstd/zlib/bzip2 (those are rocksdb defaults).
+rocksdb = { version = "0.22", optional = true, default-features = false }
 
 [[bench]]
 name = "baseline"
