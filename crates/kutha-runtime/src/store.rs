@@ -256,10 +256,11 @@ fn ids_cover(candidate: &[Event], covered: &[Event]) -> bool {
     a.len() >= b.len() && a[..b.len()] == b[..]
 }
 
-/// D-04: jsonl is SoT; WAL is a lease. Prefer WAL only when recover yields magic+v1
+/// D-04 / D-06: jsonl is SoT; WAL is a lease. Prefer WAL only when recover yields magic+v1
 /// and recovered ids cover jsonl ids in order. Header-only / magic-only / empty /
-/// short / recover-err + readable jsonl → jsonl. Both parse and neither covers the
-/// other → InvalidData. No jsonl and invalid WAL → InvalidData.
+/// short / recover-err(`InvalidData`) + readable jsonl → jsonl. A WAL `Err` of any
+/// other kind is returned (disk failure is not masked). Both parse and neither
+/// covers the other → InvalidData. No jsonl and invalid WAL → InvalidData.
 fn load_events_d04(dir: &Path) -> std::io::Result<Vec<Event>> {
     let wal_path = dir.join(EVENTS_WAL);
     let jsonl_path = dir.join(EVENTS_JSONL);
@@ -287,11 +288,23 @@ fn load_events_d04(dir: &Path) -> std::io::Result<Vec<Event>> {
             }
         }
         (Some(Ok(w)), None) => Ok(w),
-        (Some(Err(_)), Some(j)) => Ok(j),
-        (Some(Err(e)), None) => Err(std::io::Error::new(
-            std::io::ErrorKind::InvalidData,
-            format!("invalid WAL and no events.jsonl: {e}"),
-        )),
+        (Some(Err(e)), Some(j)) => {
+            if e.kind() == std::io::ErrorKind::InvalidData {
+                Ok(j)
+            } else {
+                Err(e)
+            }
+        }
+        (Some(Err(e)), None) => {
+            if e.kind() == std::io::ErrorKind::InvalidData {
+                Err(std::io::Error::new(
+                    std::io::ErrorKind::InvalidData,
+                    format!("invalid WAL and no events.jsonl: {e}"),
+                ))
+            } else {
+                Err(e)
+            }
+        }
         (None, Some(j)) => Ok(j),
         (None, None) => Ok(Vec::new()),
     }

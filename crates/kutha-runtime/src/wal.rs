@@ -8,7 +8,7 @@ const MAGIC: &[u8; 8] = b"KUTHAWAL";
 const VERSION: u32 = 1;
 
 /// Framed durable log (Rocks WAL *cousin*): length + crc + payload.
-/// Truncated/corrupt last record is dropped (kTolerateCorruptedTail analog). Not SoT algebra.
+/// This is the single place that `sync_all`s the WAL file. Not SoT algebra.
 pub(crate) fn write_wal(f: &mut File, events: &[Event]) -> std::io::Result<()> {
     f.write_all(MAGIC)?;
     f.write_all(&VERSION.to_le_bytes())?;
@@ -37,23 +37,33 @@ pub fn append_events(path: &Path, events: &[Event]) -> std::io::Result<()> {
     write_wal(&mut f, events)
 }
 
+/// Recover framed events. A file shorter than magic+version is `InvalidData`
+/// ("truncated WAL header"). Non-`UnexpectedEof` read errors propagate.
+/// Truncated/corrupt last record is dropped (kTolerateCorruptedTail analog).
 pub fn recover_events(path: &Path) -> std::io::Result<Vec<Event>> {
     if !path.exists() {
         return Ok(Vec::new());
     }
     let mut f = File::open(path)?;
-    let mut magic = [0u8; 8];
-    if f.read_exact(&mut magic).is_err() {
-        return Ok(Vec::new());
+    let mut header = [0u8; 12];
+    match f.read_exact(&mut header) {
+        Ok(()) => {}
+        Err(e) if e.kind() == std::io::ErrorKind::UnexpectedEof => {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "truncated WAL header",
+            ));
+        }
+        Err(e) => return Err(e),
     }
-    if &magic != MAGIC {
+    if header[0..8] != MAGIC[..] {
         return Err(std::io::Error::new(
             std::io::ErrorKind::InvalidData,
             "bad WAL magic",
         ));
     }
     let mut ver = [0u8; 4];
-    f.read_exact(&mut ver)?;
+    ver.copy_from_slice(&header[8..12]);
     if u32::from_le_bytes(ver) != VERSION {
         return Err(std::io::Error::new(
             std::io::ErrorKind::InvalidData,
