@@ -11,7 +11,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Fixed
 
 - `persist` writes `terms.jsonl` / `quantum_outcomes.jsonl` / `justifications.jsonl` through tmp+`sync_all`+rename; parent-directory fsync after each rename and at end of persist. Unparseable, mid-line, or proper-prefix sidecars are treated as absent; well-formed non-prefix still fails `InvalidData`.
-- Open-path `check_tt_anchors_range` allows log `TtAnchor`s with `ingested_at >= snap.next_tt`; `replay_check` stays exact. `recover_events` returns `InvalidData` ("truncated WAL header") when shorter than magic+version; `load_events_d04` does not mask non-`InvalidData` WAL I/O. Crash-matrix failpoint seam `persist_with_failpoint`. Oracles: `crates/kutha-runtime/tests/m002_snap01.rs`.
+- Open-path `check_tt_anchors_range` allows log `TtAnchor`s with `ingested_at >= snap.next_tt`; `replay_check` stays exact. `recover_events` returns `InvalidData` ("truncated WAL header") when shorter than magic+version; `load_events_d04` does not mask non-`InvalidData` WAL I/O. Crash-matrix failpoint seam `persist_with_failpoint`. Oracles: `crates/kutha-runtime/tests/m002_snap01.rs`. The directory-fsync counter is thread-local and the test asserts exactly 7 (six renames plus the end of persist), so one in-place sidecar write is caught.
 
 ### Trajectory
 

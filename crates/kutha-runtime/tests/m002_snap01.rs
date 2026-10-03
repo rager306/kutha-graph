@@ -238,8 +238,8 @@ fn persist_leaves_no_tmp_files() {
         "persist Ok must not leave .tmp siblings, found {tmp:?}"
     );
     assert!(
-        delta >= 6,
-        "D-02: persist must dir-fsync at least once per rename (6 files); count={delta}"
+        delta == 7,
+        "D-02: one dir fsync per rename (wal, jsonl, terms, snapshot, outcomes, justifications) plus one at the end; count={delta}"
     );
 
     let _ = fs::remove_dir_all(&dir);

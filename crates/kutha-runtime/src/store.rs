@@ -8,7 +8,6 @@ use serde::de::DeserializeOwned;
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, ErrorKind, Write};
 use std::path::Path;
-use std::sync::atomic::{AtomicUsize, Ordering};
 
 const TERMS_REL: &str = "terms.jsonl";
 /// Outcomes sidecar lease. SoT is `Op::QuantumOutcome` on the event log (LOG-01 / D-02).
@@ -29,19 +28,22 @@ pub enum PersistStep {
     Justifications,
 }
 
-static PERSIST_DIR_FSYNC_COUNT: AtomicUsize = AtomicUsize::new(0);
+thread_local! {
+    static PERSIST_DIR_FSYNC_COUNT: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
 
-/// Test-visible count of directory `sync_all` calls from [`sync_dir`].
+/// Test-visible count of directory `sync_all` calls from [`sync_dir`] on the
+/// current thread (exact under parallel tests).
 #[doc(hidden)]
 pub fn persist_dir_fsync_count() -> usize {
-    PERSIST_DIR_FSYNC_COUNT.load(Ordering::Relaxed)
+    PERSIST_DIR_FSYNC_COUNT.with(|c| c.get())
 }
 
 /// Reset the directory fsync counter. Tests that assert a delta should prefer
 /// [`persist_dir_fsync_count`] before/after a single `persist` instead.
 #[doc(hidden)]
 pub fn reset_persist_dir_fsync_count() {
-    PERSIST_DIR_FSYNC_COUNT.store(0, Ordering::Relaxed);
+    PERSIST_DIR_FSYNC_COUNT.with(|c| c.set(0));
 }
 
 /// Opens `dir` and calls `sync_all` so a rename is durable on the parent.
@@ -53,7 +55,7 @@ fn sync_dir(dir: &Path) -> std::io::Result<()> {
     {
         let f = File::open(dir)?;
         f.sync_all()?;
-        PERSIST_DIR_FSYNC_COUNT.fetch_add(1, Ordering::Relaxed);
+        PERSIST_DIR_FSYNC_COUNT.with(|c| c.set(c.get() + 1));
         Ok(())
     }
     #[cfg(not(unix))]
@@ -61,7 +63,7 @@ fn sync_dir(dir: &Path) -> std::io::Result<()> {
         match File::open(dir) {
             Ok(f) => {
                 f.sync_all()?;
-                PERSIST_DIR_FSYNC_COUNT.fetch_add(1, Ordering::Relaxed);
+                PERSIST_DIR_FSYNC_COUNT.with(|c| c.set(c.get() + 1));
                 Ok(())
             }
             Err(_) => Ok(()),
