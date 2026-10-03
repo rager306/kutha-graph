@@ -61,6 +61,12 @@ impl Persister {
                 "attach requires a persisted encoded log (dictionary or events)",
             ));
         }
+        let jsonl_records = jsonl_newline_count(&jsonl_path)?;
+        if jsonl_records != encoded.len() {
+            return Err(invalid(
+                "jsonl record count disagrees with runtime encoded log (recover with full persist)",
+            ));
+        }
         let last_event = last_jsonl_event(&jsonl_path, jsonl_len)?;
         let last_id = last_event.id;
         let last_frame_len = wal::frame_bytes(&last_event)?.len() as u64;
@@ -275,6 +281,11 @@ fn collect_new(p: &Persister, runtime: &Runtime) -> std::io::Result<Vec<Event>> 
     }
     out.extend(graph[p.durable_graph_count..].iter().cloned());
     Ok(out)
+}
+
+fn jsonl_newline_count(path: &Path) -> std::io::Result<usize> {
+    let bytes = fs::read(path)?;
+    Ok(bytes.iter().filter(|b| **b == b'\n').count())
 }
 
 fn last_jsonl_event(path: &Path, file_len: u64) -> std::io::Result<Event> {

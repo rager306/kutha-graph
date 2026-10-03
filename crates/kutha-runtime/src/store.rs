@@ -337,19 +337,27 @@ pub fn op_commit_class(op: &Op) -> crate::commit::CommitClass {
 
 pub use crate::commit::CommitClass;
 
-/// RED stub: `open` is unchanged; the report always counts zero drops.
+/// Load `dir` and report how many events `committed_prefix` hid.
 pub fn open_report(dir: &Path) -> std::io::Result<(Runtime, OpenReport)> {
+    let raw = load_events_d04(dir)?;
+    let before = raw.len();
+    let events = committed_prefix(raw);
+    let dropped_uncommitted = before.saturating_sub(events.len());
+    let rt = open_hydrated(dir, events)?;
     Ok((
-        open(dir)?,
+        rt,
         OpenReport {
-            dropped_uncommitted: 0,
+            dropped_uncommitted,
         },
     ))
 }
 
-/// RED stub: attach without healing a dirty uncommitted tail.
+/// If the on-disk tail is uncommitted, rewrite files to the committed prefix then attach.
 pub fn open_for_append(dir: &Path) -> std::io::Result<(Runtime, Persister)> {
-    let rt = open(dir)?;
+    let (rt, report) = open_report(dir)?;
+    if report.dropped_uncommitted > 0 {
+        persist(&rt, dir)?;
+    }
     let persister = Persister::attach(&rt, dir)?;
     Ok((rt, persister))
 }
@@ -371,8 +379,7 @@ fn fold_affecting_count(events: &[Event]) -> usize {
 }
 
 pub fn open(dir: &Path) -> std::io::Result<Runtime> {
-    let events = committed_prefix(load_events_d04(dir)?);
-    open_hydrated(dir, events)
+    open_report(dir).map(|(rt, _)| rt)
 }
 
 fn open_hydrated(dir: &Path, events: Vec<Event>) -> std::io::Result<Runtime> {
