@@ -1,4 +1,5 @@
-//! M002 S06 / SEG-01 oracles (Phase 54). 54-01: format/manifest/open. 54-02: persist + Persister.
+//! M002 S06 / SEG-01 oracles (Phase 54). 54-01: format/open. 54-02: persist +
+//! Persister. 54-03: tamper (real writer), migrate, export_jsonl.
 
 use kutha_common::{Event, EventId, Op};
 use kutha_runtime::{store, Runtime};
@@ -199,6 +200,11 @@ fn persist_expect_segmented(rt: &Runtime, dir: &Path) {
         "empty dir (no manifest, no events.jsonl, no events.wal) must persist as segments"
     );
     assert_no_legacy_log(dir);
+}
+
+fn persist_legacy(rt: &Runtime, dir: &Path) {
+    store::ensure_legacy_dir(dir).unwrap();
+    store::persist(rt, dir).unwrap();
 }
 
 fn snap_log_offset(dir: &Path) -> usize {
@@ -1001,4 +1007,427 @@ fn segmented_replay_parity_with_legacy_full_persist() {
 
     let _ = fs::remove_dir_all(&dir_seg);
     let _ = fs::remove_dir_all(&dir_leg);
+}
+
+fn sealed_writer_limits() -> LimitGuard {
+    store::set_test_segment_limits(Some(10_000_000), Some(8));
+    LimitGuard
+}
+
+fn persist_with_sealed(rt: &Runtime, dir: &Path) {
+    let _g = sealed_writer_limits();
+    persist_expect_segmented(rt, dir);
+    let n = event_frame_ranges(&fs::read(first_sealed_path(dir)).unwrap()).len();
+    assert!(
+        n >= 4,
+        "writer must seal ≥4 frames for swap/delete oracles; got {n}"
+    );
+}
+
+fn copy_store(src: &Path, dst: &Path) {
+    let _ = fs::remove_dir_all(dst);
+    fs::create_dir_all(dst).unwrap();
+    for ent in fs::read_dir(src).unwrap() {
+        let ent = ent.unwrap();
+        fs::copy(ent.path(), dst.join(ent.file_name())).unwrap();
+    }
+}
+
+fn xor_at(path: &Path, off: usize) {
+    let mut bytes = fs::read(path).unwrap();
+    bytes[off] ^= 0x01;
+    fs::write(path, &bytes).unwrap();
+}
+
+fn crc32_ieee(data: &[u8]) -> u32 {
+    let mut crc = 0xFFFF_FFFFu32;
+    for &b in data {
+        crc ^= u32::from(b);
+        for _ in 0..8 {
+            crc = if crc & 1 != 0 {
+                (crc >> 1) ^ 0xEDB8_8320
+            } else {
+                crc >> 1
+            };
+        }
+    }
+    !crc
+}
+
+fn rewrite_trailer_bytes_field(path: &Path) {
+    let mut bytes = fs::read(path).unwrap();
+    let ranges = event_frame_ranges(&bytes);
+    let trailer_start = ranges[ranges.len() - 1].1;
+    let tlen =
+        u32::from_le_bytes(bytes[trailer_start..trailer_start + 4].try_into().unwrap()) as usize;
+    let payload_off = trailer_start + 8;
+    let payload = bytes[payload_off..payload_off + tlen].to_vec();
+    let s = std::str::from_utf8(&payload).unwrap();
+    let key = "\"bytes\":";
+    let i = s.find(key).expect("trailer JSON has bytes") + key.len();
+    let mut j = i;
+    while j < s.len() && s.as_bytes()[j].is_ascii_digit() {
+        j += 1;
+    }
+    assert!(j > i, "bytes field must be a JSON number");
+    let mut new_payload = payload;
+    let last = j - 1;
+    new_payload[last] = if new_payload[last] == b'0' {
+        b'1'
+    } else {
+        b'0'
+    };
+    let crc = crc32_ieee(&new_payload);
+    bytes[trailer_start + 4..trailer_start + 8].copy_from_slice(&crc.to_le_bytes());
+    bytes[payload_off..payload_off + tlen].copy_from_slice(&new_payload);
+    fs::write(path, &bytes).unwrap();
+}
+
+#[test]
+fn writer_flipped_sealed_frame_payload_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("w-flip-pay");
+    persist_with_sealed(&rt, &dir);
+    let path = first_sealed_path(&dir);
+    let ranges = event_frame_ranges(&fs::read(&path).unwrap());
+    xor_at(&path, ranges[1].0 + 8);
+    assert_invalid_data(&dir, "CRC mismatch");
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn writer_flipped_sealed_frame_length_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("w-flip-len");
+    persist_with_sealed(&rt, &dir);
+    let path = first_sealed_path(&dir);
+    let ranges = event_frame_ranges(&fs::read(&path).unwrap());
+    xor_at(&path, ranges[1].0);
+    assert_invalid_data(&dir, "CRC mismatch");
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn writer_flipped_sealed_trailer_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("w-flip-trl");
+    persist_with_sealed(&rt, &dir);
+    let path = first_sealed_path(&dir);
+    let bytes = fs::read(&path).unwrap();
+    let ranges = event_frame_ranges(&bytes);
+    xor_at(&path, ranges[ranges.len() - 1].1 + 8);
+    assert_invalid_data(&dir, "CRC mismatch");
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn writer_flipped_manifest_chain_hex_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("w-flip-hex");
+    persist_with_sealed(&rt, &dir);
+    let man_path = dir.join(store::MANIFEST_REL);
+    let text = fs::read_to_string(&man_path).unwrap();
+    let mut v: serde_json::Value = serde_json::from_str(&text).unwrap();
+    let chain = v["sealed"][0]["chain"].as_str().unwrap().to_string();
+    let mut chars: Vec<char> = chain.chars().collect();
+    chars[0] = if chars[0] == '0' { '1' } else { '0' };
+    v["sealed"][0]["chain"] = serde_json::Value::String(chars.into_iter().collect());
+    fs::write(&man_path, serde_json::to_vec(&v).unwrap()).unwrap();
+    assert_invalid_data(&dir, "manifest disagrees");
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn writer_swapped_adjacent_sealed_frames_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("w-swap");
+    persist_with_sealed(&rt, &dir);
+    let path = first_sealed_path(&dir);
+    let bytes = fs::read(&path).unwrap();
+    let ranges = event_frame_ranges(&bytes);
+    let mut rebuilt = bytes[..12].to_vec();
+    let mut order: Vec<usize> = (0..ranges.len()).collect();
+    order.swap(1, 2);
+    for i in order {
+        rebuilt.extend_from_slice(&bytes[ranges[i].0..ranges[i].1]);
+    }
+    rebuilt.extend_from_slice(&bytes[ranges[ranges.len() - 1].1..]);
+    fs::write(&path, &rebuilt).unwrap();
+    assert_invalid_data(&dir, "chain");
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn writer_deleted_sealed_frame_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("w-del-frm");
+    persist_with_sealed(&rt, &dir);
+    let path = first_sealed_path(&dir);
+    let bytes = fs::read(&path).unwrap();
+    let ranges = event_frame_ranges(&bytes);
+    let mut rebuilt = bytes[..12].to_vec();
+    for (i, r) in ranges.iter().enumerate() {
+        if i == 1 {
+            continue;
+        }
+        rebuilt.extend_from_slice(&bytes[r.0..r.1]);
+    }
+    rebuilt.extend_from_slice(&bytes[ranges[ranges.len() - 1].1..]);
+    fs::write(&path, &rebuilt).unwrap();
+    assert_invalid_data(&dir, "count mismatch");
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn writer_deleted_sealed_file_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("w-del-file");
+    persist_with_sealed(&rt, &dir);
+    fs::remove_file(first_sealed_path(&dir)).unwrap();
+    assert_invalid_data(&dir, "missing sealed");
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn writer_replaced_sealed_by_older_copy_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("w-older");
+    {
+        store::set_test_segment_limits(Some(10_000_000), Some(3));
+        let _g = LimitGuard;
+        persist_expect_segmented(&rt, &dir);
+    }
+    let old = fs::read(first_sealed_path(&dir)).unwrap();
+    {
+        let _g = sealed_writer_limits();
+        persist_expect_segmented(&rt, &dir);
+    }
+    let newer = fs::read(first_sealed_path(&dir)).unwrap();
+    assert_ne!(
+        old, newer,
+        "second persist must rewrite the first sealed file"
+    );
+    fs::write(first_sealed_path(&dir), &old).unwrap();
+    assert_invalid_data(&dir, "manifest disagrees");
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn writer_truncated_sealed_at_frame_boundary_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("w-trunc-bd");
+    persist_with_sealed(&rt, &dir);
+    let path = first_sealed_path(&dir);
+    let bytes = fs::read(&path).unwrap();
+    let ranges = event_frame_ranges(&bytes);
+    fs::write(&path, &bytes[..ranges[1].1]).unwrap();
+    assert_invalid_data(&dir, "truncated sealed");
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn writer_appended_extra_frame_on_sealed_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("w-extra");
+    persist_with_sealed(&rt, &dir);
+    let path = first_sealed_path(&dir);
+    let bytes = fs::read(&path).unwrap();
+    let ranges = event_frame_ranges(&bytes);
+    let extra = bytes[ranges[ranges.len() - 1].0..ranges[ranges.len() - 1].1].to_vec();
+    let mut out = bytes;
+    out.extend_from_slice(&extra);
+    fs::write(&path, &out).unwrap();
+    assert_invalid_data(&dir, "extra bytes after sealed trailer");
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn writer_sealed_trailer_bytes_field_mismatch_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("w-trl-bytes");
+    persist_with_sealed(&rt, &dir);
+    rewrite_trailer_bytes_field(&first_sealed_path(&dir));
+    assert_invalid_data(&dir, "trailer bytes");
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn writer_torn_active_tail_is_dropped() {
+    let rt = seed_runtime();
+    let dir = persist_dir("w-torn");
+    persist_with_sealed(&rt, &dir);
+    let active = active_path(&dir);
+    let mut bytes = fs::read(&active).unwrap();
+    bytes.extend_from_slice(&[0xAA, 0xBB, 0xCC]);
+    fs::write(&active, &bytes).unwrap();
+    let opened = store::open(&dir).unwrap();
+    assert_eq!(log_ids(&opened), log_ids(&rt));
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn writer_unnamed_leftover_is_ignored() {
+    let rt = seed_runtime();
+    let dir = persist_dir("w-left");
+    persist_with_sealed(&rt, &dir);
+    fs::write(dir.join("orphan.bin"), b"not-a-segment").unwrap();
+    expect_round_trip(&dir, &rt);
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn migrate_preserves_ids_and_fold_fingerprint() {
+    let rt = seed_runtime();
+    let dir = persist_dir("mig-ids");
+    persist_legacy(&rt, &dir);
+    let want = log_ids(&rt);
+    let want_fp = rt.fold().fingerprint();
+    let report = store::migrate(&dir).unwrap();
+    assert_eq!(report.dropped_uncommitted, 0);
+    assert!(dir.join(store::MANIFEST_REL).exists());
+    assert!(dir.join("events.jsonl").exists(), "jsonl remains as export");
+    assert!(!dir.join("events.wal").exists(), "wal removed after verify");
+    let opened = store::open(&dir).unwrap();
+    assert_eq!(log_ids(&opened), want);
+    assert_eq!(opened.fold().fingerprint(), want_fp);
+    opened.replay_check().unwrap();
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn migrate_drops_uncommitted_suffix_and_reports() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("mig-drop");
+    persist_legacy(&rt, &dir);
+    let committed = log_ids(&rt);
+    let want_fp = rt.fold().fingerprint();
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_product_assert(&mut rt, "art-mig-drop", "99-kmh");
+    crash_omit_last(&mut p, &rt);
+    let report = store::migrate(&dir).unwrap();
+    assert!(
+        report.dropped_uncommitted > 0,
+        "uncommitted suffix must be reported"
+    );
+    let opened = store::open(&dir).unwrap();
+    assert_eq!(log_ids(&opened), committed);
+    assert_eq!(opened.fold().fingerprint(), want_fp);
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn migrate_is_idempotent() {
+    let rt = seed_runtime();
+    let dir = persist_dir("mig-idem");
+    persist_legacy(&rt, &dir);
+    store::migrate(&dir).unwrap();
+    let man = fs::read(dir.join(store::MANIFEST_REL)).unwrap();
+    let report = store::migrate(&dir).unwrap();
+    assert_eq!(report.dropped_uncommitted, 0);
+    assert_eq!(fs::read(dir.join(store::MANIFEST_REL)).unwrap(), man);
+    expect_round_trip(&dir, &rt);
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn migrate_crash_matrix_reopens_without_loss() {
+    let rt = seed_runtime();
+    let dir = persist_dir("mig-crash-src");
+    persist_legacy(&rt, &dir);
+    let want = log_ids(&rt);
+    let want_fp = rt.fold().fingerprint();
+    for step in [
+        store::MigrateStep::Segments,
+        store::MigrateStep::Verified,
+        store::MigrateStep::WalRemoved,
+    ] {
+        let run = persist_dir(&format!("mig-crash-{step:?}"));
+        copy_store(&dir, &run);
+        let err = store::migrate_with_failpoint(&run, step).unwrap_err();
+        assert_eq!(err.kind(), ErrorKind::Other);
+        assert!(
+            err.to_string().contains("failpoint"),
+            "migrate crash must be the injected failpoint; got {err}"
+        );
+        let opened = store::open(&run).unwrap();
+        assert_eq!(log_ids(&opened), want, "loss after {step:?}");
+        assert_eq!(opened.fold().fingerprint(), want_fp);
+        match step {
+            store::MigrateStep::Segments | store::MigrateStep::Verified => {
+                assert!(
+                    run.join("events.wal").exists(),
+                    "wal must survive until after verify ({step:?})"
+                );
+            }
+            store::MigrateStep::WalRemoved => {
+                assert!(
+                    !run.join("events.wal").exists(),
+                    "wal gone after WalRemoved"
+                );
+            }
+        }
+        let _ = fs::remove_dir_all(&run);
+    }
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn append_after_migrate_resumes() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("mig-append");
+    persist_legacy(&rt, &dir);
+    store::migrate(&dir).unwrap();
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    p.append(&rt).unwrap();
+    let opened = store::open(&dir).unwrap();
+    assert_eq!(log_ids(&opened), log_ids(&rt));
+    assert!(dir.join(store::MANIFEST_REL).exists());
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn export_jsonl_roundtrips_and_is_never_read_on_open() {
+    let rt = seed_runtime();
+    let dir = persist_dir("export");
+    persist_expect_segmented(&rt, &dir);
+    assert!(!dir.join("events.jsonl").exists());
+    store::export_jsonl(&dir).unwrap();
+    assert!(dir.join("events.jsonl").exists());
+    let exported = read_jsonl_events(&dir.join("events.jsonl"));
+    assert_eq!(
+        exported.iter().map(|e| e.id).collect::<Vec<_>>(),
+        store::encoded_events(&rt)
+            .iter()
+            .map(|e| e.id)
+            .collect::<Vec<_>>()
+    );
+    fs::write(dir.join("events.jsonl"), b"{not-json\n").unwrap();
+    expect_round_trip(&dir, &rt);
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn mutate_jsonl_with_manifest_open_is_ok() {
+    let rt = seed_runtime();
+    let dir = persist_dir("mut-jsonl");
+    persist_expect_segmented(&rt, &dir);
+    fs::write(dir.join("events.jsonl"), b"garbage\n").unwrap();
+    expect_round_trip(&dir, &rt);
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn legacy_dir_without_migrate_stays_legacy_after_persist() {
+    let rt = seed_runtime();
+    let dir = persist_dir("stay-leg");
+    persist_legacy(&rt, &dir);
+    store::persist(&rt, &dir).unwrap();
+    assert!(
+        !dir.join(store::MANIFEST_REL).exists(),
+        "persist must not auto-convert a legacy dir"
+    );
+    assert!(dir.join("events.jsonl").exists());
+    expect_round_trip(&dir, &rt);
+    let _ = fs::remove_dir_all(&dir);
 }

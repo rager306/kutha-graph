@@ -100,6 +100,57 @@ pub fn persist(runtime: &Runtime, dir: &Path) -> std::io::Result<()> {
     persist_until(runtime, dir, None)
 }
 
+/// Uncommitted suffix events skipped by [`migrate`] (COMMIT-01).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct MigrateReport {
+    pub dropped_uncommitted: usize,
+}
+
+/// Crash-injection points after each migrate step (DUR-01). `events.wal` is
+/// removed only after a verified reopen of the segmented store.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum MigrateStep {
+    Segments,
+    Verified,
+    WalRemoved,
+}
+
+/// Convert a legacy jsonl+WAL directory to `manifest.json` + segments.
+///
+/// Loads via [`load_events_d04`] then [`committed_prefix`]: only the committed
+/// prefix is written; the uncommitted suffix is dropped and counted in
+/// [`MigrateReport::dropped_uncommitted`]. `events.jsonl` is left as an export
+/// and is never read by [`open`] once the manifest exists. `events.wal` is
+/// removed only after a verified reopen (ids + fold fingerprint). Idempotent
+/// when `manifest.json` already exists. Never auto-invoked from [`persist`].
+pub fn migrate(dir: &Path) -> std::io::Result<MigrateReport> {
+    migrate_until(dir, None)
+}
+
+/// Crash-injection migrate: steps through `stop_after` inclusive, then an injected fault.
+pub fn migrate_with_failpoint(
+    dir: &Path,
+    stop_after: MigrateStep,
+) -> std::io::Result<MigrateReport> {
+    migrate_until(dir, Some(stop_after))
+}
+
+fn migrate_until(_dir: &Path, _stop_after: Option<MigrateStep>) -> std::io::Result<MigrateReport> {
+    Err(std::io::Error::new(
+        std::io::ErrorKind::Other,
+        "migrate not implemented",
+    ))
+}
+
+/// Write `events.jsonl` from the on-disk log via `replace_via_tmp`.
+/// Never consulted by [`open`] when `manifest.json` exists.
+pub fn export_jsonl(_dir: &Path) -> std::io::Result<()> {
+    Err(std::io::Error::new(
+        std::io::ErrorKind::Other,
+        "export_jsonl not implemented",
+    ))
+}
+
 /// Touch `events.jsonl` so [`persist`] keeps the legacy jsonl+WAL writer.
 /// Empty-dir detection is: no manifest, no `events.jsonl`, no `events.wal`.
 #[doc(hidden)]
