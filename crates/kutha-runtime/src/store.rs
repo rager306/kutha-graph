@@ -235,15 +235,23 @@ fn replace_snapshot(dir: &Path, snap: &Snapshot, commit: bool) -> std::io::Resul
 }
 
 fn read_jsonl_events(path: &Path) -> std::io::Result<Vec<Event>> {
-    let f = File::open(path)?;
+    let bytes = fs::read(path)?;
     let mut v = Vec::new();
-    for line in BufReader::new(f).lines() {
-        let line = line?;
-        if line.trim().is_empty() {
+    let mut start = 0usize;
+    for (i, b) in bytes.iter().enumerate() {
+        if *b != b'\n' {
             continue;
         }
-        v.push(serde_json::from_str(&line).map_err(json_err)?);
+        let line = &bytes[start..i];
+        start = i + 1;
+        if line.iter().all(|c| c.is_ascii_whitespace()) {
+            continue;
+        }
+        let text = std::str::from_utf8(line)
+            .map_err(|e| std::io::Error::new(ErrorKind::InvalidData, e))?;
+        v.push(serde_json::from_str(text).map_err(json_err)?);
     }
+    // D-05: bytes after the last newline are a torn tail and are dropped.
     Ok(v)
 }
 
