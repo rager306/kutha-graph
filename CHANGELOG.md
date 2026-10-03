@@ -4,6 +4,14 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Product: KNOWN-04 fixture hygiene
+
+### Product
+
+### Changed
+
+- Shared `seed_statute_between_anchors` in `crates/kutha-runtime/tests/common/mod.rs` (m014 and m016 known-on hardening keep every assertion). FIXG-01 drops `C01.contains` quote-membership tautology; `RuleTerm::constant` none and VT vs known-on remain. `leased_pin_and_derive` not merged (arity and live_count asserts diverge).
+
 ## 2026-10-03 — Product: KNOWN-04 Horn vs as_known_on (M017 S03)
 
 ### Product

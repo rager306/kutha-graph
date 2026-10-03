@@ -1,5 +1,7 @@
 //! TH-03..TH-05: Eager/Lazy known-on, fork_at, mid-cut snapshot+tail, GraphFold::replay.
 
+mod common;
+
 use kutha_common::Op;
 use kutha_runtime::{FoldIndexMode, GraphFold, Runtime};
 
@@ -8,38 +10,12 @@ const W1: u64 = 2014;
 const W2: u64 = 2020;
 const VF: u64 = 2010;
 
-fn seed_statute_between_anchors(
-    rt: &mut Runtime,
-) -> (
-    kutha_common::TermId,
-    kutha_common::TermId,
-    kutha_common::TermId,
-) {
-    let article = rt.intern("art-12-speed");
-    let in_force = rt.intern("inForceAs");
-    let limit_50 = rt.intern("50-kmh");
-    rt.emit_tt_anchor(W1).unwrap();
-    rt.emit(Op::Assert {
-        subject: article,
-        relation: in_force,
-        object: limit_50,
-        valid_from: VF,
-        valid_to: None,
-        claim: None,
-        delivery_key: None,
-        polarity: None,
-    })
-    .unwrap();
-    rt.emit_tt_anchor(W2).unwrap();
-    (article, in_force, limit_50)
-}
-
 #[test]
 fn as_known_on_eager_equals_lazy() {
     let mut eager = Runtime::with_index_mode(32, FoldIndexMode::Eager);
     let mut lazy = Runtime::with_index_mode(32, FoldIndexMode::Lazy);
-    let s_e = seed_statute_between_anchors(&mut eager);
-    let s_l = seed_statute_between_anchors(&mut lazy);
+    let s_e = common::seed_statute_between_anchors(&mut eager);
+    let s_l = common::seed_statute_between_anchors(&mut lazy);
     assert_eq!(s_e, s_l, "same intern order yields the same TermIds");
     assert_eq!(eager.as_known_on(D), lazy.as_known_on(D));
     assert_eq!(eager.as_known_on(W2), lazy.as_known_on(W2));
@@ -128,7 +104,7 @@ fn snapshot_mid_cut_tail_assert_and_anchor_recovers_known_on() {
 #[test]
 fn graph_fold_replay_as_known_on_matches_live() {
     let mut rt = Runtime::default();
-    let statute = seed_statute_between_anchors(&mut rt);
+    let statute = common::seed_statute_between_anchors(&mut rt);
     let mut replayed = GraphFold::replay(rt.log().as_slice());
     assert!(
         replayed.as_known_on(W2).is_some(),

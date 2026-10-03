@@ -9,11 +9,9 @@ const C01: &str = "пункт 15.1 действует до 01.01.2028";
 
 #[test]
 fn fixg01_c01_sunset_inexpressible_as_horn() {
-    assert!(C01.contains("15.1"));
-    assert!(C01.contains("01.01.2028"));
     assert!(
         RuleTerm::constant("01.01.2028").is_none(),
-        "RuleTerm Const is rule-ident only; a calendar sunset cannot be a Horn atom"
+        "{C01}: RuleTerm Const is rule-ident only; a calendar sunset cannot be a Horn atom"
     );
     assert!(
         RuleTerm::constant("2028").is_none(),
