@@ -1448,6 +1448,7 @@ fn migrate_verify_fault_returns_invalid_data_and_keeps_legacy() {
     let dir = persist_dir("mig-verify-fault");
     persist_legacy(&rt, &dir);
     let want = log_ids(&rt);
+    let _g = sealed_writer_limits();
     let err = store::migrate_with_verify_fault(&dir, store::MigrateVerifyFault::FlipSealedByte)
         .expect_err("verify must see the corrupted sealed file");
     assert_eq!(err.kind(), ErrorKind::InvalidData);
@@ -1473,6 +1474,7 @@ fn migrate_verify_failure_after_manifest_flip_unflips() {
     let rt = seed_runtime();
     let dir = persist_dir("mig-unflip");
     persist_legacy(&rt, &dir);
+    let _g = sealed_writer_limits();
     store::migrate_with_verify_fault(&dir, store::MigrateVerifyFault::FlipSealedByte)
         .expect_err("verify after persist_log (manifest already written) must fail");
     assert!(

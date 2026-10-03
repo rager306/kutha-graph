@@ -172,7 +172,7 @@ pub fn migrate_with_verify_fault(
 fn migrate_until(
     dir: &Path,
     stop_after: Option<MigrateStep>,
-    _fault: Option<MigrateVerifyFault>,
+    fault: Option<MigrateVerifyFault>,
 ) -> std::io::Result<MigrateReport> {
     fs::create_dir_all(dir)?;
     if dir.join(crate::segment::MANIFEST_REL).exists() {
@@ -195,7 +195,16 @@ fn migrate_until(
     let dropped_uncommitted = before.saturating_sub(events.len());
     crate::segment::persist_log(dir, &events)?;
     after_migrate_step(stop_after, MigrateStep::Segments)?;
-    migrate_verify_reopen(dir, &events)?;
+    if let Some(fault) = fault {
+        apply_migrate_verify_fault(dir, fault)?;
+    }
+    if let Err(e) = migrate_verify_reopen(dir, &events) {
+        let man = dir.join(crate::segment::MANIFEST_REL);
+        if man.exists() {
+            fs::remove_file(&man)?;
+        }
+        return Err(e);
+    }
     after_migrate_step(stop_after, MigrateStep::Verified)?;
     let wal = dir.join(EVENTS_WAL);
     if wal.exists() {
@@ -205,6 +214,27 @@ fn migrate_until(
     Ok(MigrateReport {
         dropped_uncommitted,
     })
+}
+
+fn apply_migrate_verify_fault(dir: &Path, fault: MigrateVerifyFault) -> std::io::Result<()> {
+    match fault {
+        MigrateVerifyFault::FlipSealedByte => {
+            let manifest = crate::segment::read_manifest(dir)?;
+            let name = manifest
+                .sealed
+                .first()
+                .map(|s| s.name.clone())
+                .unwrap_or(manifest.active);
+            let path = dir.join(name);
+            let mut bytes = fs::read(&path)?;
+            let off = crate::segment::HEADER_LEN as usize + 8;
+            if off >= bytes.len() {
+                return Err(io_invalid("migrate verify fault: sealed file too short"));
+            }
+            bytes[off] ^= 1;
+            fs::write(&path, bytes)
+        }
+    }
 }
 
 /// Reopen the segmented store and require ids + fold fingerprint to match the
