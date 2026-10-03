@@ -311,7 +311,8 @@ pub fn open(dir: &Path) -> std::io::Result<Runtime> {
             .collect();
         // Hydrate trap: compare snapshot-held walls before from_snapshot rebuilds from the log.
         if snap.fold.tt_anchors_pinned {
-            Runtime::check_tt_anchors(&snap.fold.tt_anchors, &graph).map_err(runtime_err)?;
+            Runtime::check_tt_anchors_range(&snap.fold.tt_anchors, &graph, Some(snap.next_tt))
+                .map_err(runtime_err)?;
         }
         let rt = Runtime::from_snapshot(snap, graph);
         rt.replay_check().map_err(runtime_err)?;

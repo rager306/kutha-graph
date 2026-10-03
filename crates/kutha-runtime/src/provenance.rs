@@ -42,11 +42,24 @@ impl Runtime {
     }
 
     /// Snapshot-held walls + `ingested_at` vs log `Op::TtAnchor` (D-02). Not fingerprint input.
+    /// `ingested_before`: on the open path, pass `snap.next_tt` so log anchors at or after
+    /// that cut are tail and allowed. `None` keeps exact equality (`replay_check`).
     pub(crate) fn check_tt_anchors(
         snapshot_held: &std::collections::BTreeMap<u64, u64>,
         events: &[kutha_common::Event],
     ) -> Result<(), RuntimeError> {
-        let from_log = GraphFold::tt_anchors_from_events(events);
+        Self::check_tt_anchors_range(snapshot_held, events, None)
+    }
+
+    pub(crate) fn check_tt_anchors_range(
+        snapshot_held: &std::collections::BTreeMap<u64, u64>,
+        events: &[kutha_common::Event],
+        ingested_before: Option<u64>,
+    ) -> Result<(), RuntimeError> {
+        let mut from_log = GraphFold::tt_anchors_from_events(events);
+        if let Some(cut) = ingested_before {
+            from_log.retain(|_, ingested_at| *ingested_at < cut);
+        }
         if snapshot_held != &from_log {
             return Err(RuntimeError::ReplayDivergence {
                 expected: tt_anchors_digest(snapshot_held),
