@@ -226,7 +226,9 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 - [x] **S05: Legal golden fixture and verdict** `risk:high` `depends:[S04]`
   > After this: a real-text fixture with one transitional rule and an as-known-on query is green, or the failing case is recorded and the plan stops before M002. The verdict is written into ADR-013 as a dated clarification.
 
-## M017: Docs honesty and replay integrity (GSD v0.10)
+## M017: Docs honesty and replay integrity — CLOSED (GSD v0.10)
+
+**Closed:** 2026-10-03. Process tag `v0.10`. S01–S04 complete; four independent VERIFICATIONs. Crate SemVer stays 0.0.0. Residuals in `.planning/milestones/v0.10-MILESTONE-AUDIT.md`.
 
 **Source:** 2026-10-02 audit at `c702d71` (ADR/roadmap, code/tests, process docs). Closes the doc drift and the replay/durability holes that M002 would otherwise inherit. Not M002 segments or Rocks; not typed `Op` clocks; not a C01 decision; not ADR Accepted.
 
@@ -238,12 +240,12 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
   > After this: tampered `TtAnchor` fails replay; `snapshot.json` and `events.wal` replace atomically; open never lets a sidecar or an empty WAL override the log; snapshot pins the fold index mode; `as_known_on` rustdoc and `known_at` oracle are honest.
 - [x] **S03: Determinism and knowledge-cut characterization** `risk:medium` `depends:[S02]`
   > After this: seeded replay==fold and Eager==Lazy (persist/open) properties are green with no new dependency; Horn-vs-known-on behaviour is recorded in a named test and ADR-013 Evidence without changing behaviour.
-- [ ] **S04: Ingest regression repair** `risk:high` `depends:[S03]`
+- [x] **S04: Ingest regression repair** `risk:high` `depends:[S03]`
   > After this: the M016 commit that tripled `ingest_plain.n` (108M to 301M ns at N=10000, found by the Phase 42 bisect) is named; a scaling oracle is RED then GREEN; ingest is within 10 percent of v0.08 on the same host or the residual is explained; named oracles unchanged.
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 is CLOSED. M016 is CLOSED. M017 is authored; only the slice named in STATE runs. M002+ stay frozen until leased.
+Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 is CLOSED. M016 is CLOSED. M017 is CLOSED. M002+ stay frozen until leased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -254,7 +256,7 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 5. **M014** — CLOSED. Typed clocks and as-known-on. Detail above.
 6. **M015** — CLOSED. Known-on honesty and M014 residuals (v0.08). Detail above.
 7. **M016** — CLOSED (S01–S05, GSD v0.09 tagged). Detail above.
-8. **M017** — Docs honesty and replay integrity (GSD v0.10). Detail above; before M002 so segment framing inherits an honest replay oracle and atomic snapshot.
+8. **M017** — CLOSED (S01–S04, GSD v0.10 tagged). Detail above.
 9. **M002** — Log durability protocol: segmented append-only log, hash chain, atomic manifest, replay parity across stores, with the quantum outcome as a commit marker in segment framing (ADR-010/014 open question). “Lease identity verified on open” is already done (v0.04 Phase 15). Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity. **Intake (2026-10-02):** cloud kernel writeback / dirty-throttle stalls — `docs/architecture/m002-cloud-kernel-io-intake.md` (arXiv:2609.12597 / SteelDB companion); multi-drain placement beats single-volume bandwidth when buffered I/O is on distributed block storage.
 10. **M003** — Cypher skin over the already-correct AS OF cut.
 11. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).

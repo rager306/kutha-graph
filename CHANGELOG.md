@@ -76,6 +76,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - ADR-010 Evidence (2026-10-03) records the D-04 open policy. Honeycomb comment restage only; cell stays **Proposed**. Active Milestone **M017**, Active Slice **S02**.
 
+## 2026-10-03 — Trajectory: M017 CLOSED (v0.10 archived)
+
+### Trajectory
+
+- Archive Phases 41–44 under `milestones/v0.10-*`; `L_delivery=M017-closed`, Active Milestone **None**. Process tag `v0.10`; crate SemVer stays 0.0.0. Ingest regression from M016 repaired (+6.3% vs v0.08). Bench gate at product close added to the GSD auto contract. Carried residuals: `v0.10-MILESTONE-AUDIT.md`.
+
 ## 2026-10-03 — Process: M017 S04 leased (ingest regression)
 
 ### Process

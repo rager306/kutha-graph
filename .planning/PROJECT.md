@@ -10,14 +10,13 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.10 (M017 docs honesty and replay integrity)
+## Current Milestone: none live (v0.10 shipped)
 
-**Last shipped:** v0.09 Test hardening + executable rules (harness M016, phases 36–40, tag `v0.09`). Crate SemVer stays `0.0.0`.
+**Last shipped:** v0.10 Docs honesty and replay integrity (harness M017, phases 41–44, tag `v0.10`). Crate SemVer stays `0.0.0`.
 
-**Harness lease:** read `.kutha/STATE.md` (Active Milestone **M017**; slice, `L_delivery` and Freeze live only there).
+**Harness lease:** read `.kutha/STATE.md` (slice, `L_delivery` and Freeze live only there).
 
-**Next:** Phases 41–43 under M017 (living docs, replay integrity, determinism) only as STATE names each slice. Honeycomb stays Proposed. FIXG-01 fail-closed: C01 sunset is not a Horn; do not invent five clocks. Do not start M002 until STATE names it.
-
+**Next (frozen until leased):** M002 durability. Honeycomb stays Proposed. FIXG-01 fail-closed: C01 sunset is not a Horn; do not invent five clocks.
 
 
 ## Business Context
@@ -71,6 +70,7 @@ GSD overlay v0.09 (Phases 36–40 — M016 executable rules):
 - [x] **v0.06 Honest baseline and one write path (M013 S01–S09):** shipped 2026-10-02 — archive `.planning/milestones/v0.06-*`, tag `v0.06`
 - [x] **v0.07 Typed clocks and as-known-on (M014 S01–S03):** shipped 2026-10-02 — archive `.planning/milestones/v0.07-*`, tag `v0.07`
 - [x] **v0.09 Test hardening + executable rules (M016 S01–S05):** shipped 2026-10-02 — archive `.planning/milestones/v0.09-*`, tag `v0.09`
+- [x] **v0.10 Docs honesty and replay integrity (M017 S01–S04):** shipped 2026-10-03 — archive `.planning/milestones/v0.10-*`, tag `v0.10`
 - [ ] Keep FF5/FF6/H2/H4/M010/M011 named fitness **green** (`L_capability=ff5-green` per `.kutha/STATE.md`)
 - [ ] Keep governor CI honest; three lifecycles uncollapsed; freeze until STATE names otherwise
 - [ ] Start only the slice `.kutha/STATE.md` names — do **not** assume M002, legal pack, or honeycomb Accepted
@@ -166,12 +166,11 @@ Harness compact index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov m
 
 ## Current State
 
-Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), **v0.04 — Single-log SoT + stable references** (2026-10-01, M012a S01–S06), **v0.05 — Dictionaries as facts** (2026-10-01, M012 S01–S05), **v0.06 — Honest baseline and one write path** (2026-10-02, M013 S01–S09), **v0.07 — Typed clocks and as-known-on** (2026-10-02, M014 S01–S03), **v0.08 — Known-on honesty** (2026-10-02, M015), and **v0.09 — Test hardening + executable rules** (2026-10-02, M016 S01–S05).
-Current GSD version is **v0.10** (M017: docs honesty and replay integrity; Phases 41–43). Honeycomb cells stay Proposed. Product stays `0.0.0`. Lease and freeze: `.kutha/STATE.md`.
+Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), **v0.04 — Single-log SoT + stable references** (2026-10-01, M012a S01–S06), **v0.05 — Dictionaries as facts** (2026-10-01, M012 S01–S05), **v0.06 — Honest baseline and one write path** (2026-10-02, M013 S01–S09), **v0.07 — Typed clocks and as-known-on** (2026-10-02, M014 S01–S03), **v0.08 — Known-on honesty** (2026-10-02, M015), **v0.09 — Test hardening + executable rules** (2026-10-02, M016 S01–S05), and **v0.10 — Docs honesty and replay integrity** (2026-10-03, M017 S01–S04). No live milestone. Honeycomb cells stay Proposed. Product stays `0.0.0`. Lease and freeze: `.kutha/STATE.md`.
 
 ## Next Milestone Goals
 
-Now: v0.10 = M017 (docs honesty and replay integrity). Phase 41 is S01; Phases 42–43 wait until STATE names them. M002 (segmented log, hash chain, manifest, commit-marker framing; Rocks for indexes only) stays frozen until STATE names it. Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack until STATE names them.
+None leased. M002 (segmented log, hash chain, manifest, commit-marker framing, sidecar atomicity SNAP-01; Rocks for indexes only) stays frozen until `.kutha/STATE.md` names it. Candidates needing a decision: C01 sunset, typed `Op` clocks, Horn vs knowledge cut. Freeze holds for Rocks/Cypher/HNSW/ADR-050 six dictionaries/legal pack.
 
 ## Context
 
@@ -179,10 +178,9 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 
 **Harness lease** (process intent, not GSD memory, not product SoT): `.kutha/STATE.md`
 
-- Active Milestone: **M017**
-- Active Slice and `L_delivery`: cite `.kutha/STATE.md` only (they change per slice)
+- Active Milestone, Active Slice and `L_delivery`: cite `.kutha/STATE.md` only (they change per slice)
 - Phase, `L_map`, `L_capability`, and Freeze: cite `.kutha/STATE.md` only
-- Next: the slice named in STATE (`docs/process/gsd-auto-contract.md`); v0.10 Phases 41–43 run one lease at a time. Freeze holds. Green governor ≠ ADR Accepted ≠ L_capability.
+- Next: the slice named in STATE (`docs/process/gsd-auto-contract.md`); one lease at a time. Freeze holds. Green governor ≠ ADR Accepted ≠ L_capability.
 
 GSD files live under `.planning/`. **Never overwrite** `.kutha/STATE.md` with GSD STATE.
 
@@ -237,4 +235,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-03 after M017 S01 lease (v0.10 living docs + governor)*
+*Last updated: 2026-10-03 after M017 close (v0.10 archived)*

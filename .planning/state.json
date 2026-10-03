@@ -1,38 +1,33 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v0.09 — Test hardening + executable rules",
+  "milestone": "v0.10 — Docs honesty and replay integrity",
   "phases": [
     {
-      "number": "36",
-      "name": "Test hardening T2–T6",
+      "number": "41",
+      "name": "Living docs and governor honesty",
       "status": "complete"
     },
     {
-      "number": "37",
-      "name": "Rule AST and hash",
+      "number": "42",
+      "name": "Replay integrity",
       "status": "complete"
     },
     {
-      "number": "38",
-      "name": "Rule evaluator and support counting",
+      "number": "43",
+      "name": "Determinism and knowledge-cut characterization",
       "status": "complete"
     },
     {
-      "number": "39",
-      "name": "Policy evaluation and execution replay",
-      "status": "complete"
-    },
-    {
-      "number": "40",
-      "name": "Legal golden fixture and verdict",
+      "number": "44",
+      "name": "Ingest regression repair",
       "status": "complete"
     }
   ],
   "next": {
     "command": "/gsd-progress --next",
     "label": "Wait next lease (M002 frozen)",
-    "reason": "v0.09 shipped · M016-closed"
+    "reason": "v0.10 shipped · M017-closed"
   },
-  "updated_at": "2026-10-02T13:45:00.000Z"
+  "updated_at": "2026-10-03T06:00:00.000Z"
 }

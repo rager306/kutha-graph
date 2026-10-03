@@ -17,7 +17,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.07 | 31–33 | M014 | S01–S03 | F13 | shipped |
 | v0.08 | 34–35 | M015 | S01–S02 | known-on honesty, M014 residuals (H1/H2) | shipped |
 | v0.09 | 36–40 | M016 | S01–S05 | T2–T6, F9, F16 | shipped |
-| v0.10 | 41–44 | M017 | S01–S04 | docs honesty, replay integrity (audit 2026-10-02) | authored |
+| v0.10 | 41–44 | M017 | S01–S04 | docs honesty, replay integrity, ingest regression (audit 2026-10-02) | shipped |
 | v0.11 | next | M002 | tbd | durability, commit marker | frozen |
 
 v0.06 phases: 22 baseline, 23 legal fixture reconnaissance, 24 fold indexes, 25 genesis log, 26 dictionary entries as facts, 27 one write path and facade, 28 independent verification and artifact budget, 29 close-out honesty (documents and governor), 30 write-path integrity hardening. Phase N maps to slice S(N-21). Phases 29–30 are the M013 tail added after the v0.06 audit and the 2026-10-02 project review.
@@ -31,6 +31,10 @@ GSD must not edit `.kutha/STATE.md`. The controller (the parent session, not a G
 3. **Independent verify** (below). A failed kill-test reopens the phase; it is not waived.
 4. **Close:** clear Active Slice, set `L_delivery` to this slice's `-done` token, tick the slice in `.kutha/ROADMAP.md`, add one CHANGELOG entry (product and process kept apart), run `uv run kutha-gov precommit` and, for product phases, `uv run kutha-gov ci`.
 5. **Milestone end (last phase of the leased GSD version):** audit, archive, tag, and `state.milestone-switch` stay GSD tools. The next lease is a controller decision.
+
+## Bench gate at product close
+
+Every milestone that edits `crates/` re-runs `cargo bench -p kutha-runtime --bench baseline` (same host, `KUTHA_BENCH_N=10000`) against the previous tag before close; a regression over 10 percent in `ingest_plain.n` or `as_of.n` is a controller stop. (M016 skipped this and tripled ingest; found and repaired in v0.10.)
 
 ## Code-graph tool pair
 

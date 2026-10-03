@@ -1,3 +1,10 @@
+## v0.10 Docs honesty and replay integrity (Shipped: 2026-10-03)
+
+**Phases:** 41–44. Process tag `v0.10`. Living docs/governor honesty, replay integrity, determinism oracles, M016 ingest regression repaired.
+**Git range:** `v0.09..v0.10`
+
+---
+
 ## v0.09 Test hardening + executable rules (Shipped: 2026-10-02)
 
 **Phases:** 36–40. Process tag `v0.09`. T2–T6, F9, F16. FIXG-01 fail-closed (C01 sunset is not a Horn).
