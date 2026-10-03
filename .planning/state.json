@@ -26,7 +26,7 @@
     {
       "number": "53",
       "name": "Commit marker decision (COMMIT-01)",
-      "status": "executing"
+      "status": "complete"
     },
     {
       "number": "54",
@@ -41,8 +41,8 @@
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Phase 53 execute, then verify",
-    "reason": "M002-S05 leased"
+    "label": "Lease M002 S06 (Phase 54: segments and hash chain) after CONTEXT",
+    "reason": "Phase 53 verified \u00b7 M002-S05-done"
   },
   "updated_at": "2026-10-03T07:00:00.000Z"
 }
