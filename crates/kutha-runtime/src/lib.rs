@@ -23,6 +23,8 @@ pub mod store;
 mod tenant;
 mod wal;
 
+#[cfg(feature = "rocks-index")]
+pub mod rocks_index;
 #[cfg(feature = "rocks-index-spike")]
 pub mod rocks_spike;
 

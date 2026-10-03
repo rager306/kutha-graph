@@ -12,6 +12,14 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `glob_absent` accepts optional `unless_line_contains` (a needle on a comment line, or on a line that also contains that substring, is ignored). `freeze-rocks` allows `rocksdb =` in `crates/*/Cargo.toml` only when the same line has `optional = true`, regardless of Active Milestone; a plain or non-optional assignment fails. Feature lines (`dep:rocksdb`) are not assignments. The workspace `Cargo.toml` must not contain `rocksdb =`. `unless_file_contains` stays in the kind and its tests. `freeze-cypher-deps` and `freeze-hnsw-dep` stay unconditional. Selftest still appends `rocksdb =` on a new line so the check fails closed.
 
+## 2026-10-04 — Product: ROCK-01 Rocks locator index (RED)
+
+### Product
+
+### Added
+
+- Optional `kutha-runtime` feature `rocks-index` (same `rocksdb` optional dep) and `m002_rock01` oracles over a droppable segmented-log locator lease. RED: `SegmentIndex` is unimplemented.
+
 ## 2026-10-04 — Product: migrate, jsonl export, and sealed tamper (SEG-01 / 54-03)
 
 ### Product
