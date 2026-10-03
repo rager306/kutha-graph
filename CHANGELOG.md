@@ -40,6 +40,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `glob_absent` accepts optional `unless_file_contains: {file, needle}` (missing file does not skip). `freeze-rocks` allows the string `rocksdb` in `crates/*/Cargo.toml` and the workspace `Cargo.toml` only while `.kutha/STATE.md` names `**Active Milestone:** M002`. `freeze-cypher-deps` and `freeze-hnsw-dep` stay unconditional. Selftest disables the unless needle on the copy before inserting `rocksdb` so the check still fails closed.
 
+## 2026-10-03 — Process: owner defers M002 S05
+
+### Process
+
+- The owner chose to defer COMMIT-01 (S05) and S06/S07 until M018's decisions (C01, Horn vs knowledge cut) are made. No lease changes; Active Slice stays **None**.
+
 ## 2026-10-03 — Process: close M002 S04 (GSD Phase 52)
 
 ### Process

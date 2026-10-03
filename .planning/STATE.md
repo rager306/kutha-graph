@@ -21,5 +21,5 @@ progress:
 **Last activity:** 2026-10-03 — v0.11 planned; Phase 45 verified; Phase 46 awaits decision
 
 Stopped at: Phase 52 closed
-Next: COMMIT-01 decision (controller and user), then lease S05
+Next: owner decides M018 (C01, Horn) first; then COMMIT-01 and lease S05
 M002 deferred intake: `docs/architecture/m002-cloud-kernel-io-intake.md`
