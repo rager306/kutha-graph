@@ -243,9 +243,24 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 - [x] **S04: Ingest regression repair** `risk:high` `depends:[S03]`
   > After this: the M016 commit that tripled `ingest_plain.n` (108M to 301M ns at N=10000, found by the Phase 42 bisect) is named; a scaling oracle is RED then GREEN; ingest is within 10 percent of v0.08 on the same host or the residual is explained; named oracles unchanged.
 
+## M018: Wedge unblock — doc truth, C01 and knowledge cut, Horn determinism (GSD v0.11)
+
+**Source:** 2026-10-03 post-v0.10 review at `d230ab2` (five read-only audits, CBM + GitNexus, `rg` arbiter): trajectory, ADR vs code, tests, docs, code logic. The wedge (norm AS OF a date) is blocked by an undecided C01 and by Horn semantics, not by Rocks. Not M002 segments or Rocks; not typed `Op` clocks; not ADR Accepted.
+
+**Success:** living docs and ADR Evidence agree with the code (one F-register, English spine); ADR-013 records one C01 option and the Horn-vs-knowledge-cut rule, with a named oracle; derived facts have deterministic identity and follow `Correct`; every cascade hop is admitted; a bad WAL read cannot silently shorten or empty the log; fold, CSR and rebuild agree on seeded random logs.
+
+- [ ] **S01: Doc truth round 2** `risk:low` `depends:[]`
+  > After this: ADR-010/012/014/041/060 Evidence and `semantic-gap-review.md` match v0.10 code (snapshot and WAL atomic, `horns_by_premise`, sidecars still in place); audit ids carry the `A-F` prefix; ADR-000 D6 and ADR-010 D010-4 no longer name Rocks WAL as shipped; ADR-013 states `as_of` is support-live, not eligibility; ADR-000 and `stca-guide.md` spine is English; CHANGELOG head, `PROJECT.md`, `.kutha/ROADMAP.md` closed-milestone wording and `.gitignore` hygiene are fixed; no file under `crates/` changes.
+- [ ] **S02: C01 and knowledge-cut decision** `risk:high` `depends:[S01]` `gate:controller+user decision`
+  > After this: ADR-013 records one C01 option (pack stamp, fifth axis, or stop) with a named oracle or an explicit out-of-wedge note; the Horn-vs-`as_known_on` rule (HORN-KC-01) and the `as_of` vs derivation-eligibility rule are decided; if behaviour changes, the oracle is RED first and `m017_known_on_horn.rs` is inverted or re-pinned by the decision.
+- [ ] **S03: Horn determinism and closure** `risk:high` `depends:[S02]`
+  > After this: two ingests of the same ops give the same derived-event identity (or the decision to keep UUID v7 is recorded with its replay consequence); `Correct` and `CorrectInterval` re-derive; every cascade hop passes `admit` and commits in a stable order; the unknown head or premise relation in a rule fails closed; named oracles unchanged.
+- [ ] **S04: Fail-closed open and differential tests** `risk:medium` `depends:[S03]`
+  > After this: a failed magic read or an empty WAL without jsonl cannot yield an empty log; a WAL error is not hidden behind jsonl; fold, CSR and clean rebuild agree on seeded random logs (no new dependency); a crash seam between jsonl and sidecars is characterized (repair stays M002 SNAP-01); I-F15 and I-F16 oracles measure what they claim; the bench gate is a recorded controller step or a governor row. SNAP-01 (sidecar rename and parent fsync) stays M002.
+
 ## Later milestones (not active)
 
-Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 is CLOSED. M016 is CLOSED. M017 is CLOSED. M002+ stay frozen until leased.
+Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 is CLOSED. M016 is CLOSED. M017 is CLOSED. M018 is next (S01–S04). M002+ stay frozen until leased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -257,13 +272,14 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 6. **M015** — CLOSED. Known-on honesty and M014 residuals (v0.08). Detail above.
 7. **M016** — CLOSED (S01–S05, GSD v0.09 tagged). Detail above.
 8. **M017** — CLOSED (S01–S04, GSD v0.10 tagged). Detail above.
-9. **M002** — Log durability protocol: segmented append-only log, hash chain, atomic manifest, replay parity across stores, with the quantum outcome as a commit marker in segment framing (ADR-010/014 open question). “Lease identity verified on open” is already done (v0.04 Phase 15). Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity. **Intake (2026-10-02):** cloud kernel writeback / dirty-throttle stalls — `docs/architecture/m002-cloud-kernel-io-intake.md` (arXiv:2609.12597 / SteelDB companion); multi-drain placement beats single-volume bandwidth when buffered I/O is on distributed block storage.
-10. **M003** — Cypher skin over the already-correct AS OF cut.
-11. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
-12. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
-13. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
-14. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
-15. *(unnumbered)* Packaging, naming and license decision (ADR-092) before any publish.
+9. **M018** — Wedge unblock (S01–S04, GSD v0.11). Detail above.
+10. **M002** — Log durability protocol: segmented append-only log, hash chain, atomic manifest, replay parity across stores, with the quantum outcome as a commit marker in segment framing (ADR-010/014 open question). “Lease identity verified on open” is already done (v0.04 Phase 15). Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity. **Intake (2026-10-02):** cloud kernel writeback / dirty-throttle stalls — `docs/architecture/m002-cloud-kernel-io-intake.md` (arXiv:2609.12597 / SteelDB companion); multi-drain placement beats single-volume bandwidth when buffered I/O is on distributed block storage.
+11. **M003** — Cypher skin over the already-correct AS OF cut.
+12. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
+13. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
+14. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
+15. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
+16. *(unnumbered)* Packaging, naming and license decision (ADR-092) before any publish.
 
 P4 (Raft/multi-node, learned indexes) is not planned until single-node hybrid evidence exists.
 

@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Process: plan M018 (GSD v0.11) and lease S01
+
+### Process
+
+### Added
+
+- Harness milestone **M018** "Wedge unblock" (GSD v0.11, Phases 45–48) from the 2026-10-03 post-v0.10 review (five read-only audits at `d230ab2`): S01 doc truth round 2, S02 C01 and knowledge-cut decision (decision gate), S03 Horn determinism and closure, S04 fail-closed open and differential tests. Requirements in `.planning/REQUIREMENTS.md`; Phase 45 CONTEXT under `.planning/phases/45-doc-truth-round-2/`. M002 durability moves to the v0.12 slot, still frozen.
+
+### Trajectory
+
+- **M017 is CLOSED** (tag `v0.10`); the product S04 entries below are historical and carry no live lease. Active Milestone **M018**, Active Slice **S01** (documents only, no `crates/` change). Audit ids F01–F14 of 2026-10-02 are written `A-F01`–`A-F14` from here on; older entries keep the original spelling. Honeycomb stays Proposed.
+
 ## 2026-10-03 — Product: Horn premise-relation ingest lease (M017 S04)
 
 ### Product
