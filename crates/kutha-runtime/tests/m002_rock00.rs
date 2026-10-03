@@ -119,3 +119,20 @@ fn rocks_dir_is_droppable() {
         assert_eq!(rocks_spike::lookup(&rocks_dir, id).unwrap(), Some(offset));
     }
 }
+
+#[test]
+fn malformed_log_line_fails_closed() {
+    let dir = persist_dir("malformed");
+    let rt = seed_runtime();
+    rt.persist(&dir).unwrap();
+    let log_path = dir.join("events.jsonl");
+    let rocks_dir = dir.join("rocks");
+
+    let mut log = fs::read_to_string(&log_path).unwrap();
+    log.push_str("{ not an event\n");
+    fs::write(&log_path, log).unwrap();
+
+    let err = rocks_spike::build_index(&log_path, &rocks_dir)
+        .expect_err("a malformed line must not be skipped");
+    assert_eq!(err.kind(), std::io::ErrorKind::InvalidData);
+}

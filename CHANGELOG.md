@@ -10,7 +10,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Added
 
-- Optional `kutha-runtime` feature `rocks-index-spike` (`rocksdb` 0.22, `default-features = false`: no snappy/lz4/zstd/zlib/bzip2). `rocks_spike::{build_index, lookup, read_event_at}` maps `EventId` bytes to `events.jsonl` offsets; oracles `m002_rock00.rs` are feature-gated. Default `cargo test --workspace` does not compile RocksDB. Not wired into `Runtime`, persist, fold, or hydrate.
+- Optional `kutha-runtime` feature `rocks-index-spike` (`rocksdb` 0.22, `default-features = false`: no snappy/lz4/zstd/zlib/bzip2). `rocks_spike::{build_index, lookup, read_event_at}` maps `EventId` bytes to `events.jsonl` offsets; oracles `m002_rock00.rs` (round trip, droppable directory, absent key, malformed log line fails closed with `InvalidData`) are feature-gated. Default `cargo test --workspace` does not compile RocksDB. Not wired into `Runtime`, persist, fold, or hydrate.
 
 ### Trajectory
 
