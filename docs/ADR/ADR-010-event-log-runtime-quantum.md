@@ -22,7 +22,7 @@ APPEND-01: `store::Persister` (`attach` / `append` / `checkpoint` / `close`) wri
 
 ### Evidence (2026-10-04, Phase 53 / M002 S05; Proposed)
 
-COMMIT-01 option A: `Op::QuantumOutcome` stays the User-quantum commit marker (no WAL/jsonl format change, no env switch). `store::open` applies `committed_prefix` after `load_events_d04` and before sidecar load, hydrate, and `replay_check`. Self-commit: `Define`, `TtAnchor`, `StoreBlob`, `JustificationCite`, `QuantumOutcome`, dictionary `kutha:*` Assert. NeedsOutcome: product `Assert`/`Retract`/`Correct`/`CorrectInterval`/`Behavior`. Commit frame (B) and quantum envelope (C) wait for S06. Oracles: `m002_commit01.rs`. Status stays **Proposed**.
+COMMIT-01 option A: `Op::QuantumOutcome` stays the User-quantum commit marker (no WAL/jsonl format change, no env switch). `store::open` applies `committed_prefix` after `load_events_d04` and before sidecar load, hydrate, and `replay_check`. Self-commit: `Define`, `TtAnchor`, `StoreBlob`, `JustificationCite`, `QuantumOutcome`, dictionary `kutha:*` Assert. NeedsOutcome: product `Assert`/`Retract`/`Correct`/`CorrectInterval`/`Behavior`. Commit frame (B) and quantum envelope (C) wait for S06. Residual: Typed/Dictionary multi-event groups have no outcome by design, so a crash inside such a group can still expose a partial group (`Define`-level atomicity only; ADR-014). Oracles: `m002_commit01.rs`. Status stays **Proposed**.
 
 ## Date
 

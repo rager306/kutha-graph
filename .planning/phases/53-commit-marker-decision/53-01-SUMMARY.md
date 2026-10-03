@@ -9,7 +9,8 @@ Executor Phase 53 / M002 S05. Not verification. Honeycomb stays Proposed. Did no
 - `5853f12` feat(53-02): hide an uncommitted suffix on open
 - `0996400` feat(53-02): report dropped events and heal before append
 - `955291c` feat(53-02): failpoint-cover heal persist crashes
-- this commit: Evidence, bench table, CHANGELOG, SUMMARY
+- `184c662` docs: Evidence, bench table, CHANGELOG, SUMMARY
+- this commit: later-SelfCommit oracles (mutation k) + ADR-010 residual
 
 ## RED (`m002_commit01`)
 
@@ -33,4 +34,4 @@ None of M010–M017 / m002_snap01 / m002_append01 assertions. New: `CommitClass`
 
 ## Residual + mutations
 
-Typed/Dictionary groups have no QO (partial group can remain visible). B/C wait for S06. D-08 in-tree: naive drop-after-QO (intern_only ReplayDivergence); keep product Assert; skip trim on open; Assert as SelfCommit; skip heal; count QO in log_offset (snapshot_ahead). Each killed; `git checkout --` left a clean tracked tree.
+Typed/Dictionary groups have no QO (partial group can remain visible). B/C wait for S06. D-08 in-tree: naive drop-after-QO (intern_only ReplayDivergence); keep product Assert; skip trim on open; Assert as SelfCommit; skip heal; count QO in log_offset (snapshot_ahead). Each killed; `git checkout --` left a clean tracked tree. Second-round: three `committed_prefix` oracles hide later SelfCommit after the first NeedsOutcome (mutation k); ADR-010 Evidence now names the Typed/Dictionary residual.

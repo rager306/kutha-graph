@@ -469,6 +469,91 @@ fn every_op_variant_is_classified() {
     );
 }
 
+fn prefix_tags(events: &[Event]) -> Vec<&'static str> {
+    events
+        .iter()
+        .map(|e| match &e.op {
+            Op::Assert { .. } => "Assert",
+            Op::Define { .. } => "Define",
+            Op::TtAnchor { .. } => "TtAnchor",
+            Op::StoreBlob { .. } => "StoreBlob",
+            Op::JustificationCite { .. } => "Cite",
+            Op::QuantumOutcome { .. } => "QuantumOutcome",
+            Op::Retract { .. } => "Retract",
+            Op::Correct { .. } => "Correct",
+            Op::CorrectInterval { .. } => "CorrectInterval",
+            Op::Behavior { .. } => "Behavior",
+        })
+        .collect()
+}
+
+/// D-03: first NeedsOutcome in the tail cuts that op and every later op,
+/// including later SelfCommit (`Define` / `TtAnchor` / `StoreBlob` / cite).
+/// Hiding a later `Define` is safe on Runtime intern-then-emit order: `intern`
+/// writes the Define before any referring op, so a kept SelfCommit cannot name
+/// a term whose Define sits after the cut. Reverse-order synthetics are not a
+/// Runtime log; this oracle does not change the rule.
+#[test]
+fn needs_outcome_hides_later_self_commit_tail() {
+    let product = Event::new(product_assert_op(1), 0);
+    let later_define = Event::stable_define("p53-after-cut-orphan", 0);
+    let later_tt = Event::new(Op::TtAnchor { wall: 9 }, 0);
+    let later_blob = Event::new(
+        Op::StoreBlob {
+            digest: "p53-orphan-blob".into(),
+            bytes: vec![],
+        },
+        0,
+    );
+    let kept = store::committed_prefix(vec![product, later_define, later_tt, later_blob]);
+    assert_eq!(
+        prefix_tags(&kept),
+        Vec::<&str>::new(),
+        "tail [product Assert, Define, TtAnchor, StoreBlob] must hide all four"
+    );
+}
+
+#[test]
+fn leading_self_commit_survives_until_first_needs_outcome() {
+    let lead = Event::stable_define("p53-lead-self-commit", 0);
+    let product = Event::new(product_assert_op(1), 0);
+    let later_tt = Event::new(Op::TtAnchor { wall: 9 }, 0);
+    let kept = store::committed_prefix(vec![lead, product, later_tt]);
+    assert_eq!(
+        prefix_tags(&kept),
+        vec!["Define"],
+        "tail [Define, product Assert, TtAnchor] keeps only the leading Define"
+    );
+    assert!(matches!(
+        &kept[0].op,
+        Op::Define { name } if name == "p53-lead-self-commit"
+    ));
+}
+
+#[test]
+fn unreferenced_later_self_commit_is_hidden() {
+    let nil = EventId::nil();
+    let product = Event::new(product_assert_op(1), 0);
+    let orphan_cite = Event::new(
+        Op::JustificationCite {
+            justification_id: "p53-orphan-cite".into(),
+            target_claim: nil,
+            source_claim_ids: vec![],
+            source_event_ids: vec![],
+            rule_version: String::new(),
+            tt: 0,
+            vt: 0,
+        },
+        0,
+    );
+    let kept = store::committed_prefix(vec![product, orphan_cite]);
+    assert_eq!(
+        prefix_tags(&kept),
+        Vec::<&str>::new(),
+        "later SelfCommit referenced by nothing must still be cut with the NeedsOutcome"
+    );
+}
+
 #[test]
 fn retract_correct_user_quanta_follow_the_same_rule() {
     let mut rt = seed_runtime();

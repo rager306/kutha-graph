@@ -10,11 +10,11 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Added
 
-- `store::committed_prefix` / `op_commit_class`: on `open`, a typed uncommitted suffix is not visible. `Op::QuantumOutcome` stays the User-quantum commit marker (option A). Self-commit: `Define`, `TtAnchor`, `StoreBlob`, `JustificationCite`, `QuantumOutcome`, dictionary `kutha:*` Assert. NeedsOutcome: product `Assert`/`Retract`/`Correct`/`CorrectInterval`/`Behavior`. `open_report` counts dropped events; `open_for_append` heals a dirty tail with a full persist then attaches. Snapshot `log_offset` ahead of the committed fold-op count fails closed. Oracles: `crates/kutha-runtime/tests/m002_commit01.rs`.
+- `store::committed_prefix` / `op_commit_class`: on `open`, a typed uncommitted suffix is not visible. `Op::QuantumOutcome` stays the User-quantum commit marker (option A). Self-commit: `Define`, `TtAnchor`, `StoreBlob`, `JustificationCite`, `QuantumOutcome`, dictionary `kutha:*` Assert. NeedsOutcome: product `Assert`/`Retract`/`Correct`/`CorrectInterval`/`Behavior`. The first NeedsOutcome in the tail cuts that op and every later op (including later SelfCommit). `open_report` counts dropped events; `open_for_append` heals a dirty tail with a full persist then attaches. Snapshot `log_offset` ahead of the committed fold-op count fails closed. Oracles: `crates/kutha-runtime/tests/m002_commit01.rs`.
 
 ### Trajectory
 
-- ADR-010/012/014/060 dated Evidence 2026-10-04 Phase 53: COMMIT-01 = option A; B/C wait for S06. Cells stay **Proposed**. `honeycomb.yaml` restaged (map/delivery/capability unchanged). Residual: Typed/Dictionary multi-event groups have no outcome, so a crash inside such a group can still expose a partial group. Bench vs `187d4c7` (interleaved medians): ingest_plain.n +5.6%, as_of.n −3.4%, open.n +3.9% — D-10 met.
+- ADR-010/012/014/060 dated Evidence 2026-10-04 Phase 53: COMMIT-01 = option A; B/C wait for S06. Cells stay **Proposed**. `honeycomb.yaml` restaged (map/delivery/capability unchanged). Residual: Typed/Dictionary multi-event groups have no outcome by design, so a crash inside such a group can still expose a partial group (now also in ADR-010 Evidence; ADR-014 already said it). Second-round: `m002_commit01` oracles kill keeping later SelfCommit after the first NeedsOutcome. Bench vs `187d4c7` (interleaved medians): ingest_plain.n +5.6%, as_of.n −3.4%, open.n +3.9% — D-10 met.
 
 ## 2026-10-03 — Product: incremental framed append (APPEND-01)
 
