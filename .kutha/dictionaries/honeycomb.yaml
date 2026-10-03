@@ -13,6 +13,7 @@ process: docs/process/governor-intake.md
 # 2026-10-02 restage (M015 S02 ANK + known-on oracles): ADR-013 evidence; map/delivery/capability unchanged.
 # 2026-10-03 restage (M017 S01 audit clarifications): ADR-000, 013, 014, 041, 050, 060, 070; map/delivery/capability unchanged.
 # 2026-10-03 restage (M017 S02 replay-integrity D-04 evidence): ADR-010; map/delivery/capability unchanged.
+# 2026-10-03 restage (M017 S03 KNOWN-04 / F05 characterization): ADR-013 evidence; map/delivery/capability unchanged.
 
 locks:
   - id: D1
@@ -136,6 +137,7 @@ cells:
       - true_on_d_differs_from_known_on_d
       - closed_vt_interval_survives_as_known_on
       - duplicate_tt_anchor_wall_is_rejected
+      - known04_horn_fires_when_premise_hidden_on_early_cut
 
   - id: ADR-014
     axis: Time

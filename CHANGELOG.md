@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Product: KNOWN-04 Horn vs as_known_on (M017 S03)
+
+### Product
+
+### Added
+
+- Characterization `known04_horn_fires_when_premise_hidden_on_early_cut` in `crates/kutha-runtime/tests/m017_known_on_horn.rs`: two-premise Horn mints derived `relatedTo(A,C)` at `TT = MAX` while `as_known_on(2014)` hides A–B and the derived row; `as_known_on(2020)` shows A–B. No eval or known-on behaviour change.
+
+### Trajectory
+
+- ADR-013 Evidence (2026-10-03) records current F05 behaviour; decision pending. Honeycomb restage comment and evidence name; cell stays **Proposed**. Active Milestone **M017**, Active Slice **S03**.
+
 ## 2026-10-03 — Product: DET-01 seeded determinism (M017 S03)
 
 ### Product

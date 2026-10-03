@@ -144,3 +144,7 @@ Answered fail-closed by FIXG-01 (`fixg01_c01_sunset_inexpressible_as_horn`): two
 FIXG-01 remains **OPEN**. C01 sunset («пункт 15.1 действует до 01.01.2028») is not a Horn (`fixg01_c01_sunset_inexpressible_as_horn`; `RuleTerm::Const` is rule-ident only) and is not `valid_to`. Options: (a) application stamp in a pack, (b) a fifth core axis (conflicts with D013-1), (c) stop / out of wedge scope. **No option is chosen.** This blocks the legal pack, not M002. D013-1 is unchanged.
 
 `GraphFold::as_known_on` takes the greatest `Op::TtAnchor` with `wall` ≤ D, then TT-only `known_at` (ignores valid-time). `Runtime::as_known_on` delegates to that fold method.
+
+### Evidence (2026-10-03; KNOWN-04 / F05; Proposed)
+
+Characterization (`known04_horn_fires_when_premise_hidden_on_early_cut`): a two-premise Horn `relatedTo(A,C) :- relatedTo(A,B), relatedTo(B,C)` mints a derived support while remaining-premise lookup uses `TT = u64::MAX` (`horn_fires` → `search_prems(..., u64::MAX)`; `live_horns` uses `is_live_at(u64::MAX, vt)`). Fixture: `TtAnchor` 2014, then Assert A–B and B–C (`valid_from` 2010), then `TtAnchor` 2020. Observed today: derived `relatedTo(A,C)` is live on the current fold; `as_known_on(2014)` hides A–B and the derived row; `as_known_on(2020)` shows A–B. Decision pending whether Horn should honour the knowledge cut. D013-1 unchanged. Cell remains **Proposed**.
