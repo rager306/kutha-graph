@@ -207,6 +207,26 @@ fn main() {
             "ns",
         );
 
+        let mut append_extra = 0u64;
+        if factor == 1 {
+            append_extra = (n / 100).max(1);
+            let mut persister = store::Persister::attach(&rt, &dir).expect("persister attach");
+            let relation = rt.intern("relatedTo");
+            let object = rt.intern("o");
+            for i in planned..planned + append_extra {
+                let s = rt.intern(&format!("sapp{i}"));
+                emit_related(&mut rt, s, relation, object, None);
+            }
+            let t_ap = Instant::now();
+            persister.append(&rt).expect("persist append");
+            put(
+                &mut metrics,
+                "persist_append.n",
+                t_ap.elapsed().as_nanos(),
+                "ns",
+            );
+        }
+
         let t3 = Instant::now();
         let opened = store::open(&dir).expect("open");
         put(
@@ -246,8 +266,11 @@ fn main() {
             "ns",
         );
         let after = rt.fold().live_count(u64::MAX, 2010) as u64;
-        if after != planned - 1 {
-            eprintln!("after retract live_count {after} != {}", planned - 1);
+        if after != planned - 1 + append_extra {
+            eprintln!(
+                "after retract live_count {after} != {}",
+                planned - 1 + append_extra
+            );
             process::exit(1);
         }
 
@@ -293,7 +316,7 @@ fn main() {
         _ => put(&mut metrics, "bytes_per_fact", "n/a", "n/a"),
     }
 
-    let expected: [&str; 28] = [
+    let expected: [&str; 29] = [
         "as_of.2n",
         "as_of.4n",
         "as_of.n",
@@ -316,6 +339,7 @@ fn main() {
         "persist.2n",
         "persist.4n",
         "persist.n",
+        "persist_append.n",
         "replay_check.2n",
         "replay_check.4n",
         "replay_check.n",
