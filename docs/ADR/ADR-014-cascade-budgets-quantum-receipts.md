@@ -16,6 +16,10 @@ Outcomes are `Op::QuantumOutcome` log records (`Runtime::persist_outcome_event` 
 
 SNAP-01 closed by Phase 50: outcome and justification sidecars are tmp+`sync_all`+rename with parent-dir fsync; partial/prefix/unparseable sidecar = absent. COMMIT-01 (commit-marker vs `Op::QuantumOutcome`) remains S05. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
 
+### Evidence (2026-10-03, Phase 52 / M002 S04; Proposed)
+
+Between checkpoints, outcome and justification sidecars stay stale leases (Phase 50 prefix-absent on open). `Persister::checkpoint` / `close` refresh them through `replace_via_tmp`. Acknowledged-vs-unacknowledged is `append`'s `Ok`, not the sidecar. COMMIT-01 remains S05. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

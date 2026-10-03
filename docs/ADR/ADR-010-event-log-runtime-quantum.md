@@ -16,6 +16,10 @@ D-04 open policy (M017 S02): jsonl is SoT; WAL is a lease. Prefer WAL only when 
 
 RocksDB builds offline as an optional spike; no wiring. Feature `rocks-index-spike` on `kutha-runtime` (`rocksdb` 0.22.0, `librocksdb-sys` 0.16.0+8.10.0, `default-features = false`) holds an `EventId`→`events.jsonl` offset map in `rocks_spike`. Default workspace tests do not compile RocksDB. Not wired into `Runtime`, persist, fold, or hydrate. Status stays **Proposed**.
 
+### Evidence (2026-10-03, Phase 52 / M002 S04; Proposed)
+
+APPEND-01: `store::Persister` (`attach` / `append` / `checkpoint` / `close`) writes only events beyond the durable tail: JSONL `write_all` then WAL length+CRC32 frames, then one WAL `sync_data` (commit point). Prefix bytes of `events.jsonl` / `events.wal` are not rewritten. A torn jsonl last line without `\n` is dropped; a complete malformed line still fails `InvalidData`. Full `persist` remains the atomic rewrite. The O(N) persist rewrite defect is **closed for the append path**. Oracles: `m002_append01.rs`. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

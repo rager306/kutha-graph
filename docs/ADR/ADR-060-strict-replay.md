@@ -16,6 +16,10 @@ Shipped: lineage (`Op::Behavior.caused_by` must name an earlier event) and Horn 
 
 SNAP-01 closed by Phase 50: sidecar atomic replace + parent-dir fsync; open-path `check_tt_anchors_range` keyed on `snap.next_tt` (`replay_check` exact equality unchanged); fail-closed WAL header and non-`InvalidData` I/O. ADS receipts and `Unavailable` remain unshipped. This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
 
+### Evidence (2026-10-03, Phase 52 / M002 S04; Proposed)
+
+Open after incremental append tail-folds a stale snapshot (`replay_check` still exact). Torn jsonl tails without `\n` are dropped; complete malformed jsonl lines still fail `InvalidData`. ADS receipts and `Unavailable` remain unshipped. This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

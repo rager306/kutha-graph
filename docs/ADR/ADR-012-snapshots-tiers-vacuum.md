@@ -20,6 +20,10 @@ SNAP-01 closed by Phase 50: sidecars `terms.jsonl` / `quantum_outcomes.jsonl` / 
 
 RocksDB builds offline as an optional spike; no wiring. The ROCK-00 map is a droppable `EventId`→file-offset lease behind `rocks-index-spike`; jsonl remains SoT. Status stays **Proposed**.
 
+### Evidence (2026-10-03, Phase 52 / M002 S04; Proposed)
+
+APPEND-01: incremental `Persister` append keeps jsonl/WAL prefix bytes; one log `sync_data` per non-checkpoint quantum; `checkpoint` / `close` refresh snapshot and sidecars via `replace_via_tmp` (logs not rewritten). Full `persist` still rewrites the whole log. O(N) persist rewrite is **closed for the append path**. Oracles: `m002_append01.rs`. COMMIT-01 remains S05. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

@@ -247,3 +247,21 @@ Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p51-bench-target
 
 D-07 ≤10% vs `24e2306`: **met** (no median regression; HEAD was faster). The apparent speedup is inside host noise (base alone moved ~18%). Default ingest/`as_of` sources were not edited. `bytes_per_fact` stayed 17216–17269 B. RocksDB is not on the default bench compile path.
 
+## Phase 52 (M002 S04) — incremental framed append (2026-10-03)
+
+Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p52-head-target` for HEAD, `tmp/p52-base-target` for `bd5fa4b`). Binaries run from each worktree's `crates/kutha-runtime`. Interleaved `base, head` × 4 pairs. Host noise: base `ingest_plain.n` alone moved 106.5M–158.4M. Compare interleaved medians; do not treat a single pair as a gate.
+
+| run | bd5fa4b ingest_plain.n | HEAD ingest_plain.n | Δ ingest | bd5fa4b as_of.n | HEAD as_of.n | Δ as_of |
+|-----|-----------------------:|--------------------:|---------:|----------------:|-------------:|--------:|
+| 1 | 109823212 | 111289559 | +1.3% | 284942 | 298546 | +4.8% |
+| 2 | 158424111 | 118883628 | −25.0% | 278469 | 298668 | +7.3% |
+| 3 | 106469742 | 111237889 | +4.5% | 325617 | 302714 | −7.0% |
+| 4 | 129561191 | 112846280 | −12.9% | 409252 | 322081 | −21.3% |
+
+| metric | median bd5fa4b | median HEAD | Δ median |
+|--------|---------------:|------------:|---------:|
+| ingest_plain.n | 119692202 | 112067920 | −6.4% |
+| as_of.n | 305280 | 300691 | −1.5% |
+
+D-10 ≤10% vs `bd5fa4b`: **met** (no median regression). Ingest/`as_of` sources were not edited. New metric `persist_append.n` (after `persist.n`, append 1% more events via `Persister`): HEAD median persist.n 5940191937 ns vs persist_append.n 48907222 ns. Mechanical: `expected` key list gained `persist_append.n`; factor-1 `events_per_assert` now includes that 1% tail.
+

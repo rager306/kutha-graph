@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Product: incremental framed append (APPEND-01)
+
+### Product
+
+### Added
+
+- `store::Persister` (`attach` / `append` / `checkpoint` / `close`): jsonl lines then WAL frames, one log `sync_data` per non-checkpoint quantum; prefix bytes of `events.jsonl` / `events.wal` stay. Torn jsonl tails without a newline are dropped; a complete malformed line still fails `InvalidData`. `CHECKPOINT_EVERY` (4096) and `close` refresh snapshot and sidecars; full `persist` remains the atomic rewrite. Oracles: `crates/kutha-runtime/tests/m002_append01.rs`. Bench key `persist_append.n` (1% tail after `persist.n`).
+
+### Trajectory
+
+- ADR-010/012/014/060 dated Evidence 2026-10-03 Phase 52: O(N) persist rewrite closed for the append path. Cells stay **Proposed**. `honeycomb.yaml` restaged (map/delivery/capability unchanged). Bench vs `bd5fa4b` (interleaved medians): ingest_plain.n −6.4%, as_of.n −1.5% — D-10 met. HEAD persist.n median 5.94 s vs persist_append.n 48.9 ms.
+
 ## 2026-10-03 — Product: ROCK-00 RocksDB EventId-offset spike
 
 ### Product
