@@ -3,7 +3,7 @@
 //! Magic `KUTHASEG` v1; event frames reuse [`crate::wal::frame_bytes`]. Persist still
 //! writes the legacy jsonl+WAL layout in plan 54-01.
 
-use crate::store::{json_err, load_events_d04, replace_via_tmp};
+use crate::store::{json_err, replace_via_tmp};
 use crate::wal;
 use crc32fast::Hasher;
 use kutha_common::{Event, EventId};
@@ -239,8 +239,15 @@ pub fn write_test_segmented(
 /// Scan a well-formed (non-torn) segment that has no trailer yet and rewrite it sealed.
 #[doc(hidden)]
 pub fn rewrite_segment_with_seal_trailer(path: &Path) -> std::io::Result<()> {
-    let events = scan_events_no_trailer(path)?;
-    write_segment_file(path, &events, true)?;
+    let bytes = fs::read(path)?;
+    let scan = scan_segment(&bytes, false)?;
+    if scan.trailer.is_some() {
+        return Err(invalid("unexpected seal trailer while rewriting"));
+    }
+    if scan.consumed != bytes.len() {
+        return Err(invalid("trailing bytes in unsealed segment"));
+    }
+    write_segment_file(path, &scan.events, true)?;
     Ok(())
 }
 
@@ -253,8 +260,19 @@ fn u32_le(slice: &[u8]) -> std::io::Result<u32> {
     Ok(u32::from_le_bytes(buf))
 }
 
-fn scan_events_no_trailer(path: &Path) -> std::io::Result<Vec<Event>> {
-    let bytes = fs::read(path)?;
+fn trailer_payload(payload: &[u8]) -> Option<SealTrailer> {
+    let t: SealTrailer = serde_json::from_slice(payload).ok()?;
+    (t.k == "seal").then_some(t)
+}
+
+struct Scan {
+    events: Vec<Event>,
+    chain: [u8; 32],
+    trailer: Option<SealTrailer>,
+    consumed: usize,
+}
+
+fn parse_header(bytes: &[u8]) -> std::io::Result<()> {
     if bytes.len() < HEADER_LEN as usize {
         return Err(invalid("truncated segment header"));
     }
@@ -265,42 +283,178 @@ fn scan_events_no_trailer(path: &Path) -> std::io::Result<Vec<Event>> {
     if ver != VERSION {
         return Err(invalid("unsupported segment version"));
     }
+    Ok(())
+}
+
+fn scan_segment(bytes: &[u8], sealed: bool) -> std::io::Result<Scan> {
+    parse_header(bytes)?;
     let mut off = HEADER_LEN as usize;
-    let mut out = Vec::new();
-    while off + 8 <= bytes.len() {
+    let mut events = Vec::new();
+    let mut chain = [0u8; 32];
+    loop {
+        if off == bytes.len() {
+            if sealed {
+                return Err(invalid("truncated sealed segment (no trailer)"));
+            }
+            break;
+        }
+        if off + 8 > bytes.len() {
+            if sealed {
+                return Err(invalid("truncated sealed segment"));
+            }
+            break;
+        }
         let len = u32_le(&bytes[off..off + 4])? as usize;
+        let crc_stored = u32_le(&bytes[off + 4..off + 8])?;
         let end = off
             .checked_add(8)
             .and_then(|x| x.checked_add(len))
             .ok_or_else(|| invalid("segment frame overflow"))?;
         if end > bytes.len() {
-            return Err(invalid("truncated segment frame"));
+            if sealed {
+                return Err(invalid("truncated sealed segment"));
+            }
+            break;
         }
         let payload = &bytes[off + 8..end];
         let mut hasher = Hasher::new();
         hasher.update(payload);
-        let crc_stored = u32_le(&bytes[off + 4..off + 8])?;
         if hasher.finalize() != crc_stored {
-            return Err(invalid("segment frame CRC mismatch"));
+            if sealed {
+                return Err(invalid("sealed frame CRC mismatch"));
+            }
+            break;
         }
-        if trailer_payload(payload).is_some() {
-            return Err(invalid("unexpected seal trailer while rewriting"));
+        let frame = &bytes[off..end];
+        if let Some(t) = trailer_payload(payload) {
+            if sealed && end != bytes.len() {
+                return Err(invalid("extra bytes after sealed trailer"));
+            }
+            return Ok(Scan {
+                events,
+                chain,
+                trailer: Some(t),
+                consumed: end,
+            });
         }
-        out.push(serde_json::from_slice(payload).map_err(json_err)?);
-        off = end;
+        match serde_json::from_slice::<Event>(payload) {
+            Ok(e) => {
+                chain = chain_absorb(chain, frame);
+                events.push(e);
+                off = end;
+            }
+            Err(_) => {
+                if sealed {
+                    return Err(invalid("sealed frame is not an Event"));
+                }
+                break;
+            }
+        }
     }
-    if off != bytes.len() {
-        return Err(invalid("trailing bytes in unsealed segment"));
-    }
-    Ok(out)
+    Ok(Scan {
+        events,
+        chain,
+        trailer: None,
+        consumed: off,
+    })
 }
 
-fn trailer_payload(payload: &[u8]) -> Option<SealTrailer> {
-    let t: SealTrailer = serde_json::from_slice(payload).ok()?;
-    (t.k == "seal").then_some(t)
+fn parse_seg_seq(name: &str) -> std::io::Result<u32> {
+    let rest = name
+        .strip_prefix("seg-")
+        .and_then(|s| s.strip_suffix(".log"))
+        .ok_or_else(|| invalid(format!("invalid segment name {name}")))?;
+    if rest.len() != 8 || !rest.as_bytes().iter().all(|b| b.is_ascii_digit()) {
+        return Err(invalid(format!("invalid segment name {name}")));
+    }
+    rest.parse::<u32>()
+        .map_err(|_| invalid(format!("invalid segment name {name}")))
 }
 
-/// RED stub: a present manifest does not change the load. Jsonl/WAL remain SoT.
+fn read_manifest(dir: &Path) -> std::io::Result<Manifest> {
+    let f = File::open(dir.join(MANIFEST_REL))?;
+    let m: Manifest = serde_json::from_reader(f).map_err(json_err)?;
+    if m.v != 1 {
+        return Err(invalid("unsupported manifest version"));
+    }
+    Ok(m)
+}
+
+fn verify_sealed(path: &Path, meta: &SealedMeta) -> std::io::Result<Vec<Event>> {
+    if !path.exists() {
+        return Err(invalid(format!("missing sealed segment {}", meta.name)));
+    }
+    let bytes = fs::read(path)?;
+    let file_len = bytes.len() as u64;
+    let scan = scan_segment(&bytes, true)?;
+    let t = scan
+        .trailer
+        .ok_or_else(|| invalid("truncated sealed segment (no trailer)"))?;
+    if t.n != scan.events.len() as u64 {
+        return Err(invalid("sealed trailer count mismatch"));
+    }
+    let first = scan
+        .events
+        .first()
+        .ok_or_else(|| invalid("sealed segment must contain at least one event"))?
+        .id;
+    let last = scan
+        .events
+        .last()
+        .ok_or_else(|| invalid("sealed segment must contain at least one event"))?
+        .id;
+    if t.first != first || t.last != last {
+        return Err(invalid("sealed trailer first/last mismatch"));
+    }
+    if t.bytes != file_len {
+        return Err(invalid("sealed trailer bytes mismatch"));
+    }
+    let chain = hex32(scan.chain);
+    if t.chain != chain {
+        return Err(invalid("sealed hash chain mismatch"));
+    }
+    if meta.first != t.first
+        || meta.last != t.last
+        || meta.count != t.n
+        || meta.bytes != file_len
+        || meta.chain != t.chain
+    {
+        return Err(invalid(format!(
+            "manifest disagrees with sealed segment {}",
+            meta.name
+        )));
+    }
+    Ok(scan.events)
+}
+
+fn read_active(path: &Path) -> std::io::Result<Vec<Event>> {
+    if !path.exists() {
+        return Err(invalid("missing active segment"));
+    }
+    let bytes = fs::read(path)?;
+    let scan = scan_segment(&bytes, false)?;
+    Ok(scan.events)
+}
+
+/// Load events from `manifest.json` + named segments. Never reads jsonl/WAL.
 pub(crate) fn load_events(dir: &Path) -> std::io::Result<Vec<Event>> {
-    load_events_d04(dir)
+    let manifest = read_manifest(dir)?;
+    let mut prev_seq = 0u32;
+    let mut all = Vec::new();
+    for entry in &manifest.sealed {
+        let seq = parse_seg_seq(&entry.name)?;
+        if seq <= prev_seq {
+            return Err(invalid("sealed segments out of order"));
+        }
+        prev_seq = seq;
+        let evs = verify_sealed(&dir.join(&entry.name), entry)?;
+        all.extend(evs);
+    }
+    let active_seq = parse_seg_seq(&manifest.active)?;
+    if !manifest.sealed.is_empty() && active_seq <= prev_seq {
+        return Err(invalid("sealed segments out of order"));
+    }
+    let active_evs = read_active(&dir.join(&manifest.active))?;
+    all.extend(active_evs);
+    Ok(all)
 }
