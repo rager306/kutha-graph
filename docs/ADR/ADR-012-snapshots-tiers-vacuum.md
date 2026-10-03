@@ -40,6 +40,10 @@ Segmented checkpoint refreshes snapshot + sidecars only (no jsonl rewrite). Poin
 
 `migrate` / `export_jsonl` do not change snapshot hydrate. Jsonl after migrate is an unread export. Open stitches the SHA-256 chain across sealed files and the active header (H0 only for the first segment). Pointer: ADR-010 2026-10-04 Phase 54-03. Status stays **Proposed**.
 
+### Evidence (2026-10-04, Phase 55 / M002 S07; Proposed)
+
+ROCK-01 RocksDB is a droppable locator lease, not a snapshot or SoT. Layout, rebuild-on-stale-tip, and "never stores payloads" are in ADR-010 Evidence 2026-10-04 Phase 55. `store::open` / hydrate / `Persister` still ignore Rocks. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

@@ -40,6 +40,20 @@ Host 2026-10-03. Isolated `CARGO_TARGET_DIR=tmp/p51-target`. Feature `rocks-inde
 
 What this spike does **not** prove: Runtime/store/fold/hydrate wiring, incremental append, segments/manifest/hash chain, `delivery_key` index, payloads or term meanings in Rocks, Cypher, HNSW, or that Rocks is SoT.
 
+## Phase 55 index timings (ROCK-01)
+
+Host 2026-10-04. Release `cargo test -p kutha-runtime --offline --features rocks-index` (default `CARGO_TARGET_DIR`). Segmented store from the real writer: **10000** `relatedTo` asserts → **30025** encoded events. Feature `rocks-index` (`SegmentIndex::build` then 10000 `get_event` of the midpoint id).
+
+| item | value |
+|------|-------|
+| encoded events | 30025 |
+| index build | 410442137 ns (~410.4 ms) |
+| lookup mean (10k gets) | 12819 ns (~12.8 µs) |
+| lookup total (10k) | 128196038 ns |
+| layout | locators/ids only (`e:` / `d:` / `m:v` / `m:tip`); not wired into open/persist |
+
+Cold `librocksdb-sys` for this release binary: 5 m 13 s `Finished` (same order as Phase 51 ~5.5 min). Default `cargo tree -p kutha-runtime --offline` still has no rocksdb.
+
 ## Non-goals
 
 - Do not start M002 from this note alone.

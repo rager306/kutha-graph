@@ -20,6 +20,10 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Optional `kutha-runtime` feature `rocks-index` (same `rocksdb` optional dep, `default-features = false`). `SegmentIndex` stores EventId locators (`e:` seq+offset+len) and delivery_key winners (`d:`) over the committed segmented prefix, plus `m:v` / `m:tip`. Deleting the Rocks directory changes no log answer. Legacy dirs fail with `InvalidData` "run store::migrate first". Not wired into `Runtime`, `store::open`, `Persister`, fold, or hydrate. Oracles: `crates/kutha-runtime/tests/m002_rock01.rs`. `rocks-index-spike` / ROCK-00 jsonl offsets stay.
 
+### Trajectory
+
+- ADR-010/012 Evidence 2026-10-04 Phase 55: ROCK-01 locator lease; cells stay **Proposed**. `honeycomb.yaml` restaged (map/delivery/capability unchanged). Bench vs `0245bbd` (2 idle interleaved pairs): ingest_plain.n −17.8%, as_of.n −8.7%, open.n −0.2% — D-10 met. 10k-assert segmented index build ~410.4 ms; midpoint `get_event` mean ~12.8 µs. Residuals: not wired into Runtime, single reader/writer, rebuild O(N), RocksDB cold compile ~5.5 min.
+
 ## 2026-10-04 — Product: migrate, jsonl export, and sealed tamper (SEG-01 / 54-03)
 
 ### Product

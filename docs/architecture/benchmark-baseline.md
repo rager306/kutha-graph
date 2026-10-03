@@ -380,5 +380,22 @@ Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p54-r2-head-targ
 
 D-09 ≤10% vs `424bda6` on ingest/`as_of`/`open.n`: **met**. Pair 2 base ingest 152M vs pair 1 110M is host noise. Worktrees and target dirs removed after the run.
 
+## Phase 55 (M002 S07) — droppable Rocks locator lease (2026-10-04)
+
+Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p55-head-target` for HEAD `a5b244c`, `tmp/p55-base-target` for `0245bbd`). Binaries run from each worktree's `crates/kutha-runtime`. Interleaved `base, head` × 2 pairs. Default paths unchanged (feature-gated `rocks-index` only). First pair-set ran during a parallel `librocksdb-sys` release compile and was discarded. Numbers below are the idle-host re-run. Compare interleaved medians (two values: arithmetic mean of the pair).
+
+| run | 0245bbd ingest_plain.n | HEAD ingest_plain.n | Δ ingest | 0245bbd as_of.n | HEAD as_of.n | Δ as_of |
+|-----|-----------------------:|--------------------:|---------:|----------------:|-------------:|--------:|
+| 1 | 143956965 | 114409735 | −20.5% | 314757 | 231110 | −26.6% |
+| 2 | 128122974 | 109185233 | −14.8% | 247381 | 282087 | +14.0% |
+
+| metric | median 0245bbd | median HEAD | Δ median |
+|--------|---------------:|------------:|---------:|
+| ingest_plain.n | 136039970 | 111797484 | −17.8% |
+| as_of.n | 281069 | 256599 | −8.7% |
+| open.n | 2710537108 | 2705649871 | −0.2% |
+
+D-10 ≤10% regression vs `0245bbd` on ingest/`as_of`/`open.n`: **met** (HEAD not slower on medians). Pair 2 as_of +14% is host noise (HEAD 282k vs pair 1 HEAD 231k). Worktrees and target dirs removed after the run.
+
 
 
