@@ -1,7 +1,7 @@
 //! Sealed segments + manifest (M002 S06 / SEG-01). Physical encoding of the event log.
 //!
-//! Magic `KUTHASEG` v1; event frames reuse [`crate::wal::frame_bytes`]. Persist still
-//! writes the legacy jsonl+WAL layout in plan 54-01.
+//! Magic `KUTHASEG` v1; event frames reuse [`crate::wal::frame_bytes`].
+//! Empty/segmented persist writes this layout in plan 54-02; legacy dirs stay jsonl+WAL.
 
 use crate::store::{json_err, replace_via_tmp};
 use crate::wal;
@@ -9,6 +9,7 @@ use crc32fast::Hasher;
 use kutha_common::{Event, EventId};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+use std::cell::Cell;
 use std::fs::{self, File};
 use std::io::Write;
 use std::path::Path;
@@ -20,6 +21,39 @@ pub(crate) const HEADER_LEN: u64 = 12;
 #[doc(hidden)]
 pub const MANIFEST_REL: &str = "manifest.json";
 const MANIFEST_TMP: &str = "manifest.json.tmp";
+
+/// Rollover threshold: sealed file size including header + frames (trailer extra is allowed).
+pub const SEGMENT_MAX_BYTES: u64 = 64 * 1024 * 1024;
+/// Rollover threshold: event frames in the active segment.
+pub const SEGMENT_MAX_EVENTS: usize = 65536;
+
+thread_local! {
+    static TEST_MAX_BYTES: Cell<Option<u64>> = const { Cell::new(None) };
+    static TEST_MAX_EVENTS: Cell<Option<usize>> = const { Cell::new(None) };
+}
+
+/// Test seam: lower rollover thresholds for this thread. `None` restores the pub const.
+#[doc(hidden)]
+pub fn set_test_segment_limits(max_bytes: Option<u64>, max_events: Option<usize>) {
+    TEST_MAX_BYTES.with(|c| c.set(max_bytes));
+    TEST_MAX_EVENTS.with(|c| c.set(max_events));
+}
+
+/// Clear the rollover test seam.
+#[doc(hidden)]
+pub fn reset_test_segment_limits() {
+    set_test_segment_limits(None, None);
+}
+
+#[allow(dead_code)] // persist_log / Persister rollover in 54-02 GREEN
+pub(crate) fn effective_max_bytes() -> u64 {
+    TEST_MAX_BYTES.with(|c| c.get()).unwrap_or(SEGMENT_MAX_BYTES)
+}
+
+#[allow(dead_code)] // persist_log / Persister rollover in 54-02 GREEN
+pub(crate) fn effective_max_events() -> usize {
+    TEST_MAX_EVENTS.with(|c| c.get()).unwrap_or(SEGMENT_MAX_EVENTS)
+}
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SealedMeta {

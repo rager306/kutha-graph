@@ -32,6 +32,9 @@ pub enum AppendStep {
     CheckpointSnapshot,
     CheckpointOutcomes,
     CheckpointJustifications,
+    RolloverTrailer,
+    RolloverNewHeader,
+    RolloverManifest,
 }
 
 /// Incremental framed append after a full [`crate::store::persist`] or [`crate::store::open`] (D-02).

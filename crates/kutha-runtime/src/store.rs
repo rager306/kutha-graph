@@ -88,9 +88,28 @@ fn after_persist_step(stop_after: Option<PersistStep>, step: PersistStep) -> std
 
 /// File-backed semantic log + snapshot lease. WAL file is durability cousin, not Rocks-as-SoT.
 /// `terms.jsonl` is a derived intern picture. Durable term meanings ride `Op::Define` (persist prefix + live intern, M010 S02–S03).
-/// Persist order: WAL, jsonl, terms, snapshot, outcomes, justifications.
+///
+/// Layout (54-02): an **empty** dir (no `manifest.json`, no `events.jsonl`, no `events.wal`)
+/// and an already-segmented dir (manifest present) write `KUTHASEG` + manifest. A **legacy**
+/// dir (`events.jsonl` or `events.wal` present, no manifest) keeps jsonl+WAL. Persist never
+/// auto-migrates. Pin tests that inspect jsonl tails with [`ensure_legacy_dir`].
+///
+/// Persist order (legacy): WAL, jsonl, terms, snapshot, outcomes, justifications.
+/// Persist order (segmented): segments+manifest, terms, snapshot, outcomes, justifications.
 pub fn persist(runtime: &Runtime, dir: &Path) -> std::io::Result<()> {
     persist_until(runtime, dir, None)
+}
+
+/// Touch `events.jsonl` so [`persist`] keeps the legacy jsonl+WAL writer.
+/// Empty-dir detection is: no manifest, no `events.jsonl`, no `events.wal`.
+#[doc(hidden)]
+pub fn ensure_legacy_dir(dir: &Path) -> std::io::Result<()> {
+    fs::create_dir_all(dir)?;
+    let jsonl = dir.join(EVENTS_JSONL);
+    if !jsonl.exists() {
+        File::create(&jsonl)?;
+    }
+    Ok(())
 }
 
 /// Test seam (D-07): run `persist` and return an injected I/O error after `stop_after` completes.
@@ -485,6 +504,18 @@ fn sidecar_or_stale_prefix<T: PartialEq>(
     }
 }
 
+/// Encoded log (Defines then graph events) that [`persist`] writes.
+#[doc(hidden)]
+pub fn encoded_events(runtime: &Runtime) -> Vec<Event> {
+    encoded_log(runtime)
+}
+
+/// Framed event bytes (`len_le32 + crc32 + JSON`) for test tampers.
+#[doc(hidden)]
+pub fn event_frame_bytes(event: &Event) -> std::io::Result<Vec<u8>> {
+    wal::frame_bytes(event)
+}
+
 pub(crate) fn encoded_log(runtime: &Runtime) -> Vec<Event> {
     let mut out: Vec<Event> = runtime
         .dictionary()
@@ -604,5 +635,6 @@ pub use crate::persist_append::{
 
 #[doc(hidden)]
 pub use crate::segment::{
-    rewrite_segment_with_seal_trailer, write_test_segmented, Manifest, MANIFEST_REL,
+    reset_test_segment_limits, rewrite_segment_with_seal_trailer, set_test_segment_limits,
+    write_test_segmented, Manifest, MANIFEST_REL, SEGMENT_MAX_BYTES, SEGMENT_MAX_EVENTS,
 };

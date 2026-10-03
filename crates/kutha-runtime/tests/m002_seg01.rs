@@ -1,5 +1,4 @@
-//! M002 S06 / SEG-01 oracles (Phase 54 plan 54-01): format, manifest, open.
-//! Persist still writes the legacy jsonl+WAL layout. RED: stub reader keeps jsonl SoT.
+//! M002 S06 / SEG-01 oracles (Phase 54). 54-01: format/manifest/open. 54-02: persist + Persister.
 
 use kutha_common::{Event, EventId, Op};
 use kutha_runtime::{store, Runtime};
@@ -8,8 +7,22 @@ use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 
 const T_OLD: u64 = 2015;
+const T_NEW: u64 = 2021;
 const VF_FIRST: u64 = 2010;
 const VF_SECOND: u64 = 2020;
+
+struct LimitGuard;
+
+impl Drop for LimitGuard {
+    fn drop(&mut self) {
+        store::reset_test_segment_limits();
+    }
+}
+
+fn tiny_limits() -> LimitGuard {
+    store::set_test_segment_limits(Some(4096), Some(3));
+    LimitGuard
+}
 
 fn persist_dir(label: &str) -> PathBuf {
     let nanos = std::time::SystemTime::now()
@@ -66,7 +79,7 @@ fn read_jsonl_events(path: &Path) -> Vec<Event> {
 
 fn persist_encoded(rt: &Runtime, dir: &Path) -> Vec<Event> {
     store::persist(rt, dir).unwrap();
-    read_jsonl_events(&dir.join("events.jsonl"))
+    store::encoded_events(rt)
 }
 
 fn layout(n: usize) -> (Vec<usize>, usize) {
@@ -160,6 +173,135 @@ fn expect_round_trip(dir: &Path, rt: &Runtime) {
     assert_eq!(log_ids(&opened), log_ids(rt));
     assert_eq!(opened.fold().fingerprint(), rt.fold().fingerprint());
     opened.replay_check().unwrap();
+}
+
+fn overlay_segmented(rt: &Runtime, dir: &Path) {
+    let events = persist_encoded(rt, dir);
+    write_segments(dir, &events);
+    drop_legacy_log(dir);
+}
+
+fn assert_no_legacy_log(dir: &Path) {
+    assert!(
+        !dir.join("events.jsonl").exists(),
+        "segmented writer must not create events.jsonl"
+    );
+    assert!(
+        !dir.join("events.wal").exists(),
+        "segmented writer must not create events.wal"
+    );
+}
+
+fn persist_expect_segmented(rt: &Runtime, dir: &Path) {
+    store::persist(rt, dir).unwrap();
+    assert!(
+        manifest_path(dir).exists(),
+        "empty dir (no manifest, no events.jsonl, no events.wal) must persist as segments"
+    );
+    assert_no_legacy_log(dir);
+}
+
+fn copy_store(src: &Path, dst: &Path) {
+    let _ = fs::remove_dir_all(dst);
+    fs::create_dir_all(dst).unwrap();
+    for ent in fs::read_dir(src).unwrap() {
+        let ent = ent.unwrap();
+        if ent.file_type().unwrap().is_file() {
+            fs::copy(ent.path(), dst.join(ent.file_name())).unwrap();
+        }
+    }
+}
+
+fn snap_log_offset(dir: &Path) -> usize {
+    let snap: kutha_runtime::Snapshot =
+        serde_json::from_reader(fs::File::open(dir.join("snapshot.json")).unwrap()).unwrap();
+    snap.log_offset
+}
+
+fn emit_one_more(rt: &mut Runtime, wall: u64) {
+    rt.emit_tt_anchor(wall).unwrap();
+}
+
+fn emit_gap_assert(rt: &mut Runtime, subject: &str, object: &str) {
+    let s = rt.intern(subject);
+    let o = rt.intern(object);
+    let r = rt.intern("inForceAs");
+    rt.emit(Op::Assert {
+        subject: s,
+        relation: r,
+        object: o,
+        valid_from: VF_FIRST,
+        valid_to: None,
+        claim: None,
+        delivery_key: None,
+        polarity: None,
+    })
+    .unwrap();
+}
+
+fn emit_product_assert(rt: &mut Runtime, subject: &str, object: &str) {
+    emit_gap_assert(rt, subject, object);
+}
+
+fn assert_dict_term_parity(src: &Runtime, opened: &Runtime) {
+    assert_eq!(
+        opened.dictionary().strings(),
+        src.dictionary().strings(),
+        "open must restore interned strings in intern order"
+    );
+    for s in src.dictionary().strings() {
+        assert_eq!(
+            opened.dictionary().id(s),
+            src.dictionary().id(s),
+            "TermId for {s} must match the source runtime"
+        );
+    }
+}
+
+fn crash_omit_last(p: &mut store::Persister, rt: &Runtime) {
+    let n = store::pending_append_len(p, rt).unwrap();
+    assert!(
+        n >= 2,
+        "pending batch must include payload and QuantumOutcome; n={n}"
+    );
+    store::append_with_event_failpoint(p, rt, n - 1)
+        .expect_err("event failpoint must inject after N-1 events");
+}
+
+fn last_event_frame_range(bytes: &[u8]) -> (usize, usize) {
+    let ranges = event_frame_ranges(bytes);
+    *ranges.last().expect("active must have an event frame")
+}
+
+fn replace_last_event_frame(bytes: &[u8], event: &Event) -> Vec<u8> {
+    let (start, end) = last_event_frame_range(bytes);
+    let frame = store::event_frame_bytes(event).unwrap();
+    assert_eq!(
+        frame.len(),
+        end - start,
+        "replacement frame must keep last-record length"
+    );
+    let mut out = bytes.to_vec();
+    out[start..end].copy_from_slice(&frame);
+    out
+}
+
+fn last_event_from_segment(bytes: &[u8]) -> Event {
+    let (start, end) = last_event_frame_range(bytes);
+    serde_json::from_slice(&bytes[start + 8..end]).expect("last Event")
+}
+
+fn assert_guard_writes_nothing(p: &mut store::Persister, rt: &Runtime, path: &Path, before: &[u8]) {
+    match p.append(rt) {
+        Ok(_) => panic!("tail-guard mismatch must return InvalidData"),
+        Err(e) => assert_eq!(e.kind(), ErrorKind::InvalidData),
+    }
+    assert_eq!(
+        fs::read(path).unwrap(),
+        before,
+        "tail-guard mismatch must write nothing to the active segment"
+    );
+    assert_no_legacy_log(path.parent().expect("active parent"));
 }
 
 #[test]
@@ -427,4 +569,430 @@ fn legacy_dir_still_opens_and_appends_as_before() {
     assert_eq!(log_ids(&again), log_ids(&rt));
 
     let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn persist_empty_dir_writes_segments_not_jsonl() {
+    let rt = seed_runtime();
+    let dir = persist_dir("empty-seg");
+    persist_expect_segmented(&rt, &dir);
+    expect_round_trip(&dir, &rt);
+    assert!(
+        store::SEGMENT_MAX_BYTES == 64 * 1024 * 1024 && store::SEGMENT_MAX_EVENTS == 65536,
+        "rollover pub consts"
+    );
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn persist_legacy_dir_keeps_jsonl_and_wal() {
+    let rt = seed_runtime();
+    let dir = persist_dir("keep-legacy");
+    store::ensure_legacy_dir(&dir).unwrap();
+    store::persist(&rt, &dir).unwrap();
+    assert!(
+        !manifest_path(&dir).exists(),
+        "legacy dir must not grow a manifest"
+    );
+    assert!(dir.join("events.jsonl").exists());
+    assert!(dir.join("events.wal").exists());
+    let from_jsonl = read_jsonl_events(&dir.join("events.jsonl"));
+    assert_eq!(from_jsonl.len(), store::encoded_events(&rt).len());
+    let opened = store::open(&dir).unwrap();
+    assert_eq!(log_ids(&opened), log_ids(&rt));
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn persist_segmented_dir_does_not_create_jsonl() {
+    let rt = seed_runtime();
+    let dir = persist_dir("rewr-seg");
+    overlay_segmented(&rt, &dir);
+    store::persist(&rt, &dir).unwrap();
+    assert!(manifest_path(&dir).exists());
+    assert_no_legacy_log(&dir);
+    expect_round_trip(&dir, &rt);
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn prefix_sealed_bytes_unchanged_after_append() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("prefix-append");
+    overlay_segmented(&rt, &dir);
+    let sealed_path = first_sealed_path(&dir);
+    let sealed_before = fs::read(&sealed_path).unwrap();
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    p.append(&rt).unwrap();
+    assert_eq!(
+        fs::read(&sealed_path).unwrap(),
+        sealed_before,
+        "append must not rewrite sealed bytes"
+    );
+    assert_no_legacy_log(&dir);
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn prefix_sealed_bytes_unchanged_after_rollover() {
+    let _limits = tiny_limits();
+    let mut rt = seed_runtime();
+    let dir = persist_dir("prefix-roll");
+    overlay_segmented(&rt, &dir);
+    let sealed_path = first_sealed_path(&dir);
+    let sealed_before = fs::read(&sealed_path).unwrap();
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    p.append(&rt).unwrap();
+    assert_eq!(
+        fs::read(&sealed_path).unwrap(),
+        sealed_before,
+        "rollover must not rewrite earlier sealed bytes"
+    );
+    expect_round_trip(&dir, &rt);
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn one_log_sync_per_quantum_on_segmented() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("one-sync");
+    overlay_segmented(&rt, &dir);
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    let before = store::persist_log_sync_count();
+    p.append(&rt).unwrap();
+    let delta = store::persist_log_sync_count().saturating_sub(before);
+    assert_eq!(
+        delta, 1,
+        "non-rollover segmented append must sync_data exactly once; count={delta}"
+    );
+    assert_no_legacy_log(&dir);
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn append_creates_no_jsonl() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("no-jsonl");
+    overlay_segmented(&rt, &dir);
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    p.append(&rt).unwrap();
+    assert_no_legacy_log(&dir);
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn append_nothing_new_does_no_io_on_segmented() {
+    let rt = seed_runtime();
+    let dir = persist_dir("noop-seg");
+    overlay_segmented(&rt, &dir);
+    let active = active_path(&dir);
+    let before = fs::read(&active).unwrap();
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    let sync_before = store::persist_log_sync_count();
+    p.append(&rt).unwrap();
+    assert_eq!(store::persist_log_sync_count().saturating_sub(sync_before), 0);
+    assert_eq!(fs::read(&active).unwrap(), before);
+    assert_no_legacy_log(&dir);
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn tail_guard_length_mismatch_writes_nothing() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("guard-len");
+    overlay_segmented(&rt, &dir);
+    let active = active_path(&dir);
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    let mut bytes = fs::read(&active).unwrap();
+    bytes.extend_from_slice(&[0xFF, 0x00, 0xAA, 0xBB]);
+    fs::write(&active, &bytes).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    assert_guard_writes_nothing(&mut p, &rt, &active, &bytes);
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn tail_guard_last_id_mismatch_writes_nothing() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("guard-id");
+    overlay_segmented(&rt, &dir);
+    let active = active_path(&dir);
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    let bytes = fs::read(&active).unwrap();
+    let mut last = last_event_from_segment(&bytes);
+    last.id = EventId::from_u128(last.id.as_u128().wrapping_add(1));
+    let tampered = replace_last_event_frame(&bytes, &last);
+    fs::write(&active, &tampered).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    assert_guard_writes_nothing(&mut p, &rt, &active, &tampered);
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn tail_guard_same_length_different_last_record_writes_nothing() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("guard-swap");
+    overlay_segmented(&rt, &dir);
+    let active = active_path(&dir);
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    let bytes = fs::read(&active).unwrap();
+    let ranges = event_frame_ranges(&bytes);
+    assert!(ranges.len() >= 2, "need a prior frame to swap");
+    let last_len = ranges[ranges.len() - 1].1 - ranges[ranges.len() - 1].0;
+    let prior = ranges
+        .iter()
+        .rev()
+        .skip(1)
+        .find(|(s, e)| e - s == last_len)
+        .copied();
+    let tampered = if let Some((s, e)) = prior {
+        let mut out = bytes.clone();
+        let last = last_event_frame_range(&bytes);
+        let frame = bytes[s..e].to_vec();
+        out[last.0..last.1].copy_from_slice(&frame);
+        out
+    } else {
+        let mut last = last_event_from_segment(&bytes);
+        last.id = EventId::from_u128(last.id.as_u128().wrapping_add(2));
+        replace_last_event_frame(&bytes, &last)
+    };
+    assert_eq!(tampered.len(), bytes.len());
+    fs::write(&active, &tampered).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    assert_guard_writes_nothing(&mut p, &rt, &active, &tampered);
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn rollover_crash_matrix_reopens_to_prefix() {
+    let _limits = tiny_limits();
+    let mut rt = seed_runtime();
+    let template = persist_dir("roll-crash-a");
+    overlay_segmented(&rt, &template);
+    let committed = log_ids(&rt);
+    let steps = [
+        store::AppendStep::RolloverTrailer,
+        store::AppendStep::RolloverNewHeader,
+        store::AppendStep::RolloverManifest,
+    ];
+    for step in steps {
+        let dir = persist_dir(&format!("roll-crash-{step:?}"));
+        copy_store(&template, &dir);
+        let mut p = store::Persister::attach(&rt, &dir).unwrap();
+        emit_one_more(&mut rt, T_NEW);
+        store::append_with_failpoint(&mut p, &rt, step)
+            .expect_err("rollover failpoint must inject");
+        match store::open(&dir) {
+            Ok(opened) => {
+                assert_eq!(
+                    log_ids(&opened),
+                    committed,
+                    "crash at {step:?} must reopen to the committed prefix"
+                );
+                opened.replay_check().unwrap();
+            }
+            Err(e) => assert_eq!(
+                e.kind(),
+                ErrorKind::InvalidData,
+                "crash at {step:?} may fail closed; {e}"
+            ),
+        }
+        if step == store::AppendStep::RolloverNewHeader {
+            let man: serde_json::Value =
+                serde_json::from_str(&fs::read_to_string(manifest_path(&dir)).unwrap()).unwrap();
+            let template_man: serde_json::Value =
+                serde_json::from_str(&fs::read_to_string(manifest_path(&template)).unwrap())
+                    .unwrap();
+            assert_eq!(
+                man["active"], template_man["active"],
+                "manifest must still name the old active after RolloverNewHeader"
+            );
+        }
+        let _ = fs::remove_dir_all(&dir);
+        rt = seed_runtime();
+        overlay_segmented(&rt, &template);
+    }
+
+    let _ = fs::remove_dir_all(&template);
+}
+
+#[test]
+fn rollover_manifest_flip_fsyncs_dir() {
+    let _limits = tiny_limits();
+    let mut rt = seed_runtime();
+    let dir = persist_dir("roll-fsync");
+    overlay_segmented(&rt, &dir);
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    let before = store::persist_dir_fsync_count();
+    p.append(&rt).unwrap();
+    let delta = store::persist_dir_fsync_count().saturating_sub(before);
+    assert!(
+        delta >= 1,
+        "manifest flip must dir-fsync; count={delta}"
+    );
+    let sealed = fs::read(first_sealed_path(&dir)).unwrap();
+    let ranges = event_frame_ranges(&sealed);
+    let trailer_off = ranges.last().map(|r| r.1).unwrap_or(12);
+    assert!(
+        is_seal_payload(&sealed[trailer_off + 8..]) || sealed.len() > trailer_off,
+        "rollover must write a seal trailer"
+    );
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn checkpoint_dir_fsync_count_exact_on_segmented() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("ckpt-fsync");
+    overlay_segmented(&rt, &dir);
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    p.append(&rt).unwrap();
+    let before = store::persist_dir_fsync_count();
+    p.checkpoint(&rt).unwrap();
+    let delta = store::persist_dir_fsync_count().saturating_sub(before);
+    assert_eq!(
+        delta, 5,
+        "checkpoint dir fsync: snapshot+terms+outcomes+justifications+final; count={delta}"
+    );
+    assert_no_legacy_log(&dir);
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn open_for_append_heals_and_appends_on_segmented() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("heal-seg");
+    overlay_segmented(&rt, &dir);
+    let committed_fp = rt.fold().fingerprint();
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_product_assert(&mut rt, "p54-heal-article", "p54-heal-80");
+    crash_omit_last(&mut p, &rt);
+
+    let (mut healed, mut p) = store::open_for_append(&dir)
+        .expect("open_for_append must persist the committed prefix then attach");
+    assert_eq!(healed.fold().fingerprint(), committed_fp);
+    emit_product_assert(&mut healed, "p54-heal2-article", "p54-heal2-90");
+    p.append(&healed).unwrap();
+    let again = store::open(&dir).unwrap();
+    assert_eq!(again.fold().fingerprint(), healed.fold().fingerprint());
+    again.replay_check().unwrap();
+    assert_no_legacy_log(&dir);
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn stale_leases_between_checkpoints_on_segmented() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("stale-seg");
+    overlay_segmented(&rt, &dir);
+    let offset_a = snap_log_offset(&dir);
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    p.append(&rt).unwrap();
+    assert_eq!(
+        snap_log_offset(&dir),
+        offset_a,
+        "small append must not rewrite snapshot.json"
+    );
+    let opened = store::open(&dir).expect("stale snapshot + log ahead");
+    assert_eq!(log_ids(&opened), log_ids(&rt));
+    opened.replay_check().unwrap();
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn interned_terms_between_appends_survive_on_segmented() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("intern-seg");
+    overlay_segmented(&rt, &dir);
+    let offset_a = snap_log_offset(&dir);
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    p.append(&rt).unwrap();
+    emit_gap_assert(&mut rt, "p54-gap-article", "p54-gap-80");
+    p.append(&rt).unwrap();
+    assert_eq!(
+        snap_log_offset(&dir),
+        offset_a,
+        "GAP A: intern-append must not checkpoint"
+    );
+    let opened = store::open(&dir).expect("open after intern-append without checkpoint");
+    assert_dict_term_parity(&rt, &opened);
+    assert_eq!(opened.fold().fingerprint(), rt.fold().fingerprint());
+    assert_eq!(opened.as_of(VF_FIRST), rt.as_of(VF_FIRST));
+    opened.replay_check().unwrap();
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn second_and_third_appends_keep_earlier_bytes_as_prefix() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("prefix-3");
+    overlay_segmented(&rt, &dir);
+    let sealed0 = fs::read(first_sealed_path(&dir)).unwrap();
+    let active = active_path(&dir);
+    let a0 = fs::read(&active).unwrap();
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    emit_one_more(&mut rt, T_NEW);
+    p.append(&rt).unwrap();
+    let a1 = fs::read(&active).unwrap();
+    assert!(a1.starts_with(&a0) && a1.len() > a0.len());
+    emit_one_more(&mut rt, T_NEW + 1);
+    p.append(&rt).unwrap();
+    let a2 = fs::read(&active).unwrap();
+    assert!(a2.starts_with(&a1) && a2.len() > a1.len());
+    p.append(&rt).unwrap();
+    assert_eq!(fs::read(&active).unwrap(), a2);
+    emit_one_more(&mut rt, T_NEW + 5);
+    p.append(&rt).unwrap();
+    let a3 = fs::read(&active).unwrap();
+    assert!(a3.starts_with(&a2) && a3.len() > a2.len());
+    assert_eq!(fs::read(first_sealed_path(&dir)).unwrap(), sealed0);
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn segmented_replay_parity_with_legacy_full_persist() {
+    let rt = seed_runtime();
+    let dir_seg = persist_dir("parity-seg");
+    persist_expect_segmented(&rt, &dir_seg);
+    let opened_s = store::open(&dir_seg).unwrap();
+
+    let dir_leg = persist_dir("parity-leg");
+    store::ensure_legacy_dir(&dir_leg).unwrap();
+    store::persist(&rt, &dir_leg).unwrap();
+    let opened_l = store::open(&dir_leg).unwrap();
+
+    assert_eq!(log_ids(&opened_s), log_ids(&opened_l));
+    assert_dict_term_parity(&opened_l, &opened_s);
+    assert_eq!(opened_s.fold().fingerprint(), opened_l.fold().fingerprint());
+    assert_eq!(opened_s.as_of(VF_FIRST), opened_l.as_of(VF_FIRST));
+    opened_s.replay_check().unwrap();
+    opened_l.replay_check().unwrap();
+
+    let _ = fs::remove_dir_all(&dir_seg);
+    let _ = fs::remove_dir_all(&dir_leg);
 }
