@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Process: lease M002 S03 (GSD Phase 51)
+
+### Process
+
+- Active Milestone **M002**, Active Slice **S03** (`L_delivery=M002-S02-done`): ROCK-00. RocksDB as an optional `kutha-runtime` feature spike (EventId to `events.jsonl` offset), not wired into `Runtime`; the `freeze-rocks` check is relaxed only while Active Milestone is M002. Honeycomb stays Proposed.
+
 ## 2026-10-03 — Process: close M002 S02 (GSD Phase 50)
 
 ### Process

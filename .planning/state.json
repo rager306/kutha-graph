@@ -16,7 +16,7 @@
     {
       "number": "51",
       "name": "RocksDB build spike",
-      "status": "planned"
+      "status": "executing"
     },
     {
       "number": "52",
@@ -41,8 +41,8 @@
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Lease M002 S03 (Phase 51: RocksDB build spike) after CONTEXT",
-    "reason": "Phase 50 verified \u00b7 M002-S02-done"
+    "label": "Phase 51 execute, then verify",
+    "reason": "M002-S03 leased"
   },
   "updated_at": "2026-10-03T07:00:00.000Z"
 }

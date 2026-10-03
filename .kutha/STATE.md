@@ -5,7 +5,7 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M002
-**Active Slice:** None
+**Active Slice:** S03
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M002 S02 done (SNAP-01 and fail-closed WAL open); S03 unleased; M018 paused at its S02 decision gate | Capability proven / Rocks started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M002 S03 active (RocksDB build spike, optional feature, not wired); M018 paused at its S02 decision gate | Capability proven / Rocks started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M002 S02 closed** (`L_delivery=M002-S02-done`, Active Milestone **M002**, Active Slice **None**, 2026-10-03). GSD Phase 50 verified independently (7/7): atomic sidecars with directory fsync, log-ahead-of-snapshot opens, fail-closed WAL header and I/O, crash matrix over all six persist steps. Next: S03 (RocksDB build spike, Phase 51) needs a lease; its first task is the `unless:` kernel extension for `freeze-rocks`. M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
+**M002 S03 leased** (`L_delivery=M002-S02-done`, Active Milestone **M002**, Active Slice **S03**, 2026-10-03). GSD Phase 51 only: ROCK-00. First task: let `freeze-rocks` allow `rocksdb` while Active Milestone is M002; then an optional `rocks-index-spike` feature in `crates/kutha-runtime` that round-trips `EventId` to `events.jsonl` offset. Not wired into `Runtime`; default build never compiles RocksDB. M018 stays paused at its S02 decision gate. Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
 
 ## Thaw map
 
