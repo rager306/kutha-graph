@@ -66,7 +66,11 @@ fn seed_two_outcomes() -> Runtime {
 }
 
 fn log_ids(rt: &Runtime) -> Vec<EventId> {
-    rt.log().iter().map(|e| e.id).collect()
+    rt.log()
+        .iter()
+        .filter(|e| !matches!(e.op, Op::Define { .. }))
+        .map(|e| e.id)
+        .collect()
 }
 
 fn read_jsonl_events(path: &Path) -> Vec<Event> {

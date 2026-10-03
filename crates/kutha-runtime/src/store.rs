@@ -4,8 +4,9 @@ use crate::quantum::{
 use crate::snapshot::Snapshot;
 use crate::wal;
 use kutha_common::{Event, EventId, Op};
+use serde::de::DeserializeOwned;
 use std::fs::{self, File};
-use std::io::{BufRead, BufReader, Write};
+use std::io::{BufRead, BufReader, ErrorKind, Write};
 use std::path::Path;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
@@ -47,7 +48,6 @@ pub fn reset_persist_dir_fsync_count() {
 ///
 /// On platforms where opening a directory fails (non-Unix), returns `Ok`
 /// without syncing — directory file descriptors are a Unix feature.
-#[allow(dead_code)] // SNAP-01 GREEN: replace_via_tmp + end of persist
 fn sync_dir(dir: &Path) -> std::io::Result<()> {
     #[cfg(unix)]
     {
@@ -126,6 +126,9 @@ fn persist_until(
     // missing file on open is empty vec (cannot admit).
     write_justifications(dir, &runtime.justification_records())?;
     after_persist_step(stop_after, PersistStep::Justifications)?;
+    if stop_after.is_none() {
+        sync_dir(dir)?;
+    }
     Ok(())
 }
 
@@ -135,6 +138,9 @@ const EVENTS_WAL: &str = "events.wal";
 const EVENTS_WAL_TMP: &str = "events.wal.tmp";
 const SNAPSHOT_JSON: &str = "snapshot.json";
 const SNAPSHOT_JSON_TMP: &str = "snapshot.json.tmp";
+const TERMS_TMP: &str = "terms.jsonl.tmp";
+const OUTCOMES_TMP: &str = "quantum_outcomes.jsonl.tmp";
+const JUSTIFICATIONS_TMP: &str = "justifications.jsonl.tmp";
 
 fn abort_before_rename() -> std::io::Error {
     std::io::Error::new(
@@ -158,6 +164,11 @@ fn replace_via_tmp(
         return Err(abort_before_rename());
     }
     fs::rename(tmp, dest)?;
+    if let Some(parent) = dest.parent() {
+        if !parent.as_os_str().is_empty() {
+            sync_dir(parent)?;
+        }
+    }
     Ok(())
 }
 
@@ -313,10 +324,12 @@ pub fn open(dir: &Path) -> std::io::Result<Runtime> {
         return finish_open(rt, outcomes, justifications);
     }
     if terms_path.exists() {
-        let strings = read_terms(&terms_path)?;
-        let rt =
-            Runtime::from_dict_and_events(strings, events, cascade_limit()).map_err(runtime_err)?;
-        return finish_open(rt, outcomes, justifications);
+        if let Some(strings) = read_terms(&terms_path)? {
+            let rt = Runtime::from_dict_and_events(strings, events, cascade_limit())
+                .map_err(runtime_err)?;
+            return finish_open(rt, outcomes, justifications);
+        }
+        // Unparseable last-resort terms.jsonl is absent (D-04).
     }
     if events.is_empty() {
         let rt = Runtime::default();
@@ -335,22 +348,34 @@ fn finish_open(
 ) -> std::io::Result<Runtime> {
     rt.hydrate_from_log();
     if let Some(rows) = outcomes {
-        if rows.as_slice() != rt.outcome_records() {
-            return Err(std::io::Error::new(
-                std::io::ErrorKind::InvalidData,
-                "outcomes sidecar disagrees with log QuantumOutcome rows",
-            ));
-        }
+        sidecar_or_stale_prefix(
+            &rows,
+            rt.outcome_records(),
+            "outcomes sidecar disagrees with log QuantumOutcome rows",
+        )?;
     }
     if let Some(rows) = justifications {
-        if rows != rt.justification_records() {
-            return Err(std::io::Error::new(
-                std::io::ErrorKind::InvalidData,
-                "justifications sidecar disagrees with log JustificationCite rows",
-            ));
-        }
+        sidecar_or_stale_prefix(
+            &rows,
+            &rt.justification_records(),
+            "justifications sidecar disagrees with log JustificationCite rows",
+        )?;
     }
     Ok(rt)
+}
+
+/// Intact sidecar must equal log-derived rows. A proper prefix (older persist) or
+/// unparseable file is treated as absent by the loader; well-formed non-prefix fails.
+fn sidecar_or_stale_prefix<T: PartialEq>(
+    rows: &[T],
+    log_rows: &[T],
+    mismatch: &str,
+) -> std::io::Result<()> {
+    if log_rows.starts_with(rows) {
+        Ok(())
+    } else {
+        Err(std::io::Error::new(ErrorKind::InvalidData, mismatch))
+    }
 }
 
 fn encoded_log(runtime: &Runtime) -> Vec<Event> {
@@ -379,75 +404,81 @@ fn defined_names(events: &[Event]) -> Vec<String> {
 }
 
 fn write_terms(dir: &Path, strings: &[String]) -> std::io::Result<()> {
-    let mut f = File::create(dir.join(TERMS_REL))?;
-    for s in strings {
-        serde_json::to_writer(&mut f, s).map_err(json_err)?;
-        f.write_all(b"\n")?;
-    }
-    Ok(())
+    replace_via_tmp(&dir.join(TERMS_REL), &dir.join(TERMS_TMP), true, |f| {
+        for s in strings {
+            serde_json::to_writer(&mut *f, s).map_err(json_err)?;
+            f.write_all(b"\n")?;
+        }
+        Ok(())
+    })
 }
 
 fn write_outcomes(dir: &Path, rows: &[PersistedQuantumOutcome]) -> std::io::Result<()> {
-    let mut f = File::create(dir.join(OUTCOMES_REL))?;
-    for row in rows {
-        serde_json::to_writer(&mut f, row).map_err(json_err)?;
-        f.write_all(b"\n")?;
+    replace_via_tmp(
+        &dir.join(OUTCOMES_REL),
+        &dir.join(OUTCOMES_TMP),
+        true,
+        |f| {
+            for row in rows {
+                serde_json::to_writer(&mut *f, row).map_err(json_err)?;
+                f.write_all(b"\n")?;
+            }
+            Ok(())
+        },
+    )
+}
+
+/// Parse a JSONL sidecar. Missing, mid-line, or unparseable bytes are `None` (absent).
+fn load_jsonl_sidecar<T: DeserializeOwned>(path: &Path) -> std::io::Result<Option<Vec<T>>> {
+    if !path.exists() {
+        return Ok(None);
     }
-    Ok(())
+    let f = File::open(path)?;
+    let mut out = Vec::new();
+    for line in BufReader::new(f).lines() {
+        let line = match line {
+            Ok(l) => l,
+            Err(e) if e.kind() == ErrorKind::InvalidData => return Ok(None),
+            Err(e) => return Err(e),
+        };
+        if line.trim().is_empty() {
+            continue;
+        }
+        match serde_json::from_str(&line) {
+            Ok(row) => out.push(row),
+            Err(_) => return Ok(None),
+        }
+    }
+    Ok(Some(out))
 }
 
 fn load_outcomes(path: &Path) -> std::io::Result<Option<Vec<PersistedQuantumOutcome>>> {
-    if !path.exists() {
-        return Ok(None);
-    }
-    let f = File::open(path)?;
-    let mut out = Vec::new();
-    for line in BufReader::new(f).lines() {
-        let line = line?;
-        if line.trim().is_empty() {
-            continue;
-        }
-        out.push(serde_json::from_str(&line).map_err(json_err)?);
-    }
-    Ok(Some(out))
+    load_jsonl_sidecar(path)
 }
 
 fn write_justifications(dir: &Path, rows: &[Justification]) -> std::io::Result<()> {
-    let mut f = File::create(dir.join(JUSTIFICATIONS_REL))?;
-    for row in rows {
-        serde_json::to_writer(&mut f, row).map_err(json_err)?;
-        f.write_all(b"\n")?;
-    }
-    Ok(())
+    replace_via_tmp(
+        &dir.join(JUSTIFICATIONS_REL),
+        &dir.join(JUSTIFICATIONS_TMP),
+        true,
+        |f| {
+            for row in rows {
+                serde_json::to_writer(&mut *f, row).map_err(json_err)?;
+                f.write_all(b"\n")?;
+            }
+            Ok(())
+        },
+    )
 }
 
 fn load_justifications(path: &Path) -> std::io::Result<Option<Vec<Justification>>> {
-    if !path.exists() {
-        return Ok(None);
-    }
-    let f = File::open(path)?;
-    let mut out = Vec::new();
-    for line in BufReader::new(f).lines() {
-        let line = line?;
-        if line.trim().is_empty() {
-            continue;
-        }
-        out.push(serde_json::from_str(&line).map_err(json_err)?);
-    }
-    Ok(Some(out))
+    load_jsonl_sidecar(path)
 }
 
-fn read_terms(path: &Path) -> std::io::Result<Vec<String>> {
-    let f = File::open(path)?;
-    let mut out = Vec::new();
-    for line in BufReader::new(f).lines() {
-        let line = line?;
-        if line.trim().is_empty() {
-            continue;
-        }
-        out.push(serde_json::from_str(&line).map_err(json_err)?);
-    }
-    Ok(out)
+/// Last-resort intern dictionary. Unparseable means absent (`None`), then open
+/// falls through to the existing "cannot restore intern meanings" error.
+fn read_terms(path: &Path) -> std::io::Result<Option<Vec<String>>> {
+    load_jsonl_sidecar(path)
 }
 
 fn json_err(e: serde_json::Error) -> std::io::Error {
