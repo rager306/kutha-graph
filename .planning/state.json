@@ -36,13 +36,13 @@
     {
       "number": "55",
       "name": "Droppable RocksDB index lease",
-      "status": "executing"
+      "status": "complete"
     }
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Phase 55 execute, then verify",
-    "reason": "M002-S07 leased"
+    "label": "Owner decision for v0.11 Phase 46",
+    "reason": "v0.12 shipped · M002-closed; v0.11 paused at S02"
   },
-  "updated_at": "2026-10-03T07:00:00.000Z"
+  "updated_at": "2026-10-04T00:00:00.000Z"
 }

@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M002
-**Active Slice:** S07
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M002-S06-done
+L_delivery=M002-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M002 S07 active (droppable RocksDB index lease); M018 paused at its S02 decision gate | Capability proven / Rocks started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M002 CLOSED (S01–S07, GSD v0.12); M018 paused at its S02 decision gate | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M002 S07 leased** (`L_delivery=M002-S06-done`, Active Milestone **M002**, Active Slice **S07**, 2026-10-04). GSD Phase 55 only: ROCK-01. First task: a durable `freeze-rocks` rule (rocksdb only as an optional dependency) so the check survives the end of M002; then an optional `rocks-index` feature with an EventId and delivery_key locator index over the segmented log, a rebuildable lease, not wired into `Runtime`. M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
+**M002 closed 2026-10-04** (Phases 49–55, v0.12). `L_delivery=M002-closed`, Active Milestone **None**, Active Slice **None**. M018 paused at its S02 decision gate (C01, Horn vs knowledge cut); those are the only open owner decisions. Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0). Process tag `v0.12` is for the controller to create.
 
 ## Thaw map
 
@@ -32,7 +32,7 @@ The freeze list came from agent-assisted commits (`1ee5942`, `85db1f7`, 2026-08-
 
 | Item | Thaws when |
 |------|------------|
-| RocksDB crate | Thawed while Active Milestone is M002 (Phase 51): optional feature `rocks-index-spike` only; `freeze-rocks` bans it under any other milestone; wiring waits for S07 |
+| RocksDB crate | Thawed (Phase 51/55): optional dependency `rocksdb` in kutha-runtime only; `freeze-rocks` is a durable rule (optional dependencies only) |
 | Cypher/GPML parser | M003 is leased |
 | HNSW | M005 is leased |
 | ADR-050 six dictionaries | SIX-01 is leased |

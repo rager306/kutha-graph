@@ -249,7 +249,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 **Success:** living docs and ADR Evidence agree with the code (one F-register, English spine); ADR-013 records one C01 option and the Horn-vs-knowledge-cut rule, with a named oracle; derived facts have deterministic identity and follow `Correct`; every cascade hop is admitted; fold, CSR and rebuild agree on seeded random logs.
 
-**Paused 2026-10-03** after S01 at the S02 decision gate (needs the user's C01 / Horn choice). M002 (below) is independent of S02–S04 and is leased first; M018 resumes at S02 after M002 S01. Failed-WAL-open (OPEN-01) and crash-seam work moved to M002 S02.
+**Paused 2026-10-03** after S01 at the S02 decision gate (needs the user's C01 / Horn choice). M002 is CLOSED (2026-10-04). M018 remains paused at S02. Failed-WAL-open (OPEN-01) and crash-seam work moved to M002 S02.
 
 - [x] **S01: Doc truth round 2** `risk:low` `depends:[]`
   > After this: ADR-010/012/014/041/060 Evidence and `semantic-gap-review.md` match v0.10 code (snapshot and WAL atomic, `horns_by_premise`, sidecars still in place); audit ids carry the `A-F` prefix; ADR-000 D6 and ADR-010 D010-4 no longer name Rocks WAL as shipped; ADR-013 states `as_of` is support-live, not eligibility; ADR-000 and `stca-guide.md` spine is English; CHANGELOG head, `PROJECT.md`, `.kutha/ROADMAP.md` closed-milestone wording and `.gitignore` hygiene are fixed; no file under `crates/` changes.
@@ -260,13 +260,15 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 - [ ] **S04: Differential tests and oracle tightening** `risk:medium` `depends:[S03]`
   > After this: fold, CSR and clean rebuild agree on seeded random logs (no new dependency); I-F15 and I-F16 oracles measure what they claim; the bench gate is a recorded controller step or a governor row. OPEN-01 (failed WAL magic read, empty WAL, WAL error hidden behind jsonl) and the crash seam between jsonl and sidecars moved to M002 S02.
 
-## M002: Log durability protocol (GSD v0.12) — THAWED, planned
+## M002: Log durability protocol — CLOSED (GSD v0.12)
 
-**Thawed 2026-10-03.** The freeze came from agent-assisted commits (`1ee5942`, `85db1f7`, 2026-08-18, Cursor co-authored); the owner states he did not decide it; the owner asked for M002 to be re-verified and run under GSD. Provenance and the per-item thaw map: `.kutha/STATE.md` § Thaw map. ADR-000 D1–D10 are not a lease gate: D6 names a Rust+RocksDB event store, D8.1 asks for log segmentation; the 2026-10-03 clarification kept `events.jsonl` as the physical SoT and Rocks as an index store; S06 (2026-10-04) moved the physical encoding to a manifest plus sealed segments, with the event log still the SoT and `events.jsonl` an on-demand export.
+**Closed:** 2026-10-04. Process tag `v0.12`. S01–S07 complete; seven independent VERIFICATIONs. Crate SemVer stays 0.0.0. Residuals in `.planning/milestones/v0.12-MILESTONE-AUDIT.md`.
 
-**Source:** 2026-10-03 re-verification at `f4af544` (provenance audit, governor freeze map, durability design research; CBM + GitNexus, `rg` arbiter). Current defects: `persist` rewrites the whole log each call (O(N), `store.rs` `encoded_log`, `wal::write_wal`); sidecars `terms`/`quantum_outcomes`/`justifications` use in-place `File::create` without sync; no parent-directory fsync after any rename; `check_tt_anchors` demands exact equality so a log ahead of the snapshot fails open; `recover_events` returns an empty log on a failed magic read; a WAL error is hidden behind jsonl. Not M003 Cypher; not M005 HNSW; not ADR Accepted.
+**Thawed 2026-10-03** then shipped. The freeze came from agent-assisted commits (`1ee5942`, `85db1f7`, 2026-08-18, Cursor co-authored); the owner states he did not decide it; the owner asked for M002 to be re-verified and run under GSD. Provenance and the per-item thaw map: `.kutha/STATE.md` § Thaw map. ADR-000 D1–D10 are not a lease gate: D6 names a Rust+RocksDB event store, D8.1 asks for log segmentation. S06 moved the physical encoding to a manifest plus sealed segments; the event log stays SoT and `events.jsonl` is an on-demand export (owner acknowledgement still needed for that wording).
 
-**Success:** a crash at any persist step reopens to the last durable log prefix or fails closed with a named error; persist cost is proportional to the new events, not to N; the quantum outcome has one durable encoding; the log is segmented with a manifest and a hash chain; RocksDB, if used, holds only droppable indexes and never owns an event, a commit or a disposition. The event log stays SoT (D1). Each slice keeps FF5, M010–M017 oracles unchanged and re-runs the bench gate when it edits `crates/`.
+**Source:** 2026-10-03 re-verification at `f4af544` (provenance audit, governor freeze map, durability design research; CBM + GitNexus, `rg` arbiter). Not M003 Cypher; not M005 HNSW; not ADR Accepted.
+
+**Success:** SNAP-01 sidecar tmp+sync+rename and parent-dir fsync; fail-closed WAL open; framed append (no O(N) rewrite of the prefix); commit marker option A (`Op::QuantumOutcome`); sealed segments with a cross-segment SHA-256 chain and atomic manifest; droppable Rocks index lease (`EventId` and `delivery_key` locators, not wired into `Runtime`). Residuals: Typed/Dictionary partial group, no multi-writer lock, tip-only index staleness, line-based `freeze-rocks` bypass forms, `rocks_spike` still on jsonl, O(N) `open`, RSS `bytes_per_fact` 17218→25200 B at Phase 50. The event log stays SoT (D1).
 
 - [x] **S01: Thaw map and freeze governor honesty** `risk:low` `depends:[]`
   > After this: the blanket "freeze until M002 lease" is replaced by a per-item thaw map (RocksDB crate: S03; Cypher: M003; HNSW: M005; six dictionaries: SIX-01; ADR-080/081, ADR-090, ADR-093, Consensus 103+: their own named gate); the `freeze` governor check no longer claims to read STATE (split per dependency, each message names its real thaw gate) and its selftest and pytest prove it; no file under `crates/` changes.
@@ -280,14 +282,14 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
   > After this: one durable encoding of the quantum outcome is chosen (commit frame in the segment, or `Op::QuantumOutcome` kept) and recorded in ADR-010/014; a crash between payload events and the commit leaves no uncommitted prefix visible; named oracles unchanged.
 - [x] **S06: Segments, manifest and hash chain** `risk:high` `depends:[S04,S05]`
   > After this: sealed segments with an atomically replaced manifest; recovery from manifest plus the active segment; a flipped byte or swapped records in a sealed segment fails open with `InvalidData`; the jsonl export is no longer the SoT.
-- [ ] **S07: Droppable RocksDB index lease** `risk:medium` `depends:[S03,S06]`
+- [x] **S07: Droppable RocksDB index lease** `risk:medium` `depends:[S03,S06]`
   > After this: `EventId` to offset (and `delivery_key`) indexes live in RocksDB as a lease rebuilt from the log; deleting the Rocks directory changes no answer; Rocks never stores an event payload, a commit frame, a disposition or a term meaning.
 
 IO-01 (cloud kernel writeback soak) stays an intake note; vacuum and litigation hold stay outside M002.
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 is CLOSED. M016 is CLOSED. M017 is CLOSED. M018 is paused after S01 at the S02 decision gate. M002 is thawed and planned (S01–S07); one lease at a time. M003+ stay unleased.
+Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 is CLOSED. M016 is CLOSED. M017 is CLOSED. M002 is CLOSED. M018 is paused after S01 at the S02 decision gate. One lease at a time. M003+ stay unleased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -300,7 +302,7 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 7. **M016** — CLOSED (S01–S05, GSD v0.09 tagged). Detail above.
 8. **M017** — CLOSED (S01–S04, GSD v0.10 tagged). Detail above.
 9. **M018** — Wedge unblock (S01–S04, GSD v0.11). S01 done; S02 decision gate. Detail above.
-10. **M002** — THAWED (S01–S07, GSD v0.12). Detail above. Log durability protocol: segmented append-only log, hash chain, atomic manifest, replay parity across stores, with the quantum outcome as a commit marker in segment framing (ADR-010/014 open question). “Lease identity verified on open” is already done (v0.04 Phase 15). Rocks only behind that protocol, for indexes — not a second SoT. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity. **Intake (2026-10-02):** cloud kernel writeback / dirty-throttle stalls — `docs/architecture/m002-cloud-kernel-io-intake.md` (arXiv:2609.12597 / SteelDB companion); multi-drain placement beats single-volume bandwidth when buffered I/O is on distributed block storage.
+10. **M002** — CLOSED (S01–S07, GSD v0.12). Detail above. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity. **Intake (2026-10-02):** cloud kernel writeback / dirty-throttle stalls — `docs/architecture/m002-cloud-kernel-io-intake.md` (arXiv:2609.12597 / SteelDB companion).
 11. **M003** — Cypher skin over the already-correct AS OF cut.
 12. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
 13. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).

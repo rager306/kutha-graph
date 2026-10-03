@@ -1,3 +1,10 @@
+## v0.12 Log durability protocol (Shipped: 2026-10-04)
+
+**Phases:** 49–55. Process tag `v0.12`. SNAP-01, fail-closed WAL, framed append, commit marker option A, sealed segments with a cross-segment SHA-256 chain, droppable Rocks index lease.
+**Git range:** `v0.10..v0.12` (v0.11 was not a tag)
+
+---
+
 ## v0.10 Docs honesty and replay integrity (Shipped: 2026-10-03)
 
 **Phases:** 41–44. Process tag `v0.10`. Living docs/governor honesty, replay integrity, determinism oracles, M016 ingest regression repaired.

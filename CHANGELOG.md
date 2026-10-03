@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-04 — Process: close M002 S07 and milestone M002 (GSD v0.12)
+
+### Process
+
+- Close S07 (ROCK-01) and archive Phases 49–55 under `.planning/milestones/v0.12-*`. What shipped: SNAP-01, fail-closed WAL open, framed append, commit marker option A (`Op::QuantumOutcome`), sealed segments with a cross-segment SHA-256 chain, droppable Rocks index lease. Residuals in `v0.12-MILESTONE-AUDIT.md` (Typed/Dictionary partial group, no multi-writer lock, tip-only index staleness, line-based `freeze-rocks` bypasses, unexplained RSS `bytes_per_fact` 17218→25200 B, `rocks_spike` still on jsonl, O(N) `open`, ~15% bench host noise). Process tag `v0.12` is for the controller to create; crate SemVer stays 0.0.0. Owner acknowledgement needed for the SoT wording that `events.jsonl` is an export.
+
+### Trajectory
+
+- `L_delivery=M002-closed`, Active Milestone **None**, Active Slice **None**. M018 remains paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed.
+
 ## 2026-10-04 — Process: durable freeze-rocks (optional rocksdb)
 
 ### Process

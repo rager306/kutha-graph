@@ -1,7 +1,7 @@
 # Requirements: Kutha
 
 **Core Value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Milestones:** v0.11 / harness M018 "Wedge unblock" (Phases 45–48; paused after Phase 45 at the S02 decision gate) and v0.12 / harness M002 "Log durability protocol" (Phases 49–55; thawed 2026-10-03). Lease: `.kutha/STATE.md`.
+**Milestones:** v0.12 / harness M002 shipped 2026-10-04 (archive `.planning/milestones/v0.12-REQUIREMENTS.md`). v0.11 / harness M018 "Wedge unblock" (Phases 45–48; paused after Phase 45 at the S02 decision gate). Lease: `.kutha/STATE.md`.
 
 ## v0.11 Requirements
 
@@ -31,37 +31,9 @@
 - **ORACLE-01**: I-F15 measures time or a bound that fails under the O(N) regression; I-F16 fails when rules do not re-derive
 - **GATE-01**: bench gate (`ingest_plain.n`, `as_of.n`) is a governor row or a recorded controller step with a selftest
 
-## v0.12 Requirements (M002, thawed; leased one slice at a time)
-
-### Thaw map (Phase 49, S01)
-
-- **THAW-01**: `.kutha/STATE.md` carries a per-item thaw map; RocksDB crate thaws in S03; Cypher (M003), HNSW (M005), six dictionaries (SIX-01), ADR-080/081, ADR-090, ADR-093 and Consensus 103+ keep their own gates
-- **GOV-03**: the `freeze` governor check is split per dependency, each message names its real thaw gate, the tautological message check is gone, the workspace root `Cargo.toml` is scanned, and selftest plus pytest prove it
-
-### SNAP-01 and fail-closed open (Phase 50, S02)
-
-- **SNAP-01**: sidecars (`terms`, `quantum_outcomes`, `justifications`) replace via temp + sync + rename; a parent-directory fsync follows every rename; an unreadable or partial sidecar is treated as absent while an intact log opens; `check_tt_anchors` tolerates a log ahead of the snapshot
-- **OPEN-01**: a failed WAL magic read or an empty WAL without jsonl never yields an empty log; a WAL error is not hidden behind jsonl
-- **CRASH-01**: a failpoint after each persist step reopens to the last durable prefix or fails closed
-
-### Rocks spike (Phase 51, S03)
-
-- **ROCK-00**: `rocksdb` builds offline on this host in an isolated module; `EventId` to offset round-trips; not wired into `Runtime`; the governor permits the dependency only in the leased slice
-
-### Log protocol (Phases 52–54, S04–S06)
-
-- **APPEND-01**: `persist` appends framed records; the prefix bytes are unchanged; one `fdatasync` per quantum; torn tail dropped
-- **COMMIT-01**: one durable encoding of the quantum outcome (commit frame or `Op::QuantumOutcome`), recorded in ADR-010/014 (decision gate)
-- **SEG-01**: sealed segments, atomically replaced manifest, hash chain; recovery from manifest plus active segment; tampered sealed segment fails closed
-
-### Rocks index lease (Phase 55, S07)
-
-- **ROCK-01**: `EventId` to offset and `delivery_key` indexes in RocksDB are a lease rebuilt from the log; deleting the Rocks directory changes no answer; Rocks never stores an event payload, commit frame, disposition or term meaning
-- **PERF-GATE**: bench re-run (`ingest_plain.n`, `as_of.n`, same host, vs previous tag) at every product slice that edits `crates/`
-
 ## Future Requirements (not leased)
 
-### Deferred inside M002 horizon
+### Deferred after M002
 
 - **WRITE-01**: `intern` admit path (WAL vs JSONL preference shipped in v0.10)
 - **IO-01** (intake only): kernel flusher/dirty-throttle on cloud block storage — `docs/architecture/m002-cloud-kernel-io-intake.md` (arXiv:2609.12597)
