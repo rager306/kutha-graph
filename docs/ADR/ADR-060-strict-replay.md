@@ -20,6 +20,10 @@ SNAP-01 closed by Phase 50: sidecar atomic replace + parent-dir fsync; open-path
 
 Open after incremental append tail-folds a stale snapshot (`replay_check` still exact). Torn jsonl tails without `\n` are dropped; complete malformed jsonl lines still fail `InvalidData`. ADS receipts and `Unavailable` remain unshipped. This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
 
+### Evidence (2026-10-04, Phase 53 / M002 S05; Proposed)
+
+COMMIT-01 option A trims the uncommitted suffix before `replay_check`. Pointer: ADR-010/014 2026-10-04. This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

@@ -239,7 +239,7 @@ FF5 compares **two valid-time windows** on the same log using the fold at **tran
 | ID | Note |
 |----|------|
 | F13 remainder | Clock half closed v0.07 (`ValidTime` / `TransactionTime` / `WallTime`, `Op::TtAnchor`). Remainder = FIXG-01: C01 sunset is not expressible as Horn; decision open (pack stamp / fifth axis / stop) in ADR-013; none chosen |
-| F1 / F6 remainder | **2026-10-03 Phase 52:** APPEND-01 closed the O(N) full-log rewrite **on the append path** (`Persister`, `m002_append01.rs`). Full `persist` still rewrites. Remaining: COMMIT-01 (S05). |
+| F1 / F6 remainder | **2026-10-04 Phase 53:** COMMIT-01 option A closed the crash-between-payload-and-outcome visibility gap on `open` (`committed_prefix`, `m002_commit01.rs`): an uncommitted User suffix is hidden; `Op::QuantumOutcome` stays the marker. Full `persist` still rewrites. Residual: Typed/Dictionary multi-event groups have no outcome (partial group can still be visible). B/C wait for S06. |
 | F8 remainder | No public fork-diff API (cosmetic) |
 
 ### Audit code findings (2026-10-02), restaged 2026-10-03

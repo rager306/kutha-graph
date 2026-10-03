@@ -283,3 +283,23 @@ Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p52-head-target-
 
 D-10 ≤10% vs `bd5fa4b` after the open-path fix: **met**. HEAD persist.n median 5957761678 ns vs persist_append.n 48742410 ns.
 
+## Phase 53 (M002 S05) — COMMIT-01 option A (2026-10-04)
+
+Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p53-head-target` for HEAD, `tmp/p53-base-target` for `187d4c7`). Binaries run from each worktree's `crates/kutha-runtime`. Interleaved `base, head` × 4 pairs. Writer path unchanged; `open` gains one linear walk. Compare interleaved medians.
+
+| run | 187d4c7 ingest_plain.n | HEAD ingest_plain.n | Δ ingest | 187d4c7 as_of.n | HEAD as_of.n | Δ as_of |
+|-----|-----------------------:|--------------------:|---------:|----------------:|-------------:|--------:|
+| 1 | 107339657 | 116227652 | +8.3% | 344151 | 318886 | −7.3% |
+| 2 | 112106349 | 115561119 | +3.1% | 295121 | 298308 | +1.1% |
+| 3 | 115031987 | 108937665 | −5.3% | 321430 | 277467 | −13.7% |
+| 4 | 101286323 | 119271174 | +17.8% | 227234 | 297054 | +30.7% |
+
+| metric | median 187d4c7 | median HEAD | Δ median |
+|--------|---------------:|------------:|---------:|
+| ingest_plain.n | 109723003 | 115894386 | +5.6% |
+| as_of.n | 308276 | 297681 | −3.4% |
+| open.n | 2774322253 | 2882886421 | +3.9% |
+
+D-10 ≤10% vs `187d4c7`: **met**. Pair 4 as_of is host noise (base 227k vs 295–344k). Worktrees and target dirs removed after the run.
+
+

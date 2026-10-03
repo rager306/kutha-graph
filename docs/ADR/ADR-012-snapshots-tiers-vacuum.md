@@ -24,6 +24,10 @@ RocksDB builds offline as an optional spike; no wiring. The ROCK-00 map is a dro
 
 APPEND-01: incremental `Persister` append keeps jsonl/WAL prefix bytes; one log `sync_data` per non-checkpoint quantum; `checkpoint` / `close` refresh snapshot and sidecars via `replace_via_tmp` (logs not rewritten). Full `persist` still rewrites the whole log. O(N) persist rewrite is **closed for the append path**. Snapshot `open` applies log `Op::Define` events beyond `snap.dict_strings` in log order (`from_snapshot`); terms interned after the last checkpoint survive without a new snapshot. Persist/open parity is graph `EventId`s plus dictionary/`TermId`s, not byte equality of encoded logs. Oracles: `m002_append01.rs`. COMMIT-01 remains S05. Status stays **Proposed**.
 
+### Evidence (2026-10-04, Phase 53 / M002 S05; Proposed)
+
+COMMIT-01 option A: a snapshot whose `log_offset` counts fold ops beyond the committed prefix fails closed (`InvalidData`). Pointer: ADR-010/014 2026-10-04. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

@@ -20,6 +20,10 @@ RocksDB builds offline as an optional spike; no wiring. Feature `rocks-index-spi
 
 APPEND-01: `store::Persister` (`attach` / `append` / `checkpoint` / `close`) writes only events beyond the durable tail: JSONL `write_all` then WAL length+CRC32 frames, then one WAL `sync_data` (commit point). Prefix bytes of `events.jsonl` / `events.wal` are not rewritten. A torn jsonl last line without `\n` is dropped; a complete malformed line still fails `InvalidData`. Full `persist` remains the atomic rewrite. The O(N) persist rewrite defect is **closed for the append path**. Oracles: `m002_append01.rs`. Status stays **Proposed**.
 
+### Evidence (2026-10-04, Phase 53 / M002 S05; Proposed)
+
+COMMIT-01 option A: `Op::QuantumOutcome` stays the User-quantum commit marker (no WAL/jsonl format change, no env switch). `store::open` applies `committed_prefix` after `load_events_d04` and before sidecar load, hydrate, and `replay_check`. Self-commit: `Define`, `TtAnchor`, `StoreBlob`, `JustificationCite`, `QuantumOutcome`, dictionary `kutha:*` Assert. NeedsOutcome: product `Assert`/`Retract`/`Correct`/`CorrectInterval`/`Behavior`. Commit frame (B) and quantum envelope (C) wait for S06. Oracles: `m002_commit01.rs`. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

@@ -20,6 +20,10 @@ SNAP-01 closed by Phase 50: outcome and justification sidecars are tmp+`sync_all
 
 Between checkpoints, outcome and justification sidecars stay stale leases (Phase 50 prefix-absent on open). `Persister::checkpoint` / `close` refresh them through `replace_via_tmp`. Acknowledged-vs-unacknowledged is `append`'s `Ok`, not the sidecar. COMMIT-01 remains S05. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
 
+### Evidence (2026-10-04, Phase 53 / M002 S05; Proposed)
+
+COMMIT-01 option A: `Op::QuantumOutcome` remains the User-quantum commit marker. An uncommitted suffix (NeedsOutcome ops after the last outcome, or a product quantum with no outcome at all) is hidden on `open`. Self-commit set: `Define`, `TtAnchor`, `StoreBlob`, `JustificationCite`, `QuantumOutcome`, `kutha:*` Assert. B/C wait for S06. Residual: Typed/Dictionary multi-event groups have no outcome, so a crash inside such a group can still expose a partial group (`Define`-level atomicity only). This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18
