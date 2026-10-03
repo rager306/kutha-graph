@@ -12,41 +12,51 @@ type IngestMap<K, V> = FxHashMap<K, V>;
 
 impl Runtime {
     pub(crate) fn hydrate_from_log(&mut self) {
-        let mut outcomes = Vec::new();
-        for e in self.log.iter() {
-            if let Op::QuantumOutcome {
-                quantum_id,
-                disposition,
-                aborted_on_budget,
-                events_in_quantum,
-                event_ids,
-                receipt_digest_hex,
-                resume_of,
-            } = &e.op
-            {
-                outcomes.push(PersistedQuantumOutcome {
-                    quantum_id: quantum_id.clone(),
-                    disposition: *disposition,
-                    aborted_on_budget: *aborted_on_budget,
-                    events_in_quantum: *events_in_quantum,
-                    event_ids: event_ids.clone(),
-                    receipt_digest_hex: receipt_digest_hex.clone(),
-                    resume_of: resume_of.clone(),
-                });
-            }
-        }
-        self.outcomes = outcomes;
+        self.outcomes = outcomes_from_events(self.log.iter());
         self.fold.rebuild_blobs(self.log.as_slice());
         self.fold.rebuild_tt_anchors(self.log.as_slice());
         self.fold.bind_reserved(&self.dict);
         self.rebuild_log_indexes();
     }
 
+    #[allow(dead_code)] // D-05: open never attach_outcomes; log is SoT
     pub(crate) fn log_has_quantum_outcome(&self) -> bool {
         self.log
             .iter()
             .any(|e| matches!(e.op, Op::QuantumOutcome { .. }))
     }
+}
+
+pub(crate) fn outcomes_from_events<'a>(
+    events: impl Iterator<Item = &'a Event>,
+) -> Vec<PersistedQuantumOutcome> {
+    let mut outcomes = Vec::new();
+    for e in events {
+        if let Op::QuantumOutcome {
+            quantum_id,
+            disposition,
+            aborted_on_budget,
+            events_in_quantum,
+            event_ids,
+            receipt_digest_hex,
+            resume_of,
+        } = &e.op
+        {
+            outcomes.push(PersistedQuantumOutcome {
+                quantum_id: quantum_id.clone(),
+                disposition: *disposition,
+                aborted_on_budget: *aborted_on_budget,
+                events_in_quantum: *events_in_quantum,
+                event_ids: event_ids.clone(),
+                receipt_digest_hex: receipt_digest_hex.clone(),
+                resume_of: resume_of.clone(),
+            });
+        }
+    }
+    outcomes
+}
+
+impl Runtime {
     pub fn snapshot(&self) -> Snapshot {
         Snapshot {
             log_offset: self.graph_len(),

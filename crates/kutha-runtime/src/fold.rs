@@ -177,7 +177,7 @@ impl Fact {
 ///
 /// - [`FoldIndexMode::Eager`]: warm maps on every fact push (accept write-cost; default).
 /// - [`FoldIndexMode::Lazy`]: thin write — append facts only; rebuild or scan on demand.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum FoldIndexMode {
     /// O(1) lookups; higher ingest wall time (D-06 tradeoff).
     #[default]
@@ -232,8 +232,7 @@ pub struct GraphFold {
     /// Hot-path examine count. Not SoT; skipped in snapshot JSON.
     #[serde(skip)]
     pub(crate) hot_examine: ExamineCounter,
-    /// Ingest index policy (not fingerprint / JSON).
-    #[serde(skip)]
+    /// Ingest index policy. Pinned in snapshot JSON (REPL-04); not fingerprint input.
     pub(crate) index_mode: FoldIndexMode,
     /// Whether secondary maps match `facts` (Lazy may leave this false).
     #[serde(skip)]
@@ -274,8 +273,10 @@ pub struct GraphFold {
     #[serde(skip)]
     pub(crate) blobs: HashMap<String, Vec<u8>>,
     /// Wall date → transaction time (`Event.ingested_at`) from `Op::TtAnchor`. Not fingerprint.
-    #[serde(skip)]
     pub(crate) tt_anchors: BTreeMap<u64, u64>,
+    /// True when `tt_anchors` was present in snapshot JSON (legacy files omit the key).
+    #[serde(skip)]
+    pub(crate) tt_anchors_pinned: bool,
 }
 
 impl Default for GraphFold {
@@ -290,11 +291,19 @@ impl<'de> serde::Deserialize<'de> for GraphFold {
         struct GraphFoldDe {
             pub(crate) facts: Vec<Fact>,
             pub(crate) next_seq: u64,
+            #[serde(default)]
+            pub(crate) tt_anchors: Option<BTreeMap<u64, u64>>,
+            #[serde(default)]
+            pub(crate) index_mode: FoldIndexMode,
         }
         let de = GraphFoldDe::deserialize(deserializer)?;
-        let mut fold = GraphFold::with_index_mode(FoldIndexMode::from_env());
+        let mut fold = GraphFold::with_index_mode(de.index_mode);
         fold.facts = de.facts;
         fold.next_seq = de.next_seq;
+        if let Some(anchors) = de.tt_anchors {
+            fold.tt_anchors = anchors;
+            fold.tt_anchors_pinned = true;
+        }
         match fold.index_mode {
             FoldIndexMode::Eager => {
                 fold.rebuild_hot_maps();
@@ -329,7 +338,19 @@ impl GraphFold {
             rel_action: None,
             blobs: HashMap::new(),
             tt_anchors: BTreeMap::new(),
+            tt_anchors_pinned: false,
         }
+    }
+
+    /// Log `Op::TtAnchor` walls and `ingested_at` (not hashed into the fact fingerprint).
+    pub(crate) fn tt_anchors_from_events(events: &[Event]) -> BTreeMap<u64, u64> {
+        let mut out = BTreeMap::new();
+        for e in events {
+            if let Op::TtAnchor { wall } = &e.op {
+                out.insert(*wall, e.ingested_at);
+            }
+        }
+        out
     }
 
     /// Bind reserved `kutha:*` relation TermIds from the live dictionary (D-01 / D-05).

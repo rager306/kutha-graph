@@ -9,12 +9,7 @@ const VERSION: u32 = 1;
 
 /// Framed durable log (Rocks WAL *cousin*): length + crc + payload.
 /// Truncated/corrupt last record is dropped (kTolerateCorruptedTail analog). Not SoT algebra.
-pub fn append_events(path: &Path, events: &[Event]) -> std::io::Result<()> {
-    let mut f = OpenOptions::new()
-        .create(true)
-        .truncate(true)
-        .write(true)
-        .open(path)?;
+pub(crate) fn write_wal(f: &mut File, events: &[Event]) -> std::io::Result<()> {
     f.write_all(MAGIC)?;
     f.write_all(&VERSION.to_le_bytes())?;
     for e in events {
@@ -30,6 +25,16 @@ pub fn append_events(path: &Path, events: &[Event]) -> std::io::Result<()> {
     }
     f.sync_all()?;
     Ok(())
+}
+
+#[allow(dead_code)] // used by wal.rs unit tests; persist uses write_wal + rename
+pub fn append_events(path: &Path, events: &[Event]) -> std::io::Result<()> {
+    let mut f = OpenOptions::new()
+        .create(true)
+        .truncate(true)
+        .write(true)
+        .open(path)?;
+    write_wal(&mut f, events)
 }
 
 pub fn recover_events(path: &Path) -> std::io::Result<Vec<Event>> {

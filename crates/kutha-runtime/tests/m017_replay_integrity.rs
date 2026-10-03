@@ -1,9 +1,8 @@
-//! M017 S02 / REPL-01..04 RED oracles. Product code is unchanged in 42-01.
-//! D-07: FF5/FF6/M010–M016 assertions stay in their own files.
+//! M017 S02 / REPL-01..04 GREEN oracles. D-07: FF5/FF6/M010–M016 assertions stay in their own files.
 
 use kutha_common::{Event, EventId, Op};
 use kutha_runtime::{store, FoldIndexMode, PersistedQuantumOutcome, Runtime};
-use std::fs::{self, File};
+use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
@@ -236,7 +235,8 @@ fn abort_snapshot_replace_keeps_previous_bytes() {
     let dest = dir.join("snapshot.json");
     let before = fs::read(&dest).unwrap();
     assert!(!before.is_empty(), "persist must write snapshot.json");
-    drop(File::create(&dest).unwrap());
+    store::abort_snapshot_replace_before_rename(&dir, &rt)
+        .expect_err("injected abort is not persist success");
     let after = fs::read(&dest).unwrap();
     assert!(
         after == before,
@@ -256,7 +256,8 @@ fn abort_wal_replace_keeps_previous_bytes() {
     let dest = dir.join("events.wal");
     let before = fs::read(&dest).unwrap();
     assert!(!before.is_empty(), "persist must write events.wal");
-    drop(File::create(&dest).unwrap());
+    store::abort_wal_replace_before_rename(&dir, &rt)
+        .expect_err("injected abort is not persist success");
     let after = fs::read(&dest).unwrap();
     assert!(
         after == before,

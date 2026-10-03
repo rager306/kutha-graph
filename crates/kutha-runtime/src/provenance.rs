@@ -5,6 +5,16 @@ use kutha_common::{EventId, Op, TransactionTime, ValidTime};
 use sha2::{Digest, Sha256};
 use std::collections::HashSet;
 
+fn tt_anchors_digest(anchors: &std::collections::BTreeMap<u64, u64>) -> [u8; 32] {
+    let mut h = Sha256::new();
+    h.update(b"kutha-tt-anchors");
+    for (wall, ingested_at) in anchors {
+        h.update(wall.to_le_bytes());
+        h.update(ingested_at.to_le_bytes());
+    }
+    h.finalize().into()
+}
+
 impl Runtime {
     pub fn replay_check(&self) -> Result<GraphFold, RuntimeError> {
         let rebuilt = GraphFold::replay(self.log.as_slice());
@@ -13,6 +23,7 @@ impl Runtime {
         if expected != actual {
             return Err(RuntimeError::ReplayDivergence { expected, actual });
         }
+        Self::check_tt_anchors(&self.fold.tt_anchors, self.log.as_slice())?;
         let mut seen = HashSet::new();
         for e in self.log.iter() {
             if let Op::Behavior { caused_by, .. } = &e.op {
@@ -28,6 +39,21 @@ impl Runtime {
             seen.insert(e.id);
         }
         Ok(rebuilt)
+    }
+
+    /// Snapshot-held walls + `ingested_at` vs log `Op::TtAnchor` (D-02). Not fingerprint input.
+    pub(crate) fn check_tt_anchors(
+        snapshot_held: &std::collections::BTreeMap<u64, u64>,
+        events: &[kutha_common::Event],
+    ) -> Result<(), RuntimeError> {
+        let from_log = GraphFold::tt_anchors_from_events(events);
+        if snapshot_held != &from_log {
+            return Err(RuntimeError::ReplayDivergence {
+                expected: tt_anchors_digest(snapshot_held),
+                actual: tt_anchors_digest(&from_log),
+            });
+        }
+        Ok(())
     }
 
     /// Lineage digest over Behavior plus log-native outcome/cite Events (ADR-060 obligation 2, LOG-03).
