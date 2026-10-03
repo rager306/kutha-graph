@@ -270,7 +270,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 - [x] **S01: Thaw map and freeze governor honesty** `risk:low` `depends:[]`
   > After this: the blanket "freeze until M002 lease" is replaced by a per-item thaw map (RocksDB crate: S03; Cypher: M003; HNSW: M005; six dictionaries: SIX-01; ADR-080/081, ADR-090, ADR-093, Consensus 103+: their own named gate); the `freeze` governor check no longer claims to read STATE (split per dependency, each message names its real thaw gate) and its selftest and pytest prove it; no file under `crates/` changes.
-- [ ] **S02: SNAP-01 and fail-closed WAL open** `risk:medium` `depends:[S01]`
+- [x] **S02: SNAP-01 and fail-closed WAL open** `risk:medium` `depends:[S01]`
   > After this: sidecars replace via tmp+sync+rename and every rename is followed by a parent-directory fsync; an unreadable or partial sidecar is treated as absent while an intact log still opens; `check_tt_anchors` tolerates a log ahead of the snapshot; a failed WAL magic read or an empty WAL without jsonl never yields an empty log; a WAL error is not hidden behind jsonl; a crash-matrix test (failpoint after each persist step) reopens to the last durable prefix or fails closed.
 - [ ] **S03: RocksDB build spike** `risk:low` `depends:[S01]`
   > After this: a thin isolated module compiles `rocksdb` offline on this host and round-trips `EventId` to file offset; it is not wired into `Runtime`; the governor allows the dependency only in the leased slice; build prerequisites are recorded; if it cannot build, the failure and the fallback (pure-Rust index) are written down.

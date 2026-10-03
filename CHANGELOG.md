@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Process: close M002 S02 (GSD Phase 50)
+
+### Process
+
+- `L_delivery=M002-S02-done`, Active Slice **None**. `50-VERIFICATION.md` is independent (7/7; kill-mutations on in-place sidecar write, missing directory fsync, exact anchor equality, short-header `Ok(vec![])`, dropped prefix rule, masked I/O error, skipped failpoint all fail a test). Bench gate D-06 met on interleaved medians (ingest +0.1%, as_of +1.4%); the first back-to-back runs were host noise. `bytes_per_fact` RSS rise is carried to Phase 52. Next: S03 (Phase 51) needs a lease; M018 stays paused.
+
 ## 2026-10-03 — Product: SNAP-01 atomic sidecars and fail-closed WAL open
 
 ### Product
