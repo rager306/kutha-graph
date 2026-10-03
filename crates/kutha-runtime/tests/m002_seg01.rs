@@ -203,6 +203,26 @@ fn missing_active_segment_is_invalid_data() {
 }
 
 #[test]
+fn sealed_without_trailer_is_invalid_data() {
+    let rt = seed_runtime();
+    let dir = persist_dir("no-trailer");
+    let events = persist_encoded(&rt, &dir);
+    write_segments(&dir, &events);
+    let path = first_sealed_path(&dir);
+    let bytes = fs::read(&path).unwrap();
+    let ranges = event_frame_ranges(&bytes);
+    assert!(
+        !ranges.is_empty(),
+        "sealed file must have event frames before the trailer"
+    );
+    fs::write(&path, &bytes[..ranges[ranges.len() - 1].1]).unwrap();
+
+    assert_invalid_data(&dir, "truncated sealed");
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
 fn truncated_sealed_is_invalid_data() {
     let rt = seed_runtime();
     let dir = persist_dir("trunc-sealed");
