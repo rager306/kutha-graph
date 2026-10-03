@@ -143,7 +143,7 @@ pub enum MigrateStep {
 /// removed only after a verified reopen (ids + fold fingerprint). Idempotent
 /// when `manifest.json` already exists. Never auto-invoked from [`persist`].
 pub fn migrate(dir: &Path) -> std::io::Result<MigrateReport> {
-    migrate_until(dir, None)
+    migrate_until(dir, None, None)
 }
 
 /// Crash-injection migrate: steps through `stop_after` inclusive, then an injected fault.
@@ -151,10 +151,29 @@ pub fn migrate_with_failpoint(
     dir: &Path,
     stop_after: MigrateStep,
 ) -> std::io::Result<MigrateReport> {
-    migrate_until(dir, Some(stop_after))
+    migrate_until(dir, Some(stop_after), None)
 }
 
-fn migrate_until(dir: &Path, stop_after: Option<MigrateStep>) -> std::io::Result<MigrateReport> {
+/// Fault injected after segments+manifest are on disk and before verify-reopen.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum MigrateVerifyFault {
+    /// XOR one payload byte in the first sealed file (CRC must fail verify).
+    FlipSealedByte,
+}
+
+/// Migrate, then corrupt the freshly written store before verify-reopen.
+pub fn migrate_with_verify_fault(
+    dir: &Path,
+    fault: MigrateVerifyFault,
+) -> std::io::Result<MigrateReport> {
+    migrate_until(dir, None, Some(fault))
+}
+
+fn migrate_until(
+    dir: &Path,
+    stop_after: Option<MigrateStep>,
+    _fault: Option<MigrateVerifyFault>,
+) -> std::io::Result<MigrateReport> {
     fs::create_dir_all(dir)?;
     if dir.join(crate::segment::MANIFEST_REL).exists() {
         let wal = dir.join(EVENTS_WAL);

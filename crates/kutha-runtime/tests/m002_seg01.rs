@@ -1441,3 +1441,46 @@ fn legacy_dir_without_migrate_stays_legacy_after_persist() {
     expect_round_trip(&dir, &rt);
     let _ = fs::remove_dir_all(&dir);
 }
+
+#[test]
+fn migrate_verify_fault_returns_invalid_data_and_keeps_legacy() {
+    let rt = seed_runtime();
+    let dir = persist_dir("mig-verify-fault");
+    persist_legacy(&rt, &dir);
+    let want = log_ids(&rt);
+    let err = store::migrate_with_verify_fault(&dir, store::MigrateVerifyFault::FlipSealedByte)
+        .expect_err("verify must see the corrupted sealed file");
+    assert_eq!(err.kind(), ErrorKind::InvalidData);
+    assert!(
+        dir.join("events.jsonl").exists(),
+        "jsonl must survive a failed verify"
+    );
+    assert!(
+        dir.join("events.wal").exists(),
+        "wal must survive a failed verify"
+    );
+    assert!(
+        !dir.join(store::MANIFEST_REL).exists(),
+        "failed verify must leave no manifest (legacy intact)"
+    );
+    let opened = store::open(&dir).unwrap();
+    assert_eq!(log_ids(&opened), want);
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn migrate_verify_failure_after_manifest_flip_unflips() {
+    let rt = seed_runtime();
+    let dir = persist_dir("mig-unflip");
+    persist_legacy(&rt, &dir);
+    store::migrate_with_verify_fault(&dir, store::MigrateVerifyFault::FlipSealedByte)
+        .expect_err("verify after persist_log (manifest already written) must fail");
+    assert!(
+        !dir.join(store::MANIFEST_REL).exists(),
+        "manifest flip must be unflipped when verify fails"
+    );
+    assert!(dir.join("events.jsonl").exists());
+    assert!(dir.join("events.wal").exists());
+    expect_round_trip(&dir, &rt);
+    let _ = fs::remove_dir_all(&dir);
+}
