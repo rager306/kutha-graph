@@ -20,7 +20,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 - [x] **Phase 41: Living docs and governor honesty** — DOC-02..05, GOV-02 (docs only; no `crates/`)
 - [x] **Phase 42: Replay integrity** — REPL-01..04, KNOWN-03 (product code; CBM + GitNexus pair)
-- [ ] **Phase 43: Determinism and knowledge-cut characterization** — DET-01, KNOWN-04 (tests first)
+- [x] **Phase 43: Determinism and knowledge-cut characterization** — DET-01, KNOWN-04 (tests first)
 - [ ] **Phase 44: Ingest regression repair** — PERF-01, PERF-02 (product code; found by Phase 42 bench bisect)
 
 ### Phase 41: Living docs and governor honesty
@@ -52,6 +52,6 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 | Milestone | Phases | Status |
 |-----------|--------|--------|
 | v0.01–v0.09 | 1–40 | shipped |
-| v0.10 | 41–44 | 2/4 |
+| v0.10 | 41–44 | 3/4 |
 
-**Next:** Phase 43 (lease S03). Phase 44 stays authored, unleased.
+**Next:** Phase 44 (lease S04).

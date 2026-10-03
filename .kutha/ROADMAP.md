@@ -236,7 +236,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
   > After this: PROJECT carries no stale lease and `cite-lease` covers it; gap-review addendum and invariants ledger match M014–M016; ADR-000/013/014/041/050/060/070 and README carry dated clarifications (three AS OF cuts, Horn over live facts, C01 open with options); no file under `crates/` changes.
 - [x] **S02: Replay integrity** `risk:high` `depends:[S01]`
   > After this: tampered `TtAnchor` fails replay; `snapshot.json` and `events.wal` replace atomically; open never lets a sidecar or an empty WAL override the log; snapshot pins the fold index mode; `as_known_on` rustdoc and `known_at` oracle are honest.
-- [ ] **S03: Determinism and knowledge-cut characterization** `risk:medium` `depends:[S02]`
+- [x] **S03: Determinism and knowledge-cut characterization** `risk:medium` `depends:[S02]`
   > After this: seeded replay==fold and Eager==Lazy (persist/open) properties are green with no new dependency; Horn-vs-known-on behaviour is recorded in a named test and ADR-013 Evidence without changing behaviour.
 - [ ] **S04: Ingest regression repair** `risk:high` `depends:[S03]`
   > After this: the M016 commit that tripled `ingest_plain.n` (108M to 301M ns at N=10000, found by the Phase 42 bisect) is named; a scaling oracle is RED then GREEN; ingest is within 10 percent of v0.08 on the same host or the residual is explained; named oracles unchanged.
