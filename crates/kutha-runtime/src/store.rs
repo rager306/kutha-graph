@@ -363,14 +363,31 @@ pub fn open_for_append_with_failpoint(
     open_for_append(dir)
 }
 
+fn fold_affecting_count(events: &[Event]) -> usize {
+    events
+        .iter()
+        .filter(|e| crate::quantum::op_affects_fold(&e.op))
+        .count()
+}
+
 pub fn open(dir: &Path) -> std::io::Result<Runtime> {
+    let events = committed_prefix(load_events_d04(dir)?);
+    open_hydrated(dir, events)
+}
+
+fn open_hydrated(dir: &Path, events: Vec<Event>) -> std::io::Result<Runtime> {
     let snap_path = dir.join(SNAPSHOT_JSON);
     let terms_path = dir.join(TERMS_REL);
-    let events = load_events_d04(dir)?;
     let outcomes = load_outcomes(&dir.join(OUTCOMES_REL))?;
     let justifications = load_justifications(&dir.join(JUSTIFICATIONS_REL))?;
     if snap_path.exists() {
         let snap: Snapshot = serde_json::from_reader(File::open(&snap_path)?).map_err(json_err)?;
+        if snap.log_offset > fold_affecting_count(&events) {
+            return Err(std::io::Error::new(
+                ErrorKind::InvalidData,
+                "snapshot log_offset is ahead of the committed prefix",
+            ));
+        }
         if snap.fold.tt_anchors_pinned {
             let graph: Vec<Event> = events
                 .iter()
