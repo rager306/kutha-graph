@@ -12,13 +12,13 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `glob_absent` accepts optional `unless_line_contains` (a needle on a comment line, or on a line that also contains that substring, is ignored). `freeze-rocks` allows `rocksdb =` in `crates/*/Cargo.toml` only when the same line has `optional = true`, regardless of Active Milestone; a plain or non-optional assignment fails. Feature lines (`dep:rocksdb`) are not assignments. The workspace `Cargo.toml` must not contain `rocksdb =`. `unless_file_contains` stays in the kind and its tests. `freeze-cypher-deps` and `freeze-hnsw-dep` stay unconditional. Selftest still appends `rocksdb =` on a new line so the check fails closed.
 
-## 2026-10-04 — Product: ROCK-01 Rocks locator index (RED)
+## 2026-10-04 — Product: ROCK-01 droppable Rocks locator lease
 
 ### Product
 
 ### Added
 
-- Optional `kutha-runtime` feature `rocks-index` (same `rocksdb` optional dep) and `m002_rock01` oracles over a droppable segmented-log locator lease. RED: `SegmentIndex` is unimplemented.
+- Optional `kutha-runtime` feature `rocks-index` (same `rocksdb` optional dep, `default-features = false`). `SegmentIndex` stores EventId locators (`e:` seq+offset+len) and delivery_key winners (`d:`) over the committed segmented prefix, plus `m:v` / `m:tip`. Deleting the Rocks directory changes no log answer. Legacy dirs fail with `InvalidData` "run store::migrate first". Not wired into `Runtime`, `store::open`, `Persister`, fold, or hydrate. Oracles: `crates/kutha-runtime/tests/m002_rock01.rs`. `rocks-index-spike` / ROCK-00 jsonl offsets stay.
 
 ## 2026-10-04 — Product: migrate, jsonl export, and sealed tamper (SEG-01 / 54-03)
 

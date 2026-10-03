@@ -426,14 +426,24 @@ fn rocks_values_hold_no_payload() {
         );
         let as_str = String::from_utf8_lossy(&v);
         assert!(
-            !as_str.contains('{') && !as_str.contains("inForceAs"),
-            "value must not hold JSON or a term string: {as_str}"
+            serde_json::from_slice::<serde_json::Value>(&v).is_err(),
+            "value must not be JSON: {as_str}"
+        );
+        assert!(
+            !as_str.contains("inForceAs"),
+            "value must not hold a term string: {as_str}"
         );
         if k.starts_with(b"e:") {
             assert_eq!(v.len(), 16, "e: locator is seq+offset+len");
         }
         if k.starts_with(b"d:") {
             assert_eq!(v.len(), 16, "d: value is EventId");
+        }
+        if k == b"m:v" {
+            assert_eq!(v.len(), 4, "m:v is u32be");
+        }
+        if k == b"m:tip" {
+            assert_eq!(v.len(), 88, "m:tip is hex+count+EventId");
         }
     }
     let _ = fs::remove_dir_all(&dir);
