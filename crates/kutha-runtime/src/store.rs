@@ -326,7 +326,7 @@ pub struct OpenReport {
     pub dropped_uncommitted: usize,
 }
 
-/// Identity in RED; GREEN walks to the last `QuantumOutcome` then keeps SelfCommit ops.
+/// Trim a loaded log to the committed prefix (COMMIT-01 option A).
 pub fn committed_prefix(events: Vec<Event>) -> Vec<Event> {
     crate::commit::committed_prefix(events)
 }
