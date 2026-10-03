@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Process: M017 S02 leased (replay integrity)
+
+### Process
+
+- Lease M017-S02 for GSD Phase 42 (REPL-01..04, KNOWN-03). Phases 43 unleased. No crate change in this entry.
+
+### Trajectory
+
+- Active Milestone **M017**, Active Slice **S02**. `L_delivery=M017-S01-done`.
+
 ## 2026-10-03 — Process: M017 S01 living docs and cite-lease
 
 ### Process
