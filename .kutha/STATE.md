@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M002
-**Active Slice:** S03
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M002-S02-done
+L_delivery=M002-S03-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M002 S03 active (RocksDB build spike, optional feature, not wired); M018 paused at its S02 decision gate | Capability proven / Rocks started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M002 S03 done (RocksDB build spike, optional feature `rocks-index-spike`, not wired); S04 unleased; M018 paused at its S02 decision gate | Capability proven / Rocks started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M002 S03 leased** (`L_delivery=M002-S02-done`, Active Milestone **M002**, Active Slice **S03**, 2026-10-03). GSD Phase 51 only: ROCK-00. First task: let `freeze-rocks` allow `rocksdb` while Active Milestone is M002; then an optional `rocks-index-spike` feature in `crates/kutha-runtime` that round-trips `EventId` to `events.jsonl` offset. Not wired into `Runtime`; default build never compiles RocksDB. M018 stays paused at its S02 decision gate. Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
+**M002 S03 closed** (`L_delivery=M002-S03-done`, Active Milestone **M002**, Active Slice **None**, 2026-10-03). GSD Phase 51 verified independently (6/6): `rocksdb` 0.22 builds offline as an optional `kutha-runtime` feature and round-trips `EventId` to `events.jsonl` offset; the default build does not compile it. Next: S04 (incremental framed append, Phase 52) needs a lease and carries the bench gate and the persist bench. M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
 
 ## Thaw map
 
@@ -32,7 +32,7 @@ The freeze list came from agent-assisted commits (`1ee5942`, `85db1f7`, 2026-08-
 
 | Item | Thaws when |
 |------|------------|
-| RocksDB crate | M002 Phase 51 (S03) is leased; until then `freeze-rocks` bans the dependency |
+| RocksDB crate | Thawed while Active Milestone is M002 (Phase 51): optional feature `rocks-index-spike` only; `freeze-rocks` bans it under any other milestone; wiring waits for S07 |
 | Cypher/GPML parser | M003 is leased |
 | HNSW | M005 is leased |
 | ADR-050 six dictionaries | SIX-01 is leased |
