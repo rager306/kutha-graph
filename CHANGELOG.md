@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Product: Horn premise-relation ingest lease (M017 S04)
+
+### Product
+
+### Fixed
+
+- Droppable `GraphFold` lease `horns_by_premise` (premise relation name → live Horn slots, `serde skip`, not fingerprint). Indexed on `kutha:rule` push and dropped on retract, including Lazy, like `allows_by_name`. `horn_fires` looks up the asserted relation instead of scanning `facts()` in `live_horns`. Extra `relatedTo` ingest no longer pays O(N) Horn visits. No new crate or public API.
+
+### Trajectory
+
+- Lease and honeycomb cells unchanged. Active Milestone **M017**, Active Slice **S04**.
+
 ## 2026-10-03 — Product: ingest Horn-visit RED oracle (M017 S04)
 
 ### Product

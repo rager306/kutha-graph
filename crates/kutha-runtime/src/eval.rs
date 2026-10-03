@@ -102,7 +102,7 @@ impl Runtime {
         valid_to: Option<u64>,
     ) -> Vec<Event> {
         let mut out = Vec::new();
-        for (pin, ast) in self.live_horns(valid_from) {
+        for (pin, ast) in self.live_horns(valid_from, relation) {
             let RuleAst::Horn { head, premises } = ast else {
                 continue;
             };
@@ -138,7 +138,32 @@ impl Runtime {
         out
     }
 
-    fn live_horns(&self, vt: u64) -> Vec<(String, RuleAst)> {
+    fn live_horns(&self, vt: u64, relation: TermId) -> Vec<(String, RuleAst)> {
+        if self.fold.rel_rule.is_none() {
+            return vec![];
+        }
+        let Some(name) = self.dict.lookup(relation) else {
+            return vec![];
+        };
+        if let Some(slots) = self.fold.horns_by_premise.get(name) {
+            let mut out = Vec::new();
+            for slot in slots {
+                self.fold.horn_examine.bump();
+                let f = &self.fold.facts()[slot.fact_idx];
+                if !f.is_live_at(u64::MAX, vt) {
+                    continue;
+                }
+                out.push((slot.pin.clone(), slot.ast.clone()));
+            }
+            return out;
+        }
+        if self.fold.horn_lease_ready {
+            return vec![];
+        }
+        self.live_horns_scan(vt)
+    }
+
+    fn live_horns_scan(&self, vt: u64) -> Vec<(String, RuleAst)> {
         let Some(rel) = self.fold.rel_rule else {
             return vec![];
         };

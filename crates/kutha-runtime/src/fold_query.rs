@@ -212,6 +212,7 @@ impl GraphFold {
 
     /// Mark a fact slot invalidated and drop it from the live-triple lease.
     pub(crate) fn invalidate_fact_at(&mut self, idx: usize, at: impl Into<TransactionTime>) {
+        self.unindex_horn_slot(idx);
         self.facts[idx].invalidated_at = Some(at.into().as_u64());
         let fact = &self.facts[idx];
         let key = (fact.subject, fact.relation, fact.object());
