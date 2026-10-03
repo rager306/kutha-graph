@@ -231,3 +231,19 @@ Runs a and b above were back-to-back, not interleaved, and the baseline commit i
 
 D-06 ≤10% vs `7e31784`: **met** on medians (ingest raw range 100.5M–120.9M base, 112.0M–142.5M head). Ingest and `as_of` sources were not edited. `bytes_per_fact` (peak RSS over the whole bench including persist) rose 17218 B to 25200 B in the first pair; this is outside the D-06 pair and is carried as a residual for Phase 52 (persist buffering).
 
+## Phase 51 (M002 S03) — ROCK-00 optional RocksDB spike (2026-10-03)
+
+Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p51-bench-target` for HEAD, `tmp/p51-base-target` for `24e2306`). Default bench binary (feature off). Binaries run from each worktree's `crates/kutha-runtime`. Interleaved `base, head, base, head`. Host noise is about 15–18% between back-to-back runs of the same binary (base ingest 154.8M then 131.0M). Compare interleaved medians; do not treat a single pair as a gate.
+
+| run | 24e2306 ingest_plain.n | HEAD ingest_plain.n | Δ ingest | 24e2306 as_of.n | HEAD as_of.n | Δ as_of |
+|-----|-----------------------:|--------------------:|---------:|----------------:|-------------:|--------:|
+| 1 | 154822225 | 109161244 | −29.5% | 312963 | 291503 | −6.9% |
+| 2 | 131002508 | 111652833 | −14.8% | 367955 | 280913 | −23.7% |
+
+| metric | median 24e2306 | median HEAD | Δ median |
+|--------|---------------:|------------:|---------:|
+| ingest_plain.n | 142912366 | 110407038 | −22.7% |
+| as_of.n | 340459 | 286208 | −15.9% |
+
+D-07 ≤10% vs `24e2306`: **met** (no median regression; HEAD was faster). The apparent speedup is inside host noise (base alone moved ~18%). Default ingest/`as_of` sources were not edited. `bytes_per_fact` stayed 17216–17269 B. RocksDB is not on the default bench compile path.
+

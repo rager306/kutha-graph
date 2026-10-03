@@ -18,6 +18,7 @@ process: docs/process/governor-intake.md
 # 2026-10-03 restage (M018 S01 doc-truth: extra_relatedto_horn_visits_constant_in_n / m017_ingest_scaling): ADR-041; map/delivery/capability unchanged.
 # 2026-10-03 restage (M002 thaw GSD v0.12: SNAP-01/WAL-open S02, persist O(N) S04, COMMIT-01 S05, Rocks index S07): ADR-010, ADR-012, ADR-014, ADR-060; map/delivery/capability unchanged.
 # 2026-10-03 restage (M002 S02 Phase 50: SNAP-01 closed — atomic sidecars, dir fsync, log-ahead anchors, fail-closed WAL open): ADR-012, ADR-014, ADR-060; map/delivery/capability unchanged.
+# 2026-10-03 restage (M002 S03 Phase 51: ROCK-00 RocksDB EventId-offset spike, optional feature, no wiring): ADR-010, ADR-012; map/delivery/capability unchanged.
 
 locks:
   - id: D1

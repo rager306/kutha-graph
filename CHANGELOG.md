@@ -12,6 +12,10 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Optional `kutha-runtime` feature `rocks-index-spike` (`rocksdb` 0.22, `default-features = false`: no snappy/lz4/zstd/zlib/bzip2). `rocks_spike::{build_index, lookup, read_event_at}` maps `EventId` bytes to `events.jsonl` offsets; oracles `m002_rock00.rs` are feature-gated. Default `cargo test --workspace` does not compile RocksDB. Not wired into `Runtime`, persist, fold, or hydrate.
 
+### Trajectory
+
+- ADR-010/012 dated Evidence 2026-10-03: RocksDB builds offline as an optional spike; no wiring. Cells stay **Proposed**. `honeycomb.yaml` restaged (map/delivery/capability unchanged). Build record in `m002-cloud-kernel-io-intake.md`. Bench vs `24e2306` (interleaved medians): ingest_plain.n −22.7%, as_of.n −15.9% — inside ~15–18% host noise; D-07 met.
+
 ## 2026-10-03 — Process: freeze-rocks allows rocksdb during M002
 
 ### Process

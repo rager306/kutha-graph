@@ -16,6 +16,10 @@ M017 S02: `persist` replaces `snapshot.json` and `events.wal` via tmp+`sync_all`
 
 SNAP-01 closed by Phase 50: sidecars `terms.jsonl` / `quantum_outcomes.jsonl` / `justifications.jsonl` replace via tmp+`sync_all`+rename; `sync_dir` fsyncs the parent after every `replace_via_tmp` rename and once at end of `persist`; unparseable / mid-line / proper-prefix sidecars are absent (intact log opens; well-formed non-prefix still `InvalidData`); open-path `check_tt_anchors_range` allows log `TtAnchor`s with `ingested_at >= snap.next_tt` (`replay_check` stays exact); `recover_events` returns `InvalidData` ("truncated WAL header") when shorter than magic+version and `load_events_d04` does not mask non-`InvalidData` WAL I/O. Incremental append / O(N) persist rewrite remain S04; COMMIT-01 remains S05. Oracles: `m002_snap01.rs`. Status stays **Proposed**.
 
+### Evidence (2026-10-03, Phase 51 / M002 S03; Proposed)
+
+RocksDB builds offline as an optional spike; no wiring. The ROCK-00 map is a droppable `EventId`→file-offset lease behind `rocks-index-spike`; jsonl remains SoT. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

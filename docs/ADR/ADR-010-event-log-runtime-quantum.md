@@ -12,6 +12,10 @@ M013 routes Assert/Retract/Correct/Behavior and dictionary constructors through 
 
 D-04 open policy (M017 S02): jsonl is SoT; WAL is a lease. Prefer WAL only when recover yields magic `KUTHAWAL` + version 1 and recovered ids cover jsonl ids in order (WAL may be longer). Header-only, magic-only, empty, short, or recover-err plus readable jsonl → jsonl (never an empty log). Both parse and neither sequence covers the other → InvalidData. Snapshot pins `tt_anchors` (replay-visible, not fingerprint) and `FoldIndexMode`. `persist` replaces `snapshot.json` and `events.wal` via tmp+`sync_all`+rename (`replace_via_tmp`, `replace_snapshot`, `replace_events_wal`). Oracle: `m017_replay_integrity.rs` (`wal_valid_covering_preferred`, `tampered_tt_anchor_wall_fails_replay_check`, `abort_snapshot_replace_keeps_previous_bytes`, `abort_wal_replace_keeps_previous_bytes`). Current defect (2026-10-03, rg arbiter; CBM `persist`→`encoded_log`, coverage `metadata_changed`): each `persist` rewrites the whole log (`store.rs` `encoded_log` / `replace_via_tmp`; `wal.rs` `write_wal`). M002 is thawed and planned as GSD v0.12 (slices S01–S07, `.kutha/ROADMAP.md` § M002); incremental append / O(N) persist rewrite is scheduled in S04. Status stays **Proposed**.
 
+### Evidence (2026-10-03, Phase 51 / M002 S03; Proposed)
+
+RocksDB builds offline as an optional spike; no wiring. Feature `rocks-index-spike` on `kutha-runtime` (`rocksdb` 0.22.0, `librocksdb-sys` 0.16.0+8.10.0, `default-features = false`) holds an `EventId`→`events.jsonl` offset map in `rocks_spike`. Default workspace tests do not compile RocksDB. Not wired into `Runtime`, persist, fold, or hydrate. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18
