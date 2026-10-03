@@ -114,7 +114,7 @@ Target contract, from docs/architecture/semantic-gap-review.md (F9, F10): the lo
 
 ### Open question (2026-10-01)
 
-Open, from docs/architecture/semantic-gap-review.md (F9): how the six dictionaries of this cell relate to the unified fact substrate (ADR-011). A single reserved namespace may make most of them views over facts rather than six stores. The six dictionaries stay frozen until STATE names them. This question does not rewrite D050-1…D050-6 and does not mark this cell Accepted.
+Open, from docs/architecture/semantic-gap-review.md (F9): how the six dictionaries of this cell relate to the unified fact substrate (ADR-011). A single reserved namespace may make most of them views over facts rather than six stores. The six dictionaries stay frozen until SIX-01 is leased (`.kutha/STATE.md` Thaw map). This question does not rewrite D050-1…D050-6 and does not mark this cell Accepted.
 
 ## Consequences
 

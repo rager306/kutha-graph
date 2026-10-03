@@ -14,7 +14,7 @@ Closing M001 left process text and governor messages still talking about “befo
 ## Pattern
 
 1. Prefer dictionary checks over hardcoded Python: new conditional lease rule → `when_match_then_match` kind + YAML row.
-2. Keep freeze messages tied to the live lease (“until Active Milestone names M002”), not a closed milestone gate.
+2. Keep freeze messages tied to the real thaw gate. (2026-10-03: the `freeze` check does not read STATE; it is split into `freeze-rocks`, `freeze-cypher-deps`, `freeze-hnsw-dep`, each naming its gate; see `.kutha/STATE.md` Thaw map.)
 3. Extend `docs-coupling` so STATE and `docs/architecture/**` diffs require CHANGELOG.
 4. Treat host `gh` version as harness tooling: CE `pr-snapshot` needs a `gh` that exposes `baseRefOid` (official GitHub CLI package, not the Ubuntu 2.45.0 pin alone).
 

@@ -18,7 +18,7 @@ A developer can prove **legal point-in-time** on a named statute-shaped fixture 
 
 **Plan:** v0.12 Phases 49–55 (thaw map, SNAP-01, RocksDB spike, framed append, commit marker, segments, Rocks index lease). v0.11 Phases 46–48 wait for the owner's C01 and Horn decision. One slice leased at a time.
 
-**Thawed:** M002 durability (2026-10-03, owner's request; the earlier freeze was agent-made). Honeycomb stays Proposed. FIXG-01 fail-closed: C01 sunset is not a Horn; do not invent five clocks.
+**Thawed:** M002 durability (2026-10-03, owner's request; the earlier freeze came from agent-assisted commits (Cursor co-authored; the owner states he did not decide it)). Honeycomb stays Proposed. FIXG-01 fail-closed: C01 sunset is not a Horn; do not invent five clocks.
 
 
 ## Business Context
@@ -78,14 +78,14 @@ GSD overlay v0.09 (Phases 36–40 — M016 executable rules):
 ### Standing
 
 - [ ] Keep FF5/FF6/H2/H4/M010/M011 named fitness **green** (`L_capability=ff5-green` per `.kutha/STATE.md`)
-- [ ] Keep governor CI honest; three lifecycles uncollapsed; freeze until STATE names otherwise
-- [ ] Start only the slice `.kutha/STATE.md` names — do **not** assume M002, legal pack, or honeycomb Accepted
+- [ ] Keep governor CI honest; three lifecycles uncollapsed; thaw gates in `.kutha/STATE.md` § Thaw map
+- [ ] Start only the slice `.kutha/STATE.md` names — do **not** assume a legal pack or honeycomb Accepted (2026-10-03: M002 thawed; remaining gates in `.kutha/STATE.md` § Thaw map)
 
 ### Out of Scope
 
 - Honeycomb ADR-010–093 as a delivery backlog — map only; Status Proposed ≠ Accepted
 - Legal / science product packs — FF5 is a fixture, not a corpus
-- Freeze items: `.kutha/STATE.md` Freeze only (do not copy the list here)
+- Thaw map items: `.kutha/STATE.md` § Thaw map only (do not copy the list here)
 - TypeScript as graph core; Python inside `kutha-runtime`; repo-root `ports/` / `adapters/` / `domain/`
 - STCA-guide §5 JSON merge-patch / `object.created` as the product write surface
 - Mandatory Neo4j / FalkorDB / Graphiti / cloud LLM for assert → invalidate → AS OF
@@ -107,7 +107,7 @@ Narrative locks in `docs/ADR/ADR-000-kutha-hybrid-architecture-research.md`. **N
 
 ### Agent control (D3)
 
-- **D3:** Hard FSM as the sole control model is rejected. Versioned meta-prompt + dictionaries; LLM proposes; dictionaries + log own audited fact truth. (Six dictionary kinds are honeycomb ADR-050 — **frozen** until STATE names them. P0 uses a single FF6 relation allowlist.)
+- **D3:** Hard FSM as the sole control model is rejected. Versioned meta-prompt + dictionaries; LLM proposes; dictionaries + log own audited fact truth. (Six dictionary kinds are honeycomb ADR-050 — **frozen** until SIX-01; see `.kutha/STATE.md` § Thaw map. P0 uses a single FF6 relation allowlist.)
 
 ### Bi-temporal facts (D4)
 
@@ -115,11 +115,11 @@ Narrative locks in `docs/ADR/ADR-000-kutha-hybrid-architecture-research.md`. **N
 
 ### Materializations as plugins (D5)
 
-- **D5:** CSR/HNSW/temporal views are reversible leases. RVF is packaging, not hot SoT. (HNSW implementation frozen until STATE names it.)
+- **D5:** CSR/HNSW/temporal views are reversible leases. RVF is packaging, not hot SoT. (HNSW implementation frozen until M005; see `.kutha/STATE.md` § Thaw map.)
 
 ### Core language (D6)
 
-- **D6:** Graph core is Rust. TypeScript is not the materializer. (P0 spike has no Tokio/Rocks in workspace deps; Rocks remains freeze until M002 lease.)
+- **D6:** Graph core is Rust. TypeScript is not the materializer. (P0 spike has no Tokio/Rocks in workspace deps; Rocks is an index store behind the log protocol and thaws at M002 Phase 51 per `.kutha/STATE.md` § Thaw map.)
 
 ### Load profiles (D7)
 
@@ -149,7 +149,7 @@ Standing control loop for every GSD execute cycle starting Phase 2 (see `.planni
 
 - **D-G1:** After each execute-wave and before phase-verify — required `uv run kutha-gov ci` + brief `explain trajectory` in SUMMARY.
 - **D-G2:** HIGH stops the wave; WARN is recorded in VERIFICATION/STATE (never masked).
-- **D-G3:** Improvements stay in harness YAML/docs and clarity of ADR/roadmap/trajectory; not a new milestone, not assumed M002, not freeze thaw / legal pack.
+- **D-G3:** Improvements stay in harness YAML/docs and clarity of ADR/roadmap/trajectory; not a new milestone, not freeze thaw / legal pack. (2026-10-03: M002 thawed at the owner's request; remaining items follow `.kutha/STATE.md` § Thaw map.)
 
 Claude-decided companions (same CONTEXT): **D-10** SUMMARY template (≤8-line trajectory excerpt); **D-11** WARN ledgered ≠ block (HIGH blocks); **D-12…D-14** PLANE/FREEZE/MAP path probes; **D-15** cargo smoke at tracer + pre-verify only.
 
@@ -159,7 +159,7 @@ See `.planning/phases/03-lease-gated-next-slice/03-CONTEXT.md`. While Active Sli
 
 ### Claude's Discretion
 
-Slice internals, test split vs `quantum.rs` size, and verification-plan shape — as long as freeze, planes, and typed Op hold. Do **not** discretionary-start M002, Cypher, HNSW, legal pack, or ADR-050.
+Slice internals, test split vs `quantum.rs` size, and verification-plan shape — as long as freeze, planes, and typed Op hold. Do **not** discretionary-start Cypher, HNSW, legal pack, or ADR-050 (2026-10-03: M002 thawed; remaining gates in `.kutha/STATE.md` § Thaw map).
 </decisions>
 
 <map>
@@ -172,11 +172,11 @@ Harness compact index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov m
 
 ## Current State
 
-Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), **v0.04 — Single-log SoT + stable references** (2026-10-01, M012a S01–S06), **v0.05 — Dictionaries as facts** (2026-10-01, M012 S01–S05), **v0.06 — Honest baseline and one write path** (2026-10-02, M013 S01–S09), **v0.07 — Typed clocks and as-known-on** (2026-10-02, M014 S01–S03), **v0.08 — Known-on honesty** (2026-10-02, M015), **v0.09 — Test hardening + executable rules** (2026-10-02, M016 S01–S05), and **v0.10 — Docs honesty and replay integrity** (2026-10-03, M017 S01–S04). Honeycomb cells stay Proposed. Product stays `0.0.0`. Lease and freeze: `.kutha/STATE.md`.
+Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), **v0.04 — Single-log SoT + stable references** (2026-10-01, M012a S01–S06), **v0.05 — Dictionaries as facts** (2026-10-01, M012 S01–S05), **v0.06 — Honest baseline and one write path** (2026-10-02, M013 S01–S09), **v0.07 — Typed clocks and as-known-on** (2026-10-02, M014 S01–S03), **v0.08 — Known-on honesty** (2026-10-02, M015), **v0.09 — Test hardening + executable rules** (2026-10-02, M016 S01–S05), and **v0.10 — Docs honesty and replay integrity** (2026-10-03, M017 S01–S04). Honeycomb cells stay Proposed. Product stays `0.0.0`. Lease and thaw map: `.kutha/STATE.md`. The freeze list came from agent-assisted commits (2026-08-18, Cursor co-authored); the owner states he did not decide it; M002 thawed 2026-10-03 at the owner's request.
 
 ## Next Milestone Goals
 
-Next slice: `.kutha/STATE.md` only. M002 (segmented log, hash chain, manifest, commit-marker framing, sidecar atomicity SNAP-01; Rocks for indexes only) stays frozen until STATE names it. Candidates needing a decision: C01 sunset, typed `Op` clocks, Horn vs knowledge cut. Freeze: `.kutha/STATE.md` Freeze.
+Next slice: `.kutha/STATE.md` only. M002 (thawed 2026-10-03; segmented log, hash chain, manifest, commit-marker framing, sidecar atomicity SNAP-01; Rocks for indexes only, Phase 51) — slice list in `.kutha/ROADMAP.md`; remaining gates in `.kutha/STATE.md` § Thaw map. Candidates needing a decision: C01 sunset, typed `Op` clocks, Horn vs knowledge cut.
 
 ## Context
 
@@ -185,8 +185,8 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 **Harness lease** (process intent, not GSD memory, not product SoT): `.kutha/STATE.md`
 
 - Active Milestone, Active Slice and `L_delivery`: cite `.kutha/STATE.md` only (they change per slice)
-- Phase, `L_map`, `L_capability`, and Freeze: cite `.kutha/STATE.md` only
-- Next: the slice named in STATE (`docs/process/gsd-auto-contract.md`); one lease at a time. Freeze holds. Green governor ≠ ADR Accepted ≠ L_capability.
+- Phase, `L_map`, `L_capability`, and Thaw map: cite `.kutha/STATE.md` only
+- Next: the slice named in STATE (`docs/process/gsd-auto-contract.md`); one lease at a time. Thaw map holds. Green governor ≠ ADR Accepted ≠ L_capability.
 
 GSD files live under `.planning/`. **Never overwrite** `.kutha/STATE.md` with GSD STATE.
 
@@ -197,7 +197,7 @@ Literature bound is closed (164 files in `cards/`: 163 original matrix rows + M0
 ## Constraints
 
 - **Stack:** Rust 2021 product crates; Python ≥3.13 harness via **uv** only (not system `python3`) — self-contained core, no mandatory graph DB
-- **Freeze:** the list lives in `.kutha/STATE.md` § Freeze (until an explicit M002 lease); do not copy it here
+- **Thaw map:** the list lives in `.kutha/STATE.md` § Thaw map (2026-10-03; nothing thaws merely by an M002 lease); do not copy it here
 - **Planes:** Product vs harness dictionaries stay distinct; no Python in `kutha-runtime`; hexagon inside a slice (ADR-022)
 - **STCA SPEC:** Isolation laws and Algorithms 2–3 from stca-guide apply as constraints; Algorithm 1 merge-patch does **not**
 - **Delivery:** One Active Slice at a time; STATE is a lease; process SoT is `.kutha/events.jsonl` (gitignored)
@@ -217,7 +217,7 @@ Literature bound is closed (164 files in `cards/`: 163 original matrix rows + M0
 | One GSD phase per M011 slice; GATE-02 lease discipline | v0.02 steel thread | ✓ Good (v0.02) |
 | Compose S08 (justifications + conflict_report) without rewriting fold/CSR/provenance | D-F1…D-F7 | ✓ Good (v0.02) |
 | GSD overlay annotated tags (`v0.01`, `v0.02`) | Milestone archival; not product SemVer / GitHub Release | ⚠️ Revisit (process tags only) |
-| M002/Rocks/Cypher/HNSW frozen | `.kutha/STATE.md` | — Pending (lease) |
+| Per-item thaw gates (Rocks Phase 51; Cypher M003; HNSW M005) | `.kutha/STATE.md` § Thaw map | — Pending (per-item; 2026-10-03 M002 thawed) |
 | Refactor and legal-fixture reconnaissance before durability (M013 before M002) | Post-M012 review R1: riskiest assumption last | ✓ Done (v0.06; `.planning/MILESTONES.md`) |
 | Independent verification and planning-artifact budget as gates | Post-M012 review R4/R5; Phase 28 `28-VERIFICATION.md` | ✓ Good (v0.06 PROC) |
 | CBM and GitNexus used together on M013 refactor phases | Measured tool limits; `rg` is arbiter | ✓ Done (v0.06; `.planning/MILESTONES.md`) |

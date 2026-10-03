@@ -22,7 +22,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 - [ ] **Phase 46: C01 and knowledge-cut decision** — ADR-013 verdict; Horn vs `as_known_on`; `as_of` vs eligibility (S02, decision gate)
 - [ ] **Phase 47: Horn determinism and closure** — derived identity, Correct re-derives, cascade admit and order (S03)
 - [ ] **Phase 48: Differential tests and oracle tightening** — fold/CSR/rebuild property, oracle tightening, bench gate (S04)
-- [ ] **Phase 49: Thaw map and freeze governor honesty** — M002 S01, docs and YAML only
+- [x] **Phase 49: Thaw map and freeze governor honesty** — M002 S01, docs and YAML only
 - [ ] **Phase 50: SNAP-01 and fail-closed WAL open** — sidecar rename, dir fsync, crash matrix (M002 S02)
 - [ ] **Phase 51: RocksDB build spike** — isolated module, offline build, EventId to offset (M002 S03)
 - [ ] **Phase 52: Incremental framed append** — no O(N) rewrite per persist (M002 S04)
@@ -36,4 +36,4 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 |-----------|--------|--------|
 | v0.01–v0.10 | 1–44 | shipped |
 | v0.11 | 45–48 | Phase 45 shipped; paused at decision gate |
-| v0.12 | 49–55 | planned (Phase 49 leased first) |
+| v0.12 | 49–55 | Phase 49 shipped; Phase 50 next |

@@ -8,7 +8,7 @@ last_mapped_at: 2026-09-29
 
 **Analysis Date:** 2026-09-29
 
-> Distinguishes **intentional research-stage gaps** (freeze / spike scope in `.kutha/STATE.md`) from **actionable debt**. Do not plan M002 Rocks, Cypher, HNSW, ADR-050 six dictionaries, legal/science packs, or ADR-080/081 until STATE leases them. Governor green ≠ ADR Accepted ≠ capability — collapsing those is itself a process failure mode.
+> Distinguishes **intentional research-stage gaps** (thaw map / spike scope in `.kutha/STATE.md` § Thaw map) from **actionable debt**. Do not start Rocks, Cypher, HNSW, ADR-050 six dictionaries, legal/science packs, or ADR-080/081 outside that map's named gates (2026-10-03: M002 thawed; nothing else thaws merely by that lease). Governor green ≠ ADR Accepted ≠ capability — collapsing those is itself a process failure mode.
 
 ## Tech Debt
 
@@ -40,7 +40,7 @@ last_mapped_at: 2026-09-29
 - Issue: `append_events` opens with `truncate(true)` and rewrites the whole file each `persist`.
 - Files: `crates/kutha-runtime/src/wal.rs`, `crates/kutha-runtime/src/store.rs`
 - Impact: Name suggests Rocks WAL semantics; durability story is “full snapshot cousin,” not crash-safe append. Large logs rewrite cost grows with log length.
-- Fix approach: Treat as intentional until M002; when leasing durability work, either rename or implement true append + checkpoint — do not pretend Rocks equivalence.
+- Fix approach: Treat as intentional until leased M002 durability slices; when that work is in the lease, either rename or implement true append + checkpoint — do not pretend Rocks equivalence (Rocks is an index store; thaws at Phase 51 per `.kutha/STATE.md` § Thaw map).
 
 **Dual durable encodings (WAL preferred over JSONL):**
 - Issue: `open` prefers `events.wal` when present; also writes `events.jsonl`, `snapshot.json`, `terms.jsonl`.
@@ -68,14 +68,14 @@ last_mapped_at: 2026-09-29
 - Files: `crates/kutha-runtime/src/csr.rs`, `crates/kutha-runtime/src/leapfrog.rs`
 - Trigger: Multi-relation graphs (legal `inForceAs` + demo `knows` on same subjects).
 - Workaround: Build CSR only on homogeneous fixtures; do not use CSR as a relation-typed index.
-- Note: Acceptable P0 lease picture; wrong for Cypher-style typed MATCH (frozen until explicit lease).
+- Note: Acceptable P0 lease picture; wrong for Cypher-style typed MATCH (frozen until M003; `.kutha/STATE.md` § Thaw map).
 
 ## Security Considerations
 
 **No auth / ABAC / multi-tenant isolation in product:**
 - Risk: Any process that can call `Runtime::emit` or write tenant ingest can mutate the log.
 - Files: `crates/kutha-runtime/src/quantum.rs`, `crates/kutha-runtime/src/tenant.rs`, `crates/kutha-runtime/src/bin/kutha-tenant.rs`
-- Current mitigation: Research-stage local spike; FF6 allowlist fail-closed for unknown relation names; freeze blocks ADR-080/081 until M002-class lease (`.kutha/STATE.md`).
+- Current mitigation: Research-stage local spike; FF6 allowlist fail-closed for unknown relation names; ADR-080/081 thaw at a security milestone after M003 (`.kutha/STATE.md` § Thaw map).
 - Recommendations: Do not invent ABAC in a side branch; keep security honeycomb Proposed. Treat `kutha-tenant` as dogfood, not a public API.
 
 **Allowlist parse failure → empty set (fail-closed):**
@@ -102,19 +102,19 @@ last_mapped_at: 2026-09-29
 - Problem: `live_at`, `live_supports`, claim support counts, and CSR build walk all facts.
 - Files: `crates/kutha-runtime/src/fold.rs`, `crates/kutha-runtime/src/csr.rs`, `crates/kutha-runtime/src/quantum.rs` (`derivation_eligible_at` also scans the log)
 - Cause: In-memory `Vec<Fact>` with no secondary index; intentional droppable picture.
-- Improvement path: Keep O(n) until a leased materializer/index; do not add HNSW or Rocks “for speed” under freeze. Measure with existing P0 timing print in `quantum.rs` tests before optimizing.
+- Improvement path: Keep O(n) until a leased materializer/index; do not add HNSW or Rocks “for speed” outside `.kutha/STATE.md` § Thaw map (HNSW: M005; Rocks crate: Phase 51). Measure with existing P0 timing print in `quantum.rs` tests before optimizing.
 
 **Full rewrite persist path:**
 - Problem: Every `persist` rewrites WAL + JSONL + terms + snapshot.
 - Files: `crates/kutha-runtime/src/store.rs`, `crates/kutha-runtime/src/wal.rs`
 - Cause: Spike durability model.
-- Improvement path: Defer to M002 durability lease; until then avoid persist in hot loops.
+- Improvement path: Defer to leased M002 durability slices (SNAP-01+); until then avoid persist in hot loops.
 
 **Leapfrog is intersection-only:**
 - Problem: `leapfrog_intersect` on sorted rows — not variable-ordered full LFTJ / MATCH.
 - Files: `crates/kutha-runtime/src/leapfrog.rs`
 - Cause: P0 spike bound (AGENTS.md / literature note).
-- Improvement path: Extend only under an explicit query/data lease; Cypher parser stays frozen.
+- Improvement path: Extend only under an explicit query/data lease; Cypher parser stays frozen until M003 (`.kutha/STATE.md` § Thaw map).
 
 ## Fragile Areas
 
@@ -124,10 +124,10 @@ last_mapped_at: 2026-09-29
 - Safe modification: Update `L_map` / `L_delivery` / `L_capability` rows together with ROADMAP/AGENTS only when the milestone lease changes; never “promote all” honeycomb; run `uv run kutha-gov precommit` / `ci`.
 - Test coverage: Harness tests in `scripts/tests/test_kutha_gov.py` (freeze message, when/then lease-closed). Product capability remains `crates/kutha-runtime/tests/ff5_legal_pit.rs`.
 
-**Freeze fence until M002:**
-- Files: `.kutha/STATE.md` (Freeze section), `.kutha/dictionaries/checks.yaml` (`freeze`, honeycomb `freeze_as`), `.kutha/ROADMAP.md`, `AGENTS.md`
-- Why fragile: Adding `rocksdb`, Cypher, HNSW, or ADR-050 six dictionaries trips HIGH freeze checks and collapses research honesty.
-- Safe modification: Do not start M002 / legal pack / ADR-100 without Active Milestone + Active Slice lease text in STATE.
+**Thaw map fence (2026-10-03):**
+- Files: `.kutha/STATE.md` (§ Thaw map), `.kutha/dictionaries/checks.yaml` (freeze needles, honeycomb `freeze_as`), `.kutha/ROADMAP.md`, `AGENTS.md`
+- Why fragile: Adding `rocksdb`, Cypher, HNSW, or ADR-050 six dictionaries outside the named gate trips HIGH freeze checks and collapses research honesty.
+- Safe modification: Do not start an item outside the leased slice's thaw gate (cite `.kutha/STATE.md` § Thaw map); M002 thawed 2026-10-03 — Rocks crate still waits for Phase 51.
 - Test coverage: Freeze needles + `freeze_as` ↔ STATE coupling in governor dictionaries.
 
 **Semantic open / Define / snapshot offset coupling:**
@@ -158,7 +158,7 @@ last_mapped_at: 2026-09-29
 **In-memory EventLog + Fact vector:**
 - Current capacity: Suitable for fixture-scale logs (statute / harness JSONL), not multi-million event corpora.
 - Limit: RAM + O(n) live scans + full persist rewrite; no compaction of retracted facts.
-- Scaling path: M002 Rocks + leased materializers (CSR already droppable); vacuum/compaction only under an explicit data-plane lease. Freeze forbids premature Rocks.
+- Scaling path: M002 Rocks index lease (Phase 51) + leased materializers (CSR already droppable); vacuum/compaction only under an explicit data-plane lease. `.kutha/STATE.md` § Thaw map forbids Rocks before Phase 51.
 
 **Harness CI quantum budget:**
 - Current capacity: `KUTHA_GOV_BUDGET` / FSM phases in `.kutha/dictionaries/fsm.yaml`; cargo timeout defaults ~180s.
@@ -168,14 +168,14 @@ last_mapped_at: 2026-09-29
 **Honeycomb / literature surface:**
 - Current capacity: ADR-010–093 Proposed; 163 closed applicability cards.
 - Limit: Treating honeycomb or cards as a delivery backlog creates sprawl without capability.
-- Scaling path: One steel thread at a time (H4 overlay dogfood in; not M002). Literature bound closed — do not mint aggregator waves.
+- Scaling path: One steel thread at a time (H4 overlay dogfood in; not a literature wave). Literature bound closed — do not mint aggregator waves.
 
 ## Dependencies at Risk
 
 **No RocksDB / graph-DB crates (intentional):**
 - Risk: Temptation to vendor Rocks/Neo4j/Graphiti for “real storage.”
-- Impact: Violates freeze and STRATEGY non-goals (external graph as SoT).
-- Migration plan: Only under explicit M002 lease in `.kutha/STATE.md`; Ports own the contract.
+- Impact: Violates `.kutha/STATE.md` § Thaw map and STRATEGY non-goals (external graph as SoT).
+- Migration plan: Rocks crate at M002 Phase 51; Cypher/graph-DB deps at M003 (`.kutha/STATE.md` § Thaw map). Ports own the contract.
 
 **Minimal Rust deps today:**
 - Risk: `sha2`, `uuid`, `serde`, `crc32fast` only at workspace level — good for spike purity; gaps appear when networking/ABAC arrives.
@@ -194,34 +194,34 @@ last_mapped_at: 2026-09-29
 
 ## Missing Critical Features
 
-> These are **intentional gaps** under freeze / research stage — list so planners do not invent them as silent debt fixes.
+> These are **intentional gaps** under the thaw map / research stage — list so planners do not invent them as silent debt fixes.
 
-**Durable Rocks-backed SoT:**
+**Durable Rocks-backed indexes (not SoT):**
 - Problem: File WAL cousin + in-memory runtime only (`crates/kutha-runtime/src/lib.rs`, `store.rs`).
 - Blocks: Production durability, shared multi-process tenants.
-- Lease: M002 in STATE — not started.
+- Lease: Rocks crate thaws at M002 Phase 51 (`.kutha/STATE.md` § Thaw map); log remains SoT.
 
 **Query language (Cypher/GPML) and HNSW/hybrid:**
 - Problem: No parser; leapfrog intersect only; no vector index.
 - Blocks: Profile B/C multi-hop product claims; hybrid GTM metrics in `STRATEGY.md`.
-- Lease: Frozen explicitly in `.kutha/STATE.md`.
+- Lease: Cypher M003; HNSW M005 (`.kutha/STATE.md` § Thaw map).
 
 **ADR-050 six agent dictionaries / full agent runtime:**
 - Problem: FF6 single relation allowlist stub only (`allow.rs`).
 - Blocks: Dict-first agent governance product story.
-- Lease: Frozen; do not grow FF6 into six kinds quietly.
+- Lease: SIX-01 (`.kutha/STATE.md` § Thaw map); do not grow FF6 into six kinds quietly.
 
 **Legal / science vertical packs:**
 - Problem: FF5 is a statute-shaped **fixture**, not a legal corpus pack; no science pack.
 - Blocks: Wedge GTM “legal temporal agents” as shippable product.
-- Lease: STATE — do not start a legal pack; M004 science is roadmap-future only.
+- Lease: `.kutha/STATE.md` § Thaw map — do not start a legal pack; science pack is M004.
 
 **Enterprise security plane (ABAC, sandbox, CMK):**
-- Problem: Sketched in STRATEGY buyer constraints; ADR-080/081 frozen.
+- Problem: Sketched in STRATEGY buyer constraints; ADR-080/081 frozen until a security milestone after M003 (`.kutha/STATE.md` § Thaw map).
 - Blocks: Enterprise ship narrative.
 
 **Full provenance / consensus query:**
-- Problem: M011 thin P→Q only; Consensus Query 103+ frozen.
+- Problem: M011 thin P→Q only; Consensus Query 103+ frozen until the owner lifts (`.kutha/STATE.md` § Thaw map).
 - Blocks: Rich audit polynomials and distributed query claims.
 
 ## Test Coverage Gaps
@@ -262,13 +262,13 @@ last_mapped_at: 2026-09-29
 - Risk: Misconfigured CI uses defaults without signal.
 - Priority: Low.
 
-## Process / Plane Collapse Risks (cite freeze)
+## Process / Plane Collapse Risks (cite thaw map)
 
 | Risk | Why it matters | Guard |
 |------|----------------|-------|
 | Treat honeycomb Proposed as backlog | Sprawl without capability | `honeycomb.yaml` + map checks; H4 “promote all” forbidden |
 | Treat `kutha-gov ci` green as FF5/product ready | False ship signal | Orthogonal `L_capability=ff5-green` vs governor |
-| Start Rocks/Cypher/HNSW/legal pack without lease | Freeze break | `.kutha/STATE.md` Freeze; check `freeze` |
+| Start Rocks/Cypher/HNSW/legal pack outside the named thaw gate | Thaw-map break | `.kutha/STATE.md` § Thaw map; freeze checks |
 | Collapse intern map (ADR-011) with agent dictionaries (ADR-050) | Wrong abstraction | AGENTS.md working convention #8 |
 | Write CE durable artifacts under `/tmp` | Lost handoffs | `AGENTS.md` docs_root rules; use `.compound-engineering/artifacts/` |
 | Further M011 work without Active Slice | Unscoped product edits | STATE: Active Slice **None**; S03 done |

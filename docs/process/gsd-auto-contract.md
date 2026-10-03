@@ -78,4 +78,4 @@ Per phase: at most two PLAN files of 150 lines or fewer, one SUMMARY of 60 lines
 
 ## Stop conditions
 
-Stop and ask the controller when: a freeze item would be thawed; an oracle assertion must change; a phase exceeds its budget; a RED oracle passes on current code (the finding is wrong); the product needs a decision that ADR-000 D1–D10 does not allow.
+Stop and ask the controller when: an item outside the leased slice's thaw gate would be thawed (2026-10-03); an oracle assertion must change; a phase exceeds its budget; a RED oracle passes on current code (the finding is wrong); the product needs a decision that ADR-000 D1–D10 does not allow.

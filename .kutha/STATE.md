@@ -5,30 +5,30 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M002
-**Active Slice:** S01
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M018-S01-done
+L_delivery=M002-S01-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M002 S01 active (thaw map and freeze governor honesty); M018 paused after S01 | Capability proven / Rocks started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M002 S01 done (thaw map and freeze governor honesty); S02 unleased; M018 paused at its S02 decision gate | Capability proven / Rocks started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M002 S01 leased** (`L_delivery=M018-S01-done`, Active Milestone **M002**, Active Slice **S01**, 2026-10-03). GSD Phase 49 only: thaw map and freeze governor honesty (documents, YAML, governor tests; no `crates/` change). M002 is thawed at the owner's request; its slice list is in `.kutha/ROADMAP.md`. M018 is paused after S01 at the S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
+**M002 S01 closed** (`L_delivery=M002-S01-done`, Active Milestone **M002**, Active Slice **None**, 2026-10-03). GSD Phase 49 verified independently (11/11). Next: S02 (SNAP-01 and fail-closed WAL open, Phase 50) needs a lease and product code; M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). The RocksDB dependency stays banned until Phase 51. Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
 
 ## Thaw map
 
-The freeze list was written by earlier AI agents (2026-08-18), not decided by the owner. M002 is thawed (2026-10-03, owner's request). Every other item keeps its own named gate; nothing is thawed by "an M002 lease".
+The freeze list came from agent-assisted commits (`1ee5942`, `85db1f7`, 2026-08-18, Cursor co-authored); the owner states he did not decide it. M002 is thawed (2026-10-03, owner's request). Every other item keeps its own named gate; nothing is thawed by "an M002 lease".
 
 | Item | Thaws when |
 |------|------------|

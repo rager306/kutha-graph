@@ -111,7 +111,7 @@ last_mapped_at: 2026-09-29
 - Location: `.kutha/`
 - Contains: `META.md`, `STATE.md`, `ROADMAP.md`, `dictionaries/*.yaml`, `events.jsonl` (gitignored), `tenant/` (gitignored)
 - Depends on: Interpreted by `kutha_gov`
-- Used by: CI quantum; humans editing lease text under freeze rules
+- Used by: CI quantum; humans editing lease text under thaw-map rules
 
 **Compound Engineering layer:**
 - Purpose: Durable session/process docs under CE `docs_root`
@@ -213,7 +213,7 @@ last_mapped_at: 2026-09-29
 - **Threading:** Single-threaded in-memory Runtime; no async runtime required for P0. Harness uses subprocess timeouts for cargo/tenant.
 - **Global state:** Product allowlist + dotenv load via `Once` in `allow.rs`. Harness Context is per-run. No process-wide product singleton.
 - **Circular imports:** Not applicable across Rust crates (`kutha-runtime` → `kutha-common` only). Python package is flat modules under `kutha_gov` without a ports tree.
-- **Freeze (until STATE leases M002):** No RocksDB crate, Cypher/GPML parser, HNSW, ADR-050 six dictionaries, ADR-080/081, full ADR-090/093 packs, ADR-100+, Consensus Query 103+.
+- **Thaw map:** per-item gates live in `.kutha/STATE.md` § Thaw map (2026-10-03); nothing thaws merely because M002 is leased. Do not copy the list here.
 - **Plane isolation:** Checks must not import `kutha_runtime`. H1 observes via `cargo test` subprocess. H2 talks only through built `kutha-tenant` API surface.
 - **Lifecycle non-collapse:** Do not encode honeycomb as the active milestone; do not treat governor green as `L_capability`.
 
@@ -265,7 +265,7 @@ last_mapped_at: 2026-09-29
 
 **Validation:** Schema strings on dictionaries (`kutha-relations/v1`, `kutha-harness-fsm/v1`, etc.); allowlists; FSM terminal decide.
 
-**Authentication:** Not applicable in P0 spike (no ABAC / multi-tenant product security — ADR-080 frozen).
+**Authentication:** Not applicable in P0 spike (no ABAC / multi-tenant product security — ADR-080 frozen; `.kutha/STATE.md` § Thaw map).
 
 **Budgets:** Product cascade `KUTHA_MAX_CASCADE`; harness `--budget` / FSM `defaults.budget` truncates check slices (Cui V cousin, not pack max-convolution yet).
 

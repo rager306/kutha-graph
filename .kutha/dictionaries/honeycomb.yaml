@@ -16,6 +16,7 @@ process: docs/process/governor-intake.md
 # 2026-10-03 restage (M017 S03 KNOWN-04 / A-F05 characterization): ADR-013 evidence; map/delivery/capability unchanged.
 # 2026-10-03 restage (M018 S01 doc-truth: wal_valid_covering_preferred, tampered_tt_anchor_wall_fails_replay_check, abort_snapshot_replace_keeps_previous_bytes, abort_wal_replace_keeps_previous_bytes): ADR-012, ADR-013, ADR-014, ADR-050, ADR-060; map/delivery/capability unchanged.
 # 2026-10-03 restage (M018 S01 doc-truth: extra_relatedto_horn_visits_constant_in_n / m017_ingest_scaling): ADR-041; map/delivery/capability unchanged.
+# 2026-10-03 restage (M002 thaw GSD v0.12: SNAP-01/WAL-open S02, persist O(N) S04, COMMIT-01 S05, Rocks index S07): ADR-010, ADR-012, ADR-014, ADR-060; map/delivery/capability unchanged.
 
 locks:
   - id: D1

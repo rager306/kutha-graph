@@ -71,21 +71,53 @@ checks:
         forbid_accepted_prefix: "ADR-0"
         forbid_accepted_not_prefix: "ADR-00"
 
-  - id: freeze
-    description: Cargo.toml members do not add frozen product deps
+  - id: freeze-rocks
+    description: Cargo members and workspace Cargo.toml do not add rocksdb until M002 Phase 51 (S03)
     steps:
       - kind: glob_absent
         glob: crates/*/Cargo.toml
-        needles: [rocksdb, neo4j, graphiti, hnswlib, falkordb]
+        needles: [rocksdb]
         case: lower
         category: frozen-dep
-        message: "found {needle}; STATE freeze still blocks it until Active Milestone names M002"
-      - kind: file_contains
-        path: .kutha/dictionaries/checks.yaml
-        needles: ["until Active Milestone names M002"]
-        require: all
+        message: "found {needle}; frozen until M002 Phase 51 (S03) thaws the RocksDB crate per .kutha/STATE.md Thaw map"
+      - kind: glob_absent
+        glob: Cargo.toml
+        needles: [rocksdb]
+        case: lower
         category: frozen-dep
-        message: "freeze check message must cite Active Milestone M002 lease"
+        message: "found {needle}; frozen until M002 Phase 51 (S03) thaws the RocksDB crate per .kutha/STATE.md Thaw map"
+
+  - id: freeze-cypher-deps
+    description: Cargo members and workspace Cargo.toml do not add neo4j/graphiti/falkordb until M003
+    steps:
+      - kind: glob_absent
+        glob: crates/*/Cargo.toml
+        needles: [neo4j, graphiti, falkordb]
+        case: lower
+        category: frozen-dep
+        message: "found {needle}; frozen until M003 per .kutha/STATE.md Thaw map"
+      - kind: glob_absent
+        glob: Cargo.toml
+        needles: [neo4j, graphiti, falkordb]
+        case: lower
+        category: frozen-dep
+        message: "found {needle}; frozen until M003 per .kutha/STATE.md Thaw map"
+
+  - id: freeze-hnsw-dep
+    description: Cargo members and workspace Cargo.toml do not add hnswlib until M005
+    steps:
+      - kind: glob_absent
+        glob: crates/*/Cargo.toml
+        needles: [hnswlib]
+        case: lower
+        category: frozen-dep
+        message: "found {needle}; frozen until M005 per .kutha/STATE.md Thaw map"
+      - kind: glob_absent
+        glob: Cargo.toml
+        needles: [hnswlib]
+        case: lower
+        category: frozen-dep
+        message: "found {needle}; frozen until M005 per .kutha/STATE.md Thaw map"
 
   - id: idle-delivery-closed
     description: Active Milestone None requires L_delivery token ending in -closed

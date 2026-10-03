@@ -169,7 +169,7 @@ Compile-time hexagon: crates + `pub(crate)`. Behavior errors → `behavior.faile
 
 ### Clarification (2026-10-03; Proposed)
 
-The implemented spike stores `events.jsonl` as SoT with `events.wal` (magic `KUTHAWAL`) as a covering lease (`crates/kutha-runtime/src/store.rs` `load_events_d04`). `snapshot.json` and `events.wal` are replaced via tmp+sync+rename. RocksDB is NOT a dependency (`crates/kutha-runtime/Cargo.toml`) and stays an optional index store behind the frozen M002 durability protocol. This pointer does not rewrite D1–D10.
+The implemented spike stores `events.jsonl` as SoT with `events.wal` (magic `KUTHAWAL`) as a covering lease (`crates/kutha-runtime/src/store.rs` `load_events_d04`). `snapshot.json` and `events.wal` are replaced via tmp+sync+rename. RocksDB is NOT a dependency (`crates/kutha-runtime/Cargo.toml`) and stays an optional index store. Thaw gates: `.kutha/STATE.md` § Thaw map; RocksDB crate thaws at M002 Phase 51. This pointer does not rewrite D1–D10.
 
 ### D7. Load profiles (one product — three modes)
 

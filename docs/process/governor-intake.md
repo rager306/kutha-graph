@@ -2,13 +2,15 @@
 
 Process contract, not an ADR. Companion: `.kutha/META.md`.
 
-This is the fail-closed analog of ADR-050 D050-2 on the **harness** plane: the LLM may propose a check; the dictionaries validate; silence is not a requirement. It does not implement product dictionary entities (STATE freeze).
+This is the fail-closed analog of ADR-050 D050-2 on the **harness** plane: the LLM may propose a check; the dictionaries validate; silence is not a requirement. It does not implement product dictionary entities.
+
+Frozen-dep checks (`freeze-rocks`, `freeze-cypher-deps`, `freeze-hnsw-dep`) scan `crates/*/Cargo.toml` and the workspace `Cargo.toml`; they do not read STATE. `.kutha/STATE.md` § Thaw map documents the named gates. Honeycomb `freeze_as` strings must appear in STATE (`honeycomb-ledger`).
 
 Three surfaces stay distinct. Mixing them in one ledger is a plane collapse.
 
 | Surface | Owns | Lives in | Governor role |
 |---------|------|----------|----------------|
-| **Control loop** | Trajectory, freeze-as-lease, META, FSM, docs coupling, plane-mix | `.kutha/dictionaries/invariants.yaml` | Interpreter may enforce |
+| **Control loop** | Trajectory, META, FSM, docs coupling, plane-mix, honeycomb `freeze_as` in STATE | `.kutha/dictionaries/invariants.yaml` | Interpreter may enforce |
 | **Bridges** | A process check that *cites* a product freeze or named test | `.kutha/dictionaries/bridges.yaml` | Cite only; do not copy L_map / L_capability |
 | **Map** | Honeycomb cells, D1–D10, stages, depends_on | `.kutha/dictionaries/honeycomb.yaml` | Validate + `kutha-gov map`; does not accept cells |
 
@@ -48,7 +50,7 @@ Unknown disposition → HIGH (`invariants-ledger`). `map-only` and `capability` 
 
 ## Bridges
 
-Required fields: `id`, `claim`, `cites`, `check`. No `disposition`. A bridge always names a live check and a product path it cites (STATE freeze, a crate test, or a product dictionary). Unknown extra lifecycle copied from an ADR → that belongs in the ADR, not here.
+Required fields: `id`, `claim`, `cites`, `check`. No `disposition`. A bridge always names a live check and a product path it cites (STATE Thaw map, a crate test, or a product dictionary). Frozen-dep bridges cite STATE; the checks themselves scan Cargo.toml. Unknown extra lifecycle copied from an ADR → that belongs in the ADR, not here.
 
 A check id appears in **exactly one** ledger: invariants (`disposition: check`) or bridges (`check:`), then in `checks.yaml`. Overlap → HIGH.
 

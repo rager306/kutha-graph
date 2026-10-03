@@ -24,7 +24,7 @@ last_mapped_at: 2026-09-29
 ## Data Storage
 
 **Databases:**
-- Not detected — no Postgres, SQLite client crate, RocksDB, or other DB. RocksDB remains frozen until `.kutha/STATE.md` names M002
+- Not detected — no Postgres, SQLite client crate, RocksDB, or other DB. RocksDB thaws at M002 Phase 51 (`.kutha/STATE.md` Thaw map)
 - Product persistence is **local filesystem** via `crates/kutha-runtime/src/store.rs`:
   - `events.wal` — WAL durability cousin (CRC), not Rocks-as-SoT
   - `events.jsonl` — encoded event log
@@ -108,7 +108,7 @@ last_mapped_at: 2026-09-29
 
 **What happens:** Adding RocksDB, Postgres, or a hosted graph API while freeze is on  
 **Why it's wrong:** Violates delivery lease and D1/D2 (event log = SoT; projections are leases)  
-**Do this instead:** Keep filesystem WAL/JSONL/`store::persist` until `.kutha/STATE.md` explicitly opens M002 Rocks
+**Do this instead:** Keep filesystem WAL/JSONL/`store::persist` until M002 Phase 52 (incremental framed append) replaces it; Rocks thaws at Phase 51 per the Thaw map
 
 ### Do not treat MCP / CE / governor as product integrations
 

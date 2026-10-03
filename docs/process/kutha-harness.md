@@ -85,7 +85,7 @@ Nakajima still holds: **graph = world, behaviors = physics, log = proof.** For t
 | trajectory | StatePort, RoadmapPort | filesystem `.kutha/*.md` + YAML row | global `scripts/ports/` |
 | lifecycles | StatePort | same | collapse L_* into one enum |
 | adr-status | AdrCorpusPort | `docs/ADR/*.md` | rewrite ADR Status |
-| freeze | CargoPort | `crates/*/Cargo.toml` (bridge cites STATE freeze) | product deps as SoT |
+| freeze | CargoPort | `crates/*/Cargo.toml` and the workspace root `Cargo.toml` (CargoPort scan; does not read STATE; thaw gates: `.kutha/STATE.md` § Thaw map) | product deps as SoT |
 | honeycomb-map | IntentPort | STATE+ROADMAP text | treat honeycomb as M001 |
 | dogfood | ManifestPort | `docs/process/kutha-harness.md` | mix into `kutha-runtime` |
 | meta-prompt | ConstitutionPort | `.kutha/META.md` + dictionaries | Python Check subclasses as intake |
@@ -107,7 +107,7 @@ Hexagon lives **inside** a slice (ADR-022). Do not grow a repo-root `ports/` / `
 3. `kutha_gov fold` is \(G = \mathrm{foldl}(\mathrm{apply}, G_0, L)\).
 4. Replay of the JSONL must reproduce the same last-run picture (process Strict Replay). Fork-and-diff of process history waits for product `fork_at` at H2.
 
-Relation Behaviors (later): `finding --raisedOn--> check` triggers lifecycle warn; `milestone --blocks--> freeze` keeps Rocks out. Not a workflow engine.
+Relation Behaviors (later, not implemented): `finding --raisedOn--> check` triggers lifecycle warn; `milestone --blocks--> freeze` does not keep Rocks out today (intent only; Rocks thaw is M002 Phase 51 per `.kutha/STATE.md` § Thaw map). Not a workflow engine.
 
 ### Composition (Cui)
 
@@ -178,4 +178,4 @@ Adding a check: control loop → `.kutha/dictionaries/invariants.yaml`; a fence 
 - System `python3` / 3.12 as the harness interpreter (must be uv + 3.13).
 - Harness as a workflow engine (Cui remains pack composition, not GSD).
 - Implementing the STCA-guide §5 tutorial runtime as a second graph (JSON merge-patch objects). That skeleton is **pedagogical**; Kutha events are typed `Op`.
-- Legal / science **product** packs (ADR-090/093) as the next crate — M001 is closed; do not start Rocks until STATE names M002 (M002 is log durability first; Rocks is for indexes only). Harness **H5** is the delivered current rung (harness/docs only). H4 overlay dogfood remains delivered; do not start a legal pack.
+- Legal / science **product** packs (ADR-090/093) as the next crate — M001 is closed; Rocks thaws at M002 Phase 51 per `.kutha/STATE.md` § Thaw map (2026-10-03; M002 is log durability first; Rocks is an index store behind the log protocol). Harness **H5** is the delivered current rung (harness/docs only). H4 overlay dogfood remains delivered; do not start a legal pack.

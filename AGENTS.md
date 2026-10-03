@@ -33,7 +33,7 @@ P0 crate spike (not Accepted product): `docs/architecture/p0-spike-inventory.md`
 
 ## Where to start
 
-Read `.kutha/STATE.md` first; do not start work it does not name. Freeze is that file's Freeze section. GSD focus is `.planning/STATE.md` (does not thaw freeze or lease a slice). Repo layout: `README.md` § Layout.
+Read `.kutha/STATE.md` first; do not start work it does not name. Thaw map is that file's Thaw map section. GSD focus is `.planning/STATE.md` (does not thaw a Thaw map item or lease a slice). Repo layout: `README.md` § Layout.
 
 ## Artifacts and layout rules
 
@@ -84,7 +84,7 @@ Forbidden: `delete_project`, CBM `manage_adr` (`docs/ADR/` owns ADRs). Only the 
 
 **GitNexus is secondary** — except M013 refactor phases, where it runs with CBM per `docs/process/gsd-auto-contract.md` (also: id map, controller protocol, verification and artifact gates). Otherwise do not dual-query with CBM. Reindex with `gitnexus analyze --index-only` or a local `.gitnexusrc` (`skipAgentsMd` + `skipSkills`) — never let analyze rewrite this file or `CLAUDE.md`.
 
-Subagent workflow: `docs/process/codex-subagents.md`. Parent owns the steel thread, freeze, integration, and the final Russian reply. Pass STATE freeze into helpers. Parallelism does not lease a milestone.
+Subagent workflow: `docs/process/codex-subagents.md`. Parent owns the steel thread, freeze, integration, and the final Russian reply. Pass STATE thaw map into helpers. Parallelism does not lease a milestone.
 
 Every `Task` that needs the graph must name **`codebase-memory-mcp`** (`list_projects` first; graph before Grep; `check_index_coverage` on cited paths). Children do not inherit Cursor rules. No MCP → read source; do not claim graph verification.
 

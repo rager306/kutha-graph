@@ -6,7 +6,7 @@
     {
       "number": "49",
       "name": "Thaw map and freeze governor honesty",
-      "status": "executing"
+      "status": "complete"
     },
     {
       "number": "50",
@@ -41,8 +41,8 @@
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Phase 49 verify, then lease S02",
-    "reason": "v0.12 planned \u00b7 M002 S01 leased \u00b7 v0.11 paused at Phase 46 gate"
+    "label": "Lease M002 S02 (Phase 50: SNAP-01) after CONTEXT",
+    "reason": "Phase 49 verified \u00b7 M002-S01-done"
   },
   "updated_at": "2026-10-03T07:00:00.000Z"
 }

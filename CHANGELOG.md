@@ -4,13 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Process: thaw map and freeze governor honesty (M002 S01)
+
+### Process
+
+### Changed
+
+- Governor: check `freeze` is split into `freeze-rocks` (Phase 51 / S03), `freeze-cypher-deps` (M003) and `freeze-hnsw-dep` (M005); each scans `crates/*/Cargo.toml` and the workspace root `Cargo.toml`; no message claims to read STATE; the tautological message check is gone; `bridges.yaml` has three rows; pytest and selftest cover each id. YAML only, no kernel change (the `unless:` extension is Phase 51's first task).
+- Docs: `AGENTS.md`, `README.md`, `PROJECT.md`, `kutha-harness.md`, `governor-intake.md`, `gsd-auto-contract.md`, codebase maps and ADR-000/010/012/014/050/060/070 point to `.kutha/STATE.md` § Thaw map instead of "freeze until M002 lease"; ADR-010/012/014/060 Evidence schedules SNAP-01, fail-closed WAL open, incremental append, COMMIT-01 and the Rocks index lease on M002 S02–S07; ADR-010 and ADR-012 also record the O(N) `persist` rewrite as the current defect. `honeycomb.yaml` restaged (capability and `freeze_as` unchanged).
+
+### Trajectory
+
+- No `crates/` change. **M002 S01 closed** (`L_delivery=M002-S01-done`, Active Slice **None**); Phase 49 verified independently (11/11) after two reopens (CHANGELOG duplicate and overclaim, harness doc omitted the workspace `Cargo.toml`, authorship wording, graphiti/falkordb test). Honeycomb stays Proposed.
+
 ## 2026-10-03 — Process: thaw M002 and plan GSD v0.12; lease S01
 
 ### Process
 
 ### Added
 
-- Harness milestone **M002** thawed and planned as GSD **v0.12** (Phases 49–55, slices S01–S07: thaw map and governor honesty; SNAP-01 with fail-closed WAL open; RocksDB build spike; incremental framed append; commit-marker decision; segments, manifest and hash chain; droppable RocksDB index lease). Requirements in `.planning/REQUIREMENTS.md`; Phase 49 CONTEXT under `.planning/phases/49-thaw-map-and-freeze-governor-honesty/`. Re-verification at `f4af544` (provenance, governor freeze map, durability design research) found that the freeze list and its "until explicit M002 lease" gate came from earlier AI agents (`1ee5942`, `85db1f7`, 2026-08-18) and not from the owner or ADR-000 D1–D10; the real defects are the O(N) `persist` rewrite, in-place sidecar writes, missing parent-directory fsync, exact-equality `check_tt_anchors`, and fail-open WAL magic reads.
+- Harness milestone **M002** thawed and planned as GSD **v0.12** (Phases 49–55, slices S01–S07: thaw map and governor honesty; SNAP-01 with fail-closed WAL open; RocksDB build spike; incremental framed append; commit-marker decision; segments, manifest and hash chain; droppable RocksDB index lease). Requirements in `.planning/REQUIREMENTS.md`; Phase 49 CONTEXT under `.planning/phases/49-thaw-map-and-freeze-governor-honesty/`. Re-verification at `f4af544` (provenance, governor freeze map, durability design research) found that the freeze list and its "until explicit M002 lease" gate came from agent-assisted commits (`1ee5942`, `85db1f7`, 2026-08-18, Cursor co-authored), which the owner says he did not decide, and not from ADR-000 D1–D10; the real defects are the O(N) `persist` rewrite, in-place sidecar writes, missing parent-directory fsync, exact-equality `check_tt_anchors`, and fail-open WAL magic reads.
 
 ### Changed
 

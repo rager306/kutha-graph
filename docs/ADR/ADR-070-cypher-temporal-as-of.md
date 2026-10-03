@@ -41,7 +41,7 @@ Native fold cut (not the Cypher skin): `GraphFold::as_of(vt)` and `Runtime::csr_
 
 ### Clarification (2026-10-03; Proposed)
 
-Three distinct cuts exist: `GraphFold::as_of(vt)` (= `live_at(tt=MAX, vt)`), `GraphFold::live_at(tt, vt)`, and `Runtime::as_known_on(wall)` (TT-only via `known_at`). This cell's P0 text names only `as_of` / `csr_lease_at`. Cypher AS OF does not cover `as_known_on`. No Cypher/GPML parser exists (frozen until STATE names it). This subsection does not rewrite D070-1…D070-4 and does not mark this cell Accepted.
+Three distinct cuts exist: `GraphFold::as_of(vt)` (= `live_at(tt=MAX, vt)`), `GraphFold::live_at(tt, vt)`, and `Runtime::as_known_on(wall)` (TT-only via `known_at`). This cell's P0 text names only `as_of` / `csr_lease_at`. Cypher AS OF does not cover `as_known_on`. No Cypher/GPML parser exists (frozen until M003 is leased; see `.kutha/STATE.md` Thaw map). This subsection does not rewrite D070-1…D070-4 and does not mark this cell Accepted.
 
 ### D070-3. Writes are typed operators, not free MERGE-as-truth
 

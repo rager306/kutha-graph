@@ -6,10 +6,20 @@ process: docs/process/governor-intake.md
 # Kutha requirements stay in ADRs, STATE freeze, and crates tests.
 
 bridges:
-  - id: B-freeze-deps
-    claim: "Cargo members do not add frozen product deps before STATE names them"
+  - id: B-freeze-rocks
+    claim: "Cargo members and workspace Cargo.toml do not add rocksdb until M002 Phase 51 (S03)"
     cites: ".kutha/STATE.md"
-    check: freeze
+    check: freeze-rocks
+
+  - id: B-freeze-cypher-deps
+    claim: "Cargo members and workspace Cargo.toml do not add neo4j/graphiti/falkordb until M003"
+    cites: ".kutha/STATE.md"
+    check: freeze-cypher-deps
+
+  - id: B-freeze-hnsw-dep
+    claim: "Cargo members and workspace Cargo.toml do not add hnswlib until M005"
+    cites: ".kutha/STATE.md"
+    check: freeze-hnsw-dep
 
   - id: B-observe-required-fn
     claim: "FSM observe_cargo.required names exist as non-vacuous #[test] functions, not fn substring needles"

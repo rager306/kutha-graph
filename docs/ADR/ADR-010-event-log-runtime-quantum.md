@@ -10,7 +10,7 @@ M013 routes Assert/Retract/Correct/Behavior and dictionary constructors through 
 
 ### Evidence (2026-10-03; Proposed)
 
-D-04 open policy (M017 S02): jsonl is SoT; WAL is a lease. Prefer WAL only when recover yields magic `KUTHAWAL` + version 1 and recovered ids cover jsonl ids in order (WAL may be longer). Header-only, magic-only, empty, short, or recover-err plus readable jsonl → jsonl (never an empty log). Both parse and neither sequence covers the other → InvalidData. Snapshot pins `tt_anchors` (replay-visible, not fingerprint) and `FoldIndexMode`. `persist` replaces `snapshot.json` and `events.wal` via tmp+`sync_all`+rename (`replace_via_tmp`, `replace_snapshot`, `replace_events_wal`). Oracle: `m017_replay_integrity.rs` (`wal_valid_covering_preferred`, `tampered_tt_anchor_wall_fails_replay_check`, `abort_snapshot_replace_keeps_previous_bytes`, `abort_wal_replace_keeps_previous_bytes`). Status stays **Proposed**.
+D-04 open policy (M017 S02): jsonl is SoT; WAL is a lease. Prefer WAL only when recover yields magic `KUTHAWAL` + version 1 and recovered ids cover jsonl ids in order (WAL may be longer). Header-only, magic-only, empty, short, or recover-err plus readable jsonl → jsonl (never an empty log). Both parse and neither sequence covers the other → InvalidData. Snapshot pins `tt_anchors` (replay-visible, not fingerprint) and `FoldIndexMode`. `persist` replaces `snapshot.json` and `events.wal` via tmp+`sync_all`+rename (`replace_via_tmp`, `replace_snapshot`, `replace_events_wal`). Oracle: `m017_replay_integrity.rs` (`wal_valid_covering_preferred`, `tampered_tt_anchor_wall_fails_replay_check`, `abort_snapshot_replace_keeps_previous_bytes`, `abort_wal_replace_keeps_previous_bytes`). Current defect (2026-10-03, rg arbiter; CBM `persist`→`encoded_log`, coverage `metadata_changed`): each `persist` rewrites the whole log (`store.rs` `encoded_log` / `replace_via_tmp`; `wal.rs` `write_wal`). M002 is thawed and planned as GSD v0.12 (slices S01–S07, `.kutha/ROADMAP.md` § M002); incremental append / O(N) persist rewrite is scheduled in S04. Status stays **Proposed**.
 
 ## Date
 
@@ -63,7 +63,7 @@ Write surface is a closed operator family in the TGMS direction: **assert / retr
 
 ### D010-4. WAL is the crash cousin, not the semantic log
 
-RocksDB (or equivalent) WAL + `WALRecoveryMode` is how bytes survive a crash. Semantic replay is fold-from-log. A recovered LSM is a materialization of storage WAL; it is not permission to treat LSM levels as SoT. Pointer (2026-10-03): shipped persist is `events.jsonl` SoT plus covering `KUTHAWAL` lease (`load_events_d04`); Rocks is an M002 index option — Clarification (2026-10-03).
+RocksDB (or equivalent) WAL + `WALRecoveryMode` is how bytes survive a crash. Semantic replay is fold-from-log. A recovered LSM is a materialization of storage WAL; it is not permission to treat LSM levels as SoT. Pointer (2026-10-03): shipped persist is `events.jsonl` SoT plus covering `KUTHAWAL` lease (`load_events_d04`); Rocks is an M002 index option (thawed 2026-10-03; scheduled S07, build spike S03) — Clarification (2026-10-03).
 
 **Hard separations (must fail closed if collapsed):**
 
@@ -85,7 +85,7 @@ Open, from docs/architecture/semantic-gap-review.md (F11): the quantum outcome i
 
 ### Clarification (2026-10-03; Proposed)
 
-Implemented store: `events.jsonl` is SoT; `events.wal` is a covering lease (`store.rs` `load_events_d04`, `wal.rs` magic `KUTHAWAL` version 1). Persist atomicity for `snapshot.json` and `events.wal` closed in M017 S02 (`replace_via_tmp` / `replace_snapshot` / `replace_events_wal`). Rocks `WALRecoveryMode` remains the literature cousin and an M002 index option, not the shipped crash path. Commit-marker vs `Op::QuantumOutcome` encoding stays M002 (COMMIT-01; gap-review F11). Sidecar `File::create` without parent-dir fsync is SNAP-01 (M002). This subsection does not rewrite D010-1…D010-4 and does not mark this cell Accepted.
+Implemented store: `events.jsonl` is SoT; `events.wal` is a covering lease (`store.rs` `load_events_d04`, `wal.rs` magic `KUTHAWAL` version 1). Persist atomicity for `snapshot.json` and `events.wal` closed in M017 S02 (`replace_via_tmp` / `replace_snapshot` / `replace_events_wal`). Rocks `WALRecoveryMode` remains the literature cousin and an M002 index option, not the shipped crash path. Commit-marker vs `Op::QuantumOutcome` encoding is COMMIT-01 (gap-review F11). Sidecar `File::create` without parent-dir fsync is SNAP-01. M002 is thawed and planned as GSD v0.12 (slices S01–S07, `.kutha/ROADMAP.md` § M002): SNAP-01, parent-dir fsync, partial-sidecar-as-absent, `check_tt_anchors` log-ahead tolerance, and fail-closed WAL open are scheduled in S02; COMMIT-01 in S05 (decision gate); Rocks as index lease in S07 (build spike S03). This subsection does not rewrite D010-1…D010-4 and does not mark this cell Accepted.
 
 ## Consequences
 

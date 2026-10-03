@@ -95,12 +95,13 @@ class SelftestTests(unittest.TestCase):
             ["git", "status", "--porcelain", "--", "crates", ".kutha/STATE.md"],
             cwd=ROOT,
         )
-        buf = StringIO()
-        with patch.object(sys, "stdout", buf):
-            code = main(["--root", str(ROOT), "--check", "freeze", "selftest"])
-        self.assertEqual(0, code, msg=buf.getvalue())
-        line = buf.getvalue().strip().splitlines()[0]
-        self.assertTrue(line.startswith("OK freeze mutations="), msg=line)
+        for check_id in ("freeze-rocks", "freeze-cypher-deps", "freeze-hnsw-dep"):
+            buf = StringIO()
+            with patch.object(sys, "stdout", buf):
+                code = main(["--root", str(ROOT), "--check", check_id, "selftest"])
+            self.assertEqual(0, code, msg=buf.getvalue())
+            line = buf.getvalue().strip().splitlines()[0]
+            self.assertTrue(line.startswith(f"OK {check_id} mutations="), msg=line)
         after = _tracked_harness_digest(ROOT)
         self.assertEqual(before, after)
         porcelain_after = subprocess.check_output(

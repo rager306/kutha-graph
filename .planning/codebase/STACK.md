@@ -66,7 +66,7 @@ Do **not** put Python inside `kutha-runtime`. Do **not** introduce TypeScript/No
 - `pyrefly` 1.2.0 — type check (Meta)
 
 **Infrastructure:**
-- Not applicable for product: no RocksDB, Redis, Postgres, HTTP client, or LLM SDK in crate deps (frozen until `.kutha/STATE.md` names them)
+- Not applicable for product: no RocksDB, Redis, Postgres, HTTP client, or LLM SDK in crate deps (frozen; gates in `.kutha/STATE.md` Thaw map — RocksDB thaws at M002 Phase 51)
 
 ## Configuration
 
