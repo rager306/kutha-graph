@@ -2,6 +2,7 @@
 
 mod admission;
 mod allow;
+mod commit;
 mod csr;
 mod eval;
 mod fold;

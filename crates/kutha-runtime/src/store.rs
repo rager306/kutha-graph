@@ -320,6 +320,49 @@ fn load_events_d04(dir: &Path) -> std::io::Result<Vec<Event>> {
     }
 }
 
+/// How many log events `open` hid as an uncommitted suffix (COMMIT-01).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct OpenReport {
+    pub dropped_uncommitted: usize,
+}
+
+/// Identity in RED; GREEN walks to the last `QuantumOutcome` then keeps SelfCommit ops.
+pub fn committed_prefix(events: Vec<Event>) -> Vec<Event> {
+    crate::commit::committed_prefix(events)
+}
+
+pub fn op_commit_class(op: &Op) -> crate::commit::CommitClass {
+    crate::commit::op_commit_class(op)
+}
+
+pub use crate::commit::CommitClass;
+
+/// RED stub: `open` is unchanged; the report always counts zero drops.
+pub fn open_report(dir: &Path) -> std::io::Result<(Runtime, OpenReport)> {
+    Ok((
+        open(dir)?,
+        OpenReport {
+            dropped_uncommitted: 0,
+        },
+    ))
+}
+
+/// RED stub: attach without healing a dirty uncommitted tail.
+pub fn open_for_append(dir: &Path) -> std::io::Result<(Runtime, Persister)> {
+    let rt = open(dir)?;
+    let persister = Persister::attach(&rt, dir)?;
+    Ok((rt, persister))
+}
+
+/// RED stub: ignore the failpoint and delegate (heal crash oracles fail).
+#[doc(hidden)]
+pub fn open_for_append_with_failpoint(
+    dir: &Path,
+    _stop_after: PersistStep,
+) -> std::io::Result<(Runtime, Persister)> {
+    open_for_append(dir)
+}
+
 pub fn open(dir: &Path) -> std::io::Result<Runtime> {
     let snap_path = dir.join(SNAPSHOT_JSON);
     let terms_path = dir.join(TERMS_REL);
@@ -515,6 +558,7 @@ fn runtime_err(e: RuntimeError) -> std::io::Error {
 }
 
 pub use crate::persist_append::{
-    abort_checkpoint_snapshot_before_rename, append_with_failpoint, checkpoint_with_failpoint,
-    persist_log_sync_count, reset_persist_log_sync_count, AppendStep, Persister, CHECKPOINT_EVERY,
+    abort_checkpoint_snapshot_before_rename, append_with_event_failpoint, append_with_failpoint,
+    checkpoint_with_failpoint, pending_append_len, persist_log_sync_count,
+    reset_persist_log_sync_count, AppendStep, Persister, CHECKPOINT_EVERY,
 };

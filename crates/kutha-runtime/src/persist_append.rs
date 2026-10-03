@@ -89,7 +89,7 @@ impl Persister {
     }
 
     pub fn append(&mut self, runtime: &Runtime) -> std::io::Result<()> {
-        self.append_until(runtime, None)
+        self.append_until(runtime, None, None)
     }
 
     pub fn checkpoint(&mut self, runtime: &Runtime) -> std::io::Result<()> {
@@ -104,12 +104,20 @@ impl Persister {
         &mut self,
         runtime: &Runtime,
         stop_after: Option<AppendStep>,
+        stop_after_events: Option<usize>,
     ) -> std::io::Result<()> {
         let new_events = collect_new(self, runtime)?;
         if new_events.is_empty() {
             return Ok(());
         }
         self.tail_guard()?;
+
+        let write_n = stop_after_events.unwrap_or(new_events.len());
+        if write_n == 0 {
+            return Err(injected_event_failpoint());
+        }
+        let n = write_n.min(new_events.len());
+        let batch = &new_events[..n];
 
         let jsonl_path = self.dir.join(EVENTS_JSONL);
         let wal_path = self.dir.join(EVENTS_WAL);
@@ -119,7 +127,7 @@ impl Persister {
                 .create(true)
                 .append(true)
                 .open(&jsonl_path)?;
-            for e in &new_events {
+            for e in batch {
                 serde_json::to_writer(&mut f, e).map_err(json_err)?;
                 f.write_all(b"\n")?;
             }
@@ -131,14 +139,18 @@ impl Persister {
                 .create(true)
                 .append(true)
                 .open(&wal_path)?;
-            wal::write_frames(&mut f, &new_events)?;
+            wal::write_frames(&mut f, batch)?;
             after_step(stop_after, AppendStep::WalWrite)?;
             f.sync_data()?;
             wal::note_log_file_sync();
         }
         after_step(stop_after, AppendStep::WalSync)?;
 
-        remember_appended(self, runtime, &new_events, &jsonl_path, &wal_path)?;
+        if stop_after_events.is_some_and(|want| want < new_events.len()) {
+            return Err(injected_event_failpoint());
+        }
+
+        remember_appended(self, runtime, batch, &jsonl_path, &wal_path)?;
 
         if self.events_since_checkpoint >= CHECKPOINT_EVERY {
             self.checkpoint_until(runtime, stop_after)?;
@@ -304,6 +316,13 @@ fn invalid(msg: &str) -> std::io::Error {
     std::io::Error::new(std::io::ErrorKind::InvalidData, msg)
 }
 
+fn injected_event_failpoint() -> std::io::Error {
+    std::io::Error::new(
+        std::io::ErrorKind::Other,
+        "injected fault: append event failpoint",
+    )
+}
+
 fn after_step(stop_after: Option<AppendStep>, step: AppendStep) -> std::io::Result<()> {
     if stop_after == Some(step) {
         Err(std::io::Error::new(
@@ -334,7 +353,24 @@ pub fn append_with_failpoint(
     runtime: &Runtime,
     stop_after: AppendStep,
 ) -> std::io::Result<()> {
-    persister.append_until(runtime, Some(stop_after))
+    persister.append_until(runtime, Some(stop_after), None)
+}
+
+/// Test seam (COMMIT-01): write the first `stop_after_events` of the pending batch,
+/// then return an injected I/O error without updating persister counters.
+#[doc(hidden)]
+pub fn append_with_event_failpoint(
+    persister: &mut Persister,
+    runtime: &Runtime,
+    stop_after_events: usize,
+) -> std::io::Result<()> {
+    persister.append_until(runtime, None, Some(stop_after_events))
+}
+
+/// Test seam (COMMIT-01): how many encoded events `append` would write.
+#[doc(hidden)]
+pub fn pending_append_len(persister: &Persister, runtime: &Runtime) -> std::io::Result<usize> {
+    collect_new(persister, runtime).map(|v| v.len())
 }
 
 /// Test seam (D-08): `checkpoint` and return an injected I/O error after `stop_after`.
