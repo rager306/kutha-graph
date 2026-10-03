@@ -16,7 +16,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Trajectory
 
 - ADR-012/014/060 dated Evidence 2026-10-03 Phase 50 (SNAP-01 closed in evidence; incremental append S04; COMMIT-01 S05). `semantic-gap-review.md` F1/F6 status. `honeycomb.yaml` restaged (capability and `freeze_as` unchanged). Cells stay **Proposed**.
-- Bench gate vs `7e31784` (`KUTHA_BENCH_N=10000`): ingest_plain.n +15.9% / +23.7% — **STOP**; as_of.n +2.5% / +11.3%. Controller must not close on this gate.
+- Bench gate vs `7e31784` (`KUTHA_BENCH_N=10000`): first back-to-back runs were host noise (baseline drifted 15% by itself); six interleaved pairs give medians ingest_plain.n +0.1%, as_of.n +1.4% — D-06 met. `bytes_per_fact` peak RSS rose 17218 B to 25200 B and is carried to Phase 52.
 
 ## 2026-10-03 — Process: lease M002 S02 (GSD Phase 50)
 

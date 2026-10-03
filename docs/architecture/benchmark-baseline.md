@@ -222,5 +222,12 @@ Same host, Eager, `KUTHA_BENCH_N=10000`, isolated `CARGO_TARGET_DIR`. Pre-phase 
 | a | 88490215 | 109468422 | +23.7% | 227344 | 252921 | +11.3% |
 | b | 101718878 | 117933202 | +15.9% | 284070 | 291312 | +2.5% |
 
-D-06 ≤10% vs `7e31784`: **STOP** — ingest_plain.n exceeds 10% on both runs. as_of.n is over cap on run a and inside cap on run b. Ingest/`as_of` code was not edited; `bytes_per_fact` (RSS over the whole bench including persist) moved 17218 B → 25200 B. Controller must not close Phase 50 on this gate.
+Runs a and b above were back-to-back, not interleaved, and the baseline commit itself moved 88.5M to 101.7M between them (about 15% host drift; load average 6+ on 12 cores). They cannot decide the gate. Controller re-measure: six interleaved base/head pairs of the prebuilt release binaries, median of six.
+
+| metric | median 7e31784 | median HEAD | Δ median |
+|--------|---------------:|------------:|---------:|
+| ingest_plain.n | 116422669 | 116580979 | +0.1% |
+| as_of.n | 282387 | 286284 | +1.4% |
+
+D-06 ≤10% vs `7e31784`: **met** on medians (ingest raw range 100.5M–120.9M base, 112.0M–142.5M head). Ingest and `as_of` sources were not edited. `bytes_per_fact` (peak RSS over the whole bench including persist) rose 17218 B to 25200 B in the first pair; this is outside the D-06 pair and is carried as a residual for Phase 52 (persist buffering).
 

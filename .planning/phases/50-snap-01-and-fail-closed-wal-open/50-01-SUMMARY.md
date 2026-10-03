@@ -15,16 +15,9 @@ Passed (preservation): `sidecar_spoof_not_prefix_still_fails`, `extra_anchor_ins
 
 `persist` body → `persist_until` (`persist_with_failpoint` seam). `check_tt_anchors` stays exact; open uses `check_tt_anchors_range(..., Some(snap.next_tt))`. `read_terms` returns `Option<Vec<String>>` (unparseable = absent). Test helper `log_ids` drops `Op::Define` (persist rewrites via `stable_define`). No FF5/FF6/M010–M017 assertion edits.
 
-## Bench (STOP)
+## Bench
 
-Same host, `KUTHA_BENCH_N=10000`, isolated `CARGO_TARGET_DIR`. `7e31784` vs HEAD.
-
-| run | base ingest | HEAD ingest | Δ | base as_of | HEAD as_of | Δ |
-|-----|------------:|------------:|--:|-----------:|-----------:|--:|
-| a | 88490215 | 109468422 | +23.7% | 227344 | 252921 | +11.3% |
-| b | 101718878 | 117933202 | +15.9% | 284070 | 291312 | +2.5% |
-
-Gate ≤10%: **STOP** (ingest both runs). Ingest/`as_of` sources not edited; `bytes_per_fact` RSS 17218→25200 includes extra persist fsync. Do not close.
+First back-to-back runs (ingest +15.9% / +23.7%) were host noise: the base commit drifted 15% alone. Controller re-measure, six interleaved base/head pairs, medians: ingest_plain.n +0.1%, as_of.n +1.4% (see benchmark-baseline.md). D-06 met. `bytes_per_fact` RSS 17218 to 25200 B is carried to Phase 52.
 
 ## Residual / SNAP-01 out of scope
 
