@@ -1404,6 +1404,11 @@ fn export_jsonl_roundtrips_and_is_never_read_on_open() {
     );
     fs::write(dir.join("events.jsonl"), b"{not-json\n").unwrap();
     expect_round_trip(&dir, &rt);
+    assert_eq!(
+        fs::read(dir.join("events.jsonl")).unwrap(),
+        b"{not-json\n",
+        "open must not rewrite events.jsonl when a manifest exists"
+    );
     let _ = fs::remove_dir_all(&dir);
 }
 
@@ -1414,6 +1419,11 @@ fn mutate_jsonl_with_manifest_open_is_ok() {
     persist_expect_segmented(&rt, &dir);
     fs::write(dir.join("events.jsonl"), b"garbage\n").unwrap();
     expect_round_trip(&dir, &rt);
+    assert_eq!(
+        fs::read(dir.join("events.jsonl")).unwrap(),
+        b"garbage\n",
+        "open must not rewrite events.jsonl when a manifest exists"
+    );
     let _ = fs::remove_dir_all(&dir);
 }
 
