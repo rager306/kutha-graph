@@ -5,7 +5,7 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M002
-**Active Slice:** None
+**Active Slice:** S02
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M002 S01 done (thaw map and freeze governor honesty); S02 unleased; M018 paused at its S02 decision gate | Capability proven / Rocks started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M002 S02 active (SNAP-01 and fail-closed WAL open); M018 paused at its S02 decision gate | Capability proven / Rocks started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M002 S01 closed** (`L_delivery=M002-S01-done`, Active Milestone **M002**, Active Slice **None**, 2026-10-03). GSD Phase 49 verified independently (11/11). Next: S02 (SNAP-01 and fail-closed WAL open, Phase 50) needs a lease and product code; M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). The RocksDB dependency stays banned until Phase 51. Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
+**M002 S02 leased** (`L_delivery=M002-S01-done`, Active Milestone **M002**, Active Slice **S02**, 2026-10-03). GSD Phase 50 only: SNAP-01, OPEN-01, CRASH-01 in `crates/kutha-runtime` store/WAL/anchor code (no segments, no Rocks, no new dependency). M018 stays paused at its S02 decision gate. The RocksDB dependency stays banned until Phase 51. Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
 
 ## Thaw map
 

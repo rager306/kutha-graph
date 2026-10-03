@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Process: lease M002 S02 (GSD Phase 50)
+
+### Trajectory
+
+- Active Milestone **M002**, Active Slice **S02** (`L_delivery=M002-S01-done`): SNAP-01, OPEN-01, CRASH-01. Product code in `crates/kutha-runtime` only; RocksDB stays banned until Phase 51; honeycomb stays Proposed.
+
 ## 2026-10-03 — Process: thaw map and freeze governor honesty (M002 S01)
 
 ### Process
