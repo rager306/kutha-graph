@@ -38,7 +38,7 @@ Segmented checkpoint refreshes snapshot + sidecars only (no jsonl rewrite). Poin
 
 ### Evidence (2026-10-04, Phase 54-03 / M002 S06; Proposed)
 
-`migrate` / `export_jsonl` do not change snapshot hydrate. Jsonl after migrate is an unread export. Pointer: ADR-010 2026-10-04 Phase 54-03. Status stays **Proposed**.
+`migrate` / `export_jsonl` do not change snapshot hydrate. Jsonl after migrate is an unread export. Open stitches the SHA-256 chain across sealed files and the active header (H0 only for the first segment). Pointer: ADR-010 2026-10-04 Phase 54-03. Status stays **Proposed**.
 
 ## Date
 

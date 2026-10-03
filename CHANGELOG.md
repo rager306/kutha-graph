@@ -10,7 +10,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Added
 
-- `store::migrate`: load via `load_events_d04` then `committed_prefix`; write segments + manifest; verify reopen (ids + fold fingerprint); leave `events.jsonl` as an unread export; remove `events.wal` only after that flip. Idempotent when a manifest already exists. Crash matrix reopens to legacy or segmented without loss. `store::export_jsonl` writes jsonl via `replace_via_tmp` and is never consulted by `open` when a manifest exists. Real-writer open-level tamper (flip payload/length/trailer/manifest chain, swap/delete frame or sealed file, older copy, truncate at a frame boundary, extra sealed frame) is `InvalidData`. Oracles: `crates/kutha-runtime/tests/m002_seg01.rs`.
+- `store::migrate`: load via `load_events_d04` then `committed_prefix`; write segments + manifest; verify reopen (ids + fold fingerprint); leave `events.jsonl` as an unread export; remove `events.wal` only after that flip. A verify failpoint that corrupts a freshly written segment returns `InvalidData` and unflips the manifest so jsonl/WAL stay. Idempotent when a manifest already exists. Crash matrix reopens to legacy or segmented without loss. `store::export_jsonl` writes jsonl via `replace_via_tmp` and is never consulted by `open` when a manifest exists. `KUTHASEG` header is 44 bytes (previous-segment chain tip; H0 only for seq 1). Open checks sealed+active name contiguity, then per-file missing / chain-link / CRC / trailer / count / bytes / hash chain / manifest fields; the active header must link to the last sealed tip. Tamper oracles assert `InvalidData` plus those distinct needles. Cross-segment swap/replace/delete-middle/reorder/foreign-active are `InvalidData`. This does not stop a full rewrite of files + manifest + recomputed hashes; the manifest tip is not externally anchored. Oracles: `crates/kutha-runtime/tests/m002_seg01.rs`.
 
 ### Process
 
@@ -20,7 +20,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Trajectory
 
-- ADR-000 Clarification 2026-10-04 Phase 54-03: D1 still names the event log as SoT; migrate is explicit. ADR-010/012/060 Evidence 2026-10-04 Phase 54-03. Cells stay **Proposed**. Residuals: Typed/Dictionary group hole, no multi-writer lock, WAL duplication gone only for segmented dirs, `rocks_spike` still on jsonl until S07. `honeycomb.yaml` restaged (map/delivery/capability unchanged). Bench vs `be57466` (interleaved medians): ingest_plain.n +7.1%, as_of.n +8.6%, open.n +0.3% (+1.5% vs 54-02 open.n) — D-09 met.
+- ADR-000 Clarification 2026-10-04 Phase 54-03: D1 still names the event log as SoT; migrate is explicit. ADR-010/012/060 Evidence 2026-10-04 Phase 54-03. Dated 2026-10-04 pointer under ADR-010 Clarification 2026-10-03 (jsonl-as-physical-SoT superseded by SEG-01; the event log is still the SoT). Cells stay **Proposed**. Residuals: Typed/Dictionary group hole, no multi-writer lock, WAL duplication gone only for segmented dirs, `rocks_spike` still on jsonl until S07. `honeycomb.yaml` restaged (map/delivery/capability unchanged). Bench vs `be57466` (interleaved medians): ingest_plain.n +7.1%, as_of.n +8.6%, open.n +0.3% (+1.5% vs 54-02 open.n) — D-09 met. Second round vs `424bda6` (2 interleaved pairs): ingest_plain.n −9.4%, as_of.n −9.7%, open.n +1.6% — D-09 met.
 
 ## 2026-10-04 — Product: segmented persist, Persister, and rollover (SEG-01 / 54-02)
 

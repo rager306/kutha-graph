@@ -22,7 +22,7 @@ D1 still names the **event log** as SoT. Plan 54-02 writes `manifest.json` + `KU
 
 ### Clarification (2026-10-04, Phase 54-03 / M002 S06; Proposed)
 
-D1 still names the **event log** as SoT. Plan 54-03 adds `store::migrate` (committed prefix only; uncommitted suffix dropped and counted; `events.jsonl` left as an unread export; `events.wal` removed after a verified reopen) and `store::export_jsonl`. Persist never auto-migrates. This pointer does not rewrite D1–D10.
+D1 still names the **event log** as SoT. Plan 54-03 adds `store::migrate` (committed prefix only; uncommitted suffix dropped and counted; `events.jsonl` left as an unread export; `events.wal` removed after a verified reopen) and `store::export_jsonl`. Persist never auto-migrates. The hash chain is continuous across segments (header prev tip; H0 only for seq 1). This pointer does not rewrite D1–D10.
 
 ## Date
 
@@ -182,6 +182,7 @@ Compile-time hexagon: crates + `pub(crate)`. Behavior errors → `behavior.faile
 ### Clarification (2026-10-03; Proposed)
 
 The implemented spike stores `events.jsonl` as SoT with `events.wal` (magic `KUTHAWAL`) as a covering lease (`crates/kutha-runtime/src/store.rs` `load_events_d04`). `snapshot.json` and `events.wal` are replaced via tmp+sync+rename. RocksDB is NOT a dependency (`crates/kutha-runtime/Cargo.toml`) and stays an optional index store. Thaw gates: `.kutha/STATE.md` § Thaw map; RocksDB crate thaws at M002 Phase 51. This pointer does not rewrite D1–D10.
+Pointer (2026-10-04): superseded for the physical encoding by SEG-01 (manifest + segments); the event log is still the SoT.
 
 ### D7. Load profiles (one product — three modes)
 

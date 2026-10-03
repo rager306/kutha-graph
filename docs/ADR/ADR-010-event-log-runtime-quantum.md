@@ -34,7 +34,7 @@ Empty and already-segmented dirs persist `KUTHASEG` + manifest. `Persister` appe
 
 ### Evidence (2026-10-04, Phase 54-03 / M002 S06; Proposed)
 
-SEG-01: `store::migrate` loads `load_events_d04` then `committed_prefix`, writes segments + manifest, verifies reopen (ids + fold fingerprint), leaves `events.jsonl` as an export, removes `events.wal` only after that flip. `store::export_jsonl` is on-demand (`replace_via_tmp`); `open` never reads jsonl when a manifest exists. Real-writer tamper at open is `InvalidData`. Residuals: Typed/Dictionary group hole (COMMIT-01); no multi-writer lock; WAL duplication gone only for segmented dirs; `rocks_spike` still indexes jsonl offsets until S07. Oracles: `m002_seg01.rs`. Status stays **Proposed**. D1 event log = SoT unchanged.
+SEG-01: `store::migrate` loads `load_events_d04` then `committed_prefix`, writes segments + manifest, verifies reopen (ids + fold fingerprint), leaves `events.jsonl` as an export, removes `events.wal` only after that flip. A verify failpoint that corrupts a freshly written segment returns `InvalidData` and unflips the manifest so the legacy store stays intact. `store::export_jsonl` is on-demand (`replace_via_tmp`); `open` never reads jsonl when a manifest exists. Header is 44 bytes (magic + v1 + previous-segment chain tip; H0 only for the first segment). Open checks sealed+active sequence contiguity, then each sealed file (missing, chain link, CRC, trailer, count, bytes, hash chain, manifest fields) and that the active header links to the last sealed tip. Tamper oracles use those distinct needles. This does **not** stop an attacker who rewrites every file including the manifest and recomputes hashes; the manifest tip is not externally anchored. Residuals: Typed/Dictionary group hole (COMMIT-01); no multi-writer lock; WAL duplication gone only for segmented dirs; `rocks_spike` still indexes jsonl offsets until S07. Oracles: `m002_seg01.rs`. Status stays **Proposed**. D1 event log = SoT unchanged.
 
 ## Date
 
@@ -88,6 +88,7 @@ Write surface is a closed operator family in the TGMS direction: **assert / retr
 ### D010-4. WAL is the crash cousin, not the semantic log
 
 RocksDB (or equivalent) WAL + `WALRecoveryMode` is how bytes survive a crash. Semantic replay is fold-from-log. A recovered LSM is a materialization of storage WAL; it is not permission to treat LSM levels as SoT. Pointer (2026-10-03): shipped persist is `events.jsonl` SoT plus covering `KUTHAWAL` lease (`load_events_d04`); Rocks is an M002 index option (thawed 2026-10-03; scheduled S07, build spike S03) — Clarification (2026-10-03).
+Pointer (2026-10-04): superseded for the physical encoding by SEG-01 (manifest + segments); the event log is still the SoT.
 
 **Hard separations (must fail closed if collapsed):**
 
@@ -110,6 +111,7 @@ Open, from docs/architecture/semantic-gap-review.md (F11): the quantum outcome i
 ### Clarification (2026-10-03; Proposed)
 
 Implemented store: `events.jsonl` is SoT; `events.wal` is a covering lease (`store.rs` `load_events_d04`, `wal.rs` magic `KUTHAWAL` version 1). Persist atomicity for `snapshot.json` and `events.wal` closed in M017 S02 (`replace_via_tmp` / `replace_snapshot` / `replace_events_wal`). Rocks `WALRecoveryMode` remains the literature cousin and an M002 index option, not the shipped crash path. Commit-marker vs `Op::QuantumOutcome` encoding is COMMIT-01 (gap-review F11). Sidecar `File::create` without parent-dir fsync is SNAP-01. M002 is thawed and planned as GSD v0.12 (slices S01–S07, `.kutha/ROADMAP.md` § M002): SNAP-01, parent-dir fsync, partial-sidecar-as-absent, `check_tt_anchors` log-ahead tolerance, and fail-closed WAL open are scheduled in S02; COMMIT-01 in S05 (decision gate); Rocks as index lease in S07 (build spike S03). This subsection does not rewrite D010-1…D010-4 and does not mark this cell Accepted.
+Pointer (2026-10-04): superseded for the physical encoding by SEG-01 (manifest + segments); the event log is still the SoT.
 
 ## Consequences
 

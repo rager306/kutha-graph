@@ -363,5 +363,22 @@ Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p54-03-head-targ
 
 D-09 ≤10% vs `be57466` on ingest/`as_of`: **met**. `open.n` vs 54-02 HEAD +1.5% (within 10%). Pair 1 HEAD ingest 140M vs later HEAD 104–118M is host noise. Worktrees and target dirs removed after the run.
 
+## Phase 54 second round (M002 S06) — cross-segment chain stitch (2026-10-04)
+
+Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p54-r2-head-target` for HEAD `2cc3639`, `tmp/p54-r2-base-target` for `424bda6`). Binaries run from each worktree. Interleaved `base, head` × 2 pairs. Open path gained a 44-byte header prev tip and chain-link checks. Compare interleaved medians (two values: arithmetic mean of the pair).
+
+| run | 424bda6 ingest_plain.n | HEAD ingest_plain.n | Δ ingest | 424bda6 as_of.n | HEAD as_of.n | Δ as_of |
+|-----|-----------------------:|--------------------:|---------:|----------------:|-------------:|--------:|
+| 1 | 110506624 | 107082382 | −3.1% | 326930 | 290302 | −11.2% |
+| 2 | 152350002 | 131048571 | −14.0% | 316209 | 290361 | −8.2% |
+
+| metric | median 424bda6 | median HEAD | Δ median |
+|--------|---------------:|------------:|---------:|
+| ingest_plain.n | 131428313 | 119065476 | −9.4% |
+| as_of.n | 321570 | 290332 | −9.7% |
+| open.n | 2606879562 | 2649238906 | +1.6% |
+
+D-09 ≤10% vs `424bda6` on ingest/`as_of`/`open.n`: **met**. Pair 2 base ingest 152M vs pair 1 110M is host noise. Worktrees and target dirs removed after the run.
+
 
 

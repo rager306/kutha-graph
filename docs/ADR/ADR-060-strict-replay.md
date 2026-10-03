@@ -34,7 +34,7 @@ Segmented persist/`Persister` still feed `committed_prefix` then `replay_check`.
 
 ### Evidence (2026-10-04, Phase 54-03 / M002 S06; Proposed)
 
-`migrate` verify-reopen runs `open` (`committed_prefix` + `replay_check`) before dropping WAL. Pointer: ADR-010 2026-10-04 Phase 54-03. This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
+`migrate` verify-reopen runs `open` (`committed_prefix` + `replay_check`) before dropping WAL. A verify failpoint that corrupts a new segment fails closed and unflips the manifest. Cross-segment chain-link is part of that open. Pointer: ADR-010 2026-10-04 Phase 54-03. This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
 
 ## Date
 

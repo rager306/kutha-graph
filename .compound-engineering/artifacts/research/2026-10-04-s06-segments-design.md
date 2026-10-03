@@ -6,11 +6,13 @@
 
 ## 1. Format
 
-Reuse `wal::frame_bytes` / `write_frames` / CRC-of-payload. **New magic** `KUTHASEG` (8) + `u32` v1 — do not bump `KUTHAWAL` v1 (`unsupported WAL version` would trip legacy `load_events_d04`). Header 12 bytes, then event frames, then optional trailer.
+Reuse `wal::frame_bytes` / `write_frames` / CRC-of-payload. **New magic** `KUTHASEG` (8) + `u32` v1 + 32-byte previous-segment chain tip — do not bump `KUTHAWAL` v1 (`unsupported WAL version` would trip legacy `load_events_d04`). Header **44 bytes**, then event frames, then optional trailer. The 32-byte field is H0 = `[0u8;32]` only for the first segment; segment *k* stores the final chain tip of segment *k-1*.
 
 **Trailer** (sealed only): one frame, payload JSON `{"k":"seal","n":N,"first":EventId,"last":EventId,"bytes":u64,"chain":"<64 hex>"}`. Not an `Event` (parse as trailer, not `recover_events`). Trailer CRC’d; **not** in the chain (avoids hashing the hash). Extra bytes after trailer → `InvalidData`.
 
-**Chain:** `H0 = [0u8;32]`; each event frame `F` (on-disk `len||crc||payload`, not payload alone): `H = SHA256(H || F)`. Tip hex in trailer + manifest. Per-frame CRC does **not** catch swap/reorder of valid frames. One SHA-256 of the whole file would catch that too; SEG-01 names a **chain**, and the hash rides the same open scan as serde. `sha2` is already a workspace dep (`kutha-runtime`/`kutha-common` `provenance`/`event`). `blake3` is absent. Do not add a crate. CRC-only “chain” is insufficient.
+**Chain:** `H0 = [0u8;32]` starts **only the first segment**. Each event frame `F` (on-disk `len||crc||payload`, not payload alone): `H = SHA256(H || F)`. Segment *k* begins hashing from the tip of *k-1* (copied into the 44-byte header). Tip hex in trailer + manifest. Rollover must **not** reset the hasher to H0. Per-frame CRC does **not** catch swap/reorder of valid frames. Open verifies header prev == expected tip, then recomputes the chain from that prev. One SHA-256 of the whole file would catch intra-file swap too; SEG-01 names a **chain**, and the hash rides the same open scan as serde. `sha2` is already a workspace dep (`kutha-runtime`/`kutha-common` `provenance`/`event`). `blake3` is absent. Do not add a crate. CRC-only “chain” is insufficient.
+
+This does **not** protect an attacker who rewrites every segment **and** the manifest **and** recomputes all hashes. The manifest tip is not externally anchored.
 
 **Rollover** (first hit; test seam thread-local like `LOG_FILE_SYNC_COUNT`): `SEGMENT_MAX_BYTES = 64 MiB`, `SEGMENT_MAX_EVENTS = 65536`. Independent of `CHECKPOINT_EVERY` (4096).
 
@@ -24,13 +26,17 @@ Reuse `wal::frame_bytes` / `write_frames` / CRC-of-payload. **New magic** `KUTHA
 
 Detect: `manifest.json` present → segmented path; **never read** `events.jsonl`/`events.wal`. Else `load_events_d04`. Then existing `committed_prefix` → hydrate/`replay_check`.
 
-**Sealed:** full verify while loading (must deserialize anyway). Check magic/v1, trailer last, `count`/`first`/`last`/`bytes`/`chain` vs manifest, chain over frames, adjacent segments stitch by EventId order. **Lazy skip of sealed bodies is forbidden** (SEG-01 tamper would stay silent). Cost: SHA-256 per frame on the scan already paid for JSON; `open.n` is hydrate/replay (~2.7s), not hashing.
+**Sealed:** full verify while loading (must deserialize anyway). Check magic/v1, header prev vs previous tip, trailer last, `count`/`first`/`last`/`bytes`/`chain` vs manifest, chain over frames starting from that prev, adjacent segment names contiguous (then active continues the sequence). **Lazy skip of sealed bodies is forbidden** (SEG-01 tamper would stay silent). Cost: SHA-256 per frame on the scan already paid for JSON; `open.n` is hydrate/replay (~2.7s), not hashing.
 
 **Active:** WAL analog — drop torn last frame (short read / CRC fail / non-Event JSON that is not a seal). Header truncated → `InvalidData`. Seal trailer on a still-named-active file: keep events before it.
 
 | Failure | Result |
 |---------|--------|
-| Flip / swap / reorder / delete in **sealed** | `InvalidData` |
+| Swap two sealed files (meta retargeted) | `InvalidData` (`chain link`) |
+| Replace a sealed file with another store's sealed file | `InvalidData` (`chain link`) |
+| Delete a middle sealed file and fix names/counts | `InvalidData` (`chain link`) |
+| Reorder manifest sealed entries | `InvalidData` (`not contiguous`) |
+| Active file from another store | `InvalidData` (`chain link`) |
 | Truncated sealed (no trailer, `bytes` mismatch, chain break) | `InvalidData` (not torn-drop) |
 | Manifest vs file (name missing, first/last/count/bytes/chain) | `InvalidData` |
 | Missing named **active** | `InvalidData` |

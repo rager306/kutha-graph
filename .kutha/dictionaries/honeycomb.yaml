@@ -26,6 +26,7 @@ process: docs/process/governor-intake.md
 # 2026-10-04 restage (M002 S06 Phase 54-01: KUTHASEG reader + manifest; persist still jsonl+WAL): ADR-000, ADR-010, ADR-012, ADR-060; map/delivery/capability unchanged.
 # 2026-10-04 restage (M002 S06 Phase 54-02: segmented persist + Persister + rollover; legacy jsonl+WAL kept): ADR-000, ADR-010, ADR-012, ADR-060; map/delivery/capability unchanged.
 # 2026-10-04 restage (M002 S06 Phase 54-03: migrate + export_jsonl + real-writer tamper; jsonl is an unread export after migrate): ADR-000, ADR-010, ADR-012, ADR-060; map/delivery/capability unchanged.
+# 2026-10-04 restage (M002 S06 Phase 54 second round: cross-segment chain stitch, migrate verify failpoint, living jsonl-SoT pointer): ADR-000, ADR-010, ADR-012, ADR-060; map/delivery/capability unchanged.
 
 locks:
   - id: D1
