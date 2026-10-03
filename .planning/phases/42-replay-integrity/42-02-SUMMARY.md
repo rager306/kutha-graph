@@ -33,7 +33,7 @@ Workspace `cargo test --workspace --offline`: **166 passed / 0 failed** (50 suit
 | ingest_plain.n | 126962516 | 303357414 | 280920210 | **+121% STOP** |
 | as_of.n | 288999 | 322652 | 269763 | −6.7% (within 10%) |
 
-D-09 ingest_plain vs last product close (Phase 30) is a controller STOP. as_of holds on run b. No ingest-path change intended this plan.
+D-09 ingest_plain vs Phase 30 is a controller STOP; controller bisect (2026-10-03): v0.06 106M, v0.08 108M, `428f3ff` (pre-42) 301M, so the regression predates Phase 42 (M016); see benchmark-baseline.md and Phase 44. as_of holds on run b. No ingest-path change intended this plan.
 
 ## Mechanical test edits (m017)
 

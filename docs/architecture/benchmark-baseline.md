@@ -186,3 +186,16 @@ Phase 27 after-lease reference: ingest_plain.n **120267790** ns, as_of.n **51123
 Single run (`tmp/p30-bench.txt`). Workspace tests and facade/dual-mode oracles added; no ingest path change intended in this plan slice.
 
 regression within 10% vs Phase 27: yes
+
+## Phase 42 (M017 S02) — ingest regression found, not caused here
+
+Same host, same day (2026-10-03), `KUTHA_BENCH_N=10000`, Eager, single runs of `cargo bench -p kutha-runtime --bench baseline`:
+
+| commit | ingest_plain.n (ns) | as_of.n (ns) |
+|--------|--------------------:|-------------:|
+| v0.06 tag | 106001520 | 240538 |
+| v0.08 tag | 107897439 | 304056 |
+| `428f3ff` (post-M016, pre-42) | 300881900 | 298766 |
+| HEAD after Phase 42 (two runs) | 303357414 / 280920210 | 322652 / 269763 |
+
+Phase 42 does not move ingest (within run noise of `428f3ff`). Between v0.08 and `428f3ff` ingest roughly tripled (+179%): M016 (v0.09) never re-ran this bench (the contract names phases 24, 27, 30 only). This is an open P1 finding against the 10 percent gate, scheduled as M017 S04 (Phase 44); it is not an M002 input until understood.
