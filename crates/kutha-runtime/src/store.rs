@@ -504,3 +504,76 @@ fn json_err(e: serde_json::Error) -> std::io::Error {
 fn runtime_err(e: RuntimeError) -> std::io::Error {
     std::io::Error::new(std::io::ErrorKind::InvalidData, e.to_string())
 }
+
+/// Automatic sidecar/snapshot refresh after this many appended events (D-06).
+pub const CHECKPOINT_EVERY: usize = 4096;
+
+/// Named append/checkpoint failpoints (D-08). Stop *after* the named step.
+#[doc(hidden)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum AppendStep {
+    Jsonl,
+    WalWrite,
+    WalSync,
+    CheckpointJsonl,
+    CheckpointTerms,
+    CheckpointSnapshot,
+    CheckpointOutcomes,
+    CheckpointJustifications,
+}
+
+/// Incremental framed append after a full [`persist`] or [`open`] (D-02).
+pub struct Persister {
+    _dir: std::path::PathBuf,
+}
+
+impl Persister {
+    /// Attach to `dir` after a full persist or open. RED stub: compiles, does not append.
+    pub fn attach(_runtime: &Runtime, dir: &Path) -> std::io::Result<Self> {
+        Ok(Self {
+            _dir: dir.to_path_buf(),
+        })
+    }
+
+    pub fn append(&mut self, _runtime: &Runtime) -> std::io::Result<()> {
+        unimplemented!("APPEND-01 RED: incremental append")
+    }
+
+    pub fn checkpoint(&mut self, _runtime: &Runtime) -> std::io::Result<()> {
+        unimplemented!("APPEND-01 RED: checkpoint")
+    }
+
+    pub fn close(self, _runtime: &Runtime) -> std::io::Result<()> {
+        unimplemented!("APPEND-01 RED: close")
+    }
+}
+
+/// Test-visible count of `sync_data`/`sync_all` on log files (D-07). RED stub stays at 0.
+#[doc(hidden)]
+pub fn persist_log_sync_count() -> usize {
+    0
+}
+
+/// Reset the log-file sync counter.
+#[doc(hidden)]
+pub fn reset_persist_log_sync_count() {}
+
+/// Test seam (D-08): `append` then injected I/O error after `stop_after`.
+#[doc(hidden)]
+pub fn append_with_failpoint(
+    persister: &mut Persister,
+    runtime: &Runtime,
+    _stop_after: AppendStep,
+) -> std::io::Result<()> {
+    persister.append(runtime)
+}
+
+/// Test seam (D-08): `checkpoint` then injected I/O error after `stop_after`.
+#[doc(hidden)]
+pub fn checkpoint_with_failpoint(
+    persister: &mut Persister,
+    runtime: &Runtime,
+    _stop_after: AppendStep,
+) -> std::io::Result<()> {
+    persister.checkpoint(runtime)
+}
