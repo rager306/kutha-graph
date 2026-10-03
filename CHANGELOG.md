@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-03 — Product: DET-01 seeded determinism (M017 S03)
+
+### Product
+
+### Added
+
+- Seeded LCG properties in `crates/kutha-runtime/tests/m017_determinism.rs`: `replay(log).fingerprint == fold.fingerprint`, Eager vs Lazy equality on sorted `as_of` / `as_known_on` / `live_at` triples (not fingerprints), persist+open round trip under `tmp/p43-01-*`, and identical-log delivery-key retry. No new Cargo test crates.
+
+### Trajectory
+
+- Lease and honeycomb cells unchanged. Active Milestone **M017**, Active Slice **S03**.
+
 ## 2026-10-03 — Product: replay integrity (M017 S02)
 
 ### Product
