@@ -3,7 +3,7 @@ gsd_state_version: "1.0"
 milestone: v0.12
 milestone_name: Log durability protocol
 status: executing
-stopped_at: Phase 54 verified; Phase 55 unleased; v0.11 paused at Phase 46 gate
+stopped_at: Phase 55 leased (M002 S07); v0.11 paused at Phase 46 gate
 last_updated: "2026-10-03T06:00:00.000Z"
 progress:
   total_phases: 7
@@ -15,11 +15,11 @@ progress:
 # Project State
 
 **Milestone:** v0.12 Log durability protocol (harness M002, thawed); v0.11 (M018) paused after Phase 45
-**Phase:** 54 verified; next 55 (lease: `.kutha/STATE.md`)
-**Status:** Phase 54 complete; Phase 55 planned
+**Phase:** 55 — Droppable RocksDB index lease (lease: `.kutha/STATE.md`)
+**Status:** Executing Phase 55 (last phase of v0.12)
 
 **Last activity:** 2026-10-03 — v0.11 planned; Phase 45 verified; Phase 46 awaits decision
 
-Stopped at: Phase 54 closed
-Next: controller leases S07 for Phase 55 (CONTEXT first)
+Stopped at: Phase 55 execution
+Next: durable freeze rule, RED oracles, rocks_index, independent verify, then milestone close
 M002 deferred intake: `docs/architecture/m002-cloud-kernel-io-intake.md`

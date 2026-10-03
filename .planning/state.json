@@ -36,13 +36,13 @@
     {
       "number": "55",
       "name": "Droppable RocksDB index lease",
-      "status": "planned"
+      "status": "executing"
     }
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Lease M002 S07 (Phase 55: droppable Rocks index) after CONTEXT",
-    "reason": "Phase 54 verified \u00b7 M002-S06-done"
+    "label": "Phase 55 execute, then verify",
+    "reason": "M002-S07 leased"
   },
   "updated_at": "2026-10-03T07:00:00.000Z"
 }

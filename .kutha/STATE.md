@@ -5,7 +5,7 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M002
-**Active Slice:** None
+**Active Slice:** S07
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M002 S06 done (segments, manifest, hash chain); S07 unleased; M018 paused at its S02 decision gate | Capability proven / Rocks started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M002 S07 active (droppable RocksDB index lease); M018 paused at its S02 decision gate | Capability proven / Rocks started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M002 S06 closed** (`L_delivery=M002-S06-done`, Active Milestone **M002**, Active Slice **None**, 2026-10-04). GSD Phase 54 verified independently (7/7 after a second round): manifest plus sealed segments plus an active segment, SHA-256 chain continuous across segments, tamper fails closed, legacy directories convert only through `store::migrate`, `events.jsonl` is an on-demand export. Next: S07 (droppable RocksDB index lease, Phase 55) needs a lease; its offsets point into segments. M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
+**M002 S07 leased** (`L_delivery=M002-S06-done`, Active Milestone **M002**, Active Slice **S07**, 2026-10-04). GSD Phase 55 only: ROCK-01. First task: a durable `freeze-rocks` rule (rocksdb only as an optional dependency) so the check survives the end of M002; then an optional `rocks-index` feature with an EventId and delivery_key locator index over the segmented log, a rebuildable lease, not wired into `Runtime`. M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
 
 ## Thaw map
 

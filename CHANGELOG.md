@@ -94,6 +94,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `glob_absent` accepts optional `unless_file_contains: {file, needle}` (missing file does not skip). `freeze-rocks` allows the string `rocksdb` in `crates/*/Cargo.toml` and the workspace `Cargo.toml` only while `.kutha/STATE.md` names `**Active Milestone:** M002`. `freeze-cypher-deps` and `freeze-hnsw-dep` stay unconditional. Selftest disables the unless needle on the copy before inserting `rocksdb` so the check still fails closed.
 
+## 2026-10-04 — Process: lease M002 S07 (GSD Phase 55)
+
+### Process
+
+- Active Milestone **M002**, Active Slice **S07** (`L_delivery=M002-S06-done`): ROCK-01, the last slice of M002. A durable `freeze-rocks` rule (rocksdb only as an optional dependency) replaces the time-boxed one; an optional `rocks-index` feature holds an EventId and delivery_key locator index over the segmented log as a droppable lease, not wired into `Runtime`. Honeycomb stays Proposed.
+
 ## 2026-10-04 — Process: close M002 S06 (GSD Phase 54)
 
 ### Process
