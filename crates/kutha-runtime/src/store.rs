@@ -50,7 +50,7 @@ pub fn reset_persist_dir_fsync_count() {
 ///
 /// On platforms where opening a directory fails (non-Unix), returns `Ok`
 /// without syncing — directory file descriptors are a Unix feature.
-fn sync_dir(dir: &Path) -> std::io::Result<()> {
+pub(crate) fn sync_dir(dir: &Path) -> std::io::Result<()> {
     #[cfg(unix)]
     {
         let f = File::open(dir)?;
@@ -134,9 +134,9 @@ fn persist_until(
     Ok(())
 }
 
-const EVENTS_JSONL: &str = "events.jsonl";
+pub(crate) const EVENTS_JSONL: &str = "events.jsonl";
 const EVENTS_JSONL_TMP: &str = "events.jsonl.tmp";
-const EVENTS_WAL: &str = "events.wal";
+pub(crate) const EVENTS_WAL: &str = "events.wal";
 const EVENTS_WAL_TMP: &str = "events.wal.tmp";
 const SNAPSHOT_JSON: &str = "snapshot.json";
 const SNAPSHOT_JSON_TMP: &str = "snapshot.json.tmp";
@@ -222,7 +222,7 @@ fn replace_events_wal(dir: &Path, events: &[Event], commit: bool) -> std::io::Re
     )
 }
 
-fn replace_snapshot(dir: &Path, snap: &Snapshot, commit: bool) -> std::io::Result<()> {
+pub(crate) fn replace_snapshot(dir: &Path, snap: &Snapshot, commit: bool) -> std::io::Result<()> {
     replace_via_tmp(
         &dir.join(SNAPSHOT_JSON),
         &dir.join(SNAPSHOT_JSON_TMP),
@@ -402,7 +402,7 @@ fn sidecar_or_stale_prefix<T: PartialEq>(
     }
 }
 
-fn encoded_log(runtime: &Runtime) -> Vec<Event> {
+pub(crate) fn encoded_log(runtime: &Runtime) -> Vec<Event> {
     let mut out: Vec<Event> = runtime
         .dictionary()
         .strings()
@@ -427,7 +427,7 @@ fn defined_names(events: &[Event]) -> Vec<String> {
         .collect()
 }
 
-fn write_terms(dir: &Path, strings: &[String]) -> std::io::Result<()> {
+pub(crate) fn write_terms(dir: &Path, strings: &[String]) -> std::io::Result<()> {
     replace_via_tmp(&dir.join(TERMS_REL), &dir.join(TERMS_TMP), true, |f| {
         for s in strings {
             serde_json::to_writer(&mut *f, s).map_err(json_err)?;
@@ -437,7 +437,7 @@ fn write_terms(dir: &Path, strings: &[String]) -> std::io::Result<()> {
     })
 }
 
-fn write_outcomes(dir: &Path, rows: &[PersistedQuantumOutcome]) -> std::io::Result<()> {
+pub(crate) fn write_outcomes(dir: &Path, rows: &[PersistedQuantumOutcome]) -> std::io::Result<()> {
     replace_via_tmp(
         &dir.join(OUTCOMES_REL),
         &dir.join(OUTCOMES_TMP),
@@ -480,7 +480,7 @@ fn load_outcomes(path: &Path) -> std::io::Result<Option<Vec<PersistedQuantumOutc
     load_jsonl_sidecar(path)
 }
 
-fn write_justifications(dir: &Path, rows: &[Justification]) -> std::io::Result<()> {
+pub(crate) fn write_justifications(dir: &Path, rows: &[Justification]) -> std::io::Result<()> {
     replace_via_tmp(
         &dir.join(JUSTIFICATIONS_REL),
         &dir.join(JUSTIFICATIONS_TMP),
@@ -505,7 +505,7 @@ fn read_terms(path: &Path) -> std::io::Result<Option<Vec<String>>> {
     load_jsonl_sidecar(path)
 }
 
-fn json_err(e: serde_json::Error) -> std::io::Error {
+pub(crate) fn json_err(e: serde_json::Error) -> std::io::Error {
     std::io::Error::new(std::io::ErrorKind::InvalidData, e)
 }
 
@@ -513,75 +513,7 @@ fn runtime_err(e: RuntimeError) -> std::io::Error {
     std::io::Error::new(std::io::ErrorKind::InvalidData, e.to_string())
 }
 
-/// Automatic sidecar/snapshot refresh after this many appended events (D-06).
-pub const CHECKPOINT_EVERY: usize = 4096;
-
-/// Named append/checkpoint failpoints (D-08). Stop *after* the named step.
-#[doc(hidden)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum AppendStep {
-    Jsonl,
-    WalWrite,
-    WalSync,
-    CheckpointJsonl,
-    CheckpointTerms,
-    CheckpointSnapshot,
-    CheckpointOutcomes,
-    CheckpointJustifications,
-}
-
-/// Incremental framed append after a full [`persist`] or [`open`] (D-02).
-pub struct Persister {
-    _dir: std::path::PathBuf,
-}
-
-impl Persister {
-    /// Attach to `dir` after a full persist or open. RED stub: compiles, does not append.
-    pub fn attach(_runtime: &Runtime, dir: &Path) -> std::io::Result<Self> {
-        Ok(Self {
-            _dir: dir.to_path_buf(),
-        })
-    }
-
-    pub fn append(&mut self, _runtime: &Runtime) -> std::io::Result<()> {
-        unimplemented!("APPEND-01 RED: incremental append")
-    }
-
-    pub fn checkpoint(&mut self, _runtime: &Runtime) -> std::io::Result<()> {
-        unimplemented!("APPEND-01 RED: checkpoint")
-    }
-
-    pub fn close(self, _runtime: &Runtime) -> std::io::Result<()> {
-        unimplemented!("APPEND-01 RED: close")
-    }
-}
-
-/// Test-visible count of `sync_data`/`sync_all` on log files (D-07). RED stub stays at 0.
-#[doc(hidden)]
-pub fn persist_log_sync_count() -> usize {
-    0
-}
-
-/// Reset the log-file sync counter.
-#[doc(hidden)]
-pub fn reset_persist_log_sync_count() {}
-
-/// Test seam (D-08): `append` then injected I/O error after `stop_after`.
-#[doc(hidden)]
-pub fn append_with_failpoint(
-    persister: &mut Persister,
-    runtime: &Runtime,
-    _stop_after: AppendStep,
-) -> std::io::Result<()> {
-    persister.append(runtime)
-}
-
-/// Test seam (D-08): `checkpoint` then injected I/O error after `stop_after`.
-#[doc(hidden)]
-pub fn checkpoint_with_failpoint(
-    persister: &mut Persister,
-    runtime: &Runtime,
-    _stop_after: AppendStep,
-) -> std::io::Result<()> {
-    persister.checkpoint(runtime)
-}
+pub use crate::persist_append::{
+    append_with_failpoint, checkpoint_with_failpoint, persist_log_sync_count,
+    reset_persist_log_sync_count, AppendStep, Persister, CHECKPOINT_EVERY,
+};

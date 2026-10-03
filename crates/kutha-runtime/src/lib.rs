@@ -11,6 +11,7 @@ mod justification;
 mod leapfrog;
 mod log;
 mod materializer;
+mod persist_append;
 mod pipeline;
 mod provenance;
 mod quantum;

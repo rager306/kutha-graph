@@ -436,8 +436,21 @@ fn checkpoint_every_threshold_refreshes_snapshot() {
     store::persist(&rt, &dir).unwrap();
     let offset_a = snap_log_offset(&dir);
     let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    let relation = rt.intern("relatedTo");
+    let object = rt.intern("ckpt-obj");
     for i in 0..store::CHECKPOINT_EVERY {
-        rt.emit_tt_anchor(T_NEW.saturating_add(i as u64)).unwrap();
+        let s = rt.intern(&format!("p52-ckpt-{i}"));
+        rt.emit(Op::Assert {
+            subject: s,
+            relation,
+            object,
+            valid_from: VF_FIRST,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
     }
     p.append(&rt).unwrap();
     let offset_b = snap_log_offset(&dir);

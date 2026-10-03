@@ -1,29 +1,101 @@
 use crc32fast::Hasher;
-use kutha_common::Event;
+use kutha_common::{Event, EventId};
+use std::cell::Cell;
 use std::fs::{File, OpenOptions};
-use std::io::{Read, Write};
+use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::Path;
 
 const MAGIC: &[u8; 8] = b"KUTHAWAL";
 const VERSION: u32 = 1;
 
+thread_local! {
+    static LOG_FILE_SYNC_COUNT: Cell<usize> = const { Cell::new(0) };
+}
+
+pub(crate) fn note_log_file_sync() {
+    LOG_FILE_SYNC_COUNT.with(|c| c.set(c.get() + 1));
+}
+
+pub(crate) fn log_file_sync_count() -> usize {
+    LOG_FILE_SYNC_COUNT.with(|c| c.get())
+}
+
+pub(crate) fn reset_log_file_sync_count() {
+    LOG_FILE_SYNC_COUNT.with(|c| c.set(0));
+}
+
+pub(crate) fn frame_bytes(event: &Event) -> std::io::Result<Vec<u8>> {
+    let payload = serde_json::to_vec(event)
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+    let mut hasher = Hasher::new();
+    hasher.update(&payload);
+    let crc = hasher.finalize();
+    let len = payload.len() as u32;
+    let mut out = Vec::with_capacity(8 + payload.len());
+    out.extend_from_slice(&len.to_le_bytes());
+    out.extend_from_slice(&crc.to_le_bytes());
+    out.extend_from_slice(&payload);
+    Ok(out)
+}
+
+pub(crate) fn write_frames(f: &mut impl Write, events: &[Event]) -> std::io::Result<()> {
+    for e in events {
+        f.write_all(&frame_bytes(e)?)?;
+    }
+    Ok(())
+}
+
+/// Last WAL frame ending at `file_len` must be exactly `frame_len` bytes (D-04).
+pub(crate) fn last_event_id_at_end(
+    path: &Path,
+    file_len: u64,
+    frame_len: u64,
+) -> std::io::Result<EventId> {
+    if frame_len < 8 || file_len < frame_len {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidData,
+            "WAL tail shorter than last frame",
+        ));
+    }
+    let mut f = File::open(path)?;
+    f.seek(SeekFrom::Start(file_len - frame_len))?;
+    let mut hdr = [0u8; 8];
+    f.read_exact(&mut hdr)?;
+    let mut len_bytes = [0u8; 4];
+    len_bytes.copy_from_slice(&hdr[0..4]);
+    let mut crc_bytes = [0u8; 4];
+    crc_bytes.copy_from_slice(&hdr[4..8]);
+    let payload_len = u32::from_le_bytes(len_bytes) as u64;
+    let crc_stored = u32::from_le_bytes(crc_bytes);
+    if payload_len.saturating_add(8) != frame_len {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidData,
+            "WAL last frame length mismatch",
+        ));
+    }
+    let mut payload = vec![0u8; payload_len as usize];
+    f.read_exact(&mut payload)?;
+    let mut hasher = Hasher::new();
+    hasher.update(&payload);
+    if hasher.finalize() != crc_stored {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidData,
+            "WAL last frame CRC mismatch",
+        ));
+    }
+    let event: Event = serde_json::from_slice(&payload)
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+    Ok(event.id)
+}
+
 /// Framed durable log (Rocks WAL *cousin*): length + crc + payload.
-/// This is the single place that `sync_all`s the WAL file. Not SoT algebra.
+/// Full persist `sync_all`s here; incremental append `sync_data`s after frames. Not SoT algebra.
 pub(crate) fn write_wal(f: &mut File, events: &[Event]) -> std::io::Result<()> {
     f.write_all(MAGIC)?;
     f.write_all(&VERSION.to_le_bytes())?;
-    for e in events {
-        let payload = serde_json::to_vec(e)
-            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
-        let mut hasher = Hasher::new();
-        hasher.update(&payload);
-        let crc = hasher.finalize();
-        let len = payload.len() as u32;
-        f.write_all(&len.to_le_bytes())?;
-        f.write_all(&crc.to_le_bytes())?;
-        f.write_all(&payload)?;
-    }
+    write_frames(f, events)?;
     f.sync_all()?;
+    note_log_file_sync();
     Ok(())
 }
 
