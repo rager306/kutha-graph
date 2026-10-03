@@ -10,7 +10,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Fixed
 
-- Droppable `GraphFold` lease `horns_by_premise` (premise relation name → live Horn slots, `serde skip`, not fingerprint). Indexed on `kutha:rule` push and dropped on retract, including Lazy, like `allows_by_name`. `horn_fires` looks up the asserted relation instead of scanning `facts()` in `live_horns`. Extra `relatedTo` ingest no longer pays O(N) Horn visits. No new crate or public API.
+- Droppable `GraphFold` lease `horns_by_premise` (premise relation name → live Horn slots, `serde skip`, not fingerprint). Indexed on `kutha:rule` push and dropped on retract, including Lazy, like `allows_by_name`. `horn_fires` looks up the asserted relation instead of scanning `facts()` in `live_horns`. Extra `relatedTo` ingest no longer pays O(N) Horn visits. No new crate or public API. Same-host Eager `KUTHA_BENCH_N=10000`: `ingest_plain.n` 111283177 / 105460301 ns vs 44-01 v0.08 115322845 (within 10%; `as_of.n` 401528 / 290851).
 
 ### Trajectory
 

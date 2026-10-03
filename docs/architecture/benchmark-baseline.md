@@ -199,3 +199,16 @@ Same host, same day (2026-10-03), `KUTHA_BENCH_N=10000`, Eager, single runs of `
 | HEAD after Phase 42 (two runs) | 303357414 / 280920210 | 322652 / 269763 |
 
 Phase 42 does not move ingest (within run noise of `428f3ff`). Between v0.08 and `428f3ff` ingest roughly tripled (+179%): M016 (v0.09) never re-ran this bench (the contract names phases 24, 27, 30 only). This is an open P1 finding against the 10 percent gate, scheduled as M017 S04 (Phase 44); it is not an M002 input until understood.
+
+## Phase 44 (M017 S04) — Horn premise-relation ingest lease (2026-10-03)
+
+Same host as 44-01, Eager, `KUTHA_BENCH_N=10000`, two runs of `cargo bench -p kutha-runtime --offline --bench baseline`. Culprit was `live_horns` scanning `fold.facts()` twice per extra `relatedTo` (genesis `inverse_knows`). Fix: droppable `horns_by_premise` lease keyed by Horn premise relation.
+
+44-01 same-host v0.08 (`1fee7a7`): ingest_plain.n **115322845** ns, as_of.n **252890** ns. Cap +10% ingest = 126855129 ns. Phase 42 table v0.08 was 107897439 ns (cap 118687182). HEAD-before 44-01 (`4d669ca`) ingest **296189698** ns. `428f3ff` ingest **300881900** ns.
+
+| run | ingest_plain.n | vs 44-01 v0.08 | vs `428f3ff` | as_of.n |
+|-----|---------------:|---------------:|-------------:|--------:|
+| a | 111283177 | −3.5% | −63.0% | 401528 |
+| b | 105460301 | −8.6% | −65.0% | 290851 |
+
+D-06 ≤10% ingest vs same-host v0.08: **met** (both runs under cap; faster than 115.3M). as_of.n stays in Phase 42 host noise (~0.25–0.40 ms). Per-fact ingest ~11.1 / 10.5 µs vs v0.08 ~11.5 µs. No ADR-010/013 edit.
