@@ -21,7 +21,7 @@
     {
       "number": "52",
       "name": "Incremental framed append",
-      "status": "planned"
+      "status": "executing"
     },
     {
       "number": "53",
@@ -41,8 +41,8 @@
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Lease M002 S04 (Phase 52: incremental framed append) after CONTEXT",
-    "reason": "Phase 51 verified \u00b7 M002-S03-done"
+    "label": "Phase 52 execute, then verify",
+    "reason": "M002-S04 leased"
   },
   "updated_at": "2026-10-03T07:00:00.000Z"
 }

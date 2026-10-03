@@ -24,6 +24,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - `glob_absent` accepts optional `unless_file_contains: {file, needle}` (missing file does not skip). `freeze-rocks` allows the string `rocksdb` in `crates/*/Cargo.toml` and the workspace `Cargo.toml` only while `.kutha/STATE.md` names `**Active Milestone:** M002`. `freeze-cypher-deps` and `freeze-hnsw-dep` stay unconditional. Selftest disables the unless needle on the copy before inserting `rocksdb` so the check still fails closed.
 
+## 2026-10-03 — Process: lease M002 S04 (GSD Phase 52)
+
+### Process
+
+- Active Milestone **M002**, Active Slice **S04** (`L_delivery=M002-S03-done`): APPEND-01, PERF-GATE. A `Persister` appends framed records to `events.jsonl` and `events.wal` with one log sync per quantum; snapshot and sidecars refresh at a checkpoint. No segments, no commit frame, no Rocks wiring. Honeycomb stays Proposed.
+
 ## 2026-10-03 — Process: close M002 S03 (GSD Phase 51)
 
 ### Process
