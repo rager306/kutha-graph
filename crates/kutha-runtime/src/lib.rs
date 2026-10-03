@@ -17,6 +17,7 @@ mod pipeline;
 mod provenance;
 mod quantum;
 mod receipt;
+mod segment;
 mod snapshot;
 pub mod store;
 mod tenant;

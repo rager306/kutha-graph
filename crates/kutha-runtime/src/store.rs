@@ -151,7 +151,7 @@ fn abort_before_rename() -> std::io::Error {
     )
 }
 
-fn replace_via_tmp(
+pub(crate) fn replace_via_tmp(
     dest: &Path,
     tmp: &Path,
     commit: bool,
@@ -271,7 +271,7 @@ fn ids_cover(candidate: &[Event], covered: &[Event]) -> bool {
 /// short / recover-err(`InvalidData`) + readable jsonl → jsonl. A WAL `Err` of any
 /// other kind is returned (disk failure is not masked). Both parse and neither
 /// covers the other → InvalidData. No jsonl and invalid WAL → InvalidData.
-fn load_events_d04(dir: &Path) -> std::io::Result<Vec<Event>> {
+pub(crate) fn load_events_d04(dir: &Path) -> std::io::Result<Vec<Event>> {
     let wal_path = dir.join(EVENTS_WAL);
     let jsonl_path = dir.join(EVENTS_JSONL);
     let jsonl = if jsonl_path.exists() {
@@ -337,9 +337,17 @@ pub fn op_commit_class(op: &Op) -> crate::commit::CommitClass {
 
 pub use crate::commit::CommitClass;
 
+fn load_log_events(dir: &Path) -> std::io::Result<Vec<Event>> {
+    if dir.join(crate::segment::MANIFEST_REL).exists() {
+        crate::segment::load_events(dir)
+    } else {
+        load_events_d04(dir)
+    }
+}
+
 /// Load `dir` and report how many events `committed_prefix` hid.
 pub fn open_report(dir: &Path) -> std::io::Result<(Runtime, OpenReport)> {
-    let raw = load_events_d04(dir)?;
+    let raw = load_log_events(dir)?;
     let before = raw.len();
     let events = committed_prefix(raw);
     let dropped_uncommitted = before.saturating_sub(events.len());
@@ -592,4 +600,9 @@ pub use crate::persist_append::{
     abort_checkpoint_snapshot_before_rename, append_with_event_failpoint, append_with_failpoint,
     checkpoint_with_failpoint, pending_append_len, persist_log_sync_count,
     reset_persist_log_sync_count, AppendStep, Persister, CHECKPOINT_EVERY,
+};
+
+#[doc(hidden)]
+pub use crate::segment::{
+    rewrite_segment_with_seal_trailer, write_test_segmented, Manifest, MANIFEST_REL,
 };
