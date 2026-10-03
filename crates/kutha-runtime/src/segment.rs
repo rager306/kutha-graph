@@ -1,7 +1,12 @@
 //! Sealed segments + manifest (M002 S06 / SEG-01). Physical encoding of the event log.
 //!
-//! Magic `KUTHASEG` v1; event frames reuse [`crate::wal::frame_bytes`].
-//! Empty/segmented persist writes this layout in plan 54-02; legacy dirs stay jsonl+WAL.
+//! Magic `KUTHASEG` v1; header is 44 bytes: magic + u32 version + previous-segment
+//! chain tip (32 bytes; `[0; 32]` only for the first segment). Event frames reuse
+//! [`crate::wal::frame_bytes`]. Segment *k* starts hashing from the final chain tip
+//! of segment *k-1*. This does **not** stop an attacker who rewrites every file
+//! including the manifest and recomputes hashes; the manifest tip is not externally
+//! anchored. Empty/segmented persist writes this layout in plan 54-02; legacy dirs
+//! stay jsonl+WAL.
 
 use crate::store::{json_err, replace_via_tmp};
 use crate::wal;
@@ -16,7 +21,9 @@ use std::path::Path;
 
 pub(crate) const MAGIC: &[u8; 8] = b"KUTHASEG";
 pub(crate) const VERSION: u32 = 1;
-pub(crate) const HEADER_LEN: u64 = 12;
+/// Magic + u32 v1 + previous-segment chain tip (H0 = 32 zero bytes for seq 1).
+#[doc(hidden)]
+pub const HEADER_LEN: u64 = 44;
 /// Manifest file name (`manifest.json`).
 #[doc(hidden)]
 pub const MANIFEST_REL: &str = "manifest.json";
@@ -118,9 +125,10 @@ pub(crate) fn segment_name(seq: u32) -> String {
     format!("seg-{seq:08}.log")
 }
 
-pub(crate) fn write_header(f: &mut impl Write) -> std::io::Result<()> {
+pub(crate) fn write_header(f: &mut impl Write, prev: [u8; 32]) -> std::io::Result<()> {
     f.write_all(MAGIC)?;
     f.write_all(&VERSION.to_le_bytes())?;
+    f.write_all(&prev)?;
     Ok(())
 }
 
@@ -167,9 +175,10 @@ fn write_segment_file(
     path: &Path,
     events: &[Event],
     sealed: bool,
-) -> std::io::Result<Option<SealedMeta>> {
+    prev: [u8; 32],
+) -> std::io::Result<(Option<SealedMeta>, [u8; 32])> {
     let mut frames = Vec::new();
-    let mut h = [0u8; 32];
+    let mut h = prev;
     for e in events {
         let frame = wal::frame_bytes(e)?;
         h = chain_absorb(h, &frame);
@@ -194,7 +203,7 @@ fn write_segment_file(
     let bytes = body_len + trailer.as_ref().map(|t| t.len() as u64).unwrap_or(0);
     {
         let mut f = File::create(path)?;
-        write_header(&mut f)?;
+        write_header(&mut f, prev)?;
         f.write_all(&frames)?;
         if let Some(t) = &trailer {
             f.write_all(t)?;
@@ -202,20 +211,23 @@ fn write_segment_file(
         f.sync_all()?;
     }
     if sealed {
-        Ok(Some(SealedMeta {
-            name: path
-                .file_name()
-                .and_then(|n| n.to_str())
-                .unwrap_or("seg.log")
-                .to_string(),
-            first: events[0].id,
-            last: events[events.len() - 1].id,
-            count: events.len() as u64,
-            bytes,
-            chain,
-        }))
+        Ok((
+            Some(SealedMeta {
+                name: path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .unwrap_or("seg.log")
+                    .to_string(),
+                first: events[0].id,
+                last: events[events.len() - 1].id,
+                count: events.len() as u64,
+                bytes,
+                chain,
+            }),
+            h,
+        ))
     } else {
-        Ok(None)
+        Ok((None, h))
     }
 }
 
@@ -251,17 +263,23 @@ pub fn write_test_segmented(
     let mut seq = 1u32;
     let mut off = 0usize;
     let mut sealed = Vec::new();
+    let mut prev = [0u8; 32];
     for &n in sealed_counts {
         let name = segment_name(seq);
         seq = seq.saturating_add(1);
         let chunk = &events[off..off + n];
         off += n;
-        let meta = write_segment_file(&dir.join(&name), chunk, true)?
-            .ok_or_else(|| invalid("sealed write returned no meta"))?;
-        sealed.push(meta);
+        let (meta, tip) = write_segment_file(&dir.join(&name), chunk, true, prev)?;
+        prev = tip;
+        sealed.push(meta.ok_or_else(|| invalid("sealed write returned no meta"))?);
     }
     let active = segment_name(seq);
-    write_segment_file(&dir.join(&active), &events[off..off + active_count], false)?;
+    write_segment_file(
+        &dir.join(&active),
+        &events[off..off + active_count],
+        false,
+        prev,
+    )?;
     write_manifest(
         dir,
         &Manifest {
@@ -283,7 +301,7 @@ pub fn rewrite_segment_with_seal_trailer(path: &Path) -> std::io::Result<()> {
     if scan.consumed != bytes.len() {
         return Err(invalid("trailing bytes in unsealed segment"));
     }
-    write_segment_file(path, &scan.events, true)?;
+    write_segment_file(path, &scan.events, true, scan.prev)?;
     Ok(())
 }
 
@@ -304,11 +322,12 @@ fn trailer_payload(payload: &[u8]) -> Option<SealTrailer> {
 struct Scan {
     events: Vec<Event>,
     chain: [u8; 32],
+    prev: [u8; 32],
     trailer: Option<SealTrailer>,
     consumed: usize,
 }
 
-fn parse_header(bytes: &[u8]) -> std::io::Result<()> {
+fn parse_header(bytes: &[u8]) -> std::io::Result<[u8; 32]> {
     if bytes.len() < HEADER_LEN as usize {
         return Err(invalid("truncated segment header"));
     }
@@ -319,14 +338,16 @@ fn parse_header(bytes: &[u8]) -> std::io::Result<()> {
     if ver != VERSION {
         return Err(invalid("unsupported segment version"));
     }
-    Ok(())
+    let mut prev = [0u8; 32];
+    prev.copy_from_slice(&bytes[12..HEADER_LEN as usize]);
+    Ok(prev)
 }
 
 fn scan_segment(bytes: &[u8], sealed: bool) -> std::io::Result<Scan> {
-    parse_header(bytes)?;
+    let prev = parse_header(bytes)?;
     let mut off = HEADER_LEN as usize;
     let mut events = Vec::new();
-    let mut chain = [0u8; 32];
+    let mut chain = prev;
     loop {
         if off == bytes.len() {
             if sealed {
@@ -369,6 +390,7 @@ fn scan_segment(bytes: &[u8], sealed: bool) -> std::io::Result<Scan> {
             return Ok(Scan {
                 events,
                 chain,
+                prev,
                 trailer: Some(t),
                 consumed: end,
             });
@@ -390,6 +412,7 @@ fn scan_segment(bytes: &[u8], sealed: bool) -> std::io::Result<Scan> {
     Ok(Scan {
         events,
         chain,
+        prev,
         trailer: None,
         consumed: off,
     })
@@ -416,12 +439,22 @@ pub(crate) fn read_manifest(dir: &Path) -> std::io::Result<Manifest> {
     Ok(m)
 }
 
-fn verify_sealed(path: &Path, meta: &SealedMeta) -> std::io::Result<Vec<Event>> {
+fn verify_sealed(
+    path: &Path,
+    meta: &SealedMeta,
+    expected_prev: [u8; 32],
+) -> std::io::Result<(Vec<Event>, [u8; 32])> {
+    // Documented order: missing → chain link → scan (CRC/trailer/truncated/extra)
+    // → count → first/last → bytes → hash chain → manifest fields.
     if !path.exists() {
         return Err(invalid(format!("missing sealed segment {}", meta.name)));
     }
     let bytes = fs::read(path)?;
     let file_len = bytes.len() as u64;
+    let prev = parse_header(&bytes)?;
+    if prev != expected_prev {
+        return Err(invalid("chain link mismatch"));
+    }
     let scan = scan_segment(&bytes, true)?;
     let t = scan
         .trailer
@@ -460,37 +493,52 @@ fn verify_sealed(path: &Path, meta: &SealedMeta) -> std::io::Result<Vec<Event>> 
             meta.name
         )));
     }
-    Ok(scan.events)
+    Ok((scan.events, scan.chain))
 }
 
-fn read_active(path: &Path) -> std::io::Result<Vec<Event>> {
+fn read_active(path: &Path, expected_prev: [u8; 32]) -> std::io::Result<Vec<Event>> {
     if !path.exists() {
         return Err(invalid("missing active segment"));
     }
     let bytes = fs::read(path)?;
+    let prev = parse_header(&bytes)?;
+    if prev != expected_prev {
+        return Err(invalid("chain link mismatch"));
+    }
     let scan = scan_segment(&bytes, false)?;
     Ok(scan.events)
 }
 
 /// Load events from `manifest.json` + named segments. Never reads jsonl/WAL.
+///
+/// Check order: missing/invalid names, sealed+active sequence contiguity,
+/// then per sealed file: chain link, scan (CRC/trailer/truncated), count, bytes,
+/// hash chain, manifest fields; then the active header chain-link.
 pub(crate) fn load_events(dir: &Path) -> std::io::Result<Vec<Event>> {
     let manifest = read_manifest(dir)?;
-    let mut prev_seq = 0u32;
-    let mut all = Vec::new();
+    let mut seqs = Vec::with_capacity(manifest.sealed.len());
     for entry in &manifest.sealed {
-        let seq = parse_seg_seq(&entry.name)?;
-        if seq <= prev_seq {
-            return Err(invalid("sealed segments out of order"));
-        }
-        prev_seq = seq;
-        let evs = verify_sealed(&dir.join(&entry.name), entry)?;
-        all.extend(evs);
+        seqs.push(parse_seg_seq(&entry.name)?);
     }
     let active_seq = parse_seg_seq(&manifest.active)?;
-    if !manifest.sealed.is_empty() && active_seq <= prev_seq {
-        return Err(invalid("sealed segments out of order"));
+    if let Some(&first) = seqs.first() {
+        for (i, &seq) in seqs.iter().enumerate() {
+            if seq != first.saturating_add(i as u32) {
+                return Err(invalid("sealed sequence not contiguous"));
+            }
+        }
+        if active_seq != first.saturating_add(seqs.len() as u32) {
+            return Err(invalid("sealed sequence not contiguous"));
+        }
     }
-    let active_evs = read_active(&dir.join(&manifest.active))?;
+    let mut prev_tip = [0u8; 32];
+    let mut all = Vec::new();
+    for entry in &manifest.sealed {
+        let (evs, tip) = verify_sealed(&dir.join(&entry.name), entry, prev_tip)?;
+        prev_tip = tip;
+        all.extend(evs);
+    }
+    let active_evs = read_active(&dir.join(&manifest.active), prev_tip)?;
     all.extend(active_evs);
     Ok(all)
 }
@@ -547,11 +595,14 @@ pub(crate) fn persist_log(dir: &Path, events: &[Event]) -> std::io::Result<()> {
     let mut sealed = Vec::new();
     let last_i = chunks.len().saturating_sub(1);
     let mut active = segment_name(seq);
+    let mut prev = [0u8; 32];
     for (i, chunk) in chunks.iter().enumerate() {
         let name = segment_name(seq);
         seq = seq.saturating_add(1);
         let is_sealed = i != last_i;
-        if let Some(meta) = write_segment_file(&dir.join(&name), chunk, is_sealed)? {
+        let (meta, tip) = write_segment_file(&dir.join(&name), chunk, is_sealed, prev)?;
+        prev = tip;
+        if let Some(meta) = meta {
             sealed.push(meta);
         }
         if i == last_i {

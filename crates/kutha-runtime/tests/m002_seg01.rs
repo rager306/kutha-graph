@@ -164,9 +164,10 @@ fn is_seal_payload(payload: &[u8]) -> bool {
 }
 
 fn event_frame_ranges(bytes: &[u8]) -> Vec<(usize, usize)> {
-    assert!(bytes.len() >= 12, "segment header");
+    let hdr = store::SEGMENT_HEADER_LEN as usize;
+    assert!(bytes.len() >= hdr, "segment header");
     assert_eq!(&bytes[0..8], b"KUTHASEG");
-    let mut off = 12usize;
+    let mut off = hdr;
     let mut out = Vec::new();
     while off + 8 <= bytes.len() {
         let mut len_buf = [0u8; 4];
@@ -424,7 +425,8 @@ fn flipped_byte_in_sealed_frame_is_invalid_data() {
     bytes[payload] ^= 0x01;
     fs::write(&path, &bytes).unwrap();
 
-    assert_invalid_data(&dir, "sealed");
+    // CRC is checked before the hash chain (scan_segment documented order).
+    assert_invalid_data(&dir, "CRC mismatch");
 
     let _ = fs::remove_dir_all(&dir);
 }
@@ -442,7 +444,7 @@ fn swapped_adjacent_sealed_frames_is_invalid_data() {
         ranges.len() >= 4,
         "swap two middle frames so first/last still match"
     );
-    let mut rebuilt = bytes[..12].to_vec();
+    let mut rebuilt = bytes[..store::SEGMENT_HEADER_LEN as usize].to_vec();
     let mut order: Vec<usize> = (0..ranges.len()).collect();
     order.swap(1, 2);
     for i in order {
@@ -470,7 +472,8 @@ fn reordered_or_deleted_sealed_frames_is_invalid_data() {
     let drop_at = ranges[1];
     bytes.drain(drop_at.0..drop_at.1);
     fs::write(&path, &bytes).unwrap();
-    assert_invalid_data(&dir, "sealed");
+    // Count is checked before bytes / hash chain (verify_sealed documented order).
+    assert_invalid_data(&dir, "count mismatch");
 
     let events = persist_encoded(&rt, &dir);
     write_segments(&dir, &events);
@@ -481,7 +484,8 @@ fn reordered_or_deleted_sealed_frames_is_invalid_data() {
     man["sealed"][0] = b;
     man["sealed"][1] = a;
     fs::write(manifest_path(&dir), serde_json::to_vec(&man).unwrap()).unwrap();
-    assert_invalid_data(&dir, "out of order");
+    // Contiguity is checked before chain-link (load_events documented order).
+    assert_invalid_data(&dir, "not contiguous");
 
     let _ = fs::remove_dir_all(&dir);
 }
@@ -887,7 +891,10 @@ fn rollover_manifest_flip_fsyncs_dir() {
         "rollover must append a seal trailer without rewriting the prefix"
     );
     let ranges = event_frame_ranges(&sealed);
-    let trailer_off = ranges.last().map(|r| r.1).unwrap_or(12);
+    let trailer_off = ranges
+        .last()
+        .map(|r| r.1)
+        .unwrap_or(store::SEGMENT_HEADER_LEN as usize);
     assert!(
         trailer_off + 8 < sealed.len() && is_seal_payload(&sealed[trailer_off + 8..]),
         "rollover must write a seal trailer on the former active"
@@ -1137,6 +1144,7 @@ fn writer_flipped_sealed_frame_length_is_invalid_data() {
     let path = first_sealed_path(&dir);
     let ranges = event_frame_ranges(&fs::read(&path).unwrap());
     xor_at(&path, ranges[1].0);
+    // A one-bit length flip still yields a complete frame; CRC is first (before chain).
     assert_invalid_data(&dir, "CRC mismatch");
     let _ = fs::remove_dir_all(&dir);
 }
@@ -1150,6 +1158,7 @@ fn writer_flipped_sealed_trailer_is_invalid_data() {
     let bytes = fs::read(&path).unwrap();
     let ranges = event_frame_ranges(&bytes);
     xor_at(&path, ranges[ranges.len() - 1].1 + 8);
+    // Trailer is a CRC'd frame; CRC is first (before trailer JSON field checks).
     assert_invalid_data(&dir, "CRC mismatch");
     let _ = fs::remove_dir_all(&dir);
 }
@@ -1179,7 +1188,7 @@ fn writer_swapped_adjacent_sealed_frames_is_invalid_data() {
     let path = first_sealed_path(&dir);
     let bytes = fs::read(&path).unwrap();
     let ranges = event_frame_ranges(&bytes);
-    let mut rebuilt = bytes[..12].to_vec();
+    let mut rebuilt = bytes[..store::SEGMENT_HEADER_LEN as usize].to_vec();
     let mut order: Vec<usize> = (0..ranges.len()).collect();
     order.swap(1, 2);
     for i in order {
@@ -1199,7 +1208,7 @@ fn writer_deleted_sealed_frame_is_invalid_data() {
     let path = first_sealed_path(&dir);
     let bytes = fs::read(&path).unwrap();
     let ranges = event_frame_ranges(&bytes);
-    let mut rebuilt = bytes[..12].to_vec();
+    let mut rebuilt = bytes[..store::SEGMENT_HEADER_LEN as usize].to_vec();
     for (i, r) in ranges.iter().enumerate() {
         if i == 1 {
             continue;
@@ -1487,6 +1496,10 @@ fn migrate_verify_fault_returns_invalid_data_and_keeps_legacy() {
         .expect_err("verify must see the corrupted sealed file");
     assert_eq!(err.kind(), ErrorKind::InvalidData);
     assert!(
+        err.to_string().contains("CRC mismatch"),
+        "verify fault must name the CRC check; got {err}"
+    );
+    assert!(
         dir.join("events.jsonl").exists(),
         "jsonl must survive a failed verify"
     );
@@ -1555,9 +1568,9 @@ fn replaced_sealed_from_other_store_is_invalid_data() {
     let dir_b = persist_dir("repl-sealed-b");
     persist_with_sealed(&other, &dir_b);
     let src = sealed_path(&dir_b, 0);
-    let dst = sealed_path(&dir, 0);
+    let dst = sealed_path(&dir, 1);
     fs::copy(&src, &dst).unwrap();
-    retarget_manifest_sealed_from_file(&dir, 0, &dst);
+    retarget_manifest_sealed_from_file(&dir, 1, &dst);
     assert_invalid_data(&dir, "chain link");
     let _ = fs::remove_dir_all(&dir);
     let _ = fs::remove_dir_all(&dir_b);
@@ -1568,18 +1581,46 @@ fn deleted_middle_sealed_with_contiguous_manifest_is_invalid_data() {
     let rt = seed_runtime();
     let dir = persist_dir("del-mid");
     persist_many_sealed(&rt, &dir, 3);
-    assert!(sealed_len(&dir) >= 3, "need three sealed files");
-    let mid = sealed_path(&dir, 1);
-    let last = sealed_path(&dir, 2);
-    fs::remove_file(&mid).unwrap();
-    fs::rename(&last, &mid).unwrap();
+    let n = sealed_len(&dir);
+    assert!(n >= 3, "need three sealed files");
+    let keep: Vec<Vec<u8>> = (0..n)
+        .filter(|&i| i != 1)
+        .map(|i| fs::read(sealed_path(&dir, i)).unwrap())
+        .collect();
+    let active_bytes = fs::read(active_path(&dir)).unwrap();
+    for i in 0..n {
+        fs::remove_file(sealed_path(&dir, i)).unwrap();
+    }
+    fs::remove_file(active_path(&dir)).unwrap();
+    for (i, bytes) in keep.iter().enumerate() {
+        fs::write(dir.join(format!("seg-{:08}.log", i as u32 + 1)), bytes).unwrap();
+    }
+    let active_name = format!("seg-{:08}.log", keep.len() as u32 + 1);
+    fs::write(dir.join(&active_name), &active_bytes).unwrap();
     let mut man: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(manifest_path(&dir)).unwrap()).unwrap();
-    let keep_name = man["sealed"][1]["name"].clone();
-    man["sealed"].as_array_mut().unwrap().remove(1);
-    man["sealed"][1]["name"] = keep_name;
+    let old = man["sealed"].as_array().unwrap().clone();
+    let mut rebuilt = Vec::new();
+    let mut seq = 1u32;
+    for (i, entry) in old.iter().enumerate() {
+        if i == 1 {
+            continue;
+        }
+        let mut e = entry.clone();
+        e["name"] = serde_json::Value::String(format!("seg-{:08}.log", seq));
+        rebuilt.push(e);
+        seq = seq.saturating_add(1);
+    }
+    man["sealed"] = serde_json::Value::Array(rebuilt);
+    man["active"] = serde_json::Value::String(active_name);
     fs::write(manifest_path(&dir), serde_json::to_vec(&man).unwrap()).unwrap();
-    retarget_manifest_sealed_from_file(&dir, 1, &mid);
+    for i in 0..keep.len() {
+        retarget_manifest_sealed_from_file(
+            &dir,
+            i,
+            &dir.join(format!("seg-{:08}.log", i as u32 + 1)),
+        );
+    }
     assert_invalid_data(&dir, "chain link");
     let _ = fs::remove_dir_all(&dir);
 }

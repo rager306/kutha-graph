@@ -335,7 +335,7 @@ impl Persister {
         let new_name = segment::segment_name(old_seq.saturating_add(1));
         {
             let mut f = File::create(self.dir.join(&new_name))?;
-            segment::write_header(&mut f)?;
+            segment::write_header(&mut f, self.chain)?;
             f.sync_data()?;
             wal::note_log_file_sync();
         }
@@ -358,7 +358,6 @@ impl Persister {
         self.wal_len = HEADER_LEN;
         self.active_events = 0;
         self.active_first = None;
-        self.chain = [0u8; 32];
         Ok(())
     }
 }
