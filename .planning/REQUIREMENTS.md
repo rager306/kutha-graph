@@ -35,7 +35,7 @@
 
 ### Docs honesty (Phase 56, S01)
 
-- **DOC-08**: living docs, ADR Evidence and honeycomb comments match post-M002 encodings (roadmap audit §4 + ADR audit §4); closed M001–M017 ROADMAP bodies collapse to one-line + pointer; ADRs stay Proposed; `.kutha/STATE.md:3` is controller-owned at lease time
+- [x] **DOC-08**: living docs, ADR Evidence and honeycomb comments match post-M002 encodings (roadmap audit §4 + ADR audit §4); closed M001–M017 ROADMAP bodies collapse to one-line + pointer; ADRs stay Proposed; `.kutha/STATE.md:3` is controller-owned at lease time
 
 ### Governor (Phases 57–58, S02–S03)
 
