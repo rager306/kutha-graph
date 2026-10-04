@@ -1,7 +1,7 @@
 # Requirements: Kutha
 
 **Core Value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Milestones:** v0.12 / harness M002 shipped 2026-10-04 (archive `.planning/milestones/v0.12-REQUIREMENTS.md`). v0.11 / harness M018 "Wedge unblock" (Phases 45–48; paused after Phase 45 at the S02 decision gate). Lease: `.kutha/STATE.md`.
+**Milestones:** v0.12 / harness M002 shipped 2026-10-04 (archive `.planning/milestones/v0.12-REQUIREMENTS.md`). v0.11 / harness M018 "Wedge unblock" (Phases 45–48; paused after Phase 45 at the S02 decision gate). v0.13 / harness M019 "Post-M002 coherence" (Phases 56–62; planned, unleased). Lease: `.kutha/STATE.md`.
 
 ## v0.11 Requirements
 
@@ -27,9 +27,39 @@
 
 ### Differential tests (Phase 48, S04)
 
-- **DIFF-01**: fold, CSR lease and clean rebuild agree on seeded random logs (no new dependency)
+- **DIFF-01**: fold, CSR lease and clean rebuild agree on seeded random logs (no new dependency) — **moved** to v0.13 Phase 62 / M019 S07 (id stays here; work is DIFF-02)
 - **ORACLE-01**: I-F15 measures time or a bound that fails under the O(N) regression; I-F16 fails when rules do not re-derive
 - **GATE-01**: bench gate (`ingest_plain.n`, `as_of.n`) is a governor row or a recorded controller step with a selftest
+
+## v0.13 Requirements (M019, planned, unleased)
+
+### Docs honesty (Phase 56, S01)
+
+- **DOC-08**: living docs, ADR Evidence and honeycomb comments match post-M002 encodings (roadmap audit §4 + ADR audit §4); closed M001–M017 ROADMAP bodies collapse to one-line + pointer; ADRs stay Proposed; `.kutha/STATE.md:3` is controller-owned at lease time
+
+### Governor (Phases 57–58, S02–S03)
+
+- **GOV-04**: new `cargo_dep_constraint` kind (`tomllib`) owns freeze-rocks / freeze-cypher-deps / freeze-hnsw-dep; governor-audit bypass forms are RED tests first
+- **GOV-05**: `m002_*` oracles enrolled in honeycomb `evidence` and `observe_cargo.required` (plus `--features rocks-index` observe row)
+- **GOV-06**: `artifact-budget` strict (`min_hits` 1 while a live phase exists; SUMMARY max 1); `id-map-cite` requires v0.12 / v0.13; selftest proves ledger / pointer kinds by their own mutation or an explicit skip with a reason
+- **PAR-01**: independent checks and selftest proofs run in a process pool (`KUTHA_GOV_JOBS` / `--jobs`, default min(cpu, 8)); `--jobs 1` is the oracle (same findings, byte-equal fold); selftest copytree skips `.compound-engineering` and `.planning/milestones`
+
+### Test strategy (Phase 59, S04)
+
+- **TEST-01**: honeycomb ADR-023 (Proposed; conventions, with 020–022) + `docs/architecture/test-matrix.md` (invariant × layer × oracle × kill-mutation × status / owner-gate) + a `rust_test_asserts`-style governor row; owner-gated invariants are `blocked: decision`, not xfail
+
+### Durability residuals (Phases 60–61, S05–S06)
+
+- **WRITER-01**: single-writer advisory lock per store dir (`File::try_lock`; two writers fail closed; RED first)
+- **GROUP-01**: Typed / Dictionary multi-event group vs `committed_prefix` decided in ADR-010 / 014; RED-first oracle; missing durability oracles from the code-tests audit §2 (mixed suffix, migrate × tail guard, active at exact frame end, wrong-role active)
+- **ROCK-02**: Rocks index staleness beyond the tip is detected (index meta bound to manifest chain tip + count, or equivalent; RED first)
+- **MEM-01**: `bytes_per_fact` 17218→25200 cause confirmed by measurement (dhat / heaptrack / counting allocator) and fixed or explained
+- **CLEAN-01**: dead-code fate (`log_has_quantum_outcome`, `wal::append_events` `allow(dead_code)`, `rocks_spike`); `SegmentIndex` / `Persister` wiring decision recorded (default: not wired, reason). Bench gate applies on product slices.
+
+### Semantic tests (Phase 62, S07)
+
+- **DIFF-02**: seeded randomized differential fold vs CSR lease vs clean rebuild (the work pulled from DIFF-01; no new dependency; LCG like `m017_determinism.rs`)
+- **SEM-02**: cascade order stable Eager vs Lazy; seeded determinism on derived triples; Correct of a Horn premise characterized; legal TR-02 gap recorded as `blocked: decision` in the matrix. No owner-gated behaviour changes.
 
 ## Future Requirements (not leased)
 

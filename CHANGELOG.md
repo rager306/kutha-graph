@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-04 — Process: author M019 / GSD v0.13 plan
+
+### Process
+
+### Added
+
+- Author harness milestone **M019** as GSD **v0.13** (Phases 56–62, slices S01–S07: docs honesty round 3; governor hardening; governor SMP; test strategy and oracle matrix; durability residuals A/B; semantic and logic test expansion). Source: 2026-10-04 post-M002 audits (`.compound-engineering/artifacts/research/2026-10-04-post-m002-audit-{roadmap,adr,code-tests,governor}.md`). Owner request: docs correction first, governor hardening plus SMP parallelism, test strategy ADR/matrix, residual fixes, semantic test expansion, all through GSD auto. Planned, unleased. Nothing shipped.
+
+### Changed
+
+- M018 S04 keeps I-F15 / I-F16 and the bench-gate items; DIFF-01 (fold / CSR / rebuild) moves to M019 S07.
+
+### Trajectory
+
+- Harness lease stays idle (`L_delivery=M002-closed`). M018 remains paused at its S02 decision gate. Honeycomb stays Proposed.
+
 ## 2026-10-04 — Process: close M002 S07 and milestone M002 (GSD v0.12)
 
 ### Process

@@ -1,48 +1,48 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v0.12 \u2014 Log durability protocol",
+  "milestone": "v0.13 \u2014 Post-M002 coherence",
   "phases": [
     {
-      "number": "49",
-      "name": "Thaw map and freeze governor honesty",
-      "status": "complete"
+      "number": "56",
+      "name": "Docs honesty round 3",
+      "status": "planned"
     },
     {
-      "number": "50",
-      "name": "SNAP-01 and fail-closed WAL open",
-      "status": "complete"
+      "number": "57",
+      "name": "Governor hardening",
+      "status": "planned"
     },
     {
-      "number": "51",
-      "name": "RocksDB build spike",
-      "status": "complete"
+      "number": "58",
+      "name": "Governor SMP",
+      "status": "planned"
     },
     {
-      "number": "52",
-      "name": "Incremental framed append",
-      "status": "complete"
+      "number": "59",
+      "name": "Test strategy and oracle matrix",
+      "status": "planned"
     },
     {
-      "number": "53",
-      "name": "Commit marker decision (COMMIT-01)",
-      "status": "complete"
+      "number": "60",
+      "name": "Durability residuals A",
+      "status": "planned"
     },
     {
-      "number": "54",
-      "name": "Segments, manifest and hash chain",
-      "status": "complete"
+      "number": "61",
+      "name": "Durability residuals B",
+      "status": "planned"
     },
     {
-      "number": "55",
-      "name": "Droppable RocksDB index lease",
-      "status": "complete"
+      "number": "62",
+      "name": "Semantic and logic test expansion",
+      "status": "planned"
     }
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Owner decision for v0.11 Phase 46",
-    "reason": "v0.12 shipped · M002-closed; v0.11 paused at S02"
+    "label": "v0.13 planned, unleased",
+    "reason": "M019 authored \u00b7 harness lease stays idle \u00b7 v0.11 paused at S02"
   },
-  "updated_at": "2026-10-04T00:00:00.000Z"
+  "updated_at": "2026-10-04T14:54:00.000Z"
 }

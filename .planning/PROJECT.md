@@ -10,9 +10,11 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: none live (v0.12 shipped; v0.11 paused)
+## Current Milestone: none live (v0.13 planned, unleased; v0.12 shipped; v0.11 paused)
 
 **Last shipped:** v0.12 Log durability protocol (harness M002, phases 49–55, tag `v0.12`). Crate SemVer stays `0.0.0`.
+
+**Planned:** v0.13 Post-M002 coherence (harness M019, phases 56–62). Unleased. One slice at a time when the controller leases.
 
 **Harness lease:** read `.kutha/STATE.md` (slice, `L_delivery` and Freeze live only there).
 
@@ -171,11 +173,11 @@ Harness compact index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov m
 
 ## Current State
 
-Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), **v0.04 — Single-log SoT + stable references** (2026-10-01, M012a S01–S06), **v0.05 — Dictionaries as facts** (2026-10-01, M012 S01–S05), **v0.06 — Honest baseline and one write path** (2026-10-02, M013 S01–S09), **v0.07 — Typed clocks and as-known-on** (2026-10-02, M014 S01–S03), **v0.08 — Known-on honesty** (2026-10-02, M015), **v0.09 — Test hardening + executable rules** (2026-10-02, M016 S01–S05), **v0.10 — Docs honesty and replay integrity** (2026-10-03, M017 S01–S04), and **v0.12 — Log durability protocol** (2026-10-04, M002 S01–S07). v0.11 is paused at the owner's decision. Honeycomb cells stay Proposed. Product stays `0.0.0`. Lease and thaw map: `.kutha/STATE.md`. The freeze list came from agent-assisted commits (2026-08-18, Cursor co-authored); the owner states he did not decide it; M002 thawed 2026-10-03 at the owner's request and closed 2026-10-04.
+Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), **v0.04 — Single-log SoT + stable references** (2026-10-01, M012a S01–S06), **v0.05 — Dictionaries as facts** (2026-10-01, M012 S01–S05), **v0.06 — Honest baseline and one write path** (2026-10-02, M013 S01–S09), **v0.07 — Typed clocks and as-known-on** (2026-10-02, M014 S01–S03), **v0.08 — Known-on honesty** (2026-10-02, M015), **v0.09 — Test hardening + executable rules** (2026-10-02, M016 S01–S05), **v0.10 — Docs honesty and replay integrity** (2026-10-03, M017 S01–S04), and **v0.12 — Log durability protocol** (2026-10-04, M002 S01–S07). v0.13 is planned, unleased. v0.11 is paused at the owner's decision. Honeycomb cells stay Proposed. Product stays `0.0.0`. Lease and thaw map: `.kutha/STATE.md`. The freeze list came from agent-assisted commits (2026-08-18, Cursor co-authored); the owner states he did not decide it; M002 thawed 2026-10-03 at the owner's request and closed 2026-10-04.
 
 ## Next Milestone Goals
 
-Next slice: `.kutha/STATE.md` only. v0.11 Phases 46–48 wait for the owner's C01 and Horn decision. Remaining thaw gates: `.kutha/STATE.md` § Thaw map. Candidates needing a decision: C01 sunset, typed `Op` clocks, Horn vs knowledge cut.
+Next slice: `.kutha/STATE.md` only. v0.13 planned, unleased. v0.11 Phases 46–48 wait for the owner's C01 and Horn decision. Remaining thaw gates: `.kutha/STATE.md` § Thaw map. Candidates needing a decision: C01 sunset, typed `Op` clocks, Horn vs knowledge cut.
 
 ## Context
 
@@ -240,4 +242,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-04 after M002 close (v0.12 archived)*
+*Last updated: 2026-10-04 after authoring M019 / GSD v0.13 (planned, unleased)*

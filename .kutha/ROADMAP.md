@@ -247,9 +247,9 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 **Source:** 2026-10-03 post-v0.10 review at `d230ab2` (five read-only audits, CBM + GitNexus, `rg` arbiter): trajectory, ADR vs code, tests, docs, code logic. The wedge (norm AS OF a date) is blocked by an undecided C01 and by Horn semantics, not by Rocks. Not M002 segments or Rocks; not typed `Op` clocks; not ADR Accepted.
 
-**Success:** living docs and ADR Evidence agree with the code (one F-register, English spine); ADR-013 records one C01 option and the Horn-vs-knowledge-cut rule, with a named oracle; derived facts have deterministic identity and follow `Correct`; every cascade hop is admitted; fold, CSR and rebuild agree on seeded random logs.
+**Success:** living docs and ADR Evidence agree with the code (one F-register, English spine); ADR-013 records one C01 option and the Horn-vs-knowledge-cut rule, with a named oracle; derived facts have deterministic identity and follow `Correct`; every cascade hop is admitted. Fold / CSR / rebuild differential (DIFF-01) moved to M019 S07.
 
-**Paused 2026-10-03** after S01 at the S02 decision gate (needs the user's C01 / Horn choice). M002 is CLOSED (2026-10-04). M018 remains paused at S02. Failed-WAL-open (OPEN-01) and crash-seam work moved to M002 S02.
+**Paused 2026-10-03** after S01 at the S02 decision gate (needs the user's C01 / Horn choice). M002 is CLOSED (2026-10-04). M019 is planned, unleased (below). M018 remains paused at S02. Failed-WAL-open (OPEN-01) and crash-seam work moved to M002 S02. DIFF-01 moved to M019 S07.
 
 - [x] **S01: Doc truth round 2** `risk:low` `depends:[]`
   > After this: ADR-010/012/014/041/060 Evidence and `semantic-gap-review.md` match v0.10 code (snapshot and WAL atomic, `horns_by_premise`, sidecars still in place); audit ids carry the `A-F` prefix; ADR-000 D6 and ADR-010 D010-4 no longer name Rocks WAL as shipped; ADR-013 states `as_of` is support-live, not eligibility; ADR-000 and `stca-guide.md` spine is English; CHANGELOG head, `PROJECT.md`, `.kutha/ROADMAP.md` closed-milestone wording and `.gitignore` hygiene are fixed; no file under `crates/` changes.
@@ -258,7 +258,7 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 - [ ] **S03: Horn determinism and closure** `risk:high` `depends:[S02]`
   > After this: two ingests of the same ops give the same derived-event identity (or the decision to keep UUID v7 is recorded with its replay consequence); `Correct` and `CorrectInterval` re-derive; every cascade hop passes `admit` and commits in a stable order; the unknown head or premise relation in a rule fails closed; named oracles unchanged.
 - [ ] **S04: Differential tests and oracle tightening** `risk:medium` `depends:[S03]`
-  > After this: fold, CSR and clean rebuild agree on seeded random logs (no new dependency); I-F15 and I-F16 oracles measure what they claim; the bench gate is a recorded controller step or a governor row. OPEN-01 (failed WAL magic read, empty WAL, WAL error hidden behind jsonl) and the crash seam between jsonl and sidecars moved to M002 S02.
+  > After this: I-F15 and I-F16 oracles measure what they claim; the bench gate is a recorded controller step or a governor row. DIFF-01 (fold, CSR and clean rebuild on seeded random logs) moved to M019 S07. OPEN-01 (failed WAL magic read, empty WAL, WAL error hidden behind jsonl) and the crash seam between jsonl and sidecars remain on M002 S02.
 
 ## M002: Log durability protocol — CLOSED (GSD v0.12)
 
@@ -287,9 +287,34 @@ Added 2026-10-02 after the v0.06 milestone audit (`gaps_found`) and the project 
 
 IO-01 (cloud kernel writeback soak) stays an intake note; vacuum and litigation hold stay outside M002.
 
+## M019: Post-M002 coherence: docs, governor, test strategy, durability residuals (GSD v0.13) — planned, unleased
+
+**Planned 2026-10-04, unleased.** Active Milestone stays None until the controller leases a slice. v0.11 (M018 S02–S04, phases 46–48) stays paused at the S02 decision gate. One lease at a time. ADRs stay Proposed. Not M003 Cypher; not M005 HNSW; not a C01 / Horn verdict; not ADR Accepted.
+
+**Source:** 2026-10-04 post-M002 audits at `36fedb9` / tag `v0.12` (CBM `root-kutha-graph`, GitNexus `kutha-graph`, `rg` arbiter): `.compound-engineering/artifacts/research/2026-10-04-post-m002-audit-roadmap.md`, `2026-10-04-post-m002-audit-adr.md`, `2026-10-04-post-m002-audit-code-tests.md`, `2026-10-04-post-m002-audit-governor.md`. Owner request: docs correction first, then governor hardening plus SMP, test-strategy cell and matrix, durability residuals, semantic test expansion — all through GSD auto.
+
+**Success:** living docs, ADR Evidence and honeycomb comments match post-M002 encodings (ADRs remain Proposed); freeze-dep checks parse Cargo TOML; M002 oracles are enrolled as evidence and observed; independent governor checks can run in parallel with `--jobs 1` as the byte-equal oracle; a Proposed conventions cell plus `docs/architecture/test-matrix.md` names every oracle; single-writer lock and mixed Typed/Dictionary group have RED-then-GREEN oracles; Rocks index staleness beyond the tip is detected; `bytes_per_fact` 17218→25200 is measured and fixed or explained; dead-code fate is recorded; DIFF-01 plus semantic characterizations land without owner-gated behaviour changes. Not whole-file persist rewrite; not O(N) `open`; not IO-01 / VAC-01.
+
+- [ ] **S01: Docs honesty round 3** `risk:low` `depends:[]`
+  > After this: the living-doc corrections in the roadmap audit §4 and the ADR audit §4 are applied (docs / YAML comments only; no crate or `scripts/` edit): ADR-000 D1 / D6 / line 184; ADR-010 D010-4 and F11 option A closed with B/C as an explicit residual; historical markers on pre-SEG-01 Evidence in ADR-010 / 012 / 014 / 060; ADR-012 D012-5 “does not authorize M002” struck; ADR-014 D014-3 cousin and F11; `docs/ADR/README.md` Rocks paragraph (unwired `rocks-index` spike vs unaccepted Rocks event store); `m002-cloud-kernel-io-intake.md` status; `p0-spike-inventory.md` Rocks row; `PROJECT.md` D6 / Validated persist picture; `REQUIREMENTS.md` DOC-06 historical and WRITE-01 rewritten as intern-admit vs segmented persist; `.planning/codebase/*` superseded banner; `STRATEGY.md` date and Rocks sentence; honeycomb.yaml ADR-010 / 012 evidence / capability honesty for the M002 oracles (Status stays Proposed); STATE / CHANGELOG “tag `v0.12` is for the controller to create” wording (CHANGELOG here; `.kutha/STATE.md:3` Product-SoT sentence is **controller-owned** and is edited only at lease time — this slice only lists it); closed M001–M017 bodies in this ROADMAP collapse to one-line + archive pointer (`.planning/milestones/*/NN-VERIFICATION.md` archives untouched). ADRs stay Proposed.
+- [ ] **S02: Governor hardening** `risk:medium` `depends:[S01]`
+  > After this: a new `cargo_dep_constraint` kind (stdlib `tomllib`; YAML row + one kind, not a Check subclass; META / intake `disposition: kind`) owns `freeze-rocks` / `freeze-cypher-deps` / `freeze-hnsw-dep`; bypass forms from the governor audit (`[dependencies.rocksdb]`, `rocksdb="0.22"`, `rocksdb = "0.22" # optional = true`, workspace `[workspace.dependencies.rocksdb]`) are RED tests first; `m002_*` oracles are enrolled in honeycomb `evidence` and `observe_cargo.required` (plus an `observe_cargo` row with `--features rocks-index`); `artifact-budget` is strict (`min_hits` 1 while a live `.planning/phases/*` exists; SUMMARY `max_files_per_dir` 1); `id-map-cite` requires `v0.12` / `v0.13`; selftest proves ledger / pointer kinds by their own mutation or declares an explicit skip with a reason.
+- [ ] **S03: Governor SMP** `risk:medium` `depends:[S02]`
+  > After this: independent checks and selftest proofs run in a process pool (`KUTHA_GOV_JOBS` / `--jobs`, default = min(cpu, 8)); `observe_cargo` may overlap selftest where the FSM allows; findings and event-log order stay deterministic (results merged in check order); `--jobs 1` stays the oracle (same findings, byte-equal fold). Selftest `copytree` skips `.compound-engineering` and `.planning/milestones` so proofs cannot depend on those archives. Goal recorded here: measure `ci` wall time before/after on this host (baseline ~9 min); target at least 40 percent lower or an honest explanation.
+- [ ] **S04: Test strategy and oracle matrix** `risk:medium` `depends:[S03]`
+  > After this: a new honeycomb cell **023** (test strategy and oracle matrix; Proposed; sits with 020–022 conventions) and `docs/architecture/test-matrix.md` (invariant × layer × oracle × kill-mutation × status / owner-gate, seeded from the code-tests audit §2–3) exist; a governor row in `rust_test_asserts` style proves every oracle named in the matrix exists and that owner-gated invariants are marked `blocked: decision` rather than xfail; layering rules are written (characterization vs decision oracle; cfg-feature tests need an FSM observe row; durability invariants require a mutation-kill). Status stays Proposed.
+- [ ] **S05: Durability residuals A** `risk:high` `depends:[S04]`
+  > After this: a single-writer advisory lock per store dir (`File::try_lock`; Rust 1.98; two writers fail closed; tests RED first); Typed / Dictionary multi-event group vs `committed_prefix` has a design decision recorded in ADR-010 / 014 and a RED-first oracle; missing oracles from the code-tests audit §2 land (mixed suffix; migrate × tail guard; active at exact frame end; wrong-role active in the manifest). Named M010–M017 oracle assertions do not change.
+- [ ] **S06: Durability residuals B** `risk:high` `depends:[S05]`
+  > After this: Rocks index staleness beyond the tip is detected cheaply (bind index meta to the manifest chain tip + count, or equivalent; RED first); the `bytes_per_fact` 17218→25200 rise is confirmed by a measurement (dhat / heaptrack or a counting allocator) and fixed or explained; dead-code cleanup (`log_has_quantum_outcome`, `wal::append_events` `allow(dead_code)`, `rocks_spike` fate: keep as spike or delete with an ADR note); a decision is recorded whether `SegmentIndex` / `Persister` get wired into `Runtime` / `kutha-tenant` (default: record “not wired, reason”). Bench gate applies.
+- [ ] **S07: Semantic and logic test expansion** `risk:medium` `depends:[S06]`
+  > After this: seeded randomized differential fold vs CSR lease vs clean rebuild is green (DIFF-01, pulled from M018 S04; hand-rolled seeded LCG like `m017_determinism.rs`; no new dependency); cascade order is stable Eager vs Lazy; derived triples are seed-deterministic; Correct of a Horn premise is characterized (current behaviour pinned and labeled characterization); the legal TR-02 gap is recorded as `blocked: decision` in the matrix. No owner-gated behaviour changes.
+
+IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residuals outside this milestone.
+
 ## Later milestones (not active)
 
-Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 is CLOSED. M016 is CLOSED. M017 is CLOSED. M002 is CLOSED. M018 is paused after S01 at the S02 decision gate. One lease at a time. M003+ stay unleased.
+Do not start until STATE names them. M011, M012a, and M012 are CLOSED. M013 is CLOSED. M014 is CLOSED. M015 is CLOSED. M016 is CLOSED. M017 is CLOSED. M002 is CLOSED. M019 is planned, unleased. M018 is paused after S01 at the S02 decision gate. One lease at a time. M003+ stay unleased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -303,12 +328,13 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 8. **M017** — CLOSED (S01–S04, GSD v0.10 tagged). Detail above.
 9. **M018** — Wedge unblock (S01–S04, GSD v0.11). S01 done; S02 decision gate. Detail above.
 10. **M002** — CLOSED (S01–S07, GSD v0.12). Detail above. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity. **Intake (2026-10-02):** cloud kernel writeback / dirty-throttle stalls — `docs/architecture/m002-cloud-kernel-io-intake.md` (arXiv:2609.12597 / SteelDB companion).
-11. **M003** — Cypher skin over the already-correct AS OF cut.
-12. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
-13. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
-14. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
-15. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
-16. *(unnumbered)* Packaging, naming and license decision (ADR-092) before any publish.
+11. **M019** — planned, unleased (S01–S07, GSD v0.13). Post-M002 coherence. Detail above. Do not lease M003 while this plan is the next authored milestone.
+12. **M003** — Cypher skin over the already-correct AS OF cut.
+13. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
+14. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
+15. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
+16. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
+17. *(unnumbered)* Packaging, naming and license decision (ADR-092) before any publish.
 
 P4 (Raft/multi-node, learned indexes) is not planned until single-node hybrid evidence exists.
 

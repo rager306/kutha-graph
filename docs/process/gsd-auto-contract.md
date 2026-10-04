@@ -20,6 +20,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.10 | 41–44 | M017 | S01–S04 | docs honesty, replay integrity, ingest regression (A-F01.. register; 2026-10-02 audit) | shipped |
 | v0.11 | 45–48 | M018 | S01–S04 | doc truth, C01 and knowledge cut, Horn determinism, differential tests (review 2026-10-03) | S01 shipped; paused at S02 gate |
 | v0.12 | 49–55 | M002 | S01–S07 | SNAP-01, OPEN-01, ROCK-01, COMMIT-01 (re-verified 2026-10-03) | shipped |
+| v0.13 | 56–62 | M019 | S01–S07 | docs honesty r3, cargo_dep_constraint, governor SMP, test matrix, durability residuals, DIFF-01 (post-M002 audits 2026-10-04) | planned |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
