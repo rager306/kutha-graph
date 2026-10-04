@@ -123,6 +123,6 @@ Semantic-gap review (2026-09-30): [semantic gap review](../architecture/semantic
 
 **Rule:** New work cites ADR-001/002 coordinates; do not silently rewrite ADR-000 D1–D10. Prefer opening a honeycomb cell over expanding vision ADRs indefinitely.
 
-Honeycomb and vision ADRs (000–002, 010–093) are **Proposed**: decisions are named and ready to accept. **Accepted** requires an implemented runtime for that cell. P0 spike covers log/fold/quantum/replay/snapshot/CSR-lease/LFTJ-intersect/WAL-cousin/materializer trait; Rocks crate, Cypher, HNSW, ABAC remain unaccepted.
+Honeycomb and vision ADRs (000–002, 010–093) are **Proposed**: decisions are named and ready to accept. **Accepted** requires an implemented runtime for that cell. P0 spike covers log/fold/quantum/replay/snapshot/CSR-lease/LFTJ-intersect/WAL-cousin/materializer trait plus SEG-01 (`KUTHASEG` + `manifest.json`) and an optional unwired `rocks-index` locator (`rocks_index::SegmentIndex`). Rocks **event store**, Cypher, HNSW, ABAC remain unaccepted.
 
 Parallel **harness** (not an ADR): [`../process/kutha-harness.md`](../process/kutha-harness.md). Execution pyramid: `.kutha/STATE.md`. Governor: `uv run kutha-gov ci` (Python 3.13 / uv). Python dogfood: `uv run kutha-gov py` (ruff, ty, pyrefly).

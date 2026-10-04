@@ -12,9 +12,13 @@
 
 `ValidTime`, `TransactionTime`, and `WallTime` are newtypes in `crates/kutha-common/src/event.rs` (`Vt` / `Tt` aliases). There is no `crates/kutha-runtime/src/event.rs`. `Op` variants, `Event.ingested_at`, and `Snapshot.next_tt` still carry raw `u64`; typed `Op` clocks are not shipped. The 2026-10-02 “u64 type aliases” line is historical. This pointer does not rewrite D1–D10.
 
+### Clarification (2026-10-04, Phase 56 / M019 S01; Proposed)
+
+The semantic log is the event sequence (D1); the physical encoding is sealed `KUTHASEG` segments plus `manifest.json` for new and migrated directories, or legacy `events.jsonl` + `events.wal` until `store::migrate`; `events.jsonl` after migrate is an unread export. Rocks is an optional unwired locator index (`rocks-index`), never the event store. Tokio is not in the workspace. HEAD symbols: `store::persist_until`, `segment::persist_log`, `Persister`, `commit::committed_prefix`, `rocks_index::SegmentIndex`, `store::migrate`, `store::export_jsonl`. This pointer does not rewrite D1–D10.
+
 ### Clarification (2026-10-04, Phase 54-01 / M002 S06; Proposed)
 
-D1 still names the **event log** as SoT. Plan 54-01 adds a reader for a physical encoding `manifest.json` + `KUTHASEG` files; `persist` / `Persister` still write `events.jsonl` + covering `KUTHAWAL`. This pointer does not rewrite D1–D10.
+Historical (superseded by the 2026-10-04 Phase 56 block above): D1 still names the **event log** as SoT. Plan 54-01 adds a reader for a physical encoding `manifest.json` + `KUTHASEG` files; `persist` / `Persister` still write `events.jsonl` + covering `KUTHAWAL`. This pointer does not rewrite D1–D10.
 
 ### Clarification (2026-10-04, Phase 54-02 / M002 S06; Proposed)
 
@@ -106,6 +110,8 @@ Client / Cypher + Hybrid + Temporal AS OF + Agent API
         Storage: RocksDB / object store + WAL (+ optional Raft)
 ```
 
+Historical (superseded by Clarification 2026-10-04 Phase 56 above): the "Storage: RocksDB / object store + WAL" line is not the shipped physical encoding.
+
 | Plane | SoT / role | Is not |
 |-----------|------------|-------------|
 | **Control** | Event log + behaviors | Hot adjacency layout |
@@ -179,9 +185,11 @@ RVF-like containers: portable agent memory, sealed knowledge units, checkpoint/f
 
 Compile-time hexagon: crates + `pub(crate)`. Behavior errors → `behavior.failed` (`Result`), not panic. A content-addressed cache of external tool/LLM calls is mandatory for cheap replay/fork.
 
+Historical (superseded by Clarification 2026-10-04 Phase 56 above): the D6 "Rust + Tokio + RocksDB (event store)" row is not the shipped runtime stack (no `tokio` crate; optional `rocksdb` is an unwired `rocks-index` locator, not an event store).
+
 ### Clarification (2026-10-03; Proposed)
 
-The implemented spike stores `events.jsonl` as SoT with `events.wal` (magic `KUTHAWAL`) as a covering lease (`crates/kutha-runtime/src/store.rs` `load_events_d04`). `snapshot.json` and `events.wal` are replaced via tmp+sync+rename. RocksDB is NOT a dependency (`crates/kutha-runtime/Cargo.toml`) and stays an optional index store. Thaw gates: `.kutha/STATE.md` § Thaw map; RocksDB crate thaws at M002 Phase 51. This pointer does not rewrite D1–D10.
+Historical (superseded by Clarification 2026-10-04 Phase 56 above): The implemented spike stores `events.jsonl` as SoT with `events.wal` (magic `KUTHAWAL`) as a covering lease (`crates/kutha-runtime/src/store.rs` `load_events_d04`). `snapshot.json` and `events.wal` are replaced via tmp+sync+rename. RocksDB is NOT a dependency (`crates/kutha-runtime/Cargo.toml`) and stays an optional index store. Thaw gates: `.kutha/STATE.md` § Thaw map; RocksDB crate thaws at M002 Phase 51. This pointer does not rewrite D1–D10.
 Pointer (2026-10-04): superseded for the physical encoding by SEG-01 (manifest + segments); the event log is still the SoT.
 
 ### D7. Load profiles (one product — three modes)
@@ -197,6 +205,10 @@ Pointer (2026-10-04): superseded for the physical encoding by SEG-01 (manifest +
 1. **Replay tax \(O(N)\)** → snapshots + log segmentation.  
 2. **Single-writer bottleneck** → RocksDB/SQLite WAL, batching.  
 3. **Fat events** → lean deltas + ids; blobs via object store / read ports.
+
+### Clarification (2026-10-04, Phase 56 / M019 S01; Proposed)
+
+D8.1 (snapshots + segmentation) is the shipped direction (`segment::persist_log`). D8.2 "RocksDB/SQLite WAL, batching" is **superseded** as a current mitigation: single-writer is unenforced (no flock / `try_lock`; two `Persister`s on one dir are undefined). Segmentation addresses replay tax, not Rocks WAL. This pointer does not rewrite D1–D10 lock wording.
 
 ### D9. Testing as a first-class capability
 
@@ -347,7 +359,7 @@ Detailing order (each → a separate ADR or spike report).
 ### Exit criteria from Research → Proposed for this ADR
 
 - [x] Spike P0 runtime demonstrates emit → cascade → stable graph + replay.
-- [x] Lean event types and snapshot story are recorded. *(lean events: `kutha-common`; snapshot = fold+dict+offset lease, JSONL semantic log; Rocks WAL still crash cousin, not SoT)*
+- [x] Lean event types and snapshot story are recorded. *(lean events: `kutha-common`; snapshot = fold+dict+offset lease; Historical: JSONL semantic log and Rocks WAL as crash cousin — superseded 2026-10-04 by SEG-01 + optional `rocks-index` locator)*
 - [x] Draft ADRs Temporal + Materialization API + Agent Control are written. *(honeycomb 010–014, 040–043, 050 Proposed)*
 - [x] Explicitly measured: replay time vs log length; cascade depth bounds. *(2026-08-18: `replay_check` log_len=200 elapsed_ms≈2.0; `max_cascade` abort covered)*
 - [x] Security threats for in-DB agents are listed and have a mitigation sketch. *(ADR-051/080/081 Proposed — sketch, not kernel)*

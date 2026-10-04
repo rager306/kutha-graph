@@ -6,23 +6,27 @@
 
 ### Evidence (2026-10-02; Proposed)
 
-Same persist story as ADR-012: `events.jsonl` rename-atomic; `OUTCOMES_REL` / `JUSTIFICATIONS_REL` sidecars still written on `persist` (`store.rs`). Receipt stays on the in-log quantum path via `pipeline`. **2026-10-03 note:** snapshot/WAL in-place truncate is false; see Evidence 2026-10-03.
+Historical (superseded by the 2026-10-04 blocks below): Same persist story as ADR-012: `events.jsonl` rename-atomic; `OUTCOMES_REL` / `JUSTIFICATIONS_REL` sidecars still written on `persist` (`store.rs`). Receipt stays on the in-log quantum path via `pipeline`. **2026-10-03 note:** snapshot/WAL in-place truncate is false; see Evidence 2026-10-03.
 
 ### Evidence (2026-10-03; Proposed)
 
-Outcomes are `Op::QuantumOutcome` log records (`Runtime::persist_outcome_event` → `outcome_op` in `pipeline.rs`). `store::persist` still writes `OUTCOMES_REL` / `JUSTIFICATIONS_REL` sidecars as leases (`write_outcomes` / `write_justifications`: `File::create` in place, no file sync or parent-dir fsync — SNAP-01). **2026-10-03:** `snapshot.json` and `events.wal` use tmp+`sync_all`+rename (`replace_snapshot`, `replace_events_wal`); persist atomicity for those files closed in M017 S02. `replay_check` calls `check_tt_anchors`; `GraphFold::fingerprint` is facts-only; `provenance_fingerprint` is a separate hash. Commit-marker vs `Op::QuantumOutcome` encoding is COMMIT-01 (gap-review F11). M002 is thawed and planned as GSD v0.12 (slices S01–S07, `.kutha/ROADMAP.md` § M002): SNAP-01, parent-dir fsync, partial-sidecar-as-absent, `check_tt_anchors` log-ahead tolerance, and fail-closed WAL open are scheduled in S02; COMMIT-01 in S05 (decision gate). This subsection does not rewrite D014-1…D014-5.
+Historical (superseded by the 2026-10-04 blocks below): Outcomes are `Op::QuantumOutcome` log records (`Runtime::persist_outcome_event` → `outcome_op` in `pipeline.rs`). `store::persist` still writes `OUTCOMES_REL` / `JUSTIFICATIONS_REL` sidecars as leases (`write_outcomes` / `write_justifications`: `File::create` in place, no file sync or parent-dir fsync — SNAP-01). **2026-10-03:** `snapshot.json` and `events.wal` use tmp+`sync_all`+rename (`replace_snapshot`, `replace_events_wal`); persist atomicity for those files closed in M017 S02. `replay_check` calls `check_tt_anchors`; `GraphFold::fingerprint` is facts-only; `provenance_fingerprint` is a separate hash. Commit-marker vs `Op::QuantumOutcome` encoding is COMMIT-01 (gap-review F11). M002 is thawed and planned as GSD v0.12 (slices S01–S07, `.kutha/ROADMAP.md` § M002): SNAP-01, parent-dir fsync, partial-sidecar-as-absent, `check_tt_anchors` log-ahead tolerance, and fail-closed WAL open are scheduled in S02; COMMIT-01 in S05 (decision gate). This subsection does not rewrite D014-1…D014-5.
 
 ### Evidence (2026-10-03, Phase 50 / M002 S02; Proposed)
 
-SNAP-01 closed by Phase 50: outcome and justification sidecars are tmp+`sync_all`+rename with parent-dir fsync; partial/prefix/unparseable sidecar = absent. COMMIT-01 (commit-marker vs `Op::QuantumOutcome`) remains S05. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
+SNAP-01 closed by Phase 50: outcome and justification sidecars are tmp+`sync_all`+rename with parent-dir fsync; partial/prefix/unparseable sidecar = absent. Historical (superseded by Phase 53 option A): COMMIT-01 (commit-marker vs `Op::QuantumOutcome`) remains S05. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
 
 ### Evidence (2026-10-03, Phase 52 / M002 S04; Proposed)
 
-Between checkpoints, outcome and justification sidecars stay stale leases (Phase 50 prefix-absent on open). `Persister::checkpoint` / `close` refresh them through `replace_via_tmp`. Acknowledged-vs-unacknowledged is `append`'s `Ok`, not the sidecar. COMMIT-01 remains S05. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
+Between checkpoints, outcome and justification sidecars stay stale leases (Phase 50 prefix-absent on open). `Persister::checkpoint` / `close` refresh them through `replace_via_tmp`. Acknowledged-vs-unacknowledged is `append`'s `Ok`, not the sidecar. Historical (superseded by Phase 53): COMMIT-01 remains S05. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
 
 ### Evidence (2026-10-04, Phase 53 / M002 S05; Proposed)
 
-COMMIT-01 option A: `Op::QuantumOutcome` remains the User-quantum commit marker. An uncommitted suffix (NeedsOutcome ops after the last outcome, or a product quantum with no outcome at all) is hidden on `open`. Self-commit set: `Define`, `TtAnchor`, `StoreBlob`, `JustificationCite`, `QuantumOutcome`, `kutha:*` Assert. B/C wait for S06. Residual: Typed/Dictionary multi-event groups have no outcome, so a crash inside such a group can still expose a partial group (`Define`-level atomicity only). This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
+COMMIT-01 option A: `Op::QuantumOutcome` remains the User-quantum commit marker. An uncommitted suffix (NeedsOutcome ops after the last outcome, or a product quantum with no outcome at all) is hidden on `open` via `commit::committed_prefix`. Self-commit set: `Define`, `TtAnchor`, `StoreBlob`, `JustificationCite`, `QuantumOutcome`, `kutha:*` Assert. F11 is closed by option A. Options B/C stay as an explicit residual (not shipped; S06 shipped segments, not commit frames). Residual: Typed/Dictionary multi-event groups have no outcome, so a crash inside such a group can still expose a partial group (`Define`-level atomicity only). This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
+
+### Current encoding (HEAD, 2026-10-04; Proposed)
+
+F11 closed by option A (`Op::QuantumOutcome` + `commit::committed_prefix`). Cousin durability is `KUTHAWAL` on a legacy dir or segment `sync_data`; optional external Merkle/chain anchor is absent (`verify_sealed` is in-file SHA-256, prev seeded `[0u8;32]`). Residuals: Typed/Dictionary group has no outcome; no multi-writer lock; `Persister` not wired into `kutha-tenant`. Pointers: `store::persist_until`, `segment::persist_log`, `Persister`, `rocks_index::SegmentIndex`.
 
 ## Date
 
@@ -61,6 +65,10 @@ Cascade/agent/materializer local functions \(h_i(v)\) compose by tropical max-co
 
 Optional epoch root-of-roots (Merkle, transparency log, even a chain) may **anchor** receipts. The semantic event log remains SoT; Rocks WAL is its storage-durability cousin (ADR-010), not another source of semantic truth. Public blockchain as graph store is rejected.
 
+### Clarification (2026-10-04, Phase 56 / M019 S01; Proposed)
+
+The D014-3 "Rocks WAL is its storage-durability cousin" sentence is **superseded** as a current claim. Cousin at HEAD is `KUTHAWAL` on a legacy dir (`writes_legacy_layout`) **or** segment `sync_data` on `KUTHASEG`. Optional external Merkle/chain anchor is **absent**. This subsection does not rewrite D014-1…D014-5 and does not mark this cell Accepted.
+
 ### D014-4. Receipt may bind control-plane versions
 
 A receipt may include `meta_prompt_version` and dictionary snapshot ids (ADR-050). This cell does not define those entities. Content-addressed LLM/tool cache keys (D6) belong in the quantum’s evidence so replay is cheap.
@@ -95,7 +103,7 @@ Hard FSM allocator     ≠  Cui envelope
 
 ### Open question (2026-10-01)
 
-Open, from docs/architecture/semantic-gap-review.md (F11): the quantum receipt, the persisted outcome (`Zero` / `Partial` / `Full`), and the cascade budget are three records of one commit. Whether the outcome is a commit marker in log framing, with `Full` derivable from the log and `Partial` / resume kept as explicit records, is open and belongs to the durability protocol. This question does not rewrite D014-1…D014-5 and does not mark this cell Accepted.
+Historical (superseded by Evidence 2026-10-04 Phase 53): the quantum receipt, the persisted outcome (`Zero` / `Partial` / `Full`), and the cascade budget are three records of one commit. F11 is **closed by option A** (`Op::QuantumOutcome` + `commit::committed_prefix`). Options B/C stay as an explicit residual. Typed/Dictionary groups still have no outcome. This question does not rewrite D014-1…D014-5 and does not mark this cell Accepted.
 
 ## Consequences
 

@@ -6,11 +6,11 @@
 
 ### Evidence (2026-10-02; Proposed)
 
-Behavior lineage and provenance oracles remain (`replay_rejects_behavior_without_prior_cause`, provenance fingerprint tests). Full execution replay and log-native quantum outcomes are still partial (sidecars; gap-review F1/F9). **2026-10-03 note:** Horn execution replay shipped in M016; ADS receipts and `Unavailable` did not — see Evidence 2026-10-03.
+Historical (superseded by the 2026-10-04 blocks below): Behavior lineage and provenance oracles remain (`replay_rejects_behavior_without_prior_cause`, provenance fingerprint tests). Full execution replay and log-native quantum outcomes are still partial (sidecars; gap-review F1/F9). **2026-10-03 note:** Horn execution replay shipped in M016; ADS receipts and `Unavailable` did not — see Evidence 2026-10-03.
 
 ### Evidence (2026-10-03; Proposed)
 
-Shipped: lineage (`Op::Behavior.caused_by` must name an earlier event) and Horn execution replay (`Runtime::replay_check` → `horn_behavior_reproducible` in `eval.rs`, called from `provenance.rs`). `replay_check` also calls `check_tt_anchors`: snapshot-held `TtAnchor` walls are compared to the log-derived map (oracle `tampered_tt_anchor_wall_fails_replay_check`). `GraphFold::fingerprint` stays facts-only (`fold_query.rs`); `provenance_fingerprint` is a separate hash. Persist of `snapshot.json` / `events.wal` is tmp+`sync_all`+rename (`replace_via_tmp`). Not shipped: D014-1 cryptographic ADS/authenticator receipts (`QuantumReceipt` is SHA-256 of event digests), an `Unavailable` outcome, and sidecar atomicity (gap-review F1: `write_terms` / `write_outcomes` / `write_justifications` still `File::create` in place — SNAP-01). No parent-directory fsync. M002 is thawed and planned as GSD v0.12 (slices S01–S07, `.kutha/ROADMAP.md` § M002): SNAP-01, parent-dir fsync, partial-sidecar-as-absent, `check_tt_anchors` log-ahead tolerance, and fail-closed WAL open are scheduled in S02. This subsection does not rewrite D060-1…D060-3.
+Historical (superseded by the 2026-10-04 blocks below): Shipped: lineage (`Op::Behavior.caused_by` must name an earlier event) and Horn execution replay (`Runtime::replay_check` → `horn_behavior_reproducible` in `eval.rs`, called from `provenance.rs`). `replay_check` also calls `check_tt_anchors`: snapshot-held `TtAnchor` walls are compared to the log-derived map (oracle `tampered_tt_anchor_wall_fails_replay_check`). `GraphFold::fingerprint` stays facts-only (`fold_query.rs`); `provenance_fingerprint` is a separate hash. Persist of `snapshot.json` / `events.wal` is tmp+`sync_all`+rename (`replace_via_tmp`). Not shipped: D014-1 cryptographic ADS/authenticator receipts (`QuantumReceipt` is SHA-256 of event digests), an `Unavailable` outcome, and sidecar atomicity (gap-review F1: `write_terms` / `write_outcomes` / `write_justifications` still `File::create` in place — SNAP-01). No parent-directory fsync. M002 is thawed and planned as GSD v0.12 (slices S01–S07, `.kutha/ROADMAP.md` § M002): SNAP-01, parent-dir fsync, partial-sidecar-as-absent, `check_tt_anchors` log-ahead tolerance, and fail-closed WAL open are scheduled in S02. This subsection does not rewrite D060-1…D060-3.
 
 ### Evidence (2026-10-03, Phase 50 / M002 S02; Proposed)
 
@@ -18,7 +18,7 @@ SNAP-01 closed by Phase 50: sidecar atomic replace + parent-dir fsync; open-path
 
 ### Evidence (2026-10-03, Phase 52 / M002 S04; Proposed)
 
-Open after incremental append tail-folds a stale snapshot (`replay_check` still exact). Torn jsonl tails without `\n` are dropped; complete malformed jsonl lines still fail `InvalidData`. ADS receipts and `Unavailable` remain unshipped. This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
+Historical (superseded by the 2026-10-04 blocks below for the default writer): Open after incremental append tail-folds a stale snapshot (`replay_check` still exact). Torn jsonl tails without `\n` are dropped; complete malformed jsonl lines still fail `InvalidData`. ADS receipts and `Unavailable` remain unshipped. This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
 
 ### Evidence (2026-10-04, Phase 53 / M002 S05; Proposed)
 
@@ -35,6 +35,10 @@ Segmented persist/`Persister` still feed `committed_prefix` then `replay_check`.
 ### Evidence (2026-10-04, Phase 54-03 / M002 S06; Proposed)
 
 `migrate` verify-reopen runs `open` (`committed_prefix` + `replay_check`) before dropping WAL. A verify failpoint that corrupts a new segment fails closed and unflips the manifest. Cross-segment chain-link is part of that open. Pointer: ADR-010 2026-10-04 Phase 54-03. This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
+
+### Current encoding (HEAD, 2026-10-04; Proposed)
+
+Segmented `open` loads via `segment::load_events` when a manifest exists, then `commit::committed_prefix`, then `replay_check`. Full `store::persist_until` still rewrites (`segment::persist_log` or legacy jsonl+WAL). `Persister` appends; not wired into `kutha-tenant`. Residuals: no external ADS/epoch tip; O(N) `open`; Typed/Dictionary partial group. WAL recovery remains a cousin of semantic replay (D060-2), not Rocks-as-SoT.
 
 ## Date
 

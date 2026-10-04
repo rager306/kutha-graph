@@ -10,6 +10,16 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Active Milestone **M019**, Active Slice **S01** (`L_delivery=M002-closed`): DOC-08, docs and YAML comments only. The controller rewrote the Product-SoT sentence in `.kutha/STATE.md` (event log; segments + manifest; `events.jsonl` is an export after migrate) and fixed the stale "tag v0.12 for the controller to create" line (the tag exists). M018 stays paused at its S02 gate.
 
+## 2026-10-04 — Process: M019 S01 docs honesty round 3 (executor)
+
+### Process
+
+- Living-doc SoT pass: ADR-000/010/012/014/060 Evidence and Decision pointers; honeycomb ADR-010/012 evidence. ADRs stay **Proposed**. No crate or `scripts/` edit.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_delivery=M002-closed`. M018 remains paused at its S02 decision gate.
+
 ## 2026-10-04 — Process: author M019 / GSD v0.13 plan
 
 ### Process

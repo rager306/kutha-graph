@@ -6,23 +6,23 @@
 
 ### Evidence (2026-10-02; Proposed)
 
-`events.jsonl` persist replaces via same-directory temp file + `rename` (`store.rs` `replace_events_jsonl`). Quantum outcome and justification sidecars remain separate files (gap-review F1: log atomic, sidecars not). **2026-10-03 note:** snapshot/WAL in-place truncate is false; see Evidence 2026-10-03.
+Historical (superseded by the 2026-10-04 blocks below): `events.jsonl` persist replaces via same-directory temp file + `rename` (`store.rs` `replace_events_jsonl`). Quantum outcome and justification sidecars remain separate files (gap-review F1: log atomic, sidecars not). **2026-10-03 note:** snapshot/WAL in-place truncate is false; see Evidence 2026-10-03.
 
 ### Evidence (2026-10-03; Proposed)
 
-M017 S02: `persist` replaces `snapshot.json` and `events.wal` via tmp+`sync_all`+rename (`replace_via_tmp`, `replace_snapshot`, `replace_events_wal`). `events.jsonl` is SoT; `events.wal` is a covering lease (`load_events_d04`, magic `KUTHAWAL`). `replay_check` calls `check_tt_anchors` (`provenance.rs`) so snapshot `TtAnchor` walls are compared to the log copy. `GraphFold::fingerprint` stays facts-only (`fold_query.rs`); `provenance_fingerprint` is a separate hash. Sidecars `terms.jsonl` / `quantum_outcomes.jsonl` / `justifications.jsonl` are written with `File::create` in place without sync or parent-dir fsync (`write_terms` / `write_outcomes` / `write_justifications`) — SNAP-01. No parent-directory fsync anywhere. Current defect (2026-10-03, rg arbiter; CBM `persist`→`encoded_log`, coverage `metadata_changed`): each `persist` rewrites the whole log (`store.rs` `encoded_log` / `replace_via_tmp`; `wal.rs` `write_wal`). M002 is thawed and planned as GSD v0.12 (slices S01–S07, `.kutha/ROADMAP.md` § M002): SNAP-01, parent-dir fsync, partial-sidecar-as-absent, `check_tt_anchors` log-ahead tolerance, and fail-closed WAL open are scheduled in S02; incremental append / O(N) persist rewrite in S04. Oracles: `wal_valid_covering_preferred`, `tampered_tt_anchor_wall_fails_replay_check`, `abort_snapshot_replace_keeps_previous_bytes`, `abort_wal_replace_keeps_previous_bytes`. Status stays **Proposed**.
+Historical (superseded by the 2026-10-04 blocks below): M017 S02: `persist` replaces `snapshot.json` and `events.wal` via tmp+`sync_all`+rename (`replace_via_tmp`, `replace_snapshot`, `replace_events_wal`). `events.jsonl` is SoT; `events.wal` is a covering lease (`load_events_d04`, magic `KUTHAWAL`). `replay_check` calls `check_tt_anchors` (`provenance.rs`) so snapshot `TtAnchor` walls are compared to the log copy. `GraphFold::fingerprint` stays facts-only (`fold_query.rs`); `provenance_fingerprint` is a separate hash. Sidecars `terms.jsonl` / `quantum_outcomes.jsonl` / `justifications.jsonl` are written with `File::create` in place without sync or parent-dir fsync (`write_terms` / `write_outcomes` / `write_justifications`) — SNAP-01. No parent-directory fsync anywhere. Current defect (2026-10-03, rg arbiter; CBM `persist`→`encoded_log`, coverage `metadata_changed`): each `persist` rewrites the whole log (`store.rs` `encoded_log` / `replace_via_tmp`; `wal.rs` `write_wal`). M002 is thawed and planned as GSD v0.12 (slices S01–S07, `.kutha/ROADMAP.md` § M002): SNAP-01, parent-dir fsync, partial-sidecar-as-absent, `check_tt_anchors` log-ahead tolerance, and fail-closed WAL open are scheduled in S02; incremental append / O(N) persist rewrite in S04. Oracles: `wal_valid_covering_preferred`, `tampered_tt_anchor_wall_fails_replay_check`, `abort_snapshot_replace_keeps_previous_bytes`, `abort_wal_replace_keeps_previous_bytes`. Status stays **Proposed**.
 
 ### Evidence (2026-10-03, Phase 50 / M002 S02; Proposed)
 
-SNAP-01 closed by Phase 50: sidecars `terms.jsonl` / `quantum_outcomes.jsonl` / `justifications.jsonl` replace via tmp+`sync_all`+rename; `sync_dir` fsyncs the parent after every `replace_via_tmp` rename and once at end of `persist`; unparseable / mid-line / proper-prefix sidecars are absent (intact log opens; well-formed non-prefix still `InvalidData`); open-path `check_tt_anchors_range` allows log `TtAnchor`s with `ingested_at >= snap.next_tt` (`replay_check` stays exact); `recover_events` returns `InvalidData` ("truncated WAL header") when shorter than magic+version and `load_events_d04` does not mask non-`InvalidData` WAL I/O. Incremental append / O(N) persist rewrite remain S04; COMMIT-01 remains S05. Oracles: `m002_snap01.rs`. Status stays **Proposed**.
+SNAP-01 closed by Phase 50: sidecars `terms.jsonl` / `quantum_outcomes.jsonl` / `justifications.jsonl` replace via tmp+`sync_all`+rename; `sync_dir` fsyncs the parent after every `replace_via_tmp` rename and once at end of `persist`; unparseable / mid-line / proper-prefix sidecars are absent (intact log opens; well-formed non-prefix still `InvalidData`); open-path `check_tt_anchors_range` allows log `TtAnchor`s with `ingested_at >= snap.next_tt` (`replay_check` stays exact); `recover_events` returns `InvalidData` ("truncated WAL header") when shorter than magic+version and `load_events_d04` does not mask non-`InvalidData` WAL I/O. Historical (superseded by Phase 53 option A / Phase 54 SEG-01): Incremental append / O(N) persist rewrite remain S04; COMMIT-01 remains S05. Oracles: `m002_snap01.rs`. Status stays **Proposed**.
 
 ### Evidence (2026-10-03, Phase 51 / M002 S03; Proposed)
 
-RocksDB builds offline as an optional spike; no wiring. The ROCK-00 map is a droppable `EventId`→file-offset lease behind `rocks-index-spike`; jsonl remains SoT. Status stays **Proposed**.
+Historical (superseded by the 2026-10-04 blocks below): RocksDB builds offline as an optional spike; no wiring. The ROCK-00 map is a droppable `EventId`→file-offset lease behind `rocks-index-spike`; jsonl remains SoT. Status stays **Proposed**.
 
 ### Evidence (2026-10-03, Phase 52 / M002 S04; Proposed)
 
-APPEND-01: incremental `Persister` append keeps jsonl/WAL prefix bytes; one log `sync_data` per non-checkpoint quantum; `checkpoint` / `close` refresh snapshot and sidecars via `replace_via_tmp` (logs not rewritten). Full `persist` still rewrites the whole log. O(N) persist rewrite is **closed for the append path**. Snapshot `open` applies log `Op::Define` events beyond `snap.dict_strings` in log order (`from_snapshot`); terms interned after the last checkpoint survive without a new snapshot. Persist/open parity is graph `EventId`s plus dictionary/`TermId`s, not byte equality of encoded logs. Oracles: `m002_append01.rs`. COMMIT-01 remains S05. Status stays **Proposed**.
+Historical (superseded by the 2026-10-04 SEG-01 blocks below for the default writer): APPEND-01: incremental `Persister` append keeps jsonl/WAL prefix bytes; one log `sync_data` per non-checkpoint quantum; `checkpoint` / `close` refresh snapshot and sidecars via `replace_via_tmp` (logs not rewritten). Full `persist` still rewrites the whole log. O(N) persist rewrite is **closed for the append path**. Snapshot `open` applies log `Op::Define` events beyond `snap.dict_strings` in log order (`from_snapshot`); terms interned after the last checkpoint survive without a new snapshot. Persist/open parity is graph `EventId`s plus dictionary/`TermId`s, not byte equality of encoded logs. Oracles: `m002_append01.rs`. Historical (superseded by Phase 53): COMMIT-01 remains S05. Status stays **Proposed**.
 
 ### Evidence (2026-10-04, Phase 53 / M002 S05; Proposed)
 
@@ -30,7 +30,7 @@ COMMIT-01 option A: a snapshot whose `log_offset` counts fold ops beyond the com
 
 ### Evidence (2026-10-04, Phase 54-01 / M002 S06; Proposed)
 
-`open` may load from `manifest.json` + `KUTHASEG` instead of jsonl/WAL; snapshot hydrate and `replay_check` are unchanged. Persist still writes jsonl+WAL. Pointer: ADR-010 2026-10-04 Phase 54-01. Status stays **Proposed**.
+Historical (superseded by the 2026-10-04 Phase 54-02/54-03 blocks below): `open` may load from `manifest.json` + `KUTHASEG` instead of jsonl/WAL; snapshot hydrate and `replay_check` are unchanged. Persist still writes jsonl+WAL. Pointer: ADR-010 2026-10-04 Phase 54-01. Status stays **Proposed**.
 
 ### Evidence (2026-10-04, Phase 54-02 / M002 S06; Proposed)
 
@@ -43,6 +43,10 @@ Segmented checkpoint refreshes snapshot + sidecars only (no jsonl rewrite). Poin
 ### Evidence (2026-10-04, Phase 55 / M002 S07; Proposed)
 
 ROCK-01 RocksDB is a droppable locator lease, not a snapshot or SoT. Layout, rebuild-on-stale-tip, and "never stores payloads" are in ADR-010 Evidence 2026-10-04 Phase 55. `store::open` / hydrate / `Persister` still ignore Rocks. Status stays **Proposed**.
+
+### Current encoding (HEAD, 2026-10-04; Proposed)
+
+The semantic log is the event sequence (D1); physical encoding is sealed `KUTHASEG` + `manifest.json` for new/migrated dirs, or legacy jsonl+WAL until `store::migrate` (`store::persist_until`, `segment::persist_log`, `Persister`, `commit::committed_prefix`). Snapshots remain leases (`replay_check` + snapshot `log_offset` vs committed prefix). `export_jsonl` is unread after migrate. Residuals: full `persist()` O(N); `open` O(N); no multi-writer lock.
 
 ## Date
 
@@ -92,7 +96,7 @@ Vacuum physically removes expired transaction-time history under a **declared po
 
 ### D012-5. Temporal vector tiering (Proposed adapter mapping)
 
-Historical vector embeddings over diachronic entities (norm editions, agent memories) must not induce memory exhaustion (Profile B/C). When this cell is implemented, the named adapter identifier is `ruvector-temporal-tensor` (P-Temporal-Tensor in the RuVector adaptation note): Hot (8-bit), Warm (7/5-bit), and Cold (3-bit) with temporal segment delta reuse and frame-level random access decode. Like CSR/HNSW, tiered vector buffers are droppable leases derived from the log, not secondary sources of truth. This mapping does not add a Cargo dependency and does not authorize HNSW or M002.
+Historical vector embeddings over diachronic entities (norm editions, agent memories) must not induce memory exhaustion (Profile B/C). When this cell is implemented, the named adapter identifier is `ruvector-temporal-tensor` (P-Temporal-Tensor in the RuVector adaptation note): Hot (8-bit), Warm (7/5-bit), and Cold (3-bit) with temporal segment delta reuse and frame-level random access decode. Like CSR/HNSW, tiered vector buffers are droppable leases derived from the log, not secondary sources of truth. This mapping does not add a Cargo dependency and does not authorize HNSW. Historical (superseded 2026-10-04): "does not authorize … M002" — M002 is CLOSED.
 
 **Hard separations:**
 

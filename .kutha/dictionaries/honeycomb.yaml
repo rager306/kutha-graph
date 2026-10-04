@@ -27,6 +27,7 @@ process: docs/process/governor-intake.md
 # 2026-10-04 restage (M002 S06 Phase 54-02: segmented persist + Persister + rollover; legacy jsonl+WAL kept): ADR-000, ADR-010, ADR-012, ADR-060; map/delivery/capability unchanged.
 # 2026-10-04 restage (M002 S06 Phase 54-03: migrate + export_jsonl + real-writer tamper; jsonl is an unread export after migrate): ADR-000, ADR-010, ADR-012, ADR-060; map/delivery/capability unchanged.
 # 2026-10-04 restage (M002 S06 Phase 54 second round: cross-segment chain stitch, migrate verify failpoint, living jsonl-SoT pointer): ADR-000, ADR-010, ADR-012, ADR-060; map/delivery/capability unchanged.
+# 2026-10-04 restage (M019 S01 Phase 56: docs honesty round 3 — SEG-01 physical SoT, M002 oracles listed, cells still Proposed): ADR-010, ADR-012; map/delivery/capability unchanged.
 # 2026-10-04 restage (M002 S07 Phase 55: ROCK-01 droppable Rocks locator lease, optional rocks-index, freeze-rocks durable): ADR-010, ADR-012; map/delivery/capability unchanged.
 
 locks:
@@ -104,8 +105,15 @@ cells:
     capability: none
     depends_on: [ADR-000, ADR-001, ADR-002]
     locks: [D1, D2, D9]
+    # durability spike, cell still Proposed
     evidence:
       - unknown_relation_rejected_for_assert_justification_and_action
+      - sidecar_truncated_mid_line_opens_from_log
+      - append_keeps_prefix_bytes_of_jsonl_and_wal
+      - payload_without_outcome_is_not_visible
+      - persist_empty_dir_writes_segments_not_jsonl
+      # feature-gated m002_rock01; default cargo test does not run them (S02 wires an observe row)
+      - index_answers_equal_the_log
 
   - id: ADR-011
     axis: Time
@@ -127,7 +135,18 @@ cells:
     capability: none
     depends_on: [ADR-000, ADR-010]
     locks: [D1, D5]
-    evidence: [e2e_incremental_matches_reconstruct_after_discarding_leases, open_rejects_tampered_snapshot, persist_replaces_events_jsonl_atomically, define_ids_stable_across_persist_open]
+    # durability spike, cell still Proposed
+    evidence:
+      - e2e_incremental_matches_reconstruct_after_discarding_leases
+      - open_rejects_tampered_snapshot
+      - persist_replaces_events_jsonl_atomically
+      - define_ids_stable_across_persist_open
+      - persist_leaves_no_tmp_files
+      - append_one_log_sync_per_quantum
+      - complete_quantum_with_outcome_is_visible
+      - export_jsonl_roundtrips_and_is_never_read_on_open
+      # feature-gated m002_rock01; default cargo test does not run them (S02 wires an observe row)
+      - dropping_rocks_dir_changes_no_answer
 
   - id: ADR-013
     axis: Time
