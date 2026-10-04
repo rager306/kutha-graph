@@ -7,7 +7,7 @@
 
 ### Doc truth (Phase 45, S01)
 
-- **DOC-06**: ADR-010/012/014/041/060, `semantic-gap-review.md`, `p0-spike-inventory.md` and `PROJECT.md` describe v0.10 behaviour (snapshot and WAL tmp+rename, jsonl SoT with covering WAL, `horns_by_premise`; sidecars still in place)
+- **DOC-06** (Historical, v0.11 Phase 45): ADR-010/012/014/041/060, `semantic-gap-review.md`, `p0-spike-inventory.md` and `PROJECT.md` describe v0.10 behaviour (snapshot and WAL tmp+rename, jsonl SoT with covering WAL, `horns_by_premise`; sidecars still in place). Living SoT wording is DOC-08.
 - **DOC-07**: ADR-000 D6 and ADR-010 D010-4 stop naming Rocks WAL as shipped; ADR-050 records five reserved facts ≠ six dictionaries ≠ harness dictionaries; ADR-013 states `as_of` is support-live, not derivation eligibility
 - **REG-01**: one finding register — audit ids carry the `A-F` prefix everywhere; F1–F16 (gap review) keep their numbers
 - **LANG-01**: ADR-000 spine and `docs/architecture/stca-guide.md` are English (meaning unchanged)
@@ -65,7 +65,7 @@
 
 ### Deferred after M002
 
-- **WRITE-01**: `intern` admit path (WAL vs JSONL preference shipped in v0.10)
+- **WRITE-01**: intern admit vs segmented persist (`store::persist_until` / `Persister::append_segmented` vs legacy jsonl+WAL until `store::migrate`; Historical: "WAL vs JSONL preference shipped in v0.10")
 - **IO-01** (intake only): kernel flusher/dirty-throttle on cloud block storage — `docs/architecture/m002-cloud-kernel-io-intake.md` (arXiv:2609.12597)
 - **VAC-01**: vacuum policy and litigation hold (ADR-012)
 - **R3 exclusion**: do not re-ship "lease identity verified on open" (v0.04) as M002 identity

@@ -36,7 +36,7 @@ Capabilities already in the P0 spike (not honeycomb Accepted; not a legal corpus
 
 - ✓ Named `GraphFold::as_of` / `live_at` (no implicit “now”) and FF5 statute PIT — existing (`crates/kutha-runtime/tests/ff5_legal_pit.rs`)
 - ✓ FF6 fail-closed unknown product relation — existing (`allow.rs`, `tests/ff6_allowlist.rs`)
-- ✓ Log, fold, emit→idle quantum, receipt, snapshot + WAL-cousin, CSR lease, leapfrog intersect, `Materializer`, `fork_at` — existing
+- ✓ Log, fold, emit→idle quantum, receipt, snapshot + WAL-cousin, CSR lease, leapfrog intersect, `Materializer`, `fork_at` — existing. Also at HEAD: `manifest.json` + `KUTHASEG` (`store::persist_until` / `segment::persist_log`), `Persister` segmented append, `store::migrate` / `store::export_jsonl`, optional unwired `rocks_index::SegmentIndex`.
 - ✓ Typed `Op::{Assert,Retract,Correct,CorrectInterval,Behavior,Define,QuantumOutcome,JustificationCite,StoreBlob,TtAnchor}` in `crates/kutha-common/src/event.rs` (not STCA-guide §5 JSON merge-patch) — existing
 - ✓ M010 semantic recovery without snapshot; live intern appends `Op::Define` — existing
 - ✓ M011 S01–S03: portable `claim_id`, unknown-claim fail-closed, replay `caused_by`, thin P→Q `derivation_eligible_at` — existing
@@ -120,7 +120,7 @@ Narrative locks in `docs/ADR/ADR-000-kutha-hybrid-architecture-research.md`. **N
 
 ### Core language (D6)
 
-- **D6:** Graph core is Rust. TypeScript is not the materializer. (P0 spike has no Tokio/Rocks in workspace deps; Rocks is an index store behind the log protocol and thaws at M002 Phase 51 per `.kutha/STATE.md` § Thaw map.)
+- **D6:** Graph core is Rust. TypeScript is not the materializer. (No Tokio crate in the workspace. Optional `rocksdb` is behind `rocks-index` as an unwired locator, never the event store; thaw map: `.kutha/STATE.md` § Thaw map.)
 
 ### Load profiles (D7)
 
