@@ -6,7 +6,7 @@
     {
       "number": "56",
       "name": "Docs honesty round 3",
-      "status": "planned"
+      "status": "executing"
     },
     {
       "number": "57",
@@ -41,8 +41,8 @@
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "v0.13 planned, unleased",
-    "reason": "M019 authored \u00b7 harness lease stays idle \u00b7 v0.11 paused at S02"
+    "label": "Phase 56 leased (M019 S01)",
+    "reason": "M019 S01 leased \u00b7 docs only \u00b7 v0.11 paused at S02"
   },
   "updated_at": "2026-10-04T14:54:00.000Z"
 }

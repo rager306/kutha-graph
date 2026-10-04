@@ -1,11 +1,11 @@
 # Kutha harness state
 
-**Lease** of process intent + last fold — not process SoT. Process SoT (H0) is `.kutha/events.jsonl` (gitignored observations). Product SoT is `crates/kutha-runtime`. Not an ADR.
+**Lease** of process intent + last fold — not process SoT. Process SoT (H0) is `.kutha/events.jsonl` (gitignored observations). Product SoT is the event log (D1): sealed `KUTHASEG` segments plus `manifest.json`, with legacy `events.jsonl` + `events.wal` until `store::migrate`; `crates/kutha-runtime` folds it. `events.jsonl` after migrate is an export. Not an ADR.
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M019
+**Active Slice:** S01
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M002 CLOSED (S01–S07, GSD v0.12); M018 paused at its S02 decision gate | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M019 S01 active (docs honesty round 3); M002 CLOSED; M018 paused at its S02 decision gate | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M002 closed 2026-10-04** (Phases 49–55, v0.12). `L_delivery=M002-closed`, Active Milestone **None**, Active Slice **None**. M018 paused at its S02 decision gate (C01, Horn vs knowledge cut); those are the only open owner decisions. Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0). Process tag `v0.12` is for the controller to create.
+**M019 S01 leased** (`L_delivery=M002-closed`, Active Milestone **M019**, Active Slice **S01**, 2026-10-04). GSD Phase 56 only: DOC-08, docs and YAML comments, no crate and no `scripts/` edit. Process tag `v0.12` exists (created 2026-10-04 at `36fedb9`). M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
 
 ## Thaw map
 

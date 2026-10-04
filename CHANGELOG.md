@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-04 — Process: lease M019 S01 (GSD Phase 56)
+
+### Process
+
+- Active Milestone **M019**, Active Slice **S01** (`L_delivery=M002-closed`): DOC-08, docs and YAML comments only. The controller rewrote the Product-SoT sentence in `.kutha/STATE.md` (event log; segments + manifest; `events.jsonl` is an export after migrate) and fixed the stale "tag v0.12 for the controller to create" line (the tag exists). M018 stays paused at its S02 gate.
+
 ## 2026-10-04 — Process: author M019 / GSD v0.13 plan
 
 ### Process
