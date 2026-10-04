@@ -74,52 +74,55 @@ checks:
   - id: freeze-rocks
     description: >-
       Cargo members may name rocksdb only as an optional dependency
-      (`optional = true` on the same line); the workspace Cargo.toml must not
+      (`optional = true`); the workspace Cargo.toml must not
       name rocksdb
     steps:
-      - kind: glob_absent
+      - kind: cargo_dep_constraint
         glob: crates/*/Cargo.toml
-        needles: ["rocksdb ="]
-        case: lower
+        rules:
+          rocksdb: require_optional
         category: frozen-dep
-        unless_line_contains: "optional = true"
         message: "found {needle}; freeze-rocks allows rocksdb in crates/*/Cargo.toml only as an optional dependency (`optional = true`)"
-      - kind: glob_absent
+      - kind: cargo_dep_constraint
         glob: Cargo.toml
-        needles: ["rocksdb ="]
-        case: lower
+        rules:
+          rocksdb: forbid
         category: frozen-dep
         message: "found {needle}; freeze-rocks forbids a rocksdb entry in the workspace Cargo.toml (optional crate dependency only)"
 
   - id: freeze-cypher-deps
     description: Cargo members and workspace Cargo.toml do not add neo4j/graphiti/falkordb until M003
     steps:
-      - kind: glob_absent
+      - kind: cargo_dep_constraint
         glob: crates/*/Cargo.toml
-        needles: [neo4j, graphiti, falkordb]
-        case: lower
+        rules:
+          neo4j: forbid
+          graphiti: forbid
+          falkordb: forbid
         category: frozen-dep
         message: "found {needle}; frozen until M003 per .kutha/STATE.md Thaw map"
-      - kind: glob_absent
+      - kind: cargo_dep_constraint
         glob: Cargo.toml
-        needles: [neo4j, graphiti, falkordb]
-        case: lower
+        rules:
+          neo4j: forbid
+          graphiti: forbid
+          falkordb: forbid
         category: frozen-dep
         message: "found {needle}; frozen until M003 per .kutha/STATE.md Thaw map"
 
   - id: freeze-hnsw-dep
     description: Cargo members and workspace Cargo.toml do not add hnswlib until M005
     steps:
-      - kind: glob_absent
+      - kind: cargo_dep_constraint
         glob: crates/*/Cargo.toml
-        needles: [hnswlib]
-        case: lower
+        rules:
+          hnswlib: forbid
         category: frozen-dep
         message: "found {needle}; frozen until M005 per .kutha/STATE.md Thaw map"
-      - kind: glob_absent
+      - kind: cargo_dep_constraint
         glob: Cargo.toml
-        needles: [hnswlib]
-        case: lower
+        rules:
+          hnswlib: forbid
         category: frozen-dep
         message: "found {needle}; frozen until M005 per .kutha/STATE.md Thaw map"
 
@@ -679,6 +682,7 @@ checks:
           - "file_max_lines"
           - "glob_max_lines"
           - "frontmatter_paths_exist"
+          - "cargo_dep_constraint"
           - "run_selftest"
           - "invariants.yaml"
           - "bridges.yaml"

@@ -549,17 +549,23 @@ class HarnessTests(unittest.TestCase):
             globs = [step.get("glob") for step in chk.steps]
             self.assertEqual(["crates/*/Cargo.toml", "Cargo.toml"], globs)
             for i, step in enumerate(chk.steps):
-                self.assertEqual("glob_absent", step.get("kind"))
+                self.assertEqual("cargo_dep_constraint", step.get("kind"))
                 self.assertEqual("frozen-dep", step.get("category"))
                 message = str(step.get("message", ""))
                 self.assertIn(gate, message)
                 self.assertNotIn("until Active Milestone names M002", message)
                 self.assertNotIn("STATE freeze still blocks", message)
                 self.assertNotIn("unless_file_contains", step)
+                self.assertNotIn("unless_line_contains", step)
+                rules = step.get("rules")
+                self.assertIsInstance(rules, dict)
                 if check_id == "freeze-rocks" and i == 0:
-                    self.assertEqual("optional = true", step.get("unless_line_contains"))
+                    self.assertEqual("require_optional", rules.get("rocksdb"))
+                elif check_id == "freeze-rocks":
+                    self.assertEqual("forbid", rules.get("rocksdb"))
                 else:
-                    self.assertNotIn("unless_line_contains", step)
+                    self.assertTrue(rules)
+                    self.assertTrue(all(action == "forbid" for action in rules.values()))
 
 
 def _rust_tree(files: dict[str, str]) -> Path:
@@ -588,6 +594,14 @@ _CLEAN_CRATE_TOML = '[package]\nname = "kutha-common"\nversion = "0.0.0"\n'
 _CLEAN_WORKSPACE_TOML = '[workspace]\nmembers = ["crates/kutha-common"]\n'
 _STATE_M002 = "**Active Milestone:** M002\n"
 _STATE_OTHER = "**Active Milestone:** M018\n"
+
+
+def _crate_deps(body: str) -> str:
+    return _CLEAN_CRATE_TOML + "[dependencies]\n" + body
+
+
+def _workspace_deps(body: str) -> str:
+    return _CLEAN_WORKSPACE_TOML + "[workspace.dependencies]\n" + body
 
 
 def _freeze_tree(
@@ -620,7 +634,7 @@ class FreezeDepTests(unittest.TestCase):
         self.assertEqual({check_id: [] for check_id in _FREEZE_IDS}, highs)
 
     def test_rocksdb_in_crate_hits_freeze_rocks_only(self) -> None:
-        highs = _freeze_highs(_freeze_tree(crate=_CLEAN_CRATE_TOML + 'rocksdb = "0.22"\n'))
+        highs = _freeze_highs(_freeze_tree(crate=_crate_deps('rocksdb = "0.22"\n')))
         self.assertEqual(1, len(highs["freeze-rocks"]))
         finding = highs["freeze-rocks"][0]
         self.assertEqual("frozen-dep", finding.category)
@@ -631,7 +645,7 @@ class FreezeDepTests(unittest.TestCase):
         self.assertEqual([], highs["freeze-hnsw-dep"])
 
     def test_rocksdb_in_workspace_root_hits_freeze_rocks_only(self) -> None:
-        highs = _freeze_highs(_freeze_tree(workspace=_CLEAN_WORKSPACE_TOML + 'rocksdb = "0.22"\n'))
+        highs = _freeze_highs(_freeze_tree(workspace=_workspace_deps('rocksdb = "0.22"\n')))
         self.assertEqual(1, len(highs["freeze-rocks"]))
         finding = highs["freeze-rocks"][0]
         self.assertEqual("Cargo.toml", finding.file)
@@ -641,7 +655,7 @@ class FreezeDepTests(unittest.TestCase):
         self.assertEqual([], highs["freeze-hnsw-dep"])
 
     def test_neo4j_in_crate_hits_freeze_cypher_deps_only(self) -> None:
-        highs = _freeze_highs(_freeze_tree(crate=_CLEAN_CRATE_TOML + 'neo4j = "0.1"\n'))
+        highs = _freeze_highs(_freeze_tree(crate=_crate_deps('neo4j = "0.1"\n')))
         self.assertEqual(1, len(highs["freeze-cypher-deps"]))
         finding = highs["freeze-cypher-deps"][0]
         self.assertEqual("crates/kutha-common/Cargo.toml", finding.file)
@@ -653,14 +667,14 @@ class FreezeDepTests(unittest.TestCase):
     def test_graphiti_and_falkordb_hit_freeze_cypher_deps_only(self) -> None:
         for needle in ("graphiti", "falkordb"):
             with self.subTest(needle=needle):
-                highs = _freeze_highs(_freeze_tree(crate=_CLEAN_CRATE_TOML + f'{needle} = "0.1"\n'))
+                highs = _freeze_highs(_freeze_tree(crate=_crate_deps(f'{needle} = "0.1"\n')))
                 self.assertEqual(1, len(highs["freeze-cypher-deps"]))
                 self.assertIn(needle, highs["freeze-cypher-deps"][0].message)
                 self.assertEqual([], highs["freeze-rocks"])
                 self.assertEqual([], highs["freeze-hnsw-dep"])
 
     def test_hnswlib_in_crate_hits_freeze_hnsw_dep_only(self) -> None:
-        highs = _freeze_highs(_freeze_tree(crate=_CLEAN_CRATE_TOML + 'hnswlib = "0.1"\n'))
+        highs = _freeze_highs(_freeze_tree(crate=_crate_deps('hnswlib = "0.1"\n')))
         self.assertEqual(1, len(highs["freeze-hnsw-dep"]))
         finding = highs["freeze-hnsw-dep"][0]
         self.assertEqual("crates/kutha-common/Cargo.toml", finding.file)
@@ -670,7 +684,7 @@ class FreezeDepTests(unittest.TestCase):
         self.assertEqual([], highs["freeze-cypher-deps"])
 
     def test_optional_rocksdb_passes_regardless_of_active_milestone(self) -> None:
-        optional = _CLEAN_CRATE_TOML + 'rocksdb = { version = "0.22", optional = true }\n'
+        optional = _crate_deps('rocksdb = { version = "0.22", optional = true }\n')
         for state in (None, _STATE_M002, _STATE_OTHER):
             with self.subTest(state=state):
                 highs = _freeze_highs(_freeze_tree(crate=optional, state=state))
@@ -681,7 +695,7 @@ class FreezeDepTests(unittest.TestCase):
     def test_non_optional_rocksdb_table_form_fails(self) -> None:
         highs = _freeze_highs(
             _freeze_tree(
-                crate=_CLEAN_CRATE_TOML + 'rocksdb = { version = "0.22" }\n',
+                crate=_crate_deps('rocksdb = { version = "0.22" }\n'),
                 state=_STATE_M002,
             )
         )
@@ -694,10 +708,8 @@ class FreezeDepTests(unittest.TestCase):
         self.assertEqual([], highs["freeze-hnsw-dep"])
 
     def test_optional_rocksdb_comment_does_not_trip_freeze_rocks(self) -> None:
-        crate = (
-            _CLEAN_CRATE_TOML
-            + "# those are rocksdb defaults\n"
-            + 'rocksdb = { version = "0.22", optional = true }\n'
+        crate = _crate_deps(
+            "# those are rocksdb defaults\n" + 'rocksdb = { version = "0.22", optional = true }\n'
         )
         highs = _freeze_highs(_freeze_tree(crate=crate, state=_STATE_OTHER))
         self.assertEqual([], highs["freeze-rocks"])
@@ -713,7 +725,7 @@ class FreezeDepTests(unittest.TestCase):
             with self.subTest(needle=needle):
                 highs = _freeze_highs(
                     _freeze_tree(
-                        crate=_CLEAN_CRATE_TOML + f'{needle} = "0.1"\n',
+                        crate=_crate_deps(f'{needle} = "0.1"\n'),
                         state=_STATE_M002,
                     )
                 )
@@ -721,6 +733,101 @@ class FreezeDepTests(unittest.TestCase):
                 self.assertIn(needle, highs[check_id][0].message)
                 self.assertIn(gate, highs[check_id][0].message)
                 self.assertEqual([], highs["freeze-rocks"])
+
+    def test_table_form_dependencies_rocksdb_is_high(self) -> None:
+        crate = _CLEAN_CRATE_TOML + '[dependencies.rocksdb]\nversion = "0.22"\n'
+        highs = _freeze_highs(_freeze_tree(crate=crate))
+        self.assertEqual(1, len(highs["freeze-rocks"]))
+        self.assertEqual("frozen-dep", highs["freeze-rocks"][0].category)
+        self.assertIn("rocksdb", highs["freeze-rocks"][0].message)
+        self.assertEqual([], highs["freeze-cypher-deps"])
+        self.assertEqual([], highs["freeze-hnsw-dep"])
+
+    def test_rocksdb_assignment_without_spaces_is_high(self) -> None:
+        crate = _CLEAN_CRATE_TOML + '[dependencies]\nrocksdb="0.22"\n'
+        highs = _freeze_highs(_freeze_tree(crate=crate))
+        self.assertEqual(1, len(highs["freeze-rocks"]))
+        self.assertIn("rocksdb", highs["freeze-rocks"][0].message)
+
+    def test_same_line_optional_true_comment_is_high(self) -> None:
+        crate = _CLEAN_CRATE_TOML + '[dependencies]\nrocksdb = "0.22" # optional = true\n'
+        highs = _freeze_highs(_freeze_tree(crate=crate))
+        self.assertEqual(1, len(highs["freeze-rocks"]))
+        self.assertIn("optional", highs["freeze-rocks"][0].message)
+
+    def test_same_line_optional_true_on_another_key_is_high(self) -> None:
+        crate = (
+            _CLEAN_CRATE_TOML + '[dependencies]\nrocksdb = "0.22"  unused = { optional = true }\n'
+        )
+        highs = _freeze_highs(_freeze_tree(crate=crate))
+        self.assertGreaterEqual(len(highs["freeze-rocks"]), 1)
+
+    def test_workspace_dependencies_rocksdb_table_is_high(self) -> None:
+        workspace = _CLEAN_WORKSPACE_TOML + '[workspace.dependencies.rocksdb]\nversion = "0.22"\n'
+        highs = _freeze_highs(_freeze_tree(workspace=workspace))
+        self.assertEqual(1, len(highs["freeze-rocks"]))
+        self.assertEqual("Cargo.toml", highs["freeze-rocks"][0].file)
+        self.assertIn("workspace", highs["freeze-rocks"][0].message)
+
+    def test_target_cfg_unix_dependencies_rocksdb_is_high(self) -> None:
+        crate = (
+            _CLEAN_CRATE_TOML + "[target.'cfg(unix)'.dependencies.rocksdb]\nversion = \"0.22\"\n"
+        )
+        highs = _freeze_highs(_freeze_tree(crate=crate))
+        self.assertEqual(1, len(highs["freeze-rocks"]))
+        self.assertIn("rocksdb", highs["freeze-rocks"][0].message)
+
+    def test_package_rename_to_rocksdb_is_high(self) -> None:
+        crate = (
+            _CLEAN_CRATE_TOML + '[dependencies]\nfoo = { package = "rocksdb", version = "0.22" }\n'
+        )
+        highs = _freeze_highs(_freeze_tree(crate=crate))
+        self.assertEqual(1, len(highs["freeze-rocks"]))
+        self.assertIn("rocksdb", highs["freeze-rocks"][0].message)
+
+    def test_comment_only_rocksdb_mention_passes(self) -> None:
+        crate = _CLEAN_CRATE_TOML + '[dependencies]\n# rocksdb = "0.22"\n'
+        highs = _freeze_highs(_freeze_tree(crate=crate))
+        self.assertEqual([], highs["freeze-rocks"])
+        self.assertEqual([], highs["freeze-cypher-deps"])
+        self.assertEqual([], highs["freeze-hnsw-dep"])
+
+    def test_live_repo_optional_rocksdb_passes(self) -> None:
+        highs = _freeze_highs(ROOT)
+        self.assertEqual({check_id: [] for check_id in _FREEZE_IDS}, highs)
+
+    def test_cypher_name_in_description_is_not_a_dep(self) -> None:
+        crate = '[package]\nname = "x"\nversion = "0.0.0"\ndescription = "neo4j notes"\n'
+        highs = _freeze_highs(_freeze_tree(crate=crate))
+        self.assertEqual([], highs["freeze-cypher-deps"])
+
+    def test_workspace_optional_rocksdb_is_still_forbidden(self) -> None:
+        workspace = _workspace_deps('rocksdb = { version = "0.22", optional = true }\n')
+        highs = _freeze_highs(_freeze_tree(workspace=workspace))
+        self.assertEqual(1, len(highs["freeze-rocks"]))
+
+    def test_unparsable_cargo_toml_is_high(self) -> None:
+        result = _rust_run(
+            _rust_tree({"crates/k/Cargo.toml": "[dependencies\nrocksdb = true\n"}),
+            {
+                "kind": "cargo_dep_constraint",
+                "glob": "crates/*/Cargo.toml",
+                "rules": {"rocksdb": "require_optional"},
+                "category": "frozen-dep",
+            },
+        )
+        self.assertEqual(["frozen-dep"], _rust_highs(result))
+
+    def test_missing_glob_match_is_not_high(self) -> None:
+        result = _rust_run(
+            _rust_tree({"README.md": "x\n"}),
+            {
+                "kind": "cargo_dep_constraint",
+                "glob": "crates/*/Cargo.toml",
+                "rules": {"rocksdb": "require_optional"},
+            },
+        )
+        self.assertEqual([], _rust_highs(result))
 
 
 class GlobAbsentUnlessTests(unittest.TestCase):

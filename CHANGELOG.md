@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-04 — Process: cargo_dep_constraint freeze kind (GSD Phase 57 GOV-04)
+
+### Process
+
+- New governor kind `cargo_dep_constraint` (stdlib `tomllib`; META / intake `disposition: kind`). `freeze-rocks`, `freeze-cypher-deps`, and `freeze-hnsw-dep` keep their ids, severities, and messages; they parse Cargo tables instead of line grep. Bypass forms (`[dependencies.rocksdb]`, `rocksdb="0.22"`, same-line `# optional = true`, workspace table form, `package = "rocksdb"` rename) are HIGH. Comments and missing globs are not.
+
 ## 2026-10-04 — Process: lease M019 S02 (GSD Phase 57)
 
 ### Process

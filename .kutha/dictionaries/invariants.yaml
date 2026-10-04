@@ -263,6 +263,12 @@ invariants:
     disposition: kind
     kind: run_checks
 
+  - id: I-cargo-dep-constraint
+    claim: "Frozen Cargo dependency checks parse TOML tables (not line grep)"
+    source: "docs/process/governor-intake.md"
+    disposition: kind
+    kind: cargo_dep_constraint
+
   - id: I-artifact-budget
     claim: "Live-phase PLAN/SUMMARY/VERIFICATION/CONTEXT files stay within line and per-directory file budgets from phase 22 onward (min_hits 1 when phases are live)"
     source: ".planning/phases/28-independent-verification-and-artifact-budget/28-CONTEXT.md"

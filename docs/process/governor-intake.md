@@ -84,6 +84,19 @@ Control-loop kind obligation (Phase 29 GOV-01):
   kind: run_checks
 ```
 
+TOML freeze kind (Phase 57 GOV-04). No existing kind parses Cargo tables, so this is `disposition: kind` — not a `Check` subclass and not `scripts/kutha_gov/checks/*.py`.
+
+```yaml
+# invariants.yaml
+- id: I-cargo-dep-constraint
+  claim: "Frozen Cargo dependency checks parse TOML tables (not line grep)"
+  source: "docs/process/governor-intake.md"
+  disposition: kind
+  kind: cargo_dep_constraint
+```
+
+`cargo_dep_constraint` (stdlib `tomllib` only) takes a Cargo.toml glob and `rules` mapping crate names to `forbid` or `require_optional`. It walks `[dependencies]`, `[dev-dependencies]`, `[build-dependencies]`, `[target.*.dependencies]`, `[workspace.dependencies]`, table form `[dependencies.NAME]`, and `package =` renames. Comments never match. A missing or unparsable TOML file is HIGH; a glob with zero matches is not. `freeze-rocks` / `freeze-cypher-deps` / `freeze-hnsw-dep` keep their ids and messages; they now use this kind.
+
 Artifact-budget glob with non-vacuous match (`artifact-budget` in `checks.yaml`):
 
 ```yaml

@@ -38,6 +38,7 @@ DERIVABLE_KINDS = frozenset(
         "file_max_lines",
         "glob_max_lines",
         "frontmatter_paths_exist",
+        "cargo_dep_constraint",
     }
 )
 SKIP_DIR_NAMES = frozenset(
@@ -287,7 +288,21 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
             unit = _derive_frontmatter_paths_exist(step, work)
             if unit:
                 derived.append(unit)
+        elif kind == "cargo_dep_constraint":
+            unit = _derive_cargo_dep_constraint(step, work)
+            if unit:
+                derived.append(unit)
     return derived
+
+
+def _derive_cargo_dep_constraint(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import cargo_dep_constraint_mutation_target
+
+    target = cargo_dep_constraint_mutation_target(step, work)
+    if target is None:
+        return []
+    path, text = target
+    return [{"op": "append_text", "path": path, "text": text}]
 
 
 def _derive_file_max_lines(step: Step, work: Path) -> list[Mutation]:
