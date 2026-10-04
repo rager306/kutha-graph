@@ -108,7 +108,9 @@ Artifact-budget glob with non-vacuous match (`artifact-budget` in `checks.yaml`)
   max_files_per_dir: 2
 ```
 
-`min_hits` is idle vs live: `0` (and `allow_empty` on glob `file_contains`) when `.planning/phases/` is empty after a milestone archive, so an empty glob is not a vacuous HIGH. When live phase files exist, set `min_hits: 1` so a missing PLAN/SUMMARY/VERIFICATION/CONTEXT glob is HIGH again. Keep `allow_empty` on `verification-independent` when the independent verifier has not yet written `NN-VERIFICATION.md`.
+`min_hits` is idle vs live: `0` (and `allow_empty` on glob `file_contains`) when `.planning/phases/` is empty after a milestone archive, so an empty glob is not a vacuous HIGH. When a live phase CONTEXT exists, set `min_hits: 1` (kind option `when_glob_exists`) so a missing SUMMARY/VERIFICATION/CONTEXT glob is HIGH again. PLAN `min_hits` is gated on the PLAN glob itself: this lease has CONTEXT without a PLAN file, so requiring a PLAN would be a false HIGH. Keep `allow_empty` on `verification-independent` when the independent verifier has not yet written `NN-VERIFICATION.md`.
+
+`observe_rocks` (FSM kind `observe_cargo`) runs `cargo test -p kutha-runtime --features rocks-index,rocks-index-spike --test m002_rock01 --test m002_rock00 --offline` with `timeout_sec: 420`. Measured 2026-10-04 on this host with a fresh `CARGO_TARGET_DIR`: cold ROCK-01 279.8s (<6 min bound, so the row stays on default `ci`), warm ROCK-01 1.4s, ROCK-00 after the shared compile 8.1s. Not `optional`. Do not enable those features in crate Cargo.toml.
 
 Verification independence (`verification-independent` check): `file_contains` with `glob` + `min_phase` on `NN-VERIFICATION.md`, plus `frontmatter_paths_exist` on `read_only_inputs` (paths must exist; plan/summary artifacts forbidden).
 

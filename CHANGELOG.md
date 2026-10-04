@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-04 — Process: enrol M002 oracles and strict artifact-budget (GSD Phase 57 GOV-05)
+
+### Process
+
+- `observe_cargo.required` lists SNAP-01 / APPEND-01 / COMMIT-01 / SEG-01 headline fns. New FSM state `observe_rocks` runs ROCK-01 and ROCK-00 under `rocks-index` / `rocks-index-spike` (`timeout_sec: 420`; cold 279.8s, warm 1.4s). `artifact-budget` uses `min_hits: 1` with `when_glob_exists` and SUMMARY `max_files_per_dir: 1`; selftest skip is live-CONTEXT gated. `id-map-cite` requires `v0.12` and `v0.13`.
+
 ## 2026-10-04 — Process: cargo_dep_constraint freeze kind (GSD Phase 57 GOV-04)
 
 ### Process

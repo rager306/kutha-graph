@@ -1494,6 +1494,55 @@ class GlobMaxLinesTests(unittest.TestCase):
         )
         self.assertEqual(["min-hits"], _rust_highs(result))
 
+    def test_glob_max_lines_when_glob_exists_idle_allows_empty(self) -> None:
+        root = _rust_tree({})
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_max_lines",
+                "glob": ".planning/phases/*-*/*-SUMMARY.md",
+                "max": 60,
+                "min_phase": 22,
+                "min_hits": 1,
+                "when_glob_exists": ".planning/phases/*-*/*-CONTEXT.md",
+            },
+        )
+        self.assertEqual([], _rust_highs(result))
+
+    def test_glob_max_lines_when_glob_exists_live_empty_summary_is_high(self) -> None:
+        root = _rust_tree({".planning/phases/22-x/22-CONTEXT.md": "ctx\n"})
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_max_lines",
+                "glob": ".planning/phases/*-*/*-SUMMARY.md",
+                "max": 60,
+                "min_phase": 22,
+                "min_hits": 1,
+                "when_glob_exists": ".planning/phases/*-*/*-CONTEXT.md",
+            },
+        )
+        self.assertEqual(["min-hits"], _rust_highs(result))
+
+    def test_glob_max_lines_summary_two_files_per_dir_is_high(self) -> None:
+        root = _rust_tree(
+            {
+                ".planning/phases/22-x/22-01-SUMMARY.md": "a\n",
+                ".planning/phases/22-x/22-02-SUMMARY.md": "a\n",
+            }
+        )
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_max_lines",
+                "glob": ".planning/phases/*-*/*-SUMMARY.md",
+                "max": 60,
+                "min_phase": 22,
+                "max_files_per_dir": 1,
+            },
+        )
+        self.assertEqual(["max-files"], _rust_highs(result))
+
 
 class VerificationIndependentTests(unittest.TestCase):
     def test_verification_independent_glob_absent_high_on_plan_path(self) -> None:

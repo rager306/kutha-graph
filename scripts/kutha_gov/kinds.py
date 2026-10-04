@@ -1741,6 +1741,14 @@ def glob_max_lines_mutation_target(step: Step, root: Path) -> tuple[str, str] | 
     return rel, "\n" * (maximum + 1)
 
 
+def glob_max_lines_effective_min_hits(step: Step, root: Path) -> int:
+    min_hits = _int(step, "min_hits", 0)
+    when_glob = _str(step, "when_glob_exists")
+    if when_glob and not any(path.is_file() for path in root.glob(when_glob)):
+        return 0
+    return min_hits
+
+
 def _kind_glob_max_lines(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
     pattern = _str(step, "glob")
     maximum = _int(step, "max", -1)
@@ -1755,7 +1763,7 @@ def _kind_glob_max_lines(check: str, step: Step, ctx: Context, result: CheckResu
             Finding(check, Severity.HIGH, "max-lines", "max must be a non-negative integer")
         )
         return
-    min_hits = _int(step, "min_hits", 0)
+    min_hits = glob_max_lines_effective_min_hits(step, ctx.root)
     hits = _glob_max_lines_hits(step, ctx.root)
     if len(hits) < min_hits:
         result.scanned += 1

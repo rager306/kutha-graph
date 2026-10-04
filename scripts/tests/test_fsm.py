@@ -58,6 +58,7 @@ class FsmTests(unittest.TestCase):
                 "run_checks",
                 "run_selftest",
                 "observe_cargo",
+                "observe_rocks",
                 "emit",
                 "emit_tenant",
                 "fold",
@@ -105,6 +106,7 @@ class FsmTests(unittest.TestCase):
         self.assertEqual([], outcome.observations)
         self.assertTrue(any(rel == "h5_selftest" for rel, _obj in outcome.evidence))
         self.assertIn("observe_cargo", outcome.trace)
+        self.assertIn("observe_rocks", outcome.trace)
         self.assertIn("emit_tenant", outcome.trace)
         self.assertIn("run_selftest", outcome.trace)
 
@@ -143,6 +145,7 @@ class FsmTests(unittest.TestCase):
         self.assertTrue(any(rel == "h5_selftest" for rel, _obj in outcome.evidence))
         self.assertIn("run_selftest", outcome.trace)
         self.assertIn("observe_cargo", outcome.trace)
+        self.assertIn("observe_rocks", outcome.trace)
 
     def test_cui_budget_truncates_tail_checks_when_v_is_short(self) -> None:
         checks = get_checks(ROOT)

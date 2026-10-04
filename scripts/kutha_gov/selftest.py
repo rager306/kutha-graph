@@ -135,18 +135,26 @@ def _prove_check(check: Check, work: Path) -> SelftestRow:
     raw_selftest = spec.get("selftest")
     if isinstance(raw_selftest, dict):
         skip = raw_selftest.get("skip")
-        if isinstance(skip, str) and skip.strip():
-            return SelftestRow(SKIP, check.name, 0, skip.strip())
+        skip_reason = skip.strip() if isinstance(skip, str) and skip.strip() else ""
+        unless_glob = raw_selftest.get("skip_unless_glob")
+        live = False
+        if isinstance(unless_glob, str) and unless_glob.strip():
+            live = any(path.is_file() for path in work.glob(unless_glob))
+        if skip_reason and not live:
+            return SelftestRow(SKIP, check.name, 0, skip_reason)
         declared = raw_selftest.get("mutations")
         if "mutations" in raw_selftest:
             mutations, error = _parse_mutations(declared)
             if error:
                 return SelftestRow(UNPROVEN, check.name, 0, error)
             return _run_mutations(check, work, mutations)
-        return SelftestRow(
-            UNPROVEN, check.name, 0, "selftest mapping has neither mutations nor skip"
-        )
-    if raw_selftest is not None:
+        if skip_reason and live:
+            pass
+        else:
+            return SelftestRow(
+                UNPROVEN, check.name, 0, "selftest mapping has neither mutations nor skip"
+            )
+    elif raw_selftest is not None:
         return SelftestRow(UNPROVEN, check.name, 0, "selftest must be a mapping")
     if not _any_derivable(check.steps):
         return SelftestRow(UNPROVEN, check.name, 0, "no derivable step and no selftest declaration")
@@ -326,20 +334,24 @@ def _derive_frontmatter_paths_exist(step: Step, work: Path) -> list[Mutation]:
 
 
 def _derive_glob_max_lines(step: Step, work: Path) -> list[Mutation]:
-    from kutha_gov.kinds import _glob_max_lines_hits, glob_max_lines_mutation_target
+    from kutha_gov.kinds import (
+        _glob_max_lines_hits,
+        glob_max_lines_effective_min_hits,
+        glob_max_lines_mutation_target,
+    )
 
-    min_hits = step.get("min_hits", 0)
-    if isinstance(min_hits, int) and min_hits > 0:
+    target = glob_max_lines_mutation_target(step, work)
+    if target is not None:
+        path, text = target
+        return [{"op": "append_text", "path": path, "text": text}]
+    min_hits = glob_max_lines_effective_min_hits(step, work)
+    if min_hits > 0:
         hits = _glob_max_lines_hits(step, work)
         if len(hits) >= min_hits:
             return [
                 {"op": "delete_file", "path": path.relative_to(work).as_posix()} for path in hits
             ]
-    target = glob_max_lines_mutation_target(step, work)
-    if target is None:
-        return []
-    path, text = target
-    return [{"op": "append_text", "path": path, "text": text}]
+    return []
 
 
 def _derive_refs_resolve(step: Step, work: Path) -> list[Mutation]:

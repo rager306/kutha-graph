@@ -176,6 +176,64 @@ class SelftestTests(unittest.TestCase):
         self.assertEqual("depends on the live git diff", rows[0].reason)
         self.assertIn("reason=depends on the live git diff", format_row(rows[0]))
 
+    def test_skip_unless_glob_derives_when_live(self) -> None:
+        root = _write_mini(
+            [
+                {
+                    "id": "budget",
+                    "description": "skip unless live context",
+                    "selftest": {
+                        "skip": "no live CONTEXT",
+                        "skip_unless_glob": ".planning/phases/*-*/*-CONTEXT.md",
+                    },
+                    "steps": [
+                        {
+                            "kind": "glob_max_lines",
+                            "glob": ".planning/phases/*-*/*-SUMMARY.md",
+                            "min_phase": 22,
+                            "min_hits": 1,
+                            "when_glob_exists": ".planning/phases/*-*/*-CONTEXT.md",
+                            "max": 60,
+                            "max_files_per_dir": 1,
+                        }
+                    ],
+                }
+            ],
+            {
+                ".planning/phases/22-x/22-CONTEXT.md": "ctx\n",
+                ".planning/phases/22-x/22-01-SUMMARY.md": "ok\n",
+            },
+        )
+        rows, code = run_selftest(root)
+        self.assertEqual(0, code, msg=rows)
+        self.assertEqual("OK", rows[0].status)
+
+    def test_skip_unless_glob_skips_when_idle(self) -> None:
+        root = _write_mini(
+            [
+                {
+                    "id": "budget-idle",
+                    "description": "skip when no context",
+                    "selftest": {
+                        "skip": "no live CONTEXT",
+                        "skip_unless_glob": ".planning/phases/*-*/*-CONTEXT.md",
+                    },
+                    "steps": [
+                        {
+                            "kind": "glob_max_lines",
+                            "glob": ".planning/phases/*-*/*-SUMMARY.md",
+                            "max": 60,
+                            "min_hits": 1,
+                        }
+                    ],
+                }
+            ]
+        )
+        rows, code = run_selftest(root)
+        self.assertEqual(0, code)
+        self.assertEqual(SKIP, rows[0].status)
+        self.assertEqual("no live CONTEXT", rows[0].reason)
+
     def test_baseline_fail_on_unmodified_copy(self) -> None:
         root = _write_mini(
             [

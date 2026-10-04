@@ -196,7 +196,7 @@ checks:
         message: "setuptools egg-info must not be in the tree: {path}"
 
   - id: observe-required-fn
-    description: FSM observe_cargo required names exist as non-vacuous #[test] functions
+    description: FSM observe_cargo / observe_rocks required names exist as non-vacuous #[test] functions
     steps:
       - kind: rust_test_asserts
         names_from_yaml:
@@ -205,6 +205,13 @@ checks:
           glob: "crates/**/*.rs"
         category: observe-fn
         message: "FSM required names missing as asserting #[test]: {missing}"
+      - kind: rust_test_asserts
+        names_from_yaml:
+          path: .kutha/dictionaries/fsm.yaml
+          select: states.observe_rocks.required
+          glob: "crates/**/*.rs"
+        category: observe-fn
+        message: "FSM rocks observe names missing as asserting #[test]: {missing}"
 
   - id: plane-mix-dicts
     description: process and product relation dictionaries keep distinct schemas
@@ -1244,30 +1251,35 @@ checks:
       Live-phase planning artifacts (v0.06 onward, including v0.07/v0.08)
       stay within declared line and per-directory file budgets (D-02, D-04).
     selftest:
-      skip: "derivable only when live .planning/phases artifacts exist"
+      skip: "no live .planning/phases CONTEXT"
+      skip_unless_glob: .planning/phases/*-*/*-CONTEXT.md
     steps:
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-PLAN.md
         min_phase: 22
-        min_hits: 0
+        min_hits: 1
+        when_glob_exists: .planning/phases/*-*/*-PLAN.md
         max: 150
         max_files_per_dir: 2
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-SUMMARY.md
         min_phase: 22
-        min_hits: 0
+        min_hits: 1
+        when_glob_exists: .planning/phases/*-*/*-CONTEXT.md
         max: 60
-        max_files_per_dir: 2
+        max_files_per_dir: 1
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-VERIFICATION.md
         min_phase: 22
-        min_hits: 0
+        min_hits: 1
+        when_glob_exists: .planning/phases/*-*/*-CONTEXT.md
         max: 60
         max_files_per_dir: 1
       - kind: glob_max_lines
         glob: .planning/phases/*-*/*-CONTEXT.md
         min_phase: 22
-        min_hits: 0
+        min_hits: 1
+        when_glob_exists: .planning/phases/*-*/*-CONTEXT.md
         max: 80
         max_files_per_dir: 1
 
@@ -1303,7 +1315,7 @@ checks:
     steps:
       - kind: file_contains
         path: docs/process/gsd-auto-contract.md
-        needles: ["## Id map", "GSD version", "v0.06", "v0.07", "v0.08", "v0.09"]
+        needles: ["## Id map", "GSD version", "v0.06", "v0.07", "v0.08", "v0.09", "v0.12", "v0.13"]
         require: all
       - kind: file_contains
         path: .planning/ROADMAP.md

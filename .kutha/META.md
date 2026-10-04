@@ -68,7 +68,7 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 | `cite_equals` | one capture from a source file must equal each cite capture; mismatch is HIGH |
 | `refs_resolve` | ADR-NNN and D1–D10 citations resolve to files or honeycomb locks |
 | `file_max_lines` | file line count (`wc -l`) is at most `max` |
-| `glob_max_lines` | glob matches (`wc -l`) at most `max`; optional `min_phase`, `min_hits` (default 0; when ≥1, zero matches → HIGH), and `max_files_per_dir` |
+| `glob_max_lines` | glob matches (`wc -l`) at most `max`; optional `min_phase`, `min_hits` (default 0; when ≥1, zero matches → HIGH), `when_glob_exists` (if that glob matches no file, treat `min_hits` as 0), and `max_files_per_dir` |
 | `frontmatter_paths_exist` (optional `allow_empty`) | every string in a YAML frontmatter list field must be a repo-relative file that exists; optional `glob`, `min_phase`, `field` (default `read_only_inputs`) |
 | `cargo_dep_constraint` | parse Cargo.toml with stdlib `tomllib`; `rules` map crate names to `forbid` or `require_optional`; walks `[dependencies]`, `[dev-dependencies]`, `[build-dependencies]`, `[target.*.dependencies]`, `[workspace.dependencies]`, table form `[dependencies.NAME]`, and `package =` renames; comments never match; missing/unparsable TOML is HIGH; a glob with zero files is not |
 
