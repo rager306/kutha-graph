@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-04 — Process: lease M019 S02 (GSD Phase 57)
+
+### Process
+
+- Active Milestone **M019**, Active Slice **S02** (`L_delivery=M019-S01-done`): GOV-04, GOV-05, GOV-06. First task: RED pytest for freeze bypass forms. M018 stays paused at its S02 gate.
+
 ## 2026-10-04 — Process: close M019 S01 (GSD Phase 56)
 
 ### Process
