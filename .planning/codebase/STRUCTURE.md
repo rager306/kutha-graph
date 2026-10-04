@@ -4,6 +4,8 @@ last_mapped_at: 2026-09-29
 ---
 # Codebase Structure
 
+> **Superseded map (2026-10-04):** last mapped `e77132d` / 2026-09-29. Living inventory: `docs/architecture/p0-spike-inventory.md` and ADR Evidence. Do not read this file as current persist / Rocks / Tokio fact.
+
 **Analysis Date:** 2026-09-29
 
 ## Directory Layout
@@ -229,7 +231,7 @@ kutha-graph/
 - Committed: Local/tooling policy; do not treat as architecture authority
 
 **Frozen / do not add until STATE leases:**
-- RocksDB crate, Cypher parser crate, HNSW, legal pack tree, ADR-100+ — keep out of `crates/` until `.kutha/STATE.md` names the work
+- Historical (superseded 2026-10-04): "RocksDB crate … keep out of `crates/`". Optional `rocksdb` is in `kutha-runtime` behind `rocks-index`. Still out until named gates: Cypher parser crate, HNSW, legal pack tree, ADR-100+ — see `.kutha/STATE.md` § Thaw map
 
 ---
 

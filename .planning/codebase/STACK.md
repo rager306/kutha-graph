@@ -4,6 +4,8 @@ last_mapped_at: 2026-09-29
 ---
 # Technology Stack
 
+> **Superseded map (2026-10-04):** last mapped `e77132d` / 2026-09-29. Living inventory: `docs/architecture/p0-spike-inventory.md` and ADR Evidence. Do not read this file as current persist / Rocks / Tokio fact.
+
 **Analysis Date:** 2026-09-29
 
 ## Languages

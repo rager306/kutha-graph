@@ -6,6 +6,8 @@ last_mapped_at: 2026-09-29
 
 # Codebase Concerns
 
+> **Superseded map (2026-10-04):** last mapped `e77132d` / 2026-09-29. Living inventory: `docs/architecture/p0-spike-inventory.md` and ADR Evidence. Do not read this file as current persist / Rocks / Tokio fact.
+
 **Analysis Date:** 2026-09-29
 
 > Distinguishes **intentional research-stage gaps** (thaw map / spike scope in `.kutha/STATE.md` § Thaw map) from **actionable debt**. Do not start Rocks, Cypher, HNSW, ADR-050 six dictionaries, legal/science packs, or ADR-080/081 outside that map's named gates (2026-10-03: M002 thawed; nothing else thaws merely by that lease). Governor green ≠ ADR Accepted ≠ capability — collapsing those is itself a process failure mode.

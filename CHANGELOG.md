@@ -15,6 +15,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Process
 
 - Living-doc SoT pass: ADR-000/010/012/014/060 Evidence and Decision pointers; honeycomb ADR-010/012 evidence. ADRs stay **Proposed**. No crate or `scripts/` edit.
+- Architecture inventory, STRATEGY date/Rocks sentence, and `.planning/codebase/*` superseded banners aligned with HEAD encodings.
 
 ### Trajectory
 

@@ -1,6 +1,6 @@
 # M002 intake: cloud kernel I/O writeback stalls
 
-**Status:** note only — M002 remains **frozen** until `.kutha/STATE.md` leases it.  
+**Status:** note only — M002 is **CLOSED** (2026-10-04, GSD v0.12). IO-01 (cloud kernel writeback soak) remains intake-only; it is not a leased slice.  
 **Captured:** 2026-10-02  
 **Card:** `.compound-engineering/artifacts/research/applicability/cards/paper-kernel-io-dirty-throttle-cloud-oltp.md`
 

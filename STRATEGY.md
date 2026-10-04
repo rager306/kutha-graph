@@ -1,6 +1,6 @@
 ---
 name: Kutha
-last_updated: 2026-08-17
+last_updated: 2026-10-04
 ---
 
 # Kutha Strategy
@@ -86,7 +86,7 @@ Each item is a temptation with a concrete failure mode:
 - **Hard FSM as the sole agent control model** — every vertical forks the runtime; rejected for versioned meta-prompt + temporal dictionaries (FSM may be *derived* for audit, not hard-coded).
 - **Workflow-engine orchestration instead of Cui pack composition** — fights reversible packs and budgeted competition between materializers/agents.
 - **TypeScript as the graph core** — fine for agent I/O/SDK; GC/event-loop choke Profile B hot graphs.
-- **RVF (or portable packs) as primary hot storage** — packaging/transport layer only; hot path stays RocksDB + projections.
+- **RVF (or portable packs) as primary hot storage** — packaging/transport layer only; hot path stays the event-log fold plus droppable projections (CSR now; optional unwired `rocks-index` locator, never Rocks as SoT).
 - **Whole RuVector monorepo as a dependency / “agent brain product”** — too large, marketing-heavy, many STUB/NO-OP facades; adapt only REAL crates behind Ports (see ruvector-plugin-adaptation research note).
 - **External ETL + external agent orchestrator as target shape** — agents leave the runtime; contradicts “agents inside the engine.”
 - **Early Raft multi-node or GNN learned indexes** — distract before P0/P1 single-node hybrid evidence; P4 only.
