@@ -559,6 +559,7 @@ class HarnessTests(unittest.TestCase):
                 self.assertNotIn("unless_line_contains", step)
                 rules = step.get("rules")
                 self.assertIsInstance(rules, dict)
+                assert isinstance(rules, dict)
                 if check_id == "freeze-rocks" and i == 0:
                     self.assertEqual("require_optional", rules.get("rocksdb"))
                 elif check_id == "freeze-rocks":

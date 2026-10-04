@@ -2074,7 +2074,11 @@ def yaml_map_list_mutation_target(step: Step, root: Path) -> tuple[str, str, str
 
     unique = _str(step, "unique")
     if unique:
-        vals = [row.get(unique) for row in maps if isinstance(row.get(unique), str)]
+        vals: list[str] = []
+        for row in maps:
+            raw = row.get(unique)
+            if isinstance(raw, str):
+                vals.append(raw)
         if len(vals) >= 2 and vals[0] != vals[1]:
             pattern = rf"(?m)^(\s*(?:- )?{re.escape(unique)}: ){re.escape(vals[1])}\s*$"
             if re.search(pattern, text):
@@ -2119,8 +2123,10 @@ def yaml_map_list_mutation_target(step: Step, root: Path) -> tuple[str, str, str
             hit = _swap(f"- {values[0]}", "- __selftest_missing_ref__")
             if hit is not None:
                 return hit
-    if field and step.get("absent_other") is not True and (
-        _path_list(step, "other") or _str(step, "glob")
+    if (
+        field
+        and step.get("absent_other") is not True
+        and (_path_list(step, "other") or _str(step, "glob"))
     ):
         for row in maps:
             val = row.get(field)

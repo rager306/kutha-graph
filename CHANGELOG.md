@@ -8,7 +8,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Process
 
-- Selftest classifies each dictionary check as `derived-by-own-mutation`, `explicit-mutation`, or `explicit-skip`. `git_path_implies` stays skip (live diff). `file-exists-only` is reported as LOW, not as proof of sibling steps. Ledger/pointer/glob kinds now derive a mutation that breaks their own rule.
+- Selftest classifies each dictionary check as `derived-by-own-mutation`, `explicit-mutation`, or `explicit-skip`. `git_path_implies` stays skip (live diff). `file-exists-only` is reported as LOW, not as proof of sibling steps. Ledger/pointer/glob kinds now derive a mutation that breaks their own rule. Mutation-target formatting and freeze-rule typing follow ruff/ty.
 
 ## 2026-10-04 — Process: enrol M002 oracles and strict artifact-budget (GSD Phase 57 GOV-05)
 
