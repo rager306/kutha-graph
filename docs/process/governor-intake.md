@@ -69,6 +69,8 @@ A check id appears in **exactly one** ledger: invariants (`disposition: check`) 
 
 Presence is not meaning. A needle that still matches after the claimed property is gone is a vacuous pass. `kutha-gov selftest` (and `ci`'s `run_selftest`) proves meaning by mutating a **copy** of the tree: each check must go HIGH under a declared or derived mutation, or carry a specific `selftest.skip` reason. Unproven (neither mutation nor skip reason) fails closed. Skip is not a silent pass.
 
+Selftest classifies every dictionary check as `derived-by-own-mutation`, `explicit-mutation`, or `explicit-skip` (reason required). `git_path_implies` is skip because it depends on the live git diff. A check whose only HIGH derivation is `file_exists` deletion is `file-exists-only` (LOW: not proof of sibling ledger/pointer steps). New kinds (`yaml_map_list`, `pointer_in_other_file`, `markdown_heading_tag`, `glob_none`, `glob_paths_in_file`, `when_match_then_match`) derive a mutation that breaks that kind's own rule, or the YAML row declares skip/mutations.
+
 A green governor is **not** ADR **Accepted**, not L_capability, and not product correctness. Checks keep the harness honest about its own dictionaries, citations, and named-test evidence. They do not close F1–F8, accept honeycomb cells, or lease M012a.
 
 ## Example intake rows (current)

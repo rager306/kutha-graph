@@ -4,6 +4,8 @@ meta_prompt: .kutha/META.md
 # Kinds: see .kutha/META.md. Unknown kind → HIGH (fail-closed).
 # Vacuity: optional `selftest.mutations` or `selftest.skip`. Several kinds derive
 # mutations; a row with neither is UNPROVEN (`kutha-gov selftest` fails closed).
+# git_path_implies stays `selftest.skip` (live diff). file_exists-only derivation
+# is classified, not treated as proof of sibling steps.
 
 checks:
   - id: trajectory

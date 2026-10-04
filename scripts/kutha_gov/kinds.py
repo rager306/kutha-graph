@@ -2043,6 +2043,187 @@ def _collect_dep_tables(data: Mapping[str, object]) -> list[Mapping[str, object]
     return tables
 
 
+def yaml_map_list_mutation_target(step: Step, root: Path) -> tuple[str, str, str] | None:
+    path = _str(step, "path")
+    select = _str(step, "select")
+    if not path or not (root / path).is_file():
+        return None
+    text = (root / path).read_text(encoding="utf-8")
+    try:
+        loaded = yaml.safe_load(text)
+    except yaml.YAMLError:
+        return None
+    rows = _yaml_select(loaded, select)
+    if not isinstance(rows, list):
+        return None
+    maps = [row for row in rows if isinstance(row, dict)]
+    when = _as_str_map(step.get("when"))
+    if when:
+        maps = [
+            row
+            for row in maps
+            if all(str(row.get(key, "")) == value for key, value in when.items())
+        ]
+    if not maps:
+        return None
+
+    def _swap(needle: str, replacement: str) -> tuple[str, str, str] | None:
+        if needle and needle in text and needle != replacement:
+            return path, re.escape(needle), replacement
+        return None
+
+    unique = _str(step, "unique")
+    if unique:
+        vals = [row.get(unique) for row in maps if isinstance(row.get(unique), str)]
+        if len(vals) >= 2 and vals[0] != vals[1]:
+            pattern = rf"(?m)^(\s*(?:- )?{re.escape(unique)}: ){re.escape(vals[1])}\s*$"
+            if re.search(pattern, text):
+                return path, pattern, rf"\1{vals[0]}"
+    allowed = _str_list(step, "allowed")
+    field = _str(step, "field")
+    if allowed and field:
+        for row in maps:
+            val = row.get(field)
+            if isinstance(val, str) and val in allowed:
+                hit = _swap(f"{field}: {val}", f"{field}: __selftest_not_allowed__")
+                if hit is not None:
+                    return hit
+    for field_name in _str_list(step, "require_fields"):
+        hit = _swap(f"{field_name}:", f"selftest_removed_{field_name}:")
+        if hit is not None:
+            return hit
+    nonempty_list = _str(step, "nonempty_list")
+    if nonempty_list:
+        hit = _swap(f"{nonempty_list}:", f"selftest_removed_{nonempty_list}:")
+        if hit is not None:
+            return hit
+    if field and step.get("must_exist") is True:
+        for row in maps:
+            loc = row.get(field)
+            rid = row.get("id")
+            if not isinstance(loc, str) or not loc.strip() or not isinstance(rid, str):
+                continue
+            pattern = (
+                rf"(id: {re.escape(rid)}\n(?:.*\n)*? *{re.escape(field)}: ){re.escape(loc.strip())}"
+            )
+            if re.search(pattern, text):
+                return path, pattern, r"\1tmp/selftest-missing-path"
+    list_field = _str(step, "list_field")
+    if list_field:
+        values: list[str] = []
+        for row in maps:
+            raw = row.get(list_field)
+            if isinstance(raw, list):
+                values.extend(item for item in raw if isinstance(item, str) and item.strip())
+        if values:
+            hit = _swap(f"- {values[0]}", "- __selftest_missing_ref__")
+            if hit is not None:
+                return hit
+    if field and step.get("absent_other") is not True and (
+        _path_list(step, "other") or _str(step, "glob")
+    ):
+        for row in maps:
+            val = row.get(field)
+            if isinstance(val, str) and val.strip():
+                hit = _swap(f"{field}: {val.strip()}", f"{field}: __selftest_missing_ref__")
+                if hit is not None:
+                    return hit
+    return None
+
+
+def pointer_in_other_file_mutation_target(step: Step, root: Path) -> tuple[str, str, str] | None:
+    path = _str(step, "path")
+    pattern = _str(step, "pattern")
+    if not path or not pattern or not (root / path).is_file():
+        return None
+    text = (root / path).read_text(encoding="utf-8")
+    compiled = re.compile(pattern, _re_flags(step))
+    match = compiled.search(text)
+    if match is None:
+        return None
+    captured = match.groupdict().get("id") or (match.group(1) if match.lastindex else None)
+    if not isinstance(captured, str) or not captured:
+        return None
+    if captured in set(_str_list(step, "skip_values")):
+        return None
+    group: str | int = "id" if match.groupdict().get("id") is not None else 1
+    gstart, gend = match.span(group)
+    full = match.group(0)
+    rel_s = gstart - match.start()
+    rel_e = gend - match.start()
+    mutated = full[:rel_s] + "SELFTEST_POINTER" + full[rel_e:]
+    if mutated == full:
+        return None
+    return path, re.escape(full), mutated
+
+
+def markdown_heading_tag_mutation_target(step: Step, root: Path) -> tuple[str, str, str] | None:
+    pattern = _str(step, "glob")
+    heading = _str(step, "heading", "## Status")
+    allowed = _str_list(step, "allowed")
+    if not pattern or not allowed:
+        return None
+    tag_alt = "|".join(re.escape(tag) for tag in allowed) or "Never"
+    status_re = re.compile(
+        rf"^{re.escape(heading)}\s*\n+\s*\*\*(?P<tag>{tag_alt})\*\*",
+        re.MULTILINE,
+    )
+    for path in sorted(root.glob(pattern)):
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8")
+        match = status_re.search(text)
+        if match is None:
+            continue
+        tag = match.group("tag")
+        rel = path.relative_to(root).as_posix()
+        return (
+            rel,
+            rf"({re.escape(heading)}\s*\n+\s*)\*\*{re.escape(tag)}\*\*",
+            r"\1**NotAStatusTag**",
+        )
+    return None
+
+
+def glob_none_mutation_target(step: Step) -> tuple[str, str] | None:
+    pattern = _str(step, "glob")
+    if not pattern:
+        return None
+    if "*.egg-info" in pattern:
+        return "kutha-gov-selftest.egg-info/PKG-INFO", "selftest\n"
+    stripped = pattern.replace("**/", "").replace("*", "selftest")
+    if stripped.endswith("/"):
+        stripped += "MARKER"
+    if not stripped or "*" in stripped:
+        return None
+    return stripped, "selftest\n"
+
+
+def glob_paths_in_file_mutation_target(step: Step) -> tuple[str, str] | None:
+    pattern = _str(step, "glob")
+    if not pattern:
+        return None
+    rel = pattern.replace("**/", "").replace("*", "selftest-missing")
+    if not rel or "*" in rel or rel.endswith("/"):
+        return None
+    return rel, "# selftest\n"
+
+
+def when_match_then_match_mutation_target(step: Step, root: Path) -> tuple[str, str, str] | None:
+    path = _str(step, "path")
+    when = _str(step, "pattern")
+    then = _str(step, "then_pattern")
+    if not path or not when or not then or not (root / path).is_file():
+        return None
+    text = (root / path).read_text(encoding="utf-8")
+    flags = _re_flags(step)
+    if not re.search(when, text, flags):
+        return None
+    if not re.search(then, text, flags):
+        return None
+    return path, then, "SELFTEST_THEN_REMOVED"
+
+
 def cargo_dep_constraint_mutation_target(step: Step, root: Path) -> tuple[str, str] | None:
     pattern = _str(step, "glob")
     rules = _cargo_dep_rules(step)

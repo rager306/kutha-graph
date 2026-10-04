@@ -17,12 +17,18 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from kutha_gov.__main__ import main  # noqa: E402
-from kutha_gov.dictionary import DictCheck  # noqa: E402
+from kutha_gov.dictionary import DictCheck, get_checks  # noqa: E402
 from kutha_gov.selftest import (  # noqa: E402
     BASELINE_FAIL,
+    CLASS_DERIVED,
+    CLASS_EXPLICIT_MUTATION,
+    CLASS_EXPLICIT_SKIP,
+    CLASS_FILE_EXISTS_ONLY,
+    CLASS_UNPROVEN,
     SKIP,
     UNPROVEN,
     VACUOUS,
+    classify_check,
     copy_harness_tree,
     format_row,
     run_selftest,
@@ -131,12 +137,12 @@ class SelftestTests(unittest.TestCase):
             self.assertTrue((dest / ".kutha" / "STATE.md").is_file())
             self.assertTrue((dest / "crates" / "kutha-runtime").is_dir())
 
-    def test_synthetic_unproven_pointer_only(self) -> None:
+    def test_synthetic_pointer_derives_own_mutation(self) -> None:
         root = _write_mini(
             [
                 {
                     "id": "pointer-only",
-                    "description": "no derivable step",
+                    "description": "pointer own-rule mutation",
                     "steps": [
                         {
                             "kind": "pointer_in_other_file",
@@ -150,8 +156,161 @@ class SelftestTests(unittest.TestCase):
             {"a.md": "X\n", "b.md": "X\n"},
         )
         rows, code = run_selftest(root)
-        self.assertEqual(1, code)
-        self.assertEqual(UNPROVEN, rows[0].status)
+        self.assertEqual(0, code, msg=rows)
+        self.assertEqual("OK", rows[0].status)
+        self.assertEqual(CLASS_DERIVED, rows[0].classification)
+
+    def test_file_exists_only_is_classified_low(self) -> None:
+        root = _write_mini(
+            [
+                {
+                    "id": "only-exists",
+                    "description": "file_exists deletion is not sibling proof",
+                    "steps": [{"kind": "file_exists", "path": "README.md"}],
+                }
+            ],
+            {"README.md": "x\n"},
+        )
+        rows, code = run_selftest(root)
+        self.assertEqual(0, code, msg=rows)
+        self.assertEqual("OK", rows[0].status)
+        self.assertEqual(CLASS_FILE_EXISTS_ONLY, rows[0].classification)
+        self.assertIn("file-exists-only", format_row(rows[0]))
+
+    def test_every_live_check_is_classified(self) -> None:
+        allowed = {
+            CLASS_DERIVED,
+            CLASS_EXPLICIT_MUTATION,
+            CLASS_EXPLICIT_SKIP,
+            CLASS_FILE_EXISTS_ONLY,
+        }
+        lows: list[str] = []
+        live = get_checks(ROOT)
+        self.assertEqual(CLASS_EXPLICIT_MUTATION, classify_check(live["adr-status"], ROOT)[0])
+        for check in live.values():
+            cls, reason = classify_check(check, ROOT)
+            self.assertIn(cls, allowed, msg=f"{check.name} -> {cls} {reason}")
+            self.assertNotEqual(CLASS_UNPROVEN, cls, msg=check.name)
+            if cls == CLASS_EXPLICIT_SKIP:
+                self.assertTrue(reason, msg=check.name)
+            if cls == CLASS_FILE_EXISTS_ONLY:
+                lows.append(check.name)
+        if lows:
+            print("LOW file-exists-only:", ",".join(lows))
+
+    def test_docs_coupling_is_explicit_skip(self) -> None:
+        checks = get_checks(ROOT)
+        cls, reason = classify_check(checks["docs-coupling"], ROOT)
+        self.assertEqual(CLASS_EXPLICIT_SKIP, cls)
+        self.assertTrue(reason)
+
+    def test_synthetic_yaml_map_list_unique_derives(self) -> None:
+        root = _write_mini(
+            [
+                {
+                    "id": "ledger",
+                    "description": "unique ids",
+                    "steps": [
+                        {
+                            "kind": "yaml_map_list",
+                            "path": "ledger.yaml",
+                            "select": "rows",
+                            "unique": "id",
+                        }
+                    ],
+                }
+            ],
+            {"ledger.yaml": "rows:\n  - id: a\n  - id: b\n"},
+        )
+        rows, code = run_selftest(root)
+        self.assertEqual(0, code, msg=rows)
+        self.assertEqual("OK", rows[0].status)
+        self.assertEqual(CLASS_DERIVED, rows[0].classification)
+
+    def test_synthetic_glob_none_derives(self) -> None:
+        root = _write_mini(
+            [
+                {
+                    "id": "no-egg",
+                    "description": "glob none",
+                    "steps": [{"kind": "glob_none", "glob": "**/*.egg-info/*"}],
+                }
+            ],
+            {"README.md": "ok\n"},
+        )
+        rows, code = run_selftest(root)
+        self.assertEqual(0, code, msg=rows)
+        self.assertEqual("OK", rows[0].status)
+
+    def test_synthetic_glob_paths_in_file_derives(self) -> None:
+        root = _write_mini(
+            [
+                {
+                    "id": "paths",
+                    "description": "glob paths must be cited",
+                    "steps": [
+                        {
+                            "kind": "glob_paths_in_file",
+                            "glob": "docs/ADR/ADR-*.md",
+                            "path": "index.yaml",
+                            "prefix": "    path: ",
+                        }
+                    ],
+                }
+            ],
+            {
+                "docs/ADR/ADR-001.md": "# one\n",
+                "index.yaml": "    path: docs/ADR/ADR-001.md\n",
+            },
+        )
+        rows, code = run_selftest(root)
+        self.assertEqual(0, code, msg=rows)
+        self.assertEqual("OK", rows[0].status)
+
+    def test_synthetic_when_match_then_match_derives(self) -> None:
+        root = _write_mini(
+            [
+                {
+                    "id": "when-then",
+                    "description": "when then",
+                    "steps": [
+                        {
+                            "kind": "when_match_then_match",
+                            "path": "STATE.md",
+                            "pattern": r"^Active: None\s*$",
+                            "flags": ["multiline"],
+                            "then_pattern": r"(?m)^L_delivery=\S+-closed\s*$",
+                        }
+                    ],
+                }
+            ],
+            {"STATE.md": "Active: None\nL_delivery=idle-closed\n"},
+        )
+        rows, code = run_selftest(root)
+        self.assertEqual(0, code, msg=rows)
+        self.assertEqual("OK", rows[0].status)
+
+    def test_synthetic_markdown_heading_tag_derives(self) -> None:
+        root = _write_mini(
+            [
+                {
+                    "id": "status-tag",
+                    "description": "status tag",
+                    "steps": [
+                        {
+                            "kind": "markdown_heading_tag",
+                            "glob": "docs/ADR/ADR-*.md",
+                            "heading": "## Status",
+                            "allowed": ["Proposed", "Accepted"],
+                        }
+                    ],
+                }
+            ],
+            {"docs/ADR/ADR-001.md": "## Status\n\n**Proposed**\n"},
+        )
+        rows, code = run_selftest(root)
+        self.assertEqual(0, code, msg=rows)
+        self.assertEqual("OK", rows[0].status)
 
     def test_synthetic_skip_is_success(self) -> None:
         root = _write_mini(

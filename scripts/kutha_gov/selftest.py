@@ -21,6 +21,11 @@ UNPROVEN = "UNPROVEN"
 VACUOUS = "VACUOUS"
 BASELINE_FAIL = "BASELINE-FAIL"
 
+CLASS_DERIVED = "derived-by-own-mutation"
+CLASS_EXPLICIT_MUTATION = "explicit-mutation"
+CLASS_EXPLICIT_SKIP = "explicit-skip"
+CLASS_FILE_EXISTS_ONLY = "file-exists-only"
+CLASS_UNPROVEN = "unproven"
 SUCCESS = frozenset({OK, SKIP})
 MUTATION_OPS = frozenset({"delete_file", "remove_text", "append_text", "replace_regex"})
 DERIVABLE_KINDS = frozenset(
@@ -39,6 +44,12 @@ DERIVABLE_KINDS = frozenset(
         "glob_max_lines",
         "frontmatter_paths_exist",
         "cargo_dep_constraint",
+        "yaml_map_list",
+        "pointer_in_other_file",
+        "markdown_heading_tag",
+        "glob_none",
+        "glob_paths_in_file",
+        "when_match_then_match",
     }
 )
 SKIP_DIR_NAMES = frozenset(
@@ -63,12 +74,15 @@ class SelftestRow:
     check_id: str
     mutations: int
     reason: str = ""
+    classification: str = ""
 
 
 def format_row(row: SelftestRow) -> str:
     line = f"{row.status} {row.check_id} mutations={row.mutations}"
     if row.reason:
         line += f" reason={row.reason}"
+    if row.classification:
+        line += f" class={row.classification}"
     return line
 
 
@@ -111,7 +125,20 @@ def run_selftest(root: Path, check_id: str | None = None) -> tuple[list[Selftest
             probe = work_checks.get(name)
             if probe is None:
                 probe = selected[name]
-            rows.append(_prove_check(probe, work))
+            proved = _prove_check(probe, work)
+            cls, cls_reason = classify_check(probe, work)
+            reason = proved.reason
+            if cls == CLASS_FILE_EXISTS_ONLY and not reason:
+                reason = cls_reason
+            rows.append(
+                SelftestRow(
+                    proved.status,
+                    proved.check_id,
+                    proved.mutations,
+                    reason,
+                    cls,
+                )
+            )
     code = 0 if rows and all(_success(row) for row in rows) else 1
     if not rows:
         code = 1
@@ -122,6 +149,43 @@ def _success(row: SelftestRow) -> bool:
     if row.status == OK:
         return True
     return row.status == SKIP and bool(row.reason)
+
+
+def classify_check(check: Check, work: Path) -> tuple[str, str]:
+    """Classify how selftest proves a dictionary check. git_path_implies stays skip."""
+    if not isinstance(check, DictCheck):
+        return CLASS_UNPROVEN, "not a dictionary check"
+    spec = check.spec
+    raw_selftest = spec.get("selftest")
+    skip_reason = ""
+    if isinstance(raw_selftest, dict):
+        skip = raw_selftest.get("skip")
+        skip_reason = skip.strip() if isinstance(skip, str) and skip.strip() else ""
+        unless_glob = raw_selftest.get("skip_unless_glob")
+        live = False
+        if isinstance(unless_glob, str) and unless_glob.strip():
+            live = any(path.is_file() for path in work.glob(unless_glob))
+        if skip_reason and not live:
+            return CLASS_EXPLICIT_SKIP, skip_reason
+        if "mutations" in raw_selftest:
+            return CLASS_EXPLICIT_MUTATION, ""
+        if skip_reason and live:
+            pass
+        else:
+            return CLASS_UNPROVEN, "selftest mapping has neither mutations nor skip"
+    elif raw_selftest is not None:
+        return CLASS_UNPROVEN, "selftest must be a mapping"
+    high_kinds = [
+        _str(step, "kind")
+        for step in check.steps
+        if _str(step, "severity", "high").lower() != "low"
+    ]
+    derivable = [kind for kind in high_kinds if kind in DERIVABLE_KINDS]
+    if not _any_derivable(check.steps):
+        return CLASS_UNPROVEN, "no derivable step and no selftest declaration"
+    if derivable and set(derivable) <= {"file_exists"}:
+        return CLASS_FILE_EXISTS_ONLY, "derived only by deleting file_exists paths"
+    return CLASS_DERIVED, ""
 
 
 def _skip_name(name: str) -> bool:
@@ -300,7 +364,91 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
             unit = _derive_cargo_dep_constraint(step, work)
             if unit:
                 derived.append(unit)
+        elif kind == "yaml_map_list":
+            unit = _derive_yaml_map_list(step, work)
+            if unit:
+                derived.append(unit)
+        elif kind == "pointer_in_other_file":
+            unit = _derive_pointer_in_other_file(step, work)
+            if unit:
+                derived.append(unit)
+        elif kind == "markdown_heading_tag":
+            unit = _derive_markdown_heading_tag(step, work)
+            if unit:
+                derived.append(unit)
+        elif kind == "glob_none":
+            unit = _derive_glob_none(step, work)
+            if unit:
+                derived.append(unit)
+        elif kind == "glob_paths_in_file":
+            unit = _derive_glob_paths_in_file(step, work)
+            if unit:
+                derived.append(unit)
+        elif kind == "when_match_then_match":
+            unit = _derive_when_match_then_match(step, work)
+            if unit:
+                derived.append(unit)
     return derived
+
+
+def _derive_yaml_map_list(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import yaml_map_list_mutation_target
+
+    target = yaml_map_list_mutation_target(step, work)
+    if target is None:
+        return []
+    path, pattern, replacement = target
+    return [{"op": "replace_regex", "path": path, "pattern": pattern, "with": replacement}]
+
+
+def _derive_pointer_in_other_file(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import pointer_in_other_file_mutation_target
+
+    target = pointer_in_other_file_mutation_target(step, work)
+    if target is None:
+        return []
+    path, pattern, replacement = target
+    return [{"op": "replace_regex", "path": path, "pattern": pattern, "with": replacement}]
+
+
+def _derive_markdown_heading_tag(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import markdown_heading_tag_mutation_target
+
+    target = markdown_heading_tag_mutation_target(step, work)
+    if target is None:
+        return []
+    path, pattern, replacement = target
+    return [{"op": "replace_regex", "path": path, "pattern": pattern, "with": replacement}]
+
+
+def _derive_glob_none(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import glob_none_mutation_target
+
+    target = glob_none_mutation_target(step)
+    if target is None:
+        return []
+    path, text = target
+    return [{"op": "append_text", "path": path, "text": text}]
+
+
+def _derive_glob_paths_in_file(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import glob_paths_in_file_mutation_target
+
+    target = glob_paths_in_file_mutation_target(step)
+    if target is None:
+        return []
+    path, text = target
+    return [{"op": "append_text", "path": path, "text": text}]
+
+
+def _derive_when_match_then_match(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import when_match_then_match_mutation_target
+
+    target = when_match_then_match_mutation_target(step, work)
+    if target is None:
+        return []
+    path, pattern, replacement = target
+    return [{"op": "replace_regex", "path": path, "pattern": pattern, "with": replacement}]
 
 
 def _derive_cargo_dep_constraint(step: Step, work: Path) -> list[Mutation]:

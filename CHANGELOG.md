@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-04 — Process: selftest classification and own-rule mutations (GSD Phase 57 GOV-06)
+
+### Process
+
+- Selftest classifies each dictionary check as `derived-by-own-mutation`, `explicit-mutation`, or `explicit-skip`. `git_path_implies` stays skip (live diff). `file-exists-only` is reported as LOW, not as proof of sibling steps. Ledger/pointer/glob kinds now derive a mutation that breaks their own rule.
+
 ## 2026-10-04 — Process: enrol M002 oracles and strict artifact-budget (GSD Phase 57 GOV-05)
 
 ### Process
