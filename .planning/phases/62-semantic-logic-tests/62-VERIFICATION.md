@@ -1,3 +1,34 @@
+---
+independent: true
+verifier_model: cursor-grok-4.6-xhigh
+status: passed-with-findings
+score: 11/11
+exit: 0
+commands:
+  - {cmd: "git log da655d8..HEAD", exit: 0}
+  - {cmd: "cargo fmt --all --check", exit: 0}
+  - {cmd: "cargo clippy --workspace --all-targets --offline", exit: 0}
+  - {cmd: "cargo test --workspace --offline", exit: 0}
+  - {cmd: "uv run kutha-gov precommit --check test-matrix", exit: 0}
+  - {cmd: "uv run kutha-gov precommit", exit: 0}
+  - {cmd: "uv run pytest", exit: 0}
+read_only_inputs:
+  - crates/kutha-runtime/tests/common/sem.rs
+  - crates/kutha-runtime/tests/m019_sem_diff.rs
+  - crates/kutha-runtime/tests/m019_sem_model.rs
+  - crates/kutha-runtime/tests/m019_sem_meta.rs
+  - crates/kutha-runtime/src/fold.rs
+  - crates/kutha-runtime/src/hydrate.rs
+  - crates/kutha-runtime/src/csr.rs
+  - crates/kutha-runtime/src/segment.rs
+  - crates/kutha-common/src/intern.rs
+  - docs/architecture/test-matrix.yaml
+  - docs/architecture/test-matrix.md
+  - docs/ADR/ADR-013-bitemporal-facts-invalidation.md
+  - docs/ADR/ADR-041-csr-graphblas-hot-path.md
+  - docs/ADR/ADR-060-strict-replay.md
+  - CHANGELOG.md
+---
 # 62-VERIFICATION — M019-S07 semantic/logic oracles (independent)
 
 Verifier judged from `git log da655d8..HEAD` (HEAD `d64dab3`), tests, matrix, ADRs, CHANGELOG, and scratch-copy runs. **Did not read** Phase 62 CONTEXT/PLAN/SUMMARY.
