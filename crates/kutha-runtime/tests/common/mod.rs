@@ -1,4 +1,7 @@
 //! Shared log-backed fixtures for integration tests (D-04). Not a `[[test]]` crate.
+#![allow(dead_code)]
+
+pub mod sem;
 
 use kutha_common::Op;
 use kutha_runtime::Runtime;
