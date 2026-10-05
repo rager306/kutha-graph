@@ -46,7 +46,7 @@
 
 ### Test strategy (Phase 59, S04)
 
-- **TEST-01**: honeycomb ADR-023 (Proposed; conventions, with 020–022) + `docs/architecture/test-matrix.md` (invariant × layer × oracle × kill-mutation × status / owner-gate) + a `rust_test_asserts`-style governor row; owner-gated invariants are `blocked: decision`, not xfail
+- [x] **TEST-01**: honeycomb ADR-023 (Proposed; conventions, with 020–022) + `docs/architecture/test-matrix.md` (invariant × layer × oracle × kill-mutation × status / owner-gate) + a `rust_test_asserts`-style governor row; owner-gated invariants are `blocked: decision`, not xfail
 
 ### Durability residuals (Phases 60–61, S05–S06)
 

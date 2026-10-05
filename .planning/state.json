@@ -21,7 +21,7 @@
     {
       "number": "59",
       "name": "Test strategy and oracle matrix",
-      "status": "executing"
+      "status": "complete"
     },
     {
       "number": "60",
@@ -41,8 +41,8 @@
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Phase 59 leased (M019 S04)",
-    "reason": "M019 S04 leased \u00b7 TEST-01 \u00b7 v0.11 paused at S02"
+    "label": "Lease M019 S05 (Phase 60: durability residuals A) after CONTEXT",
+    "reason": "Phase 59 verified \u00b7 M019-S04-done"
   },
-  "updated_at": "2026-10-05T03:34:00.000Z"
+  "updated_at": "2026-10-05T04:37:00.000Z"
 }

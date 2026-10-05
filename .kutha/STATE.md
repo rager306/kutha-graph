@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M019
-**Active Slice:** S04
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M019-S03-done
+L_delivery=M019-S04-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M019 S04 active (test strategy and oracle matrix); M018 paused at its S02 decision gate | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M019 S04 done (test strategy and oracle matrix); S05 unleased; M018 paused at its S02 decision gate | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M019 S04 leased** (`L_delivery=M019-S03-done`, Active Milestone **M019**, Active Slice **S04**, 2026-10-05). GSD Phase 59 only: TEST-01; first task: research note + honeycomb cell 023 ADR draft, then the matrix and its governor check RED first. Process tag `v0.12` exists (created 2026-10-04 at `36fedb9`). M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
+**M019 S04 closed** (`L_delivery=M019-S04-done`, Active Milestone **M019**, Active Slice **None**, 2026-10-05). GSD Phase 59 verified independently (12/12). Next: controller lease M019 S05 (Phase 60 durability residuals A: single-writer lock, Typed/Dictionary group vs committed_prefix, missing durability oracles from the matrix gap rows owned by M019-S05). Process tag `v0.12` exists (created 2026-10-04 at `36fedb9`). M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
 
 ## Thaw map
 

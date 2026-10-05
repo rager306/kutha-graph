@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Process: close M019 S04 (GSD Phase 59)
+
+### Process
+
+- `L_delivery=M019-S04-done`, Active Slice **None**. Independent verification 12/12 after a fix round (`59-VERIFICATION.md`: unlabelled characterizations, missing checkpoint × omitted-QO gap, an overclaimed killed row replaced by a gap row, a planning-artifact reference removed). TEST-01 closed: ADR-023 **Proposed** (oracle taxonomy, layering and determinism rules, options verdicts); `docs/architecture/test-matrix.yaml` 67 rows (killed 34, gap 19, blocked 6, spec-only 4, characterization 3, gate 1) plus the human page; kind `test_matrix` and check `test-matrix` (64 → 65 checks; selftest 65/65 derived by own rule); 10 RED pytests then green; pytest 181 passed; two characterization oracles got a label comment (the only `crates/` touch, comment-only). Honest non-claims: the matrix is a map of oracles, not coverage; `killed` is recorded text checked for consistency, not a mutation gate; 6 blocked rows wait for owner decisions (C01/FIXG-01, HORN-KC-01, ASOF-ELIG-01, DET-02, TR-02, HORN-CORR-01); 19 gap rows are owned by M019 S05/S06/S07. No capability claim. Next: controller leases M019 S05 (Phase 60 durability residuals A: single-writer lock, Typed/Dictionary group vs `committed_prefix`, missing durability oracles from the matrix gap rows owned by M019-S05).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-023 remains Proposed. `L_capability` unchanged (FF5). M018 remains paused at its S02 decision gate.
+
 ## 2026-10-05 — Test strategy matrix and ADR-023 (GSD Phase 59)
 
 ### Product
