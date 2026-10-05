@@ -5,8 +5,8 @@
 mod common;
 
 use common::sem::{
-    MixStyle, fail_seed, ingest_mix, replay_runtime, seeds, shrink_events, sorted_as_of,
-    sorted_live, vt_cuts,
+    MixStyle, assert_seed_budget, fail_seed, ingest_mix, replay_runtime, seeds, shrink_events,
+    sorted_as_of, sorted_live, vt_cuts,
 };
 use kutha_common::{Event, EventId, Op, TermId};
 use kutha_runtime::{FoldIndexMode, Runtime};
@@ -241,6 +241,7 @@ fn product_live(naive: &Naive, rt: &Runtime, tt: u64, vt: u64) -> Vec<(TermId, T
 
 #[test]
 fn bitemporal_model_matches_fold_live_at_and_as_of() {
+    assert_seed_budget();
     for (case, seed) in seeds().into_iter().enumerate() {
         let mut rt = Runtime::with_index_mode(32, FoldIndexMode::Eager);
         ingest_mix(&mut rt, seed, MixStyle::BehaviorFree);

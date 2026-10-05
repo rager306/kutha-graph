@@ -4,8 +4,8 @@
 mod common;
 
 use common::sem::{
-    Lcg, MixStyle, assert_same_stamps, fail_seed, open_export_imported, persist_dir,
-    persist_legacy, persist_migrated, persist_seed_count, persist_segmented,
+    Lcg, MixStyle, assert_same_stamps, assert_seed_budget, fail_seed, open_export_imported,
+    persist_dir, persist_legacy, persist_migrated, persist_seed_count, persist_segmented,
     persist_segmented_rollover, replay_runtime, rm_dir, runtime_stamps, seeded_runtime, seeds,
     shrink_events,
 };
@@ -130,6 +130,7 @@ fn named_vt(rt: &Runtime) -> Vec<(String, String, String, u64, Option<u64>)> {
 
 #[test]
 fn order_independence_disjoint_subjects() {
+    assert_seed_budget();
     for (case, seed) in seeds().into_iter().enumerate() {
         let mut lcg = Lcg::from_seed(seed);
         let facts = [("u0", "o0"), ("u1", "o1"), ("u2", "o2"), ("u3", "o3")];
@@ -173,6 +174,7 @@ fn order_independence_disjoint_subjects() {
 
 #[test]
 fn replay_idempotence_fresh_runtime_twice() {
+    assert_seed_budget();
     for (case, seed) in seeds().into_iter().enumerate() {
         let (rt, _) = seeded_runtime(seed, MixStyle::WithHorn, FoldIndexMode::Eager);
         rt.replay_check()
@@ -197,6 +199,7 @@ fn replay_idempotence_fresh_runtime_twice() {
 
 #[test]
 fn persist_roundtrip_random_layouts() {
+    assert_seed_budget();
     for seed in seeds().into_iter().take(persist_seed_count()) {
         let (rt, _) = seeded_runtime(seed, MixStyle::BehaviorFree, FoldIndexMode::Eager);
         let layouts: [(&str, fn(&Runtime, &std::path::Path)); 3] = [
@@ -265,6 +268,7 @@ fn fold_affecting_user<'a>(events: &'a [Event], rt: &Runtime) -> Vec<(usize, &'a
 /// Never silently equal. Kind is named in the assertion message.
 #[test]
 fn replay_tamper_flip_swap_drop_never_silently_equal() {
+    assert_seed_budget();
     for (case, seed) in seeds().into_iter().take(persist_seed_count()).enumerate() {
         let (rt, _) = seeded_runtime(seed, MixStyle::BehaviorFree, FoldIndexMode::Eager);
         let orig = runtime_stamps(&rt);

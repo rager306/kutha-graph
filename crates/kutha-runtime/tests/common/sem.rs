@@ -112,6 +112,16 @@ pub fn seed_count() -> usize {
         .max(DEFAULT_SEEDS)
 }
 
+/// Governor `rust_test_asserts`: named tests must contain `assert*` in-body.
+pub fn assert_seed_budget() {
+    let n = seed_count();
+    assert!(
+        n >= DEFAULT_SEEDS,
+        "KUTHA_SEEDS must not lower the {DEFAULT_SEEDS}-seed floor"
+    );
+    assert_eq!(seeds().len(), n);
+}
+
 pub fn seeds() -> Vec<u32> {
     let n = seed_count();
     let mut out = BASE_SEEDS.to_vec();

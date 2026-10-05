@@ -6,10 +6,10 @@
 mod common;
 
 use common::sem::{
-    MixStyle, assert_same_stamps, assert_views_stable, fail_seed, open_export_imported,
-    persist_dir, persist_legacy, persist_migrated, persist_seed_count, persist_segmented,
-    persist_segmented_rollover, replay_runtime, rm_dir, runtime_stamps, seeded_runtime, seeds,
-    shrink_events,
+    MixStyle, assert_same_stamps, assert_seed_budget, assert_views_stable, fail_seed,
+    open_export_imported, persist_dir, persist_legacy, persist_migrated, persist_seed_count,
+    persist_segmented, persist_segmented_rollover, replay_runtime, rm_dir, runtime_stamps,
+    seeded_runtime, seeds, shrink_events,
 };
 use kutha_runtime::{FoldIndexMode, GraphFold, store};
 
@@ -38,6 +38,7 @@ fn diff_one(seed: u32, style: MixStyle, case_base: usize) {
 
 #[test]
 fn csr_fold_diff_behavior_free_agrees() {
+    assert_seed_budget();
     for (case, seed) in seeds().into_iter().enumerate() {
         diff_one(seed, MixStyle::BehaviorFree, case * 10);
     }
@@ -45,6 +46,7 @@ fn csr_fold_diff_behavior_free_agrees() {
 
 #[test]
 fn csr_fold_diff_with_horn_agrees() {
+    assert_seed_budget();
     for (case, seed) in seeds().into_iter().enumerate() {
         diff_one(seed, MixStyle::WithHorn, 10_000 + case * 10);
     }
@@ -107,6 +109,7 @@ fn persist_roundtrip_one(seed: u32, style: MixStyle) {
 
 #[test]
 fn csr_fold_diff_persist_rebuild_layouts() {
+    assert_seed_budget();
     for seed in seeds().into_iter().take(persist_seed_count()) {
         persist_roundtrip_one(seed, MixStyle::BehaviorFree);
     }
@@ -114,6 +117,7 @@ fn csr_fold_diff_persist_rebuild_layouts() {
 
 #[test]
 fn persist_roundtrip_export_jsonl_imported() {
+    assert_seed_budget();
     for seed in seeds().into_iter().take(persist_seed_count()) {
         let (rt, _) = seeded_runtime(seed, MixStyle::BehaviorFree, FoldIndexMode::Eager);
         let src = persist_dir("exp-src");
