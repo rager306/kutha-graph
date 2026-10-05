@@ -16,7 +16,7 @@
     {
       "number": "58",
       "name": "Governor SMP",
-      "status": "planned"
+      "status": "executing"
     },
     {
       "number": "59",
@@ -41,8 +41,8 @@
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Lease M019 S03 (Phase 58: governor SMP) after CONTEXT",
-    "reason": "Phase 57 verified \u00b7 M019-S02-done"
+    "label": "Phase 58 leased (M019 S03)",
+    "reason": "M019 S03 leased \u00b7 PAR-01 \u00b7 v0.11 paused at S02"
   },
-  "updated_at": "2026-10-05T02:24:00.000Z"
+  "updated_at": "2026-10-05T02:27:00.000Z"
 }
