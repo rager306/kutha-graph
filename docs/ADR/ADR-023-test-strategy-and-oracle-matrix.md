@@ -44,7 +44,7 @@ Layering: every durability invariant needs a named test and a named `kill_mutati
 
 Determinism: seeded LCG only; EventIds are not stable (UUID v7); compare derived triples, not ids, until the owner decides identity; no wall-clock or sleep in oracles.
 
-Mutation policy: the verifier runs a mutation list per slice (CONTEXT D-08). `cargo-mutants` may be a host tool (this host has 27.1.0); it is never a repository dependency and never a gate.
+Mutation policy: the verifier runs a mutation list per slice. `cargo-mutants` may be a host tool (this host has 27.1.0); it is never a repository dependency and never a gate.
 
 ### D023-3. Matrix is machine-readable first
 

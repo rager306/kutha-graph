@@ -19,6 +19,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Trajectory
 
 - ADR-023 **Proposed** (Verify-primary, numbered in the 020 band). Honeycomb cell 023 is `map-only` / `capability: none`. `docs/architecture/test-matrix.yaml` is the machine map (67 rows); the `.md` page is counts, gaps by slice, and blocked decisions. Not Accepted. Not a coverage number. ADR-023 mutation policy does not cite a planning CONTEXT.
+- Honeycomb restage 59-06 (ADR-023 no planning CONTEXT cite).
 
 ## 2026-10-05 — Process: lease M019 S04 (GSD Phase 59)
 
