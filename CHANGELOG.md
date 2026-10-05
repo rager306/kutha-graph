@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Process: lease M019 S07 (GSD Phase 62)
+
+### Process
+
+- Active Milestone **M019**, Active Slice **S07** (`L_delivery=M019-S06-done`): DIFF-02, SEM-02 (DIFF-01 moved from M018 S04). First task: reference-model design plus RED differential oracles; owner-gated rules stay blocked. M018 stays paused at its S02 gate.
+
 ## 2026-10-05 — Process: close M019 S06 (GSD Phase 61)
 
 ### Process
