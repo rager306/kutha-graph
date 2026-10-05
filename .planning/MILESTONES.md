@@ -1,3 +1,10 @@
+## v0.13 Post-M002 coherence (Shipped: 2026-10-05)
+
+**Phases:** 56–62. Process tag `v0.13` (GSD process tag, not a product release). Docs honesty r3, cargo_dep_constraint, governor SMP, test matrix, durability residuals, DIFF-01/DIFF-02/SEM-02. MEM-01 partial (RSS `bytes_per_fact` not explained to a lower bound).
+**Git range:** `v0.12..v0.13`
+
+---
+
 ## v0.12 Log durability protocol (Shipped: 2026-10-04)
 
 **Phases:** 49–55. Process tag `v0.12`. SNAP-01, fail-closed WAL, framed append, commit marker option A, sealed segments with a cross-segment SHA-256 chain, droppable Rocks index lease.

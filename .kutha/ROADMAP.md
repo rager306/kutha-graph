@@ -121,7 +121,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 **Success:** living docs and ADR Evidence agree with the code (one F-register, English spine); ADR-013 records one C01 option and the Horn-vs-knowledge-cut rule, with a named oracle; derived facts have deterministic identity and follow `Correct`; every cascade hop is admitted. Fold / CSR / rebuild differential (DIFF-01) moved to M019 S07.
 
-**Paused 2026-10-03** after S01 at the S02 decision gate (needs the user's C01 / Horn choice). M002 is CLOSED (2026-10-04). M019 is active, S01 done (below). M018 remains paused at S02. Failed-WAL-open (OPEN-01) and crash-seam work moved to M002 S02. DIFF-01 moved to M019 S07.
+**Paused 2026-10-03** after S01 at the S02 decision gate (needs the user's C01 / Horn choice). M002 is CLOSED (2026-10-04). M019 is CLOSED (2026-10-05). M018 remains paused at S02. Failed-WAL-open (OPEN-01) and crash-seam work moved to M002 S02. DIFF-01 moved to M019 S07.
 
 - [x] **S01: Doc truth round 2** `risk:low` `depends:[]`
   > After this: ADR-010/012/014/041/060 Evidence and `semantic-gap-review.md` match v0.10 code (snapshot and WAL atomic, `horns_by_premise`, sidecars still in place); audit ids carry the `A-F` prefix; ADR-000 D6 and ADR-010 D010-4 no longer name Rocks WAL as shipped; ADR-013 states `as_of` is support-live, not eligibility; ADR-000 and `stca-guide.md` spine is English; CHANGELOG head, `PROJECT.md`, `.kutha/ROADMAP.md` closed-milestone wording and `.gitignore` hygiene are fixed; no file under `crates/` changes.
@@ -159,9 +159,9 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 IO-01 (cloud kernel writeback soak) stays an intake note; vacuum and litigation hold stay outside M002.
 
-## M019: Post-M002 coherence: docs, governor, test strategy, durability residuals (GSD v0.13) — active, S07 done
+## M019: Post-M002 coherence: docs, governor, test strategy, durability residuals — CLOSED (GSD v0.13)
 
-**Active, S07 done.** Awaiting milestone close. Active Milestone **M019**. v0.11 (M018 S02–S04, phases 46–48) stays paused at the S02 decision gate. One lease at a time. ADRs stay Proposed. Not M003 Cypher; not M005 HNSW; not a C01 / Horn verdict; not ADR Accepted.
+**Closed:** 2026-10-05. Process tag `v0.13` (GSD process tag, not a product release). S01–S07 complete; seven independent VERIFICATIONs (Phase 62 passed-with-findings). Crate SemVer stays 0.0.0. Residuals in `.planning/milestones/v0.13-MILESTONE-AUDIT.md`. v0.11 (M018 S02–S04, phases 46–48) stays paused at the S02 decision gate. One lease at a time. ADRs stay Proposed. Not M003 Cypher; not M005 HNSW; not a C01 / Horn verdict; not ADR Accepted.
 
 **Source:** 2026-10-04 post-M002 audits at `36fedb9` / tag `v0.12` (CBM `root-kutha-graph`, GitNexus `kutha-graph`, `rg` arbiter): `.compound-engineering/artifacts/research/2026-10-04-post-m002-audit-roadmap.md`, `2026-10-04-post-m002-audit-adr.md`, `2026-10-04-post-m002-audit-code-tests.md`, `2026-10-04-post-m002-audit-governor.md`. Owner request: docs correction first, then governor hardening plus SMP, test-strategy cell and matrix, durability residuals, semantic test expansion — all through GSD auto.
 
@@ -186,7 +186,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. Next lease on the wedge: M018 S02 (owner). M002 is CLOSED (see above). One lease at a time. M003+ stay unleased.
+Do not start until STATE names them. Next lease on the wedge: M018 S02 (owner). M002 is CLOSED. M019 is CLOSED. One lease at a time. M003+ stay unleased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -200,7 +200,7 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 8. **M017** — CLOSED (S01–S04, GSD v0.10 tagged). Detail above.
 9. **M018** — Wedge unblock (S01–S04, GSD v0.11). S01 done; S02 decision gate. Detail above.
 10. **M002** — CLOSED (S01–S07, GSD v0.12). Detail above. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity. **Intake (2026-10-02):** cloud kernel writeback / dirty-throttle stalls — `docs/architecture/m002-cloud-kernel-io-intake.md` (arXiv:2609.12597 / SteelDB companion).
-11. **M019** — active, S07 done (S01–S07, GSD v0.13). Post-M002 coherence. Detail above. Do not lease M003 while this plan is the next authored milestone. Awaiting milestone close.
+11. **M019** — CLOSED (S01–S07, GSD v0.13). Detail above.
 12. **M003** — Cypher skin over the already-correct AS OF cut.
 13. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
 14. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).

@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Process: close M019 / v0.13
+
+### Process
+
+- Close M019 (S01–S07) and archive Phases 56–62 under `.planning/milestones/v0.13-*`. What shipped: docs honesty r3, `cargo_dep_constraint`, governor SMP, test matrix, durability residuals, DIFF-01/DIFF-02/SEM-02. Cumulative bench vs v0.12 PASS (ingest_plain −6.05%, as_of +5.24%, open −0.40%). Residuals in `v0.13-MILESTONE-AUDIT.md` (MEM-01 RSS `bytes_per_fact` not explained to a lower bound; GROUP-01 verdict (c); no external chain anchor; `open` O(N); Persister/`SegmentIndex` unwired; advisory lock without lock-dir fsync; no worker timeout; `.env` cargo timeout 180 s; `id-map-cite` substring; `apply_dotenv` writes `.env` into the process environment; clippy `-D warnings` 22 pre-existing lib lints; Phase 62 equivalent/indirect pins). Process tag `v0.13` is a GSD process tag for the controller to create, not a product release; crate SemVer stays 0.0.0. Owner acknowledgement still needed for the SoT wording that `events.jsonl` is an export.
+
+### Trajectory
+
+- `L_delivery=M019-closed`, Active Milestone **None**, Active Slice **None**. M018 remains paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed.
+
 ## 2026-10-05 — Process: close M019 S07 (GSD Phase 62)
 
 ### Process

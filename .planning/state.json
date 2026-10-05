@@ -41,8 +41,8 @@
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Close milestone v0.13 / M019 after CONTEXT",
-    "reason": "Phase 62 verified \u00b7 M019-S07-done"
+    "label": "Owner decision for v0.11 Phase 46",
+    "reason": "v0.13 shipped \u00b7 M019-closed; v0.11 paused at S02"
   },
-  "updated_at": "2026-10-05T14:32:00.000Z"
+  "updated_at": "2026-10-05T15:00:00.000Z"
 }
