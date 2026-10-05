@@ -1,24 +1,28 @@
 //! Droppable RocksDB locator lease over the segmented log (ROCK-01).
 //! Not wired into `Runtime`, `store::open`, `Persister`, fold, or hydrate.
 //!
-//! Keys: `e:` + EventId, `d:` + delivery_key UTF-8, `m:v`, `m:tip`.
+//! Keys: `e:` + EventId, `d:` + delivery_key UTF-8, `m:v`, `m:tip`,
+//! `m:sealed` (per-sealed seq+chain), `m:digest` (crc32 of `e:` key||value).
 //! Values are fixed locators / ids / meta — never event payloads.
 
 use crate::segment::{self, HEADER_LEN, MANIFEST_REL, Manifest};
 use crate::store;
 use crc32fast::Hasher;
 use kutha_common::{Event, EventId, Op};
-use rocksdb::{DB, Options};
+use rocksdb::{DB, Direction, IteratorMode, Options};
 use std::fs::{self, File};
 use std::io::{self, Error, ErrorKind, Read, Seek, SeekFrom};
 use std::path::{Path, PathBuf};
 
-const FORMAT_VERSION: u32 = 1;
+const FORMAT_VERSION: u32 = 2;
 const LOCATOR_LEN: usize = 16;
 const TIP_HEX_LEN: usize = 64;
 const TIP_LEN: usize = TIP_HEX_LEN + 8 + 16;
+const DIGEST_LEN: usize = 4;
 const KEY_MV: &[u8] = b"m:v";
 const KEY_TIP: &[u8] = b"m:tip";
+const KEY_SEALED: &[u8] = b"m:sealed";
+const KEY_DIGEST: &[u8] = b"m:digest";
 
 /// On-disk frame locator: segment seq, byte offset, frame length (big-endian in Rocks).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -276,10 +280,48 @@ fn write_rows(db: &DB, located: &[Located]) -> io::Result<()> {
     Ok(())
 }
 
-fn write_meta(db: &DB, tip: &Tip) -> io::Result<()> {
+fn encode_sealed_list(man: &Manifest) -> io::Result<Vec<u8>> {
+    let n = u32::try_from(man.sealed.len()).map_err(|_| invalid("sealed list overflow"))?;
+    let mut out = Vec::with_capacity(4 + man.sealed.len() * (4 + TIP_HEX_LEN));
+    out.extend_from_slice(&n.to_be_bytes());
+    for entry in &man.sealed {
+        if entry.chain.len() != TIP_HEX_LEN {
+            return Err(invalid("sealed chain hex must be 64 characters"));
+        }
+        let seq = segment::parse_seg_seq(&entry.name)?;
+        out.extend_from_slice(&seq.to_be_bytes());
+        out.extend_from_slice(entry.chain.as_bytes());
+    }
+    Ok(out)
+}
+
+fn event_locator_digest(db: &DB) -> io::Result<(u64, [u8; DIGEST_LEN])> {
+    let mut hasher = Hasher::new();
+    let mut count = 0u64;
+    let iter = db.iterator(IteratorMode::From(b"e:", Direction::Forward));
+    for item in iter {
+        let (k, v) = item.map_err(rocks_err)?;
+        if !k.starts_with(b"e:") {
+            break;
+        }
+        hasher.update(&k);
+        hasher.update(&v);
+        count += 1;
+    }
+    Ok((count, hasher.finalize().to_be_bytes()))
+}
+
+fn write_meta(db: &DB, man: &Manifest, tip: &Tip) -> io::Result<()> {
     db.put(KEY_MV, FORMAT_VERSION.to_be_bytes())
         .map_err(rocks_err)?;
     db.put(KEY_TIP, encode_tip(tip)?).map_err(rocks_err)?;
+    db.put(KEY_SEALED, encode_sealed_list(man)?)
+        .map_err(rocks_err)?;
+    let (count, digest) = event_locator_digest(db)?;
+    if count != tip.count {
+        return Err(invalid("e: key count disagrees with m:tip"));
+    }
+    db.put(KEY_DIGEST, digest).map_err(rocks_err)?;
     Ok(())
 }
 
@@ -350,16 +392,16 @@ impl SegmentIndex {
     pub fn build(store_dir: impl AsRef<Path>, rocks_dir: impl AsRef<Path>) -> io::Result<Self> {
         let store_dir = store_dir.as_ref().to_path_buf();
         let rocks_dir = rocks_dir.as_ref().to_path_buf();
-        let (_man, located, tip) = located_committed(&store_dir)?;
+        let (man, located, tip) = located_committed(&store_dir)?;
         destroy_dir(&rocks_dir)?;
         let db = open_db(&rocks_dir, true)?;
         write_rows(&db, &located)?;
-        write_meta(&db, &tip)?;
+        write_meta(&db, &man, &tip)?;
         db.flush().map_err(rocks_err)?;
         Ok(Self { db, store_dir })
     }
 
-    /// Open if `m:tip` matches the log tip; otherwise destroy `rocks_dir` and rebuild.
+    /// Open if `m:tip` and the sealed-list binding match the manifest; otherwise rebuild.
     pub fn open_or_rebuild(
         store_dir: impl AsRef<Path>,
         rocks_dir: impl AsRef<Path>,
@@ -369,7 +411,7 @@ impl SegmentIndex {
         if rocks_dir_buf.exists() {
             match Self::try_open(store_dir_buf.clone(), rocks_dir_buf.clone()) {
                 Ok(idx) => {
-                    if idx.tip_matches_log()? && idx.tip_event_ok() {
+                    if idx.tip_matches_log()? && idx.sealed_list_matches()? && idx.tip_event_ok() {
                         return Ok(idx);
                     }
                 }
@@ -406,10 +448,19 @@ impl SegmentIndex {
         }
     }
 
+    fn sealed_list_matches(&self) -> io::Result<bool> {
+        let stored = match self.db.get(KEY_SEALED).map_err(rocks_err)? {
+            None => return Ok(false),
+            Some(bytes) => bytes,
+        };
+        let man = segment::read_manifest(&self.store_dir)?;
+        Ok(stored.as_slice() == encode_sealed_list(&man)?.as_slice())
+    }
+
     /// Index only events after the recorded tip when the log only grew.
     pub fn catch_up(&self) -> io::Result<usize> {
         let stored = stored_tip(&self.db)?;
-        let (_man, located, current) = located_committed(&self.store_dir)?;
+        let (man, located, current) = located_committed(&self.store_dir)?;
         if (located.len() as u64) < stored.count {
             return Err(invalid("log is shorter than the recorded index tip"));
         }
@@ -426,7 +477,7 @@ impl SegmentIndex {
         }
         let tail = &located[stored.count as usize..];
         write_rows(&self.db, tail)?;
-        write_meta(&self.db, &current)?;
+        write_meta(&self.db, &man, &current)?;
         self.db.flush().map_err(rocks_err)?;
         Ok(tail.len())
     }
@@ -458,11 +509,20 @@ impl SegmentIndex {
         }
     }
 
-    /// Scan `e:` keys against a stored digest (no log IO). ROCK-02 / Phase 61.
-    ///
-    /// RED stub: always `Ok` until the digest check lands. Poisoned locators
-    /// stay invisible here; `get_event` still re-verifies the frame.
+    /// Scan `e:` keys against the stored digest (O(N) keys, no log IO).
     pub fn verify_full(&self) -> io::Result<()> {
+        let stored = match self.db.get(KEY_DIGEST).map_err(rocks_err)? {
+            None => return Err(invalid("missing m:digest")),
+            Some(bytes) => bytes,
+        };
+        if stored.len() != DIGEST_LEN {
+            return Err(invalid("m:digest is not crc32"));
+        }
+        let (count, digest) = event_locator_digest(&self.db)?;
+        let tip = stored_tip(&self.db)?;
+        if count != tip.count || stored.as_slice() != digest.as_slice() {
+            return Err(invalid("index digest mismatch"));
+        }
         Ok(())
     }
 }
