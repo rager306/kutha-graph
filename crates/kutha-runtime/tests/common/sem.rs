@@ -1,5 +1,8 @@
 //! M019 S07 shared LCG, stamps, mix ingest, persist layouts.
-//! Default ≥64 seeds; `KUTHA_SEEDS=<n>` may raise (never lowers). No wall-clock oracle.
+//! Default ≥64 seeds; `KUTHA_SEEDS=<n>` may raise (never lowers).
+//! Persist/tamper/export use `persist_seed_count()` = max(12, n/5), so the env
+//! raises those families too (default 64 → 12; 256 → 51). No wall-clock oracle;
+//! persist scratch names are pid + atomic counter only.
 #![allow(dead_code)]
 
 use kutha_common::{Event, EventId, Op, TermId};
@@ -10,8 +13,12 @@ use std::{env, fs};
 
 pub const DEFAULT_SEEDS: usize = 64;
 pub const N_OPS: u32 = 8;
+pub const N_PERSIST_OPS: u32 = 4;
 const PATCH_FROM: u64 = 2015;
 const PATCH_TO: u64 = 2020;
+/// Explicit edge cut: always before mix `valid_from` (≥2010). Not an inside cut.
+pub const EDGE_VT: u64 = 2009;
+const AFTER_VT: u64 = 2025;
 
 /// Fixed table of 64 seeds (m017 LCG cousin). Extra seeds are LCG-derived.
 pub const BASE_SEEDS: [u32; DEFAULT_SEEDS] = [
@@ -120,6 +127,10 @@ pub fn assert_seed_budget() {
         "KUTHA_SEEDS must not lower the {DEFAULT_SEEDS}-seed floor"
     );
     assert_eq!(seeds().len(), n);
+    assert!(
+        persist_seed_count() >= 12,
+        "persist/tamper floor is 12 seeds"
+    );
 }
 
 pub fn seeds() -> Vec<u32> {
@@ -133,9 +144,9 @@ pub fn seeds() -> Vec<u32> {
     out
 }
 
-/// Persist/tamper use this many seeds (first of `seeds()`). Scales with `KUTHA_SEEDS`.
+/// Persist/tamper/export: `max(12, seed_count()/5)`. Default 64 → 12; env raises.
 pub fn persist_seed_count() -> usize {
-    seed_count().min(12)
+    (seed_count() / 5).max(12)
 }
 
 pub struct LimitGuard;
@@ -153,15 +164,11 @@ pub fn tiny_segment_limits() -> LimitGuard {
 
 pub fn persist_dir(label: &str) -> PathBuf {
     let n = DIR_SEQ.fetch_add(1, Ordering::Relaxed);
-    let nanos = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .map(|d| d.as_nanos())
-        .unwrap_or(0);
     let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
         .join("tmp")
         .join("p62-sem")
-        .join(format!("{label}-{n}-{}-{nanos}", std::process::id()));
+        .join(format!("{label}-{n}-{}", std::process::id()));
     let _ = fs::remove_dir_all(&dir);
     fs::create_dir_all(&dir).unwrap();
     dir
@@ -217,8 +224,19 @@ pub fn sorted_as_of(rt: &Runtime, vt: u64) -> Vec<(TermId, TermId, TermId)> {
     t
 }
 
-pub fn vt_cuts() -> [u64; 4] {
-    [2009, 2012, 2017, 2025]
+/// Four cuts: explicit 2009 edge, two strictly inside mix `valid_from`, one after.
+pub fn vt_cuts_for(min_vf: u64, max_vf: u64) -> [u64; 4] {
+    let lo = if max_vf > min_vf { min_vf + 1 } else { min_vf };
+    let hi = if max_vf > min_vf + 1 {
+        max_vf - 1
+    } else {
+        max_vf
+    };
+    [EDGE_VT, lo, hi, AFTER_VT]
+}
+
+pub fn vt_cut_inside(cut: u64, min_vf: u64, max_vf: u64) -> bool {
+    cut > min_vf && cut < max_vf
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -229,9 +247,36 @@ pub enum MixStyle {
     WithHorn,
 }
 
+pub fn persist_style(i: usize) -> MixStyle {
+    if i.is_multiple_of(2) {
+        MixStyle::BehaviorFree
+    } else {
+        MixStyle::WithHorn
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PersistLayout {
+    Legacy,
+    Segmented,
+    Rollover,
+    Migrated,
+}
+
+pub fn persist_layout(i: usize) -> PersistLayout {
+    match i % 4 {
+        0 => PersistLayout::Legacy,
+        1 => PersistLayout::Segmented,
+        2 => PersistLayout::Rollover,
+        _ => PersistLayout::Migrated,
+    }
+}
+
 pub struct MixMeta {
     pub last_wall: Option<u64>,
     pub saw_assert: bool,
+    pub min_vf: u64,
+    pub max_vf: u64,
 }
 
 fn emit_assert(
@@ -257,8 +302,13 @@ fn emit_assert(
     out.receipt.event_ids[0]
 }
 
+fn note_vf(meta: &mut MixMeta, vf: u64) {
+    meta.min_vf = meta.min_vf.min(vf);
+    meta.max_vf = meta.max_vf.max(vf);
+}
+
 /// Seeded mix: Assert / Retract / Correct / CorrectInterval / TtAnchor. No wall clock.
-pub fn ingest_mix(rt: &mut Runtime, seed: u32, style: MixStyle) -> MixMeta {
+pub fn ingest_mix_n(rt: &mut Runtime, seed: u32, style: MixStyle, n_ops: u32) -> MixMeta {
     let mut lcg = Lcg::from_seed(seed);
     let related = rt.intern("relatedTo");
     let knows = rt.intern("knows");
@@ -266,11 +316,15 @@ pub fn ingest_mix(rt: &mut Runtime, seed: u32, style: MixStyle) -> MixMeta {
     let obj_b = rt.intern("P-prime");
     let subjects: Vec<TermId> = (0..4).map(|i| rt.intern(&format!("s{i}"))).collect();
     let mut pool: Vec<EventId> = Vec::new();
-    let mut last_wall = Some(2014);
-    let mut saw_assert = false;
+    let mut meta = MixMeta {
+        last_wall: Some(2014),
+        saw_assert: false,
+        min_vf: u64::MAX,
+        max_vf: 0,
+    };
     let _ = rt.emit_tt_anchor(2014u64);
 
-    for i in 0..N_OPS {
+    for i in 0..n_ops {
         let draw = lcg.draw100();
         let subj = subjects[lcg.pick(subjects.len())];
         let rel = match style {
@@ -288,7 +342,8 @@ pub fn ingest_mix(rt: &mut Runtime, seed: u32, style: MixStyle) -> MixMeta {
         if want_assert {
             let id = emit_assert(rt, subj, rel, obj_a, valid_from, valid_to);
             pool.push(id);
-            saw_assert = true;
+            meta.saw_assert = true;
+            note_vf(&mut meta, valid_from);
             continue;
         }
         if draw < 55 {
@@ -298,7 +353,8 @@ pub fn ingest_mix(rt: &mut Runtime, seed: u32, style: MixStyle) -> MixMeta {
                 Err(RuntimeError::UnknownFact { .. }) => {
                     let id = emit_assert(rt, subj, rel, obj_a, valid_from, valid_to);
                     pool.push(id);
-                    saw_assert = true;
+                    meta.saw_assert = true;
+                    note_vf(&mut meta, valid_from);
                 }
                 Err(e) => panic!("Retract seed={seed} i={i}: {e}"),
             }
@@ -329,7 +385,8 @@ pub fn ingest_mix(rt: &mut Runtime, seed: u32, style: MixStyle) -> MixMeta {
             if !patched {
                 let id = emit_assert(rt, subj, rel, obj_a, valid_from, valid_to);
                 pool.push(id);
-                saw_assert = true;
+                meta.saw_assert = true;
+                note_vf(&mut meta, valid_from);
             }
             continue;
         }
@@ -348,6 +405,7 @@ pub fn ingest_mix(rt: &mut Runtime, seed: u32, style: MixStyle) -> MixMeta {
                             pool.push(*new_id);
                         }
                         done = true;
+                        note_vf(&mut meta, valid_from);
                         break;
                     }
                     Err(RuntimeError::UnknownFact { .. }) => {}
@@ -357,31 +415,50 @@ pub fn ingest_mix(rt: &mut Runtime, seed: u32, style: MixStyle) -> MixMeta {
             if !done {
                 let id = emit_assert(rt, subj, rel, obj_a, valid_from, valid_to);
                 pool.push(id);
-                saw_assert = true;
+                meta.saw_assert = true;
+                note_vf(&mut meta, valid_from);
             }
             continue;
         }
         let wall = 2015 + u64::from(i);
         match rt.emit_tt_anchor(wall) {
-            Ok(_) => last_wall = Some(wall),
+            Ok(_) => meta.last_wall = Some(wall),
             Err(RuntimeError::TtAnchorRejected { .. }) => {}
             Err(e) => panic!("TtAnchor seed={seed} i={i}: {e}"),
         }
     }
-    MixMeta {
-        last_wall,
-        saw_assert,
+    if meta.min_vf == u64::MAX {
+        meta.min_vf = 2010;
+        meta.max_vf = 2014;
     }
+    meta
 }
 
-pub fn seeded_runtime(seed: u32, style: MixStyle, mode: FoldIndexMode) -> (Runtime, MixMeta) {
+pub fn ingest_mix(rt: &mut Runtime, seed: u32, style: MixStyle) -> MixMeta {
+    ingest_mix_n(rt, seed, style, N_OPS)
+}
+
+pub fn seeded_runtime_n(
+    seed: u32,
+    style: MixStyle,
+    mode: FoldIndexMode,
+    n_ops: u32,
+) -> (Runtime, MixMeta) {
     let mut rt = Runtime::with_index_mode(32, mode);
-    let meta = ingest_mix(&mut rt, seed, style);
+    let meta = ingest_mix_n(&mut rt, seed, style, n_ops);
     assert!(
         meta.saw_assert,
         "seed={seed} mix must include a product Assert"
     );
     (rt, meta)
+}
+
+pub fn seeded_runtime(seed: u32, style: MixStyle, mode: FoldIndexMode) -> (Runtime, MixMeta) {
+    seeded_runtime_n(seed, style, mode, N_OPS)
+}
+
+pub fn seeded_persist_runtime(seed: u32, style: MixStyle) -> (Runtime, MixMeta) {
+    seeded_runtime_n(seed, style, FoldIndexMode::Eager, N_PERSIST_OPS)
 }
 
 pub fn brief_ops(events: &[Event]) -> String {
@@ -447,7 +524,16 @@ pub fn fail_seed(seed: u32, case: usize, events: &[Event], msg: &str) -> ! {
         events.len(),
         brief_ops(events)
     );
+    eprintln!("shrunk ops={}", brief_ops(events));
     panic!("{msg}");
+}
+
+pub fn fail_shrunk<F>(seed: u32, case: usize, events: &[Event], pred_fails: F, msg: &str) -> !
+where
+    F: FnMut(&[Event]) -> bool,
+{
+    let shrunk = shrink_events(events, pred_fails);
+    fail_seed(seed, case, &shrunk, msg);
 }
 
 pub fn persist_legacy(rt: &Runtime, dir: &Path) {
@@ -486,6 +572,24 @@ pub fn persist_migrated(rt: &Runtime, dir: &Path) {
     assert!(dir.join(store::MANIFEST_REL).exists());
 }
 
+pub fn persist_with_layout(rt: &Runtime, dir: &Path, layout: PersistLayout) -> usize {
+    match layout {
+        PersistLayout::Legacy => {
+            persist_legacy(rt, dir);
+            0
+        }
+        PersistLayout::Segmented => {
+            persist_segmented(rt, dir);
+            sealed_count(dir)
+        }
+        PersistLayout::Rollover => persist_segmented_rollover(rt, dir),
+        PersistLayout::Migrated => {
+            persist_migrated(rt, dir);
+            sealed_count(dir)
+        }
+    }
+}
+
 /// export_jsonl into a fresh jsonl-only dir (no manifest / WAL). Open uses jsonl as SoT.
 pub fn open_export_imported(src: &Path, dest: &Path) -> Runtime {
     store::export_jsonl(src).unwrap();
@@ -494,8 +598,7 @@ pub fn open_export_imported(src: &Path, dest: &Path) -> Runtime {
     store::open(dest).unwrap()
 }
 
-pub fn assert_csr_matches_fold(rt: &Runtime, tt: u64, vt: u64, seed: u32, case: usize) {
-    let want = sorted_live(rt, tt, vt);
+pub fn typed_csr_triples(rt: &Runtime, tt: u64, vt: u64) -> Vec<(TermId, TermId, TermId)> {
     let typed = rt.typed_csr_lease_at(tt, vt);
     let mut from_typed = Vec::new();
     for v in 0..rt.dictionary().len() as u32 {
@@ -504,11 +607,23 @@ pub fn assert_csr_matches_fold(rt: &Runtime, tt: u64, vt: u64, seed: u32, case: 
         }
     }
     from_typed.sort_unstable();
+    from_typed
+}
+
+pub fn csr_disagrees(rt: &Runtime, events: &[Event], tt: u64, vt: u64) -> bool {
+    let r = replay_runtime(rt, events);
+    typed_csr_triples(&r, tt, vt) != sorted_live(&r, tt, vt)
+}
+
+pub fn assert_csr_matches_fold(rt: &Runtime, tt: u64, vt: u64, seed: u32, case: usize) {
+    let want = sorted_live(rt, tt, vt);
+    let from_typed = typed_csr_triples(rt, tt, vt);
     if from_typed != want {
-        fail_seed(
+        fail_shrunk(
             seed,
             case,
             rt.log().as_slice(),
+            |prefix| csr_disagrees(rt, prefix, tt, vt),
             "typed CSR edges must equal live_at triples",
         );
     }
@@ -526,31 +641,151 @@ pub fn assert_csr_matches_fold(rt: &Runtime, tt: u64, vt: u64, seed: u32, case: 
     }
     for v in 0..rt.dictionary().len() as u32 {
         if untyped.neighbors(v) != buckets[v as usize].as_slice() {
-            fail_seed(
+            fail_shrunk(
                 seed,
                 case,
                 rt.log().as_slice(),
+                |prefix| csr_disagrees(rt, prefix, tt, vt),
                 "untyped CSR neighbors must equal unique live objects",
             );
         }
     }
 }
 
-pub fn assert_views_stable(rt: &Runtime, last_wall: Option<u64>, seed: u32, case: usize) {
-    for (i, vt) in vt_cuts().iter().enumerate() {
+pub fn persist_stamps_disagree(
+    rt: &Runtime,
+    events: &[Event],
+    layout: PersistLayout,
+    seed: u32,
+) -> bool {
+    let live = replay_runtime(rt, events);
+    let dir = persist_dir(&format!("shrink-{seed}"));
+    persist_with_layout(&live, &dir, layout);
+    let bad = match store::open(&dir) {
+        Ok(opened) => runtime_stamps(&live) != runtime_stamps(&opened),
+        Err(_) => true,
+    };
+    rm_dir(&dir);
+    bad
+}
+
+pub fn assert_same_stamps_shrunk(
+    a: &Runtime,
+    b: &Runtime,
+    seed: u32,
+    case: usize,
+    layout: PersistLayout,
+    msg: &str,
+) {
+    if runtime_stamps(a) != runtime_stamps(b) {
+        fail_shrunk(
+            seed,
+            case,
+            a.log().as_slice(),
+            |prefix| persist_stamps_disagree(a, prefix, layout, seed),
+            msg,
+        );
+    }
+}
+
+pub fn replay_check_or_shrink(rt: &Runtime, seed: u32, case: usize) {
+    if let Err(e) = rt.replay_check() {
+        fail_shrunk(
+            seed,
+            case,
+            rt.log().as_slice(),
+            |prefix| replay_runtime(rt, prefix).replay_check().is_err(),
+            &format!("replay_check: {e}"),
+        );
+    }
+}
+
+pub fn expected_next_tt(events: &[Event]) -> u64 {
+    events
+        .iter()
+        .map(|e| e.ingested_at.saturating_add(1))
+        .max()
+        .unwrap_or(0)
+}
+
+pub fn qo_count(events: &[Event]) -> usize {
+    events
+        .iter()
+        .filter(|e| matches!(e.op, Op::QuantumOutcome { .. }))
+        .count()
+}
+
+/// Every log event is load-bearing: count, committed prefix, dictionary, outcomes, next_tt.
+#[derive(Debug, PartialEq, Eq)]
+pub struct LoadBearing {
+    pub n_events: usize,
+    pub n_committed: usize,
+    pub dict: Vec<String>,
+    pub n_outcomes: usize,
+    pub graph_len: usize,
+    pub next_tt: u64,
+    pub ops: String,
+}
+
+pub fn load_bearing(rt: &Runtime) -> LoadBearing {
+    let events = rt.log().as_slice();
+    LoadBearing {
+        n_events: events.len(),
+        n_committed: store::committed_prefix(events.to_vec()).len(),
+        dict: rt.dictionary().strings().to_vec(),
+        n_outcomes: rt.outcome_records().len(),
+        graph_len: rt.graph_len(),
+        next_tt: rt.snapshot().next_tt,
+        ops: brief_ops(events),
+    }
+}
+
+pub fn hydrate_skips_event(rt: &Runtime, events: &[Event]) -> bool {
+    let r = replay_runtime(rt, events);
+    r.log().as_slice().len() != events.len()
+        || r.outcome_records().len() != qo_count(events)
+        || r.snapshot().next_tt != expected_next_tt(events)
+        || store::committed_prefix(r.log().as_slice().to_vec()).len()
+            != store::committed_prefix(events.to_vec()).len()
+}
+
+pub fn assert_load_bearing(live: &Runtime, replayed: &Runtime, seed: u32, case: usize) {
+    let events = live.log().as_slice();
+    if replayed.log().as_slice().len() != events.len()
+        || load_bearing(live) != load_bearing(replayed)
+        || replayed.snapshot().next_tt != expected_next_tt(events)
+        || replayed.outcome_records().len() != qo_count(events)
+    {
+        fail_shrunk(
+            seed,
+            case,
+            events,
+            |prefix| hydrate_skips_event(live, prefix),
+            "hydrate must keep event count, committed prefix, dictionary, outcomes, next_tt",
+        );
+    }
+}
+
+pub fn assert_views_stable(rt: &Runtime, meta: &MixMeta, seed: u32, case: usize) {
+    let cuts = vt_cuts_for(meta.min_vf, meta.max_vf);
+    for (i, vt) in cuts.iter().enumerate() {
         let as_of = sorted_as_of(rt, *vt);
         let live_max = sorted_live(rt, u64::MAX, *vt);
         if as_of != live_max {
-            fail_seed(
+            fail_shrunk(
                 seed,
                 case + i,
                 rt.log().as_slice(),
+                |prefix| {
+                    let r = replay_runtime(rt, prefix);
+                    sorted_as_of(&r, *vt) != sorted_live(&r, u64::MAX, *vt)
+                },
                 "as_of(vt) must equal live_at(MAX, vt)",
             );
         }
         assert_csr_matches_fold(rt, u64::MAX, *vt, seed, case + 10 + i);
     }
-    if let Some(wall) = last_wall {
+    if let Some(wall) = meta.last_wall {
         let Some(mut known) = rt.as_known_on(wall) else {
             fail_seed(
                 seed,
@@ -594,8 +829,8 @@ pub fn assert_views_stable(rt: &Runtime, last_wall: Option<u64>, seed: u32, case
         v
     };
     if let Some(&mid) = tts.get(tts.len() / 2) {
-        assert_csr_matches_fold(rt, mid, 2017, seed, case + 40);
-        assert_csr_matches_fold(rt, mid, 2012, seed, case + 41);
+        let inside = vt_cuts_for(meta.min_vf, meta.max_vf)[1];
+        assert_csr_matches_fold(rt, mid, inside, seed, case + 40);
     }
 }
 
@@ -615,4 +850,160 @@ pub fn assert_same_stamps(a: &Runtime, b: &Runtime, seed: u32, case: usize, msg:
     if runtime_stamps(a) != runtime_stamps(b) {
         fail_seed(seed, case, a.log().as_slice(), msg);
     }
+}
+
+fn is_seal_payload(payload: &[u8]) -> bool {
+    serde_json::from_slice::<serde_json::Value>(payload)
+        .ok()
+        .and_then(|v| v.get("k").and_then(|k| k.as_str()).map(|s| s == "seal"))
+        .unwrap_or(false)
+}
+
+pub fn event_frame_ranges(bytes: &[u8]) -> Vec<(usize, usize)> {
+    let hdr = store::SEGMENT_HEADER_LEN as usize;
+    assert!(bytes.len() >= hdr, "segment header");
+    assert_eq!(&bytes[0..8], b"KUTHASEG");
+    let mut off = hdr;
+    let mut out = Vec::new();
+    while off + 8 <= bytes.len() {
+        let mut len_buf = [0u8; 4];
+        len_buf.copy_from_slice(&bytes[off..off + 4]);
+        let len = u32::from_le_bytes(len_buf) as usize;
+        let end = off + 8 + len;
+        if end > bytes.len() {
+            break;
+        }
+        if is_seal_payload(&bytes[off + 8..end]) {
+            break;
+        }
+        out.push((off, end));
+        off = end;
+    }
+    out
+}
+
+pub fn sealed_path(dir: &Path, i: usize) -> PathBuf {
+    let v: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(dir.join(store::MANIFEST_REL)).unwrap()).unwrap();
+    dir.join(
+        v["sealed"][i]["name"]
+            .as_str()
+            .unwrap_or_else(|| panic!("sealed[{i}].name")),
+    )
+}
+
+/// XOR one payload byte in a middle sealed segment. Open must fail closed: CRC mismatch.
+pub fn flip_middle_segment_payload(dir: &Path) -> usize {
+    let n = sealed_count(dir);
+    assert!(
+        n >= 3,
+        "need ≥3 sealed segments to flip a middle file; n={n}"
+    );
+    let mid = n / 2;
+    let path = sealed_path(dir, mid);
+    let mut bytes = fs::read(&path).unwrap();
+    let ranges = event_frame_ranges(&bytes);
+    assert!(
+        ranges.len() >= 2,
+        "middle sealed {} must have a payload frame to flip",
+        path.display()
+    );
+    let payload = ranges[1].0 + 8;
+    bytes[payload] ^= 0x01;
+    fs::write(&path, &bytes).unwrap();
+    mid
+}
+
+/// XOR one nibble of the middle sealed entry's manifest `chain` field.
+pub fn flip_manifest_chain(dir: &Path) -> usize {
+    let path = dir.join(store::MANIFEST_REL);
+    let mut v: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&path).unwrap()).unwrap();
+    let n = v["sealed"].as_array().map(|a| a.len()).unwrap_or(0);
+    assert!(n >= 3, "need ≥3 sealed entries to flip middle chain; n={n}");
+    let mid = n / 2;
+    let chain = v["sealed"][mid]["chain"]
+        .as_str()
+        .expect("sealed.chain")
+        .to_string();
+    let mut chars: Vec<char> = chain.chars().collect();
+    if let Some(last) = chars.last_mut() {
+        *last = if *last == '0' { '1' } else { '0' };
+    }
+    v["sealed"][mid]["chain"] = serde_json::Value::String(chars.into_iter().collect());
+    fs::write(&path, serde_json::to_vec(&v).unwrap()).unwrap();
+    mid
+}
+
+pub fn open_fails_closed(dir: &Path, needle: &str, seed: u32, case: usize) {
+    match store::open(dir) {
+        Ok(_) => fail_seed(
+            seed,
+            case,
+            &[],
+            &format!("open must fail closed ({needle})"),
+        ),
+        Err(e) => {
+            assert_eq!(
+                e.kind(),
+                std::io::ErrorKind::InvalidData,
+                "seed={seed} case={case}: fail closed InvalidData, got {e}"
+            );
+            let msg = e.to_string();
+            assert!(
+                msg.contains(needle),
+                "seed={seed} case={case}: error must mention {needle:?}; got {msg}"
+            );
+        }
+    }
+}
+
+#[derive(Default)]
+pub struct MixCoverage {
+    pub n: usize,
+    pub retract: usize,
+    pub correct: usize,
+    pub interval: usize,
+    pub horn: usize,
+    pub vt_inside: usize,
+    pub vt_total: usize,
+}
+
+pub fn scan_mix_coverage(rt: &Runtime, meta: &MixMeta, style: MixStyle) -> MixCoverage {
+    let mut c = MixCoverage::default();
+    c.n = 1;
+    let mut saw_r = false;
+    let mut saw_c = false;
+    let mut saw_i = false;
+    let mut saw_h = false;
+    for e in rt.log().iter() {
+        match &e.op {
+            Op::Retract { .. } => saw_r = true,
+            Op::Correct { .. } => saw_c = true,
+            Op::CorrectInterval { .. } => saw_i = true,
+            Op::Behavior { name, .. } if name == "inverse_knows" || name == "alsoKnows" => {
+                saw_h = true;
+            }
+            _ => {}
+        }
+    }
+    if saw_r {
+        c.retract = 1;
+    }
+    if saw_c {
+        c.correct = 1;
+    }
+    if saw_i {
+        c.interval = 1;
+    }
+    if saw_h && style == MixStyle::WithHorn {
+        c.horn = 1;
+    }
+    for vt in vt_cuts_for(meta.min_vf, meta.max_vf) {
+        c.vt_total = c.vt_total.saturating_add(1);
+        if vt_cut_inside(vt, meta.min_vf, meta.max_vf) {
+            c.vt_inside = c.vt_inside.saturating_add(1);
+        }
+    }
+    c
 }
