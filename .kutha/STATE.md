@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M019
-**Active Slice:** S02
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M019-S01-done
+L_delivery=M019-S02-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M019 S02 active (governor hardening); M018 paused at its S02 decision gate | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M019 S02 done (governor hardening); S03 unleased; M018 paused at its S02 decision gate | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M019 S02 leased** (`L_delivery=M019-S01-done`, Active Milestone **M019**, Active Slice **S02**, 2026-10-04). GSD Phase 57 only: GOV-04, GOV-05, GOV-06; first task RED pytest for freeze bypass forms. Process tag `v0.12` exists (created 2026-10-04 at `36fedb9`). M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
+**M019 S02 closed** (`L_delivery=M019-S02-done`, Active Milestone **M019**, Active Slice **None**, 2026-10-05). GSD Phase 57 verified independently (19/19). Next: controller lease M019 S03 (Phase 58 governor SMP). Rust 1.99 / edition 2024 are already in tree. Process tag `v0.12` exists (created 2026-10-04 at `36fedb9`). M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
 
 ## Thaw map
 

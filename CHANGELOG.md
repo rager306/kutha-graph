@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Process: close M019 S02 (GSD Phase 57)
+
+### Process
+
+- `L_delivery=M019-S02-done`, Active Slice **None**. Independent verification 19/19 (`57-VERIFICATION.md`). Governor hardening (GOV-04, GOV-05, GOV-06) closed: `cargo_dep_constraint` kind with stdlib `tomllib`; 7 bypass forms RED then green; M002 oracles enrolled in `observe_cargo` plus an `observe_rocks` row; strict `artifact-budget`; `id-map-cite` requires `v0.12`/`v0.13`; selftest classification 58 derived / 4 explicit mutation / 2 explicit skip, 0 file-exists-only; `rust_test_asserts` index cached (selftest ~17 min → ~28 s, `ci` ~56 s warm); full pytest 159 passed ~110 s. Honest residuals: `.env` `KUTHA_GOV_CARGO_TIMEOUT_SEC=180` overrides the 420 s rocks row so a cold RocksDB build can time out (fail closed); `test_ci_green_on_this_tree` is hermetic-stubbed and no longer proves live cargo observe (the controller's standalone `ci` does); `id-map-cite` needle is a substring; `docs-coupling` and `verification-independent` selftests are explicit skips; CBM index is stale for `scripts/kutha_gov` (controller reindex pending). No capability claim. Next: controller leases M019 S03 (Phase 58 governor SMP).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADRs remain Proposed. `L_capability` unchanged (FF5). M018 remains paused at its S02 decision gate.
+
 ## 2026-10-05 — Process: hermetic pytest ci and rust_test_asserts cache (GSD Phase 57)
 
 ### Process
