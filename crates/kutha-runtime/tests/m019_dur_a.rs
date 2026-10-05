@@ -432,6 +432,7 @@ fn dead_process_stale_lock_does_not_block() {
         let path = PathBuf::from(&dir).join(store::STORE_LOCK_REL);
         let f = OpenOptions::new()
             .create(true)
+            .truncate(false)
             .read(true)
             .write(true)
             .open(&path)

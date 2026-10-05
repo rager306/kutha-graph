@@ -23,9 +23,9 @@ Counted from `test-matrix.yaml` rows on 2026-10-05. Recount after you edit the Y
 
 | Status | Rows |
 |--------|------|
-| killed | 34 |
-| characterization | 3 |
-| gap | 19 |
+| killed | 46 |
+| characterization | 4 |
+| gap | 6 |
 | blocked | 6 |
 | spec-only | 4 |
 | gate | 1 |
@@ -35,7 +35,7 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 ## Gaps by slice
 
-**M019-S05 (durability A):** `DUR-checkpoint-omitted-qo`, `DUR-jsonl-inode-rename`, `DUR-seg-manifest-sync-all`, `DUR-seg-final-sync-dir`, `DUR-mixed-typed-dict`, `DUR-migrate-tail-guard`, `DUR-active-exact-frame-end`, `DUR-wrong-role-active`, `DUR-two-writer`, `DUR-chain-active-prev`, `DUR-manifest-pre-rename`, `DUR-sealed-trailer-lie`, `DUR-migrate-concurrent`.
+**M019-S05 (durability A):** closed in Phase 60 — 12 `killed` + `DUR-mixed-typed-dict` `characterization` (GROUP-01 verdict (c); Typed/Dictionary SelfCommit prefix can be visible after a crash).
 
 **M019-S06 (durability B):** `DUR-export-race`, `DUR-rocks-mid-stale`, `DUR-bytes-per-fact`. Spec-only on the same slice: `DUR-dead-code-fate`, `DUR-index-wiring`. Bench controller: `BENCH-controller`.
 

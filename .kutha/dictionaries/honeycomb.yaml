@@ -116,6 +116,11 @@ cells:
       - persist_empty_dir_writes_segments_not_jsonl
       # feature-gated m002_rock01; default cargo test does not run them (S02 wires an observe row)
       - index_answers_equal_the_log
+      # Phase 60 / M019 S05 — lock + GROUP-01 (c); cell still Proposed
+      - two_writer_attach_fails_closed
+      - persist_migrate_race_serialized_or_fails_closed
+      - mixed_typed_dict_partial_group_is_visible
+      - checkpoint_omitted_qo_then_open_for_append_fails_closed
 
   - id: ADR-011
     axis: Time
@@ -149,6 +154,9 @@ cells:
       - export_jsonl_roundtrips_and_is_never_read_on_open
       # feature-gated m002_rock01; default cargo test does not run them (S02 wires an observe row)
       - dropping_rocks_dir_changes_no_answer
+      # Phase 60 / M019 S05 — persist lock wraps snapshot rewrite; cell still Proposed
+      - jsonl_inode_changes_on_persist_rename
+      - checkpoint_omitted_qo_then_open_for_append_fails_closed
 
   - id: ADR-013
     axis: Time
@@ -189,6 +197,9 @@ cells:
       - discard_outcomes_sidecar_keeps_reconstructible_disposition
       - discard_justifications_sidecar_keeps_admission_and_resume
       - provenance_fingerprint_moves_when_log_native_record_bytes_change
+      # Phase 60 / M019 S05 — GROUP-01 (c) + WRITER-01; cell still Proposed
+      - mixed_typed_dict_partial_group_is_visible
+      - two_writer_attach_fails_closed
 
   - id: ADR-020
     axis: Space

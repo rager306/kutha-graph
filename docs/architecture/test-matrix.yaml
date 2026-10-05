@@ -213,11 +213,12 @@ rows:
   # --- durability gaps (S05 A / S06 B) ---
   - id: DUR-checkpoint-omitted-qo
     plane: product
-    invariant: checkpoint after an omitted QuantumOutcome then open_for_append heal vs fail-closed
+    invariant: checkpoint after an omitted QuantumOutcome then open_for_append fail-closed
     layer: crash
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - checkpoint_omitted_qo_then_open_for_append_fails_closed
+    kill_mutation: skip snapshot log_offset-ahead check so open_for_append heals
+    status: killed
     gate: default
     owner: M019-S05
     source: audit-code-tests §2 MED
@@ -225,9 +226,10 @@ rows:
     plane: product
     invariant: jsonl replaced via tmp+rename witness (inode change / no in-place write)
     layer: crash
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - jsonl_inode_changes_on_persist_rename
+    kill_mutation: write events.jsonl in place (File::create dest, no tmp+rename)
+    status: killed
     gate: default
     owner: M019-S05
     source: audit-code-tests §2 / verifier surviving mutation
@@ -235,9 +237,10 @@ rows:
     plane: product
     invariant: segmented write_manifest sync_all on tmp before rename
     layer: crash
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - seg_manifest_tmp_sync_all_before_rename
+    kill_mutation: skip sync_all on tmp when dest is manifest.json
+    status: killed
     gate: default
     owner: M019-S05
     source: audit-code-tests §2 residual
@@ -245,19 +248,21 @@ rows:
     plane: product
     invariant: final sync_dir after segmented persist_log
     layer: crash
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - seg_final_sync_dir_after_persist_log
+    kill_mutation: skip the final sync_dir at the end of persist_unlocked
+    status: killed
     gate: default
     owner: M019-S05
     source: audit-code-tests §2 residual
   - id: DUR-mixed-typed-dict
     plane: product
-    invariant: mixed Typed/Dictionary uncommitted group vs committed_prefix
-    layer: crash
-    oracle: []
-    kill_mutation: none
-    status: gap
+    invariant: characterization — crashed Typed/Dictionary group can expose a SelfCommit prefix
+    layer: characterization
+    oracle:
+      - mixed_typed_dict_partial_group_is_visible
+    kill_mutation: drop every event after the last QuantumOutcome
+    status: characterization
     gate: default
     owner: M019-S05
     source: audit-code-tests §2 HIGH
@@ -265,9 +270,10 @@ rows:
     plane: product
     invariant: tail guard after migrate (same-length last-frame swap on new active)
     layer: crash
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - migrate_tail_guard_rejects_same_length_last_frame_swap
+    kill_mutation: skip tail_guard on a segmented active
+    status: killed
     gate: default
     owner: M019-S05
     source: audit-code-tests §2
@@ -275,9 +281,10 @@ rows:
     plane: product
     invariant: truncate active at an exact complete frame end keeps the prefix
     layer: crash
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - active_truncate_at_exact_frame_end_keeps_prefix
+    kill_mutation: clear events when scan hits an exact frame-end EOF on active
+    status: killed
     gate: default
     owner: M019-S05
     source: audit-code-tests §2
@@ -285,9 +292,10 @@ rows:
     plane: product
     invariant: manifest.active names a sealed file that exists (wrong role)
     layer: crash
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - wrong_role_active_names_sealed_file_fails_closed
+    kill_mutation: skip sequence + skip named active + skip snapshot-ahead/tt-anchor/replay/sidecar checks
+    status: killed
     gate: default
     owner: M019-S05
     source: audit-code-tests §2
@@ -295,9 +303,10 @@ rows:
     plane: product
     invariant: two Persister::attach on one dir fail closed
     layer: crash
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - two_writer_attach_fails_closed
+    kill_mutation: skip acquire_store_write_lock in Persister::attach
+    status: killed
     gate: default
     owner: M019-S05
     source: audit-code-tests §2 HIGH
@@ -305,9 +314,10 @@ rows:
     plane: product
     invariant: flip active header prev-hash while sealed chain stays valid
     layer: crash
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - chain_active_prev_hash_flip_fails_closed
+    kill_mutation: skip read_active prev-hash vs expected tip
+    status: killed
     gate: default
     owner: M019-S05
     source: audit-code-tests §2 residual
@@ -315,9 +325,10 @@ rows:
     plane: product
     invariant: crash after new header exists, before manifest rename; second open
     layer: crash
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - manifest_pre_rename_second_open_keeps_prefix
+    kill_mutation: treat an unnamed leftover seg-*.log as InvalidData
+    status: killed
     gate: default
     owner: M019-S05
     source: audit-code-tests §2 residual
@@ -325,9 +336,10 @@ rows:
     plane: product
     invariant: sealed truncate with trailer.bytes rewritten to match
     layer: crash
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - sealed_trailer_bytes_lie_fails_closed
+    kill_mutation: skip sealed chain-link + return scan+expected_prev + skip snapshot-ahead and replay_check
+    status: killed
     gate: default
     owner: M019-S05
     source: audit-code-tests §2 residual
@@ -335,9 +347,10 @@ rows:
     plane: product
     invariant: concurrent persist on the same legacy dir during migrate
     layer: crash
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - persist_migrate_race_serialized_or_fails_closed
+    kill_mutation: skip acquire_store_write_lock in migrate_until
+    status: killed
     gate: default
     owner: M019-S05
     source: audit-code-tests §2 residual

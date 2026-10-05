@@ -69,6 +69,7 @@ pub fn acquire_store_write_lock(dir: &Path) -> std::io::Result<File> {
     let path = dir.join(STORE_LOCK_REL);
     let file = OpenOptions::new()
         .create(true)
+        .truncate(false)
         .read(true)
         .write(true)
         .open(&path)?;

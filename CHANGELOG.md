@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Product: durability residuals A (M019 S05 / GSD Phase 60)
+
+### Product
+
+- Added advisory single-writer lock `kutha.lock` (`File::try_lock`, `ErrorKind::WouldBlock`, message names the file) on `Persister::attach`, `open_for_append`, `store::persist`, `store::migrate`, and `store::export_jsonl`. Readers (`store::open`) take no lock. A dead-process lock file does not block. Panic/unwind Drop unlocks. Failed append/checkpoint releases the lock so in-process heal can run; attach validates before locking so a dirty tail stays `InvalidData`.
+- Added `m019_dur_a.rs` oracles for the 13 S05 matrix rows plus lock semantics (second writer, reader unaffected, dead-process, panic release, listings ignore `kutha.lock`).
+- GROUP-01 stays verdict (c): no Event/Op/Snapshot/frame-format change. A crashed Typed/Dictionary group can still expose a SelfCommit prefix (`mixed_typed_dict_partial_group_is_visible`, characterization).
+
+### Trajectory
+
+- ADR-010 / ADR-012 / ADR-014 Evidence 2026-10-05; statuses stay **Proposed**. Residuals: no external chain anchor; `open` O(N); `Persister` not wired into `kutha-tenant`.
+- Test matrix: killed 34→46, characterization 3→4, gap 19→6 (total 67). S05 gaps closed; S06/S07 gaps remain.
+
 ## 2026-10-05 — Process: lease M019 S05 (GSD Phase 60)
 
 ### Process
