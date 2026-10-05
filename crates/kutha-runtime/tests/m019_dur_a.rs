@@ -163,10 +163,7 @@ fn overlay_full_active(rt: &Runtime, dir: &Path) {
 fn active_name(dir: &Path) -> String {
     let v: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(dir.join(store::MANIFEST_REL)).unwrap()).unwrap();
-    v["active"]
-        .as_str()
-        .expect("manifest.active")
-        .to_string()
+    v["active"].as_str().expect("manifest.active").to_string()
 }
 
 fn event_frame_ranges(bytes: &[u8]) -> Vec<(usize, usize)> {
@@ -212,6 +209,7 @@ fn checkpoint_omitted_qo_then_open_for_append_fails_closed() {
     emit_product_assert(&mut rt, "p60-omit-article", "p60-omit-80");
     crash_omit_last(&mut p, &rt);
     p.checkpoint(&rt).expect("checkpoint after omitted QO");
+    drop(p);
     let err = match store::open_for_append(&dir) {
         Ok(_) => panic!("must fail closed, not heal"),
         Err(e) => e,
@@ -464,8 +462,8 @@ fn dead_process_stale_lock_does_not_block() {
     }
     child.kill().unwrap();
     let _ = child.wait();
-    let _p = store::Persister::attach(&rt, &dir)
-        .expect("advisory lock must die with the child process");
+    let _p =
+        store::Persister::attach(&rt, &dir).expect("advisory lock must die with the child process");
     let _ = fs::remove_dir_all(&dir);
 }
 
@@ -497,7 +495,10 @@ fn lock_file_ignored_by_dir_listings() {
         .into_iter()
         .filter(|n| n.ends_with(".tmp"))
         .collect();
-    assert!(tmp.is_empty(), "listings that skip the lock must see no .tmp; {tmp:?}");
+    assert!(
+        tmp.is_empty(),
+        "listings that skip the lock must see no .tmp; {tmp:?}"
+    );
     let _ = fs::remove_dir_all(&dir);
 }
 
@@ -561,7 +562,10 @@ fn sealed_trailer_bytes_lie_fails_closed() {
     let sealed = dir.join(&sealed_name);
     let bytes = fs::read(&sealed).unwrap();
     let ranges = event_frame_ranges(&bytes);
-    assert!(ranges.len() >= 2, "need a frame to drop from the sealed file");
+    assert!(
+        ranges.len() >= 2,
+        "need a frame to drop from the sealed file"
+    );
     let keep_end = ranges[ranges.len() - 2].1;
     let trailer_off = ranges.last().unwrap().1;
     let mut lied = bytes[..keep_end].to_vec();

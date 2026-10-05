@@ -55,13 +55,38 @@ pub struct Persister {
     active_events: usize,
     active_first: Option<EventId>,
     chain: [u8; 32],
+    /// Held for the writer lifetime; released on Drop (including panic).
+    write_lock: Option<File>,
+}
+
+impl Drop for Persister {
+    fn drop(&mut self) {
+        if let Some(lock) = self.write_lock.take() {
+            let _ = lock.unlock();
+        }
+    }
 }
 
 impl Persister {
     /// Attach to `dir` after a full persist or open.
+    ///
+    /// Tail/count checks run before the lock so a dirty uncommitted suffix
+    /// stays `InvalidData` (COMMIT-01) even when another writer already holds
+    /// `kutha.lock`. No store files are written before the lock is taken.
     pub fn attach(runtime: &Runtime, dir: &Path) -> std::io::Result<Self> {
+        let mut prepared = Self::attach_holding(runtime, dir, None)?;
+        let lock = crate::store::acquire_store_write_lock(dir)?;
+        prepared.write_lock = Some(lock);
+        Ok(prepared)
+    }
+
+    pub(crate) fn attach_holding(
+        runtime: &Runtime,
+        dir: &Path,
+        write_lock: Option<File>,
+    ) -> std::io::Result<Self> {
         if dir.join(MANIFEST_REL).exists() {
-            return attach_segmented(runtime, dir);
+            return attach_segmented(runtime, dir, write_lock);
         }
         let jsonl_path = dir.join(EVENTS_JSONL);
         let wal_path = dir.join(EVENTS_WAL);
@@ -108,6 +133,7 @@ impl Persister {
             active_events: 0,
             active_first: None,
             chain: [0u8; 32],
+            write_lock,
         })
     }
 
@@ -116,7 +142,19 @@ impl Persister {
     }
 
     pub fn checkpoint(&mut self, runtime: &Runtime) -> std::io::Result<()> {
-        self.checkpoint_until(runtime, None)
+        match self.checkpoint_until(runtime, None) {
+            Ok(()) => Ok(()),
+            Err(e) => {
+                self.release_write_lock();
+                Err(e)
+            }
+        }
+    }
+
+    fn release_write_lock(&mut self) {
+        if let Some(lock) = self.write_lock.take() {
+            let _ = lock.unlock();
+        }
     }
 
     pub fn close(mut self, runtime: &Runtime) -> std::io::Result<()> {
@@ -124,6 +162,21 @@ impl Persister {
     }
 
     fn append_until(
+        &mut self,
+        runtime: &Runtime,
+        stop_after: Option<AppendStep>,
+        stop_after_events: Option<usize>,
+    ) -> std::io::Result<()> {
+        match self.append_until_inner(runtime, stop_after, stop_after_events) {
+            Ok(()) => Ok(()),
+            Err(e) => {
+                self.release_write_lock();
+                Err(e)
+            }
+        }
+    }
+
+    fn append_until_inner(
         &mut self,
         runtime: &Runtime,
         stop_after: Option<AppendStep>,
@@ -362,7 +415,11 @@ impl Persister {
     }
 }
 
-fn attach_segmented(runtime: &Runtime, dir: &Path) -> std::io::Result<Persister> {
+fn attach_segmented(
+    runtime: &Runtime,
+    dir: &Path,
+    write_lock: Option<File>,
+) -> std::io::Result<Persister> {
     let manifest = segment::read_manifest(dir)?;
     let active_path = dir.join(&manifest.active);
     let encoded = encoded_log(runtime);
@@ -415,6 +472,7 @@ fn attach_segmented(runtime: &Runtime, dir: &Path) -> std::io::Result<Persister>
         active_events: tip.events,
         active_first: tip.first_id,
         chain: tip.chain,
+        write_lock,
     })
 }
 

@@ -5,7 +5,7 @@ use crate::snapshot::Snapshot;
 use crate::wal;
 use kutha_common::{Event, EventId, Op};
 use serde::de::DeserializeOwned;
-use std::fs::{self, File};
+use std::fs::{self, File, OpenOptions};
 use std::io::{BufRead, BufReader, ErrorKind, Write};
 use std::path::Path;
 
@@ -61,6 +61,28 @@ pub fn replace_via_tmp_file_sync_count() -> usize {
 #[doc(hidden)]
 pub fn reset_replace_via_tmp_file_sync_count() {
     REPLACE_TMP_FILE_SYNC_COUNT.with(|c| c.set(0));
+}
+
+/// Exclusive advisory lock on [`STORE_LOCK_REL`]. Fail-closed: `WouldBlock` names the file.
+pub fn acquire_store_write_lock(dir: &Path) -> std::io::Result<File> {
+    fs::create_dir_all(dir)?;
+    let path = dir.join(STORE_LOCK_REL);
+    let file = OpenOptions::new()
+        .create(true)
+        .read(true)
+        .write(true)
+        .open(&path)?;
+    match file.try_lock() {
+        Ok(()) => Ok(file),
+        Err(std::fs::TryLockError::WouldBlock) => Err(std::io::Error::new(
+            ErrorKind::WouldBlock,
+            format!("store writer lock held ({STORE_LOCK_REL})"),
+        )),
+        Err(std::fs::TryLockError::Error(e)) => Err(std::io::Error::new(
+            e.kind(),
+            format!("store writer lock failed on {STORE_LOCK_REL}: {e}"),
+        )),
+    }
 }
 
 /// Opens `dir` and calls `sync_all` so a rename is durable on the parent.
@@ -192,6 +214,7 @@ fn migrate_until(
     fault: Option<MigrateVerifyFault>,
 ) -> std::io::Result<MigrateReport> {
     fs::create_dir_all(dir)?;
+    let _lock = acquire_store_write_lock(dir)?;
     if dir.join(crate::segment::MANIFEST_REL).exists() {
         let wal = dir.join(EVENTS_WAL);
         if wal.exists() {
@@ -278,6 +301,7 @@ fn migrate_verify_reopen(dir: &Path, events: &[Event]) -> std::io::Result<()> {
 /// Write `events.jsonl` from the on-disk log via `replace_via_tmp`.
 /// Never consulted by [`open`] when `manifest.json` exists.
 pub fn export_jsonl(dir: &Path) -> std::io::Result<()> {
+    let _lock = acquire_store_write_lock(dir)?;
     let events = load_log_events(dir)?;
     replace_events_jsonl(dir, &events)
 }
@@ -310,6 +334,15 @@ fn persist_until(
     stop_after: Option<PersistStep>,
 ) -> std::io::Result<()> {
     fs::create_dir_all(dir)?;
+    let _lock = acquire_store_write_lock(dir)?;
+    persist_unlocked(runtime, dir, stop_after)
+}
+
+fn persist_unlocked(
+    runtime: &Runtime,
+    dir: &Path,
+    stop_after: Option<PersistStep>,
+) -> std::io::Result<()> {
     let events = encoded_log(runtime);
     if writes_legacy_layout(dir) {
         replace_events_wal(dir, &events, true)?;
@@ -600,11 +633,13 @@ fn open_for_append_until(
     dir: &Path,
     stop_after: Option<PersistStep>,
 ) -> std::io::Result<(Runtime, Persister)> {
+    fs::create_dir_all(dir)?;
+    let lock = acquire_store_write_lock(dir)?;
     let (rt, report) = open_report(dir)?;
     if report.dropped_uncommitted > 0 {
-        persist_until(&rt, dir, stop_after)?;
+        persist_unlocked(&rt, dir, stop_after)?;
     }
-    let persister = Persister::attach(&rt, dir)?;
+    let persister = Persister::attach_holding(&rt, dir, Some(lock))?;
     Ok((rt, persister))
 }
 
