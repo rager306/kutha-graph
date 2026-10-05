@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Process: pin Rust 1.99
+
+### Process
+
+- Added `rust-toolchain.toml` (channel `1.99.0`, rustfmt, clippy, minimal profile) and `rust-version = "1.99"` in the workspace package (both crates inherit it). Edition stays 2021; crate versions stay `0.0.0`. `cargo check --workspace --offline` is green on 1.99.0. Updated `.planning/codebase/STACK.md` and the M019 S05 text (`File::try_lock` on Rust 1.99). The Phase 51 build record in `m002-cloud-kernel-io-intake.md` keeps 1.98.1 as history.
+
 ## 2026-10-04 — Process: selftest classification and own-rule mutations (GSD Phase 57 GOV-06)
 
 ### Process
