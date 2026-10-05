@@ -11,7 +11,7 @@ use crate::wal;
 use kutha_common::{Event, EventId, Op};
 use std::cell::Cell;
 use std::fs::{self, File, OpenOptions};
-use std::io::{Read, Seek, SeekFrom, Write};
+use std::io::{self, ErrorKind, Read, Seek, SeekFrom, Write};
 use std::path::{Path, PathBuf};
 
 thread_local! {
@@ -39,6 +39,11 @@ pub enum AppendStep {
 }
 
 /// Incremental framed append after a full [`crate::store::persist`] or [`crate::store::open`] (D-02).
+///
+/// A fail-closed `append` (`ErrorKind::InvalidData`, e.g. tail-guard mismatch)
+/// poisons this object: later `append` / `checkpoint` / `close` return that
+/// same kind and write nothing. Heal is a new [`crate::store::open_for_append`].
+/// Injected failpoints stay `ErrorKind::Other` and do not poison.
 pub struct Persister {
     dir: PathBuf,
     durable_count: usize,
@@ -57,6 +62,10 @@ pub struct Persister {
     chain: [u8; 32],
     /// Held for the writer lifetime; released on Drop (including panic).
     write_lock: Option<File>,
+    /// Set on a fail-closed (`ErrorKind::InvalidData`) `append`. Later
+    /// `append` / `checkpoint` / `close` on this object return that same
+    /// kind and write nothing. Heal is a new `open_for_append`.
+    poisoned: Option<ErrorKind>,
 }
 
 impl Drop for Persister {
@@ -134,7 +143,24 @@ impl Persister {
             active_first: None,
             chain: [0u8; 32],
             write_lock,
+            poisoned: None,
         })
+    }
+
+    fn fail_if_poisoned(&self) -> io::Result<()> {
+        match self.poisoned {
+            Some(kind) => Err(io::Error::new(
+                kind,
+                "Persister poisoned after fail-closed append; heal with a new open_for_append",
+            )),
+            None => Ok(()),
+        }
+    }
+
+    fn poison_if_fail_closed(&mut self, err: &io::Error) {
+        if err.kind() == ErrorKind::InvalidData {
+            self.poisoned = Some(ErrorKind::InvalidData);
+        }
     }
 
     pub fn append(&mut self, runtime: &Runtime) -> std::io::Result<()> {
@@ -142,6 +168,7 @@ impl Persister {
     }
 
     pub fn checkpoint(&mut self, runtime: &Runtime) -> std::io::Result<()> {
+        self.fail_if_poisoned()?;
         match self.checkpoint_until(runtime, None) {
             Ok(()) => Ok(()),
             Err(e) => {
@@ -158,6 +185,7 @@ impl Persister {
     }
 
     pub fn close(mut self, runtime: &Runtime) -> std::io::Result<()> {
+        self.fail_if_poisoned()?;
         self.checkpoint(runtime)
     }
 
@@ -167,9 +195,11 @@ impl Persister {
         stop_after: Option<AppendStep>,
         stop_after_events: Option<usize>,
     ) -> std::io::Result<()> {
+        self.fail_if_poisoned()?;
         match self.append_until_inner(runtime, stop_after, stop_after_events) {
             Ok(()) => Ok(()),
             Err(e) => {
+                self.poison_if_fail_closed(&e);
                 self.release_write_lock();
                 Err(e)
             }
@@ -473,6 +503,7 @@ fn attach_segmented(
         active_first: tip.first_id,
         chain: tip.chain,
         write_lock,
+        poisoned: None,
     })
 }
 

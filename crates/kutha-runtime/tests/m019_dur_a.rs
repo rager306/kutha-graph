@@ -630,3 +630,79 @@ fn persist_migrate_race_serialized_or_fails_closed() {
     let _ = fs::remove_dir_all(&dir);
     let _ = fs::remove_dir_all(dir2.as_path());
 }
+
+#[test]
+fn persister_is_poisoned_after_failed_append_and_cannot_write_without_lock() {
+    let mut rt = seed_runtime();
+    let dir = persist_dir("poison");
+    persist_segmented(&rt, &dir);
+    let mut p = store::Persister::attach(&rt, &dir).unwrap();
+    let active = dir.join(active_name(&dir));
+    let bytes = fs::read(&active).unwrap();
+    let mut last = last_event_from_segment(&bytes);
+    let (start, end) = *event_frame_ranges(&bytes)
+        .last()
+        .expect("active event frame");
+    last.id = EventId::from_u128(last.id.as_u128().wrapping_add(1));
+    let frame = store::event_frame_bytes(&last).unwrap();
+    assert_eq!(frame.len(), end - start);
+    let mut tampered = bytes.clone();
+    tampered[start..end].copy_from_slice(&frame);
+    fs::write(&active, &tampered).unwrap();
+    rt.emit_tt_anchor(T_NEW).unwrap();
+    let first = p.append(&rt).expect_err("tail guard must fail closed");
+    assert_eq!(first.kind(), ErrorKind::InvalidData);
+
+    fs::write(&active, &bytes).unwrap();
+    let opened = store::open(&dir).expect("restored prefix must open");
+    let second_writer = store::Persister::attach(&opened, &dir)
+        .expect("fail-closed append must release kutha.lock");
+    drop(second_writer);
+    let after_heal = listing_bytes(&dir);
+
+    let again = p
+        .append(&rt)
+        .expect_err("poisoned Persister must not append");
+    assert_eq!(
+        again.kind(),
+        ErrorKind::InvalidData,
+        "poison returns the same fail-closed kind as the tail-guard append"
+    );
+    assert!(
+        again.to_string().contains("poisoned"),
+        "poison message must name the poison; got {again}"
+    );
+    assert_eq!(
+        listing_bytes(&dir),
+        after_heal,
+        "poisoned append must write nothing"
+    );
+
+    let ck = p
+        .checkpoint(&rt)
+        .expect_err("poisoned Persister must not checkpoint");
+    assert_eq!(ck.kind(), ErrorKind::InvalidData);
+    assert_eq!(listing_bytes(&dir), after_heal);
+
+    let cl = p
+        .close(&rt)
+        .expect_err("poisoned Persister must not close-write");
+    assert_eq!(cl.kind(), ErrorKind::InvalidData);
+    assert_eq!(listing_bytes(&dir), after_heal);
+
+    let (healed, mut fresh) =
+        store::open_for_append(&dir).expect("heal is a new open_for_append that re-takes the lock");
+    fresh.append(&healed).expect("fresh writer after heal");
+    drop(fresh);
+    let _ = fs::remove_dir_all(&dir);
+}
+
+fn listing_bytes(dir: &Path) -> Vec<(String, Vec<u8>)> {
+    listing_names(dir)
+        .into_iter()
+        .map(|n| {
+            let b = fs::read(dir.join(&n)).unwrap_or_default();
+            (n, b)
+        })
+        .collect()
+}
