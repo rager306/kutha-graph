@@ -40,6 +40,10 @@ Segmented persist/`Persister` still feed `committed_prefix` then `replay_check`.
 
 Segmented `open` loads via `segment::load_events` when a manifest exists, then `commit::committed_prefix`, then `replay_check`. Full `store::persist_until` still rewrites (`segment::persist_log` or legacy jsonl+WAL). `Persister` appends; not wired into `kutha-tenant`. Residuals: no external ADS/epoch tip; O(N) `open`; Typed/Dictionary partial group. WAL recovery remains a cousin of semantic replay (D060-2), not Rocks-as-SoT.
 
+### Evidence (2026-10-05, Phase 62 / M019 S07; Proposed)
+
+Metamorphic oracles (`m019_sem_meta.rs`): replay of the same log twice matches (`SEM-replay-idempotence`); persist+open matches in-memory stamps for legacy, segmented, migrated, and `export_jsonl`-imported layouts (`SEM-persist-roundtrip-random`); flip/swap/drop one fold-affecting event fails closed or the fold differs and is never silently equal (`SEM-replay-tamper-random`). Still open: Horn@TT=`MAX`, `as_of` vs eligibility, C01. This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

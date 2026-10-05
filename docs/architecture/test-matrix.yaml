@@ -632,9 +632,10 @@ rows:
     plane: product
     invariant: stable knows vs inverse_knows order across Eager/Lazy
     layer: property
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - cascade_order_eager_lazy_inverse_knows
+    kill_mutation: Lazy reverse of rule_follow_ons before cascade commit
+    status: killed
     gate: default
     owner: M019-S07
     source: audit-code-tests §3 / M019 S07
@@ -642,22 +643,85 @@ rows:
     plane: product
     invariant: seeded differential fold vs CSR vs clean rebuild (DIFF-01)
     layer: property
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - csr_fold_diff_behavior_free_agrees
+      - csr_fold_diff_with_horn_agrees
+      - csr_fold_diff_persist_rebuild_layouts
+    kill_mutation: TypedCsrLease::from_fold stores relation=0
+    status: killed
     gate: default
     owner: M019-S07
     source: audit-code-tests §3 / M019 S07
+  - id: SEM-bitemporal-model
+    plane: product
+    invariant: naive ADR-013 list-scan agrees with GraphFold live_at/as_of
+    layer: property
+    oracle:
+      - bitemporal_model_matches_fold_live_at_and_as_of
+      - bitemporal_model_agrees_on_ff5_statute
+      - model_as_of_alias_is_live_at_max
+    kill_mutation: Fact::is_live_at skips ingested_at > tt
+    status: killed
+    gate: default
+    owner: M019-S07
+    source: M019 S07 / ADR-013
+  - id: SEM-order-independence
+    plane: product
+    invariant: permuting disjoint-subject Asserts does not change (s,r,o,vt)
+    layer: property
+    oracle:
+      - order_independence_disjoint_subjects
+    kill_mutation: push_fact retains only the last live fact (global LWW)
+    status: killed
+    gate: default
+    owner: M019-S07
+    source: M019 S07
+  - id: SEM-replay-idempotence
+    plane: product
+    invariant: two fresh replays and replay_check match the live fold
+    layer: property
+    oracle:
+      - replay_idempotence_fresh_runtime_twice
+    kill_mutation: GraphFold::replay skips Correct and CorrectInterval
+    status: killed
+    gate: default
+    owner: M019-S07
+    source: M019 S07 / ADR-060
+  - id: SEM-persist-roundtrip-random
+    plane: product
+    invariant: persist+open equals in-memory fold (legacy, segmented, migrate, export_jsonl)
+    layer: property
+    oracle:
+      - persist_roundtrip_random_layouts
+      - persist_roundtrip_export_jsonl_imported
+    kill_mutation: encoded_log drops the last event before persist
+    status: killed
+    gate: default
+    owner: M019-S07
+    source: M019 S07 / ADR-060
+  - id: SEM-replay-tamper-random
+    plane: product
+    invariant: flip/swap/drop one event fails closed or fold differs; never silently equal
+    layer: property
+    oracle:
+      - replay_tamper_flip_swap_drop_never_silently_equal
+    kill_mutation: GraphFold::apply ignores Assert.valid_from (hardcodes 2010)
+    status: killed
+    gate: default
+    owner: M019-S07
+    source: M019 S07 / ADR-060
   - id: SEM-horn-correct-char
     plane: product
     invariant: characterize current Correct-of-Horn-premise behaviour
     layer: characterization
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - horn_correct_char_derived_survives_premise_correct
+      - horn_correct_interval_char_derived_survives_patch
+    kill_mutation: rule_follow_ons fires Horn on Correct of a premise
+    status: characterization
     gate: default
     owner: M019-S07
-    source: M019 S07
+    source: M019 S07 / HORN-CORR-01
 
   # --- harness ---
   - id: HAR-freeze-rocks

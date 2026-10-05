@@ -152,3 +152,7 @@ Characterization (`known04_horn_fires_when_premise_hidden_on_early_cut`): a two-
 ### Clarification (2026-10-03; Proposed)
 
 (a) `as_of(vt)` = `live_at(u64::MAX, vt)` (`fold_query.rs`) is **SUPPORT-LIVE**: a Horn-derived fact is not retracted when its premise support is retracted. `rule_follow_ons` (`eval.rs`) handles `Assert` / `Behavior` / `Retract` only; `Correct` / `CorrectInterval` do not trigger Horn re-derivation. Derivation eligibility is a separate API `derivation_eligible_at` (`provenance.rs`). (b) Horn fires at TT=`u64::MAX` (`search_prems` / `live_horns`); `as_known_on` never re-derives. (a) and (b) stay open for M018 S02/S03 (HORN-KC-01, ASOF-ELIG-01, HORN-CORR-01) — **no option chosen**. (c) Gap-review F2 EventId targeting: `Retract` / `Correct` on a missing or already-invalidated `event_id` is a silent no-op in `GraphFold::apply` (`fold.rs`); fail-closed is not claimed. C01 remains open; no option chosen. This subsection does not rewrite D013-1…D013-4 and does not mark this cell Accepted.
+
+### Evidence (2026-10-05, Phase 62 / M019 S07; Proposed)
+
+Seeded list-scan model (`SEM-bitemporal-model`, `m019_sem_model.rs`) agrees with `GraphFold::live_at` / `as_of` on random Assert/Retract/Correct/CorrectInterval logs and on the FF5 statute fixture. Differential persist rebuilds and CSR cuts are ADR-041/060. Still open: Horn@TT=`MAX` (HORN-KC-01), `as_of` vs derivation eligibility (ASOF-ELIG-01), C01. This subsection does not rewrite D013-1…D013-4. Status stays **Proposed**.

@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Product: M019 S07 semantic and logic oracles
+
+### Product
+
+- Seeded LCG oracles (≥64 seeds; `KUTHA_SEEDS` may raise): `SEM-csr-fold-diff` (fold `live_at`/`as_of`/`as_known_on` vs typed/untyped CSR vs persist+open legacy/segmented/migrate), `SEM-bitemporal-model` (naive ADR-013 list-scan vs `GraphFold`), `SEM-cascade-order` (Eager vs Lazy `knows`/`inverse_knows`), metamorphic `SEM-order-independence`, `SEM-replay-idempotence`, `SEM-persist-roundtrip-random` (including `export_jsonl` import), `SEM-replay-tamper-random` (flip/swap/drop never silently equal). `SEM-horn-correct-char` pins current Correct/CorrectInterval-of-Horn-premise behaviour (HORN-CORR-01; no rule chosen). Tests: `m019_sem_diff.rs`, `m019_sem_model.rs`, `m019_sem_meta.rs`. No product `src/` change.
+
+### Trajectory
+
+- ADR-013 / ADR-041 / ADR-060 Evidence 2026-10-05. Honeycomb restaged; cells stay **Proposed**. Matrix: killed 55, characterization 6, gap 0, blocked 6, spec-only 4, gate 1 (total 72). Still open: Horn@TT=`MAX` (HORN-KC-01), `as_of` vs eligibility (ASOF-ELIG-01), C01, DET-02, TR-02, HORN-CORR-01.
+
 ## 2026-10-05 — Process: lease M019 S07 (GSD Phase 62)
 
 ### Process

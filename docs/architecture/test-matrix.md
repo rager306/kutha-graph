@@ -23,13 +23,13 @@ Counted from `test-matrix.yaml` rows on 2026-10-05. Recount after you edit the Y
 
 | Status | Rows |
 |--------|------|
-| killed | 48 |
-| characterization | 5 |
-| gap | 3 |
+| killed | 55 |
+| characterization | 6 |
+| gap | 0 |
 | blocked | 6 |
 | spec-only | 4 |
 | gate | 1 |
-| **total** | **67** |
+| **total** | **72** |
 
 Planes: product vs harness. Layers: decision, characterization, property, crash, kill, governor, bench.
 
@@ -39,7 +39,7 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M019-S06 (durability B):** closed in Phase 61 — `DUR-export-race` and `DUR-rocks-mid-stale` `killed`; `DUR-bytes-per-fact` `characterization` (streaming persist + drop `encoded_log`; `bytes_per_fact` is whole-bench VmRSS delta / live facts; residual rise not shown as an engine lower bound). Spec-only: `DUR-dead-code-fate`, `DUR-index-wiring`. Bench controller: `BENCH-controller`.
 
-**M019-S07 (semantic expansion):** `SEM-cascade-order`, `SEM-csr-fold-diff`, `SEM-horn-correct-char`.
+**M019-S07 (semantic expansion):** closed in Phase 62 — `SEM-cascade-order`, `SEM-csr-fold-diff`, `SEM-bitemporal-model`, `SEM-order-independence`, `SEM-replay-idempotence`, `SEM-persist-roundtrip-random`, `SEM-replay-tamper-random` `killed`; `SEM-horn-correct-char` `characterization` (HORN-CORR-01; Correct/CorrectInterval of a Horn premise does not retract or re-mint derived inverse today).
 
 `unowned` is rejected by the governor check.
 

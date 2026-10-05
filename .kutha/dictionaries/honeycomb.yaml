@@ -33,6 +33,7 @@ process: docs/process/governor-intake.md
 # 2026-10-05 restage (M019 S04 Phase 59-06: ADR-023 drop planning CONTEXT cite; matrix honesty 67 rows): ADR-023; map/delivery/capability unchanged.
 # 2026-10-05 restage (M019 S05 Phase 60-05: Persister poison + lock residuals; layered trailer-lie kill): ADR-010, ADR-014; map/delivery/capability unchanged.
 # 2026-10-05 restage (M019 S06 Phase 61: ROCK-02 sealed-list + verify_full m:v=2; MEM-01 persist stream; CLEAN-01): ADR-010, ADR-012; map/delivery/capability unchanged.
+# 2026-10-05 restage (M019 S07 Phase 62: semantic/logic oracles; cells still Proposed): ADR-013, ADR-041, ADR-060; map/delivery/capability unchanged.
 
 locks:
   - id: D1
@@ -193,6 +194,9 @@ cells:
       - closed_vt_interval_survives_as_known_on
       - duplicate_tt_anchor_wall_is_rejected
       - known04_horn_fires_when_premise_hidden_on_early_cut
+      # Phase 62 / M019 S07 — list-scan model vs fold; cell still Proposed
+      - bitemporal_model_matches_fold_live_at_and_as_of
+      - bitemporal_model_agrees_on_ff5_statute
 
   - id: ADR-014
     axis: Time
@@ -314,6 +318,10 @@ cells:
       - as_of_and_claim_supported_at_skip_non_overlapping_facts
       - discard_csr_lease_and_snapshot_rebuild_keeps_as_of
       - csr_lease_at_builds_via_materializer
+      # Phase 62 / M019 S07 — fold vs CSR vs persist rebuild; cell still Proposed
+      - csr_fold_diff_behavior_free_agrees
+      - csr_fold_diff_with_horn_agrees
+      - csr_fold_diff_persist_rebuild_layouts
 
   - id: ADR-042
     axis: Data
@@ -388,7 +396,17 @@ cells:
     capability: none
     depends_on: [ADR-000, ADR-010, ADR-014]
     locks: [D9]
-    evidence: [replay_rejects_behavior_without_prior_cause, provenance_detects_caused_by_swap_when_state_fingerprint_matches, provenance_detects_rule_version_change_when_state_fingerprint_matches, discard_outcomes_sidecar_keeps_reconstructible_disposition, discard_justifications_sidecar_keeps_admission_and_resume, provenance_fingerprint_moves_when_log_native_record_bytes_change]
+    evidence:
+      - replay_rejects_behavior_without_prior_cause
+      - provenance_detects_caused_by_swap_when_state_fingerprint_matches
+      - provenance_detects_rule_version_change_when_state_fingerprint_matches
+      - discard_outcomes_sidecar_keeps_reconstructible_disposition
+      - discard_justifications_sidecar_keeps_admission_and_resume
+      - provenance_fingerprint_moves_when_log_native_record_bytes_change
+      # Phase 62 / M019 S07 — replay/persist metamorphic; cell still Proposed
+      - replay_idempotence_fresh_runtime_twice
+      - persist_roundtrip_random_layouts
+      - replay_tamper_flip_swap_drop_never_silently_equal
 
   - id: ADR-061
     axis: Verify
