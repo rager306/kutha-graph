@@ -27,7 +27,7 @@
 
 ### Differential tests (Phase 48, S04)
 
-- **DIFF-01**: fold, CSR lease and clean rebuild agree on seeded random logs (no new dependency) — **moved** to v0.13 Phase 62 / M019 S07 (id stays here; work is DIFF-02)
+- [x] **DIFF-01**: fold, CSR lease and clean rebuild agree on seeded random logs (no new dependency) — **moved** to v0.13 Phase 62 / M019 S07 (id stays here; work is DIFF-02)
 - **ORACLE-01**: I-F15 measures time or a bound that fails under the O(N) regression; I-F16 fails when rules do not re-derive
 - **GATE-01**: bench gate (`ingest_plain.n`, `as_of.n`) is a governor row or a recorded controller step with a selftest
 
@@ -58,8 +58,8 @@
 
 ### Semantic tests (Phase 62, S07)
 
-- **DIFF-02**: seeded randomized differential fold vs CSR lease vs clean rebuild (the work pulled from DIFF-01; no new dependency; LCG like `m017_determinism.rs`)
-- **SEM-02**: cascade order stable Eager vs Lazy; seeded determinism on derived triples; Correct of a Horn premise characterized; legal TR-02 gap recorded as `blocked: decision` in the matrix. No owner-gated behaviour changes.
+- [x] **DIFF-02**: seeded randomized differential fold vs CSR lease vs clean rebuild (the work pulled from DIFF-01; no new dependency; LCG like `m017_determinism.rs`)
+- [x] **SEM-02**: cascade order stable Eager vs Lazy; seeded determinism on derived triples; Correct of a Horn premise characterized; legal TR-02 gap recorded as `blocked: decision` in the matrix. No owner-gated behaviour changes.
 
 ## Future Requirements (not leased)
 

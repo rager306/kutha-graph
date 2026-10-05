@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M019
-**Active Slice:** S07
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M019-S06-done
+L_delivery=M019-S07-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M019 S07 active (semantic and logic test expansion); M018 paused at its S02 decision gate | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M019 S07 done (semantic and logic test expansion); awaiting milestone close; M018 paused at its S02 decision gate | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M019 S07 leased** (`L_delivery=M019-S06-done`, Active Milestone **M019**, Active Slice **S07**, 2026-10-05). GSD Phase 62 only: DIFF-02, SEM-02 (DIFF-01 moved from M018 S04); first task: reference-model design plus RED differential oracles; owner-gated rules stay blocked. Process tag `v0.12` exists (created 2026-10-04 at `36fedb9`). M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
+**M019 S07 closed** (`L_delivery=M019-S07-done`, Active Milestone **M019**, Active Slice **None**, 2026-10-05). GSD Phase 62 verified independently (11/11 PASS-WITH-FINDINGS, then re-verified; final fix `511e2a5`). Next: controller milestone close (v0.13 / M019). Owner-gated still open: C01/FIXG-01, HORN-KC-01, ASOF-ELIG-01, DET-02, TR-02, HORN-CORR-01. Process tag `v0.12` exists (created 2026-10-04 at `36fedb9`). M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
 
 ## Thaw map
 
