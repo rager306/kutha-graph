@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Process: lease M019 S06 (GSD Phase 61)
+
+### Process
+
+- Active Milestone **M019**, Active Slice **S06** (`L_delivery=M019-S05-done`): ROCK-02, MEM-01, CLEAN-01. First task: Rocks staleness design note, then RED oracles; measure bytes_per_fact before changing code. M018 stays paused at its S02 gate.
+
 ## 2026-10-05 — Process: close M019 S05 (GSD Phase 60)
 
 ### Process

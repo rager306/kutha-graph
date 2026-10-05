@@ -5,7 +5,7 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M019
-**Active Slice:** None
+**Active Slice:** S06
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M019 S05 done (durability residuals A); S06 unleased; M018 paused at its S02 decision gate | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M019 S06 active (durability residuals B); M018 paused at its S02 decision gate | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M019 S05 closed** (`L_delivery=M019-S05-done`, Active Milestone **M019**, Active Slice **None**, 2026-10-05). GSD Phase 60 verified independently (13/13). Next: controller lease M019 S06 (Phase 61 durability residuals B: Rocks staleness beyond the tip, bytes_per_fact RSS, dead-code cleanup, wiring decision). Process tag `v0.12` exists (created 2026-10-04 at `36fedb9`). M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
+**M019 S06 leased** (`L_delivery=M019-S05-done`, Active Milestone **M019**, Active Slice **S06**, 2026-10-05). GSD Phase 61 only: ROCK-02, MEM-01, CLEAN-01; first task: Rocks staleness design note, then RED oracles; measure bytes_per_fact before changing code. Process tag `v0.12` exists (created 2026-10-04 at `36fedb9`). M018 stays paused at its S02 decision gate (C01, Horn vs knowledge cut). Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0).
 
 ## Thaw map
 
