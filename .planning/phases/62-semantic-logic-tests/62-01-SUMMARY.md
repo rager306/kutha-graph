@@ -1,6 +1,6 @@
 # Phase 62-01 SUMMARY
 
-Start `da655d8`. Commits: `5f96184` test(62-01) LCG helper; `3285865` test(62-02) model; `d71790c` test(62-03) CSR/fold/persist diff; `b2a0bbb` test(62-04) cascade/meta/Horn char; `2ca6644` docs(62-05) matrix/ADR/CHANGELOG; test(62-06) `assert_seed_budget` for governor rust_test_asserts. No `src/` change. No STATE/ROADMAP edit.
+Start `da655d8`. Commits: `5f96184` test(62-01) LCG helper; `3285865` test(62-02) model; `d71790c` test(62-03) CSR/fold/persist diff; `b2a0bbb` test(62-04) cascade/meta/Horn char; `2ca6644` docs(62-05) matrix/ADR/CHANGELOG; `07f3f93` test(62-06) `assert_seed_budget`; `fix(62-07)` `TermDictionary::is_empty` (clippy `-D warnings`). No STATE/ROADMAP edit.
 
 **Oracles:** `SEM-csr-fold-diff` DIFF-01/02 — 64 seeds behavior-free then Horn; live_at/as_of/as_known_on; typed/untyped CSR; persist+open legacy, segmented+rollover (≥2 sealed), migrate, export_jsonl import. `SEM-bitemporal-model` naive list-scan (no fold internals) vs `GraphFold` + FF5. `SEM-cascade-order` Eager/Lazy inverse_knows+alsoKnows name order. Metamorphic: disjoint-subject permute, two fresh replays + `replay_check`, persist layouts, tamper flip/swap/drop (named; never silently equal). `SEM-horn-correct-char` HORN-CORR-01: Correct/CorrectInterval of `knows` leaves derived inverse live, does not mint replacement inverse.
 
