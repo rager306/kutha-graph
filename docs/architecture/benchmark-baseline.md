@@ -397,5 +397,19 @@ Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated targets (`tmp/p55-head-target`
 
 D-10 ≤10% regression vs `0245bbd` on ingest/`as_of`/`open.n`: **met** (HEAD not slower on medians). Pair 2 as_of +14% is host noise (HEAD 282k vs pair 1 HEAD 231k). Worktrees and target dirs removed after the run.
 
+## Phase 60 (M019 S05): writer lock
+
+Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated worktrees and absolute target dirs. Binaries pinned with `taskset -c 10`. Interleaved `base, head` × 6 pairs after a discarded warm-up. Base `1f9fb14` vs head `642ddd3`. Host load 5–9 from other agents. Compare interleaved medians; do not treat a single pair as a gate.
+
+| metric | median 1f9fb14 | median 642ddd3 | Δ median |
+|--------|---------------:|---------------:|---------:|
+| ingest_plain.n | 112518252 | 108327822 | −3.72% |
+| as_of.n | 295375 | 280262 | −5.12% |
+| open.n | 2813254980 | 2754772929 | −2.08% |
+
+A first 2-pair run showed a one-off 3× `as_of` outlier (892233 ns) that did not reproduce in the 6-pair run.
+
+D-10 ≤10% vs `1f9fb14` on ingest/`as_of`/`open.n`: **PASS**.
+
 
 

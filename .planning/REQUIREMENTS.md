@@ -50,8 +50,8 @@
 
 ### Durability residuals (Phases 60–61, S05–S06)
 
-- **WRITER-01**: single-writer advisory lock per store dir (`File::try_lock`; two writers fail closed; RED first)
-- **GROUP-01**: Typed / Dictionary multi-event group vs `committed_prefix` decided in ADR-010 / 014; RED-first oracle; missing durability oracles from the code-tests audit §2 (mixed suffix, migrate × tail guard, active at exact frame end, wrong-role active)
+- [x] **WRITER-01**: single-writer advisory lock per store dir (`File::try_lock`; two writers fail closed; RED first)
+- [x] **GROUP-01**: Typed / Dictionary multi-event group vs `committed_prefix` decided in ADR-010 / 014; RED-first oracle; missing durability oracles from the code-tests audit §2 (mixed suffix, migrate × tail guard, active at exact frame end, wrong-role active)
 - **ROCK-02**: Rocks index staleness beyond the tip is detected (index meta bound to manifest chain tip + count, or equivalent; RED first)
 - **MEM-01**: `bytes_per_fact` 17218→25200 cause confirmed by measurement (dhat / heaptrack / counting allocator) and fixed or explained
 - **CLEAN-01**: dead-code fate (`log_has_quantum_outcome`, `wal::append_events` `allow(dead_code)`, `rocks_spike`); `SegmentIndex` / `Persister` wiring decision recorded (default: not wired, reason). Bench gate applies on product slices.

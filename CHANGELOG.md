@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Process: close M019 S05 (GSD Phase 60)
+
+### Process
+
+- `L_delivery=M019-S05-done`, Active Slice **None**. Independent verification 13/13 after a fix round (`60-VERIFICATION.md`: killed row for sealed-trailer-lie corrected to the layered mutation; Persister poison added). WRITER-01 / GROUP-01 closed: advisory single-writer `kutha.lock` (`File::try_lock`, `WouldBlock`, readers unlocked, dead-process safe, panic releases, listings ignore it); `Persister` poisoned after a fail-closed append; GROUP-01 verdict (c) documented residual with no format change (design note `.compound-engineering/artifacts/research/2026-10-05-group-commit-design.md`). 13 matrix rows resolved: killed 46 / characterization 4 / gap 6 / blocked 6 / spec-only 4 / gate 1 (67). Four lock oracles were RED on the old code (real bugs: second writer allowed, no lock file, persist/migrate race, listings); the rest were green pins shown to fail under their mutations. Bench gate PASS. Honest residuals: no fsync of the lock dir entry; advisory local lock only (NFS / other host not covered); bypass writes not covered; tenant covered via `store::persist`; Typed/Dictionary partial group still a documented residual; no external chain anchor; `open` O(N); `Persister` not wired into `kutha-tenant`; 6 gap rows remain for S06/S07. No capability claim. Next: controller leases M019 S06 (Phase 61 durability residuals B: Rocks staleness beyond the tip, `bytes_per_fact` RSS, dead-code cleanup, wiring decision).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-010 / ADR-012 / ADR-014 remain Proposed. `L_capability` unchanged (FF5). M018 remains paused at its S02 decision gate.
+
 ## 2026-10-05 — Product: durability residuals A (M019 S05 / GSD Phase 60)
 
 ### Product
