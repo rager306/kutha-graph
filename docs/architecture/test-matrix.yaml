@@ -383,7 +383,7 @@ rows:
     source: audit-code-tests §2 HIGH
   - id: DUR-bytes-per-fact
     plane: product
-    invariant: characterization — bytes_per_fact 17218 to 25200 is persist buffering plus whole-bench RSS; ingest live unchanged
+    invariant: characterization — bytes_per_fact is whole-bench VmRSS delta / live fact count (baseline.rs ~143-314); ingest-live unchanged; persist peak lowered by streaming; residual rise not shown as an engine lower bound
     layer: characterization
     oracle:
       - write_segment_file_streams_frames

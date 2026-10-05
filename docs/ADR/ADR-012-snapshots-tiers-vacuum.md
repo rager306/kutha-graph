@@ -54,7 +54,7 @@ The semantic log is the event sequence (D1); physical encoding is sealed `KUTHAS
 
 ### Evidence (2026-10-05, Phase 61 / M019 S06; Proposed)
 
-ROCK-02 Rocks meta is still a droppable locator lease (`m:v`=2, sealed-list always-on, `verify_full` opt-in). `store::open` / hydrate / `Persister` still ignore Rocks. MEM-01: `write_segment_file` streams frames (no concatenated buffer); `persist_unlocked` drops `encoded_log` before `replace_snapshot`. Remaining `bytes_per_fact` is whole-bench RSS, not ingest live (identical vs `7e31784`). CLEAN-01 / D-05: not wired; `rocks_spike` jsonl vs `rocks_index` segments, both optional. Status stays **Proposed**.
+ROCK-02 Rocks meta is still a droppable locator lease (`m:v`=2, sealed-list always-on, `verify_full` opt-in). `store::open` / hydrate / `Persister` still ignore Rocks. MEM-01: `write_segment_file` streams frames (no concatenated buffer); `persist_unlocked` drops `encoded_log` before `replace_snapshot`. Ingest-live bytes unchanged vs `7e31784`. `bytes_per_fact` is whole-bench VmRSS delta / live fact count (`baseline.rs` ~143–314); the residual rise is not shown to be a lower bound of the engine and stays an open measurement item. CLEAN-01 / D-05: not wired; `rocks_spike` jsonl vs `rocks_index` segments, both optional. Status stays **Proposed**.
 
 ### Current encoding (HEAD, 2026-10-05; Proposed)
 
