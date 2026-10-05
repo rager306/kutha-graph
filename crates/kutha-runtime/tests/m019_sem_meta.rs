@@ -1,13 +1,15 @@
 //! SEM-cascade-order, metamorphic oracles, SEM-horn-correct-char (HORN-CORR-01).
-//! Default ≥64 seeds; `KUTHA_SEEDS=<n>` may raise. Characterization is labelled.
+//! Default ≥64 seeds; `KUTHA_SEEDS=<n>` may raise (persist/tamper = max(12, n/5)).
+//! Characterization is labelled. Failures print seed, case, shrunk ops.
 
 mod common;
 
 use common::sem::{
-    Lcg, MixStyle, assert_same_stamps, assert_seed_budget, fail_seed, open_export_imported,
-    persist_dir, persist_legacy, persist_migrated, persist_seed_count, persist_segmented,
-    persist_segmented_rollover, replay_runtime, rm_dir, runtime_stamps, seeded_runtime, seeds,
-    shrink_events,
+    MixStyle, PersistLayout, assert_load_bearing, assert_same_stamps_shrunk, assert_seed_budget,
+    fail_seed, fail_shrunk, flip_manifest_chain, flip_middle_segment_payload, open_fails_closed,
+    persist_dir, persist_layout, persist_seed_count, persist_segmented_rollover, persist_style,
+    persist_with_layout, replay_check_or_shrink, replay_runtime, rm_dir, runtime_stamps,
+    seeded_persist_runtime, seeded_runtime, seeds,
 };
 use kutha_common::{Event, Op, RuleAst, RuleAtom, RuleTerm, TermId};
 use kutha_runtime::{FoldIndexMode, Runtime, store};
@@ -75,20 +77,35 @@ fn derived_names_in_order(rt: &Runtime) -> Vec<String> {
 
 #[test]
 fn cascade_order_eager_lazy_inverse_knows() {
+    assert_seed_budget();
     let eager = cascade_fixture(FoldIndexMode::Eager);
     let lazy = cascade_fixture(FoldIndexMode::Lazy);
     let e_inv = inverse_behaviors(&eager);
     let l_inv = inverse_behaviors(&lazy);
-    assert_eq!(
-        e_inv, l_inv,
-        "inverse_knows derived triples must match in order Eager vs Lazy"
-    );
-    assert_eq!(e_inv.len(), 3, "three knows Asserts mint three inverses");
-    assert_eq!(
-        derived_names_in_order(&eager),
-        derived_names_in_order(&lazy),
-        "Behavior name order must be stable across index modes"
-    );
+    if e_inv != l_inv {
+        fail_seed(
+            0,
+            0,
+            eager.log().as_slice(),
+            "inverse_knows derived triples must match in order Eager vs Lazy",
+        );
+    }
+    if e_inv.len() != 3 {
+        fail_seed(
+            0,
+            1,
+            eager.log().as_slice(),
+            "three knows Asserts mint three inverses",
+        );
+    }
+    if derived_names_in_order(&eager) != derived_names_in_order(&lazy) {
+        fail_seed(
+            0,
+            2,
+            eager.log().as_slice(),
+            "Behavior name order must be stable across index modes",
+        );
+    }
     let e_live: Vec<_> = {
         let mut v = eager.as_of(2017);
         v.sort_unstable();
@@ -99,7 +116,9 @@ fn cascade_order_eager_lazy_inverse_knows() {
         v.sort_unstable();
         v
     };
-    assert_eq!(e_live, l_live, "as_of picture Eager == Lazy");
+    if e_live != l_live {
+        fail_seed(0, 3, eager.log().as_slice(), "as_of picture Eager == Lazy");
+    }
 }
 
 fn named_vt(rt: &Runtime) -> Vec<(String, String, String, u64, Option<u64>)> {
@@ -132,7 +151,7 @@ fn named_vt(rt: &Runtime) -> Vec<(String, String, String, u64, Option<u64>)> {
 fn order_independence_disjoint_subjects() {
     assert_seed_budget();
     for (case, seed) in seeds().into_iter().enumerate() {
-        let mut lcg = Lcg::from_seed(seed);
+        let mut lcg = common::sem::Lcg::from_seed(seed);
         let facts = [("u0", "o0"), ("u1", "o1"), ("u2", "o2"), ("u3", "o3")];
         let emit = |rt: &mut Runtime, pairs: &[(&str, &str)]| {
             let rel = rt.intern("relatedTo");
@@ -177,77 +196,82 @@ fn replay_idempotence_fresh_runtime_twice() {
     assert_seed_budget();
     for (case, seed) in seeds().into_iter().enumerate() {
         let (rt, _) = seeded_runtime(seed, MixStyle::WithHorn, FoldIndexMode::Eager);
-        rt.replay_check()
-            .unwrap_or_else(|e| panic!("live replay_check seed={seed}: {e}"));
+        replay_check_or_shrink(&rt, seed, case);
         let events = rt.log().as_slice().to_vec();
         let once = replay_runtime(&rt, &events);
         let twice = replay_runtime(&rt, &events);
         if runtime_stamps(&once) != runtime_stamps(&twice) {
-            let shrunk = shrink_events(&events, |prefix| {
-                let x = replay_runtime(&rt, prefix);
-                let y = replay_runtime(&rt, prefix);
-                runtime_stamps(&x) != runtime_stamps(&y)
-            });
-            eprintln!("shrunk ops={}", common::sem::brief_ops(&shrunk));
-            fail_seed(seed, case, &shrunk, "two fresh replays must match");
+            fail_shrunk(
+                seed,
+                case,
+                &events,
+                |prefix| {
+                    let x = replay_runtime(&rt, prefix);
+                    let y = replay_runtime(&rt, prefix);
+                    runtime_stamps(&x) != runtime_stamps(&y)
+                },
+                "two fresh replays must match",
+            );
         }
-        assert_same_stamps(&rt, &once, seed, case, "replay stamps must equal live fold");
-        once.replay_check()
-            .unwrap_or_else(|e| panic!("replayed replay_check seed={seed}: {e}"));
+        assert_load_bearing(&rt, &once, seed, case);
+        assert_load_bearing(&once, &twice, seed, case);
+        if runtime_stamps(&rt) != runtime_stamps(&once) {
+            fail_shrunk(
+                seed,
+                case,
+                &events,
+                |prefix| {
+                    let x = replay_runtime(&rt, prefix);
+                    runtime_stamps(&rt) != runtime_stamps(&x)
+                },
+                "replay stamps must equal live fold",
+            );
+        }
+        replay_check_or_shrink(&once, seed, case);
     }
 }
 
 #[test]
 fn persist_roundtrip_random_layouts() {
     assert_seed_budget();
-    for seed in seeds().into_iter().take(persist_seed_count()) {
-        let (rt, _) = seeded_runtime(seed, MixStyle::BehaviorFree, FoldIndexMode::Eager);
-        type PersistFn = fn(&Runtime, &std::path::Path);
-        let layouts: [(&str, PersistFn); 3] = [
-            ("legacy", persist_legacy),
-            ("segmented", persist_segmented),
-            ("migrated", persist_migrated),
-        ];
-        for (label, persist_fn) in layouts {
-            let dir = persist_dir(label);
-            persist_fn(&rt, &dir);
-            let opened = store::open(&dir).unwrap();
-            assert_same_stamps(
-                &rt,
-                &opened,
+    for (i, seed) in seeds().into_iter().take(persist_seed_count()).enumerate() {
+        let style = persist_style(i);
+        let layout = persist_layout(i);
+        let (rt, _) = seeded_persist_runtime(seed, style);
+        let dir = persist_dir("meta-p");
+        persist_with_layout(&rt, &dir, layout);
+        let opened = store::open(&dir).unwrap_or_else(|e| {
+            fail_shrunk(
                 seed,
-                0,
-                "persist+open stamps must match in-memory fold",
+                i,
+                rt.log().as_slice(),
+                |prefix| common::sem::persist_stamps_disagree(&rt, prefix, layout, seed),
+                &format!("persist+open {layout:?}: {e}"),
             );
-            opened
-                .replay_check()
-                .unwrap_or_else(|e| panic!("opened replay_check {label} seed={seed}: {e}"));
-            rm_dir(&dir);
-        }
-        let roll = persist_dir("roll");
-        persist_segmented_rollover(&rt, &roll);
-        let opened = store::open(&roll).unwrap();
-        assert_same_stamps(
+        });
+        assert_same_stamps_shrunk(
             &rt,
             &opened,
             seed,
-            1,
-            "rollover persist+open stamps must match",
+            i,
+            layout,
+            "persist+open stamps must match in-memory fold",
         );
-        rm_dir(&roll);
-        let src = persist_dir("exp-src");
-        persist_segmented(&rt, &src);
-        let dst = persist_dir("exp-dst");
-        let imported = open_export_imported(&src, &dst);
-        assert_same_stamps(
-            &rt,
-            &imported,
-            seed,
-            2,
-            "export_jsonl-imported stamps must match",
-        );
-        rm_dir(&src);
-        rm_dir(&dst);
+        replay_check_or_shrink(&opened, seed, i);
+        if layout == PersistLayout::Segmented {
+            let dst = persist_dir("meta-exp");
+            let imported = common::sem::open_export_imported(&dir, &dst);
+            assert_same_stamps_shrunk(
+                &rt,
+                &imported,
+                seed,
+                i,
+                layout,
+                "export_jsonl-imported stamps must match",
+            );
+            rm_dir(&dst);
+        }
+        rm_dir(&dir);
     }
 }
 
@@ -267,11 +291,13 @@ fn fold_affecting_user<'a>(events: &'a [Event], rt: &Runtime) -> Vec<(usize, &'a
 
 /// Tamper: flip / swap / drop one fold-affecting event. Must fail closed or fold must differ.
 /// Never silently equal. Kind is named in the assertion message.
+/// Segmented: flip a middle sealed payload (open fails closed: CRC mismatch) and
+/// one manifest chain nibble (open fails closed: manifest disagrees).
 #[test]
 fn replay_tamper_flip_swap_drop_never_silently_equal() {
     assert_seed_budget();
     for (case, seed) in seeds().into_iter().take(persist_seed_count()).enumerate() {
-        let (rt, _) = seeded_runtime(seed, MixStyle::BehaviorFree, FoldIndexMode::Eager);
+        let (rt, _) = seeded_runtime(seed, persist_style(case), FoldIndexMode::Eager);
         let orig = runtime_stamps(&rt);
         let events = rt.log().as_slice().to_vec();
         let users = fold_affecting_user(&events, &rt);
@@ -280,7 +306,6 @@ fn replay_tamper_flip_swap_drop_never_silently_equal() {
             "seed={seed}: need ≥2 fold-affecting product ops to tamper"
         );
 
-        // drop
         let drop_i = users[users.len() / 2].0;
         let mut dropped = events.clone();
         dropped.remove(drop_i);
@@ -291,22 +316,37 @@ fn replay_tamper_flip_swap_drop_never_silently_equal() {
             "drop: fold must differ (not silently equal) seed={seed} case={case} idx={drop_i}"
         );
 
-        // swap two fold-affecting events
-        let i = users[0].0;
-        let j = users[users.len() - 1].0;
-        if i != j {
-            let mut swapped = events.clone();
-            swapped.swap(i, j);
-            let after_swap = replay_runtime(&rt, &swapped);
-            let swap_stamps = runtime_stamps(&after_swap);
-            let swap_ok = orig != swap_stamps;
-            assert!(
-                swap_ok,
-                "swap: fold must differ (not silently equal) seed={seed} case={case} i={i} j={j}"
-            );
+        let mut swap_pair = None;
+        for &(i, _) in &users {
+            for &(j, _) in &users {
+                if i >= j {
+                    continue;
+                }
+                let mut swapped = events.clone();
+                swapped.swap(i, j);
+                if orig != runtime_stamps(&replay_runtime(&rt, &swapped)) {
+                    swap_pair = Some((i, j));
+                    break;
+                }
+            }
+            if swap_pair.is_some() {
+                break;
+            }
         }
+        let (i, j) = swap_pair.unwrap_or_else(|| {
+            panic!(
+                "swap: no non-commuting pair seed={seed} case={case} n={}",
+                users.len()
+            )
+        });
+        let mut swapped = events.clone();
+        swapped.swap(i, j);
+        assert_ne!(
+            orig,
+            runtime_stamps(&replay_runtime(&rt, &swapped)),
+            "swap: fold must differ (not silently equal) seed={seed} case={case} i={i} j={j}"
+        );
 
-        // flip a fold-affecting Assert.valid_from (same event list otherwise)
         let mut flipped = events.clone();
         let mut did_flip = false;
         for e in &mut flipped {
@@ -329,7 +369,6 @@ fn replay_tamper_flip_swap_drop_never_silently_equal() {
             "flip: fold must differ (not silently equal) seed={seed} case={case}"
         );
 
-        // persist jsonl-only with the flipped Assert: fail closed or fold differs
         let dest = persist_dir("tamper-flip");
         fs::create_dir_all(&dest).unwrap();
         let jsonl_path = dest.join("events.jsonl");
@@ -357,21 +396,41 @@ fn replay_tamper_flip_swap_drop_never_silently_equal() {
         }
         rm_dir(&dest);
     }
+
+    // Segmented layout: middle-file CRC + manifest chain (two seeds, rollover).
+    for (case, seed) in seeds().into_iter().take(2).enumerate() {
+        let (rt, _) = seeded_persist_runtime(seed, MixStyle::WithHorn);
+        let dir = persist_dir("tamper-crc");
+        persist_segmented_rollover(&rt, &dir);
+        flip_middle_segment_payload(&dir);
+        open_fails_closed(&dir, "CRC mismatch", seed, 200 + case);
+        rm_dir(&dir);
+    }
+    let seed = seeds()[0];
+    let (rt, _) = seeded_persist_runtime(seed, MixStyle::WithHorn);
+    let dir = persist_dir("tamper-chain");
+    persist_segmented_rollover(&rt, &dir);
+    flip_manifest_chain(&dir);
+    open_fails_closed(&dir, "manifest disagrees", seed, 210);
+    rm_dir(&dir);
+}
+
+fn live_triple(rt: &Runtime, s: TermId, r: TermId, o: TermId, vt: u64) -> bool {
+    rt.fold()
+        .facts()
+        .iter()
+        .any(|f| f.subject == s && f.relation == r && f.object() == o && f.is_live_at(u64::MAX, vt))
 }
 
 fn live_known_by(rt: &Runtime, s: TermId, o: TermId) -> bool {
     let kb = rt.dictionary().id("knownBy").expect("knownBy");
-    rt.fold().facts().iter().any(|f| {
-        f.subject == s
-            && f.relation == kb
-            && f.object() == o
-            && f.invalidated_at.is_none()
-            && f.is_live_at(u64::MAX, 2017)
-    })
+    live_triple(rt, s, kb, o, 2017)
 }
 
 /// Characterization (HORN-CORR-01): Correct of a Horn premise does not re-mint or
 /// retract the derived inverse today (`rule_follow_ons` skips Correct).
+/// Also pins current fold behaviour: the superseded premise fact is not live
+/// at the post-correction cut (not an owner choice of HORN-CORR-01).
 #[test]
 fn horn_correct_char_derived_survives_premise_correct() {
     let mut rt = Runtime::default();
@@ -417,6 +476,14 @@ fn horn_correct_char_derived_survives_premise_correct() {
         inverse_behaviors(&rt).len(),
         "characterization HORN-CORR-01: no extra inverse_knows Behavior is appended on Correct"
     );
+    assert!(
+        !live_triple(&rt, alice, knows, bob, 2017),
+        "characterization (current fold): superseded premise is not live at the post-correction cut"
+    );
+    assert!(
+        live_triple(&rt, alice, knows, carol, 2017),
+        "characterization (current fold): replacement premise is live at the post-correction cut"
+    );
 }
 
 /// Characterization (HORN-CORR-01): CorrectInterval of a Horn premise likewise
@@ -457,5 +524,13 @@ fn horn_correct_interval_char_derived_survives_patch() {
         1,
         inverse_behaviors(&rt).len(),
         "characterization HORN-CORR-01: CorrectInterval does not append inverse_knows"
+    );
+    assert!(
+        !live_triple(&rt, alice, knows, bob, 2017),
+        "characterization (current fold): original premise is not live inside the patched interval"
+    );
+    assert!(
+        live_triple(&rt, alice, knows, carol, 2017),
+        "characterization (current fold): patched object is live inside the patched interval"
     );
 }
