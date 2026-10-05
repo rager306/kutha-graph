@@ -6,11 +6,11 @@
 mod common;
 
 use common::sem::{
-    MixStyle, assert_seed_budget, fail_seed, fail_shrunk, ingest_mix, replay_runtime, seeds,
-    sorted_as_of, sorted_live, vt_cuts_for,
+    EDGE_VT, MixStyle, assert_seed_budget, fail_seed, fail_shrunk, fold_stamps, ingest_mix,
+    is_product_rel, replay_runtime, runtime_stamps, seeds, sorted_as_of, sorted_live, vt_cuts_for,
 };
 use kutha_common::{Event, EventId, Op, TermId};
-use kutha_runtime::{FoldIndexMode, Runtime};
+use kutha_runtime::{FoldIndexMode, GraphFold, Runtime};
 
 struct Row {
     subject: TermId,
@@ -253,6 +253,35 @@ fn mix_vf_range(naive: &Naive, rt: &Runtime) -> (u64, u64) {
     }
 }
 
+fn pin_is_live_at_vs_naive(naive: &Naive, rt: &Runtime, seed: u32, case: usize) {
+    let tt = u64::MAX;
+    let vt = EDGE_VT;
+    for f in rt.fold().facts() {
+        if !is_product_rel(rt, f.relation) {
+            continue;
+        }
+        let Some(row) = naive.rows.iter().find(|r| {
+            r.event_id == f.event_id
+                && r.subject == f.subject
+                && r.relation == f.relation
+                && r.object == f.object()
+                && r.ingested_at == f.ingested_at
+                && r.valid_from == f.valid_from
+                && r.valid_to == f.valid_to
+        }) else {
+            continue;
+        };
+        if Naive::is_live(row, tt, vt) != f.is_live_at(tt, vt) {
+            fail_seed(
+                seed,
+                case,
+                rt.log().as_slice(),
+                "Fact::is_live_at must match naive VT/TT at EDGE_VT (skip valid_from dies; Eager live_at via vt_by_from would mask it)",
+            );
+        }
+    }
+}
+
 #[test]
 fn bitemporal_model_matches_fold_live_at_and_as_of() {
     assert_seed_budget();
@@ -261,6 +290,20 @@ fn bitemporal_model_matches_fold_live_at_and_as_of() {
         ingest_mix(&mut rt, seed, MixStyle::BehaviorFree);
         let events = rt.log().as_slice();
         let naive = Naive::from_events(events);
+        let replayed = GraphFold::replay(events);
+        if fold_stamps(&replayed, &rt) != runtime_stamps(&rt) {
+            fail_shrunk(
+                seed,
+                case,
+                events,
+                |prefix| {
+                    let r = replay_runtime(&rt, prefix);
+                    fold_stamps(&GraphFold::replay(prefix), &r) != runtime_stamps(&r)
+                },
+                "GraphFold::replay stamps must equal ingest (Retract-first replay dies)",
+            );
+        }
+        pin_is_live_at_vs_naive(&naive, &rt, seed, case);
         let (min_vf, max_vf) = mix_vf_range(&naive, &rt);
         for vt in vt_cuts_for(min_vf, max_vf) {
             let fold_as_of = sorted_as_of(&rt, vt);
@@ -275,7 +318,7 @@ fn bitemporal_model_matches_fold_live_at_and_as_of() {
                         let n = Naive::from_events(prefix);
                         sorted_as_of(&r, vt) != product_live(&n, &r, u64::MAX, vt)
                     },
-                    "model as_of must match GraphFold::as_of",
+                    "model as_of must match GraphFold::as_of (triples are (s,r,o); object is compared)",
                 );
             }
             let fold_live = sorted_live(&rt, u64::MAX, vt);
@@ -353,4 +396,37 @@ fn model_as_of_alias_is_live_at_max() {
     ingest_mix(&mut rt, 42, MixStyle::BehaviorFree);
     let n = Naive::from_events(rt.log().as_slice());
     assert_eq!(n.as_of(2017), n.live_at(u64::MAX, 2017));
+}
+
+/// Pins that model/fold triples include the object, not only subject.
+#[test]
+fn bitemporal_model_compares_object_not_only_subject() {
+    assert_seed_budget();
+    let mut rt = Runtime::default();
+    let alice = rt.intern("Alice");
+    let bob = rt.intern("Bob");
+    let rel = rt.intern("relatedTo");
+    rt.emit(Op::Assert {
+        subject: alice,
+        relation: rel,
+        object: bob,
+        valid_from: 2010,
+        valid_to: None,
+        claim: None,
+        delivery_key: None,
+        polarity: None,
+    })
+    .unwrap();
+    let naive = Naive::from_events(rt.log().as_slice());
+    let fold = sorted_as_of(&rt, 2017);
+    let model = product_live(&naive, &rt, u64::MAX, 2017);
+    assert_eq!(fold, model, "model and fold must agree on (s,r,o)");
+    assert!(
+        fold.contains(&(alice, rel, bob)),
+        "live triple must keep Assert object, not only subject"
+    );
+    assert!(
+        !fold.contains(&(bob, rel, alice)),
+        "Assert subject/object swap must not be invisible to the model/fold diff"
+    );
 }

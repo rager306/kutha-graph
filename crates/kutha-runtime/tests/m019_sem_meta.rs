@@ -5,13 +5,15 @@
 mod common;
 
 use common::sem::{
-    MixStyle, PersistLayout, assert_load_bearing, assert_same_stamps_shrunk, assert_seed_budget,
-    fail_seed, fail_shrunk, flip_manifest_chain, flip_middle_segment_payload, open_fails_closed,
-    persist_dir, persist_layout, persist_seed_count, persist_segmented_rollover, persist_style,
-    persist_with_layout, replay_check_or_shrink, replay_runtime, rm_dir, runtime_stamps,
+    MixStyle, PersistLayout, assert_export_preserves_event_order, assert_load_bearing,
+    assert_same_stamps_shrunk, assert_seed_budget, assert_swap_not_silent,
+    ensure_tamper_swap_bites, fail_seed, fail_shrunk, flip_manifest_chain,
+    flip_middle_segment_payload, open_fails_closed, open_must_fail_invalid_data, persist_dir,
+    persist_schedule, persist_seed_count, persist_segmented_rollover, persist_with_layout,
+    pin_error_detector, replay_check_or_shrink, replay_runtime, rm_dir, runtime_stamps,
     seeded_persist_runtime, seeded_runtime, seeds,
 };
-use kutha_common::{Event, Op, RuleAst, RuleAtom, RuleTerm, TermId};
+use kutha_common::{Op, RuleAst, RuleAtom, RuleTerm, TermId};
 use kutha_runtime::{FoldIndexMode, Runtime, store};
 use std::fs;
 
@@ -234,73 +236,92 @@ fn replay_idempotence_fresh_runtime_twice() {
 #[test]
 fn persist_roundtrip_random_layouts() {
     assert_seed_budget();
+    let mut saw_legacy = false;
+    let mut saw_rollover = false;
+    let mut saw_migrated = false;
+    let mut saw_export = false;
+    let mut saw_horn_seg = false;
+    let mut saw_horn_mig = false;
     for (i, seed) in seeds().into_iter().take(persist_seed_count()).enumerate() {
-        let style = persist_style(i);
-        let layout = persist_layout(i);
-        let (rt, _) = seeded_persist_runtime(seed, style);
-        let dir = persist_dir("meta-p");
-        persist_with_layout(&rt, &dir, layout);
-        let opened = store::open(&dir).unwrap_or_else(|e| {
-            fail_shrunk(
-                seed,
-                i,
-                rt.log().as_slice(),
-                |prefix| common::sem::persist_stamps_disagree(&rt, prefix, layout, seed),
-                &format!("persist+open {layout:?}: {e}"),
-            );
-        });
-        assert_same_stamps_shrunk(
-            &rt,
-            &opened,
-            seed,
-            i,
-            layout,
-            "persist+open stamps must match in-memory fold",
-        );
-        replay_check_or_shrink(&opened, seed, i);
-        if layout == PersistLayout::Segmented {
-            let dst = persist_dir("meta-exp");
-            let imported = common::sem::open_export_imported(&dir, &dst);
+        for (pass, case) in persist_schedule(i).into_iter().enumerate() {
+            let (rt, _) = seeded_persist_runtime(seed, case.style);
+            let dir = persist_dir("meta-p");
+            persist_with_layout(&rt, &dir, case.layout);
+            let opened = store::open(&dir).unwrap_or_else(|e| {
+                fail_shrunk(
+                    seed,
+                    i * 2 + pass,
+                    rt.log().as_slice(),
+                    |prefix| common::sem::persist_stamps_disagree(&rt, prefix, case.layout, seed),
+                    &format!("persist+open {:?}: {e}", case.layout),
+                );
+            });
             assert_same_stamps_shrunk(
                 &rt,
-                &imported,
+                &opened,
                 seed,
-                i,
-                layout,
-                "export_jsonl-imported stamps must match",
+                i * 2 + pass,
+                case.layout,
+                "persist+open stamps must match in-memory fold",
             );
-            rm_dir(&dst);
-        }
-        rm_dir(&dir);
-    }
-}
-
-fn fold_affecting_user<'a>(events: &'a [Event], rt: &Runtime) -> Vec<(usize, &'a Event)> {
-    events
-        .iter()
-        .enumerate()
-        .filter(|(_, e)| match &e.op {
-            Op::Assert { relation, .. } | Op::Behavior { relation, .. } => {
-                common::sem::is_product_rel(rt, *relation)
+            replay_check_or_shrink(&opened, seed, i * 2 + pass);
+            match case.layout {
+                PersistLayout::Legacy => saw_legacy = true,
+                PersistLayout::Rollover => saw_rollover = true,
+                PersistLayout::Migrated => saw_migrated = true,
+                PersistLayout::Segmented => {}
             }
-            Op::Retract { .. } | Op::Correct { .. } | Op::CorrectInterval { .. } => true,
-            _ => false,
-        })
-        .collect()
+            if case.style == MixStyle::WithHorn && case.layout == PersistLayout::Segmented {
+                saw_horn_seg = true;
+            }
+            if case.style == MixStyle::WithHorn && case.layout == PersistLayout::Migrated {
+                saw_horn_mig = true;
+            }
+            if case.export {
+                let dst = persist_dir("meta-exp");
+                let imported = common::sem::open_export_imported(&dir, &dst);
+                assert_same_stamps_shrunk(
+                    &rt,
+                    &imported,
+                    seed,
+                    i * 2 + pass,
+                    case.layout,
+                    "export_jsonl-imported stamps must match",
+                );
+                assert_export_preserves_event_order(&dst, &rt, seed, 400 + i * 2 + pass);
+                saw_export = true;
+                rm_dir(&dst);
+            }
+            rm_dir(&dir);
+        }
+    }
+    assert!(
+        saw_legacy && saw_rollover && saw_migrated && saw_export,
+        "persist schedule must cover legacy, rollover, migrated, export-imported"
+    );
+    assert!(
+        saw_horn_seg && saw_horn_mig,
+        "persist schedule must put WithHorn through segmented and migrated"
+    );
 }
 
 /// Tamper: flip / swap / drop one fold-affecting event. Must fail closed or fold must differ.
-/// Never silently equal. Kind is named in the assertion message.
-/// Segmented: flip a middle sealed payload (open fails closed: CRC mismatch) and
-/// one manifest chain nibble (open fails closed: manifest disagrees).
+/// Never silently equal. A swap that leaves the fold equal is allowed only when the two
+/// events touch disjoint (subject, relation) sets (`commutes`); overlapping keys + equal
+/// fold is a defect. Kind is named in the assertion message.
+/// Segmented: flip a middle sealed payload — fail-closed InvalidData (any message) AND
+/// named detector pin `CRC mismatch` (skip-CRC dies on the needle; JSON parse is fallback).
+/// Manifest chain nibble: open fails closed `manifest disagrees`.
 #[test]
 fn replay_tamper_flip_swap_drop_never_silently_equal() {
     assert_seed_budget();
     for (case, seed) in seeds().into_iter().take(persist_seed_count()).enumerate() {
-        let (rt, _) = seeded_runtime(seed, persist_style(case), FoldIndexMode::Eager);
+        let (mut rt, _) =
+            seeded_runtime(seed, persist_schedule(case)[0].style, FoldIndexMode::Eager);
+        ensure_tamper_swap_bites(&mut rt);
         let orig = runtime_stamps(&rt);
         let events = rt.log().as_slice().to_vec();
-        let users = fold_affecting_user(&events, &rt);
+        let users = common::sem::fold_affecting_user(&events, &rt);
         assert!(
             users.len() >= 2,
             "seed={seed}: need ≥2 fold-affecting product ops to tamper"
@@ -316,36 +337,7 @@ fn replay_tamper_flip_swap_drop_never_silently_equal() {
             "drop: fold must differ (not silently equal) seed={seed} case={case} idx={drop_i}"
         );
 
-        let mut swap_pair = None;
-        for &(i, _) in &users {
-            for &(j, _) in &users {
-                if i >= j {
-                    continue;
-                }
-                let mut swapped = events.clone();
-                swapped.swap(i, j);
-                if orig != runtime_stamps(&replay_runtime(&rt, &swapped)) {
-                    swap_pair = Some((i, j));
-                    break;
-                }
-            }
-            if swap_pair.is_some() {
-                break;
-            }
-        }
-        let (i, j) = swap_pair.unwrap_or_else(|| {
-            panic!(
-                "swap: no non-commuting pair seed={seed} case={case} n={}",
-                users.len()
-            )
-        });
-        let mut swapped = events.clone();
-        swapped.swap(i, j);
-        assert_ne!(
-            orig,
-            runtime_stamps(&replay_runtime(&rt, &swapped)),
-            "swap: fold must differ (not silently equal) seed={seed} case={case} i={i} j={j}"
-        );
+        assert_swap_not_silent(&rt, &events, seed, case);
 
         let mut flipped = events.clone();
         let mut did_flip = false;
@@ -398,12 +390,14 @@ fn replay_tamper_flip_swap_drop_never_silently_equal() {
     }
 
     // Segmented layout: middle-file CRC + manifest chain (two seeds, rollover).
+    // Fail-closed InvalidData is the property; `CRC mismatch` pins the detector.
     for (case, seed) in seeds().into_iter().take(2).enumerate() {
         let (rt, _) = seeded_persist_runtime(seed, MixStyle::WithHorn);
         let dir = persist_dir("tamper-crc");
         persist_segmented_rollover(&rt, &dir);
         flip_middle_segment_payload(&dir);
-        open_fails_closed(&dir, "CRC mismatch", seed, 200 + case);
+        let err = open_must_fail_invalid_data(&dir, seed, 200 + case);
+        pin_error_detector(&err, "CRC mismatch", seed, 200 + case);
         rm_dir(&dir);
     }
     let seed = seeds()[0];

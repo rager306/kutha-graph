@@ -1,12 +1,15 @@
 //! M019 S07 shared LCG, stamps, mix ingest, persist layouts.
 //! Default ≥64 seeds; `KUTHA_SEEDS=<n>` may raise (never lowers).
 //! Persist/tamper/export use `persist_seed_count()` = max(12, n/5), so the env
-//! raises those families too (default 64 → 12; 256 → 51). No wall-clock oracle;
-//! persist scratch names are pid + atomic counter only.
+//! raises those families too (default 64 → 12; 256 → 51). Two persist passes per
+//! seed so any window of 16 persist indices covers legacy, segmented-multi-segment
+//! (rollover), migrated, and export-imported; pass 1 puts WithHorn through
+//! segmented/migrated. No wall-clock oracle; persist scratch names are pid + atomic.
 #![allow(dead_code)]
 
 use kutha_common::{Event, EventId, Op, TermId};
 use kutha_runtime::{FoldIndexMode, GraphFold, Runtime, RuntimeError, store};
+use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::{env, fs};
@@ -272,6 +275,46 @@ pub fn persist_layout(i: usize) -> PersistLayout {
     }
 }
 
+/// One persist+open (and optional export_jsonl) case.
+#[derive(Clone, Copy, Debug)]
+pub struct PersistCase {
+    pub style: MixStyle,
+    pub layout: PersistLayout,
+    /// Run export_jsonl + import + log-order pin (kills middle-event swap).
+    pub export: bool,
+}
+
+fn layout_exports(layout: PersistLayout) -> bool {
+    matches!(layout, PersistLayout::Segmented | PersistLayout::Rollover)
+}
+
+/// Two deterministic passes per persist index.
+/// Pass 0: `persist_layout(i)` + `persist_style(i)`.
+/// Pass 1: `persist_layout(i+2)` and WithHorn on segmented/migrated/rollover.
+/// Together, any 16 consecutive indices cover all four layouts and export-imported.
+pub fn persist_schedule(i: usize) -> [PersistCase; 2] {
+    let lay0 = persist_layout(i);
+    let lay1 = persist_layout(i + 2);
+    let style1 = match lay1 {
+        PersistLayout::Segmented | PersistLayout::Migrated | PersistLayout::Rollover => {
+            MixStyle::WithHorn
+        }
+        PersistLayout::Legacy => persist_style(i),
+    };
+    [
+        PersistCase {
+            style: persist_style(i),
+            layout: lay0,
+            export: layout_exports(lay0),
+        },
+        PersistCase {
+            style: style1,
+            layout: lay1,
+            export: layout_exports(lay1),
+        },
+    ]
+}
+
 pub struct MixMeta {
     pub last_wall: Option<u64>,
     pub saw_assert: bool,
@@ -518,6 +561,140 @@ pub fn replay_runtime(rt: &Runtime, events: &[Event]) -> Runtime {
     .expect("from_dict_and_events")
 }
 
+/// Product Assert/Behavior plus Retract/Correct/CorrectInterval (fold-affecting).
+pub fn fold_affecting_user<'a>(events: &'a [Event], rt: &Runtime) -> Vec<(usize, &'a Event)> {
+    events
+        .iter()
+        .enumerate()
+        .filter(|(_, e)| match &e.op {
+            Op::Assert { relation, .. } | Op::Behavior { relation, .. } => {
+                is_product_rel(rt, *relation)
+            }
+            Op::Retract { .. } | Op::Correct { .. } | Op::CorrectInterval { .. } => true,
+            _ => false,
+        })
+        .collect()
+}
+
+/// (subject, relation) keys an event writes or patches on the live fold.
+pub fn event_touch_sr(rt: &Runtime, e: &Event) -> BTreeSet<(TermId, TermId)> {
+    match &e.op {
+        Op::Assert {
+            subject, relation, ..
+        }
+        | Op::Behavior {
+            subject, relation, ..
+        } => BTreeSet::from([(*subject, *relation)]),
+        Op::Retract { event_id }
+        | Op::Correct { event_id, .. }
+        | Op::CorrectInterval { event_id, .. } => rt
+            .fold()
+            .facts()
+            .iter()
+            .filter(|f| f.event_id == *event_id)
+            .map(|f| (f.subject, f.relation))
+            .collect(),
+        _ => BTreeSet::new(),
+    }
+}
+
+/// True when some fold-affecting swap changes `runtime_stamps`.
+pub fn swap_changes_fold(rt: &Runtime, events: &[Event]) -> bool {
+    let orig = runtime_stamps(rt);
+    let users = fold_affecting_user(events, rt);
+    for &(i, _) in &users {
+        for &(j, _) in &users {
+            if i >= j {
+                continue;
+            }
+            let mut swapped = events.to_vec();
+            swapped.swap(i, j);
+            if orig != runtime_stamps(&replay_runtime(rt, &swapped)) {
+                return true;
+            }
+        }
+    }
+    false
+}
+
+/// Tamper generator: if every in-log swap commutes, retract one live product Assert
+/// so Assert↔Retract is a load-bearing pair (KUTHA_SEEDS=256 seed=79).
+pub fn ensure_tamper_swap_bites(rt: &mut Runtime) {
+    let events = rt.log().as_slice().to_vec();
+    if swap_changes_fold(rt, &events) {
+        return;
+    }
+    let ids: Vec<EventId> = rt
+        .log()
+        .iter()
+        .filter_map(|e| match &e.op {
+            Op::Assert { relation, .. } if is_product_rel(rt, *relation) => Some(e.id),
+            _ => None,
+        })
+        .collect();
+    for event_id in ids {
+        if rt.emit(Op::Retract { event_id }).is_ok() {
+            let events = rt.log().as_slice().to_vec();
+            assert!(
+                swap_changes_fold(rt, &events),
+                "Retract of a live Assert must yield a non-commuting swap pair"
+            );
+            return;
+        }
+    }
+    panic!("tamper mix could not mint a dependent Retract for a non-commuting swap");
+}
+
+pub fn assert_swap_not_silent(rt: &Runtime, events: &[Event], seed: u32, case: usize) {
+    let orig = runtime_stamps(rt);
+    let users = fold_affecting_user(events, rt);
+    assert!(
+        users.len() >= 2,
+        "seed={seed}: need ≥2 fold-affecting product ops to tamper"
+    );
+    let mut changing = None;
+    for &(i, _) in &users {
+        for &(j, _) in &users {
+            if i >= j {
+                continue;
+            }
+            let mut swapped = events.to_vec();
+            swapped.swap(i, j);
+            if orig != runtime_stamps(&replay_runtime(rt, &swapped)) {
+                changing = Some((i, j));
+                break;
+            }
+        }
+        if changing.is_some() {
+            break;
+        }
+    }
+    if let Some((i, j)) = changing {
+        let mut swapped = events.to_vec();
+        swapped.swap(i, j);
+        assert_ne!(
+            orig,
+            runtime_stamps(&replay_runtime(rt, &swapped)),
+            "swap: fold must differ (not silently equal) seed={seed} case={case} i={i} j={j}"
+        );
+        return;
+    }
+    for &(i, ei) in &users {
+        for &(j, ej) in &users {
+            if i >= j {
+                continue;
+            }
+            let a = event_touch_sr(rt, ei);
+            let b = event_touch_sr(rt, ej);
+            assert!(
+                !a.is_empty() && !b.is_empty() && a.is_disjoint(&b),
+                "swap: equal-fold pair must commute on disjoint subjects/relations \
+                 seed={seed} case={case} i={i} j={j} a={a:?} b={b:?}"
+            );
+        }
+    }
+}
+
 pub fn fail_seed(seed: u32, case: usize, events: &[Event], msg: &str) -> ! {
     eprintln!(
         "SEM fail seed={seed} case={case} n={} ops={}",
@@ -590,12 +767,61 @@ pub fn persist_with_layout(rt: &Runtime, dir: &Path, layout: PersistLayout) -> u
     }
 }
 
+pub fn jsonl_event_ids(path: &Path) -> Vec<EventId> {
+    let text = fs::read_to_string(path).unwrap();
+    text.lines()
+        .filter(|l| !l.is_empty())
+        .map(|l| {
+            let e: Event = serde_json::from_str(l).expect("events.jsonl line");
+            e.id
+        })
+        .collect()
+}
+
 /// export_jsonl into a fresh jsonl-only dir (no manifest / WAL). Open uses jsonl as SoT.
+/// Pins log event-id order so a middle-event swap in `export_jsonl` dies even when
+/// the swapped prefix commutes under `runtime_stamps`.
 pub fn open_export_imported(src: &Path, dest: &Path) -> Runtime {
     store::export_jsonl(src).unwrap();
     fs::create_dir_all(dest).unwrap();
     fs::copy(src.join("events.jsonl"), dest.join("events.jsonl")).unwrap();
     store::open(dest).unwrap()
+}
+
+pub fn expected_persist_event_ids(rt: &Runtime) -> Vec<EventId> {
+    let mut out: Vec<EventId> = rt
+        .dictionary()
+        .strings()
+        .iter()
+        .map(|name| Event::stable_define(name.clone(), 0).id)
+        .collect();
+    for e in rt.log().iter() {
+        if !matches!(e.op, Op::Define { .. }) {
+            out.push(e.id);
+        }
+    }
+    out
+}
+
+pub fn assert_export_preserves_event_order(src: &Path, rt: &Runtime, seed: u32, case: usize) {
+    let ids = jsonl_event_ids(&src.join("events.jsonl"));
+    let live = expected_persist_event_ids(rt);
+    if ids.len() < 3 {
+        fail_seed(
+            seed,
+            case,
+            rt.log().as_slice(),
+            "export_jsonl order pin needs ≥3 events so a middle swap is observable",
+        );
+    }
+    if ids != live {
+        fail_seed(
+            seed,
+            case,
+            rt.log().as_slice(),
+            "export_jsonl must preserve persist-encoded event-id order (middle-event swap dies)",
+        );
+    }
 }
 
 pub fn typed_csr_triples(rt: &Runtime, tt: u64, vt: u64) -> Vec<(TermId, TermId, TermId)> {
@@ -935,27 +1161,35 @@ pub fn flip_manifest_chain(dir: &Path) -> usize {
     mid
 }
 
-pub fn open_fails_closed(dir: &Path, needle: &str, seed: u32, case: usize) {
+/// Fail-closed property: `open` must return `InvalidData` (message unrestricted).
+/// Skip-CRC still fail-closes here (`sealed frame is not an Event`).
+pub fn open_must_fail_invalid_data(dir: &Path, seed: u32, case: usize) -> std::io::Error {
     match store::open(dir) {
-        Ok(_) => fail_seed(
-            seed,
-            case,
-            &[],
-            &format!("open must fail closed ({needle})"),
-        ),
+        Ok(_) => fail_seed(seed, case, &[], "open must fail closed (InvalidData)"),
         Err(e) => {
             assert_eq!(
                 e.kind(),
                 std::io::ErrorKind::InvalidData,
                 "seed={seed} case={case}: fail closed InvalidData, got {e}"
             );
-            let msg = e.to_string();
-            assert!(
-                msg.contains(needle),
-                "seed={seed} case={case}: error must mention {needle:?}; got {msg}"
-            );
+            e
         }
     }
+}
+
+/// Named-detector pin (not generic fail-closed). CRC-disabled dies on this needle;
+/// the JSON-parse fallback is a different message and fails this assert.
+pub fn pin_error_detector(err: &std::io::Error, needle: &str, seed: u32, case: usize) {
+    let msg = err.to_string();
+    assert!(
+        msg.contains(needle),
+        "seed={seed} case={case}: detector pin {needle:?}; got {msg}"
+    );
+}
+
+pub fn open_fails_closed(dir: &Path, needle: &str, seed: u32, case: usize) {
+    let err = open_must_fail_invalid_data(dir, seed, case);
+    pin_error_detector(&err, needle, seed, case);
 }
 
 #[derive(Default)]

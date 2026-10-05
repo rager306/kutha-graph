@@ -7,11 +7,12 @@
 mod common;
 
 use common::sem::{
-    MixCoverage, MixStyle, PersistLayout, assert_csr_matches_fold, assert_same_stamps_shrunk,
-    assert_seed_budget, assert_views_stable, fail_shrunk, fold_stamps, ingest_mix,
-    open_export_imported, persist_dir, persist_layout, persist_seed_count, persist_style,
-    persist_with_layout, replay_check_or_shrink, replay_runtime, rm_dir, runtime_stamps,
-    scan_mix_coverage, seeded_persist_runtime, seeded_runtime, seeds, vt_cuts_for,
+    MixCoverage, MixStyle, PersistLayout, assert_csr_matches_fold,
+    assert_export_preserves_event_order, assert_same_stamps_shrunk, assert_seed_budget,
+    assert_views_stable, fail_shrunk, fold_stamps, ingest_mix, open_export_imported, persist_dir,
+    persist_schedule, persist_seed_count, persist_with_layout, replay_check_or_shrink,
+    replay_runtime, rm_dir, runtime_stamps, scan_mix_coverage, seeded_persist_runtime,
+    seeded_runtime, seeds, vt_cuts_for,
 };
 use kutha_runtime::{FoldIndexMode, GraphFold, Runtime, store};
 
@@ -52,7 +53,13 @@ fn csr_fold_diff_with_horn_agrees() {
     }
 }
 
-fn persist_roundtrip_one(seed: u32, style: MixStyle, layout: PersistLayout, case: usize) {
+fn persist_roundtrip_one(
+    seed: u32,
+    style: MixStyle,
+    layout: PersistLayout,
+    case: usize,
+    export: bool,
+) {
     let (rt, meta) = seeded_persist_runtime(seed, style);
     assert_csr_matches_fold(
         &rt,
@@ -87,7 +94,7 @@ fn persist_roundtrip_one(seed: u32, style: MixStyle, layout: PersistLayout, case
         seed,
         case + 1,
     );
-    if layout == PersistLayout::Segmented {
+    if export {
         let dest = persist_dir("exp");
         let imported = open_export_imported(&dir, &dest);
         assert_same_stamps_shrunk(
@@ -95,9 +102,10 @@ fn persist_roundtrip_one(seed: u32, style: MixStyle, layout: PersistLayout, case
             &imported,
             seed,
             case + 2,
-            PersistLayout::Segmented,
+            layout,
             "export_jsonl-imported open must match live stamps",
         );
+        assert_export_preserves_event_order(&dest, &rt, seed, case + 3);
         rm_dir(&dest);
     }
     rm_dir(&dir);
@@ -106,20 +114,74 @@ fn persist_roundtrip_one(seed: u32, style: MixStyle, layout: PersistLayout, case
 #[test]
 fn csr_fold_diff_persist_rebuild_layouts() {
     assert_seed_budget();
+    let mut saw_legacy = false;
+    let mut saw_rollover = false;
+    let mut saw_migrated = false;
+    let mut saw_export = false;
+    let mut saw_horn_seg = false;
+    let mut saw_horn_mig = false;
     for (i, seed) in seeds().into_iter().take(persist_seed_count()).enumerate() {
-        persist_roundtrip_one(seed, persist_style(i), persist_layout(i), i);
+        for (pass, case) in persist_schedule(i).into_iter().enumerate() {
+            persist_roundtrip_one(
+                seed,
+                case.style,
+                case.layout,
+                i * 20 + pass * 4,
+                case.export,
+            );
+            match case.layout {
+                PersistLayout::Legacy => saw_legacy = true,
+                PersistLayout::Rollover => saw_rollover = true,
+                PersistLayout::Migrated => saw_migrated = true,
+                PersistLayout::Segmented => {}
+            }
+            if case.export {
+                saw_export = true;
+            }
+            if case.style == MixStyle::WithHorn && case.layout == PersistLayout::Segmented {
+                saw_horn_seg = true;
+            }
+            if case.style == MixStyle::WithHorn && case.layout == PersistLayout::Migrated {
+                saw_horn_mig = true;
+            }
+        }
     }
+    assert!(
+        saw_legacy && saw_rollover && saw_migrated && saw_export,
+        "persist schedule must cover legacy, rollover, migrated, export-imported"
+    );
+    assert!(
+        saw_horn_seg && saw_horn_mig,
+        "persist schedule must put WithHorn through segmented and migrated"
+    );
 }
 
 #[test]
 fn persist_roundtrip_export_jsonl_imported() {
     assert_seed_budget();
+    let mut n = 0usize;
     for (i, seed) in seeds().into_iter().take(persist_seed_count()).enumerate() {
-        if persist_layout(i) != PersistLayout::Segmented {
-            continue;
+        for (pass, case) in persist_schedule(i).into_iter().enumerate() {
+            if !case.export {
+                continue;
+            }
+            persist_roundtrip_one(
+                seed,
+                case.style,
+                case.layout,
+                1000 + i * 20 + pass * 4,
+                true,
+            );
+            n += 1;
+            if n >= 2 {
+                break;
+            }
         }
-        persist_roundtrip_one(seed, persist_style(i), PersistLayout::Segmented, 100 + i);
+        if n >= 2 {
+            break;
+        }
     }
+    assert!(n >= 1, "export-imported layout must run at least once");
 }
 
 #[test]
