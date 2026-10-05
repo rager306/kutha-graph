@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Process: close M019 S06 (GSD Phase 61)
+
+### Process
+
+- `L_delivery=M019-S06-done`, Active Slice **None**. Independent verification 8/8 (`61-VERIFICATION.md`). ROCK-02: always-on sealed-list binding `m:sealed`, opt-in `verify_full()`, `m:v` 2. Export-race oracles were already green because of the Phase 60 lock (green pins). MEM-01: counting-allocator attribution + streaming of frames + `split_events` by reference + `drop(encoded_log)` (persist peak N=10000 56.7 MB → 28.7 MB by the verifier's allocator; persisted bytes identical base vs head). `log_has_quantum_outcome` deleted; `wal::append_events` and `rocks_spike` kept; wiring not done (reasons in ADR-010). Matrix killed 48 / characterization 5 / gap 3 / blocked 6 / spec-only 4 / gate 1 (67). Bench gate **PASS** on the controller re-measure (base `d71cd91` vs head `65cc5a3`, 10 interleaved pairs, `taskset -c 9`; executor 6-pair `open` +10.10% did not reproduce). Honest residuals: `bytes_per_fact` rise not explained to a lower bound; mid-poison only by `verify_full`/`get_event`; `m:v` shadowed by `m:sealed`; `open` O(N); no external chain anchor; Persister not wired into kutha-tenant; DUR-export-race tests were green pins; 3 gap rows remain for S07. No capability claim. Next: controller leases M019 S07 (Phase 62 semantic and logic test expansion: seeded fold/CSR/rebuild differential, cascade order, Correct-of-Horn-premise characterization).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-010 / ADR-012 remain Proposed. `L_capability` unchanged (FF5). M018 remains paused at its S02 decision gate.
+
 ## 2026-10-05 — Durability residuals B (M019 S06 / GSD Phase 61)
 
 ### Product

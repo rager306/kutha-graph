@@ -430,9 +430,23 @@ Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated worktrees (`tmp/p61-bench-base
 | as_of.n | 323262 | 303952 | −5.97% |
 | open.n | 3323479384 | 3659289620 | +10.10% |
 
-`bytes_per_fact` (whole-bench RSS / N, 6 counted pairs): median 21673 B (`d71cd91`) vs 21138 B (`93b49a3`). Counting-allocator N=500: ingest live identical vs `7e31784` (867644 B); persist peak 1506755 → 1312566 B after streaming. Remaining bpf vs the Phase 50 17218 B figure is inherent whole-bench RSS.
+`bytes_per_fact` is whole-bench VmRSS delta / live fact count (`baseline.rs` ~143–314). Six counted pairs: median 21673 B (`d71cd91`) vs 21138 B (`93b49a3`). Counting-allocator attribution: ingest-live bytes unchanged vs `7e31784` (N=500: 867644 B); persist peak lowered by streaming (1506755 → 1312566 B). The residual rise vs the Phase 50 17218 B figure is not shown to be a lower bound of the engine and stays an open measurement item.
 
-D-10 ≤10% vs `d71cd91` on ingest/`as_of`/`open.n`: **STOP** on `open.n` median +10.10% (ingest/as_of inside the gate). Pair-level open swings +39% / +30% are host noise. Worktrees and target dirs removed after the run.
+Executor 6-pair (HEAD `93b49a3`, `taskset -c 4`): D-10 **STOP** on `open.n` median +10.10% (ingest/as_of inside the gate). Pair-level open swings +39% / +30% are host noise. That `open` delta did not reproduce on the controller re-measure.
+
+### Controller re-measure (HEAD `65cc5a3`)
+
+Same host, Eager, `KUTHA_BENCH_N=10000`. Base `d71cd91` vs head `65cc5a3`. Interleaved `base, head` × 10 pairs after a discarded warm-up. Binaries pinned with `taskset -c 9`. Host load 14–21 from other agents.
+
+| metric | median d71cd91 | median 65cc5a3 | Δ median |
+|--------|---------------:|---------------:|---------:|
+| ingest_plain.n | 132980058 | 124038642 | −6.72% |
+| as_of.n | 290046 | 283012 | −2.42% |
+| open.n | 3184254257 | 3216175592 | +1.00% |
+
+4 of 10 pairs had head faster on `open.n`. A 5+5+5+5 block run gave `open.n` +0.62%.
+
+D-10 ≤10% vs `d71cd91` on ingest/`as_of`/`open.n`: **PASS**. Worktrees and target dirs removed after the run.
 
 
 
