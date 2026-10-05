@@ -1,6 +1,6 @@
 # Phase 62-01 SUMMARY
 
-Start `da655d8`. Commits through verifier `7b72acd`, then follow-up: `test(62-11)` helper, `test(62-12)` model, `test(62-13)` CSR/diff, `test(62-14)` meta, `docs(62-15)` matrix/CHANGELOG/this file. No STATE/ROADMAP edit.
+Start `da655d8`. Commits through verifier `7b72acd`, then `c9642a1` test(62-11) helper; `da01f04` test(62-12) model; `73ccc46` test(62-13) CSR/diff; `6a5552d` test(62-14) meta; `8397df5` docs(62-15) matrix/CHANGELOG. No STATE/ROADMAP edit.
 
 **Follow-up (verifier PASS-WITH-FINDINGS):** persist/tamper `persist_seed_count = max(12, n/5)` so `KUTHA_SEEDS` raises those families. Hydrate load-bearing pins (event count, committed prefix, dictionary, outcomes, `next_tt`) kill drop-last-on-fold. Segmented middle-file payload XOR must fail closed `CRC mismatch` (CRC-disabled dies on that needle; fallback is JSON parse). Manifest chain nibble fails closed. Horn char also pins superseded premise not live at post-correction cut (not HORN-CORR-01). Failures print seed, case, `shrunk ops=`. Persist scratch = pid + atomic (no `SystemTime`). VT cuts: 2009 edge + two inside mix `valid_from` + 2025. Persist layouts round-robin BehaviorFree/WithHorn. Row+Naive+intersect = 200 lines.
 
