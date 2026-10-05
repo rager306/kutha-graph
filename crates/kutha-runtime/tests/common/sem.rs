@@ -153,10 +153,15 @@ pub fn tiny_segment_limits() -> LimitGuard {
 
 pub fn persist_dir(label: &str) -> PathBuf {
     let n = DIR_SEQ.fetch_add(1, Ordering::Relaxed);
+    let nanos = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_nanos())
+        .unwrap_or(0);
     let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
         .join("tmp")
-        .join(format!("p62-{label}-{n}"));
+        .join("p62-sem")
+        .join(format!("{label}-{n}-{}-{nanos}", std::process::id()));
     let _ = fs::remove_dir_all(&dir);
     fs::create_dir_all(&dir).unwrap();
     dir

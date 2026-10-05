@@ -10,6 +10,6 @@ Start `da655d8`. Commits: `5f96184` test(62-01) LCG helper; `3285865` test(62-02
 
 **Matrix:** before killed 48 / char 5 / gap 3 / blocked 6 / spec-only 4 / gate 1 (67). After killed 55 / char 6 / gap 0 / blocked 6 / spec-only 4 / gate 1 (72).
 
-**Graph:** CBM `list_projects` `root-kutha-graph`; coverage src match, new tests `not_tracked`. No `src/` so no GitNexus impact / no bench gate. Did not reindex.
+**Graph:** CBM `list_projects` `root-kutha-graph`; new tests `not_tracked`; `intern.rs` `metadata_changed`. GitNexus impact on `TermDictionary.len` HIGH/lower-bound (index 6 behind); `rg` arbiter: `is_empty` has no callers yet. Clippy `-D warnings` is not repo CI (Phase 61: clippy without `-D`, 54 warn / lib 22). Additive `is_empty` only. Did not reindex. Bench skipped (no hot-path callers).
 
 **Gates:** fmt/clippy/workspace tests/rocks/`kutha-gov` py precommit ci selftest/pytest (see executor reply). **Open:** HORN-KC-01, ASOF-ELIG-01, C01, DET-02, TR-02, HORN-CORR-01 (blocked/char). ADRs Proposed. No product bug found.
