@@ -289,3 +289,15 @@ invariants:
     source: ".planning/phases/28-independent-verification-and-artifact-budget/28-CONTEXT.md"
     disposition: check
     check: id-map-cite
+
+  - id: I-test-matrix-kind
+    claim: "Test-matrix consistency cannot be expressed as yaml_map_list (ROADMAP slice ids are M###-S##, not literal tokens; killed requires a non-none kill_mutation)"
+    source: "docs/process/governor-intake.md"
+    disposition: kind
+    kind: test_matrix
+
+  - id: I-test-matrix
+    claim: "docs/architecture/test-matrix.yaml names real oracles and keeps statuses internally consistent"
+    source: "docs/process/governor-intake.md"
+    disposition: check
+    check: test-matrix

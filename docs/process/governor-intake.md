@@ -107,6 +107,19 @@ TOML freeze kind (Phase 57 GOV-04). No existing kind parses Cargo tables, so thi
 
 `cargo_dep_constraint` (stdlib `tomllib` only) takes a Cargo.toml glob and `rules` mapping crate names to `forbid` or `require_optional`. It walks `[dependencies]`, `[dev-dependencies]`, `[build-dependencies]`, `[target.*.dependencies]`, `[workspace.dependencies]`, table form `[dependencies.NAME]`, and `package =` renames. Comments never match. A missing or unparsable TOML file is HIGH; a glob with zero matches is not. `freeze-rocks` / `freeze-cypher-deps` / `freeze-hnsw-dep` keep their ids and messages; they now use this kind.
 
+Test-matrix kind (Phase 59 TEST-01). `yaml_map_list` cannot prove (iii)–(v) without theatre: ROADMAP slice owners are `M019-S05` while the file writes `## M019` plus `**S05:`; `killed` × `kill_mutation != none` is a cross-field rule; `feature:<observe>` is a prefix lookup into `fsm.yaml` states of kind `observe_cargo`. Disposition is `kind`.
+
+```yaml
+# invariants.yaml
+- id: I-test-matrix-kind
+  claim: "Test-matrix consistency cannot be expressed as yaml_map_list"
+  source: "docs/process/governor-intake.md"
+  disposition: kind
+  kind: test_matrix
+```
+
+`test_matrix` reads `docs/architecture/test-matrix.yaml`. Product `oracle` names must be asserting `#[test]` fns (not `#[ignore]`); harness names must be check ids; `blocked` owners are the decision allowlist (`C01`, `HORN-KC-01`, `HORN-CORR-01`, `ASOF-ELIG-01`, `TR-02`, `DET-02`, `FIXG-01`); gap and other slice owners must appear as `M###-S##` under that ROADMAP heading; `unowned` is rejected. Green means the map is consistent, not that the product is tested. Do not add the matrix to `observe_cargo.required`.
+
 Artifact-budget glob with non-vacuous match (`artifact-budget` in `checks.yaml`):
 
 ```yaml

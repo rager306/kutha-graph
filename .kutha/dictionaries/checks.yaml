@@ -692,6 +692,7 @@ checks:
           - "glob_max_lines"
           - "frontmatter_paths_exist"
           - "cargo_dep_constraint"
+          - "test_matrix"
           - "run_selftest"
           - "invariants.yaml"
           - "bridges.yaml"
@@ -1467,4 +1468,17 @@ checks:
           - empty_pin_inverse_fails_replay_fingerprint_unchanged
         category: i-f-oracle
         message: "I-F16 derivable oracle missing {missing}"
+
+  - id: test-matrix
+    description: >-
+      test-matrix.yaml named oracles exist and statuses are internally consistent
+      (not a coverage number; not product correctness)
+    steps:
+      - kind: test_matrix
+        path: docs/architecture/test-matrix.yaml
+        rust_glob: "crates/**/*.rs"
+        checks: .kutha/dictionaries/checks.yaml
+        roadmap: .kutha/ROADMAP.md
+        fsm: .kutha/dictionaries/fsm.yaml
+        message: "test-matrix oracle missing {missing}"
 

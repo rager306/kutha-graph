@@ -9,6 +9,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Process
 
 - RED pytest (`scripts/tests/test_test_matrix.py`) failed 10/10 on a missing check id before the kind existed.
+- Kind `test_matrix` and check `test-matrix` prove the oracle map is internally consistent (named `#[test]` / check ids exist; `killed` forbids `kill_mutation: none`; `gap` owners are ROADMAP `M###-S##`; `feature:` gates name an `observe_cargo` row; `blocked` owners are the decision allowlist). Selftest derives a missing-oracle mutation. FSM and `.env.example` budget 64 → 65 (65 dictionary checks).
 
 ### Trajectory
 

@@ -47,6 +47,7 @@ DERIVABLE_KINDS = frozenset(
         "glob_max_lines",
         "frontmatter_paths_exist",
         "cargo_dep_constraint",
+        "test_matrix",
         "yaml_map_list",
         "pointer_in_other_file",
         "markdown_heading_tag",
@@ -446,6 +447,10 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
             unit = _derive_cargo_dep_constraint(step, work)
             if unit:
                 derived.append(unit)
+        elif kind == "test_matrix":
+            unit = _derive_test_matrix(step, work)
+            if unit:
+                derived.append(unit)
         elif kind == "yaml_map_list":
             unit = _derive_yaml_map_list(step, work)
             if unit:
@@ -471,6 +476,16 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
             if unit:
                 derived.append(unit)
     return derived
+
+
+def _derive_test_matrix(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import test_matrix_mutation_target
+
+    target = test_matrix_mutation_target(step, work)
+    if target is None:
+        return []
+    path, pattern, replacement = target
+    return [{"op": "replace_regex", "path": path, "pattern": pattern, "with": replacement}]
 
 
 def _derive_yaml_map_list(step: Step, work: Path) -> list[Mutation]:
