@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import atexit
+import os
 import shutil
 import sys
 import tempfile
@@ -73,7 +74,22 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual("unknown-kind", highs[0].category)
 
     def test_ci_green_on_this_tree(self) -> None:
-        self.assertEqual(0, main(["--root", str(ROOT), "ci"]))
+        # Hermetic: stub cargo/tenant. Live cargo under timeout_sec 180 times out on a
+        # cold edition-2024 rebuild (pytest log: observe_cargo=180111, empty stdout).
+        # Controller standalone `kutha-gov ci` remains the real-tree cargo proof.
+        bindir, tenant = _stub_ci_bins()
+        previous_path = os.environ.get("PATH", "")
+        previous_tenant = os.environ.get("KUTHA_TENANT_BIN")
+        try:
+            os.environ["PATH"] = bindir + os.pathsep + previous_path
+            os.environ["KUTHA_TENANT_BIN"] = tenant
+            self.assertEqual(0, main(["--root", str(ROOT), "ci"]))
+        finally:
+            os.environ["PATH"] = previous_path
+            if previous_tenant is None:
+                os.environ.pop("KUTHA_TENANT_BIN", None)
+            else:
+                os.environ["KUTHA_TENANT_BIN"] = previous_tenant
 
     def test_no_high_on_live_tree(self) -> None:
         for name, chk in get_checks(ROOT).items():
@@ -567,6 +583,45 @@ class HarnessTests(unittest.TestCase):
                 else:
                     self.assertTrue(rules)
                     self.assertTrue(all(action == "forbid" for action in rules.values()))
+
+
+def _stub_ci_bins() -> tuple[str, str]:
+    """PATH `cargo` + KUTHA_TENANT_BIN that satisfy observe without compiling."""
+    from kutha_gov.fsm import load_machine
+
+    raw = tempfile.mkdtemp(prefix="kutha-ci-stub-")
+    atexit.register(shutil.rmtree, raw, ignore_errors=True)
+    bindir = Path(raw)
+    machine = load_machine(ROOT)
+    ws_raw = machine.states["observe_cargo"].get("required", [])
+    rocks_raw = machine.states["observe_rocks"].get("required", [])
+    ws = [n for n in ws_raw if isinstance(n, str)] if isinstance(ws_raw, list) else []
+    rocks = [n for n in rocks_raw if isinstance(n, str)] if isinstance(rocks_raw, list) else []
+    cargo = bindir / "cargo"
+    cargo.write_text(
+        "#!/usr/bin/env python3\n"
+        "import sys\n"
+        f"WS = {ws!r}\n"
+        f"ROCKS = {rocks!r}\n"
+        "args = sys.argv[1:]\n"
+        "joined = ' '.join(args)\n"
+        "if 'build' in args:\n"
+        "    sys.exit(0)\n"
+        "names = ROCKS if 'rocks-index' in joined else WS\n"
+        "for name in names:\n"
+        "    print(f'test {name} ... ok')\n"
+        "sys.exit(0)\n",
+        encoding="utf-8",
+    )
+    cargo.chmod(0o755)
+    tenant = bindir / "kutha-tenant"
+    tenant.write_text(
+        "#!/bin/sh\n"
+        "echo 'tenant: ingested=1 last_status=ok last_vf=1 as_of_match=1 dir=.kutha/tenant'\n",
+        encoding="utf-8",
+    )
+    tenant.chmod(0o755)
+    return str(bindir), str(tenant)
 
 
 def _rust_tree(files: dict[str, str]) -> Path:
@@ -1081,6 +1136,33 @@ class RustTestAssertsTests(unittest.TestCase):
             },
         )
         self.assertIn("rust-test-missing", _rust_highs(result))
+
+    def test_rust_fn_index_scratch_copy_does_not_see_original_cache(self) -> None:
+        step: dict[str, object] = {
+            "kind": "rust_test_asserts",
+            "path": "crates/k/tests/t.rs",
+            "tests": ["cache_probe"],
+        }
+        original = _rust_tree(
+            {"crates/k/tests/t.rs": "#[test]\nfn cache_probe() { assert!(true); }\n"}
+        )
+        self.assertEqual([], _rust_highs(_rust_run(original, step)))
+        scratch = _rust_tree({"crates/k/tests/t.rs": "#[test]\nfn cache_probe() { let _x = 1; }\n"})
+        self.assertEqual(["rust-test-vacuous"], _rust_highs(_rust_run(scratch, step)))
+
+    def test_rust_fn_index_invalidates_when_same_root_file_changes(self) -> None:
+        root = _rust_tree({"crates/k/tests/t.rs": "#[test]\nfn cache_probe() { assert!(true); }\n"})
+        step: dict[str, object] = {
+            "kind": "rust_test_asserts",
+            "path": "crates/k/tests/t.rs",
+            "tests": ["cache_probe"],
+        }
+        self.assertEqual([], _rust_highs(_rust_run(root, step)))
+        (root / "crates/k/tests/t.rs").write_text(
+            "#[test]\nfn cache_probe() { let _x = 1; }\n",
+            encoding="utf-8",
+        )
+        self.assertEqual(["rust-test-vacuous"], _rust_highs(_rust_run(root, step)))
 
 
 _CITE_TOKEN = r"L_delivery=([A-Za-z0-9][A-Za-z0-9._-]*)"

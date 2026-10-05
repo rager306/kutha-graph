@@ -327,8 +327,8 @@ class FnItem:
         return src[: self.start].count("\n") + 1
 
 
-def parse_fns(src: str) -> list[FnItem]:
-    stripped = strip_noise(src)
+def parse_fns(src: str, stripped: str | None = None) -> list[FnItem]:
+    stripped = strip_noise(src) if stripped is None else stripped
     items: list[FnItem] = []
     bodies: list[tuple[int, int]] = []
     for match in _FN_RE.finditer(stripped):

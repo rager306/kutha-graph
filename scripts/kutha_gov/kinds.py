@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 import tomllib
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 
 import yaml
@@ -1191,6 +1191,48 @@ def _rel_of(ctx: Context, path: Path) -> str:
         return str(path)
 
 
+type _RustStamp = tuple[str, int, int]
+type _RustFnHit = tuple[Path, str, FnItem, str]
+
+# Process-local. Keyed by absolute path + mtime/size (and root for the name index)
+# so a selftest scratch copy never reuses another tree's parse.
+_RUST_FILE_CACHE: dict[_RustStamp, tuple[str, str, tuple[FnItem, ...]]] = {}
+_RUST_FN_INDEX: dict[tuple[str, tuple[_RustStamp, ...]], dict[str, list[_RustFnHit]]] = {}
+
+
+def _rust_file_stamp(path: Path) -> _RustStamp:
+    resolved = path.resolve()
+    st = resolved.stat()
+    return (str(resolved), st.st_mtime_ns, st.st_size)
+
+
+def _parse_rust_file_cached(path: Path) -> tuple[str, str, tuple[FnItem, ...]]:
+    stamp = _rust_file_stamp(path)
+    hit = _RUST_FILE_CACHE.get(stamp)
+    if hit is not None:
+        return hit
+    src = path.read_text(encoding="utf-8")
+    stripped = strip_noise(src)
+    parsed = (src, stripped, tuple(parse_fns(src, stripped=stripped)))
+    _RUST_FILE_CACHE[stamp] = parsed
+    return parsed
+
+
+def _rust_fn_index(root: Path, files: Sequence[Path]) -> dict[str, list[_RustFnHit]]:
+    stamps = tuple(_rust_file_stamp(path) for path in files)
+    key = (str(root.resolve()), stamps)
+    cached = _RUST_FN_INDEX.get(key)
+    if cached is not None:
+        return cached
+    index: dict[str, list[_RustFnHit]] = {}
+    for path in files:
+        src, stripped, items = _parse_rust_file_cached(path)
+        for item in items:
+            index.setdefault(item.name, []).append((path, src, item, body_text(stripped, item)))
+    _RUST_FN_INDEX[key] = index
+    return index
+
+
 def _kind_rust_test_asserts(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
     names = _names_from_yaml_rows(check, step, ctx, result)
     if names is None:
@@ -1210,11 +1252,8 @@ def _kind_rust_test_asserts(check: str, step: Step, ctx: Context, result: CheckR
         return
     prefixes = _prefixes(step)
     require_symbols = _as_str_list_map(step.get("require_symbols"))
-    parsed: list[tuple[Path, str, str]] = []
-    for path in files:
-        src = path.read_text(encoding="utf-8")
-        parsed.append((path, src, strip_noise(src)))
-        result.scanned += 1
+    index = _rust_fn_index(ctx.root, files)
+    result.scanned += len(files)
     for name in names:
         _prove_named_test(
             check,
@@ -1222,7 +1261,7 @@ def _kind_rust_test_asserts(check: str, step: Step, ctx: Context, result: CheckR
             ctx,
             result,
             name,
-            parsed,
+            index.get(name, []),
             prefixes,
             require_symbols.get(name, []),
         )
@@ -1234,16 +1273,10 @@ def _prove_named_test(
     ctx: Context,
     result: CheckResult,
     name: str,
-    parsed: list[tuple[Path, str, str]],
+    matching: list[_RustFnHit],
     prefixes: tuple[str, ...],
     symbols: list[str],
 ) -> None:
-    matching: list[tuple[Path, str, FnItem, str]] = []
-    for path, src, stripped in parsed:
-        for item in parse_fns(src):
-            if item.name != name:
-                continue
-            matching.append((path, src, item, body_text(stripped, item)))
     if not matching:
         result.findings.append(
             Finding(
@@ -1370,9 +1403,9 @@ def rust_test_mutation_targets(step: Step, root: Path) -> list[tuple[str, str]]:
     out: list[tuple[str, str]] = []
     for path in files:
         rel = str(path.relative_to(root)).replace("\\", "/")
-        src = path.read_text(encoding="utf-8")
+        _src, _stripped, items = _parse_rust_file_cached(path)
         seen: set[str] = set()
-        for item in parse_fns(src):
+        for item in items:
             if (
                 item.name in wanted
                 and item.name not in seen

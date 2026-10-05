@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Process: hermetic pytest ci and rust_test_asserts cache (GSD Phase 57)
+
+### Process
+
+- `test_ci_green_on_this_tree` stubs `cargo` and `kutha-tenant` so pytest does not cold-compile under `timeout_sec: 180` (pytest log: `observe_cargo=180111`, empty stdout, 65 `observe-missing`). `rust_test_asserts` keeps a process-local fn-name index keyed by root + file mtime/size so honeycomb-ledger selftest does not re-parse `crates/**/*.rs` on every YAML mutation. Oracles and required names are unchanged; standalone `kutha-gov ci` remains the live cargo proof.
+
 ## 2026-10-05 — Product: Rust edition 2024
 
 ### Product
