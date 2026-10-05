@@ -26,7 +26,8 @@ pub(crate) fn apply_dotenv() {
                         let key = key.trim();
                         let value = value.trim().trim_matches('"').trim_matches('\'');
                         if std::env::var_os(key).is_none() {
-                            std::env::set_var(key, value);
+                            // SAFETY: runs once per process (`Once`) and only sets keys that are still unset; the library has no thread of its own, but a host that reads the environment concurrently on another thread before first use would race (edition-2024 `set_var` contract). Follow-up: stop writing `.env` into the process environment.
+                            unsafe { std::env::set_var(key, value) };
                         }
                     }
                 }

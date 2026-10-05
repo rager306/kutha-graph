@@ -1,7 +1,7 @@
 //! M017 S02 / REPL-01..04 GREEN oracles. D-07: FF5/FF6/M010–M016 assertions stay in their own files.
 
 use kutha_common::{Event, EventId, Op};
-use kutha_runtime::{store, FoldIndexMode, PersistedQuantumOutcome, Runtime};
+use kutha_runtime::{FoldIndexMode, PersistedQuantumOutcome, Runtime, store};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
@@ -124,15 +124,18 @@ struct RestoreEnv {
 impl Drop for RestoreEnv {
     fn drop(&mut self) {
         match &self.prev {
-            Some(v) => std::env::set_var(self.key, v),
-            None => std::env::remove_var(self.key),
+            // SAFETY: test-only env mutation; callers serialize through the file's env mutex or run before other threads read the variable.
+            Some(v) => unsafe { std::env::set_var(self.key, v) },
+            // SAFETY: test-only env mutation; callers serialize through the file's env mutex or run before other threads read the variable.
+            None => unsafe { std::env::remove_var(self.key) },
         }
     }
 }
 
 fn set_env(key: &'static str, value: &str) -> RestoreEnv {
     let prev = std::env::var(key).ok();
-    std::env::set_var(key, value);
+    // SAFETY: test-only env mutation; callers serialize through the file's env mutex or run before other threads read the variable.
+    unsafe { std::env::set_var(key, value) };
     RestoreEnv { key, prev }
 }
 

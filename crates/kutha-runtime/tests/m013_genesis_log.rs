@@ -1,8 +1,8 @@
 //! M013 S04 / Phase 25: genesis-log oracles (YAML only on new-log create).
 //! Do not intern extra YAML names. FF6 / m012_allowlist_facts asserts stay unchanged.
 
-use kutha_common::{Op, KUTHA_ALLOWS};
-use kutha_runtime::{store, Runtime, RuntimeError};
+use kutha_common::{KUTHA_ALLOWS, Op};
+use kutha_runtime::{Runtime, RuntimeError, store};
 use std::sync::Mutex;
 
 /// Serialize tests that read or mutate `KUTHA_RELATIONS_PATH` (process-global).
@@ -13,8 +13,10 @@ struct RestoreRelationsPath(Option<String>);
 impl Drop for RestoreRelationsPath {
     fn drop(&mut self) {
         match &self.0 {
-            Some(v) => std::env::set_var("KUTHA_RELATIONS_PATH", v),
-            None => std::env::remove_var("KUTHA_RELATIONS_PATH"),
+            // SAFETY: test-only env mutation; callers serialize through the file's env mutex or run before other threads read the variable.
+            Some(v) => unsafe { std::env::set_var("KUTHA_RELATIONS_PATH", v) },
+            // SAFETY: test-only env mutation; callers serialize through the file's env mutex or run before other threads read the variable.
+            None => unsafe { std::env::remove_var("KUTHA_RELATIONS_PATH") },
         }
     }
 }
@@ -111,7 +113,8 @@ fn open_after_relations_path_missing_still_emits() {
     let missing = dir.join("missing-relations.yaml");
     let prev = std::env::var("KUTHA_RELATIONS_PATH").ok();
     let _restore = RestoreRelationsPath(prev);
-    std::env::set_var("KUTHA_RELATIONS_PATH", &missing);
+    // SAFETY: test-only env mutation; callers serialize through the file's env mutex or run before other threads read the variable.
+    unsafe { std::env::set_var("KUTHA_RELATIONS_PATH", &missing) };
 
     let mut opened = store::open(&dir).unwrap();
     let article = opened.intern("art-12-speed");

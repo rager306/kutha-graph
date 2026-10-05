@@ -1,8 +1,8 @@
 //! Independent Phase 42 kill-tests (verifier). Public API only; not the executor oracles.
 
 use kutha_common::{Event, EventId, Op, OutcomeDisposition, TransactionTime, ValidTime};
-use kutha_runtime::{store, FoldIndexMode, Justification, PersistedQuantumOutcome, Runtime};
-use serde_json::{json, Value};
+use kutha_runtime::{FoldIndexMode, Justification, PersistedQuantumOutcome, Runtime, store};
+use serde_json::{Value, json};
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
@@ -18,7 +18,8 @@ struct EnvGuard {
 impl EnvGuard {
     fn set(key: &'static str, value: &str) -> Self {
         let prev = std::env::var(key).ok();
-        std::env::set_var(key, value);
+        // SAFETY: test-only env mutation; callers serialize through the file's env mutex or run before other threads read the variable.
+        unsafe { std::env::set_var(key, value) };
         Self { key, prev }
     }
 }
@@ -26,8 +27,10 @@ impl EnvGuard {
 impl Drop for EnvGuard {
     fn drop(&mut self) {
         match &self.prev {
-            Some(v) => std::env::set_var(self.key, v),
-            None => std::env::remove_var(self.key),
+            // SAFETY: test-only env mutation; callers serialize through the file's env mutex or run before other threads read the variable.
+            Some(v) => unsafe { std::env::set_var(self.key, v) },
+            // SAFETY: test-only env mutation; callers serialize through the file's env mutex or run before other threads read the variable.
+            None => unsafe { std::env::remove_var(self.key) },
         }
     }
 }

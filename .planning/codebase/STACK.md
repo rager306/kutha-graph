@@ -12,7 +12,7 @@ last_mapped_at: 2026-09-29
 
 **Primary:**
 - Rust 2021 edition (workspace `0.0.0`, `publish = false`) — product plane in `crates/kutha-common` and `crates/kutha-runtime`
-- Toolchain: `rust-toolchain.toml` pins `1.99.0` (rustfmt, clippy); workspace `rust-version = "1.99"`, edition 2021, resolver `"2"`
+- Toolchain: `rust-toolchain.toml` pins `1.99.0` (rustfmt, clippy); workspace `rust-version = "1.99"`, edition 2024, resolver `"2"`
 
 **Secondary:**
 - Python >=3.13 (pin file `.python-version` = `3.13`) — harness plane only (`scripts/kutha_gov`, package name `kutha-harness` in `pyproject.toml`)

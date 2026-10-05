@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Product: Rust edition 2024
+
+### Product
+
+- Workspace `edition` 2021 → 2024 (crates inherit it). `cargo fix --edition` ran on all targets with `rocks-index` and `rocks-index-spike` enabled. Only change: `std::env::set_var` / `remove_var` are `unsafe` in 2024, so `allow::apply_dotenv` (once per process, only unset keys) and four test helpers wrap them in `unsafe` with SAFETY notes. Follow-up (not done): stop writing `.env` into the process environment. One `tail-expr-drop-order` warning remains in `m017_verify_killtests` (harmless drop-order change on a test temporary). `cargo fmt --all` applied in a separate commit (2024 style: import ordering). No behaviour or oracle assertion changed. `cargo test --workspace --offline` green; `m002_rock01` (11) and `m002_rock00` (3) green with their features. Bench gate stays a controller step at the M019 close.
+
 ## 2026-10-05 — Process: pin Rust 1.99
 
 ### Process
