@@ -660,7 +660,8 @@ rows:
       - bitemporal_model_matches_fold_live_at_and_as_of
       - bitemporal_model_agrees_on_ff5_statute
       - model_as_of_alias_is_live_at_max
-    kill_mutation: Fact::is_live_at skips ingested_at > tt
+      - bitemporal_model_compares_object_not_only_subject
+    kill_mutation: Fact::is_live_at skips ingested_at > tt; skip valid_from dies on Fact::is_live_at vs naive at EDGE_VT (Eager live_at via vt_by_from would mask it); Assert s/o swap dies on (s,r,o) triples; Retract-first GraphFold::replay dies vs ingest stamps
     status: killed
     gate: default
     owner: M019-S07
@@ -694,18 +695,18 @@ rows:
     oracle:
       - persist_roundtrip_random_layouts
       - persist_roundtrip_export_jsonl_imported
-    kill_mutation: encoded_log drops the last event before persist
+    kill_mutation: encoded_log drops the last event before persist; export_jsonl swapping two middle events dies on persist-encoded event-id order
     status: killed
     gate: default
     owner: M019-S07
-    source: M019 S07 / ADR-060; persist_seed_count = max(12, KUTHA_SEEDS/5)
+    source: M019 S07 / ADR-060; persist_seed_count = max(12, KUTHA_SEEDS/5); two persist passes per index cover legacy, rollover multi-segment, migrated, export-imported; pass 1 WithHorn on segmented/migrated
   - id: SEM-replay-tamper-random
     plane: product
     invariant: flip/swap/drop one event fails closed or fold differs; never silently equal
     layer: property
     oracle:
       - replay_tamper_flip_swap_drop_never_silently_equal
-    kill_mutation: GraphFold::apply ignores Assert.valid_from (hardcodes 2010); middle sealed payload XOR must fail closed with CRC mismatch (CRC-disabled dies on that needle; JSON parse is the fallback if CRC skipped)
+    kill_mutation: GraphFold::apply ignores Assert.valid_from (hardcodes 2010); equal-fold swap is commutes only on disjoint (s,r) else a dependent Retract is minted; middle sealed payload XOR fails closed InvalidData (any message) AND detector pin CRC mismatch (CRC-disabled dies on the needle; JSON parse is the fallback if CRC skipped)
     status: killed
     gate: default
     owner: M019-S07
