@@ -275,11 +275,15 @@ pub fn ingest_mix(rt: &mut Runtime, seed: u32, style: MixStyle) -> MixMeta {
         let subj = subjects[lcg.pick(subjects.len())];
         let rel = match style {
             MixStyle::BehaviorFree => related,
-            MixStyle::WithHorn if draw % 3 == 0 => knows,
+            MixStyle::WithHorn if draw.is_multiple_of(3) => knows,
             MixStyle::WithHorn => related,
         };
         let valid_from = 2010 + u64::from(i % 5);
-        let valid_to = if draw % 5 == 0 { Some(2019) } else { None };
+        let valid_to = if draw.is_multiple_of(5) {
+            Some(2019)
+        } else {
+            None
+        };
         let want_assert = pool.is_empty() || draw < 40;
         if want_assert {
             let id = emit_assert(rt, subj, rel, obj_a, valid_from, valid_to);

@@ -54,6 +54,7 @@ impl Naive {
             .or_else(|| self.rows.iter().rposition(|r| r.event_id == event_id))
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn push(
         &mut self,
         subject: TermId,
@@ -103,10 +104,10 @@ impl Naive {
                 event.id,
             ),
             Op::Retract { event_id } => {
-                if let Some(i) = self.find_live(*event_id) {
-                    if self.rows[i].invalidated_at.is_none() {
-                        self.rows[i].invalidated_at = Some(event.ingested_at);
-                    }
+                if let Some(i) = self.find_live(*event_id)
+                    && self.rows[i].invalidated_at.is_none()
+                {
+                    self.rows[i].invalidated_at = Some(event.ingested_at);
                 }
             }
             Op::Correct {

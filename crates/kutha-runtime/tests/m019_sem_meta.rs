@@ -202,7 +202,8 @@ fn persist_roundtrip_random_layouts() {
     assert_seed_budget();
     for seed in seeds().into_iter().take(persist_seed_count()) {
         let (rt, _) = seeded_runtime(seed, MixStyle::BehaviorFree, FoldIndexMode::Eager);
-        let layouts: [(&str, fn(&Runtime, &std::path::Path)); 3] = [
+        type PersistFn = fn(&Runtime, &std::path::Path);
+        let layouts: [(&str, PersistFn); 3] = [
             ("legacy", persist_legacy),
             ("segmented", persist_segmented),
             ("migrated", persist_migrated),
@@ -309,12 +310,12 @@ fn replay_tamper_flip_swap_drop_never_silently_equal() {
         let mut flipped = events.clone();
         let mut did_flip = false;
         for e in &mut flipped {
-            if let Op::Assert { valid_from, .. } = &mut e.op {
-                if *valid_from >= 2010 {
-                    *valid_from += 17;
-                    did_flip = true;
-                    break;
-                }
+            if let Op::Assert { valid_from, .. } = &mut e.op
+                && *valid_from >= 2010
+            {
+                *valid_from += 17;
+                did_flip = true;
+                break;
             }
         }
         assert!(
