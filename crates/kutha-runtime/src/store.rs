@@ -28,8 +28,13 @@ pub enum PersistStep {
     Justifications,
 }
 
+/// Advisory single-writer lock file inside the store directory (WRITER-01).
+/// Local filesystem only; not multi-host / NFS coordination.
+pub const STORE_LOCK_REL: &str = "kutha.lock";
+
 thread_local! {
     static PERSIST_DIR_FSYNC_COUNT: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+    static REPLACE_TMP_FILE_SYNC_COUNT: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
 }
 
 /// Test-visible count of directory `sync_all` calls from [`sync_dir`] on the
@@ -44,6 +49,18 @@ pub fn persist_dir_fsync_count() -> usize {
 #[doc(hidden)]
 pub fn reset_persist_dir_fsync_count() {
     PERSIST_DIR_FSYNC_COUNT.with(|c| c.set(0));
+}
+
+/// Test-visible count of tmp-file `sync_all` calls from [`replace_via_tmp`].
+#[doc(hidden)]
+pub fn replace_via_tmp_file_sync_count() -> usize {
+    REPLACE_TMP_FILE_SYNC_COUNT.with(|c| c.get())
+}
+
+/// Reset the tmp-file `sync_all` counter (thread-local).
+#[doc(hidden)]
+pub fn reset_replace_via_tmp_file_sync_count() {
+    REPLACE_TMP_FILE_SYNC_COUNT.with(|c| c.set(0));
 }
 
 /// Opens `dir` and calls `sync_all` so a rename is durable on the parent.
@@ -358,6 +375,7 @@ pub(crate) fn replace_via_tmp(
         let mut f = File::create(tmp)?;
         write(&mut f)?;
         f.sync_all()?;
+        REPLACE_TMP_FILE_SYNC_COUNT.with(|c| c.set(c.get() + 1));
     }
     if !commit {
         return Err(abort_before_rename());
