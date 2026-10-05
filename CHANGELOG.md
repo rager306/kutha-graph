@@ -6,6 +6,10 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ## 2026-10-05 — Test strategy matrix and ADR-023 (GSD Phase 59)
 
+### Process
+
+- RED pytest (`scripts/tests/test_test_matrix.py`) failed 10/10 on a missing check id before the kind existed.
+
 ### Trajectory
 
 - ADR-023 **Proposed** (Verify-primary, numbered in the 020 band). Honeycomb cell 023 is `map-only` / `capability: none`. `docs/architecture/test-matrix.yaml` is the machine map (65 rows); the `.md` page is counts, gaps by slice, and blocked decisions. Not Accepted. Not a coverage number.
