@@ -8,7 +8,6 @@ import shutil
 import sys
 import tempfile
 import unittest
-from concurrent.futures import ThreadPoolExecutor
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
@@ -261,18 +260,16 @@ class JobsIsolationTests(unittest.TestCase):
         ]
         root_ok = _write_mini(checks, {"crates/k/tests/t.rs": rust_ok[0]})
         root_bad = _write_mini(checks, {"crates/k/tests/t.rs": rust_ok[1]})
-
-        def _one(root: Path) -> tuple[int, str, str]:
-            return _capture(["--jobs", "2", "--root", str(root), "precommit"])
-
-        with ThreadPoolExecutor(max_workers=2) as pool:
-            fut_ok = pool.submit(_one, root_ok)
-            fut_bad = pool.submit(_one, root_bad)
-            code_ok, out_ok, err_ok = fut_ok.result()
-            code_bad, out_bad, err_bad = fut_bad.result()
-        self.assertEqual(0, code_ok, msg=out_ok + err_ok)
-        self.assertEqual(1, code_bad, msg=out_bad + err_bad)
-        self.assertIn("rust-test-vacuous", out_bad)
+        for jobs in ("1", "2"):
+            code_ok, out_ok, err_ok = _capture(
+                ["--jobs", jobs, "--root", str(root_ok), "precommit"]
+            )
+            code_bad, out_bad, err_bad = _capture(
+                ["--jobs", jobs, "--root", str(root_bad), "precommit"]
+            )
+            self.assertEqual(0, code_ok, msg=f"jobs={jobs} ok: {out_ok}{err_ok}")
+            self.assertEqual(1, code_bad, msg=f"jobs={jobs} bad: {out_bad}{err_bad}")
+            self.assertIn("rust-test-vacuous", out_bad, msg=f"jobs={jobs} {out_bad}")
         for root in (root_ok, root_bad):
             leftover = list((root / "tmp").glob("kutha-*")) if (root / "tmp").exists() else []
             self.assertEqual([], leftover, msg=leftover)
