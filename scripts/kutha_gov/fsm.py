@@ -4,13 +4,17 @@ from __future__ import annotations
 
 import time
 from collections.abc import Mapping
+from concurrent.futures import Future, ThreadPoolExecutor
+from contextlib import suppress
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 import yaml
 
 from kutha_gov.checks import get_checks
-from kutha_gov.protocol import Check, CheckResult, Context, Finding, Severity
+from kutha_gov.parallel import run_checks_parallel
+from kutha_gov.protocol import CheckResult, Context, Finding, Severity
 from kutha_gov.time_log import (
     LOG_REL,
     append_observe,
@@ -129,23 +133,6 @@ def _lookup(machine: Machine, current: str, event: str) -> str | None:
     return None
 
 
-def _run_one(check: Check, ctx: Context) -> CheckResult:
-    try:
-        result = check.run(ctx)
-    except Exception as exc:
-        result = CheckResult(check=check.name)
-        result.findings.append(
-            Finding(
-                check=check.name,
-                severity=Severity.HIGH,
-                category="check-error",
-                message=f"{type(exc).__name__}: {exc}",
-            )
-        )
-    result.check = check.name
-    return result
-
-
 def _high_so_far(outcome: QuantumOutcome) -> bool:
     return any(r.high_count for r in outcome.results) or any(
         f.severity is Severity.HIGH for f in outcome.findings
@@ -156,62 +143,141 @@ def _skip_heavy_observe(ctx: Context, outcome: QuantumOutcome) -> bool:
     return ctx.skip_cargo or _high_so_far(outcome)
 
 
+def _overlap_specs(machine: Machine) -> list[tuple[str, Step]]:
+    specs: list[tuple[str, Step]] = []
+    for name, spec in machine.states.items():
+        if _str(spec, "kind") != "observe_cargo":
+            continue
+        raw = spec.get("overlap_with")
+        if isinstance(raw, list) and raw:
+            specs.append((name, spec))
+    return specs
+
+
+def _overlap_pipeline(
+    root: Path, specs: list[tuple[str, Step]]
+) -> dict[str, tuple[int, list[str], list[Finding]] | None]:
+    from kutha_gov.observe import run_cargo_observation
+
+    out: dict[str, tuple[int, list[str], list[Finding]] | None] = {}
+    skip_rest = False
+    for name, spec in specs:
+        if skip_rest:
+            out[name] = None
+            continue
+        code, seen_ok, findings = run_cargo_observation(root, spec)
+        out[name] = (code, seen_ok, findings)
+        if any(finding.severity is Severity.HIGH for finding in findings):
+            skip_rest = True
+    return out
+
+
+def _maybe_start_overlap(machine: Machine, ctx: Context, overlap: dict[str, Any]) -> None:
+    if overlap.get("fut") is not None:
+        return
+    if ctx.jobs <= 1 or ctx.skip_cargo:
+        return
+    specs = _overlap_specs(machine)
+    if not specs:
+        return
+    pool = ThreadPoolExecutor(max_workers=1)
+    overlap["pool"] = pool
+    overlap["fut"] = pool.submit(_overlap_pipeline, ctx.root, specs)
+
+
+def _shutdown_overlap(overlap: dict[str, Any]) -> None:
+    fut = overlap.get("fut")
+    if isinstance(fut, Future):
+        with suppress(Exception):
+            fut.result()
+    pool = overlap.get("pool")
+    if isinstance(pool, ThreadPoolExecutor):
+        pool.shutdown(wait=True)
+
+
+def _apply_cargo_pack(
+    outcome: QuantumOutcome, packed: tuple[int, list[str], list[Finding]]
+) -> None:
+    code, seen_ok, findings = packed
+    outcome.findings.extend(findings)
+    status = "ok" if code == 0 and not findings else "fail"
+    outcome.observations.append(("cargo", status))
+    for name in seen_ok:
+        outcome.evidence.append((name, "ok"))
+
+
 def run_quantum(ctx: Context, *, budget: int, start_event: str = "start") -> QuantumOutcome:
     outcome = QuantumOutcome(terminal="fail", trace=[])
+    overlap: dict[str, Any] = {}
     try:
-        machine = load_machine(ctx.root)
-    except (OSError, ValueError, yaml.YAMLError) as exc:
-        outcome.findings.append(Finding("fsm", Severity.HIGH, "load", f"{FSM_REL}: {exc}", FSM_REL))
-        outcome.trace = ["fail"]
-        outcome.high = 1
-        return outcome
+        try:
+            machine = load_machine(ctx.root)
+        except (OSError, ValueError, yaml.YAMLError) as exc:
+            outcome.findings.append(
+                Finding("fsm", Severity.HIGH, "load", f"{FSM_REL}: {exc}", FSM_REL)
+            )
+            outcome.trace = ["fail"]
+            outcome.high = 1
+            return outcome
 
-    state = machine.initial
-    outcome.trace.append(state)
-    event = start_event
-    guard = 0
-    while state not in machine.terminal:
-        guard += 1
-        if guard > 64:
-            outcome.findings.append(
-                Finding("fsm", Severity.HIGH, "cycle", "FSM exceeded 64 steps — fail-closed")
-            )
-            state = "fail"
-            outcome.trace.append(state)
-            break
-        nxt = _lookup(machine, state, event)
-        if nxt is None:
-            outcome.findings.append(
-                Finding(
-                    "fsm",
-                    Severity.HIGH,
-                    "unknown-transition",
-                    f"no transition from {state!r} on {event!r} — fail-closed",
-                )
-            )
-            state = "fail"
-            outcome.trace.append(state)
-            break
-        state = nxt
+        state = machine.initial
         outcome.trace.append(state)
-        spec = machine.states.get(state, {})
-        kind = _str(spec, "kind")
-        unknown = step_kind(kind)
-        if unknown is not None:
-            outcome.findings.append(unknown)
-            state = "fail"
+        event = start_event
+        guard = 0
+        while state not in machine.terminal:
+            guard += 1
+            if guard > 64:
+                outcome.findings.append(
+                    Finding("fsm", Severity.HIGH, "cycle", "FSM exceeded 64 steps — fail-closed")
+                )
+                state = "fail"
+                outcome.trace.append(state)
+                break
+            nxt = _lookup(machine, state, event)
+            if nxt is None:
+                outcome.findings.append(
+                    Finding(
+                        "fsm",
+                        Severity.HIGH,
+                        "unknown-transition",
+                        f"no transition from {state!r} on {event!r} — fail-closed",
+                    )
+                )
+                state = "fail"
+                outcome.trace.append(state)
+                break
+            state = nxt
             outcome.trace.append(state)
-            break
-        started = time.monotonic()
-        event = _execute(kind, spec, ctx, outcome, budget=budget)
-        outcome.phase_ms.append((kind, int((time.monotonic() - started) * 1000)))
+            spec = machine.states.get(state, {})
+            kind = _str(spec, "kind")
+            unknown = step_kind(kind)
+            if unknown is not None:
+                outcome.findings.append(unknown)
+                state = "fail"
+                outcome.trace.append(state)
+                break
+            if kind == "run_checks":
+                _maybe_start_overlap(machine, ctx, overlap)
+            started = time.monotonic()
+            event = _execute(
+                kind,
+                spec,
+                ctx,
+                outcome,
+                budget=budget,
+                state=state,
+                overlap=overlap,
+            )
+            outcome.phase_ms.append((kind, int((time.monotonic() - started) * 1000)))
 
-    outcome.terminal = state if state in machine.terminal else "fail"
-    outcome.high += sum(r.high_count for r in outcome.results)
-    outcome.low += sum(r.low_count for r in outcome.results)
-    outcome.high += sum(1 for f in outcome.findings if f.severity is Severity.HIGH)
-    outcome.low += sum(1 for f in outcome.findings if f.severity is Severity.LOW)
-    return outcome
+        outcome.terminal = state if state in machine.terminal else "fail"
+        outcome.high += sum(r.high_count for r in outcome.results)
+        outcome.low += sum(r.low_count for r in outcome.results)
+        outcome.high += sum(1 for f in outcome.findings if f.severity is Severity.HIGH)
+        outcome.low += sum(1 for f in outcome.findings if f.severity is Severity.LOW)
+        return outcome
+    finally:
+        _shutdown_overlap(overlap)
 
 
 def _execute(
@@ -221,6 +287,8 @@ def _execute(
     outcome: QuantumOutcome,
     *,
     budget: int,
+    state: str,
+    overlap: dict[str, Any],
 ) -> str:
     if kind in {"noop", "terminal"}:
         return "ok"
@@ -246,17 +314,29 @@ def _execute(
                     f"truncated {outcome.skipped} checks under budget={budget}",
                 )
             )
-        outcome.results = [_run_one(chk, ctx) for _, chk in selected]
+        results, extra = run_checks_parallel(selected, ctx)
+        outcome.results = results
+        outcome.findings.extend(extra)
         return "done"
     if kind == "run_selftest":
-        from kutha_gov.selftest import SUCCESS, run_selftest
+        from kutha_gov.selftest import SUCCESS, WORKER_ERROR, run_selftest
 
-        rows, _code = run_selftest(ctx.root)
+        rows, _code = run_selftest(ctx.root, jobs=ctx.jobs)
         proved = sum(1 for row in rows if row.status in SUCCESS)
         total = len(rows)
         outcome.evidence.append(("h5_selftest", f"{proved}/{total}"))
         for row in rows:
             if row.status in SUCCESS:
+                continue
+            if row.status == WORKER_ERROR:
+                outcome.findings.append(
+                    Finding(
+                        row.check_id,
+                        Severity.HIGH,
+                        "worker-error",
+                        row.reason or "worker raised",
+                    )
+                )
                 continue
             extra = f" ({row.reason})" if row.reason else ""
             outcome.findings.append(
@@ -271,14 +351,22 @@ def _execute(
     if kind == "observe_cargo":
         if _skip_heavy_observe(ctx, outcome):
             return "done"
+        fut = overlap.get("fut")
+        if isinstance(fut, Future):
+            try:
+                pipeline = fut.result()
+            except Exception:
+                pipeline = None
+            if isinstance(pipeline, dict):
+                packed = pipeline.get(state)
+                if packed is None:
+                    return "done"
+                _apply_cargo_pack(outcome, packed)
+                return "done"
         from kutha_gov.observe import run_cargo_observation
 
         code, seen_ok, findings = run_cargo_observation(ctx.root, spec)
-        outcome.findings.extend(findings)
-        status = "ok" if code == 0 and not findings else "fail"
-        outcome.observations.append(("cargo", status))
-        for name in seen_ok:
-            outcome.evidence.append((name, "ok"))
+        _apply_cargo_pack(outcome, (code, seen_ok, findings))
         return "done"
     if kind == "emit_log":
         high = sum(r.high_count for r in outcome.results) + sum(

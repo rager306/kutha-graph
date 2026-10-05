@@ -19,10 +19,11 @@ states:
   load_invariants: { kind: require_file, path: .kutha/dictionaries/invariants.yaml }
   load_bridges: { kind: require_file, path: .kutha/dictionaries/bridges.yaml }
   load_honeycomb: { kind: require_file, path: .kutha/dictionaries/honeycomb.yaml }
-  run_checks: { kind: run_checks }
-  run_selftest: { kind: run_selftest }
+  run_checks: { kind: run_checks, parallel: true }
+  run_selftest: { kind: run_selftest, parallel: true }
   observe_cargo:
     kind: observe_cargo
+    overlap_with: [run_checks, run_selftest]
     bin: cargo
     args: ["test", "--workspace", "--offline"]
     timeout_sec: 180
@@ -97,6 +98,7 @@ states:
       - persist_empty_dir_writes_segments_not_jsonl
   observe_rocks:
     kind: observe_cargo
+    overlap_with: [run_checks, run_selftest]
     # Phase 57 measured: cold m002_rock01 279.8s (<6 min ci bound), warm 1.4s;
     # m002_rock00 after shared rocksdb compile 8.1s. Stays on the default ci path.
     bin: cargo

@@ -8,11 +8,12 @@ import sys
 from pathlib import Path
 
 from kutha_gov.checks import get_checks
-from kutha_gov.config import ENV_FAIL_ON_WARN, env_flag, load_dotenv, resolve_budget
+from kutha_gov.config import ENV_FAIL_ON_WARN, env_flag, load_dotenv, resolve_budget, resolve_jobs
 from kutha_gov.dictionary import DICT_REL, DictCheck
 from kutha_gov.fsm import FSM_REL, load_machine, run_quantum
 from kutha_gov.honeycomb import MAP_REL, format_map, load_map, neighborhood, resolve_cell_id
-from kutha_gov.protocol import CheckResult, Context, Finding, Severity
+from kutha_gov.parallel import run_checks_parallel
+from kutha_gov.protocol import CheckResult, Context, Severity
 from kutha_gov.selftest import format_row, run_selftest
 from kutha_gov.time_log import LOG_REL, fold_log
 
@@ -23,23 +24,6 @@ def _detect_root(start: Path) -> Path:
         if all((candidate / hint).exists() for hint in (".kutha", "docs/ADR")):
             return candidate
     return here
-
-
-def _run_one(check, ctx: Context) -> CheckResult:
-    try:
-        result = check.run(ctx)
-    except Exception as exc:
-        result = CheckResult(check=check.name)
-        result.findings.append(
-            Finding(
-                check=check.name,
-                severity=Severity.HIGH,
-                category="check-error",
-                message=f"{type(exc).__name__}: {exc}",
-            )
-        )
-    result.check = check.name
-    return result
 
 
 def _select_checks(root: Path, check_id: str | None) -> tuple[dict, int]:
@@ -204,7 +188,11 @@ def cmd_json(ctx: Context, *, check_id: str | None) -> int:
     checks, err = _select_checks(ctx.root, check_id)
     if err:
         return err
-    results = [_run_one(chk, ctx) for _, chk in sorted(checks.items())]
+    results, extra = run_checks_parallel(sorted(checks.items()), ctx)
+    if extra:
+        wrap = CheckResult(check="fsm")
+        wrap.findings.extend(extra)
+        results = [*results, wrap]
     payload = {
         "schema": "kutha-harness-report/v1",
         "authoritative": False,
@@ -238,7 +226,11 @@ def cmd_precommit(ctx: Context, *, check_id: str | None) -> int:
     checks, err = _select_checks(ctx.root, check_id)
     if err:
         return err
-    results = [_run_one(chk, ctx) for _, chk in sorted(checks.items())]
+    results, extra = run_checks_parallel(sorted(checks.items()), ctx)
+    if extra:
+        wrap = CheckResult(check="fsm")
+        wrap.findings.extend(extra)
+        results = [*results, wrap]
     return _print_check_results(
         results,
         ctx,
@@ -246,13 +238,13 @@ def cmd_precommit(ctx: Context, *, check_id: str | None) -> int:
     )
 
 
-def cmd_selftest(root: Path, *, check_id: str | None) -> int:
+def cmd_selftest(root: Path, *, check_id: str | None, jobs: int) -> int:
     if check_id:
         checks = get_checks(root)
         if check_id not in checks:
             print(f"unknown check: {check_id}", file=sys.stderr)
             return 2
-    rows, code = run_selftest(root, check_id=check_id)
+    rows, code = run_selftest(root, check_id=check_id, jobs=jobs)
     for row in rows:
         print(format_row(row))
     return code
@@ -322,6 +314,15 @@ def main(argv: list[str] | None = None) -> int:
         help="Cui-lite V (overrides KUTHA_GOV_BUDGET and fsm.yaml defaults.budget)",
     )
     parser.add_argument(
+        "--jobs",
+        default=None,
+        metavar="N",
+        help=(
+            "Worker processes for ci/precommit/selftest checks "
+            "(overrides KUTHA_GOV_JOBS; default min(CPU, 8); 1=serial)"
+        ),
+    )
+    parser.add_argument(
         "--check",
         default=None,
         metavar="ID",
@@ -363,7 +364,18 @@ def main(argv: list[str] | None = None) -> int:
     if args.skip_cargo and args.command != "ci":
         print("--skip-cargo is only valid with ci", file=sys.stderr)
         return 2
-    ctx = Context(root=root, fail_on_warn=fail_on_warn, skip_cargo=args.skip_cargo)
+    jobs = 1
+    jobs_commands = {"ci", "precommit", "selftest", "json"}
+    if args.command in jobs_commands:
+        try:
+            jobs = resolve_jobs(cli=args.jobs)
+        except ValueError as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+    elif args.jobs is not None:
+        print("--jobs is only valid with ci, precommit, selftest, or json", file=sys.stderr)
+        return 2
+    ctx = Context(root=root, fail_on_warn=fail_on_warn, skip_cargo=args.skip_cargo, jobs=jobs)
     if args.check and args.command not in {"json", "precommit", "selftest"}:
         print("--check is only valid with json, precommit, or selftest", file=sys.stderr)
         return 2
@@ -386,7 +398,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "map":
         return cmd_map(root, args.name, as_json=args.format == "json")
     if args.command == "selftest":
-        return cmd_selftest(root, check_id=args.check)
+        return cmd_selftest(root, check_id=args.check, jobs=jobs)
     if args.command == "fold":
         picture = fold_log(root / LOG_REL)
         print(

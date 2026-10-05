@@ -73,6 +73,14 @@ Selftest classifies every dictionary check as `derived-by-own-mutation`, `explic
 
 A green governor is **not** ADR **Accepted**, not L_capability, and not product correctness. Checks keep the harness honest about its own dictionaries, citations, and named-test evidence. They do not close F1–F8, accept honeycomb cells, or lease M012a.
 
+## Parallel execution
+
+`ci`, `selftest`, and `precommit` accept `--jobs N` (env `KUTHA_GOV_JOBS`). Precedence: flag > env > default `min(CPU, 8)`. `1` is serial. `0` or a non-integer is a contract error (exit 2).
+
+Independent dictionary checks and selftest proofs run in a process pool (`spawn`). Results merge in dictionary check order, never completion order. `--jobs 1` is the oracle: findings (id, severity, message, order), the exit code, and JSONL rows (ignoring timing fields such as `phase_ms`, timestamps, and run ids) match any `N ≥ 2`.
+
+`observe_cargo` / `observe_rocks` may overlap `run_checks` + `run_selftest` when the FSM row has `overlap_with:` and jobs > 1. Emit, tenant, and fold stay serial at the end. A worker exception, a pool breakage, or a timeout is a HIGH `worker-error` (check id + exception text), never a silent skip. A crashed pool falls back to serial for unfinished checks and records a LOW `pool-fallback`.
+
 ## Example intake rows (current)
 
 Control-loop kind obligation (Phase 29 GOV-01):

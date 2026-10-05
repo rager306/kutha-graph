@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import multiprocessing
 import re
 import shutil
+import tempfile
 from collections.abc import Mapping
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -62,10 +65,13 @@ SKIP_DIR_NAMES = frozenset(
         ".pytest_cache",
         ".ruff_cache",
         ".claude",
+        ".compound-engineering",
     }
 )
 SKIP_CURSOR_CHILDREN = frozenset({"gsd-core", "skills"})
+SKIP_PLANNING_CHILDREN = frozenset({"milestones"})
 SCRATCH_DIR = "tmp"
+WORKER_ERROR = "WORKER-ERROR"
 
 
 @dataclass(frozen=True)
@@ -98,6 +104,8 @@ def copy_harness_tree(src: Path, dst: Path) -> None:
             return dropped
         if rel == Path(".cursor"):
             dropped.update(name for name in names if name in SKIP_CURSOR_CHILDREN)
+        if rel == Path(".planning"):
+            dropped.update(name for name in names if name in SKIP_PLANNING_CHILDREN)
         if rel == Path("."):
             dropped.update(name for name in names if name == SCRATCH_DIR)
         return dropped
@@ -105,8 +113,10 @@ def copy_harness_tree(src: Path, dst: Path) -> None:
     shutil.copytree(src_root, dst, ignore=ignore, symlinks=True, ignore_dangling_symlinks=True)
 
 
-def run_selftest(root: Path, check_id: str | None = None) -> tuple[list[SelftestRow], int]:
-    """Copy the tree once, then mutate/restore per check. Never writes `root`."""
+def run_selftest(
+    root: Path, check_id: str | None = None, *, jobs: int = 1
+) -> tuple[list[SelftestRow], int]:
+    """Copy the tree once (jobs=1) or per check (jobs>=2). Never writes `root`."""
     checks = get_checks(root)
     if check_id is not None:
         if check_id not in checks:
@@ -114,6 +124,17 @@ def run_selftest(root: Path, check_id: str | None = None) -> tuple[list[Selftest
         selected = {check_id: checks[check_id]}
     else:
         selected = checks
+    if jobs <= 1 or len(selected) <= 1:
+        rows = _run_selftest_serial(root, selected)
+    else:
+        rows = _run_selftest_parallel(root, selected, jobs)
+    code = 0 if rows and all(_success(row) for row in rows) else 1
+    if not rows:
+        code = 1
+    return rows, code
+
+
+def _run_selftest_serial(root: Path, selected: dict[str, Check]) -> list[SelftestRow]:
     rows: list[SelftestRow] = []
     scratch = root / SCRATCH_DIR
     scratch.mkdir(exist_ok=True)
@@ -125,24 +146,85 @@ def run_selftest(root: Path, check_id: str | None = None) -> tuple[list[Selftest
             probe = work_checks.get(name)
             if probe is None:
                 probe = selected[name]
-            proved = _prove_check(probe, work)
-            cls, cls_reason = classify_check(probe, work)
-            reason = proved.reason
-            if cls == CLASS_FILE_EXISTS_ONLY and not reason:
-                reason = cls_reason
-            rows.append(
-                SelftestRow(
-                    proved.status,
-                    proved.check_id,
-                    proved.mutations,
-                    reason,
-                    cls,
-                )
-            )
-    code = 0 if rows and all(_success(row) for row in rows) else 1
-    if not rows:
-        code = 1
-    return rows, code
+            rows.append(_row_for_probe(probe, work))
+    return rows
+
+
+def _eval_selftest_worker(payload: tuple[str, str, str]) -> SelftestRow:
+    check_id, _root_str, template_str = payload
+    template = Path(template_str)
+    scratch_parent = template.parent
+    scratch_parent.mkdir(parents=True, exist_ok=True)
+    raw = tempfile.mkdtemp(prefix="kutha-selftest-", dir=str(scratch_parent))
+    try:
+        work = Path(raw) / "tree"
+        copy_harness_tree(template, work)
+        work_checks = get_checks(work)
+        probe = work_checks.get(check_id)
+        if probe is None:
+            return SelftestRow(UNPROVEN, check_id, 0, "check missing on copy")
+        return _row_for_probe(probe, work)
+    finally:
+        shutil.rmtree(raw, ignore_errors=True)
+
+
+def _run_selftest_parallel(root: Path, selected: dict[str, Check], jobs: int) -> list[SelftestRow]:
+    names = sorted(selected)
+    scratch = root / SCRATCH_DIR
+    scratch.mkdir(exist_ok=True)
+    template_dir = tempfile.mkdtemp(prefix="kutha-selftest-template-", dir=str(scratch))
+    by_name: dict[str, SelftestRow | None] = dict.fromkeys(names)
+    try:
+        template = Path(template_dir) / "tree"
+        copy_harness_tree(root, template)
+        workers = max(1, min(jobs, len(names)))
+        ctx = multiprocessing.get_context("spawn")
+        with ProcessPoolExecutor(max_workers=workers, mp_context=ctx) as pool:
+            futs = {
+                pool.submit(_eval_selftest_worker, (name, str(root), str(template))): name
+                for name in names
+            }
+            try:
+                for fut in as_completed(futs):
+                    name = futs[fut]
+                    try:
+                        by_name[name] = fut.result()
+                    except Exception as exc:
+                        by_name[name] = SelftestRow(
+                            WORKER_ERROR,
+                            name,
+                            0,
+                            f"{type(exc).__name__}: {exc}",
+                        )
+            except Exception:
+                leftover = {name: selected[name] for name in names if by_name[name] is None}
+                if leftover:
+                    for row in _run_selftest_serial(root, leftover):
+                        by_name[row.check_id] = row
+    finally:
+        shutil.rmtree(template_dir, ignore_errors=True)
+    rows: list[SelftestRow] = []
+    for name in names:
+        got = by_name.get(name)
+        if got is None:
+            got = SelftestRow(WORKER_ERROR, name, 0, "missing worker result")
+        rows.append(got)
+    return rows
+
+
+def _row_for_probe(probe: Check, work: Path) -> SelftestRow:
+    proved = _prove_check(probe, work)
+    cls, cls_reason = classify_check(probe, work)
+    reason = proved.reason
+    if cls == CLASS_FILE_EXISTS_ONLY and not reason:
+        reason = cls_reason
+    return SelftestRow(
+        proved.status,
+        proved.check_id,
+        proved.mutations,
+        reason,
+        cls,
+    )
 
 
 def _success(row: SelftestRow) -> bool:

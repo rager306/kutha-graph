@@ -137,6 +137,14 @@ class SelftestTests(unittest.TestCase):
             self.assertTrue((dest / ".kutha" / "STATE.md").is_file())
             self.assertTrue((dest / "crates" / "kutha-runtime").is_dir())
 
+    def test_copy_skips_compound_engineering_and_planning_milestones(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            dest = Path(raw) / "tree"
+            copy_harness_tree(ROOT, dest)
+            self.assertFalse((dest / ".compound-engineering").exists())
+            self.assertFalse((dest / ".planning" / "milestones").exists())
+            self.assertTrue((dest / ".planning" / "STATE.md").is_file())
+
     def test_synthetic_pointer_derives_own_mutation(self) -> None:
         root = _write_mini(
             [

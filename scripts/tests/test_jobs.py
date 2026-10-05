@@ -246,7 +246,7 @@ class JobsIsolationTests(unittest.TestCase):
             "#[test]\nfn cache_probe() { assert!(true); }\n",
             "#[test]\nfn cache_probe() { let _x = 1; }\n",
         )
-        checks = [
+        checks: list[dict[str, object]] = [
             {
                 "id": "rust-probe",
                 "description": "rust fn index keyed by root",

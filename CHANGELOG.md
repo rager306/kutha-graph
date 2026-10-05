@@ -8,7 +8,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Process
 
-- RED pytest for PAR-01: jobs-1 vs jobs-N parity, jobs config, scratch isolation, and merge order (`--jobs` not implemented yet).
+- PAR-01: `--jobs` / `KUTHA_GOV_JOBS` process pool for dictionary checks and selftest proofs; `observe_cargo` may overlap those phases; findings merge in dictionary order. `--jobs 1` is the serial oracle.
 
 ## 2026-10-05 — Process: lease M019 S03 (GSD Phase 58)
 

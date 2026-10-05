@@ -58,6 +58,7 @@ class Context:
     git_against: str = "auto"
     changed_paths: frozenset[str] | None = None
     skip_cargo: bool = False
+    jobs: int = 1
 
     def read(self, rel_path: str) -> str | None:
         path = self.root / rel_path
