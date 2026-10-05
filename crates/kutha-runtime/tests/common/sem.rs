@@ -970,8 +970,6 @@ pub struct MixCoverage {
 }
 
 pub fn scan_mix_coverage(rt: &Runtime, meta: &MixMeta, style: MixStyle) -> MixCoverage {
-    let mut c = MixCoverage::default();
-    c.n = 1;
     let mut saw_r = false;
     let mut saw_c = false;
     let mut saw_i = false;
@@ -987,23 +985,17 @@ pub fn scan_mix_coverage(rt: &Runtime, meta: &MixMeta, style: MixStyle) -> MixCo
             _ => {}
         }
     }
-    if saw_r {
-        c.retract = 1;
+    let cuts = vt_cuts_for(meta.min_vf, meta.max_vf);
+    MixCoverage {
+        n: 1,
+        retract: usize::from(saw_r),
+        correct: usize::from(saw_c),
+        interval: usize::from(saw_i),
+        horn: usize::from(saw_h && style == MixStyle::WithHorn),
+        vt_inside: cuts
+            .iter()
+            .filter(|vt| vt_cut_inside(**vt, meta.min_vf, meta.max_vf))
+            .count(),
+        vt_total: cuts.len(),
     }
-    if saw_c {
-        c.correct = 1;
-    }
-    if saw_i {
-        c.interval = 1;
-    }
-    if saw_h && style == MixStyle::WithHorn {
-        c.horn = 1;
-    }
-    for vt in vt_cuts_for(meta.min_vf, meta.max_vf) {
-        c.vt_total = c.vt_total.saturating_add(1);
-        if vt_cut_inside(vt, meta.min_vf, meta.max_vf) {
-            c.vt_inside = c.vt_inside.saturating_add(1);
-        }
-    }
-    c
 }
