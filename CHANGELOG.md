@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Process: lease M019 S05 (GSD Phase 60)
+
+### Process
+
+- Active Milestone **M019**, Active Slice **S05** (`L_delivery=M019-S04-done`): WRITER-01, GROUP-01. First task: design note for the group-commit option (hard stop if a format change is needed), then RED oracles. M018 stays paused at its S02 gate.
+
 ## 2026-10-05 — Process: close M019 S04 (GSD Phase 59)
 
 ### Process

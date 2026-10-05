@@ -26,7 +26,7 @@
     {
       "number": "60",
       "name": "Durability residuals A",
-      "status": "planned"
+      "status": "executing"
     },
     {
       "number": "61",
@@ -41,8 +41,8 @@
   ],
   "next": {
     "command": "/gsd-progress --next",
-    "label": "Lease M019 S05 (Phase 60: durability residuals A) after CONTEXT",
-    "reason": "Phase 59 verified \u00b7 M019-S04-done"
+    "label": "Phase 60 leased (M019 S05)",
+    "reason": "M019 S05 leased \u00b7 WRITER-01, GROUP-01 \u00b7 v0.11 paused at S02"
   },
-  "updated_at": "2026-10-05T04:37:00.000Z"
+  "updated_at": "2026-10-05T04:40:00.000Z"
 }
