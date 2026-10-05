@@ -29,6 +29,7 @@ process: docs/process/governor-intake.md
 # 2026-10-04 restage (M002 S06 Phase 54 second round: cross-segment chain stitch, migrate verify failpoint, living jsonl-SoT pointer): ADR-000, ADR-010, ADR-012, ADR-060; map/delivery/capability unchanged.
 # 2026-10-04 restage (M019 S01 Phase 56: docs honesty round 3 — SEG-01 physical SoT, M002 oracles listed, cells still Proposed): ADR-010, ADR-012; map/delivery/capability unchanged.
 # 2026-10-04 restage (M002 S07 Phase 55: ROCK-01 droppable Rocks locator lease, optional rocks-index, freeze-rocks durable): ADR-010, ADR-012; map/delivery/capability unchanged.
+# 2026-10-05 restage (M019 S04 Phase 59: ADR-023 test strategy / oracle matrix opened Proposed, map-only, capability none): ADR-023; other cells unchanged.
 
 locks:
   - id: D1
@@ -219,6 +220,17 @@ cells:
     capability: none
     depends_on: [ADR-002, ADR-020]
     locks: []
+    evidence: []
+
+  - id: ADR-023
+    axis: Verify
+    must: "test strategy and oracle matrix (map, not coverage)"
+    path: docs/ADR/ADR-023-test-strategy-and-oracle-matrix.md
+    map: Proposed
+    delivery: map-only
+    capability: none
+    depends_on: [ADR-000, ADR-002, ADR-020]
+    locks: [D9]
     evidence: []
 
   - id: ADR-030

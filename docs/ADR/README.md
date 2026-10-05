@@ -69,6 +69,7 @@ YYYY-MM-DD
 | [020](./ADR-020-cargo-workspace-port-isolation.md) | Cargo Workspace & Port Isolation | Proposed | 2026-08-18 |
 | [021](./ADR-021-pack-plugin-lifecycle.md) | Pack / Plugin Lifecycle | Proposed | 2026-08-18 |
 | [022](./ADR-022-vertical-slice-module-conventions.md) | Vertical-Slice Module Conventions | Proposed | 2026-08-18 |
+| [023](./ADR-023-test-strategy-and-oracle-matrix.md) | Test Strategy and Oracle Matrix | Proposed | 2026-10-05 |
 | [030](./ADR-030-cui-budget-traits.md) | Cui Budget Traits / Max-Convolution Allocation | Proposed | 2026-08-18 |
 | [031](./ADR-031-pack-scheduling-under-v.md) | Pack Scheduling Under V | Proposed | 2026-08-18 |
 | [040](./ADR-040-materialization-plugin-protocol.md) | Materialization Plugin Protocol | Proposed | 2026-08-18 |
@@ -94,12 +95,12 @@ YYYY-MM-DD
 
 All coordinate-band working titles listed in this README are **opened** as Proposed cells. Numbers remain bands, not a waterfall. Clarifications belong in the existing cell without silently rewriting D1–D10. New ADR-100+ cells remain frozen under `.kutha/STATE.md`; this index does not authorize opening them.
 
-This index lists **31** ADR files; all are **Proposed**.
+This index lists **32** ADR files; all are **Proposed**.
 
 | Band | Axis | Notes |
 |------|------|--------|
 | **010–019** | Time | Opened 010–014 |
-| **020–029** | Space | Opened 020–022 |
+| **020–029** | Space | Opened 020–023. **ADR-023 is Verify-primary** (`honeycomb.yaml` `axis: Verify`) though numbered in this Space band |
 | **030–039** | Composition | Opened 030–031 |
 | **040–049** | Data | Opened 040–043. **ADR-043 is Query-primary** (`honeycomb.yaml` `axis: Query`) though numbered in this Data band |
 | **050–059** | Agent | Opened 050–052 |

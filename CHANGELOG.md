@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Test strategy matrix and ADR-023 (GSD Phase 59)
+
+### Trajectory
+
+- ADR-023 **Proposed** (Verify-primary, numbered in the 020 band). Honeycomb cell 023 is `map-only` / `capability: none`. `docs/architecture/test-matrix.yaml` is the machine map (65 rows); the `.md` page is counts, gaps by slice, and blocked decisions. Not Accepted. Not a coverage number.
+
 ## 2026-10-05 — Process: lease M019 S04 (GSD Phase 59)
 
 ### Process

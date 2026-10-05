@@ -1,0 +1,730 @@
+schema: kutha-test-matrix/v1
+adr: ADR-023
+# Map of oracles, not a coverage number. Governor green on test-matrix means
+# named oracles exist and statuses are internally consistent — not "the product
+# is tested". Do not mark killed unless the test exists and a mutation is recorded.
+rows:
+  # --- M002 / persist durability (audit-code-tests §2) ---
+  - id: DUR-sidecar-atomic
+    plane: product
+    invariant: Atomic sidecar tmp+rename (legacy jsonl path)
+    layer: crash
+    oracle:
+      - persist_replaces_events_jsonl_atomically
+      - abort_snapshot_replace_keeps_previous_bytes
+      - abort_wal_replace_keeps_previous_bytes
+    kill_mutation: write sidecar in place without tmp+rename
+    status: killed
+    gate: default
+    owner: M012a-S04
+    source: audit-code-tests §2
+  - id: DUR-dir-fsync
+    plane: product
+    invariant: Parent-dir fsync after sidecar/manifest rename
+    layer: crash
+    oracle:
+      - persist_leaves_no_tmp_files
+      - rollover_manifest_flip_fsyncs_dir
+    kill_mutation: skip final sync_dir after rename
+    status: killed
+    gate: default
+    owner: M002-S02
+    source: audit-code-tests §2
+  - id: DUR-committed-prefix
+    plane: product
+    invariant: Uncommitted suffix is hidden on open
+    layer: decision
+    oracle:
+      - payload_without_outcome_is_not_visible
+      - product_assert_without_any_outcome_is_hidden
+      - horn_followon_quantum_is_atomic
+    kill_mutation: hydrate the uncommitted suffix
+    status: killed
+    gate: default
+    owner: M002-S05
+    source: audit-code-tests §2
+  - id: DUR-tail-guard
+    plane: product
+    invariant: Tail guard rejects length or last-record mismatch
+    layer: crash
+    oracle:
+      - tail_guard_length_mismatch_writes_nothing
+      - tail_guard_last_id_mismatch_writes_nothing
+      - tail_guard_same_length_different_last_record_writes_nothing
+      - append_tail_guard_mismatch_fails_closed_without_writing
+      - append_tail_guard_rejects_truncated_or_garbage_logs
+      - append_tail_guard_rejects_same_length_last_record_swap
+    kill_mutation: append after a same-length last-frame swap
+    status: killed
+    gate: default
+    owner: M002-S06
+    source: audit-code-tests §2
+  - id: DUR-chain-verify
+    plane: product
+    invariant: Sealed-segment hash chain fails closed on flip
+    layer: crash
+    oracle:
+      - writer_flipped_manifest_chain_hex_is_invalid_data
+      - writer_flipped_sealed_frame_payload_is_invalid_data
+      - writer_flipped_sealed_trailer_is_invalid_data
+    kill_mutation: flip a sealed frame or manifest chain hex
+    status: killed
+    gate: default
+    owner: M002-S06
+    source: audit-code-tests §2
+  - id: DUR-manifest-flip
+    plane: product
+    invariant: Rollover crash reopens to the durable prefix
+    layer: crash
+    oracle:
+      - rollover_crash_matrix_reopens_to_prefix
+      - rollover_manifest_flip_fsyncs_dir
+    kill_mutation: crash mid-rollover and accept a torn manifest
+    status: killed
+    gate: default
+    owner: M002-S06
+    source: audit-code-tests §2
+  - id: DUR-torn-active
+    plane: product
+    invariant: Partial bytes on the active tail are dropped
+    layer: crash
+    oracle:
+      - torn_active_tail_dropped
+      - writer_torn_active_tail_is_dropped
+    kill_mutation: keep a mid-frame torn active tail
+    status: killed
+    gate: default
+    owner: M002-S06
+    source: audit-code-tests §2
+  - id: DUR-sealed-truncate
+    plane: product
+    invariant: Sealed truncate at a frame boundary is InvalidData
+    layer: crash
+    oracle:
+      - writer_truncated_sealed_at_frame_boundary_is_invalid_data
+    kill_mutation: accept a sealed file truncated on a frame boundary
+    status: killed
+    gate: default
+    owner: M002-S06
+    source: audit-code-tests §2
+  - id: DUR-missing-active
+    plane: product
+    invariant: Missing active segment is InvalidData
+    layer: crash
+    oracle:
+      - missing_active_segment_is_invalid_data
+    kill_mutation: open when manifest.active path is absent
+    status: killed
+    gate: default
+    owner: M002-S06
+    source: audit-code-tests §2
+  - id: DUR-migrate
+    plane: product
+    invariant: migrate preserves ids and fold fingerprint; crash/verify fail closed
+    layer: crash
+    oracle:
+      - migrate_preserves_ids_and_fold_fingerprint
+      - migrate_crash_matrix_reopens_without_loss
+      - migrate_verify_fault_returns_invalid_data_and_keeps_legacy
+    kill_mutation: drop events or keep a half-migrated manifest
+    status: killed
+    gate: default
+    owner: M002-S06
+    source: audit-code-tests §2
+  - id: DUR-export-jsonl
+    plane: product
+    invariant: export_jsonl round-trips and is never read on open
+    layer: decision
+    oracle:
+      - export_jsonl_roundtrips_and_is_never_read_on_open
+    kill_mutation: load exported jsonl as SoT on open
+    status: killed
+    gate: default
+    owner: M002-S06
+    source: audit-code-tests §2
+  - id: DUR-rocks-rebuild
+    plane: product
+    invariant: Stale Rocks index is rebuilt; catch-up indexes only the tail
+    layer: crash
+    oracle:
+      - stale_index_is_rebuilt
+      - catch_up_indexes_only_the_tail
+    kill_mutation: keep a stale index whose tip no longer matches
+    status: killed
+    gate: feature:observe_rocks
+    owner: M002-S07
+    source: audit-code-tests §2
+  - id: DUR-sidecar-truncated
+    plane: product
+    invariant: Truncated sidecar opens from the log
+    layer: crash
+    oracle:
+      - sidecar_truncated_mid_line_opens_from_log
+    kill_mutation: fail closed on a truncated sidecar when the log is intact
+    status: killed
+    gate: default
+    owner: M002-S02
+    source: audit-code-tests §2
+  - id: DUR-append-prefix
+    plane: product
+    invariant: Incremental append keeps prefix bytes of jsonl and WAL
+    layer: crash
+    oracle:
+      - append_keeps_prefix_bytes_of_jsonl_and_wal
+    kill_mutation: rewrite the prefix on a second persist
+    status: killed
+    gate: default
+    owner: M002-S04
+    source: audit-code-tests §2
+  - id: DUR-empty-dir-seg
+    plane: product
+    invariant: persist of an empty dir writes segments, not jsonl
+    layer: decision
+    oracle:
+      - persist_empty_dir_writes_segments_not_jsonl
+    kill_mutation: write legacy jsonl for a new empty dir
+    status: killed
+    gate: default
+    owner: M002-S06
+    source: audit-code-tests §2
+  - id: DUR-snapshot-ahead
+    plane: product
+    invariant: Snapshot ahead of the committed prefix fails closed
+    layer: crash
+    oracle:
+      - snapshot_ahead_of_committed_prefix_fails_closed
+    kill_mutation: open a snapshot whose offset is past the committed prefix
+    status: killed
+    gate: default
+    owner: M002-S05
+    source: audit-code-tests §2
+  - id: DUR-verify-open
+    plane: product
+    invariant: Tampered snapshot is rejected on open
+    layer: kill
+    oracle:
+      - open_rejects_tampered_snapshot
+    kill_mutation: accept a snapshot whose fold does not match the log
+    status: killed
+    gate: default
+    owner: M012a-S04
+    source: audit-code-tests §2
+
+  # --- durability gaps (S05 A / S06 B) ---
+  - id: DUR-seg-manifest-sync-all
+    plane: product
+    invariant: segmented write_manifest sync_all on tmp before rename
+    layer: crash
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: default
+    owner: M019-S05
+    source: audit-code-tests §2 residual
+  - id: DUR-seg-final-sync-dir
+    plane: product
+    invariant: final sync_dir after segmented persist_log
+    layer: crash
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: default
+    owner: M019-S05
+    source: audit-code-tests §2 residual
+  - id: DUR-mixed-typed-dict
+    plane: product
+    invariant: mixed Typed/Dictionary uncommitted group vs committed_prefix
+    layer: crash
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: default
+    owner: M019-S05
+    source: audit-code-tests §2 HIGH
+  - id: DUR-migrate-tail-guard
+    plane: product
+    invariant: tail guard after migrate (same-length last-frame swap on new active)
+    layer: crash
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: default
+    owner: M019-S05
+    source: audit-code-tests §2
+  - id: DUR-active-exact-frame-end
+    plane: product
+    invariant: truncate active at an exact complete frame end keeps the prefix
+    layer: crash
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: default
+    owner: M019-S05
+    source: audit-code-tests §2
+  - id: DUR-wrong-role-active
+    plane: product
+    invariant: manifest.active names a sealed file that exists (wrong role)
+    layer: crash
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: default
+    owner: M019-S05
+    source: audit-code-tests §2
+  - id: DUR-two-writer
+    plane: product
+    invariant: two Persister::attach on one dir fail closed
+    layer: crash
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: default
+    owner: M019-S05
+    source: audit-code-tests §2 HIGH
+  - id: DUR-chain-active-prev
+    plane: product
+    invariant: flip active header prev-hash while sealed chain stays valid
+    layer: crash
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: default
+    owner: M019-S05
+    source: audit-code-tests §2 residual
+  - id: DUR-manifest-pre-rename
+    plane: product
+    invariant: crash after new header exists, before manifest rename; second open
+    layer: crash
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: default
+    owner: M019-S05
+    source: audit-code-tests §2 residual
+  - id: DUR-sealed-trailer-lie
+    plane: product
+    invariant: sealed truncate with trailer.bytes rewritten to match
+    layer: crash
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: default
+    owner: M019-S05
+    source: audit-code-tests §2 residual
+  - id: DUR-migrate-concurrent
+    plane: product
+    invariant: concurrent persist on the same legacy dir during migrate
+    layer: crash
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: default
+    owner: M019-S05
+    source: audit-code-tests §2 residual
+  - id: DUR-export-race
+    plane: product
+    invariant: export_jsonl vs Persister.append race
+    layer: crash
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: default
+    owner: M019-S06
+    source: audit-code-tests §2 MED
+  - id: DUR-rocks-mid-stale
+    plane: product
+    invariant: poison middle locator while m:tip still matches
+    layer: crash
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: feature:observe_rocks
+    owner: M019-S06
+    source: audit-code-tests §2 HIGH
+  - id: DUR-bytes-per-fact
+    plane: product
+    invariant: bytes_per_fact 17218 to 25200 measured and fixed or explained
+    layer: bench
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: controller
+    owner: M019-S06
+    source: audit-code-tests §4
+  - id: DUR-dead-code-fate
+    plane: product
+    invariant: fate of log_has_quantum_outcome, wal::append_events, rocks_spike
+    layer: decision
+    oracle: []
+    kill_mutation: none
+    status: spec-only
+    gate: default
+    owner: M019-S06
+    source: audit-code-tests §5
+  - id: DUR-index-wiring
+    plane: product
+    invariant: SegmentIndex / Persister wiring into Runtime (default not wired)
+    layer: decision
+    oracle: []
+    kill_mutation: none
+    status: spec-only
+    gate: default
+    owner: M019-S06
+    source: M019 S06 text
+
+  # --- semantic core (audit-code-tests §3, ADR audit §2) ---
+  - id: SEM-ff5-as-of
+    plane: product
+    invariant: FF5 as_of(t1) differs from as_of(t2) on the statute fixture
+    layer: decision
+    oracle:
+      - ff5_as_of_t1_differs_from_as_of_t2_on_statute_log
+    kill_mutation: return the same live set at both VT cuts
+    status: killed
+    gate: default
+    owner: M001-S01
+    source: D-03 seed / FF5
+  - id: SEM-ff6-allowlist
+    plane: product
+    invariant: FF6 unknown relation does not append
+    layer: decision
+    oracle:
+      - ff6_unknown_relation_does_not_append
+    kill_mutation: admit an unknown relation
+    status: killed
+    gate: default
+    owner: M001-S03
+    source: D-03 seed / FF6
+  - id: SEM-claim-support
+    plane: product
+    invariant: claim id is distinct from the support slot; retract one support leaves the claim
+    layer: decision
+    oracle:
+      - claim_id_distinct_from_support_slot
+      - retracting_one_support_leaves_claim_supported
+    kill_mutation: treat claim_id as the support EventId
+    status: killed
+    gate: default
+    owner: M012a-S03
+    source: D-03 seed
+  - id: SEM-correct-interval
+    plane: product
+    invariant: Correct / CorrectInterval leave named VT residuals
+    layer: decision
+    oracle:
+      - interval_patch_leaves_vt_2012_and_2021_residuals
+      - whole_version_correct_does_not_invent_residuals
+    kill_mutation: invent or drop residuals on interval patch
+    status: killed
+    gate: default
+    owner: M011-S04
+    source: D-03 seed
+  - id: SEM-seeded-det
+    plane: product
+    invariant: seeded LCG persist/open compares sorted triples, not EventIds
+    layer: property
+    oracle:
+      - det01_all_seeds_replay_eager_lazy_persist_open
+      - det01_seed1_replay_eager_lazy_persist_open
+      - det01_delivery_key_retry_identical_log
+    kill_mutation: compare EventIds or drop the seed loop
+    status: killed
+    gate: default
+    owner: M017-S03
+    source: D-03 seed / DET-01
+  - id: SEM-replay-provenance
+    plane: product
+    invariant: replay_check / provenance digest detect tamper and cite swap
+    layer: kill
+    oracle:
+      - replay_detects_tamper
+      - provenance_detects_caused_by_swap_when_state_fingerprint_matches
+      - provenance_detects_rule_version_change_when_state_fingerprint_matches
+    kill_mutation: keep a matching state fingerprint after swapping caused_by
+    status: killed
+    gate: default
+    owner: M011-S07
+    source: D-03 seed
+  - id: SEM-true-on-vs-known-on
+    plane: product
+    invariant: true_on(D) differs from known_on(D)
+    layer: decision
+    oracle:
+      - true_on_d_differs_from_known_on_d
+    kill_mutation: collapse as_of and as_known_on
+    status: killed
+    gate: default
+    owner: M015-S01
+    source: ADR-013
+  - id: SEM-csr-labels
+    plane: product
+    invariant: typed CSR preserves labels and support multiplicity
+    layer: decision
+    oracle:
+      - typed_csr_preserves_relation_labels_and_support_multiplicity
+    kill_mutation: drop relation labels on the typed lease
+    status: killed
+    gate: default
+    owner: M011-S06
+    source: D-03 seed
+  - id: SEM-eager-lazy
+    plane: product
+    invariant: lazy as_of matches eager after the same ingest
+    layer: property
+    oracle:
+      - lazy_as_of_matches_eager_after_same_ingest
+    kill_mutation: serve a different neighbor set in Lazy mode
+    status: killed
+    gate: default
+    owner: M013-S03
+    source: D-03 seed
+  - id: SEM-define-stable
+    plane: product
+    invariant: Define ids are stable across persist/open
+    layer: decision
+    oracle:
+      - define_ids_stable_across_persist_open
+    kill_mutation: mint a new Define id on persist
+    status: killed
+    gate: default
+    owner: M012a-S04
+    source: D-03 seed
+  - id: SEM-horn-tt-max
+    plane: product
+    invariant: characterization — Horn fires when a premise is hidden on an early cut
+    layer: characterization
+    oracle:
+      - known04_horn_fires_when_premise_hidden_on_early_cut
+    kill_mutation: none
+    status: characterization
+    gate: default
+    owner: M017-S03
+    source: audit-code-tests §3
+  - id: SEM-c01-inexpressible
+    plane: product
+    invariant: characterization — C01 sunset is inexpressible as Horn today
+    layer: characterization
+    oracle:
+      - fixg01_c01_sunset_inexpressible_as_horn
+    kill_mutation: none
+    status: characterization
+    gate: default
+    owner: M016-S05
+    source: ADR audit §2 FIXG-01
+  - id: SEM-cascade-count
+    plane: product
+    invariant: characterization — cascade idles without an inverse loop (events_in_quantum==2)
+    layer: characterization
+    oracle:
+      - cascade_idles_without_inverse_loop
+    kill_mutation: none
+    status: characterization
+    gate: default
+    owner: M011-S03
+    source: audit-code-tests §3
+
+  - id: SEM-horn-kc
+    plane: product
+    invariant: Horn must not mint when a premise is absent at the knowledge cut
+    layer: decision
+    oracle:
+      - known04_horn_fires_when_premise_hidden_on_early_cut
+    kill_mutation: none
+    status: blocked
+    gate: default
+    owner: HORN-KC-01
+    source: audit-code-tests §3 / ADR audit §2
+  - id: SEM-c01-decision
+    plane: product
+    invariant: C01 sunset / tempus regit actum option (pack stamp, fifth axis, or stop)
+    layer: decision
+    oracle:
+      - fixg01_c01_sunset_inexpressible_as_horn
+    kill_mutation: none
+    status: blocked
+    gate: default
+    owner: C01
+    source: ADR audit §2 FIXG-01
+  - id: SEM-asof-elig
+    plane: product
+    invariant: as_of must hide derivation-ineligible rows
+    layer: decision
+    oracle: []
+    kill_mutation: none
+    status: blocked
+    gate: default
+    owner: ASOF-ELIG-01
+    source: ADR audit §2
+  - id: SEM-det02-ids
+    plane: product
+    invariant: derived EventId reuse across replay (seed-stable identity)
+    layer: decision
+    oracle: []
+    kill_mutation: none
+    status: blocked
+    gate: default
+    owner: DET-02
+    source: audit-code-tests §3
+  - id: SEM-tr02-legal
+    plane: product
+    invariant: legal TR-02 force vs publication vs decision clocks
+    layer: decision
+    oracle: []
+    kill_mutation: none
+    status: blocked
+    gate: default
+    owner: TR-02
+    source: ADR-090 / D-03 seed
+  - id: SEM-horn-correct
+    plane: product
+    invariant: Correct of a Horn premise retracts or re-mints Behavior
+    layer: decision
+    oracle: []
+    kill_mutation: none
+    status: blocked
+    gate: default
+    owner: HORN-CORR-01
+    source: ADR audit §2
+
+  - id: SEM-cascade-order
+    plane: product
+    invariant: stable knows vs inverse_knows order across Eager/Lazy
+    layer: property
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: default
+    owner: M019-S07
+    source: audit-code-tests §3 / M019 S07
+  - id: SEM-csr-fold-diff
+    plane: product
+    invariant: seeded differential fold vs CSR vs clean rebuild (DIFF-01)
+    layer: property
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: default
+    owner: M019-S07
+    source: audit-code-tests §3 / M019 S07
+  - id: SEM-horn-correct-char
+    plane: product
+    invariant: characterize current Correct-of-Horn-premise behaviour
+    layer: characterization
+    oracle: []
+    kill_mutation: none
+    status: gap
+    gate: default
+    owner: M019-S07
+    source: M019 S07
+
+  # --- harness ---
+  - id: HAR-freeze-rocks
+    plane: harness
+    invariant: freeze-rocks parses Cargo tables
+    layer: governor
+    oracle:
+      - freeze-rocks
+    kill_mutation: add [dependencies.rocksdb] without optional
+    status: killed
+    gate: default
+    owner: M019-S02
+    source: audit-governor §2
+  - id: HAR-freeze-cypher
+    plane: harness
+    invariant: freeze-cypher-deps forbids cypher crates
+    layer: governor
+    oracle:
+      - freeze-cypher-deps
+    kill_mutation: add neo4j = in a crate Cargo.toml
+    status: killed
+    gate: default
+    owner: M019-S02
+    source: audit-governor §2
+  - id: HAR-freeze-hnsw
+    plane: harness
+    invariant: freeze-hnsw-dep forbids hnswlib
+    layer: governor
+    oracle:
+      - freeze-hnsw-dep
+    kill_mutation: add hnswlib = in a crate Cargo.toml
+    status: killed
+    gate: default
+    owner: M019-S02
+    source: audit-governor §2
+  - id: HAR-ledgers
+    plane: harness
+    invariant: invariants / bridges / honeycomb ledgers stay partitioned
+    layer: governor
+    oracle:
+      - invariants-ledger
+      - bridges-ledger
+      - honeycomb-ledger
+    kill_mutation: drop a required ledger field or overlap a check id
+    status: killed
+    gate: default
+    owner: M019-S02
+    source: audit-governor §1
+  - id: HAR-artifact-budget
+    plane: harness
+    invariant: live-phase PLAN/SUMMARY/VERIFICATION stay in budget
+    layer: governor
+    oracle:
+      - artifact-budget
+    kill_mutation: add a third SUMMARY in a live phase dir
+    status: killed
+    gate: default
+    owner: M019-S02
+    source: audit-governor §3
+  - id: HAR-observe-fn
+    plane: harness
+    invariant: FSM required names exist as asserting #[test]
+    layer: governor
+    oracle:
+      - observe-required-fn
+    kill_mutation: rename an observe_cargo required fn
+    status: killed
+    gate: default
+    owner: M019-S02
+    source: audit-governor §1
+  - id: HAR-rocks-observe
+    plane: product
+    invariant: ROCK-00 / ROCK-01 headline fns exist and are observed under features
+    layer: governor
+    oracle:
+      - index_answers_equal_the_log
+      - rocks_roundtrips_event_id_to_offset
+    kill_mutation: drop the observe_rocks required names
+    status: killed
+    gate: feature:observe_rocks
+    owner: M019-S02
+    source: Phase 57 GOV-05
+  - id: HAR-selftest-class
+    plane: harness
+    invariant: selftest classifies every check (derived / explicit / skip)
+    layer: governor
+    oracle: []
+    kill_mutation: none
+    status: spec-only
+    gate: controller
+    owner: M019-S02
+    source: audit-governor §1 / Phase 57 GOV-06
+  - id: HAR-parallel-parity
+    plane: harness
+    invariant: --jobs 1 findings match --jobs N (pytest, not a check id)
+    layer: governor
+    oracle: []
+    kill_mutation: none
+    status: spec-only
+    gate: controller
+    owner: M019-S03
+    source: Phase 58 PAR-01
+  - id: BENCH-controller
+    plane: product
+    invariant: bench gate vs baseline is a recorded controller step
+    layer: bench
+    oracle: []
+    kill_mutation: none
+    status: gate
+    gate: controller
+    owner: M019-S06
+    source: gsd-auto-contract / I-F8 deferred
