@@ -355,6 +355,7 @@ fn persist_unlocked(
         after_persist_step(stop_after, PersistStep::Wal)?;
         after_persist_step(stop_after, PersistStep::Jsonl)?;
     }
+    drop(events);
     write_terms(dir, runtime.dictionary().strings())?;
     after_persist_step(stop_after, PersistStep::Terms)?;
     replace_snapshot(dir, &runtime.snapshot(), true)?;

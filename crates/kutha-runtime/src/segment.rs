@@ -177,19 +177,22 @@ fn write_segment_file(
     sealed: bool,
     prev: [u8; 32],
 ) -> std::io::Result<(Option<SealedMeta>, [u8; 32])> {
-    let mut frames = Vec::new();
+    if sealed && events.is_empty() {
+        return Err(invalid("sealed segment must contain at least one event"));
+    }
     let mut h = prev;
+    let mut frames_len = 0u64;
+    let mut f = File::create(path)?;
+    write_header(&mut f, prev)?;
     for e in events {
         let frame = wal::frame_bytes(e)?;
         h = chain_absorb(h, &frame);
-        frames.extend_from_slice(&frame);
+        f.write_all(&frame)?;
+        frames_len = frames_len.saturating_add(frame.len() as u64);
     }
     let chain = hex32(h);
-    let body_len = HEADER_LEN + frames.len() as u64;
+    let body_len = HEADER_LEN + frames_len;
     let trailer = if sealed {
-        if events.is_empty() {
-            return Err(invalid("sealed segment must contain at least one event"));
-        }
         Some(seal_frame(
             events.len() as u64,
             events[0].id,
@@ -201,15 +204,10 @@ fn write_segment_file(
         None
     };
     let bytes = body_len + trailer.as_ref().map(|t| t.len() as u64).unwrap_or(0);
-    {
-        let mut f = File::create(path)?;
-        write_header(&mut f, prev)?;
-        f.write_all(&frames)?;
-        if let Some(t) = &trailer {
-            f.write_all(t)?;
-        }
-        f.sync_all()?;
+    if let Some(t) = &trailer {
+        f.write_all(t)?;
     }
+    f.sync_all()?;
     if sealed {
         Ok((
             Some(SealedMeta {
@@ -561,29 +559,29 @@ pub(crate) fn inspect_active(path: &Path) -> std::io::Result<ActiveTip> {
     })
 }
 
-fn split_events(events: &[Event]) -> std::io::Result<Vec<Vec<Event>>> {
+fn split_events(events: &[Event]) -> std::io::Result<Vec<&[Event]>> {
     if events.is_empty() {
-        return Ok(vec![Vec::new()]);
+        return Ok(vec![events]);
     }
     let max_bytes = effective_max_bytes();
     let max_events = effective_max_events();
     let mut chunks = Vec::new();
-    let mut cur = Vec::new();
+    let mut start = 0usize;
+    let mut count = 0usize;
     let mut bytes = HEADER_LEN;
-    for e in events {
+    for (i, e) in events.iter().enumerate() {
         let flen = wal::frame_bytes(e)?.len() as u64;
-        let overflow =
-            !cur.is_empty() && (cur.len() >= max_events || bytes.saturating_add(flen) > max_bytes);
+        let overflow = count > 0 && (count >= max_events || bytes.saturating_add(flen) > max_bytes);
         if overflow {
-            chunks.push(std::mem::take(&mut cur));
+            chunks.push(&events[start..i]);
+            start = i;
+            count = 0;
             bytes = HEADER_LEN;
         }
-        cur.push(e.clone());
         bytes = bytes.saturating_add(flen);
+        count += 1;
     }
-    if !cur.is_empty() {
-        chunks.push(cur);
-    }
+    chunks.push(&events[start..]);
     Ok(chunks)
 }
 
