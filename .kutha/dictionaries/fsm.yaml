@@ -113,6 +113,8 @@ states:
         "m002_rock01",
         "--test",
         "m002_rock00",
+        "--test",
+        "m019_rocks_b",
         "--offline",
       ]
     timeout_sec: 420

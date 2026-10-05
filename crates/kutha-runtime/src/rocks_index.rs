@@ -457,4 +457,12 @@ impl SegmentIndex {
             Some(bytes) => Ok(Some(decode_event_id(&bytes)?)),
         }
     }
+
+    /// Scan `e:` keys against a stored digest (no log IO). ROCK-02 / Phase 61.
+    ///
+    /// RED stub: always `Ok` until the digest check lands. Poisoned locators
+    /// stay invisible here; `get_event` still re-verifies the frame.
+    pub fn verify_full(&self) -> io::Result<()> {
+        Ok(())
+    }
 }
