@@ -18,13 +18,6 @@ impl Runtime {
         self.fold.bind_reserved(&self.dict);
         self.rebuild_log_indexes();
     }
-
-    #[allow(dead_code)] // D-05: open never attach_outcomes; log is SoT
-    pub(crate) fn log_has_quantum_outcome(&self) -> bool {
-        self.log
-            .iter()
-            .any(|e| matches!(e.op, Op::QuantumOutcome { .. }))
-    }
 }
 
 pub(crate) fn outcomes_from_events<'a>(
