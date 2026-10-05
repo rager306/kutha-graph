@@ -682,7 +682,7 @@ rows:
     layer: property
     oracle:
       - replay_idempotence_fresh_runtime_twice
-    kill_mutation: GraphFold::replay skips Correct and CorrectInterval
+    kill_mutation: GraphFold::replay skips Correct and CorrectInterval; from_dict_and_events dropping last fold event dies on event count/committed prefix/next_tt
     status: killed
     gate: default
     owner: M019-S07
@@ -698,18 +698,18 @@ rows:
     status: killed
     gate: default
     owner: M019-S07
-    source: M019 S07 / ADR-060
+    source: M019 S07 / ADR-060; persist_seed_count = max(12, KUTHA_SEEDS/5)
   - id: SEM-replay-tamper-random
     plane: product
     invariant: flip/swap/drop one event fails closed or fold differs; never silently equal
     layer: property
     oracle:
       - replay_tamper_flip_swap_drop_never_silently_equal
-    kill_mutation: GraphFold::apply ignores Assert.valid_from (hardcodes 2010)
+    kill_mutation: GraphFold::apply ignores Assert.valid_from (hardcodes 2010); middle sealed payload XOR must fail closed with CRC mismatch (CRC-disabled dies on that needle; JSON parse is the fallback if CRC skipped)
     status: killed
     gate: default
     owner: M019-S07
-    source: M019 S07 / ADR-060
+    source: M019 S07 / ADR-060; persist_seed_count = max(12, KUTHA_SEEDS/5)
   - id: SEM-horn-correct-char
     plane: product
     invariant: characterize current Correct-of-Horn-premise behaviour
@@ -717,7 +717,7 @@ rows:
     oracle:
       - horn_correct_char_derived_survives_premise_correct
       - horn_correct_interval_char_derived_survives_patch
-    kill_mutation: rule_follow_ons fires Horn on Correct of a premise
+    kill_mutation: rule_follow_ons fires Horn on Correct of a premise; Correct skip of invalidate_fact_at dies because the superseded premise stays live
     status: characterization
     gate: default
     owner: M019-S07
