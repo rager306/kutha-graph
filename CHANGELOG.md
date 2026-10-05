@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Process: governor SMP (GSD Phase 58)
+
+### Process
+
+- RED pytest for PAR-01: jobs-1 vs jobs-N parity, jobs config, scratch isolation, and merge order (`--jobs` not implemented yet).
+
 ## 2026-10-05 — Process: lease M019 S03 (GSD Phase 58)
 
 ### Process
