@@ -7,6 +7,7 @@ use kutha_runtime::Runtime;
 /// law-nexus syn-001 quote (C01). Do not copy the corpus file.
 const C01: &str = "пункт 15.1 действует до 01.01.2028";
 
+// Characterization oracle (ADR-023 D023-2): pins current behaviour, not a decided rule.
 #[test]
 fn fixg01_c01_sunset_inexpressible_as_horn() {
     assert!(

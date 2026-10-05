@@ -6,14 +6,19 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ## 2026-10-05 — Test strategy matrix and ADR-023 (GSD Phase 59)
 
+### Product
+
+- Comment-only D023-2 labels on `cascade_idles_without_inverse_loop` and `fixg01_c01_sunset_inexpressible_as_horn` (no assertion, name, or logic change).
+
 ### Process
 
 - RED pytest (`scripts/tests/test_test_matrix.py`) failed 10/10 on a missing check id before the kind existed.
 - Kind `test_matrix` and check `test-matrix` prove the oracle map is internally consistent (named `#[test]` / check ids exist; `killed` forbids `kill_mutation: none`; `gap` owners are ROADMAP `M###-S##`; `feature:` gates name an `observe_cargo` row; `blocked` owners are the decision allowlist). Selftest derives a missing-oracle mutation. FSM and `.env.example` budget 64 → 65 (65 dictionary checks).
+- Matrix honesty (verifier): `DUR-sidecar-atomic` kill is abort-before-rename dest truncate, not same-bytes in-place write; S05 gaps added for inode/tmp+rename witness and checkpoint-after-omitted-QO (`open_for_append`).
 
 ### Trajectory
 
-- ADR-023 **Proposed** (Verify-primary, numbered in the 020 band). Honeycomb cell 023 is `map-only` / `capability: none`. `docs/architecture/test-matrix.yaml` is the machine map (65 rows); the `.md` page is counts, gaps by slice, and blocked decisions. Not Accepted. Not a coverage number.
+- ADR-023 **Proposed** (Verify-primary, numbered in the 020 band). Honeycomb cell 023 is `map-only` / `capability: none`. `docs/architecture/test-matrix.yaml` is the machine map (67 rows); the `.md` page is counts, gaps by slice, and blocked decisions. Not Accepted. Not a coverage number. ADR-023 mutation policy does not cite a planning CONTEXT.
 
 ## 2026-10-05 — Process: lease M019 S04 (GSD Phase 59)
 

@@ -64,6 +64,7 @@ fn retract_keeps_loser() {
     rt.replay_check().unwrap();
 }
 
+// Characterization oracle (ADR-023 D023-2): pins current behaviour, not a decided rule.
 #[test]
 fn cascade_idles_without_inverse_loop() {
     let mut rt = Runtime::default();
