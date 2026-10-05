@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Process: close M019 S03 (GSD Phase 58)
+
+### Process
+
+- `L_delivery=M019-S03-done`, Active Slice **None**. Independent verification 13/13 (`58-VERIFICATION.md`). Governor SMP (PAR-01) closed: `--jobs` / `KUTHA_GOV_JOBS` (flag > env > min(cpu, 8)); process pool for checks and selftest; cargo observation overlap; deterministic merge in dictionary order; `--jobs 1` golden equal to pre-phase; worker errors fail closed (`worker-error` HIGH); scratch dirs under `tmp/`; selftest copy skips `.compound-engineering` and `.planning/milestones` with identical classification 58/4/2; pytest 171 passed. Honest residuals: no per-check worker timeout (`parallel.py` ~line 106; a hung check hangs the run as in serial); a SIGKILLed worker yields HIGH on unfinished checks without a LOW `pool-fallback` note; selftest pool fallback in `selftest.py` ~line 199 is silent (re-runs serial); SIGINT takes ~22 s to stop the pool; selftest `--jobs 2` slower than serial because of per-check copytree; `.env` `KUTHA_GOV_CARGO_TIMEOUT_SEC=180` still overrides the rocks 420 s row. No capability claim. Next: controller leases M019 S04 (Phase 59 test strategy and oracle matrix).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADRs remain Proposed. `L_capability` unchanged (FF5). M018 remains paused at its S02 decision gate.
+
 ## 2026-10-05 — Process: governor SMP (GSD Phase 58)
 
 ### Process

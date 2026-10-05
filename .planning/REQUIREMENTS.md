@@ -42,7 +42,7 @@
 - [x] **GOV-04**: new `cargo_dep_constraint` kind (`tomllib`) owns freeze-rocks / freeze-cypher-deps / freeze-hnsw-dep; governor-audit bypass forms are RED tests first
 - [x] **GOV-05**: `m002_*` oracles enrolled in honeycomb `evidence` and `observe_cargo.required` (plus `--features rocks-index` observe row)
 - [x] **GOV-06**: `artifact-budget` strict (`min_hits` 1 while a live phase exists; SUMMARY max 1); `id-map-cite` requires v0.12 / v0.13; selftest proves ledger / pointer kinds by their own mutation or an explicit skip with a reason
-- **PAR-01**: independent checks and selftest proofs run in a process pool (`KUTHA_GOV_JOBS` / `--jobs`, default min(cpu, 8)); `--jobs 1` is the oracle (same findings, byte-equal fold); selftest copytree skips `.compound-engineering` and `.planning/milestones`
+- [x] **PAR-01**: independent checks and selftest proofs run in a process pool (`KUTHA_GOV_JOBS` / `--jobs`, default min(cpu, 8)); `--jobs 1` is the oracle (same findings, byte-equal fold); selftest copytree skips `.compound-engineering` and `.planning/milestones`
 
 ### Test strategy (Phase 59, S04)
 
