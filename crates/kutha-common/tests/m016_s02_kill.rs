@@ -1,6 +1,6 @@
 //! Independent RULE-01 kill-tests. Lazy decoders (JSON, BE length, prefix-only) fail these.
 
-use kutha_common::{rule_body_hash, rule_definition_hash, RuleAst};
+use kutha_common::{RuleAst, rule_body_hash, rule_definition_hash};
 
 #[test]
 fn be_length_and_truncation_are_not_canonical() {

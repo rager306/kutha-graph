@@ -30,13 +30,13 @@ pub mod rocks_spike;
 
 pub use csr::{CsrLease, TypedCsrLease, TypedEdge};
 pub use fold::{Fact, FoldIndexMode, GraphFold};
-pub use leapfrog::{leapfrog_intersect, AdjacencyIter};
+pub use leapfrog::{AdjacencyIter, leapfrog_intersect};
 pub use log::EventLog;
 pub use materializer::{CsrMaterializer, Materializer};
 pub use quantum::{
-    disposition, ActionRecord, ConflictReport, Justification, OutcomeDisposition,
-    PersistedQuantumOutcome, QuantumOutcome, Runtime, RuntimeError,
+    ActionRecord, ConflictReport, Justification, OutcomeDisposition, PersistedQuantumOutcome,
+    QuantumOutcome, Runtime, RuntimeError, disposition,
 };
-pub use receipt::{digest_to_hex, QuantumReceipt};
+pub use receipt::{QuantumReceipt, digest_to_hex};
 pub use snapshot::Snapshot;
-pub use tenant::{ingest_harness_jsonl, ingest_harness_jsonl_str, IngestReport, TenantError};
+pub use tenant::{IngestReport, TenantError, ingest_harness_jsonl, ingest_harness_jsonl_str};

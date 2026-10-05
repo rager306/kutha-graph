@@ -1,7 +1,7 @@
 //! Independent RULE-03/04 kill-tests. Lazy "leased-policy still admits under deny" or empty-pin inverse pass fail these.
 
-use kutha_common::{rule_definition_hash, Event, EventId, Op, TransactionTime, ValidTime};
-use kutha_runtime::{store, GraphFold, Runtime, RuntimeError, Snapshot};
+use kutha_common::{Event, EventId, Op, TransactionTime, ValidTime, rule_definition_hash};
+use kutha_runtime::{GraphFold, Runtime, RuntimeError, Snapshot, store};
 use std::fs;
 
 fn leased_pin_and_derive() -> (Runtime, EventId, EventId) {

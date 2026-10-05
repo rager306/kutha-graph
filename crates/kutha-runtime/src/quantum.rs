@@ -5,8 +5,8 @@ use crate::log::EventLog;
 use crate::materializer::{CsrMaterializer, Materializer};
 use crate::receipt::QuantumReceipt;
 use kutha_common::{
-    rule_definition_hash, Event, EventId, Op, TermDictionary, TermId, TransactionTime, ValidTime,
-    WallTime, KUTHA_RESERVED_RELS,
+    Event, EventId, KUTHA_RESERVED_RELS, Op, TermDictionary, TermId, TransactionTime, ValidTime,
+    WallTime, rule_definition_hash,
 };
 use rustc_hash::FxHashMap;
 use std::fmt;

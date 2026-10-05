@@ -1,9 +1,9 @@
 //! M011 S08 candidate fixture; semantic-contract observations at named cuts.
 
 use kutha_common::{
-    rule_definition_hash, EventId, Op, SupportPolarity, TermId, TransactionTime, ValidTime,
+    EventId, Op, SupportPolarity, TermId, TransactionTime, ValidTime, rule_definition_hash,
 };
-use kutha_runtime::{store, GraphFold, Runtime, RuntimeError};
+use kutha_runtime::{GraphFold, Runtime, RuntimeError, store};
 
 /// Year-like valid-time instants (same as S04).
 const VF_WIDE: u64 = 2010;
@@ -226,16 +226,18 @@ fn e2e_fixture_supports_and_conflict_at_named_cuts() {
 
     fx.apply_t2_conflict();
     let t2 = fx.t2.expect("t2");
-    assert!(fx
-        .rt
-        .fold()
-        .live_at(TransactionTime::from(t2), ValidTime::from(VT_INTERIOR))
-        .contains(&(fx.b, fx.related, fx.p)));
-    assert!(fx
-        .rt
-        .fold()
-        .live_at(TransactionTime::from(t2), ValidTime::from(VT_INTERIOR))
-        .contains(&(fx.a, fx.related, fx.not_p)));
+    assert!(
+        fx.rt
+            .fold()
+            .live_at(TransactionTime::from(t2), ValidTime::from(VT_INTERIOR))
+            .contains(&(fx.b, fx.related, fx.p))
+    );
+    assert!(
+        fx.rt
+            .fold()
+            .live_at(TransactionTime::from(t2), ValidTime::from(VT_INTERIOR))
+            .contains(&(fx.a, fx.related, fx.not_p))
+    );
     let t2_report = fx.rt.conflict_report_at(
         fx.claim_p,
         TransactionTime::from(t2),
@@ -274,16 +276,18 @@ fn e2e_fixture_supports_and_conflict_at_named_cuts() {
         TransactionTime::from(t3),
         ValidTime::from(VT_INTERIOR)
     ));
-    assert!(fx
-        .rt
-        .fold()
-        .live_at(TransactionTime::from(t3), ValidTime::from(VT_LEFT))
-        .contains(&(fx.a, fx.related, fx.p)));
-    assert!(fx
-        .rt
-        .fold()
-        .live_at(TransactionTime::from(t3), ValidTime::from(VT_RIGHT))
-        .contains(&(fx.a, fx.related, fx.p)));
+    assert!(
+        fx.rt
+            .fold()
+            .live_at(TransactionTime::from(t3), ValidTime::from(VT_LEFT))
+            .contains(&(fx.a, fx.related, fx.p))
+    );
+    assert!(
+        fx.rt
+            .fold()
+            .live_at(TransactionTime::from(t3), ValidTime::from(VT_RIGHT))
+            .contains(&(fx.a, fx.related, fx.p))
+    );
     fx.rt.replay_check().unwrap();
 }
 

@@ -1,6 +1,6 @@
 //! RULE-01: canonical RuleAst encoding (M016 S02). Not an evaluator.
 
-use kutha_common::{rule_body_hash, RuleAst, RuleAtom, RuleTerm};
+use kutha_common::{RuleAst, RuleAtom, RuleTerm, rule_body_hash};
 
 #[test]
 fn named_and_horn_round_trip() {

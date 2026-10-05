@@ -4,11 +4,11 @@
 //! Keys: `e:` + EventId, `d:` + delivery_key UTF-8, `m:v`, `m:tip`.
 //! Values are fixed locators / ids / meta — never event payloads.
 
-use crate::segment::{self, Manifest, HEADER_LEN, MANIFEST_REL};
+use crate::segment::{self, HEADER_LEN, MANIFEST_REL, Manifest};
 use crate::store;
 use crc32fast::Hasher;
 use kutha_common::{Event, EventId, Op};
-use rocksdb::{Options, DB};
+use rocksdb::{DB, Options};
 use std::fs::{self, File};
 use std::io::{self, Error, ErrorKind, Read, Seek, SeekFrom};
 use std::path::{Path, PathBuf};

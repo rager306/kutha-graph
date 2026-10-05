@@ -2,7 +2,7 @@
 //! D-08: RED records current failures; FF5/FF6/M010–M017 assertions stay in their files.
 
 use kutha_common::{Event, EventId, Op};
-use kutha_runtime::{store, PersistedQuantumOutcome, Runtime, Snapshot};
+use kutha_runtime::{PersistedQuantumOutcome, Runtime, Snapshot, store};
 use std::fs;
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};

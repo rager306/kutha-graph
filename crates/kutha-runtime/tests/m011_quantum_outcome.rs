@@ -1,7 +1,7 @@
 //! M011 S05: persisted quantum outcomes survive persist→open (ADR-014 / D-O1…D-O4).
 
 use kutha_common::Op;
-use kutha_runtime::{store, OutcomeDisposition, Runtime};
+use kutha_runtime::{OutcomeDisposition, Runtime, store};
 
 #[test]
 fn budgets_0_1_2_distinguish_zero_partial_full_after_persist_open() {

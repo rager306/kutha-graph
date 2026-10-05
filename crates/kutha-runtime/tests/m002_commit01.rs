@@ -1,8 +1,8 @@
 //! M002 S05 / COMMIT-01 oracles (Phase 53). Option A: QuantumOutcome is the marker.
 //! D-07: RED records current failures; FF5/FF6/M010–M017 / m002_snap01 / m002_append01 stay.
 
-use kutha_common::{Event, EventId, Op, OutcomeDisposition, KUTHA_ALLOWS, KUTHA_RESERVED_RELS};
-use kutha_runtime::{store, Runtime, Snapshot};
+use kutha_common::{Event, EventId, KUTHA_ALLOWS, KUTHA_RESERVED_RELS, Op, OutcomeDisposition};
+use kutha_runtime::{Runtime, Snapshot, store};
 use std::fs;
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};

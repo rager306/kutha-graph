@@ -1,6 +1,6 @@
 //! M012a S02 / REF-01: Retract targets the minting EventId, not fold-local seq.
 
-use kutha_common::{rule_definition_hash, Event, EventId, Op, TransactionTime, ValidTime};
+use kutha_common::{Event, EventId, Op, TransactionTime, ValidTime, rule_definition_hash};
 use kutha_runtime::{Runtime, RuntimeError};
 
 #[test]

@@ -3,8 +3,8 @@
 #![cfg(feature = "rocks-index-spike")]
 
 use kutha_common::{Event, EventId, Op};
-use kutha_runtime::rocks_spike;
 use kutha_runtime::Runtime;
+use kutha_runtime::rocks_spike;
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, Seek};
 use std::path::{Path, PathBuf};

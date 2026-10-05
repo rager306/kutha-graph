@@ -2,7 +2,7 @@
 //! No criterion. Measures relatedTo (no inverse cascade). Validates answers.
 
 use kutha_common::{EventId, Op, TermId};
-use kutha_runtime::{store, FoldIndexMode, Runtime};
+use kutha_runtime::{FoldIndexMode, Runtime, store};
 use std::collections::BTreeMap;
 use std::env;
 use std::path::PathBuf;

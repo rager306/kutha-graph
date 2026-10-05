@@ -80,9 +80,11 @@ fn monotone_unique_anchors_persist_open() {
     let opened = Runtime::open(dir).unwrap();
     let known_d = opened.as_known_on(2015).expect("A1 rebuilt");
     assert!(!known_d.contains(&statute));
-    assert!(opened
-        .as_known_on(2020)
-        .expect("A2 rebuilt")
-        .contains(&statute));
+    assert!(
+        opened
+            .as_known_on(2020)
+            .expect("A2 rebuilt")
+            .contains(&statute)
+    );
     let _ = std::fs::remove_dir_all(dir);
 }

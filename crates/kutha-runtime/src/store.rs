@@ -1,5 +1,5 @@
 use crate::quantum::{
-    cascade_limit, Justification, PersistedQuantumOutcome, Runtime, RuntimeError,
+    Justification, PersistedQuantumOutcome, Runtime, RuntimeError, cascade_limit,
 };
 use crate::snapshot::Snapshot;
 use crate::wal;
@@ -813,14 +813,14 @@ fn runtime_err(e: RuntimeError) -> std::io::Error {
 }
 
 pub use crate::persist_append::{
-    abort_checkpoint_snapshot_before_rename, append_with_event_failpoint, append_with_failpoint,
-    checkpoint_with_failpoint, pending_append_len, persist_log_sync_count,
-    reset_persist_log_sync_count, AppendStep, Persister, CHECKPOINT_EVERY,
+    AppendStep, CHECKPOINT_EVERY, Persister, abort_checkpoint_snapshot_before_rename,
+    append_with_event_failpoint, append_with_failpoint, checkpoint_with_failpoint,
+    pending_append_len, persist_log_sync_count, reset_persist_log_sync_count,
 };
 
 #[doc(hidden)]
 pub use crate::segment::{
-    reset_test_segment_limits, rewrite_segment_with_seal_trailer, set_test_segment_limits,
-    write_test_segmented, Manifest, HEADER_LEN as SEGMENT_HEADER_LEN, MANIFEST_REL,
-    SEGMENT_MAX_BYTES, SEGMENT_MAX_EVENTS,
+    HEADER_LEN as SEGMENT_HEADER_LEN, MANIFEST_REL, Manifest, SEGMENT_MAX_BYTES,
+    SEGMENT_MAX_EVENTS, reset_test_segment_limits, rewrite_segment_with_seal_trailer,
+    set_test_segment_limits, write_test_segmented,
 };

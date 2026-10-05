@@ -1,7 +1,7 @@
 //! M011 S07 provenance digest; ADR-060 obligation 2.
 //! State fold fingerprint stays Facts-only; lineage mix is a separate surface.
 
-use kutha_common::{rule_definition_hash, EventId, Op};
+use kutha_common::{EventId, Op, rule_definition_hash};
 use kutha_runtime::Runtime;
 
 /// Two valid priors plus a Behavior caused_by the first, name `derive_pq`, pin `r1`.

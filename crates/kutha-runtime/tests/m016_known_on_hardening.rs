@@ -96,7 +96,9 @@ fn snapshot_mid_cut_tail_assert_and_anchor_recovers_known_on() {
     );
     let restored = Runtime::from_snapshot(snap, rt.log().as_slice().to_vec());
     assert_eq!(restored.as_known_on(W1), rt.as_known_on(W1));
-    let known = restored.as_known_on(W1).expect("tail TtAnchor must hydrate");
+    let known = restored
+        .as_known_on(W1)
+        .expect("tail TtAnchor must hydrate");
     assert!(known.contains(&(s0, rel, o0)));
     assert!(known.contains(&(s1, rel, o1)));
 }

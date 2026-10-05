@@ -52,13 +52,14 @@ fn retract_keeps_loser() {
         .event_id;
     rt.emit(Op::Retract { event_id: minting }).unwrap();
     assert_eq!(rt.fold().live_count(u64::MAX, 0), 0); // inverse Horn retracts with premise
-    assert!(!rt
-        .fold()
-        .facts()
-        .iter()
-        .find(|f| f.relation == r)
-        .unwrap()
-        .is_live_at(u64::MAX, 0));
+    assert!(
+        !rt.fold()
+            .facts()
+            .iter()
+            .find(|f| f.relation == r)
+            .unwrap()
+            .is_live_at(u64::MAX, 0)
+    );
     assert!(rt.fold().facts().iter().any(|f| f.invalidated_at.is_some()));
     rt.replay_check().unwrap();
 }

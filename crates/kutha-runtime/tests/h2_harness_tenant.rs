@@ -1,7 +1,7 @@
 //! H2: harness JSONL is a tenant of the product log. Query AS OF the process.
 //! Delivery facts, not legal norms. Architecture SoT remains docs/ADR/.
 
-use kutha_runtime::{store, Runtime};
+use kutha_runtime::{Runtime, store};
 use std::path::Path;
 
 const T_FAIL: u64 = 1500;

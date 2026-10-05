@@ -2,7 +2,7 @@
 use crate::fold::GraphFold;
 use crate::log::EventLog;
 use crate::quantum::{
-    op_affects_fold, IngestExamine, PersistedQuantumOutcome, Runtime, RuntimeError,
+    IngestExamine, PersistedQuantumOutcome, Runtime, RuntimeError, op_affects_fold,
 };
 use crate::snapshot::Snapshot;
 use kutha_common::{Event, Op, TermDictionary};

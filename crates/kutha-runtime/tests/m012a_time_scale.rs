@@ -1,6 +1,6 @@
 //! M012a S05 / TIME-01..02: fixture years are YearCe; transaction time is log sequence.
 
-use kutha_common::{Op, TimeScale, ValidTime, TRANSACTION_TIME_SCALE, VALID_TIME_SCALE};
+use kutha_common::{Op, TRANSACTION_TIME_SCALE, TimeScale, VALID_TIME_SCALE, ValidTime};
 use kutha_runtime::Runtime;
 
 /// FF5 `T_OLD` 2015 and `T_NEW` 2021 are the same YearCe mapping as these fixtures.

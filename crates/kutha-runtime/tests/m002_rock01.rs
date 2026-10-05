@@ -4,8 +4,8 @@
 
 use kutha_common::{Event, EventId, Op, OutcomeDisposition};
 use kutha_runtime::rocks_index::{Locator, SegmentIndex};
-use kutha_runtime::{store, Runtime};
-use rocksdb::{IteratorMode, Options, DB};
+use kutha_runtime::{Runtime, store};
+use rocksdb::{DB, IteratorMode, Options};
 use std::collections::HashMap;
 use std::fs;
 use std::io::ErrorKind;

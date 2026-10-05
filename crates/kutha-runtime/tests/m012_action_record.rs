@@ -2,10 +2,10 @@
 //! Not ADR-050's six dictionary kinds. Not n-ary derivation.
 
 use kutha_common::{
-    policy_version_hash, rule_definition_hash, EventId, Op, TransactionTime, ValidTime,
-    KUTHA_ACTION, KUTHA_ADMISSION,
+    EventId, KUTHA_ACTION, KUTHA_ADMISSION, Op, TransactionTime, ValidTime, policy_version_hash,
+    rule_definition_hash,
 };
-use kutha_runtime::{store, Runtime, RuntimeError};
+use kutha_runtime::{Runtime, RuntimeError, store};
 
 fn leased_pin_and_derive() -> (Runtime, EventId, EventId) {
     let mut rt = Runtime::default();

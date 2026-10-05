@@ -1,8 +1,8 @@
 //! M012 S02: rule registry as log facts (RULE-01..03).
 //! Not ADR-050's six dictionary kinds.
 
-use kutha_common::{rule_definition_hash, Op, TransactionTime, ValidTime};
-use kutha_runtime::{store, Runtime, RuntimeError};
+use kutha_common::{Op, TransactionTime, ValidTime, rule_definition_hash};
+use kutha_runtime::{Runtime, RuntimeError, store};
 
 #[test]
 fn register_rule_pins_behavior_to_definition_hash() {

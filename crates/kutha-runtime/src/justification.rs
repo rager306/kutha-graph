@@ -2,7 +2,7 @@
 use crate::pipeline::ReceiptMode;
 use crate::quantum::{ActionRecord, Justification, Runtime, RuntimeError};
 use kutha_common::{
-    Event, EventId, Op, SupportPolarity, TransactionTime, ValidTime, KUTHA_ACTION, KUTHA_ADMISSION,
+    Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, Op, SupportPolarity, TransactionTime, ValidTime,
 };
 
 impl Runtime {

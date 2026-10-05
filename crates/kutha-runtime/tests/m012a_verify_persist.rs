@@ -1,7 +1,7 @@
 //! M012a S04 / DUR-01..03: verify-on-open, atomic events.jsonl, stable Define ids.
 
 use kutha_common::{Event, EventId, Op};
-use kutha_runtime::{store, Runtime};
+use kutha_runtime::{Runtime, store};
 use std::fs;
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};

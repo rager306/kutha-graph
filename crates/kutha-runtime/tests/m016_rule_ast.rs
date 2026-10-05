@@ -1,7 +1,7 @@
 //! RULE-01: canonical rule body hash is rule_version; non-canonical fail closed.
 
 use kutha_common::{
-    blob_digest_matches, rule_body_hash, rule_definition_hash, Op, RuleAst, RuleAtom, RuleTerm,
+    Op, RuleAst, RuleAtom, RuleTerm, blob_digest_matches, rule_body_hash, rule_definition_hash,
 };
 use kutha_runtime::{Runtime, RuntimeError};
 

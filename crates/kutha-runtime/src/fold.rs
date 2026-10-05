@@ -1,6 +1,6 @@
 use kutha_common::{
-    Event, EventId, Op, RuleAst, SupportPolarity, TermDictionary, TermId, TransactionTime,
-    ValidTime, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE,
+    Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE, Op,
+    RuleAst, SupportPolarity, TermDictionary, TermId, TransactionTime, ValidTime,
 };
 use rustc_hash::FxHashMap;
 use smallvec::SmallVec;

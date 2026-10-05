@@ -1,7 +1,7 @@
 //! M010: open recovers intern meanings; live intern logs Op::Define (ADR-011).
 
 use kutha_common::Op;
-use kutha_runtime::{store, Runtime};
+use kutha_runtime::{Runtime, store};
 
 #[test]
 fn intern_appends_define_for_new_terms_only() {

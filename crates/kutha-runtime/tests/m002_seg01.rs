@@ -2,7 +2,7 @@
 //! Persister. 54-03: tamper (real writer), migrate, export_jsonl.
 
 use kutha_common::{Event, EventId, Op};
-use kutha_runtime::{store, Runtime};
+use kutha_runtime::{Runtime, store};
 use std::fs;
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};

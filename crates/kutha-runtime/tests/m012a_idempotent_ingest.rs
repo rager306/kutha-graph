@@ -1,7 +1,7 @@
 //! M012a S03 / ING-01: identical Assert retry under one delivery key does not mint a second support.
 
 use kutha_common::{Op, SupportPolarity, TransactionTime, ValidTime};
-use kutha_runtime::{store, Runtime, RuntimeError};
+use kutha_runtime::{Runtime, RuntimeError, store};
 
 #[test]
 fn identical_assert_same_delivery_key_does_not_mint_second_support() {

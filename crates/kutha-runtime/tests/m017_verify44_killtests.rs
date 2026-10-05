@@ -1,7 +1,7 @@
 //! Phase 44 independent semantic kill-tests (public API). Differential vs `4d669ca`.
 
 use kutha_common::{
-    policy_version_hash, Event, Op, RuleAst, RuleAtom, RuleTerm, TermId, TransactionTime, ValidTime,
+    Event, Op, RuleAst, RuleAtom, RuleTerm, TermId, TransactionTime, ValidTime, policy_version_hash,
 };
 use kutha_runtime::{FoldIndexMode, GraphFold, Runtime};
 use std::fs;
@@ -32,11 +32,19 @@ fn nary_knows_mentors() -> RuleAst {
 }
 
 fn share_head_fwd() -> RuleAst {
-    RuleAst::horn(atom("v44h1", v(0), v(1)), vec![atom("v44share", v(0), v(1))]).unwrap()
+    RuleAst::horn(
+        atom("v44h1", v(0), v(1)),
+        vec![atom("v44share", v(0), v(1))],
+    )
+    .unwrap()
 }
 
 fn share_head_rev() -> RuleAst {
-    RuleAst::horn(atom("v44h2", v(1), v(0)), vec![atom("v44share", v(0), v(1))]).unwrap()
+    RuleAst::horn(
+        atom("v44h2", v(1), v(0)),
+        vec![atom("v44share", v(0), v(1))],
+    )
+    .unwrap()
 }
 
 fn persist_dir(label: &str) -> PathBuf {
@@ -116,7 +124,9 @@ fn live_count(rt: &Runtime, s: TermId, r: TermId, o: TermId) -> usize {
     rt.fold()
         .facts()
         .iter()
-        .filter(|f| f.subject == s && f.relation == r && f.object() == o && f.invalidated_at.is_none())
+        .filter(|f| {
+            f.subject == s && f.relation == r && f.object() == o && f.invalidated_at.is_none()
+        })
         .count()
 }
 
@@ -125,7 +135,11 @@ fn has_as_of(rt: &Runtime, s: TermId, r: TermId, o: TermId) -> bool {
 }
 
 fn last_tt(rt: &Runtime) -> u64 {
-    rt.log().as_slice().last().map(|e| e.ingested_at).unwrap_or(0)
+    rt.log()
+        .as_slice()
+        .last()
+        .map(|e| e.ingested_at)
+        .unwrap_or(0)
 }
 
 fn replay_fingerprint_matches(rt: &Runtime) {

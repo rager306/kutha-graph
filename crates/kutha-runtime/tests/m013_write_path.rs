@@ -2,7 +2,7 @@
 //! justification/action constructors (pipeline receipt). Never edit named
 //! m012_*/m012a_*/m011_*/ff5/ff6 expects. Never edit `.kutha/STATE.md`.
 
-use kutha_common::{rule_definition_hash, Op, TransactionTime, ValidTime, KUTHA_ALLOWS};
+use kutha_common::{KUTHA_ALLOWS, Op, TransactionTime, ValidTime, rule_definition_hash};
 use kutha_runtime::{Runtime, RuntimeError};
 
 #[test]

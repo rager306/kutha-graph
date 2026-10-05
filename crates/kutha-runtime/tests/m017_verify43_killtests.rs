@@ -29,9 +29,7 @@ fn sorted(mut v: Vec<(TermId, TermId, TermId)>) -> Vec<(TermId, TermId, TermId)>
     v
 }
 
-fn opt_sorted(
-    v: Option<Vec<(TermId, TermId, TermId)>>,
-) -> Option<Vec<(TermId, TermId, TermId)>> {
+fn opt_sorted(v: Option<Vec<(TermId, TermId, TermId)>>) -> Option<Vec<(TermId, TermId, TermId)>> {
     v.map(sorted)
 }
 
@@ -43,10 +41,7 @@ fn persist_dir(label: &str) -> PathBuf {
     let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
         .join("tmp")
-        .join(format!(
-            "p43-vfy-{label}-{}-{nanos}",
-            std::process::id()
-        ));
+        .join(format!("p43-vfy-{label}-{}-{nanos}", std::process::id()));
     let _ = fs::remove_dir_all(&dir);
     fs::create_dir_all(&dir).unwrap();
     dir
@@ -218,12 +213,7 @@ fn mentors_horn() -> RuleAst {
     .unwrap()
 }
 
-fn has_triple(
-    view: &[(TermId, TermId, TermId)],
-    s: TermId,
-    r: TermId,
-    o: TermId,
-) -> bool {
+fn has_triple(view: &[(TermId, TermId, TermId)], s: TermId, r: TermId, o: TermId) -> bool {
     view.iter().any(|t| *t == (s, r, o))
 }
 

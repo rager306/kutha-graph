@@ -1,8 +1,8 @@
 //! M012 S01: relation allowlist entries as log facts (ALL-01..03).
 //! Not ADR-050's six dictionary kinds.
 
-use kutha_common::{Op, TransactionTime, ValidTime, KUTHA_ALLOWS};
-use kutha_runtime::{store, Runtime, RuntimeError};
+use kutha_common::{KUTHA_ALLOWS, Op, TransactionTime, ValidTime};
+use kutha_runtime::{Runtime, RuntimeError, store};
 
 #[test]
 fn allow_relation_appends_as_log_fact() {

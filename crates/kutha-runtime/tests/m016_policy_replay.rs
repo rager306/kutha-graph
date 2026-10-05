@@ -1,7 +1,7 @@
 //! RULE-03/04 oracles: deny policy body; leased-policy still admits; AS OF prior admission.
 
 use kutha_common::{
-    policy_version_hash, rule_definition_hash, EventId, Op, TransactionTime, ValidTime,
+    EventId, Op, TransactionTime, ValidTime, policy_version_hash, rule_definition_hash,
 };
 use kutha_runtime::{Runtime, RuntimeError};
 

@@ -1,11 +1,11 @@
 //! Admit and delivery-key gates for the write pipeline (D-01 / T-27-02).
 use crate::pipeline::ReceiptMode;
 use crate::quantum::{
-    op_relation, ConflictReport, Justification, QuantumOutcome, Runtime, RuntimeError,
+    ConflictReport, Justification, QuantumOutcome, Runtime, RuntimeError, op_relation,
 };
 use crate::receipt::QuantumReceipt;
 use kutha_common::{
-    blob_digest_matches, EventId, Op, TermId, TransactionTime, ValidTime, KUTHA_RESERVED_RELS,
+    EventId, KUTHA_RESERVED_RELS, Op, TermId, TransactionTime, ValidTime, blob_digest_matches,
 };
 
 impl Runtime {

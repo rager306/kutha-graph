@@ -2,10 +2,10 @@
 //! Not ADR-050's six dictionary kinds. Not a thin Action record.
 
 use kutha_common::{
-    policy_version_hash, rule_definition_hash, EventId, Op, TransactionTime, ValidTime,
-    KUTHA_ADMISSION, KUTHA_POLICY,
+    EventId, KUTHA_ADMISSION, KUTHA_POLICY, Op, TransactionTime, ValidTime, policy_version_hash,
+    rule_definition_hash,
 };
-use kutha_runtime::{store, Runtime, RuntimeError};
+use kutha_runtime::{Runtime, RuntimeError, store};
 
 fn leased_pin_and_derive() -> (Runtime, EventId, EventId, EventId) {
     let mut rt = Runtime::default();

@@ -1,7 +1,7 @@
 //! M012a S06 / HOT-01: fold-internal as_of and claim_supported_at skip non-overlapping facts.
 
-use kutha_common::{EventId, Op, TermId, TransactionTime, ValidTime, KUTHA_RESERVED_RELS};
-use kutha_runtime::{store, CsrLease, CsrMaterializer, Materializer, Runtime, TypedCsrLease};
+use kutha_common::{EventId, KUTHA_RESERVED_RELS, Op, TermId, TransactionTime, ValidTime};
+use kutha_runtime::{CsrLease, CsrMaterializer, Materializer, Runtime, TypedCsrLease, store};
 use std::fs;
 use std::path::PathBuf;
 
@@ -165,9 +165,10 @@ fn hot_as_of_matches_brute_force_after_retract() {
     let mut live = rt.fold().as_of(ValidTime::from(2017));
     live.sort_unstable();
     assert!(live.contains(&triple));
-    assert!(rt
-        .fold()
-        .claim_supported_at(event_id, TransactionTime::MAX, ValidTime::from(2017)));
+    assert!(
+        rt.fold()
+            .claim_supported_at(event_id, TransactionTime::MAX, ValidTime::from(2017))
+    );
     assert_eq!(live, brute_force_as_of(&rt, 2017));
     assert_eq!(
         rt.fold()
@@ -183,9 +184,10 @@ fn hot_as_of_matches_brute_force_after_retract() {
         !after.contains(&triple),
         "retracted 2017 triple must leave as_of(2017)"
     );
-    assert!(!rt
-        .fold()
-        .claim_supported_at(event_id, TransactionTime::MAX, ValidTime::from(2017)));
+    assert!(
+        !rt.fold()
+            .claim_supported_at(event_id, TransactionTime::MAX, ValidTime::from(2017))
+    );
     assert_eq!(after, brute_force_as_of(&rt, 2017));
     assert_eq!(
         rt.fold()
@@ -260,9 +262,10 @@ fn discard_csr_lease_and_snapshot_rebuild_keeps_as_of() {
     let mut before = rt.fold().as_of(ValidTime::from(2017));
     before.sort_unstable();
     let fp = rt.fold().fingerprint();
-    assert!(rt
-        .fold()
-        .claim_supported_at(live_claim, TransactionTime::MAX, ValidTime::from(2017)));
+    assert!(
+        rt.fold()
+            .claim_supported_at(live_claim, TransactionTime::MAX, ValidTime::from(2017))
+    );
     assert!(before.contains(&(a, rel, b)));
 
     {
@@ -274,9 +277,10 @@ fn discard_csr_lease_and_snapshot_rebuild_keeps_as_of() {
     after_drop.sort_unstable();
     assert_eq!(after_drop, before);
     assert_eq!(rt.fold().fingerprint(), fp);
-    assert!(rt
-        .fold()
-        .claim_supported_at(live_claim, TransactionTime::MAX, ValidTime::from(2017)));
+    assert!(
+        rt.fold()
+            .claim_supported_at(live_claim, TransactionTime::MAX, ValidTime::from(2017))
+    );
 
     let dir = temp_dir("discard-csr");
     store::persist(&rt, &dir).unwrap();

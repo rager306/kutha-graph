@@ -1,7 +1,7 @@
 //! M013 S03 / Phase 24: ingest fold indexes — visit counts constant in N.
 
 use kutha_common::Op;
-use kutha_runtime::{store, Runtime};
+use kutha_runtime::{Runtime, store};
 use std::fs;
 
 fn emit_keyed(rt: &mut Runtime, i: u32, rel: kutha_common::TermId, obj: kutha_common::TermId) {

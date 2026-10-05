@@ -1,7 +1,7 @@
 //! M013 S05 / Phase 26: D-08 GREEN — dictionary entries on `dictionary_as_of`.
 //! Product `as_of` excludes `kutha:`. Never edit `.kutha/STATE.md`.
 
-use kutha_common::{rule_definition_hash, EventId, Op, TransactionTime, ValidTime, KUTHA_ALLOWS};
+use kutha_common::{EventId, KUTHA_ALLOWS, Op, TransactionTime, ValidTime, rule_definition_hash};
 use kutha_runtime::{Runtime, RuntimeError};
 
 fn leased_pin_and_derive() -> (Runtime, EventId, EventId, EventId) {

@@ -6,10 +6,10 @@ mod intern;
 mod rule;
 
 pub use event::{
-    blob_digest_matches, policy_version_hash, rule_definition_hash, sha256_hex, Event, EventId, Op,
-    OutcomeDisposition, SupportPolarity, TermId, TimeScale, TransactionTime, Tt, ValidTime, Vt,
-    WallTime, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RESERVED_RELS,
-    KUTHA_RULE, TRANSACTION_TIME_SCALE, VALID_TIME_SCALE,
+    Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RESERVED_RELS,
+    KUTHA_RULE, Op, OutcomeDisposition, SupportPolarity, TRANSACTION_TIME_SCALE, TermId, TimeScale,
+    TransactionTime, Tt, VALID_TIME_SCALE, ValidTime, Vt, WallTime, blob_digest_matches,
+    policy_version_hash, rule_definition_hash, sha256_hex,
 };
 pub use intern::TermDictionary;
-pub use rule::{is_rule_ident, rule_body_hash, RuleAst, RuleAtom, RuleTerm};
+pub use rule::{RuleAst, RuleAtom, RuleTerm, is_rule_ident, rule_body_hash};

@@ -1,6 +1,6 @@
 //! Independent RULE-01 admit kill-tests. Lazy "hash the JSON / utf8 name" paths fail these.
 
-use kutha_common::{blob_digest_matches, rule_definition_hash, Op, RuleAst};
+use kutha_common::{Op, RuleAst, blob_digest_matches, rule_definition_hash};
 use kutha_runtime::{Runtime, RuntimeError};
 
 #[test]

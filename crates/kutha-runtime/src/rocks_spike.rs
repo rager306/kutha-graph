@@ -2,7 +2,7 @@
 //! Not wired into `Runtime`, persist, fold, or hydrate.
 
 use kutha_common::{Event, EventId};
-use rocksdb::{Options, DB};
+use rocksdb::{DB, Options};
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, Error, ErrorKind, Seek, SeekFrom};
 use std::path::Path;

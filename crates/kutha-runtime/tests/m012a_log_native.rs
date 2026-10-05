@@ -1,7 +1,7 @@
 //! M012a S01 / LOG-01: quantum outcomes are log records; the outcomes file is a lease.
 
-use kutha_common::{rule_definition_hash, Op, TransactionTime, ValidTime};
-use kutha_runtime::{store, OutcomeDisposition, Runtime};
+use kutha_common::{Op, TransactionTime, ValidTime, rule_definition_hash};
+use kutha_runtime::{OutcomeDisposition, Runtime, store};
 
 #[test]
 fn discard_outcomes_sidecar_keeps_reconstructible_disposition() {

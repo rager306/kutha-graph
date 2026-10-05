@@ -1,6 +1,6 @@
 //! TH-02: JustificationCite stores distinct tt/vt; a swapped clone fails equality.
 
-use kutha_common::{rule_definition_hash, Op, TransactionTime, ValidTime};
+use kutha_common::{Op, TransactionTime, ValidTime, rule_definition_hash};
 use kutha_runtime::{Justification, Runtime};
 
 #[test]
@@ -47,7 +47,10 @@ fn swapped_justification_cite_tt_vt_fails_equality() {
         .find(|f| f.claim_id == claim_q)
         .unwrap()
         .ingested_at;
-    assert_ne!(t1, 0, "cite tt must differ from vt=0 so a swap is observable");
+    assert_ne!(
+        t1, 0,
+        "cite tt must differ from vt=0 so a swap is observable"
+    );
     let jid = rt
         .record_justification(
             claim_q,

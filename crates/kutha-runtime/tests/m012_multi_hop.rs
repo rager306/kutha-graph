@@ -2,9 +2,9 @@
 //! Walks `caused_by`; not a MATCH compiler or provenance-polynomial evaluator.
 
 use kutha_common::{
-    rule_definition_hash, EventId, Op, RuleAst, RuleAtom, RuleTerm, TransactionTime, ValidTime,
+    EventId, Op, RuleAst, RuleAtom, RuleTerm, TransactionTime, ValidTime, rule_definition_hash,
 };
-use kutha_runtime::{store, Runtime};
+use kutha_runtime::{Runtime, store};
 
 fn inverse_knows_pin() -> String {
     let head = RuleAtom::new(

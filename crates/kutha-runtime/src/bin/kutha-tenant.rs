@@ -1,7 +1,7 @@
 //! Ingest `.kutha/events.jsonl` onto the product runtime (H2 tenant).
 //! Paths from env: `KUTHA_HARNESS_LOG`, `KUTHA_TENANT_DIR`.
 
-use kutha_runtime::{ingest_harness_jsonl, store, Runtime};
+use kutha_runtime::{Runtime, ingest_harness_jsonl, store};
 use std::path::Path;
 use std::process::ExitCode;
 
@@ -49,7 +49,11 @@ fn main() -> ExitCode {
     }
     println!(
         "tenant: ingested={} last_status={} last_vf={} as_of_match={} dir={}  (tenant log, not architecture SoT)",
-        report.status_facts, last_status, last_vf, u8::from(matched), dir
+        report.status_facts,
+        last_status,
+        last_vf,
+        u8::from(matched),
+        dir
     );
     if matched {
         ExitCode::SUCCESS

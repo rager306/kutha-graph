@@ -1,4 +1,4 @@
-use crate::rule::{rule_body_hash, RuleAst};
+use crate::rule::{RuleAst, rule_body_hash};
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
 

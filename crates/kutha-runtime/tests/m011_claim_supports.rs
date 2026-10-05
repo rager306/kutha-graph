@@ -1,6 +1,6 @@
 //! M011 S01: independent supports share a claim_id; retract one, the other remains.
 
-use kutha_common::{rule_definition_hash, EventId, Op, TransactionTime, ValidTime};
+use kutha_common::{EventId, Op, TransactionTime, ValidTime, rule_definition_hash};
 use kutha_runtime::Runtime;
 
 #[test]
@@ -45,9 +45,10 @@ fn retracting_one_support_leaves_claim_supported() {
     })
     .unwrap();
     assert_eq!(2, rt.fold().live_support_count(claim, u64::MAX, 2017));
-    assert!(rt
-        .fold()
-        .claim_supported_at(claim, TransactionTime::MAX, ValidTime::from(2017)));
+    assert!(
+        rt.fold()
+            .claim_supported_at(claim, TransactionTime::MAX, ValidTime::from(2017))
+    );
 
     rt.emit(Op::Retract { event_id: event_a }).unwrap();
     assert_eq!(1, rt.fold().live_support_count(claim, u64::MAX, 2017));
