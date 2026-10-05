@@ -30,11 +30,11 @@ F11 closed by option A (`Op::QuantumOutcome` + `commit::committed_prefix`). Cous
 
 ### Evidence (2026-10-05, Phase 60 / M019 S05; Proposed)
 
-WRITER-01 ships the advisory `kutha.lock` (local FS, `WouldBlock`, readers unlocked). GROUP-01 stays (c): F11 option A does not hide a complete mid-group Typed/Dictionary SelfCommit prefix; no format change. Residual wording: Typed/Dictionary group still has no outcome (characterization `mixed_typed_dict_partial_group_is_visible`); no external chain anchor; `open` O(N); `Persister` not wired into `kutha-tenant`. Oracles: `m019_dur_a.rs`. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
+WRITER-01 ships the advisory `kutha.lock` (local FS, `WouldBlock`, readers unlocked). GROUP-01 stays (c): F11 option A does not hide a complete mid-group Typed/Dictionary SelfCommit prefix; no format change. Residual wording: Typed/Dictionary group still has no outcome (characterization `mixed_typed_dict_partial_group_is_visible`); no fsync of the `kutha.lock` directory entry; advisory local lock only (NFS / another host not covered); writes that bypass `Persister` / `store::*` are not covered; `kutha-tenant` is covered only through `store::persist`; no external chain anchor; `open` O(N). Oracles: `m019_dur_a.rs`. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
 
 ### Current encoding (HEAD, 2026-10-05; Proposed)
 
-F11 closed by option A (`Op::QuantumOutcome` + `commit::committed_prefix`). Writers take advisory `kutha.lock` (local filesystem only). Cousin durability is `KUTHAWAL` on a legacy dir or segment `sync_data`; optional external Merkle/chain anchor is absent (`verify_sealed` is in-file SHA-256, prev seeded `[0u8;32]`). Residuals: Typed/Dictionary group has no outcome (GROUP-01 (c)); no external chain anchor; `open` O(N); `Persister` not wired into `kutha-tenant`. Pointers: `store::persist_until`, `segment::persist_log`, `Persister`, `rocks_index::SegmentIndex`.
+F11 closed by option A (`Op::QuantumOutcome` + `commit::committed_prefix`). Writers take advisory `kutha.lock` (local filesystem only). Cousin durability is `KUTHAWAL` on a legacy dir or segment `sync_data`; optional external Merkle/chain anchor is absent (`verify_sealed` is in-file SHA-256, prev seeded `[0u8;32]`). Residuals: Typed/Dictionary group has no outcome (GROUP-01 (c)); no fsync of the `kutha.lock` directory entry; advisory local lock only (NFS / another host not covered); writes that bypass `Persister` / `store::*` are not covered; `kutha-tenant` is covered only through `store::persist`; no external chain anchor; `open` O(N). Pointers: `store::persist_until`, `segment::persist_log`, `Persister`, `rocks_index::SegmentIndex`.
 
 ## Date
 

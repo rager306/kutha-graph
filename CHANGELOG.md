@@ -8,14 +8,14 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Product
 
-- Added advisory single-writer lock `kutha.lock` (`File::try_lock`, `ErrorKind::WouldBlock`, message names the file) on `Persister::attach`, `open_for_append`, `store::persist`, `store::migrate`, and `store::export_jsonl`. Readers (`store::open`) take no lock. A dead-process lock file does not block. Panic/unwind Drop unlocks. Failed append/checkpoint releases the lock so in-process heal can run; attach validates before locking so a dirty tail stays `InvalidData`.
-- Added `m019_dur_a.rs` oracles for the 13 S05 matrix rows plus lock semantics (second writer, reader unaffected, dead-process, panic release, listings ignore `kutha.lock`).
+- Added advisory single-writer lock `kutha.lock` (`File::try_lock`, `ErrorKind::WouldBlock`, message names the file) on `Persister::attach`, `open_for_append`, `store::persist`, `store::migrate`, and `store::export_jsonl`. Readers (`store::open`) take no lock. A dead-process lock file does not block. Panic/unwind Drop unlocks. Failed append/checkpoint releases the lock so in-process heal can run; attach validates before locking so a dirty tail stays `InvalidData`. A fail-closed `append` (`ErrorKind::InvalidData`, tail-guard) poisons that `Persister`: later `append` / `checkpoint` / `close` return the same kind and write nothing; heal is a new `open_for_append`. Failpoints stay `Other` and do not poison.
+- Added `m019_dur_a.rs` oracles for the 13 S05 matrix rows plus lock semantics (second writer, poison after fail-closed append, reader unaffected, dead-process, panic release, listings ignore `kutha.lock`).
 - GROUP-01 stays verdict (c): no Event/Op/Snapshot/frame-format change. A crashed Typed/Dictionary group can still expose a SelfCommit prefix (`mixed_typed_dict_partial_group_is_visible`, characterization).
 
 ### Trajectory
 
-- ADR-010 / ADR-012 / ADR-014 Evidence 2026-10-05; statuses stay **Proposed**. Residuals: no external chain anchor; `open` O(N); `Persister` not wired into `kutha-tenant`.
-- Test matrix: killed 34→46, characterization 3→4, gap 19→6 (total 67). S05 gaps closed; S06/S07 gaps remain.
+- ADR-010 / ADR-012 / ADR-014 Evidence 2026-10-05; statuses stay **Proposed**. Residuals: no fsync of the `kutha.lock` directory entry; advisory local lock only (NFS / another host not covered); writes that bypass `Persister` / `store::*` are not covered; `kutha-tenant` is covered only through `store::persist`; no external chain anchor; `open` O(N).
+- Test matrix: killed 34→46, characterization 3→4, gap 19→6 (total 67). S05 gaps closed; S06/S07 gaps remain. `DUR-sealed-trailer-lie` / `DUR-wrong-role-active` record layered kills (single-check removal is covered by neighbouring checks).
 
 ## 2026-10-05 — Process: lease M019 S05 (GSD Phase 60)
 

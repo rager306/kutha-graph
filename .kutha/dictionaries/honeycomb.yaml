@@ -31,6 +31,7 @@ process: docs/process/governor-intake.md
 # 2026-10-04 restage (M002 S07 Phase 55: ROCK-01 droppable Rocks locator lease, optional rocks-index, freeze-rocks durable): ADR-010, ADR-012; map/delivery/capability unchanged.
 # 2026-10-05 restage (M019 S04 Phase 59: ADR-023 test strategy / oracle matrix opened Proposed, map-only, capability none): ADR-023; other cells unchanged.
 # 2026-10-05 restage (M019 S04 Phase 59-06: ADR-023 drop planning CONTEXT cite; matrix honesty 67 rows): ADR-023; map/delivery/capability unchanged.
+# 2026-10-05 restage (M019 S05 Phase 60-05: Persister poison + lock residuals; layered trailer-lie kill): ADR-010, ADR-014; map/delivery/capability unchanged.
 
 locks:
   - id: D1
@@ -121,6 +122,8 @@ cells:
       - persist_migrate_race_serialized_or_fails_closed
       - mixed_typed_dict_partial_group_is_visible
       - checkpoint_omitted_qo_then_open_for_append_fails_closed
+      # Phase 60-05 — poison after fail-closed append; cell still Proposed
+      - persister_is_poisoned_after_failed_append_and_cannot_write_without_lock
 
   - id: ADR-011
     axis: Time
@@ -200,6 +203,7 @@ cells:
       # Phase 60 / M019 S05 — GROUP-01 (c) + WRITER-01; cell still Proposed
       - mixed_typed_dict_partial_group_is_visible
       - two_writer_attach_fails_closed
+      - persister_is_poisoned_after_failed_append_and_cannot_write_without_lock
 
   - id: ADR-020
     axis: Space

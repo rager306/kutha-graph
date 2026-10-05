@@ -294,7 +294,7 @@ rows:
     layer: crash
     oracle:
       - wrong_role_active_names_sealed_file_fails_closed
-    kill_mutation: skip sequence + skip named active + skip snapshot-ahead/tt-anchor/replay/sidecar checks
+    kill_mutation: skip sequence + skip named active + skip snapshot-ahead/tt-anchor/replay/sidecar (single-check removal is covered by neighbouring checks)
     status: killed
     gate: default
     owner: M019-S05
@@ -305,7 +305,8 @@ rows:
     layer: crash
     oracle:
       - two_writer_attach_fails_closed
-    kill_mutation: skip acquire_store_write_lock in Persister::attach
+      - persister_is_poisoned_after_failed_append_and_cannot_write_without_lock
+    kill_mutation: skip acquire_store_write_lock in Persister::attach; do not poison after InvalidData append
     status: killed
     gate: default
     owner: M019-S05
@@ -338,7 +339,7 @@ rows:
     layer: crash
     oracle:
       - sealed_trailer_bytes_lie_fails_closed
-    kill_mutation: skip sealed chain-link + return scan+expected_prev + skip snapshot-ahead and replay_check
+    kill_mutation: skip sealed trailer checks + do not propagate scan.chain + skip sealed and read_active prev (single-check removal is covered by neighbouring checks)
     status: killed
     gate: default
     owner: M019-S05
