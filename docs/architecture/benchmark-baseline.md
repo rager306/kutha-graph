@@ -448,5 +448,26 @@ Same host, Eager, `KUTHA_BENCH_N=10000`. Base `d71cd91` vs head `65cc5a3`. Inter
 
 D-10 ≤10% vs `d71cd91` on ingest/`as_of`/`open.n`: **PASS**. Worktrees and target dirs removed after the run.
 
+## v0.13 close (cumulative vs v0.12)
+
+Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated worktrees (`tmp/v013-close-base` @ `36fedb9` / tag `v0.12`, `tmp/v013-close-head` @ `b66cb4d`) and absolute target dirs (`tmp/v013-close-base-target`, `tmp/v013-close-head-target`). Binaries pinned with `taskset -c 7`. Run from each worktree's `crates/kutha-runtime`. Interleaved `base, head` × **6** pairs after a discarded warm-up. Host load ~5–9 from other agents; waited out unrelated `cargo`/`rustc` before pair 6 head. Compare interleaved medians; do not treat a single pair as a gate. Host noise is ~15% (pair-level ingest swung −36% to +41%; pair 4 head `as_of.n` 5.8 ms vs ~0.3 ms is an outlier that does not move the median). v0.12 has no `rust-toolchain.toml`; both trees ran rustc 1.99.0 (host `stable`). Edition 2021 (v0.12) vs 2024 (HEAD) was not retrofitted. Product delta since v0.12 includes the Rust 1.99 / edition 2024 move, writer lock `kutha.lock`, streaming persist, Persister poison, Rocks index binding, and `TermDictionary::is_empty`.
+
+| run | v0.12 ingest_plain.n | HEAD ingest_plain.n | Δ ingest | v0.12 as_of.n | HEAD as_of.n | Δ as_of |
+|-----|---------------------:|--------------------:|---------:|--------------:|-------------:|--------:|
+| 1 | 143991635 | 111639948 | −22.47% | 393282 | 386389 | −1.75% |
+| 2 | 192817417 | 123521120 | −35.94% | 295461 | 619945 | +109.82% |
+| 3 | 105427511 | 118918731 | +12.80% | 321127 | 294518 | −8.29% |
+| 4 | 145368899 | 205050925 | +41.06% | 325897 | 5814997 | +1684.31% |
+| 5 | 124272849 | 161474497 | +29.94% | 290461 | 276727 | −4.73% |
+| 6 | 146406883 | 148341153 | +1.32% | 519768 | 287014 | −44.78% |
+
+| metric | median v0.12 | median HEAD | Δ median |
+|--------|-------------:|------------:|---------:|
+| ingest_plain.n | 144680267 | 135931137 | −6.05% |
+| as_of.n | 323512 | 340454 | +5.24% |
+| open.n | 3044527302 | 3032375291 | −0.40% |
+
+≤10% vs tag `v0.12` on ingest/`as_of`/`open.n`: **PASS**. No median exceeded 10%, so the 10-pair re-measure was not required. Worktrees and target dirs removed after the run.
+
 
 
