@@ -411,5 +411,28 @@ A first 2-pair run showed a one-off 3× `as_of` outlier (892233 ns) that did not
 
 D-10 ≤10% vs `1f9fb14` on ingest/`as_of`/`open.n`: **PASS**.
 
+## Phase 61 (M019 S06): ROCK-02 / MEM-01 persist stream
+
+Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated worktrees (`tmp/p61-bench-base` @ `d71cd91`, `tmp/p61-bench-head` @ `93b49a3`) and absolute target dirs. Binaries pinned with `taskset -c 4`. Run from each worktree's `crates/kutha-runtime`. Interleaved `base, head` × 6 pairs after a discarded warm-up. Host load included a parallel samyama `--release` test compile. Compare interleaved medians; do not treat a single pair as a gate.
+
+| run | d71cd91 ingest_plain.n | HEAD ingest_plain.n | Δ ingest | d71cd91 as_of.n | HEAD as_of.n | Δ as_of |
+|-----|-----------------------:|--------------------:|---------:|----------------:|-------------:|--------:|
+| 1 | 124882985 | 166591677 | +33.4% | 296684 | 279281 | −5.9% |
+| 2 | 116541174 | 128743228 | +10.5% | 363688 | 286515 | −21.2% |
+| 3 | 241683118 | 108690441 | −55.0% | 346175 | 303356 | −12.4% |
+| 4 | 150976219 | 134769134 | −10.7% | 296804 | 307984 | +3.8% |
+| 5 | 125475069 | 130512731 | +4.0% | 644170 | 308605 | −52.1% |
+| 6 | 138054298 | 124706051 | −9.7% | 300350 | 304547 | +1.4% |
+
+| metric | median d71cd91 | median 93b49a3 | Δ median |
+|--------|---------------:|---------------:|---------:|
+| ingest_plain.n | 131764684 | 129627980 | −1.62% |
+| as_of.n | 323262 | 303952 | −5.97% |
+| open.n | 3323479384 | 3659289620 | +10.10% |
+
+`bytes_per_fact` (whole-bench RSS / N, 6 counted pairs): median 21673 B (`d71cd91`) vs 21138 B (`93b49a3`). Counting-allocator N=500: ingest live identical vs `7e31784` (867644 B); persist peak 1506755 → 1312566 B after streaming. Remaining bpf vs the Phase 50 17218 B figure is inherent whole-bench RSS.
+
+D-10 ≤10% vs `d71cd91` on ingest/`as_of`/`open.n`: **STOP** on `open.n` median +10.10% (ingest/as_of inside the gate). Pair-level open swings +39% / +30% are host noise. Worktrees and target dirs removed after the run.
+
 
 

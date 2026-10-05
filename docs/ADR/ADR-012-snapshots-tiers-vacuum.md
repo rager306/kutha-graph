@@ -52,9 +52,13 @@ The semantic log is the event sequence (D1); physical encoding is sealed `KUTHAS
 
 `store::persist` / `export_jsonl` take the same advisory `kutha.lock` as other writers (snapshot text unchanged; lease semantics unchanged). Checkpoint after an omitted QuantumOutcome still fails closed when the snapshot `log_offset` is ahead of the committed prefix (`checkpoint_omitted_qo_then_open_for_append_fails_closed`). Residuals: `open` O(N); no external chain anchor. Status stays **Proposed**.
 
+### Evidence (2026-10-05, Phase 61 / M019 S06; Proposed)
+
+ROCK-02 Rocks meta is still a droppable locator lease (`m:v`=2, sealed-list always-on, `verify_full` opt-in). `store::open` / hydrate / `Persister` still ignore Rocks. MEM-01: `write_segment_file` streams frames (no concatenated buffer); `persist_unlocked` drops `encoded_log` before `replace_snapshot`. Remaining `bytes_per_fact` is whole-bench RSS, not ingest live (identical vs `7e31784`). CLEAN-01 / D-05: not wired; `rocks_spike` jsonl vs `rocks_index` segments, both optional. Status stays **Proposed**.
+
 ### Current encoding (HEAD, 2026-10-05; Proposed)
 
-The semantic log is the event sequence (D1); physical encoding is sealed `KUTHASEG` + `manifest.json` for new/migrated dirs, or legacy jsonl+WAL until `store::migrate` (`store::persist_until`, `segment::persist_log`, `Persister`, `commit::committed_prefix`). Snapshots remain leases (`replay_check` + snapshot `log_offset` vs committed prefix). Writers take `kutha.lock`. `export_jsonl` is unread after migrate. Residuals: full `persist()` O(N); `open` O(N); no external chain anchor.
+The semantic log is the event sequence (D1); physical encoding is sealed `KUTHASEG` + `manifest.json` for new/migrated dirs, or legacy jsonl+WAL until `store::migrate` (`store::persist_until`, `segment::persist_log`, `Persister`, `commit::committed_prefix`). Snapshots remain leases (`replay_check` + snapshot `log_offset` vs committed prefix). Writers take `kutha.lock`. `export_jsonl` is unread after migrate. Rocks meta `m:v`=2. Residuals: full `persist()` O(N); `open` O(N); no external chain anchor.
 
 ## Date
 

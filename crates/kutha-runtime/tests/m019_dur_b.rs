@@ -127,3 +127,47 @@ fn export_jsonl_takes_lock_before_reading() {
         "export_jsonl must acquire kutha.lock before load_log_events"
     );
 }
+
+/// Characterization (ADR-023 D023-2): cheap persist copies only. Remaining
+/// `bytes_per_fact` is whole-bench RSS (ingest + persist transients + a second
+/// Runtime on open), not ingest live. Mutation: concatenate frames before create.
+#[test]
+fn write_segment_file_streams_frames() {
+    let src = include_str!("../src/segment.rs");
+    let fn_start = src
+        .find("fn write_segment_file")
+        .expect("write_segment_file must exist");
+    let body = &src[fn_start..];
+    let create = body
+        .find("File::create")
+        .expect("write_segment_file must create the segment file");
+    let write = body
+        .find("f.write_all(&frame)")
+        .expect("write_segment_file must write each frame");
+    assert!(create < write, "must create the file before writing frames");
+    let prefix = &body[..write];
+    assert!(
+        !prefix.contains("frames.extend") && !prefix.contains("all_frames"),
+        "must not concatenate frames before the write"
+    );
+}
+
+/// Characterization (ADR-023 D023-2): encoded_log is dropped before snapshot.
+#[test]
+fn persist_drops_encoded_log_before_snapshot() {
+    let src = include_str!("../src/store.rs");
+    let fn_start = src
+        .find("fn persist_unlocked")
+        .expect("persist_unlocked must exist");
+    let body = &src[fn_start..];
+    let drop_events = body
+        .find("drop(events)")
+        .expect("persist_unlocked must drop encoded_log");
+    let snapshot = body
+        .find("replace_snapshot")
+        .expect("persist_unlocked must write the snapshot");
+    assert!(
+        drop_events < snapshot,
+        "encoded_log must be dropped before snapshot clone"
+    );
+}

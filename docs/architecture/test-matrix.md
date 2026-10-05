@@ -23,9 +23,9 @@ Counted from `test-matrix.yaml` rows on 2026-10-05. Recount after you edit the Y
 
 | Status | Rows |
 |--------|------|
-| killed | 46 |
-| characterization | 4 |
-| gap | 6 |
+| killed | 48 |
+| characterization | 5 |
+| gap | 3 |
 | blocked | 6 |
 | spec-only | 4 |
 | gate | 1 |
@@ -37,7 +37,7 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M019-S05 (durability A):** closed in Phase 60 — 12 `killed` + `DUR-mixed-typed-dict` `characterization` (GROUP-01 verdict (c); Typed/Dictionary SelfCommit prefix can be visible after a crash).
 
-**M019-S06 (durability B):** `DUR-export-race`, `DUR-rocks-mid-stale`, `DUR-bytes-per-fact`. Spec-only on the same slice: `DUR-dead-code-fate`, `DUR-index-wiring`. Bench controller: `BENCH-controller`.
+**M019-S06 (durability B):** closed in Phase 61 — `DUR-export-race` and `DUR-rocks-mid-stale` `killed`; `DUR-bytes-per-fact` `characterization` (streaming persist + drop `encoded_log`; remaining RSS is whole-bench). Spec-only: `DUR-dead-code-fate`, `DUR-index-wiring`. Bench controller: `BENCH-controller`.
 
 **M019-S07 (semantic expansion):** `SEM-cascade-order`, `SEM-csr-fold-diff`, `SEM-horn-correct-char`.
 

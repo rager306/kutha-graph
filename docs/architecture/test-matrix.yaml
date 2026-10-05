@@ -359,9 +359,12 @@ rows:
     plane: product
     invariant: export_jsonl vs Persister.append race
     layer: crash
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - export_jsonl_while_persister_holds_lock_fails_closed
+      - export_jsonl_after_writer_drops_equals_log
+      - export_jsonl_takes_lock_before_reading
+    kill_mutation: skip acquire_store_write_lock in export_jsonl
+    status: killed
     gate: default
     owner: M019-S06
     source: audit-code-tests §2 MED
@@ -369,25 +372,30 @@ rows:
     plane: product
     invariant: poison middle locator while m:tip still matches
     layer: crash
-    oracle: []
-    kill_mutation: none
-    status: gap
+    oracle:
+      - verify_full_rejects_poisoned_middle_locator
+      - middle_locator_poison_survives_open_or_rebuild
+      - open_or_rebuild_rebuilds_when_sealed_list_binding_differs
+    kill_mutation: stub verify_full as Ok (skip digest compare)
+    status: killed
     gate: feature:observe_rocks
     owner: M019-S06
     source: audit-code-tests §2 HIGH
   - id: DUR-bytes-per-fact
     plane: product
-    invariant: bytes_per_fact 17218 to 25200 measured and fixed or explained
-    layer: bench
-    oracle: []
+    invariant: characterization — bytes_per_fact 17218 to 25200 is persist buffering plus whole-bench RSS; ingest live unchanged
+    layer: characterization
+    oracle:
+      - write_segment_file_streams_frames
+      - persist_drops_encoded_log_before_snapshot
     kill_mutation: none
-    status: gap
-    gate: controller
+    status: characterization
+    gate: default
     owner: M019-S06
     source: audit-code-tests §4
   - id: DUR-dead-code-fate
     plane: product
-    invariant: fate of log_has_quantum_outcome, wal::append_events, rocks_spike
+    invariant: log_has_quantum_outcome deleted (no callers); wal::append_events kept for wal unit test; rocks_spike kept (jsonl offsets, optional, unwired)
     layer: decision
     oracle: []
     kill_mutation: none
@@ -397,7 +405,7 @@ rows:
     source: audit-code-tests §5
   - id: DUR-index-wiring
     plane: product
-    invariant: SegmentIndex / Persister wiring into Runtime (default not wired)
+    invariant: SegmentIndex and Persister stay unwired into Runtime/kutha-tenant (D-05)
     layer: decision
     oracle: []
     kill_mutation: none

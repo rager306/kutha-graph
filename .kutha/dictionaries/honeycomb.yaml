@@ -32,6 +32,7 @@ process: docs/process/governor-intake.md
 # 2026-10-05 restage (M019 S04 Phase 59: ADR-023 test strategy / oracle matrix opened Proposed, map-only, capability none): ADR-023; other cells unchanged.
 # 2026-10-05 restage (M019 S04 Phase 59-06: ADR-023 drop planning CONTEXT cite; matrix honesty 67 rows): ADR-023; map/delivery/capability unchanged.
 # 2026-10-05 restage (M019 S05 Phase 60-05: Persister poison + lock residuals; layered trailer-lie kill): ADR-010, ADR-014; map/delivery/capability unchanged.
+# 2026-10-05 restage (M019 S06 Phase 61: ROCK-02 sealed-list + verify_full m:v=2; MEM-01 persist stream; CLEAN-01): ADR-010, ADR-012; map/delivery/capability unchanged.
 
 locks:
   - id: D1
@@ -124,6 +125,10 @@ cells:
       - checkpoint_omitted_qo_then_open_for_append_fails_closed
       # Phase 60-05 — poison after fail-closed append; cell still Proposed
       - persister_is_poisoned_after_failed_append_and_cannot_write_without_lock
+      # Phase 61 / M019 S06 — ROCK-02 / DUR-export-race; cell still Proposed
+      - export_jsonl_while_persister_holds_lock_fails_closed
+      - verify_full_rejects_poisoned_middle_locator
+      - open_or_rebuild_rebuilds_when_sealed_list_binding_differs
 
   - id: ADR-011
     axis: Time
@@ -160,6 +165,10 @@ cells:
       # Phase 60 / M019 S05 — persist lock wraps snapshot rewrite; cell still Proposed
       - jsonl_inode_changes_on_persist_rename
       - checkpoint_omitted_qo_then_open_for_append_fails_closed
+      # Phase 61 / M019 S06 — export after writer; persist stream characterization; cell still Proposed
+      - export_jsonl_after_writer_drops_equals_log
+      - write_segment_file_streams_frames
+      - persist_drops_encoded_log_before_snapshot
 
   - id: ADR-013
     axis: Time

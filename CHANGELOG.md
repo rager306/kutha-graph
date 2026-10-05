@@ -4,6 +4,24 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-05 — Durability residuals B (M019 S06 / GSD Phase 61)
+
+### Product
+
+- ROCK-02: `SegmentIndex` meta `m:v` 1→2. Always-on sealed-list binding (`m:sealed`) on `open_or_rebuild`; opt-in `verify_full()` scans `e:` keys against `m:digest`. A poisoned middle locator with matching tip is not an open rebuild; `verify_full` and `get_event` fail closed. Sealed-list tamper rebuilds. Log/segments/events unchanged. Oracles: `m019_rocks_b.rs`.
+- DUR-export-race: `export_jsonl` while a `Persister` holds `kutha.lock` fails closed (`WouldBlock`) and writes nothing; after drop the export equals the log; lock is taken before `load_log_events`. Oracles: `m019_dur_b.rs` (GREEN pins on the Phase 60 lock).
+- MEM-01: counting `GlobalAlloc` N=500 — ingest live identical vs `7e31784` (867644 B). Cheap persist copies: stream frames, `split_events` by ref, drop `encoded_log` before snapshot. Persist peak 1506755 → 1312566 B. Remaining `bytes_per_fact` is whole-bench RSS (ingest + persist transients + a second Runtime on open). Characterization oracles pin the streaming/`drop` order.
+- CLEAN-01: deleted unused `hydrate::log_has_quantum_outcome` (no callers). Kept `wal::append_events` (`wal` unit test) and `rocks_spike` / `m002_rock00` (jsonl offsets, optional, unwired).
+- Bench vs `d71cd91` (6 interleaved pairs, warm-up discarded, `taskset -c 4`): ingest_plain.n −1.62%, as_of.n −5.97%, open.n **+10.10% STOP**. Host noise ~15–55% per pair.
+
+### Process
+
+- `observe_rocks` lists `m019_rocks_b` and requires the three ROCK-02 tests. Test matrix: killed 48, characterization 5, gap 3 (SEM S07), blocked 6, spec-only 4, gate 1 (total 67).
+
+### Trajectory
+
+- ADR-010 / ADR-012 Evidence 2026-10-05 Phase 61; statuses stay **Proposed**. D-05: `SegmentIndex` and `Persister` stay unwired into `Runtime` / `kutha-tenant`. `honeycomb.yaml` restaged (map/delivery/capability unchanged). Design note `.compound-engineering/artifacts/research/2026-10-05-rocks-staleness-design.md` (a always-on, b opt-in). Residuals: `open` O(N); no external chain anchor; bpf RSS inherent; SEM S07 gaps.
+
 ## 2026-10-05 — Process: lease M019 S06 (GSD Phase 61)
 
 ### Process

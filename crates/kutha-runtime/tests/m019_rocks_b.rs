@@ -94,8 +94,8 @@ fn poison_locator(rocks: &Path, id: EventId) {
     drop(db);
 }
 
-/// D-01: middle-locator poison with matching `m:tip` is not an `open_or_rebuild`
-/// trigger. `get_event` already fail-closes. Pair with `verify_full`.
+/// D-01 pin (not a bug): middle-locator poison with matching `m:tip` is not an
+/// `open_or_rebuild` trigger. `get_event` already fail-closes. Pair with `verify_full`.
 #[test]
 fn middle_locator_poison_survives_open_or_rebuild() {
     let rt = seed_runtime();
