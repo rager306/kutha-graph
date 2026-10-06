@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-06 — Process: lease M018 S02 (GSD Phase 46)
+
+### Process
+
+- Active Milestone **M018**, Active Slice **S02** (`L_delivery=M018-S01-done`): C01 and knowledge-cut decision. Process tag `v0.13` already exists on `1520220` (not a product release). Owner acknowledgement: sealed `KUTHASEG` + `manifest.json` are D1; `events.jsonl` after migrate is an export.
+
+### Trajectory
+
+- Locked for this slice (not ADR Accepted): C01 option (a) pack stamp — no fifth core axis, not a Horn, not `valid_to`; HORN-KC-01 ingest-time Horn at log-head TT, `as_known_on` does not re-derive; ASOF-ELIG-01 `as_of` remains support-live, eligibility is `derivation_eligible_at`. DET-02 / HORN-CORR-01 wait for S03. Honeycomb stays Proposed.
+
 ## 2026-10-05 — Process: close M019 / v0.13
 
 ### Process

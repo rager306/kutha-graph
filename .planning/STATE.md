@@ -1,25 +1,25 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.13
-milestone_name: Post-M002 coherence
-status: complete
-stopped_at: v0.13 archived; M019 CLOSED; v0.11 paused at Phase 46 gate
-last_updated: "2026-10-05T15:00:00.000Z"
+milestone: v0.11
+milestone_name: Wedge unblock
+status: in_progress
+stopped_at: v0.13 archived; M019 CLOSED; v0.11 Phase 46 leased
+last_updated: "2026-10-06T08:00:00.000Z"
 progress:
-  total_phases: 7
-  completed_phases: 7
-  total_plans: 7
-  completed_plans: 7
+  total_phases: 4
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
 ---
 
 # Project State
 
-**Milestone:** v0.13 shipped (M019 CLOSED); v0.12 shipped (M002 CLOSED); v0.11 (M018) paused after Phase 45
-**Phase:** none live
-**Status:** Complete — archive under `.planning/milestones/v0.13-*`; idle pending owner decision
+**Milestone:** v0.11 Wedge unblock (M018); v0.13 / v0.12 shipped
+**Phase:** 46 — C01 and knowledge-cut decision
+**Status:** In progress — S02 leased
 
-**Last activity:** 2026-10-05 — Phase 62 verified; M019 closed; v0.13 archived
+**Last activity:** 2026-10-06 — controller leased M018 S02; C01/HORN-KC/ASOF-ELIG decided in CONTEXT
 
-Stopped at: v0.13 archived; M018 paused at S02
-Next: owner decision for v0.11 Phase 46 (C01, Horn vs knowledge cut)
+Stopped at: executing Phase 46
+Next: plan and execute Phase 46 (CONTEXT exists; discuss skipped)
 M002 deferred intake: `docs/architecture/m002-cloud-kernel-io-intake.md`

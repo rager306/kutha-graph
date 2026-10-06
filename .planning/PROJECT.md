@@ -10,13 +10,13 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: none live (v0.13 shipped; v0.12 shipped; v0.11 paused)
+## Current Milestone: v0.11 Phase 46 (v0.13 / v0.12 shipped)
 
-**Last shipped:** v0.13 Post-M002 coherence (harness M019, phases 56–62, process tag `v0.13`). Crate SemVer stays `0.0.0`.
+**Last shipped:** v0.13 Post-M002 coherence (harness M019, phases 56–62, process tag `v0.13` on `1520220`). Crate SemVer stays `0.0.0`.
 
 **Harness lease:** read `.kutha/STATE.md` (slice, `L_delivery` and Freeze live only there).
 
-**Paused:** v0.11 Phases 46–48 wait for the owner's C01 and Horn decision. Honeycomb stays Proposed. FIXG-01 fail-closed: C01 sunset is not a Horn; do not invent five clocks.
+**In progress:** v0.11 Phase 46 / M018 S02. C01 = pack stamp (not fifth axis, not Horn, not `valid_to`). Honeycomb stays Proposed. FIXG-01 fail-closed: C01 sunset is not a Horn; do not invent five clocks.
 
 
 ## Business Context
@@ -176,7 +176,7 @@ Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), **v0.04 
 
 ## Next Milestone Goals
 
-Next slice: `.kutha/STATE.md` only. v0.11 Phases 46–48 wait for the owner's C01 and Horn decision. Remaining thaw gates: `.kutha/STATE.md` § Thaw map. Candidates needing a decision: C01 sunset, typed `Op` clocks, Horn vs knowledge cut.
+Next slice: `.kutha/STATE.md` only. v0.11 Phase 46 / M018 S02 is leased (C01 pack stamp, Horn ingest-at-head, `as_of` support-live). Remaining thaw gates: `.kutha/STATE.md` § Thaw map.
 
 ## Context
 

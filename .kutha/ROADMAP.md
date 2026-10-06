@@ -121,7 +121,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 **Success:** living docs and ADR Evidence agree with the code (one F-register, English spine); ADR-013 records one C01 option and the Horn-vs-knowledge-cut rule, with a named oracle; derived facts have deterministic identity and follow `Correct`; every cascade hop is admitted. Fold / CSR / rebuild differential (DIFF-01) moved to M019 S07.
 
-**Paused 2026-10-03** after S01 at the S02 decision gate (needs the user's C01 / Horn choice). M002 is CLOSED (2026-10-04). M019 is CLOSED (2026-10-05). M018 remains paused at S02. Failed-WAL-open (OPEN-01) and crash-seam work moved to M002 S02. DIFF-01 moved to M019 S07.
+**S02 leased 2026-10-06** (controller + owner: continue via GSD auto; decisions in `.planning/phases/46-c01-knowledge-cut/46-CONTEXT.md`). M002 is CLOSED (2026-10-04). M019 is CLOSED (2026-10-05). Failed-WAL-open (OPEN-01) and crash-seam work moved to M002 S02. DIFF-01 moved to M019 S07.
 
 - [x] **S01: Doc truth round 2** `risk:low` `depends:[]`
   > After this: ADR-010/012/014/041/060 Evidence and `semantic-gap-review.md` match v0.10 code (snapshot and WAL atomic, `horns_by_premise`, sidecars still in place); audit ids carry the `A-F` prefix; ADR-000 D6 and ADR-010 D010-4 no longer name Rocks WAL as shipped; ADR-013 states `as_of` is support-live, not eligibility; ADR-000 and `stca-guide.md` spine is English; CHANGELOG head, `PROJECT.md`, `.kutha/ROADMAP.md` closed-milestone wording and `.gitignore` hygiene are fixed; no file under `crates/` changes.

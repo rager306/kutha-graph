@@ -18,7 +18,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.08 | 34–35 | M015 | S01–S02 | known-on honesty, M014 residuals (H1/H2) | shipped |
 | v0.09 | 36–40 | M016 | S01–S05 | T2–T6, F9, F16 | shipped |
 | v0.10 | 41–44 | M017 | S01–S04 | docs honesty, replay integrity, ingest regression (A-F01.. register; 2026-10-02 audit) | shipped |
-| v0.11 | 45–48 | M018 | S01–S04 | doc truth, C01 and knowledge cut, Horn determinism, differential tests (review 2026-10-03) | S01 shipped; paused at S02 gate |
+| v0.11 | 45–48 | M018 | S01–S04 | doc truth, C01 and knowledge cut, Horn determinism, differential tests (review 2026-10-03) | S01 shipped; S02 leased 2026-10-06 |
 | v0.12 | 49–55 | M002 | S01–S07 | SNAP-01, OPEN-01, ROCK-01, COMMIT-01 (re-verified 2026-10-03) | shipped |
 | v0.13 | 56–62 | M019 | S01–S07 | docs honesty r3, cargo_dep_constraint, governor SMP, test matrix, durability residuals, DIFF-01 (post-M002 audits 2026-10-04) | shipped |
 
