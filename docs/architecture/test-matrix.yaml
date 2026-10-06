@@ -739,6 +739,17 @@ rows:
     gate: default
     owner: M018-S03
     source: M018 S03 / CASC-01 / Phase 47
+  - id: ORACLE-if15
+    plane: product
+    invariant: extra unrelated relatedTo must not grow Horn examine with N
+    layer: kill
+    oracle:
+      - extra_relatedto_horn_visits_constant_in_n
+    kill_mutation: live_horns walking fold.facts() so horn_examine grows with extra unrelated relatedTo N
+    status: killed
+    gate: default
+    owner: M018-S04
+    source: M018 S04 / ORACLE-01 / I-F15
 
   # --- harness ---
   - id: HAR-freeze-rocks

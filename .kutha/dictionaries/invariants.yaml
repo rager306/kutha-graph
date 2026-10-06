@@ -228,7 +228,7 @@ invariants:
     check: i-f14-typed-refs
 
   - id: I-F15-ingest-o1
-    claim: "Keyed ingest, claim admit, retract, and correct use fold indexes, not a scan of the log or the fact vector"
+    claim: "Keyed ingest, claim admit, retract, and correct use fold indexes, not a scan of the log or the fact vector; I-F15 visit bound is extra_relatedto_horn_visits_constant_in_n"
     source: docs/architecture/semantic-gap-review.md
     disposition: check
     check: i-f15-ingest-o1

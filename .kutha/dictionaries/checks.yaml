@@ -1458,6 +1458,12 @@ checks:
           - green_ingest_visits_constant_in_n
         category: i-f-oracle
         message: "I-F15 ingest-o1 oracle missing {missing}"
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m017_ingest_scaling.rs
+        tests:
+          - extra_relatedto_horn_visits_constant_in_n
+        category: i-f-oracle
+        message: "I-F15 visit-bound oracle missing {missing}"
 
   - id: i-f16-derivable
     description: I-F16 — Horn execution replay re-derives from logged premises (M016)

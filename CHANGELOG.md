@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-06 — Oracle tightening (Phase 48)
+
+### Product
+
+- I-F15 visit bound remains `extra_relatedto_horn_visits_constant_in_n` (`m017_ingest_scaling.rs`): extra unrelated `relatedTo` must not grow `horn_examine` with N. Matrix `ORACLE-if15` killed (`owner: M018-S04`). `i-f15-ingest-o1` still cites `green_ingest_visits_constant_in_n` and now also this pin.
+
 ## 2026-10-06 — Process: lease M018 S04 (GSD Phase 48)
 
 ### Process
