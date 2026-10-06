@@ -234,3 +234,83 @@ fn derived_q_loses_eligibility_when_last_premise_support_withdrawn() {
     );
     rt.replay_check().unwrap();
 }
+
+/// Query-plane support-live pin (D-ASOF-ELIG / ASOF-ELIG-01).
+///
+/// After the last premise-support Retract, `derivation_eligible_at` is false
+/// while `Runtime.as_of(2017)` still lists the derived triple. Eligibility stays
+/// a separate API; `as_of` is not an eligibility filter.
+/// Distinct from `v44_a_inverse_retract_as_of_earlier` (direct Horn
+/// `retract_derived` of an inverse).
+#[test]
+fn asof_elig01_as_of_contains_derived_when_ineligible() {
+    let mut rt = Runtime::default();
+    let p = rt.intern("P");
+    let q = rt.intern("Q");
+    let rel = rt.intern("relatedTo");
+    let true_ = rt.intern("true");
+    rt.emit_rule("derive_pq", 2010, None).unwrap();
+
+    let first = rt
+        .emit(Op::Assert {
+            subject: p,
+            relation: rel,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
+    let claim_p: EventId = first.receipt.event_ids[0];
+    let event_a = claim_p;
+
+    let second = rt
+        .emit(Op::Assert {
+            subject: p,
+            relation: rel,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+            claim: Some(claim_p),
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
+    assert!(!second.receipt.event_ids.is_empty());
+    let event_b = rt
+        .fold()
+        .facts()
+        .iter()
+        .find(|f| f.claim_id == claim_p && f.event_id != event_a)
+        .unwrap()
+        .event_id;
+
+    let derived = rt
+        .emit(Op::Behavior {
+            name: "derive_pq".into(),
+            caused_by: claim_p,
+            rule_version: rule_definition_hash("derive_pq"),
+            subject: q,
+            relation: rel,
+            object: true_,
+            valid_from: 2010,
+            valid_to: None,
+        })
+        .unwrap();
+    let claim_q: EventId = derived.receipt.event_ids[0];
+
+    rt.emit(Op::Retract { event_id: event_a }).unwrap();
+    rt.emit(Op::Retract { event_id: event_b }).unwrap();
+
+    assert!(
+        !rt.derivation_eligible_at(claim_q, TransactionTime::MAX, ValidTime::from(2017)),
+        "last positive support gone: Q is ineligible through this derivation"
+    );
+    assert!(
+        rt.as_of(2017).contains(&(q, rel, true_)),
+        "as_of stays support-live: ineligible derived triple remains listed"
+    );
+    rt.replay_check().unwrap();
+}
