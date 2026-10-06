@@ -10,13 +10,13 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.11 Phase 46 (v0.13 / v0.12 shipped)
+## Current Milestone: none live (v0.11 / v0.12 / v0.13 shipped)
 
-**Last shipped:** v0.13 Post-M002 coherence (harness M019, phases 56–62, process tag `v0.13` on `1520220`). Crate SemVer stays `0.0.0`.
+**Last shipped:** v0.11 Wedge unblock (harness M018, phases 45–48, closed 2026-10-06). Also v0.13 / v0.12. Crate SemVer stays `0.0.0`.
 
 **Harness lease:** read `.kutha/STATE.md` (slice, `L_delivery` and Freeze live only there).
 
-**In progress:** v0.11 Phases 45–47 shipped; next is Phase 48 / M018 S04. Honeycomb stays Proposed.
+**Idle:** Active Slice **None**. Honeycomb stays Proposed.
 
 
 ## Business Context

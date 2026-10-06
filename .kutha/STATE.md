@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M018
-**Active Slice:** S04
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M018-S03-done
+L_delivery=M018-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M018 S04 leased (GSD Phase 48); S03-done | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M018 CLOSED (S01–S04, GSD v0.11); M019 CLOSED | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M018 S04 leased 2026-10-06** (GSD Phase 48). Active Milestone **M018**, Active Slice **S04**, `L_delivery=M018-S03-done`. Locked: ORACLE-01 I-F15 visit bound + I-F16 re-derive pin; GATE-01 recorded controller bench step (gsd-auto-contract) plus existing BENCH-controller row. DIFF-01 already closed in M019. Honeycomb stays Proposed.
+**M018 closed 2026-10-06** (GSD v0.11 Phases 45–48, S01–S04). `L_delivery=M018-closed`, Active Milestone **None**, Active Slice **None**. Independent `48-VERIFICATION.md` passed. Honeycomb stays Proposed. No SemVer product tag (crates 0.0.0). Process tags `v0.12`/`v0.13` already exist; do not mint a late `v0.11` product tag. Next: owner lease (not Cypher/HNSW unless STATE thaws).
 
 ## Thaw map
 

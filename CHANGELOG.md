@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-06 — Process: close M018 / v0.11
+
+### Process
+
+- `L_delivery=M018-closed`, Active Milestone **None**, Active Slice **None**. S01–S04 complete (Phases 45–48). Independent `48-VERIFICATION.md` passed. ORACLE-01 / GATE-01 closed. No late process tag `v0.11` (v0.12/v0.13 already exist). Crate SemVer 0.0.0.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-06 — Oracle tightening (Phase 48)
 
 ### Product

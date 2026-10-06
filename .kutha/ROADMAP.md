@@ -115,13 +115,15 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 - [x] **S03: Determinism and knowledge-cut characterization**
 - [x] **S04: Ingest regression repair**
 
-## M018: Wedge unblock — doc truth, C01 and knowledge cut, Horn determinism (GSD v0.11)
+## M018: Wedge unblock — CLOSED (GSD v0.11)
+
+**Closed:** 2026-10-06. GSD Phases 45–48, S01–S04. Independent VERIFICATIONs including `48-VERIFICATION.md`. Crate SemVer stays 0.0.0. Honeycomb stays Proposed. Not a late `v0.11` process tag after `v0.13`.
 
 **Source:** 2026-10-03 post-v0.10 review at `d230ab2` (five read-only audits, CBM + GitNexus, `rg` arbiter): trajectory, ADR vs code, tests, docs, code logic. The wedge (norm AS OF a date) is blocked by an undecided C01 and by Horn semantics, not by Rocks. Not M002 segments or Rocks; not typed `Op` clocks; not ADR Accepted.
 
 **Success:** living docs and ADR Evidence agree with the code (one F-register, English spine); ADR-013 records one C01 option and the Horn-vs-knowledge-cut rule, with a named oracle; derived facts have deterministic identity and follow `Correct`; every cascade hop is admitted. Fold / CSR / rebuild differential (DIFF-01) moved to M019 S07.
 
-**S02 leased 2026-10-06** (controller + owner: continue via GSD auto; decisions in `.planning/phases/46-c01-knowledge-cut/46-CONTEXT.md`). M002 is CLOSED (2026-10-04). M019 is CLOSED (2026-10-05). Failed-WAL-open (OPEN-01) and crash-seam work moved to M002 S02. DIFF-01 moved to M019 S07.
+**S02–S04 shipped 2026-10-06.** M002 CLOSED (2026-10-04). M019 CLOSED (2026-10-05). DIFF-01 moved to M019 S07.
 
 - [x] **S01: Doc truth round 2** `risk:low` `depends:[]`
   > After this: ADR-010/012/014/041/060 Evidence and `semantic-gap-review.md` match v0.10 code (snapshot and WAL atomic, `horns_by_premise`, sidecars still in place); audit ids carry the `A-F` prefix; ADR-000 D6 and ADR-010 D010-4 no longer name Rocks WAL as shipped; ADR-013 states `as_of` is support-live, not eligibility; ADR-000 and `stca-guide.md` spine is English; CHANGELOG head, `PROJECT.md`, `.kutha/ROADMAP.md` closed-milestone wording and `.gitignore` hygiene are fixed; no file under `crates/` changes.
@@ -129,7 +131,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
   > After this: ADR-013 records one C01 option (pack stamp, fifth axis, or stop) with a named oracle or an explicit out-of-wedge note; the Horn-vs-`as_known_on` rule (HORN-KC-01) and the `as_of` vs derivation-eligibility rule are decided; if behaviour changes, the oracle is RED first and `m017_known_on_horn.rs` is inverted or re-pinned by the decision.
 - [x] **S03: Horn determinism and closure** `risk:high` `depends:[S02]`
   > After this: two ingests of the same ops give the same derived-event identity (or the decision to keep UUID v7 is recorded with its replay consequence); `Correct` and `CorrectInterval` re-derive; every cascade hop passes `admit` and commits in a stable order; the unknown head or premise relation in a rule fails closed; named oracles unchanged.
-- [ ] **S04: Differential tests and oracle tightening** `risk:medium` `depends:[S03]`
+- [x] **S04: Differential tests and oracle tightening** `risk:medium` `depends:[S03]`
   > After this: I-F15 and I-F16 oracles measure what they claim; the bench gate is a recorded controller step or a governor row. DIFF-01 (fold, CSR and clean rebuild on seeded random logs) moved to M019 S07. OPEN-01 (failed WAL magic read, empty WAL, WAL error hidden behind jsonl) and the crash seam between jsonl and sidecars remain on M002 S02.
 
 ## M002: Log durability protocol — CLOSED (GSD v0.12)
