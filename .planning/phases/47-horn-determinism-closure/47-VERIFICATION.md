@@ -6,7 +6,15 @@ verifier_model: composer-2.5-fast
 status: passed
 score: 7/7 must-haves verified
 behavior_unverified: 0
-read_only_inputs: [47-CONTEXT.md, REQUIREMENTS.md DET-02/HORN-CORR-01/CASC-01, test-matrix.yaml SEM-det02-ids SEM-horn-correct SEM-casc-admit; excluded 47-*-PLAN.md and 47-*-SUMMARY.md]
+read_only_inputs:
+  - .planning/REQUIREMENTS.md
+  - .planning/phases/47-horn-determinism-closure/47-CONTEXT.md
+  - docs/architecture/test-matrix.yaml
+  - crates/kutha-runtime/tests/m019_sem_meta.rs
+  - crates/kutha-common/src/event.rs
+  - crates/kutha-runtime/src/eval.rs
+  - crates/kutha-runtime/src/pipeline.rs
+  - docs/ADR/ADR-013-bitemporal-facts-invalidation.md
 commands:
   - cmd: cargo test -p kutha-runtime --test m019_sem_meta det02_two_ingest_derived_event_ids_equal -- --exact
     exit: 0

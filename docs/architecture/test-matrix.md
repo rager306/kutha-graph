@@ -23,13 +23,13 @@ Counted from `test-matrix.yaml` rows on 2026-10-06. Recount after you edit the Y
 
 | Status | Rows |
 |--------|------|
-| killed | 59 |
+| killed | 61 |
 | characterization | 5 |
 | gap | 0 |
 | blocked | 4 |
 | spec-only | 4 |
 | gate | 1 |
-| **total** | **73** |
+| **total** | **75** |
 
 Planes: product vs harness. Layers: decision, characterization, property, crash, kill, governor, bench.
 
@@ -42,6 +42,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 **M019-S07 (semantic expansion):** closed in Phase 62 — `SEM-cascade-order`, `SEM-csr-fold-diff`, `SEM-bitemporal-model`, `SEM-order-independence`, `SEM-replay-idempotence`, `SEM-persist-roundtrip-random`, `SEM-replay-tamper-random` `killed`. Default ≥64 seeds; `KUTHA_SEEDS` may raise; persist/tamper/export use `max(12, n/5)`. Tamper equal-fold swap is `commutes` only on disjoint (s,r); otherwise a dependent Retract is minted so `KUTHA_SEEDS=256` seed=79 stays green. Persist: two passes per index (legacy, rollover, migrated, export-imported; WithHorn through segmented/migrated). `Fact::is_live_at` vs naive at EDGE_VT (skip `valid_from` is not equivalent: Eager `live_at` via `vt_by_from` would mask it). CRC: fail-closed InvalidData plus detector pin `CRC mismatch`.
 
 **M018-S03 (Horn closure):** Phase 47 — `SEM-det02-ids`, `SEM-horn-correct`, `SEM-horn-correct-char`, `SEM-casc-admit` `killed` (owner `M018-S03`). Oracles: `det02_two_ingest_derived_event_ids_equal`, inverted `horn_correct_*`, `casc01_*`.
+
+**M018-S04 (oracle tightening):** Phase 48 — `ORACLE-if15` / `ORACLE-if16` `killed` (owner `M018-S04`). GATE-01 is `BENCH-controller` (`status: gate`). DIFF-01 stays closed as `SEM-csr-fold-diff`.
 
 `unowned` is rejected by the governor check.
 

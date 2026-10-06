@@ -16,6 +16,10 @@ M016's evaluator (`crates/kutha-runtime/src/eval.rs`) runs Horn bodies, not over
 
 Seeded differential (`SEM-csr-fold-diff`, `m019_sem_diff.rs`): typed and untyped CSR leases at random `(tt, vt)` cuts match `live_at`/`as_of`/`as_known_on` on behavior-free and Horn mixes; persist+open rebuild agrees for legacy, segmented (rollover seam), and migrate. Evaluator still does not join over the CSR lease. Horn@TT=`MAX`, `as_of` vs eligibility, and C01 stay open. This subsection does not rewrite D041-1…D041-4. Status stays **Proposed**.
 
+### Evidence (2026-10-06, Phase 48 / M018 S04; Proposed)
+
+I-F15 visit bound remains `extra_relatedto_horn_visits_constant_in_n` (`m017_ingest_scaling.rs`; GREEN after M017 `horns_by_premise`). This subsection does not rewrite D041-1…D041-4. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

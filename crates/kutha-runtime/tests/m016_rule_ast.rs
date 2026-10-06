@@ -77,6 +77,7 @@ fn emit_rule_stores_canonical_named_pin_equals_hash() {
 #[test]
 fn emit_rule_ast_horn_pin_equals_body_hash() {
     let mut rt = Runtime::default();
+    rt.emit_allow("derive_pq", 0, None).unwrap();
     let head = RuleAtom::new(
         "derive_pq",
         RuleTerm::var(0).unwrap(),

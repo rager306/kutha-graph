@@ -92,6 +92,10 @@ The matrix is a map of oracles, not a coverage number. Governor green ≠ ADR Ac
 - Prior art: `.compound-engineering/artifacts/research/2026-10-05-test-strategy-prior-art.md`
 - Semantic gaps: `docs/architecture/semantic-gap-review.md`
 
+### Evidence (2026-10-06, Phase 48 / M018 S04; Proposed)
+
+`ORACLE-if15` and `ORACLE-if16` are killed. GATE-01 equals `BENCH-controller` (existing `gsd-auto-contract` Bench gate at product close; `status: gate`). Status stays **Proposed**.
+
 ## Open questions
 
 Decided 2026-10-06 (Phase 46 / M018 S02; recorded in ADR-013; this cell stays Proposed):

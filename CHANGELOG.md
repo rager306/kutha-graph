@@ -10,6 +10,17 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - I-F15 visit bound remains `extra_relatedto_horn_visits_constant_in_n` (`m017_ingest_scaling.rs`): extra unrelated `relatedTo` must not grow `horn_examine` with N. Matrix `ORACLE-if15` killed (`owner: M018-S04`). `i-f15-ingest-o1` still cites `green_ingest_visits_constant_in_n` and now also this pin.
 - I-F16 pins `horn_correct_derived_not_live_after_premise_correct` and `horn_correct_interval_derived_not_live_after_patch` (`m019_sem_meta.rs`). Matrix `ORACLE-if16` killed (`owner: M018-S04`). `i-f16-derivable` observes those two tests (no longer `empty_pin_inverse_fails_replay_fingerprint_unchanged`). `SEM-horn-correct` stays killed.
+- GATE-01 is the recorded controller bench step (`ingest_plain.n`, `as_of.n`, `KUTHA_BENCH_N=10000`, 10 percent stop), not a second harness.
+- `emit_rule_ast_horn_pin_equals_body_hash` admits `derive_pq` before the premise Assert so CASC-01 hop-admit does not fail the workspace observe.
+
+### Process
+
+- Test matrix: `ORACLE-if15` / `ORACLE-if16` killed (`owner: M018-S04`). GATE-01 recorded as `gsd-auto-contract` Bench gate at product close plus `BENCH-controller` (`status: gate`, `gate: controller`). `observe_cargo` stays `cargo test --workspace --offline`. No new governor Check class; no `cargo bench` in CI.
+- Repaired `47-VERIFICATION.md` `read_only_inputs` (governor `verification-independent`: list existing paths; no `-PLAN.md` / `-SUMMARY.md` needles).
+
+### Trajectory
+
+- ADR-041 / ADR-023 Evidence 2026-10-06 (Phase 48 / M018 S04). Honeycomb restaged (those cells); map/delivery/capability unchanged; honeycomb stays **Proposed**. D041-1…D041-4 unchanged. No `.kutha/STATE.md` write; `48-VERIFICATION.md` is verifier-owned.
 
 ## 2026-10-06 — Process: lease M018 S04 (GSD Phase 48)
 
