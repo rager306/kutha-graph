@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M018
-**Active Slice:** S02
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M018-S01-done
+L_delivery=M018-S02-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M018 S02 leased (GSD Phase 46); M019 CLOSED (S01–S07, GSD v0.13) | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M018 S02-done (GSD Phase 46 verified); M019 CLOSED | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M018 S02 leased 2026-10-06** (GSD Phase 46). Active Milestone **M018**, Active Slice **S02**, `L_delivery=M018-S01-done`. Owner decisions for this slice (CONTEXT): C01 = pack stamp, not a fifth axis / not a Horn / not `valid_to`; HORN-KC-01 = ingest-time Horn at log-head TT, `as_known_on` does not re-derive; ASOF-ELIG-01 = `as_of` stays support-live, eligibility is `derivation_eligible_at`. DET-02 / HORN-CORR-01 / CASC-01 wait for S03; TR-02 waits with the legal pack. SoT wording acknowledged: sealed `KUTHASEG` + `manifest.json` are D1; `events.jsonl` after migrate is an export. Honeycomb stays Proposed. No SemVer product tag (crates remain 0.0.0). Process tag `v0.13` exists on `1520220` (GSD process tag, not a product release). Process tag `v0.12` exists (created 2026-10-04 at `36fedb9`).
+**M018 S02 closed 2026-10-06** (GSD Phase 46, independent `46-VERIFICATION.md` 5/5). `L_delivery=M018-S02-done`, Active Slice **None**. C01 = pack stamp; HORN-KC ingest-at-head; ASOF support-live. Honeycomb stays Proposed. Next: controller leases M018 S03 (Phase 47: DET-02, HORN-CORR-01, CASC-01). Process tag `v0.13` exists on `1520220`. Crate SemVer 0.0.0.
 
 ## Thaw map
 

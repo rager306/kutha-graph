@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-06 — Process: close M018 S02 (GSD Phase 46)
+
+### Process
+
+- `L_delivery=M018-S02-done`, Active Slice **None**. Independent verification 5/5 (`46-VERIFICATION.md`, composer-2.5-fast). C01-01 / HORN-KC-01 / ASOF-ELIG-01 recorded; fold src unchanged. Next: controller leases M018 S03 (Phase 47).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-013 remains Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-06 — C01 knowledge-cut (Phase 46)
 
 ### Product
