@@ -216,10 +216,10 @@ invariants:
     check: i-f12-consumer
 
   - id: I-F13-typed-clocks
-    claim: "C01 application-end is not expressible as Horn; ADR-013 records options and none is chosen"
+    claim: "C01 application-end is a pack stamp (out of wedge for core); not a fifth axis, not Horn, not valid_to-as-application"
     source: docs/architecture/semantic-gap-review.md
     disposition: deferred
-    until: "FIXG-01 C01 decision"
+    until: "legal pack / SPIKE-LAW-01"
 
   - id: I-F14-typed-refs
     claim: "References between records are EventId or content hash, not formatted strings, and no RAM buffer shadows the log"

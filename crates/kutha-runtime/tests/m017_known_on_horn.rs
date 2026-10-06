@@ -1,5 +1,6 @@
-//! KNOWN-04 / F05: Horn remaining-premise lookup is `TT = u64::MAX`, not the knowledge cut.
-//! Characterization of today's behaviour; `eval.rs` is unchanged.
+//! KNOWN-04 / D-HORN-KC: killed pin of ingest-at-head.
+//! Horn remaining-premise lookup is `TT = u64::MAX` (log-head). `as_known_on` TT-hides
+//! supports minted after the cut. Do not invert; `eval.rs` is unchanged.
 
 use kutha_common::{Op, RuleAst, RuleAtom, RuleTerm};
 use kutha_runtime::Runtime;
@@ -14,8 +15,8 @@ fn two_prem_horn() -> RuleAst {
     .unwrap()
 }
 
-/// F05: `horn_fires` → `search_prems(..., u64::MAX)`; `live_horns` uses `is_live_at(u64::MAX, vt)`.
-/// Only the early `TtAnchor` exists when Horn fires, so remaining-premise lookup is MAX, not 2014.
+/// D-HORN-KC killed pin: `horn_fires` → `search_prems(..., u64::MAX)`; `live_horns` uses `is_live_at(u64::MAX, vt)`.
+/// Ingest mints at head; `as_known_on` TT-hides. Do not invert these asserts.
 #[test]
 fn known04_horn_fires_when_premise_hidden_on_early_cut() {
     let mut rt = Runtime::default();

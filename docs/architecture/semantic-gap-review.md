@@ -195,7 +195,7 @@ Sequencing and gates: `.kutha/ROADMAP.md` (M013 → M014 → M015 → M002) and 
 | F7 remainder | Five legal clocks / calendar scale beyond YearCe + LogSequence + Wall (see post-M014 addendum) |
 | F8 remainder | Typed CSR via `from_fold`; no public fork `diff` API |
 | F9 | Policy/rule bodies not evaluated on admit (M016) |
-| F13 remainder | Sufficiency of two axes + typed annotations for transitional rules (golden fixture → M016) |
+| F13 remainder | Sufficiency of two axes + typed annotations for transitional rules — **DECIDED 2026-10-06:** pack stamp (ADR-013 Verdict Phase 46); crate unchanged. See addendum 2026-10-06. |
 | F16 | Caller-emitted `Behavior`; no execution replay re-derive (M016) |
 
 ### FF5 scope (not “as known on D”)
@@ -218,7 +218,7 @@ FF5 compares **two valid-time windows** on the same log using the fold at **tran
 | ID | Note |
 |----|------|
 | F7 remainder | Promulgation / effective / application / edition are not distinct core types |
-| F13 remainder | Whether two axes plus typed annotations suffice (`tempus regit actum`) — M016 golden fixture |
+| F13 remainder | Whether two axes plus typed annotations suffice (`tempus regit actum`) — **DECIDED 2026-10-06:** pack stamp (ADR-013 Verdict Phase 46); crate unchanged. See addendum 2026-10-06. |
 | F9, F16 | Executable rules — M016 |
 
 ## Addendum 2026-10-03: post-M016 (executable rules + FIXG-01)
@@ -238,7 +238,7 @@ FF5 compares **two valid-time windows** on the same log using the fold at **tran
 
 | ID | Note |
 |----|------|
-| F13 remainder | Clock half closed v0.07 (`ValidTime` / `TransactionTime` / `WallTime`, `Op::TtAnchor`). Remainder = FIXG-01: C01 sunset is not expressible as Horn; decision open (pack stamp / fifth axis / stop) in ADR-013; none chosen |
+| F13 remainder | Clock half closed v0.07 (`ValidTime` / `TransactionTime` / `WallTime`, `Op::TtAnchor`). Remainder = FIXG-01: C01 sunset is not expressible as Horn. **DECIDED 2026-10-06:** pack stamp (a); not fifth axis, not Horn, not `valid_to`-as-application. Crate unchanged. Legal pack out of wedge. |
 | F1 / F6 remainder | **2026-10-04 Phase 53:** COMMIT-01 option A closed the crash-between-payload-and-outcome visibility gap on `open` (`committed_prefix`, `m002_commit01.rs`): an uncommitted User suffix is hidden; `Op::QuantumOutcome` stays the marker. Full `persist` still rewrites. Residual: Typed/Dictionary multi-event groups have no outcome (partial group can still be visible). B/C wait for S06. |
 | F8 remainder | No public fork-diff API (cosmetic) |
 
@@ -253,6 +253,19 @@ FF5 compares **two valid-time windows** on the same log using the fold at **tran
 | A-F07 | `FoldIndexMode::from_env` on new/open; snapshot does not pin mode | Closed: `snapshot_index_mode_survives_env_flip` (`m017_replay_integrity.rs`) |
 | A-F08 | WAL preferred whenever the file exists (empty/magic-only can beat intact `events.jsonl`) | Closed: `wal_header_only_falls_back_to_jsonl`, `wal_magic_only_falls_back_to_jsonl` (`m017_replay_integrity.rs`) |
 | A-F10 | `as_known_on` rustdoc/oracle honesty (TT-only vs `live_at(tt, MAX)` on a closed interval) | Closed: `as_known_on_differs_from_live_at_max_on_closed_vt` (`m017_replay_integrity.rs`) |
-| A-F05 | Horn remaining-premise lookup is `TT = u64::MAX`, not the knowledge cut | **OPEN.** Characterized by `known04_horn_fires_when_premise_hidden_on_early_cut` (`m017_known_on_horn.rs`); no behaviour change. |
+| A-F05 | Horn remaining-premise lookup is `TT = u64::MAX`, not the knowledge cut | **DECIDED 2026-10-06.** Ingest-at-head (D-HORN-KC). Killed pin: `known04_horn_fires_when_premise_hidden_on_early_cut` (`m017_known_on_horn.rs`; ingest mint + `as_known_on` TT hide). Crate behaviour unchanged. Do not invert. |
 
-DET-01 / KNOWN-04 characterized A-F05. A-F09 / A-F11 / A-F12 of the same audit wave are not in the closed set above.
+DET-01 / KNOWN-04 characterized A-F05; Phase 46 promoted `known04` to the killed pin of ingest-at-head (crate unchanged). A-F09 / A-F11 / A-F12 of the same audit wave are not in the closed set above.
+
+## Addendum 2026-10-06: Phase 46 / M018 S02 (C01 / HORN-KC / ASOF)
+
+**Proposed review, not an ADR.** Crate behaviour unchanged (`eval.rs` / fold / provenance not edited). Honeycomb stays **Proposed**.
+
+### Decided (crate unchanged)
+
+| ID | Decision |
+|----|----------|
+| F13 remainder | C01 is pack stamp (a). Not fifth axis, not Horn, not `valid_to`-as-application. Oracle `fixg01_c01_sunset_inexpressible_as_horn`. Legal pack out of wedge. |
+| A-F05 | Ingest-at-head (D-HORN-KC). Killed pin `known04_horn_fires_when_premise_hidden_on_early_cut` (ingest mint + `as_known_on` TT hide). Do not invert. |
+
+`as_of` stays support-live (`asof_elig01_as_of_contains_derived_when_ineligible`). Eligibility is `derivation_eligible_at`.

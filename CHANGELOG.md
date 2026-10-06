@@ -12,11 +12,11 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Process
 
-- Test matrix: `SEM-c01-decision` / `SEM-horn-kc` / `SEM-asof-elig` stay `blocked` (`kill_mutation: none`); invariants rewritten to pack stamp, ingest-at-head, and support-live. `SEM-asof-elig` oracle filled with `asof_elig01_as_of_contains_derived_when_ineligible`. `SEM-horn-tt-max` and `SEM-c01-inexpressible` stay characterization. ADR-023 questions 1–3 dated closed 2026-10-06; 4–6 remain open.
+- Test matrix: `SEM-c01-decision` / `SEM-horn-kc` / `SEM-asof-elig` stay `blocked` (`kill_mutation: none`); invariants rewritten to pack stamp, ingest-at-head, and support-live. `SEM-asof-elig` oracle filled with `asof_elig01_as_of_contains_derived_when_ineligible`. `SEM-horn-tt-max` and `SEM-c01-inexpressible` stay characterization. ADR-023 questions 1–3 dated closed 2026-10-06; 4–6 remain open. Honesty restage: F13 remainder and A-F05 decided (crate unchanged). `I-F13-typed-clocks` claim is pack-stamp out-of-wedge; disposition stays deferred.
 
 ### Trajectory
 
-- ADR-013 Verdict 2026-10-06 (Phase 46 / M018 S02): C01 (a) pack stamp; HORN-KC ingest-at-head; ASOF support-live. Honeycomb restaged (ADR-013, ADR-023); map/delivery/capability unchanged; ADR-013 stays **Proposed**. D013-1…D013-4 unchanged. FIXG-01 oracle kept.
+- ADR-013 Verdict 2026-10-06 (Phase 46 / M018 S02): C01 (a) pack stamp; HORN-KC ingest-at-head; ASOF support-live. Honeycomb restaged (ADR-013, ADR-023); map/delivery/capability unchanged; honeycomb stays **Proposed**. D013-1…D013-4 unchanged. FIXG-01 oracle kept. D-SOT: sealed `KUTHASEG` + `manifest.json` are D1; `events.jsonl` after migrate is an export; not a fifth clock.
 
 ## 2026-10-06 — Process: lease M018 S02 (GSD Phase 46)
 
