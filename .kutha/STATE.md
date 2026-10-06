@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M018
-**Active Slice:** S03
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M018-S02-done
+L_delivery=M018-S03-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M018 S03 leased (GSD Phase 47); S02-done | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M018 S03-done (GSD Phase 47 verified); S02-done | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M018 S03 leased 2026-10-06** (GSD Phase 47). Active Milestone **M018**, Active Slice **S03**, `L_delivery=M018-S02-done`. Locked: DET-02 hash-stable derived EventId (user ops stay UUID v7); HORN-CORR-01 Correct/CorrectInterval re-derive; CASC-01 every hop `admit`, unknown Horn relation fail-closed. Honeycomb stays Proposed. Crate SemVer 0.0.0.
+**M018 S03 closed 2026-10-06** (GSD Phase 47, independent `47-VERIFICATION.md` passed). `L_delivery=M018-S03-done`, Active Slice **None**. DET-02 hash-stable derived ids; HORN-CORR re-derive; CASC hop admit. Honeycomb stays Proposed. Next: controller leases M018 S04 (Phase 48: ORACLE-01, GATE-01). Crate SemVer 0.0.0.
 
 ## Thaw map
 

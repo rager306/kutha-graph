@@ -16,7 +16,7 @@ A developer can prove **legal point-in-time** on a named statute-shaped fixture 
 
 **Harness lease:** read `.kutha/STATE.md` (slice, `L_delivery` and Freeze live only there).
 
-**In progress:** v0.11 Phase 47 / M018 S03 leased. DET-02 hash-stable derived ids; HORN-CORR re-derive; CASC admit hops. Honeycomb stays Proposed.
+**In progress:** v0.11 Phases 45–47 shipped; next is Phase 48 / M018 S04. Honeycomb stays Proposed.
 
 
 ## Business Context

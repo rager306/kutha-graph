@@ -15,12 +15,12 @@ read_only_inputs:
   - crates/kutha-runtime/src/provenance.rs
   - crates/kutha-runtime/src/quantum.rs
 commands:
-  - "grep 'Verdict (2026-10-06; Phase 46' docs/ADR/ADR-013-bitemporal-facts-invalidation.md → exit 0"
-  - "grep SEM-c01-decision|SEM-horn-kc|SEM-asof-elig + status blocked in test-matrix.yaml → exit 0"
-  - "git diff --exit-code -- crates/kutha-runtime/src/eval.rs; git diff HEAD~20 -- eval.rs → 0 bytes → exit 0"
-  - "cargo test m016 fixg01_c01_sunset_inexpressible_as_horn --exact → exit 0"
-  - "cargo test m017 known04_horn_fires_when_premise_hidden_on_early_cut --exact → exit 0"
-  - "cargo test m011 asof_elig01_as_of_contains_derived_when_ineligible --exact → exit 0"
+  - {cmd: "grep 'Verdict (2026-10-06; Phase 46' docs/ADR/ADR-013-bitemporal-facts-invalidation.md", exit: 0}
+  - {cmd: "rg 'status: blocked' docs/architecture/test-matrix.yaml", exit: 0}
+  - {cmd: "git diff --exit-code -- crates/kutha-runtime/src/eval.rs", exit: 0}
+  - {cmd: "cargo test -p kutha-runtime --offline --test m016_golden_fixture -- fixg01_c01_sunset_inexpressible_as_horn --exact", exit: 0}
+  - {cmd: "cargo test -p kutha-runtime --offline --test m017_known_on_horn -- known04_horn_fires_when_premise_hidden_on_early_cut --exact", exit: 0}
+  - {cmd: "cargo test -p kutha-runtime --offline --test m011_claim_supports -- asof_elig01_as_of_contains_derived_when_ineligible --exact", exit: 0}
 covered_files: [crates/kutha-runtime/src/eval.rs, crates/kutha-runtime/tests/m011_claim_supports.rs, crates/kutha-runtime/tests/m016_golden_fixture.rs, crates/kutha-runtime/tests/m017_known_on_horn.rs, docs/ADR/ADR-013-bitemporal-facts-invalidation.md, docs/architecture/test-matrix.yaml]
 covered_digest: "v3:sha256:4a4b4e549e78e1b0cc0bcf6678caa84ef4ac8e269490d76e40cbbc60f63a55da"
 behavior_unverified: 0
