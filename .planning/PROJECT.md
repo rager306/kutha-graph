@@ -16,7 +16,7 @@ A developer can prove **legal point-in-time** on a named statute-shaped fixture 
 
 **Harness lease:** read `.kutha/STATE.md` (slice, `L_delivery` and Freeze live only there).
 
-**In progress:** v0.11 Phase 46 / M018 S02. C01 = pack stamp (not fifth axis, not Horn, not `valid_to`). Honeycomb stays Proposed. FIXG-01 fail-closed: C01 sunset is not a Horn; do not invent five clocks.
+**In progress:** v0.11 Phases 45–46 shipped; next is Phase 47 / M018 S03. Honeycomb stays Proposed. C01 = pack stamp (not fifth axis).
 
 
 ## Business Context
