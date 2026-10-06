@@ -28,8 +28,8 @@
 ### Differential tests (Phase 48, S04)
 
 - [x] **DIFF-01**: fold, CSR lease and clean rebuild agree on seeded random logs (no new dependency) — **moved** to v0.13 Phase 62 / M019 S07 and closed as DIFF-02
-- **ORACLE-01**: I-F15 measures time or a bound that fails under the O(N) regression; I-F16 fails when rules do not re-derive
-- **GATE-01**: bench gate (`ingest_plain.n`, `as_of.n`) is a governor row or a recorded controller step with a selftest
+- [x] **ORACLE-01**: I-F15 measures time or a bound that fails under the O(N) regression; I-F16 fails when rules do not re-derive
+- [x] **GATE-01**: bench gate (`ingest_plain.n`, `as_of.n`) is a governor row or a recorded controller step with a selftest
 
 ## Future Requirements (not leased)
 

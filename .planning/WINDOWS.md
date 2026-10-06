@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 8
+open_count: 11
 waived_count: 4
 fixed_count: 1
-total_count: 13
-last_updated: 2026-10-06T12:30:20.217Z
+total_count: 16
+last_updated: 2026-10-06T15:01:55.029Z
 ---
 
 # Broken Windows Ledger
@@ -28,6 +28,9 @@ last_updated: 2026-10-06T12:30:20.217Z
 | 11 | 28 | unmet-truth | .planning/phases/28-independent-verification-and-artifact-budget/28-VERIFICATION.md |  | PROC-02 pending post-execute 28-VERIFICATION (verify-work, independent model per D-08) | open |  | 2026-10-01T18:41:40.853Z |  |
 | 12 | 28 | deviation | docs/process/gsd-auto-contract.md |  | Restored pre-existing uncommitted Gate stacking/reindex edits to HEAD so 28-02 did not change the contract | open |  | 2026-10-01T18:41:41.282Z |  |
 | 13 | 47 | deviation | .planning/phases/46-c01-knowledge-cut/46-VERIFICATION.md |  | ci HIGH verification-independent missing exit: needle (pre-existing; out of 47-01 slice) | open |  | 2026-10-06T12:30:20.217Z |  |
+| 14 | 48 | deviation | .kutha/dictionaries/invariants.yaml |  | Rule 3: I-F15/I-F16 claim text with checks.yaml for docs-coupling | open |  | 2026-10-06T15:01:54.157Z |  |
+| 15 | 48 | deviation | .planning/phases/47-horn-determinism-closure/47-VERIFICATION.md |  | Rule 3: repaired 47-VERIFICATION read_only_inputs for verification-independent | open |  | 2026-10-06T15:01:54.624Z |  |
+| 16 | 48 | deviation | crates/kutha-runtime/tests/m016_rule_ast.rs | 80 | Rule 1: emit_allow derive_pq so CASC-01 hop-admit does not fail workspace observe | open |  | 2026-10-06T15:01:55.029Z |  |
 
 ````json
 [
@@ -197,6 +200,45 @@ last_updated: 2026-10-06T12:30:20.217Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-10-06T12:30:20.217Z",
+    "resolved_at": null,
+    "milestone": "v0.11"
+  },
+  {
+    "id": 14,
+    "kind": "deviation",
+    "phase": "48",
+    "file": ".kutha/dictionaries/invariants.yaml",
+    "line": null,
+    "description": "Rule 3: I-F15/I-F16 claim text with checks.yaml for docs-coupling",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-10-06T15:01:54.157Z",
+    "resolved_at": null,
+    "milestone": "v0.11"
+  },
+  {
+    "id": 15,
+    "kind": "deviation",
+    "phase": "48",
+    "file": ".planning/phases/47-horn-determinism-closure/47-VERIFICATION.md",
+    "line": null,
+    "description": "Rule 3: repaired 47-VERIFICATION read_only_inputs for verification-independent",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-10-06T15:01:54.624Z",
+    "resolved_at": null,
+    "milestone": "v0.11"
+  },
+  {
+    "id": 16,
+    "kind": "deviation",
+    "phase": "48",
+    "file": "crates/kutha-runtime/tests/m016_rule_ast.rs",
+    "line": 80,
+    "description": "Rule 1: emit_allow derive_pq so CASC-01 hop-admit does not fail workspace observe",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-10-06T15:01:55.029Z",
     "resolved_at": null,
     "milestone": "v0.11"
   }

@@ -30,8 +30,8 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
   - [x] 47-01-PLAN.md — RED pins then stable ids, Correct re-derive, hop admit, matrix/ADR/CHANGELOG
 - [ ] **Phase 48: Differential tests and oracle tightening** — I-F15/I-F16 and bench gate (S04); DIFF-01 moved to Phase 62 (v0.13)
   - **Goal:** I-F15 visit-bound oracle stays `extra_relatedto_horn_visits_constant_in_n`; I-F16 is pinned to Phase 47 `horn_correct_*`; GATE-01 is the recorded `gsd-auto-contract` bench gate plus `BENCH-controller`; honeycomb stays Proposed
-  - **Plans:** 1 plans
-  - [ ] 48-01-PLAN.md — pin I-F15/I-F16 oracles and record GATE-01
+  - **Plans:** 1/1 executed; independent `48-VERIFICATION.md` pending
+  - [x] 48-01-PLAN.md — pin I-F15/I-F16 oracles and record GATE-01
 
 ## Progress
 
