@@ -19,7 +19,7 @@ Each YAML row is one invariant. `oracle` is a list of real `#[test]` function na
 
 ## Counts (this file)
 
-Counted from `test-matrix.yaml` rows on 2026-10-05. Recount after you edit the YAML; do not invent a coverage percentage.
+Counted from `test-matrix.yaml` rows on 2026-10-06. Recount after you edit the YAML; do not invent a coverage percentage. Status counts unchanged (Phase 46 rewrote three blocked invariants; no row added or re-statused).
 
 | Status | Rows |
 |--------|------|
@@ -47,9 +47,9 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 | Decision | Row | What is waiting |
 |----------|-----|-----------------|
-| HORN-KC-01 | `SEM-horn-kc` | Horn must not mint when a premise is absent at the knowledge cut. Current pin: `known04_horn_fires_when_premise_hidden_on_early_cut` (characterization). |
-| C01 | `SEM-c01-decision` | Sunset / `tempus regit actum` option. Current pin: `fixg01_c01_sunset_inexpressible_as_horn`. |
-| ASOF-ELIG-01 | `SEM-asof-elig` | `as_of` vs derivation eligibility. |
+| HORN-KC-01 | `SEM-horn-kc` | Ingest-at-head: Horn fires at log-head TT. Killed pin: `known04_horn_fires_when_premise_hidden_on_early_cut` (do not invert). Status stays blocked. |
+| C01 | `SEM-c01-decision` | Pack stamp; not fifth axis, not Horn, not `valid_to`-as-application. Oracle: `fixg01_c01_sunset_inexpressible_as_horn`. Status stays blocked (legal pack out of wedge). |
+| ASOF-ELIG-01 | `SEM-asof-elig` | `as_of` stays support-live; eligibility is `derivation_eligible_at`. Oracle: `asof_elig01_as_of_contains_derived_when_ineligible`. Status stays blocked. |
 | DET-02 | `SEM-det02-ids` | Seed-stable derived EventId vs keep UUID v7 and compare triples. |
 | TR-02 | `SEM-tr02-legal` | Force vs publication vs decision. FF5 is two VT windows, not this. |
 | HORN-CORR-01 | `SEM-horn-correct` | Correct of a Horn premise. S07 may characterize current behaviour without choosing the rule. |

@@ -94,9 +94,14 @@ The matrix is a map of oracles, not a coverage number. Governor green ≠ ADR Ac
 
 ## Open questions
 
-1. C01 / FIXG-01 — pack stamp, fifth axis, or stop. Blocks legal pack, not this cell.
-2. HORN-KC-01 — Horn at TT=MAX vs `as_known_on`. Characterized (`known04_horn_fires_when_premise_hidden_on_early_cut`); not decided.
-3. ASOF-ELIG-01 — `as_of` vs derivation eligibility.
+Decided 2026-10-06 (Phase 46 / M018 S02; recorded in ADR-013; this cell stays Proposed):
+
+1. C01 / FIXG-01 — pack stamp (a). Not a fifth axis, not a Horn body, not `valid_to` as application-end. Oracle remains `fixg01_c01_sunset_inexpressible_as_horn`.
+2. HORN-KC-01 — ingest-at-head. Horn fires at log-head TT (`search_prems` / `live_horns` at `u64::MAX`). `known04_horn_fires_when_premise_hidden_on_early_cut` is the killed pin (ingest mint + `as_known_on` TT hide; do not invert). Historical-cut mint is not an ingest-time law.
+3. ASOF-ELIG-01 — `as_of` is support-live; eligibility is `derivation_eligible_at`. Query still lists ineligible live triples. Oracle: `asof_elig01_as_of_contains_derived_when_ineligible`.
+
+Still open:
+
 4. DET-02 — seed-stable derived EventId vs keep UUID v7 and compare triples.
 5. TR-02 — force vs publication vs decision clocks (ADR-090). FF5 is two VT windows, not this.
 6. HORN-CORR-01 — Correct of a Horn premise. S07 may characterize current behaviour without choosing the rule.
@@ -105,7 +110,7 @@ The matrix is a map of oracles, not a coverage number. Governor green ≠ ADR Ac
 
 - ADR-000 D9 — testing is first-class
 - ADR-010 / 012 / 014 — durability encodings
-- ADR-013 — bi-temporal cuts; C01 / Horn / `as_of` still open
+- ADR-013 — bi-temporal cuts; C01 pack stamp / Horn ingest-at-head / `as_of` support-live recorded 2026-10-06; DET-02 / TR-02 / HORN-CORR-01 still open
 - ADR-020 — conventions neighbour (format, not crate layout)
 - ADR-060 — strict replay
 - ADR-090 TR-02 — legal clocks, mapped not implemented

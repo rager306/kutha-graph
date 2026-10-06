@@ -567,7 +567,7 @@ rows:
 
   - id: SEM-horn-kc
     plane: product
-    invariant: Horn must not mint when a premise is absent at the knowledge cut
+    invariant: Horn ingest-at-head (search_prems / live_horns at u64::MAX); as_known_on never re-derives
     layer: decision
     oracle:
       - known04_horn_fires_when_premise_hidden_on_early_cut
@@ -578,7 +578,7 @@ rows:
     source: audit-code-tests §3 / ADR audit §2
   - id: SEM-c01-decision
     plane: product
-    invariant: C01 sunset / tempus regit actum option (pack stamp, fifth axis, or stop)
+    invariant: C01 sunset / tempus regit actum is a pack stamp (not fifth axis, not Horn, not valid_to-as-application)
     layer: decision
     oracle:
       - fixg01_c01_sunset_inexpressible_as_horn
@@ -589,9 +589,10 @@ rows:
     source: ADR audit §2 FIXG-01
   - id: SEM-asof-elig
     plane: product
-    invariant: as_of must hide derivation-ineligible rows
+    invariant: as_of stays support-live; eligibility is derivation_eligible_at; query lists ineligible live triples
     layer: decision
-    oracle: []
+    oracle:
+      - asof_elig01_as_of_contains_derived_when_ineligible
     kill_mutation: none
     status: blocked
     gate: default

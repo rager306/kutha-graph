@@ -156,3 +156,13 @@ Characterization (`known04_horn_fires_when_premise_hidden_on_early_cut`): a two-
 ### Evidence (2026-10-05, Phase 62 / M019 S07; Proposed)
 
 Seeded list-scan model (`SEM-bitemporal-model`, `m019_sem_model.rs`) agrees with `GraphFold::live_at` / `as_of` on random Assert/Retract/Correct/CorrectInterval logs and on the FF5 statute fixture. Differential persist rebuilds and CSR cuts are ADR-041/060. Still open: Horn@TT=`MAX` (HORN-KC-01), `as_of` vs derivation eligibility (ASOF-ELIG-01), C01. This subsection does not rewrite D013-1…D013-4. Status stays **Proposed**.
+
+### Verdict (2026-10-06; Phase 46 / M018 S02; Proposed)
+
+(a) C01 sunset / `tempus regit actum` is a **pack stamp** (typed pack annotation), not core algebra. Forbidden: fifth axis (D013-1), Horn body, treating `valid_to` as application-end. Oracle remains `fixg01_c01_sunset_inexpressible_as_horn`. SPIKE-LAW-01 waits for a pack. Out of wedge for *core*.
+
+HORN-KC ingest-at-head: Horn fires at log-head TT (`search_prems` / `live_horns` at `u64::MAX`). `as_known_on` never re-derives; a derived support minted after a cut is hidden by TT like any Assert. `known04_horn_fires_when_premise_hidden_on_early_cut` is the killed pin of this rule (ingest mint + `as_known_on` TT hide). Reject “must not mint at a historical cut” as an ingest-time requirement.
+
+ASOF: `as_of` = `live_at(u64::MAX, vt)` stays **support-live**. Eligibility is `derivation_eligible_at`. Query still lists ineligible live triples (`asof_elig01_as_of_contains_derived_when_ineligible`). Reject “`as_of` must hide ineligible rows.”
+
+This subsection does not rewrite D013-1…D013-4. Cell remains **Proposed**.

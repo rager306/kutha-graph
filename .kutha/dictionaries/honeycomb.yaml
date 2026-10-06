@@ -34,6 +34,7 @@ process: docs/process/governor-intake.md
 # 2026-10-05 restage (M019 S05 Phase 60-05: Persister poison + lock residuals; layered trailer-lie kill): ADR-010, ADR-014; map/delivery/capability unchanged.
 # 2026-10-05 restage (M019 S06 Phase 61: ROCK-02 sealed-list + verify_full m:v=2; MEM-01 persist stream; CLEAN-01): ADR-010, ADR-012; map/delivery/capability unchanged.
 # 2026-10-05 restage (M019 S07 Phase 62: semantic/logic oracles; cells still Proposed): ADR-013, ADR-041, ADR-060; map/delivery/capability unchanged.
+# 2026-10-06 restage (M018 S02 Phase 46: C01 (a) / HORN-KC / ASOF-ELIG): ADR-013, ADR-023; map/delivery/capability unchanged.
 
 locks:
   - id: D1
@@ -197,6 +198,8 @@ cells:
       # Phase 62 / M019 S07 — list-scan model vs fold; cell still Proposed
       - bitemporal_model_matches_fold_live_at_and_as_of
       - bitemporal_model_agrees_on_ff5_statute
+      # Phase 46 / M018 S02 — as_of support-live pin; cell still Proposed
+      - asof_elig01_as_of_contains_derived_when_ineligible
 
   - id: ADR-014
     axis: Time

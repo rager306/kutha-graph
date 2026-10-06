@@ -10,6 +10,14 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Named pin `asof_elig01_as_of_contains_derived_when_ineligible`: after last premise-support Retract, `derivation_eligible_at` is false and `Runtime.as_of(2017)` still lists the derived triple. Eligibility stays a separate API; `as_of` is not filtered. Distinct from `v44_a_inverse_retract_as_of_earlier` (direct Horn `retract_derived`). Fold src unchanged.
 
+### Process
+
+- Test matrix: `SEM-c01-decision` / `SEM-horn-kc` / `SEM-asof-elig` stay `blocked` (`kill_mutation: none`); invariants rewritten to pack stamp, ingest-at-head, and support-live. `SEM-asof-elig` oracle filled with `asof_elig01_as_of_contains_derived_when_ineligible`. `SEM-horn-tt-max` and `SEM-c01-inexpressible` stay characterization. ADR-023 questions 1–3 dated closed 2026-10-06; 4–6 remain open.
+
+### Trajectory
+
+- ADR-013 Verdict 2026-10-06 (Phase 46 / M018 S02): C01 (a) pack stamp; HORN-KC ingest-at-head; ASOF support-live. Honeycomb restaged (ADR-013, ADR-023); map/delivery/capability unchanged; ADR-013 stays **Proposed**. D013-1…D013-4 unchanged. FIXG-01 oracle kept.
+
 ## 2026-10-06 — Process: lease M018 S02 (GSD Phase 46)
 
 ### Process
