@@ -100,17 +100,20 @@ Decided 2026-10-06 (Phase 46 / M018 S02; recorded in ADR-013; this cell stays Pr
 2. HORN-KC-01 — ingest-at-head. Horn fires at log-head TT (`search_prems` / `live_horns` at `u64::MAX`). `known04_horn_fires_when_premise_hidden_on_early_cut` is the killed pin (ingest mint + `as_known_on` TT hide; do not invert). Historical-cut mint is not an ingest-time law.
 3. ASOF-ELIG-01 — `as_of` is support-live; eligibility is `derivation_eligible_at`. Query still lists ineligible live triples. Oracle: `asof_elig01_as_of_contains_derived_when_ineligible`.
 
+Decided 2026-10-06 (Phase 47 / M018 S03; this cell stays Proposed):
+
+4. DET-02 — derived EventIds are SHA-256-stable (`Event::stable_derived`); user Assert stays UUID v7. Oracle: `det02_two_ingest_derived_event_ids_equal`.
+6. HORN-CORR-01 — `Correct` / `CorrectInterval` of a Horn premise `retract_derived` then `horn_fires`. Oracles: `horn_correct_derived_not_live_after_premise_correct`, `horn_correct_interval_derived_not_live_after_patch`.
+
 Still open:
 
-4. DET-02 — seed-stable derived EventId vs keep UUID v7 and compare triples.
 5. TR-02 — force vs publication vs decision clocks (ADR-090). FF5 is two VT windows, not this.
-6. HORN-CORR-01 — Correct of a Horn premise. S07 may characterize current behaviour without choosing the rule.
 
 ## Related Decisions
 
 - ADR-000 D9 — testing is first-class
 - ADR-010 / 012 / 014 — durability encodings
-- ADR-013 — bi-temporal cuts; C01 pack stamp / Horn ingest-at-head / `as_of` support-live recorded 2026-10-06; DET-02 / TR-02 / HORN-CORR-01 still open
+- ADR-013 — bi-temporal cuts; C01 pack stamp / Horn ingest-at-head / `as_of` support-live recorded 2026-10-06; DET-02 / HORN-CORR-01 recorded 2026-10-06; TR-02 still open
 - ADR-020 — conventions neighbour (format, not crate layout)
 - ADR-060 — strict replay
 - ADR-090 TR-02 — legal clocks, mapped not implemented

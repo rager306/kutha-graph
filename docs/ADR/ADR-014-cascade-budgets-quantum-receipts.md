@@ -36,6 +36,10 @@ WRITER-01 ships the advisory `kutha.lock` (local FS, `WouldBlock`, readers unloc
 
 F11 closed by option A (`Op::QuantumOutcome` + `commit::committed_prefix`). Writers take advisory `kutha.lock` (local filesystem only). Cousin durability is `KUTHAWAL` on a legacy dir or segment `sync_data`; optional external Merkle/chain anchor is absent (`verify_sealed` is in-file SHA-256, prev seeded `[0u8;32]`). Residuals: Typed/Dictionary group has no outcome (GROUP-01 (c)); no fsync of the `kutha.lock` directory entry; advisory local lock only (NFS / another host not covered); writes that bypass `Persister` / `store::*` are not covered; `kutha-tenant` is covered only through `store::persist`; no external chain anchor; `open` O(N). Pointers: `store::persist_until`, `segment::persist_log`, `Persister`, `rocks_index::SegmentIndex`.
 
+### Evidence (2026-10-06; Phase 47 / M018 S03; Proposed)
+
+`commit_user_cascade` admits each follow-on (`ReceiptMode::User`) before `pending.push`. LIFO `pending.pop` is unchanged. A hop that fails `admit` never appears in the log. UnknownRelation only when a matched firing Horn's head is missing from the dict. Oracles: `casc01_disallowed_second_hop_absent_from_log`, `casc01_unknown_head_on_matched_horn_is_err`. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

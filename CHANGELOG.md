@@ -13,6 +13,14 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - `Correct` / `CorrectInterval` of a Horn premise `retract_derived` then `horn_fires` on fold subject/relation plus the new object/interval. Stale derived is not live at the post-correct cut.
 - `commit_user_cascade` admits each follow-on (`ReceiptMode::User`) before `pending.push`; LIFO `pop` unchanged. UnknownRelation only on a matched firing Horn whose head is missing from the dict; intern-later nary stays `Ok`.
 
+### Process
+
+- Test matrix: `SEM-det02-ids`, `SEM-horn-correct`, `SEM-horn-correct-char`, `SEM-casc-admit` `killed` with owner `M018-S03`. Blocked remaining: C01, HORN-KC-01, ASOF-ELIG-01, TR-02.
+
+### Trajectory
+
+- ADR-013 / ADR-014 / ADR-023 Evidence 2026-10-06 (Phase 47 / M018 S03). Honeycomb restaged (those cells); map/delivery/capability unchanged; honeycomb stays **Proposed**. D013-1…D013-4 unchanged. No `.kutha/STATE.md` write; `47-VERIFICATION.md` is verifier-owned.
+
 ## 2026-10-06 — Process: lease M018 S03 (GSD Phase 47)
 
 ### Process

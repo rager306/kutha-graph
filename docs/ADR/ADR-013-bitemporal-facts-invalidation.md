@@ -166,3 +166,7 @@ HORN-KC ingest-at-head: Horn fires at log-head TT (`search_prems` / `live_horns`
 ASOF: `as_of` = `live_at(u64::MAX, vt)` stays **support-live**. Eligibility is `derivation_eligible_at`. Query still lists ineligible live triples (`asof_elig01_as_of_contains_derived_when_ineligible`). Reject “`as_of` must hide ineligible rows.”
 
 This subsection does not rewrite D013-1…D013-4. Cell remains **Proposed**.
+
+### Evidence (2026-10-06; Phase 47 / M018 S03; Proposed)
+
+Derived Horn EventIds are hash-stable (`Event::stable_derived`, prefix `kutha-derived-id`). User Assert stays `Event::new` UUID v7. `Correct` / `CorrectInterval` of a Horn premise `retract_derived` then `horn_fires` on the corrected triple; stale derived is not live at the post-correct cut. Oracles: `det02_two_ingest_derived_event_ids_equal`, `horn_correct_derived_not_live_after_premise_correct`, `horn_correct_interval_derived_not_live_after_patch`. This subsection does not rewrite D013-1…D013-4. Cell remains **Proposed**.

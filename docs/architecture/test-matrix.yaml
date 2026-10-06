@@ -600,14 +600,15 @@ rows:
     source: ADR audit §2
   - id: SEM-det02-ids
     plane: product
-    invariant: derived EventId reuse across replay (seed-stable identity)
+    invariant: two Runtime ingest of the same Horn fixture mint equal derived Behavior EventIds; user Assert stays Event::new v7
     layer: decision
-    oracle: []
-    kill_mutation: none
-    status: blocked
+    oracle:
+      - det02_two_ingest_derived_event_ids_equal
+    kill_mutation: derived Event::new
+    status: killed
     gate: default
-    owner: DET-02
-    source: audit-code-tests §3
+    owner: M018-S03
+    source: M018 S03 / DET-02 / Phase 47
   - id: SEM-tr02-legal
     plane: product
     invariant: legal TR-02 force vs publication vs decision clocks
@@ -622,12 +623,14 @@ rows:
     plane: product
     invariant: Correct of a Horn premise retracts or re-mints Behavior
     layer: decision
-    oracle: []
-    kill_mutation: none
-    status: blocked
+    oracle:
+      - horn_correct_derived_not_live_after_premise_correct
+      - horn_correct_interval_derived_not_live_after_patch
+    kill_mutation: rule_follow_ons `_ => vec![]` skips Correct/CorrectInterval of a Horn premise
+    status: killed
     gate: default
-    owner: HORN-CORR-01
-    source: ADR audit §2
+    owner: M018-S03
+    source: M018 S03 / HORN-CORR-01 / Phase 47
 
   - id: SEM-cascade-order
     plane: product
@@ -714,16 +717,28 @@ rows:
     source: M019 S07 / ADR-060; persist_seed_count = max(12, KUTHA_SEEDS/5)
   - id: SEM-horn-correct-char
     plane: product
-    invariant: characterize current Correct-of-Horn-premise behaviour
+    invariant: stale derived inverse is not live after Correct/CorrectInterval of a Horn premise
     layer: characterization
     oracle:
-      - horn_correct_char_derived_survives_premise_correct
-      - horn_correct_interval_char_derived_survives_patch
-    kill_mutation: rule_follow_ons fires Horn on Correct of a premise; Correct skip of invalidate_fact_at dies because the superseded premise stays live
-    status: characterization
+      - horn_correct_derived_not_live_after_premise_correct
+      - horn_correct_interval_derived_not_live_after_patch
+    kill_mutation: rule_follow_ons skips Correct of a premise so stale inverse stays live
+    status: killed
     gate: default
-    owner: M019-S07
-    source: M019 S07 / HORN-CORR-01
+    owner: M018-S03
+    source: M018 S03 / HORN-CORR-01 / Phase 47
+  - id: SEM-casc-admit
+    plane: product
+    invariant: every cascade hop admits before pending.push; unknown matched head is UnknownRelation
+    layer: kill
+    oracle:
+      - casc01_disallowed_second_hop_absent_from_log
+      - casc01_unknown_head_on_matched_horn_is_err
+    kill_mutation: commit_user_cascade skips admit on inner hops; dict.id None on matched firing head continues
+    status: killed
+    gate: default
+    owner: M018-S03
+    source: M018 S03 / CASC-01 / Phase 47
 
   # --- harness ---
   - id: HAR-freeze-rocks

@@ -19,17 +19,17 @@ Each YAML row is one invariant. `oracle` is a list of real `#[test]` function na
 
 ## Counts (this file)
 
-Counted from `test-matrix.yaml` rows on 2026-10-06. Recount after you edit the YAML; do not invent a coverage percentage. Status counts unchanged (Phase 46 rewrote three blocked invariants; no row added or re-statused).
+Counted from `test-matrix.yaml` rows on 2026-10-06. Recount after you edit the YAML; do not invent a coverage percentage.
 
 | Status | Rows |
 |--------|------|
-| killed | 55 |
-| characterization | 6 |
+| killed | 59 |
+| characterization | 5 |
 | gap | 0 |
-| blocked | 6 |
+| blocked | 4 |
 | spec-only | 4 |
 | gate | 1 |
-| **total** | **72** |
+| **total** | **73** |
 
 Planes: product vs harness. Layers: decision, characterization, property, crash, kill, governor, bench.
 
@@ -39,7 +39,9 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M019-S06 (durability B):** closed in Phase 61 — `DUR-export-race` and `DUR-rocks-mid-stale` `killed`; `DUR-bytes-per-fact` `characterization` (streaming persist + drop `encoded_log`; `bytes_per_fact` is whole-bench VmRSS delta / live facts; residual rise not shown as an engine lower bound). Spec-only: `DUR-dead-code-fate`, `DUR-index-wiring`. Bench controller: `BENCH-controller`.
 
-**M019-S07 (semantic expansion):** closed in Phase 62 — `SEM-cascade-order`, `SEM-csr-fold-diff`, `SEM-bitemporal-model`, `SEM-order-independence`, `SEM-replay-idempotence`, `SEM-persist-roundtrip-random`, `SEM-replay-tamper-random` `killed`; `SEM-horn-correct-char` `characterization` (HORN-CORR-01; Correct/CorrectInterval of a Horn premise does not retract or re-mint derived inverse today; superseded premise is not live at the post-correction cut). Default ≥64 seeds; `KUTHA_SEEDS` may raise; persist/tamper/export use `max(12, n/5)`. Tamper equal-fold swap is `commutes` only on disjoint (s,r); otherwise a dependent Retract is minted so `KUTHA_SEEDS=256` seed=79 stays green. Persist: two passes per index (legacy, rollover, migrated, export-imported; WithHorn through segmented/migrated). `Fact::is_live_at` vs naive at EDGE_VT (skip `valid_from` is not equivalent: Eager `live_at` via `vt_by_from` would mask it). CRC: fail-closed InvalidData plus detector pin `CRC mismatch`.
+**M019-S07 (semantic expansion):** closed in Phase 62 — `SEM-cascade-order`, `SEM-csr-fold-diff`, `SEM-bitemporal-model`, `SEM-order-independence`, `SEM-replay-idempotence`, `SEM-persist-roundtrip-random`, `SEM-replay-tamper-random` `killed`. Default ≥64 seeds; `KUTHA_SEEDS` may raise; persist/tamper/export use `max(12, n/5)`. Tamper equal-fold swap is `commutes` only on disjoint (s,r); otherwise a dependent Retract is minted so `KUTHA_SEEDS=256` seed=79 stays green. Persist: two passes per index (legacy, rollover, migrated, export-imported; WithHorn through segmented/migrated). `Fact::is_live_at` vs naive at EDGE_VT (skip `valid_from` is not equivalent: Eager `live_at` via `vt_by_from` would mask it). CRC: fail-closed InvalidData plus detector pin `CRC mismatch`.
+
+**M018-S03 (Horn closure):** Phase 47 — `SEM-det02-ids`, `SEM-horn-correct`, `SEM-horn-correct-char`, `SEM-casc-admit` `killed` (owner `M018-S03`). Oracles: `det02_two_ingest_derived_event_ids_equal`, inverted `horn_correct_*`, `casc01_*`.
 
 `unowned` is rejected by the governor check.
 
@@ -50,9 +52,7 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 | HORN-KC-01 | `SEM-horn-kc` | Ingest-at-head: Horn fires at log-head TT. Killed pin: `known04_horn_fires_when_premise_hidden_on_early_cut` (do not invert). Status stays blocked. |
 | C01 | `SEM-c01-decision` | Pack stamp; not fifth axis, not Horn, not `valid_to`-as-application. Oracle: `fixg01_c01_sunset_inexpressible_as_horn`. Status stays blocked (legal pack out of wedge). |
 | ASOF-ELIG-01 | `SEM-asof-elig` | `as_of` stays support-live; eligibility is `derivation_eligible_at`. Oracle: `asof_elig01_as_of_contains_derived_when_ineligible`. Status stays blocked. |
-| DET-02 | `SEM-det02-ids` | Seed-stable derived EventId vs keep UUID v7 and compare triples. |
 | TR-02 | `SEM-tr02-legal` | Force vs publication vs decision. FF5 is two VT windows, not this. |
-| HORN-CORR-01 | `SEM-horn-correct` | Correct of a Horn premise. S07 may characterize current behaviour without choosing the rule. |
 
 Do not implement a behaviour change for these rows in S04. Do not mark them `#[ignore]`.
 
