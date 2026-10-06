@@ -15,9 +15,9 @@
 
 ### Decisions (Phase 46, S02)
 
-- **C01-01**: ADR-013 records one C01 option — pack stamp, fifth axis, or stop — with a named oracle or an explicit out-of-wedge note
-- **HORN-KC-01**: Horn derivation vs `as_known_on` decided and pinned by a named test
-- **ASOF-ELIG-01**: whether `as_of` hides a derived fact whose premise support was retracted is decided and pinned
+- [x] **C01-01**: ADR-013 records one C01 option — pack stamp (a), not fifth axis, not Horn, not `valid_to` — with oracle `fixg01_c01_sunset_inexpressible_as_horn` and an out-of-wedge note
+- [x] **HORN-KC-01**: Horn ingest-at-head vs `as_known_on` decided; killed pin `known04_horn_fires_when_premise_hidden_on_early_cut` (not inverted)
+- [x] **ASOF-ELIG-01**: `as_of` stays support-live when ineligible; pin `asof_elig01_as_of_contains_derived_when_ineligible`
 
 ### Horn closure (Phase 47, S03)
 
