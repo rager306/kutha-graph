@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-06 — Process: lease M018 S04 (GSD Phase 48)
+
+### Process
+
+- Active Milestone **M018**, Active Slice **S04** (`L_delivery=M018-S03-done`): I-F15/I-F16 oracle tightening and bench gate (GATE-01). DIFF-01 already closed in M019 S07.
+
+### Trajectory
+
+- Honeycomb stays Proposed. No new capability claim.
+
 ## 2026-10-06 — Process: close M018 S03 (GSD Phase 47)
 
 ### Process

@@ -5,7 +5,7 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M018
-**Active Slice:** None
+**Active Slice:** S04
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M018 S03-done (GSD Phase 47 verified); S02-done | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
+| L_delivery | M018 S04 leased (GSD Phase 48); S03-done | Capability proven / Cypher started / typed clocks / ADR-050 six dictionaries |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M018 S03 closed 2026-10-06** (GSD Phase 47, independent `47-VERIFICATION.md` passed). `L_delivery=M018-S03-done`, Active Slice **None**. DET-02 hash-stable derived ids; HORN-CORR re-derive; CASC hop admit. Honeycomb stays Proposed. Next: controller leases M018 S04 (Phase 48: ORACLE-01, GATE-01). Crate SemVer 0.0.0.
+**M018 S04 leased 2026-10-06** (GSD Phase 48). Active Milestone **M018**, Active Slice **S04**, `L_delivery=M018-S03-done`. Locked: ORACLE-01 I-F15 visit bound + I-F16 re-derive pin; GATE-01 recorded controller bench step (gsd-auto-contract) plus existing BENCH-controller row. DIFF-01 already closed in M019. Honeycomb stays Proposed.
 
 ## Thaw map
 
