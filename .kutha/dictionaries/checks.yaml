@@ -1466,14 +1466,15 @@ checks:
         message: "I-F15 visit-bound oracle missing {missing}"
 
   - id: i-f16-derivable
-    description: I-F16 — Horn execution replay re-derives from logged premises (M016)
+    description: I-F16 — Horn Correct/CorrectInterval re-derives from logged premises
     steps:
       - kind: rust_test_asserts
-        path: crates/kutha-runtime/tests/m016_s04_kill.rs
+        path: crates/kutha-runtime/tests/m019_sem_meta.rs
         tests:
-          - empty_pin_inverse_fails_replay_fingerprint_unchanged
+          - horn_correct_derived_not_live_after_premise_correct
+          - horn_correct_interval_derived_not_live_after_patch
         category: i-f-oracle
-        message: "I-F16 derivable oracle missing {missing}"
+        message: "I-F16 horn_correct oracles missing {missing}"
 
   - id: test-matrix
     description: >-

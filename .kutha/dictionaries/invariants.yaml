@@ -234,7 +234,7 @@ invariants:
     check: i-f15-ingest-o1
 
   - id: I-F16-derivable
-    claim: "A derived fact is reproducible by re-running registered rules over logged premises"
+    claim: "A derived fact is reproducible by re-running registered rules over logged premises; I-F16 pins horn_correct_derived_not_live_after_premise_correct and horn_correct_interval_derived_not_live_after_patch"
     source: docs/architecture/semantic-gap-review.md
     disposition: check
     check: i-f16-derivable

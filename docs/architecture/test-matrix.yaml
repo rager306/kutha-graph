@@ -750,6 +750,18 @@ rows:
     gate: default
     owner: M018-S04
     source: M018 S04 / ORACLE-01 / I-F15
+  - id: ORACLE-if16
+    plane: product
+    invariant: Correct and CorrectInterval of a Horn premise re-derive; stale derived is not live
+    layer: kill
+    oracle:
+      - horn_correct_derived_not_live_after_premise_correct
+      - horn_correct_interval_derived_not_live_after_patch
+    kill_mutation: rule_follow_ons skips Correct/CorrectInterval of a Horn premise
+    status: killed
+    gate: default
+    owner: M018-S04
+    source: M018 S04 / ORACLE-01 / I-F16
 
   # --- harness ---
   - id: HAR-freeze-rocks

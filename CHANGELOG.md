@@ -9,6 +9,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Product
 
 - I-F15 visit bound remains `extra_relatedto_horn_visits_constant_in_n` (`m017_ingest_scaling.rs`): extra unrelated `relatedTo` must not grow `horn_examine` with N. Matrix `ORACLE-if15` killed (`owner: M018-S04`). `i-f15-ingest-o1` still cites `green_ingest_visits_constant_in_n` and now also this pin.
+- I-F16 pins `horn_correct_derived_not_live_after_premise_correct` and `horn_correct_interval_derived_not_live_after_patch` (`m019_sem_meta.rs`). Matrix `ORACLE-if16` killed (`owner: M018-S04`). `i-f16-derivable` observes those two tests (no longer `empty_pin_inverse_fails_replay_fingerprint_unchanged`). `SEM-horn-correct` stays killed.
 
 ## 2026-10-06 — Process: lease M018 S04 (GSD Phase 48)
 
