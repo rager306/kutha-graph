@@ -107,10 +107,10 @@ Docs/oracles only. ASVS V2–V4/V6 n/a. V5: fixture strings stay in tests (C01 q
 |---|-------|------|
 | A1 | CONTEXT “leave `blocked`” outranks D-HORN-KC “promote → killed” for **YAML status** | If controller wanted `killed`+mutation, `test_matrix` HIGH until mutation text exists |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Retract cascade vs ASOF wording** — treat as query-plane (recommended) vs stop under D-SCOPE.
-2. Dual `SEM-horn-tt-max` (characterization) + `SEM-horn-kc` (blocked, same oracle) — keep both; rewrite kc invariant only.
+1. **Retract cascade vs ASOF wording** — RESOLVED: query-plane pin (`as_of` still lists ineligible live triples); if that pin fails on HEAD, D-SCOPE stop. Do not delete `retract_derived`.
+2. Dual `SEM-horn-tt-max` (characterization) + `SEM-horn-kc` (blocked, same oracle) — RESOLVED: keep both; rewrite kc invariant only.
 
 ## Sources
 
