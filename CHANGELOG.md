@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-06 — Process: lease M018 S03 (GSD Phase 47)
+
+### Process
+
+- Active Milestone **M018**, Active Slice **S03** (`L_delivery=M018-S02-done`): Horn determinism and closure (DET-02, HORN-CORR-01, CASC-01). RED first on characterization oracles that this slice inverts.
+
+### Trajectory
+
+- Locked for this slice (not ADR Accepted): derived EventIds are SHA-256-stable like `Event::stable_define`; user Assert stays UUID v7. Correct/CorrectInterval of a Horn premise re-derives. Every cascade hop `admit`s; unknown Horn relation fails closed. Honeycomb stays Proposed.
+
 ## 2026-10-06 — Process: close M018 S02 (GSD Phase 46)
 
 ### Process

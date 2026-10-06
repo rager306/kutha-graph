@@ -13,7 +13,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 ## Milestones
 
 - ✅ **v0.01–v0.10, v0.12, v0.13** — shipped — see `./milestones/`
-- 🚧 **v0.11 Wedge unblock** — Phases 45–48 (harness M018) — Phases 45–46 shipped; Phase 47 next
+- 🚧 **v0.11 Wedge unblock** — Phases 45–48 (harness M018) — Phases 45–46 shipped; Phase 47 leased 2026-10-06
 - ✅ **v0.12 Log durability protocol** — Phases 49–55 (harness M002) — shipped 2026-10-04 — [archive](./milestones/v0.12-ROADMAP.md)
 - ✅ **v0.13 Post-M002 coherence** — Phases 56–62 (harness M019) — shipped 2026-10-05 — [archive](./milestones/v0.13-ROADMAP.md)
 
@@ -34,4 +34,4 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 | v0.01–v0.10, v0.12, v0.13 | 1–44, 49–62 | shipped |
 | v0.11 | 45–48 | Phases 45–46 shipped; Phase 47 next |
 
-**Next:** lease M018 S03 / `/gsd-autonomous --only 47` (DET-02, HORN-CORR-01, CASC-01).
+**Next:** execute v0.11 Phase 47 (DET-02 hash-stable derived ids, HORN-CORR re-derive, CASC admit hops).
