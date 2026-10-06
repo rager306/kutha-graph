@@ -421,6 +421,47 @@ fn live_known_by(rt: &Runtime, s: TermId, o: TermId) -> bool {
     live_triple(rt, s, kb, o, 2017)
 }
 
+/// DET-02 / D-DET-02: two fresh `Runtime` ingest sequences of genesis
+/// `inverse_knows` (Alice/Bob `knows`) mint equal derived Behavior EventIds.
+/// User Assert stays `Event::new` (UUID v7) and is not compared.
+#[test]
+fn det02_two_ingest_derived_event_ids_equal() {
+    fn ingest_derived_behavior_ids() -> Vec<kutha_common::EventId> {
+        let mut rt = Runtime::default();
+        let alice = rt.intern("Alice");
+        let bob = rt.intern("Bob");
+        let knows = rt.intern("knows");
+        rt.emit(Op::Assert {
+            subject: alice,
+            relation: knows,
+            object: bob,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
+        rt.log()
+            .iter()
+            .filter_map(|e| match &e.op {
+                Op::Behavior { .. } => Some(e.id),
+                _ => None,
+            })
+            .collect()
+    }
+    let a = ingest_derived_behavior_ids();
+    let b = ingest_derived_behavior_ids();
+    assert!(
+        !a.is_empty(),
+        "genesis inverse_knows must mint at least one derived Behavior"
+    );
+    assert_eq!(
+        a, b,
+        "two ingest of the same Horn fixture must mint equal derived Behavior EventIds"
+    );
+}
+
 /// Characterization (HORN-CORR-01): Correct of a Horn premise does not re-mint or
 /// retract the derived inverse today (`rule_follow_ons` skips Correct).
 /// Also pins current fold behaviour: the superseded premise fact is not live

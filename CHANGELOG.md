@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-06 — Horn determinism (Phase 47)
+
+### Product
+
+- RED pin `det02_two_ingest_derived_event_ids_equal`: two `Runtime::default()` ingest of genesis `inverse_knows` (Alice/Bob `knows`) must mint equal derived Behavior EventIds. Fails on HEAD because derived mint is `Event::new` / UUID v7. User Assert stays `Event::new` v7 and is not compared. Characterization `horn_correct_char_*` stays live until GREEN invert.
+
 ## 2026-10-06 — Process: lease M018 S03 (GSD Phase 47)
 
 ### Process
