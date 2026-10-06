@@ -304,6 +304,58 @@ impl Event {
         }
     }
 
+    /// Hash-stable derived `Op::Behavior` / follow-on `Op::Retract` (DET-02).
+    ///
+    /// Id is the first 16 bytes of SHA-256(`kutha-derived-id` || pin || ingested_at
+    /// || TermId bindings || ASCII `B`/`R`). Does not hash the triggering user
+    /// Assert UUID v7. Live [`Event::new`] user ingest still mints UUID v7.
+    pub fn stable_derived(op: Op, ingested_at: impl Into<TransactionTime>) -> Self {
+        let ingested_at = ingested_at.into().as_u64();
+        let mut h = Sha256::new();
+        h.update(b"kutha-derived-id");
+        let object_ids = match &op {
+            Op::Behavior {
+                rule_version,
+                subject,
+                relation,
+                object,
+                ..
+            } => {
+                h.update(rule_version.as_bytes());
+                h.update(ingested_at.to_le_bytes());
+                h.update(subject.to_le_bytes());
+                h.update(relation.to_le_bytes());
+                h.update(object.to_le_bytes());
+                h.update(b"B");
+                vec![*subject, *relation, *object]
+            }
+            Op::Retract { event_id } => {
+                h.update(ingested_at.to_le_bytes());
+                h.update(event_id.as_bytes());
+                h.update(b"R");
+                vec![]
+            }
+            other => {
+                debug_assert!(
+                    false,
+                    "stable_derived is for derived Behavior/Retract, got {other:?}"
+                );
+                h.update(ingested_at.to_le_bytes());
+                h.update(b"?");
+                vec![]
+            }
+        };
+        let digest = h.finalize();
+        let mut id_bytes = [0u8; 16];
+        id_bytes.copy_from_slice(&digest[..16]);
+        Self {
+            id: Uuid::from_bytes(id_bytes),
+            op,
+            ingested_at,
+            object_ids,
+        }
+    }
+
     pub fn digest_bytes(&self) -> [u8; 32] {
         let mut h = Sha256::new();
         h.update(self.id.as_bytes());

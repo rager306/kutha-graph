@@ -1,7 +1,7 @@
 //! Horn evaluation over live product triples (M016 S03 / RULE-02).
 //! Named bodies are pins only; they do not auto-fire.
 
-use crate::quantum::Runtime;
+use crate::quantum::{Runtime, RuntimeError};
 use kutha_common::{Event, EventId, Op, RuleAst, RuleAtom, RuleTerm, TermDictionary, TermId};
 
 const MAX_VAR: usize = 16;
@@ -25,7 +25,7 @@ pub(crate) fn inverse_knows_rule() -> RuleAst {
 type Bind = [Option<TermId>; MAX_VAR];
 
 impl Runtime {
-    pub(crate) fn rule_follow_ons(&self, event: &Event) -> Vec<Event> {
+    pub(crate) fn rule_follow_ons(&self, event: &Event) -> Result<Vec<Event>, RuntimeError> {
         match &event.op {
             Op::Assert {
                 subject,
@@ -51,8 +51,52 @@ impl Runtime {
                 *valid_from,
                 *valid_to,
             ),
-            Op::Retract { event_id } => self.retract_derived(event, *event_id),
-            _ => vec![],
+            Op::Retract { event_id } => Ok(self.retract_derived(event, *event_id)),
+            Op::Correct {
+                event_id,
+                object,
+                valid_from,
+                valid_to,
+            } => {
+                let mut out = self.retract_derived(event, *event_id);
+                if let Some(idx) = self.fold.fact_index_by_event_id(*event_id) {
+                    let fact = &self.fold.facts()[idx];
+                    let (s, r) = (fact.subject, fact.relation);
+                    out.extend(self.horn_fires(
+                        event.id,
+                        event.ingested_at,
+                        s,
+                        r,
+                        *object,
+                        *valid_from,
+                        *valid_to,
+                    )?);
+                }
+                Ok(out)
+            }
+            Op::CorrectInterval {
+                event_id,
+                object,
+                patch_from,
+                patch_to,
+            } => {
+                let mut out = self.retract_derived(event, *event_id);
+                if let Some(idx) = self.fold.fact_index_by_event_id(*event_id) {
+                    let fact = &self.fold.facts()[idx];
+                    let (s, r) = (fact.subject, fact.relation);
+                    out.extend(self.horn_fires(
+                        event.id,
+                        event.ingested_at,
+                        s,
+                        r,
+                        *object,
+                        *patch_from,
+                        *patch_to,
+                    )?);
+                }
+                Ok(out)
+            }
+            _ => Ok(vec![]),
         }
     }
 
@@ -82,61 +126,66 @@ impl Runtime {
                 .and_then(|i| self.fold.facts().get(i))
                 .is_some_and(|f| f.invalidated_at.is_none())
             {
-                out.push(Event::new(
-                    Op::Retract { event_id: e.id },
-                    trigger.ingested_at,
-                ));
+                  out.push(Event::stable_derived(
+                      Op::Retract { event_id: e.id },
+                      trigger.ingested_at,
+                  ));
             }
         }
         out
     }
 
-    fn horn_fires(
-        &self,
-        caused_by: EventId,
-        ingested_at: u64,
-        subject: TermId,
-        relation: TermId,
-        object: TermId,
-        valid_from: u64,
-        valid_to: Option<u64>,
-    ) -> Vec<Event> {
-        let mut out = Vec::new();
-        for (pin, ast) in self.live_horns(valid_from, relation) {
-            let RuleAst::Horn { head, premises } = ast else {
-                continue;
-            };
-            for (i, prem) in premises.iter().enumerate() {
-                let Some(prem_rel) = self.dict.id(&prem.relation) else {
-                    continue;
-                };
-                if prem_rel != relation {
-                    continue;
-                }
-                let mut bind = [None; MAX_VAR];
-                if !unify_term(&prem.subject, subject, &self.dict, &mut bind) {
-                    continue;
-                }
-                if !unify_term(&prem.object, object, &self.dict, &mut bind) {
-                    continue;
-                }
-                if let Some(bind) = search_prems(self, &premises, i, bind, valid_from, u64::MAX) {
-                    if let Some(ev) = self.head_event(
-                        &head,
-                        &pin,
-                        &bind,
-                        caused_by,
-                        ingested_at,
-                        valid_from,
-                        valid_to,
-                    ) {
-                        out.push(ev);
-                    }
-                }
-            }
-        }
-        out
-    }
+      fn horn_fires(
+          &self,
+          caused_by: EventId,
+          ingested_at: u64,
+          subject: TermId,
+          relation: TermId,
+          object: TermId,
+          valid_from: u64,
+          valid_to: Option<u64>,
+      ) -> Result<Vec<Event>, RuntimeError> {
+          let mut out = Vec::new();
+          for (pin, ast) in self.live_horns(valid_from, relation) {
+              let RuleAst::Horn { head, premises } = ast else {
+                  continue;
+              };
+              for (i, prem) in premises.iter().enumerate() {
+                  let Some(prem_rel) = self.dict.id(&prem.relation) else {
+                      continue;
+                  };
+                  if prem_rel != relation {
+                      continue;
+                  }
+                  let mut bind = [None; MAX_VAR];
+                  if !unify_term(&prem.subject, subject, &self.dict, &mut bind) {
+                      continue;
+                  }
+                  if !unify_term(&prem.object, object, &self.dict, &mut bind) {
+                      continue;
+                  }
+                  if let Some(bind) = search_prems(self, &premises, i, bind, valid_from, u64::MAX) {
+                      if self.dict.id(&head.relation).is_none() {
+                          return Err(RuntimeError::UnknownRelation {
+                              name: head.relation.clone(),
+                          });
+                      }
+                      if let Some(ev) = self.head_event(
+                          &head,
+                          &pin,
+                          &bind,
+                          caused_by,
+                          ingested_at,
+                          valid_from,
+                          valid_to,
+                      ) {
+                          out.push(ev);
+                      }
+                  }
+              }
+          }
+          Ok(out)
+      }
 
     fn live_horns(&self, vt: u64, relation: TermId) -> Vec<(String, RuleAst)> {
         if self.fold.rel_rule.is_none() {
@@ -210,19 +259,19 @@ impl Runtime {
         } else {
             head.relation.clone()
         };
-        Some(Event::new(
-            Op::Behavior {
-                name,
-                caused_by,
-                rule_version: pin.to_string(),
-                subject,
-                relation: rel,
-                object,
-                valid_from,
-                valid_to,
-            },
-            ingested_at,
-        ))
+          Some(Event::stable_derived(
+              Op::Behavior {
+                  name,
+                  caused_by,
+                  rule_version: pin.to_string(),
+                  subject,
+                  relation: rel,
+                  object,
+                  valid_from,
+                  valid_to,
+              },
+              ingested_at,
+          ))
     }
 
     /// Horn-pinned Behavior is reproducible from premises live at `ingested_at`.

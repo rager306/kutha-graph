@@ -242,9 +242,6 @@ impl Runtime {
 
     fn commit_user_cascade(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
         let first = Event::new(op, self.next_tt());
-        for follow in self.rule_follow_ons(&first) {
-            self.admit(&follow.op, ReceiptMode::User)?;
-        }
         let mut ids = Vec::new();
         let mut digests = Vec::new();
         let mut aborted = false;
@@ -259,7 +256,10 @@ impl Runtime {
             used += 1;
             ids.push(event.id);
             digests.push(event.digest_bytes());
-            let follow = self.rule_follow_ons(&event);
+            let follow = self.rule_follow_ons(&event)?;
+            for e in &follow {
+                self.admit(&e.op, ReceiptMode::User)?;
+            }
             self.commit_event(event);
             for e in follow {
                 pending.push(e);

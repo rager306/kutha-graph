@@ -8,7 +8,10 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Product
 
-- RED pin `det02_two_ingest_derived_event_ids_equal`: two `Runtime::default()` ingest of genesis `inverse_knows` (Alice/Bob `knows`) must mint equal derived Behavior EventIds. Fails on HEAD because derived mint is `Event::new` / UUID v7. User Assert stays `Event::new` v7 and is not compared. Characterization `horn_correct_char_*` stays live until GREEN invert.
+- RED pin `det02_two_ingest_derived_event_ids_equal`: two `Runtime::default()` ingest of genesis `inverse_knows` (Alice/Bob `knows`) must mint equal derived Behavior EventIds. User Assert stays `Event::new` v7 and is not compared.
+- Derived Horn `Op::Behavior` and follow-on `Op::Retract` mint `Event::stable_derived` (SHA-256 prefix `kutha-derived-id`, rule pin UTF-8, `ingested_at`, TermId bindings as LE bytes, ASCII tag `B`/`R`). Triggering user Assert UUID v7 is not in the preimage.
+- `Correct` / `CorrectInterval` of a Horn premise `retract_derived` then `horn_fires` on fold subject/relation plus the new object/interval. Stale derived is not live at the post-correct cut.
+- `commit_user_cascade` admits each follow-on (`ReceiptMode::User`) before `pending.push`; LIFO `pop` unchanged. UnknownRelation only on a matched firing Horn whose head is missing from the dict; intern-later nary stays `Ok`.
 
 ## 2026-10-06 — Process: lease M018 S03 (GSD Phase 47)
 

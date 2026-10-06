@@ -14,7 +14,7 @@ use common::sem::{
     seeded_persist_runtime, seeded_runtime, seeds,
 };
 use kutha_common::{Op, RuleAst, RuleAtom, RuleTerm, TermId};
-use kutha_runtime::{FoldIndexMode, Runtime, store};
+use kutha_runtime::{FoldIndexMode, Runtime, RuntimeError, store};
 use std::fs;
 
 fn inverse_behaviors(rt: &Runtime) -> Vec<(TermId, TermId, TermId)> {
@@ -462,12 +462,10 @@ fn det02_two_ingest_derived_event_ids_equal() {
     );
 }
 
-/// Characterization (HORN-CORR-01): Correct of a Horn premise does not re-mint or
-/// retract the derived inverse today (`rule_follow_ons` skips Correct).
-/// Also pins current fold behaviour: the superseded premise fact is not live
-/// at the post-correction cut (not an owner choice of HORN-CORR-01).
+/// HORN-CORR-01: Correct of a Horn premise retracts the stale derived inverse
+/// and re-fires on the replacement object (Carol inverse minted or none).
 #[test]
-fn horn_correct_char_derived_survives_premise_correct() {
+fn horn_correct_derived_not_live_after_premise_correct() {
     let mut rt = Runtime::default();
     let alice = rt.intern("Alice");
     let bob = rt.intern("Bob");
@@ -488,9 +486,8 @@ fn horn_correct_char_derived_survives_premise_correct() {
     let prem = out.receipt.event_ids[0];
     assert!(
         live_known_by(&rt, bob, alice),
-        "characterization: inverse_knows mints Bob knownBy Alice"
+        "inverse_knows mints Bob knownBy Alice"
     );
-    let n_inv_before = inverse_behaviors(&rt).len();
     rt.emit(Op::Correct {
         event_id: prem,
         object: carol,
@@ -499,32 +496,22 @@ fn horn_correct_char_derived_survives_premise_correct() {
     })
     .unwrap();
     assert!(
-        live_known_by(&rt, bob, alice),
-        "characterization HORN-CORR-01: derived inverse stays live after Correct of the premise"
-    );
-    assert!(
-        !live_known_by(&rt, carol, alice),
-        "characterization HORN-CORR-01: Correct does not mint a new inverse for the replacement object"
-    );
-    assert_eq!(
-        n_inv_before,
-        inverse_behaviors(&rt).len(),
-        "characterization HORN-CORR-01: no extra inverse_knows Behavior is appended on Correct"
+        !live_known_by(&rt, bob, alice),
+        "HORN-CORR-01: stale derived inverse is not live after Correct of the premise"
     );
     assert!(
         !live_triple(&rt, alice, knows, bob, 2017),
-        "characterization (current fold): superseded premise is not live at the post-correction cut"
+        "superseded premise is not live at the post-correction cut"
     );
     assert!(
         live_triple(&rt, alice, knows, carol, 2017),
-        "characterization (current fold): replacement premise is live at the post-correction cut"
+        "replacement premise is live at the post-correction cut"
     );
 }
 
-/// Characterization (HORN-CORR-01): CorrectInterval of a Horn premise likewise
-/// leaves the derived inverse in place (no retract_derived, no re-mint).
+/// HORN-CORR-01: CorrectInterval of a Horn premise retracts then re-derives.
 #[test]
-fn horn_correct_interval_char_derived_survives_patch() {
+fn horn_correct_interval_derived_not_live_after_patch() {
     let mut rt = Runtime::default();
     let alice = rt.intern("Alice");
     let bob = rt.intern("Bob");
@@ -552,20 +539,126 @@ fn horn_correct_interval_char_derived_survives_patch() {
     })
     .unwrap();
     assert!(
-        live_known_by(&rt, bob, alice),
-        "characterization HORN-CORR-01: CorrectInterval does not retract the derived inverse"
-    );
-    assert_eq!(
-        1,
-        inverse_behaviors(&rt).len(),
-        "characterization HORN-CORR-01: CorrectInterval does not append inverse_knows"
+        !live_known_by(&rt, bob, alice),
+        "HORN-CORR-01: CorrectInterval retracts the stale derived inverse"
     );
     assert!(
         !live_triple(&rt, alice, knows, bob, 2017),
-        "characterization (current fold): original premise is not live inside the patched interval"
+        "original premise is not live inside the patched interval"
     );
     assert!(
         live_triple(&rt, alice, knows, carol, 2017),
-        "characterization (current fold): patched object is live inside the patched interval"
+        "patched object is live inside the patched interval"
     );
+}
+
+/// CASC-01: interned but not-allowed Horn head is admitted before push; hop absent from log.
+#[test]
+fn casc01_disallowed_second_hop_absent_from_log() {
+    let mut rt = Runtime::default();
+    let _ghost = rt.intern("ghostHop");
+    let v = |i| RuleTerm::var(i).unwrap();
+    let atom = |rel: &str, s, o| RuleAtom::new(rel, s, o).unwrap();
+    let ast = RuleAst::horn(
+        atom("ghostHop", v(1), v(0)),
+        vec![atom("knows", v(0), v(1))],
+    )
+    .unwrap();
+    rt.emit_rule_ast(&ast, 2010, None).unwrap();
+    let alice = rt.intern("Alice");
+    let bob = rt.intern("Bob");
+    let knows = rt.intern("knows");
+    let err = rt
+        .emit(Op::Assert {
+            subject: alice,
+            relation: knows,
+            object: bob,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::UnknownRelation { ref name } if name == "ghostHop"),
+        "{err}"
+    );
+    assert!(
+        rt.log().iter().all(|e| {
+            !matches!(
+                &e.op,
+                Op::Behavior { name, .. } if name == "ghostHop"
+            )
+        }),
+        "disallowed hop must never appear in the log"
+    );
+}
+
+/// CASC-01: matched firing Horn with head missing from the dict is UnknownRelation.
+/// Uninterned unmatched premises stay intern-later (`emit_rule_ast` then intern).
+#[test]
+fn casc01_unknown_head_on_matched_horn_is_err() {
+    let mut rt = Runtime::default();
+    let v = |i| RuleTerm::var(i).unwrap();
+    let atom = |rel: &str, s, o| RuleAtom::new(rel, s, o).unwrap();
+    let ast = RuleAst::horn(
+        atom("missingHead", v(1), v(0)),
+        vec![atom("knows", v(0), v(1))],
+    )
+    .unwrap();
+    rt.emit_rule_ast(&ast, 2010, None).unwrap();
+    let alice = rt.intern("Alice");
+    let bob = rt.intern("Bob");
+    let knows = rt.intern("knows");
+    let err = rt
+        .emit(Op::Assert {
+            subject: alice,
+            relation: knows,
+            object: bob,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap_err();
+    assert!(
+        matches!(err, RuntimeError::UnknownRelation { ref name } if name == "missingHead"),
+        "{err}"
+    );
+
+    let mut nary = Runtime::default();
+    let two = RuleAst::horn(
+        atom("relatedTo", v(0), v(2)),
+        vec![atom("relatedTo", v(0), v(1)), atom("relatedTo", v(1), v(2))],
+    )
+    .unwrap();
+    nary.emit_rule_ast(&two, 2010, None).unwrap();
+    let a = nary.intern("A");
+    let b = nary.intern("B");
+    let c = nary.intern("C");
+    let rel = nary.intern("relatedTo");
+    nary.emit(Op::Assert {
+        subject: a,
+        relation: rel,
+        object: b,
+        valid_from: 2010,
+        valid_to: None,
+        claim: None,
+        delivery_key: None,
+        polarity: None,
+    })
+    .unwrap();
+    nary.emit(Op::Assert {
+        subject: b,
+        relation: rel,
+        object: c,
+        valid_from: 2010,
+        valid_to: None,
+        claim: None,
+        delivery_key: None,
+        polarity: None,
+    })
+    .unwrap();
 }
