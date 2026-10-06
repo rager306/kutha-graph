@@ -21,9 +21,9 @@
 
 ### Horn closure (Phase 47, S03)
 
-- **DET-02**: derived-event identity is deterministic from premise ids, rule pin and binding — or the UUID v7 choice is recorded with its replay consequence
-- **HORN-CORR-01**: `Correct` and `CorrectInterval` re-derive; stale derived rows do not stay live
-- **CASC-01**: every cascade hop passes `admit`; commit order is stable; unknown head or premise relation in a rule fails closed
+- [x] **DET-02**: derived-event identity is deterministic from premise ids, rule pin and binding — or the UUID v7 choice is recorded with its replay consequence
+- [x] **HORN-CORR-01**: `Correct` and `CorrectInterval` re-derive; stale derived rows do not stay live
+- [x] **CASC-01**: every cascade hop passes `admit`; commit order is stable; unknown head or premise relation in a rule fails closed
 
 ### Differential tests (Phase 48, S04)
 

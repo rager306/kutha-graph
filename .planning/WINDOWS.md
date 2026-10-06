@@ -1,15 +1,13 @@
 ---
 schema_version: 1
-open_count: 7
+open_count: 8
 waived_count: 4
 fixed_count: 1
-total_count: 12
-last_updated: 2026-10-01T18:41:41.282Z
+total_count: 13
+last_updated: 2026-10-06T12:30:20.217Z
 ---
 
 # Broken Windows Ledger
-
-> **Status 2026-10-03:** Windows 2, 4, 7, and 12 are archaeology. Window 11 (PROC-02) passed in v0.06. `workflow.windows_enforce` is not set. Rows are not deleted.
 
 > Cross-phase defect register. With `workflow.windows_enforce` enabled, `/gsd-ship` blocks while `open_count > 0`.
 > Waive with `gsd-tools windows waive <id> "<reason>"` (reason required).
@@ -29,6 +27,7 @@ last_updated: 2026-10-01T18:41:41.282Z
 | 10 | 27 | deviation | docs/architecture/benchmark-baseline.md |  | D-07 Phase 22 bench ≤10% STOP: ingest +2168% as_of +1566% | open |  | 2026-10-01T17:47:53.285Z |  |
 | 11 | 28 | unmet-truth | .planning/phases/28-independent-verification-and-artifact-budget/28-VERIFICATION.md |  | PROC-02 pending post-execute 28-VERIFICATION (verify-work, independent model per D-08) | open |  | 2026-10-01T18:41:40.853Z |  |
 | 12 | 28 | deviation | docs/process/gsd-auto-contract.md |  | Restored pre-existing uncommitted Gate stacking/reindex edits to HEAD so 28-02 did not change the contract | open |  | 2026-10-01T18:41:41.282Z |  |
+| 13 | 47 | deviation | .planning/phases/46-c01-knowledge-cut/46-VERIFICATION.md |  | ci HIGH verification-independent missing exit: needle (pre-existing; out of 47-01 slice) | open |  | 2026-10-06T12:30:20.217Z |  |
 
 ````json
 [
@@ -187,6 +186,19 @@ last_updated: 2026-10-01T18:41:41.282Z
     "recorded_at": "2026-10-01T18:41:41.282Z",
     "resolved_at": null,
     "milestone": "v0.06"
+  },
+  {
+    "id": 13,
+    "kind": "deviation",
+    "phase": "47",
+    "file": ".planning/phases/46-c01-knowledge-cut/46-VERIFICATION.md",
+    "line": null,
+    "description": "ci HIGH verification-independent missing exit: needle (pre-existing; out of 47-01 slice)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-10-06T12:30:20.217Z",
+    "resolved_at": null,
+    "milestone": "v0.11"
   }
 ]
 ````

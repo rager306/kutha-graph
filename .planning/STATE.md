@@ -5,12 +5,15 @@ milestone_name: Wedge unblock
 current_phase: 47
 current_phase_name: Horn determinism and closure
 status: in_progress
-stopped_at: Phase 47 47-01-PLAN.md ready
-last_updated: "2026-10-06T12:00:00.000Z"
+stopped_at: Completed 47-01-PLAN.md
+last_updated: "2026-10-06T12:30:24.247Z"
+last_activity: 2026-10-06
+last_activity_desc: Phase 47 plan 01 executed (SUMMARY written; independent verification pending)
+state_head: 017b46fd632ff745a104b4b5643c135ea24c6091
 progress:
-  total_phases: 4
+  total_phases: 3
   completed_phases: 2
-  total_plans: 3
+  total_plans: 2
   completed_plans: 2
 ---
 
@@ -20,8 +23,30 @@ progress:
 **Phase:** 47 — Horn determinism and closure
 **Status:** In progress — S03 leased
 
-**Last activity:** 2026-10-06 — Phase 47 plan written (`47-01-PLAN.md`, 1 wave)
+**Last activity:** 2026-10-06 — Phase 47 plan 01 executed (`47-01-SUMMARY.md`; independent verification pending)
 
-Stopped at: Phase 47 ready to execute
-Next: `/gsd-execute-phase 47` (or `/gsd-autonomous --only 47`)
+Stopped at: Completed 47-01-PLAN.md
+Next: independent `47-VERIFICATION.md` (verifier), then `/gsd-verify-work`
 M002 deferred intake: `docs/architecture/m002-cloud-kernel-io-intake.md`
+
+## Current Position
+
+Current Plan: 1
+Total Plans in Phase: 1
+
+## Performance Metrics
+
+| Plan | Duration | Tasks | Files |
+|------|----------|-------|-------|
+| Phase 47-horn-determinism-closure P01 | 11min | 3 tasks | 11 files |
+
+## Decisions
+
+- [Phase 47]: stable_derived hashes kutha-derived-id + pin + ingested_at + bindings + B/R; not user Assert v7
+- [Phase 47]: UnknownRelation only when a matched firing Horn head is missing; unmatched dict.id None continues
+
+## Session
+
+**Last session:** 2026-10-06T12:30:24.084Z
+**Stopped at:** Completed 47-01-PLAN.md
+**Resume file:** None

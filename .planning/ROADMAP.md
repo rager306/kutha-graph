@@ -26,8 +26,8 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
   - [x] 46-01-PLAN.md — named as_of support-live pin; ADR-013/matrix/honeycomb verdicts; CHANGELOG planes
 - [ ] **Phase 47: Horn determinism and closure** — derived identity, Correct re-derives, cascade admit and order (S03)
   - **Goal:** Derived Horn EventIds are SHA-256-stable across two ingests; Correct/CorrectInterval re-derive; every cascade hop admits; honeycomb stays Proposed
-  - **Plans:** 1 plan
-  - [ ] 47-01-PLAN.md — RED pins then stable ids, Correct re-derive, hop admit, matrix/ADR/CHANGELOG
+  - **Plans:** 1/1 executed; independent `47-VERIFICATION.md` pending
+  - [x] 47-01-PLAN.md — RED pins then stable ids, Correct re-derive, hop admit, matrix/ADR/CHANGELOG
 - [ ] **Phase 48: Differential tests and oracle tightening** — I-F15/I-F16 and bench gate (S04); DIFF-01 moved to Phase 62 (v0.13)
 
 ## Progress
