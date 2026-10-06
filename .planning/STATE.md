@@ -5,12 +5,12 @@ milestone_name: Wedge unblock
 current_phase: 47
 current_phase_name: Horn determinism and closure
 status: in_progress
-stopped_at: M018 S03 leased; Phase 47 CONTEXT ready
-last_updated: "2026-10-06T11:50:00.000Z"
+stopped_at: Phase 47 47-01-PLAN.md ready
+last_updated: "2026-10-06T12:00:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 2
+  total_plans: 3
   completed_plans: 2
 ---
 
@@ -20,8 +20,8 @@ progress:
 **Phase:** 47 — Horn determinism and closure
 **Status:** In progress — S03 leased
 
-**Last activity:** 2026-10-06 — controller leased M018 S03; DET-02/HORN-CORR/CASC locked in CONTEXT
+**Last activity:** 2026-10-06 — Phase 47 plan written (`47-01-PLAN.md`, 1 wave)
 
-Stopped at: planning Phase 47
-Next: `/gsd-autonomous --only 47` (CONTEXT exists; discuss skipped)
+Stopped at: Phase 47 ready to execute
+Next: `/gsd-execute-phase 47` (or `/gsd-autonomous --only 47`)
 M002 deferred intake: `docs/architecture/m002-cloud-kernel-io-intake.md`
