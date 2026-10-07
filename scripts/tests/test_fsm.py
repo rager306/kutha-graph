@@ -221,6 +221,64 @@ class FsmTests(unittest.TestCase):
             else:
                 os.environ["KUTHA_GOV_BUDGET"] = previous
 
+    def test_fold_log_bad_jsonl_raises_value_error_with_line(self) -> None:
+        import json
+        import tempfile
+
+        from kutha_gov.time_log import HarnessEvent, fold_log
+
+        raw = tempfile.mkdtemp(prefix="kutha-fold-")
+        path = Path(raw) / "events.jsonl"
+        good = HarnessEvent(
+            id="01",
+            op="assert",
+            subject="harness.run",
+            relation="status",
+            object="ok",
+            ingested_at=1,
+            valid_from=1,
+        )
+        path.write_text(json.dumps(good.to_json()) + "\nNOT_JSON\n", encoding="utf-8")
+        with self.assertRaises(ValueError) as ctx:
+            fold_log(path)
+        msg = str(ctx.exception)
+        self.assertIn("line 2", msg)
+        self.assertNotIn("Expecting value: line 1 column 1", msg)
+
+    def test_fsm_fold_log_bad_jsonl_fails_observed(self) -> None:
+        import json
+        import tempfile
+
+        from kutha_gov.fsm import QuantumOutcome, _execute
+        from kutha_gov.time_log import LOG_REL, HarnessEvent
+
+        raw = tempfile.mkdtemp(prefix="kutha-fsm-fold-")
+        root = Path(raw)
+        (root / ".kutha").mkdir()
+        good = HarnessEvent(
+            id="01",
+            op="assert",
+            subject="harness.run",
+            relation="status",
+            object="ok",
+            ingested_at=1,
+            valid_from=1,
+        )
+        (root / LOG_REL).write_text(json.dumps(good.to_json()) + "\nbad\n", encoding="utf-8")
+        outcome = QuantumOutcome(terminal="", trace=[])
+        event = _execute(
+            "fold_log",
+            {},
+            Context(root=root),
+            outcome,
+            budget=1,
+            state="fold",
+            overlap={},
+        )
+        self.assertEqual("fail", event)
+        self.assertTrue(any(f.severity is Severity.HIGH for f in outcome.findings))
+        self.assertIn(("fold_log", "fail"), outcome.observations)
+
 
 class ObserveTests(unittest.TestCase):
     def test_missing_required_ff_is_high_evidence_not_sot(self) -> None:

@@ -475,6 +475,117 @@ class SelftestTests(unittest.TestCase):
         self.assertEqual("OK", rows[0].status)
         self.assertEqual(1, rows[0].mutations)
 
+    def test_nameless_dict_id_is_load_error(self) -> None:
+        root = _write_mini(
+            [
+                {
+                    "id": "ok-check",
+                    "description": "valid",
+                    "steps": [{"kind": "file_exists", "path": "README.md"}],
+                },
+                {
+                    "description": "missing id",
+                    "steps": [{"kind": "file_exists", "path": "README.md"}],
+                },
+            ],
+            {"README.md": "x\n"},
+        )
+        from kutha_gov.dictionary import LoadErrorCheck
+        from kutha_gov.protocol import Context
+
+        checks = get_checks(root)
+        self.assertEqual([LoadErrorCheck.name], list(checks))
+        result = checks[LoadErrorCheck.name].run(Context(root=root))
+        self.assertGreaterEqual(result.high_count, 1)
+
+    def test_missing_cite_path_is_high(self) -> None:
+        from kutha_gov.protocol import Context
+
+        root = _write_mini(
+            [
+                {
+                    "id": "cite-miss",
+                    "description": "cite path must exist",
+                    "steps": [
+                        {
+                            "kind": "cite_equals",
+                            "source": {
+                                "path": "SOURCE.md",
+                                "pattern": r"version:\s*(\S+)",
+                            },
+                            "cites": [
+                                {
+                                    "path": "MISSING.md",
+                                    "pattern": r"version:\s*(\S+)",
+                                }
+                            ],
+                        }
+                    ],
+                }
+            ],
+            {"SOURCE.md": "version: 1.0\n"},
+        )
+        check = get_checks(root)["cite-miss"]
+        result = check.run(Context(root=root))
+        self.assertGreaterEqual(result.high_count, 1)
+        self.assertTrue(
+            any(f.category == "missing" and "MISSING.md" in f.message for f in result.findings),
+            msg=result.findings,
+        )
+
+    def test_min_phase_unprefixed_dirname_is_high(self) -> None:
+        from kutha_gov.protocol import Context
+
+        root = _write_mini(
+            [
+                {
+                    "id": "phase-dirs",
+                    "description": "unprefixed phase dir",
+                    "steps": [
+                        {
+                            "kind": "glob_max_lines",
+                            "glob": ".planning/phases/*-*/*.md",
+                            "min_phase": 1,
+                            "max": 200,
+                            "min_hits": 0,
+                        }
+                    ],
+                }
+            ],
+            {".planning/phases/nophase/x.md": "# hi\n"},
+        )
+        check = get_checks(root)["phase-dirs"]
+        result = check.run(Context(root=root))
+        self.assertGreaterEqual(result.high_count, 1)
+        self.assertTrue(
+            any("nophase" in (f.message or "") or "nophase" in (f.path or "") for f in result.findings),
+            msg=result.findings,
+        )
+
+    def test_empty_markdown_heading_glob_is_high(self) -> None:
+        from kutha_gov.protocol import Context
+
+        root = _write_mini(
+            [
+                {
+                    "id": "empty-heading",
+                    "description": "empty ADR glob",
+                    "steps": [
+                        {
+                            "kind": "markdown_heading_tag",
+                            "glob": "docs/ADR/ADR-*.md",
+                            "heading": "## Status",
+                            "allowed": ["Proposed", "Accepted"],
+                        }
+                    ],
+                }
+            ],
+            {"docs/ADR/.keep": ""},
+        )
+        check = get_checks(root)["empty-heading"]
+        result = check.run(Context(root=root))
+        self.assertGreaterEqual(result.high_count, 1)
+
     def test_unknown_mutation_op_is_unproven(self) -> None:
         check = DictCheck(
             {
