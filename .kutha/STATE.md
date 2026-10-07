@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M020
+**Active Slice:** S03
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M020 S02 done (harness fail-closed); S03+ unleased | Capability proven / Cypher started |
+| L_delivery | M020 S02 done; S03 leased (persist atomic rewrite) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M020 S02 closed 2026-10-07** (GSD Phase 64). Independent `64-VERIFICATION.md` passed. `L_delivery=M020-S02-done`, Active Slice **None**. Next lease: M020 S03 (persist atomic rewrite). Honeycomb stays Proposed. Not Cypher/HNSW.
+**Lease M020 S03 / GSD Phase 65 (persist atomic rewrite).** `L_delivery=M020-S02-done`. Scope: `write_segment_file` / `persist_log` via tmp+fsync+rename (manifest last); crash-window failpoint oracle; bench ≤10% on `ingest_plain.n` / `as_of.n`. Honeycomb stays Proposed. Not Cypher/HNSW.
 
 ## Thaw map
 
