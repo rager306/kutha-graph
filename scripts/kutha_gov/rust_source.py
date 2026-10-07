@@ -401,7 +401,3 @@ def first_assert_macro_span(src: str, name: str) -> tuple[int, int] | None:
     if not spans:
         return None
     return spans[0]
-
-
-def line_at(src: str, index: int) -> int:
-    return src[:index].count("\n") + 1
