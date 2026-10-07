@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-07 — Process: lease M021 S02 (GSD Phase 69)
+
+### Process
+
+- `L_delivery=M021-S01-done`, Active Slice **S02**: Retract-all-live for CorrectInterval residuals; RED first; bench ≤10%. Independent `68-VERIFICATION.md` passed. Honeycomb stays Proposed.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
+## 2026-10-07 — Process: close M021 S01 (Phase 68)
+
+### Process
+
+- `L_delivery=M021-S01-done`. Independent `68-VERIFICATION.md` passed. TR-02 / C01 pins; matrix decision rows killed.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-07 — Product: wedge decision pins (Phase 68)
 
 ### Product

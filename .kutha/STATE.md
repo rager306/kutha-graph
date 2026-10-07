@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M021
-**Active Slice:** S01
+**Active Slice:** S02
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M020-closed
+L_delivery=M021-S01-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M021 S01 leased (wedge decisions); prior M020 CLOSED | Capability proven / Cypher started |
+| L_delivery | M021 S02 leased (Retract-all-live); S01 done | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M021 S01 / GSD Phase 68** — lock TR-02 + C01 pack-fact spike; kill matrix decision rows; ADR Evidence. Fold unchanged. Honeycomb stays Proposed. Not Cypher/HNSW.
+**M021 S02 / GSD Phase 69** — Retract(event_id) invalidates all live residuals for that id (CorrectInterval multi-row); RED first; bench ≤10%. Honeycomb stays Proposed. Not Cypher/HNSW.
 
 ## Thaw map
 
