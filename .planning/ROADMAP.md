@@ -26,7 +26,8 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
   - [x] 63-01-PLAN.md — fmt, delete line_at, land ce-skills-ru
 - [ ] **Phase 64: Harness fail-closed** — silent-pass paths become findings (S02)
   - **Goal:** nameless dictionary row, missing cite, bad JSONL, `min_phase` without NN-, empty heading glob fail closed; RED selftest first; honeycomb stays Proposed
-  - **Plans:** 0/1
+  - **Plans:** 1 plan
+  - [ ] 64-01-PLAN.md — fail-closed dict id, cite path, JSONL fold, min_phase dirname, empty heading glob
 - [ ] **Phase 65: Persist atomic rewrite** — tmp+fsync+rename; failpoint; bench (S03)
   - **Goal:** crash mid-`persist_log` leaves openable store or clean failure; named oracle; bench ≤10%; honeycomb stays Proposed
   - **Plans:** 0/1
@@ -44,4 +45,4 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 | v0.01–v0.13 | 1–62 | shipped |
 | v0.14 | 63–67 | active |
 
-**Next:** Phase 63 after `.kutha/STATE.md` leases M020 S01.
+**Next:** Phase 64 execute (`64-01-PLAN.md`); `.kutha/STATE.md` already leases M020 S02.
