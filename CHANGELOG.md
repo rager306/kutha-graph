@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-07 — Product: wedge decision pins (Phase 68)
+
+### Product
+
+- Named oracles `tr02_force_vt_publication_anchor_decision_as_of` and `c01_applies_to_assert_encodes_application_window` (`m021_wedge_decisions.rs`). Fold/eval unchanged.
+
+### Trajectory
+
+- ADR-013 / ADR-090 Evidence 2026-10-07: TR-02 three moments on two axes; C01 pack Assert spike. Matrix SEM-c01 / horn-kc / asof / tr02 `killed`. Honeycomb restaged; cells stay Proposed.
+
 ## 2026-10-07 — Process: lease M021 S01 (GSD Phase 68)
 
 ### Process
