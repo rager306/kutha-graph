@@ -24,7 +24,7 @@ L_capability=ff5-green
 
 ## Next action
 
-**M018 closed 2026-10-06** (GSD v0.11 Phases 45–48, S01–S04). `L_delivery=M018-closed`, Active Milestone **None**, Active Slice **None**. Independent `48-VERIFICATION.md` passed. Honeycomb stays Proposed. No SemVer product tag (crates 0.0.0). Process tags `v0.12`/`v0.13` already exist; do not mint a late `v0.11` product tag. Next: owner lease (not Cypher/HNSW unless STATE thaws).
+**M020 opened 2026-10-07** (GSD v0.14 Phases 63–67). Source: whole-repo audit correction plan. `L_delivery=M018-closed` until S01 is leased. Active Milestone **None**, Active Slice **None** until lease. Honeycomb stays Proposed. No SemVer product tag. Not Cypher/HNSW.
 
 ## Thaw map
 

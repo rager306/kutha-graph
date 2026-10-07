@@ -21,6 +21,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.11 | 45–48 | M018 | S01–S04 | doc truth, C01 and knowledge cut, Horn determinism, differential tests (review 2026-10-03) | shipped 2026-10-06 |
 | v0.12 | 49–55 | M002 | S01–S07 | SNAP-01, OPEN-01, ROCK-01, COMMIT-01 (re-verified 2026-10-03) | shipped |
 | v0.13 | 56–62 | M019 | S01–S07 | docs honesty r3, cargo_dep_constraint, governor SMP, test matrix, durability residuals, DIFF-01 (post-M002 audits 2026-10-04) | shipped |
+| v0.14 | 63–67 | M020 | S01–S05 | whole-repo audit correction (2026-10-07): hygiene, harness fail-closed, persist atomic, Horn/fold residuals, process contract | active |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
@@ -30,7 +31,7 @@ v0.06 phases: 22 baseline, 23 legal fixture reconnaissance, 24 fold indexes, 25 
 
 GSD must not edit `.kutha/STATE.md`. The controller (the parent session, not a GSD subagent) owns the lease.
 
-1. **Lease:** set Active Slice to the phase's slice and `L_delivery` to the previous slice's `-done` token in `.kutha/STATE.md`; commit that alone.
+1. **Lease:** set Active Slice to the phase's slice and `L_delivery` to the previous slice's `-done` token in `.kutha/STATE.md`. Commit **only** `.kutha/STATE.md` plus the required `CHANGELOG.md` process entry (`docs-coupling`). Roadmap ticks, `.planning/*`, and CONTEXT belong in a separate open/plan commit — not in the lease.
 2. **Run one phase:** `/gsd-autonomous --only N`. Executors commit atomically per task on the feature branch with named files (as in phases 17–21); the final plan's commit carries the `CHANGELOG.md` entry so the docs-coupling check holds. Nobody but the controller edits `.kutha/STATE.md`. Do not run `--from 22 --to 28` in one go: execution stops at the lease and the independent verify gate. CONTEXT exists for every phase, so discuss is skipped.
 3. **Independent verify** (below). A failed kill-test reopens the phase; it is not waived.
 4. **Close:** clear Active Slice, set `L_delivery` to this slice's `-done` token, tick the slice in `.kutha/ROADMAP.md`, add one CHANGELOG entry (product and process kept apart), run `uv run kutha-gov precommit` and, for product phases, `uv run kutha-gov ci`.

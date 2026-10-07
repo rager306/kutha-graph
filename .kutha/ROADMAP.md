@@ -186,9 +186,26 @@ IO-01 (cloud kernel writeback soak) stays an intake note; vacuum and litigation 
 
 IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residuals outside this milestone.
 
+## M020: Audit correction — ACTIVE (GSD v0.14)
+
+**Opened:** 2026-10-07. Source: `.compound-engineering/artifacts/reviews/2026-10-07-whole-repo-audit/` plus parent re-verification `.compound-engineering/artifacts/plans/2026-10-07-audit-correction-plan.md`. Not Cypher/HNSW. Honeycomb stays Proposed. Crate SemVer 0.0.0.
+
+**Success:** hygiene green (`cargo fmt`); harness silent-pass paths fail closed with RED selftests; `persist_log` is crash-atomic (tmp+rename); CorrectInterval residuals re-derive; `live_triples` co-live safe; user Retract cannot kill `kutha:*`; process lease/bench/verify rules match practice; independent VERIFICATION per phase.
+
+- [ ] **S01: Hygiene** `risk:low` `depends:[]`
+  > After this: `cargo fmt --check` green; dead `line_at` removed; stale Next-action / ROADMAP pointers fixed; `ce-skills-ru` handoff override committed or dropped; no product behaviour change.
+- [ ] **S02: Harness fail-closed** `risk:medium` `depends:[S01]`
+  > After this: nameless dictionary row, missing cite file, bad JSONL line, `min_phase` without NN-, empty heading glob are findings (not silent pass); each has a RED selftest mutation first.
+- [ ] **S03: Persist atomic rewrite** `risk:high` `depends:[S02]`
+  > After this: `persist_log` / seal rewrite write `*.tmp`, fsync, rename; manifest last; failpoint/crash-window oracle; bench gate ≤10% on `ingest_plain.n` / `as_of.n`.
+- [ ] **S04: Horn and fold residuals** `risk:high` `depends:[S03]`
+  > After this: CorrectInterval prefix/suffix re-derive; co-live-safe `live_triples`; Retract admit gate for reserved/`kutha:*`; real fingerprint oracle replaces `open_retract_reemit` stub; named pins; bench gate ≤10%.
+- [ ] **S05: Process contract** `risk:low` `depends:[S04]`
+  > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
+
 ## Later milestones (not active)
 
-Do not start until STATE names them. Next lease on the wedge: M018 S02 (owner). M002 is CLOSED. M019 is CLOSED. One lease at a time. M003+ stay unleased.
+Do not start until STATE names them. M018–M019 CLOSED. M020 ACTIVE when STATE leases a slice. One lease at a time. M003+ stay unleased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -200,15 +217,16 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 6. **M015** — CLOSED. Known-on honesty and M014 residuals (v0.08). Detail above.
 7. **M016** — CLOSED (S01–S05, GSD v0.09 tagged). Detail above.
 8. **M017** — CLOSED (S01–S04, GSD v0.10 tagged). Detail above.
-9. **M018** — Wedge unblock (S01–S04, GSD v0.11). S01 done; S02 decision gate. Detail above.
+9. **M018** — CLOSED (S01–S04, GSD v0.11). Detail above.
 10. **M002** — CLOSED (S01–S07, GSD v0.12). Detail above. Vacuum policy and litigation hold stay in this horizon, not as the milestone identity. **Intake (2026-10-02):** cloud kernel writeback / dirty-throttle stalls — `docs/architecture/m002-cloud-kernel-io-intake.md` (arXiv:2609.12597 / SteelDB companion).
 11. **M019** — CLOSED (S01–S07, GSD v0.13). Detail above.
-12. **M003** — Cypher skin over the already-correct AS OF cut.
-13. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
-14. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
-15. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
-16. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
-17. *(unnumbered)* Packaging, naming and license decision (ADR-092) before any publish.
+12. **M020** — Audit correction (S01–S05, GSD v0.14). Detail above.
+13. **M003** — Cypher skin over the already-correct AS OF cut.
+14. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
+15. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
+16. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
+17. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
+18. *(unnumbered)* Packaging, naming and license decision (ADR-092) before any publish.
 
 P4 (Raft/multi-node, learned indexes) is not planned until single-node hybrid evidence exists.
 

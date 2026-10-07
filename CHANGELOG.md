@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-07 — Process: open M020 / v0.14 (audit correction)
+
+### Process
+
+- Harness milestone **M020** (GSD v0.14, Phases 63–67): hygiene, harness fail-closed, persist atomic rewrite, Horn/fold residuals, process contract. Source: `.compound-engineering/artifacts/reviews/2026-10-07-whole-repo-audit/` and parent plan `2026-10-07-audit-correction-plan.md`.
+- Id map row v0.14 added. Lease rule clarified: STATE + CHANGELOG only (`docs-coupling`); ROADMAP/CONTEXT are a separate open/plan commit.
+- Active Slice still **None** until the S01 lease commit.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5). Not Cypher/HNSW.
+
 ## 2026-10-06 — Process: close M018 / v0.11
 
 ### Process
