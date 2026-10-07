@@ -31,7 +31,7 @@ v0.06 phases: 22 baseline, 23 legal fixture reconnaissance, 24 fold indexes, 25 
 
 GSD must not edit `.kutha/STATE.md`. The controller (the parent session, not a GSD subagent) owns the lease.
 
-1. **Lease:** set Active Slice to the phase's slice and `L_delivery` to the previous slice's `-done` token in `.kutha/STATE.md`. Commit **only** `.kutha/STATE.md` plus the required `CHANGELOG.md` process entry (`docs-coupling`). Roadmap ticks, `.planning/*`, and CONTEXT belong in a separate open/plan commit — not in the lease.
+1. **Lease:** set Active Slice to the phase's slice and `L_delivery` to the previous slice's `-done` token in `.kutha/STATE.md`. Commit **only** `.kutha/STATE.md` plus the required `CHANGELOG.md` process entry (`docs-coupling`). Do **not** put README, ROADMAP ticks, `.planning/*`, or CONTEXT in the lease commit — those belong in a separate open/plan commit.
 2. **Run one phase:** `/gsd-autonomous --only N`. Executors commit atomically per task on the feature branch with named files (as in phases 17–21); the final plan's commit carries the `CHANGELOG.md` entry so the docs-coupling check holds. Nobody but the controller edits `.kutha/STATE.md`. Do not run `--from 22 --to 28` in one go: execution stops at the lease and the independent verify gate. CONTEXT exists for every phase, so discuss is skipped.
 3. **Independent verify** (below). A failed kill-test reopens the phase; it is not waived.
 4. **Close:** clear Active Slice, set `L_delivery` to this slice's `-done` token, tick the slice in `.kutha/ROADMAP.md`, add one CHANGELOG entry (product and process kept apart), run `uv run kutha-gov precommit` and, for product phases, `uv run kutha-gov ci`.
@@ -39,7 +39,9 @@ GSD must not edit `.kutha/STATE.md`. The controller (the parent session, not a G
 
 ## Bench gate at product close
 
-Every milestone that edits `crates/` re-runs `cargo bench -p kutha-runtime --bench baseline` (same host, `KUTHA_BENCH_N=10000`) against the previous tag before close; a regression over 10 percent in `ingest_plain.n` or `as_of.n` is a controller stop. (M016 skipped this and tripled ingest; found and repaired in v0.10.)
+Every milestone that edits `crates/` re-runs `cargo bench -p kutha-runtime --bench baseline` (same host, `KUTHA_BENCH_N=10000`) against a same-host pre-change baseline (or the previous process tag when closing the milestone); a regression over 10 percent in `ingest_plain.n` or `as_of.n` is a controller stop. (M016 skipped this and tripled ingest; found and repaired in v0.10.)
+
+**Record the numbers:** when a product phase or milestone close edits `crates/`, the Process or Product CHANGELOG entry for that close must cite the measured `ingest_plain.n` and `as_of.n` (pre and post, or post vs tag) so the gate is auditable. A green `ci` alone does not record the bench.
 
 ## Code-graph tool pair
 
@@ -66,6 +68,7 @@ Executor-written tests and governor observations are evidence, not verification.
 - It writes kill-tests: inputs that would pass a lazy implementation and fail a correct one (for example: retract a seeded relation, then admit; re-emit the same keyed Assert at large N and check the scan count; two runs of the same log give the same fingerprint).
 - Output is one `NN-VERIFICATION.md` with frontmatter `independent: true`, `verifier_model`, `commands:` (with exit statuses), and `read_only_inputs:` (requirement and public-API files only, never a PLAN or SUMMARY path). Phase 28 turns the structure into a governor check. `/gsd-verify-work` is the interactive form for the same gate.
 - Different model family or at least a fresh context from the executor. A phase does not close on its own author's check. Model-family independence is **honor-system**: `independent: true` frontmatter and the governor's path checks prove structure, not that the verifier used a different model family.
+- **Re-verify after VERIFICATION edits:** once `NN-VERIFICATION.md` exists with `status: passed`, any later edit to that file (or to the kill-test commands it cites) invalidates the close. Run a fresh independent verify pass and rewrite/append the report before clearing Active Slice. Do not close on a stale VERIFICATION that was patched by the executor.
 
 ## Refactor safety (S03–S06, S09)
 

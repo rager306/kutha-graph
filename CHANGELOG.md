@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-07 — Process: contract + close M020 (Phase 67)
+
+### Process
+
+- `gsd-auto-contract.md`: lease commit = STATE+CHANGELOG only; product close CHANGELOG must record bench numbers; edits to a passed `NN-VERIFICATION.md` require re-verify before close.
+- `L_delivery=M020-closed`, Active Slice **None**. M020 / GSD v0.14 closed. Independent `67-VERIFICATION.md` passed.
+- Bench recorded (S03/S04): Phase 65 `ingest_plain.n` 137106769→104606205, `as_of.n` 316671→253101; Phase 66 `ingest_plain.n` 137712385→132950275, `as_of.n` 419823→315267 (`KUTHA_BENCH_N=10000`).
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-07 — Process: lease M020 S05 (GSD Phase 67)
 
 ### Process
