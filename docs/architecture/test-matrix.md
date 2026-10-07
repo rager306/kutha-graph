@@ -23,13 +23,13 @@ Counted from `test-matrix.yaml` rows on 2026-10-07 (M021 S01). Recount after you
 
 | Status | Rows |
 |--------|------|
-| killed | 65 |
+| killed | 66 |
 | characterization | 5 |
 | gap | 0 |
 | blocked | 0 |
 | spec-only | 4 |
 | gate | 1 |
-| **total** | **75** |
+| **total** | **76** |
 
 Planes: product vs harness. Layers: decision, characterization, property, crash, kill, governor, bench.
 

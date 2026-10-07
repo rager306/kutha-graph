@@ -37,6 +37,7 @@ process: docs/process/governor-intake.md
 # 2026-10-06 restage (M018 S02 Phase 46: C01 (a) / HORN-KC / ASOF-ELIG): ADR-013, ADR-023; map/delivery/capability unchanged.
 # 2026-10-06 restage (M018 S03 Phase 47: hash-stable derived ids, Correct re-derive, hop admit): ADR-013, ADR-014, ADR-023; map/delivery/capability unchanged.
 # 2026-10-07 restage (M021 S01 Phase 68: TR-02 / C01 pack-fact pins; matrix kill): ADR-013, ADR-090; map/delivery/capability unchanged.
+# 2026-10-07 restage (M021 S02 Phase 69: Retract-all-live): ADR-013; map/delivery/capability unchanged.
 # 2026-10-06 restage (M018 S04 Phase 48: I-F15/I-F16 oracles, GATE-01 BENCH-controller): ADR-041, ADR-023; map/delivery/capability unchanged.
 
 locks:
@@ -210,6 +211,9 @@ cells:
       # Phase 68 / M021 S01 — TR-02 + C01 pack Assert; cell still Proposed
       - tr02_force_vt_publication_anchor_decision_as_of
       - c01_applies_to_assert_encodes_application_window
+      # Phase 69 / M021 S02 — Retract all live residuals; cell still Proposed
+      - retract_correct_interval_event_id_clears_all_residuals
+      - retract_assert_event_id_still_clears_single_row
 
   - id: ADR-014
     axis: Time
