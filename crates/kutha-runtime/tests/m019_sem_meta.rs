@@ -552,6 +552,52 @@ fn horn_correct_interval_derived_not_live_after_patch() {
     );
 }
 
+/// HF-01: CorrectInterval re-derives inverse on prefix/suffix (old object) and patch (new).
+#[test]
+fn horn_correct_interval_prefix_suffix_derived_remain_live() {
+    let mut rt = Runtime::default();
+    let alice = rt.intern("Alice");
+    let bob = rt.intern("Bob");
+    let carol = rt.intern("Carol");
+    let knows = rt.intern("knows");
+    let out = rt
+        .emit(Op::Assert {
+            subject: alice,
+            relation: knows,
+            object: bob,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap();
+    let prem = out.receipt.event_ids[0];
+    rt.emit(Op::CorrectInterval {
+        event_id: prem,
+        object: carol,
+        patch_from: 2015,
+        patch_to: Some(2020),
+    })
+    .unwrap();
+    assert!(
+        live_triple(&rt, bob, rt.dictionary().id("knownBy").unwrap(), alice, 2012),
+        "prefix residual must keep Bob knownBy Alice at VT 2012"
+    );
+    assert!(
+        live_triple(&rt, bob, rt.dictionary().id("knownBy").unwrap(), alice, 2021),
+        "suffix residual must keep Bob knownBy Alice at VT 2021"
+    );
+    assert!(
+        live_triple(&rt, carol, rt.dictionary().id("knownBy").unwrap(), alice, 2017),
+        "patch window must mint Carol knownBy Alice at VT 2017"
+    );
+    assert!(
+        !live_triple(&rt, bob, rt.dictionary().id("knownBy").unwrap(), alice, 2017),
+        "Bob inverse must not be live inside the patched interval"
+    );
+}
+
 /// CASC-01: interned but not-allowed Horn head is admitted before push; hop absent from log.
 #[test]
 fn casc01_disallowed_second_hop_absent_from_log() {

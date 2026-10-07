@@ -113,7 +113,10 @@ impl Runtime {
                     return Err(RuntimeError::MetaOpRejected);
                 }
             }
-            if let Op::Correct { event_id, .. } | Op::CorrectInterval { event_id, .. } = op {
+            if let Op::Correct { event_id, .. }
+            | Op::CorrectInterval { event_id, .. }
+            | Op::Retract { event_id } = op
+            {
                 if let Some(idx) = self.fold.fact_index_by_event_id(*event_id) {
                     let rel = self.fold.facts()[idx].relation;
                     if self.relation_name_reserved(rel) {

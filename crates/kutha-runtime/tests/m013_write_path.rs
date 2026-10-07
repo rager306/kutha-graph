@@ -111,6 +111,25 @@ fn public_emit_behavior_kutha_relation_is_refused() {
 }
 
 #[test]
+fn public_emit_retract_kutha_allow_is_refused() {
+    let mut rt = Runtime::default();
+    let allow = rt.emit_allow("leasedRetract", 2010, None).unwrap();
+    let allow_event = allow.receipt.event_ids[0];
+    let n = rt.log().len();
+    let err = rt
+        .emit(Op::Retract {
+            event_id: allow_event,
+        })
+        .unwrap_err();
+    assert!(matches!(err, RuntimeError::MetaOpRejected), "{err:?}");
+    assert_eq!(
+        n,
+        rt.log().len(),
+        "User Retract of kutha:allows must not append"
+    );
+}
+
+#[test]
 fn public_emit_correct_kutha_allow_is_refused() {
     let mut rt = Runtime::default();
     let allow = rt.emit_allow("leasedRel", 2010, None).unwrap();

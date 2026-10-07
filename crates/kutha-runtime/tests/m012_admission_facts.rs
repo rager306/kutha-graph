@@ -310,10 +310,7 @@ fn retract_admission_and_policy_version_at_later_cut() {
     );
     let n = rt.log().len();
 
-    rt.emit(Op::Retract {
-        event_id: admission_id,
-    })
-    .unwrap();
+    rt.emit_retract_dict(admission_id).unwrap();
     assert_eq!(
         None,
         rt.admission_status_at(&jid, TransactionTime::MAX, ValidTime::from(2017))
@@ -324,10 +321,7 @@ fn retract_admission_and_policy_version_at_later_cut() {
         fork.admission_status_at(&jid, TransactionTime::MAX, ValidTime::from(2017))
     );
 
-    rt.emit(Op::Retract {
-        event_id: pin_event,
-    })
-    .unwrap();
+    rt.emit_retract_dict(pin_event).unwrap();
     let after = rt.log().len();
     let err = rt
         .record_justification(

@@ -89,26 +89,46 @@ fn open_retract_reemit_indexes_match_fingerprint() {
         .as_slice()
         .iter()
         .find_map(|e| match &e.op {
-            Op::Assert { .. } => Some(e.id),
+            Op::Assert {
+                delivery_key: Some(k),
+                ..
+            } if k.starts_with("dk") => Some(e.id),
             _ => None,
         })
-        .unwrap();
-    let dir = std::env::temp_dir().join(format!("kutha-p24-{}", std::process::id()));
+        .expect("keyed product assert");
+    let nanos = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_nanos();
+    let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .join("tmp")
+        .join(format!("kutha-p24-{nanos}"));
     let _ = fs::remove_dir_all(&dir);
+    fs::create_dir_all(&dir).unwrap();
     store::persist(&rt, &dir).unwrap();
     let mut opened = store::open(&dir).unwrap();
     opened.emit(Op::Retract { event_id: id }).unwrap();
     emit_keyed(&mut opened, 1, rel, obj);
     let fp = opened.fold().fingerprint();
+    store::persist(&opened, &dir).unwrap();
     let rebuilt = store::open(&dir).unwrap();
-    // Parent dir still has pre-retract log; fork path instead:
+    assert_eq!(
+        fp,
+        rebuilt.fold().fingerprint(),
+        "persist+open after retract+reemit must match in-memory fingerprint"
+    );
+    assert_eq!(
+        fp,
+        opened.replay_check().unwrap().fingerprint(),
+        "replay_check must match in-memory fingerprint"
+    );
     let mut forked = opened.fork_at(opened.log().len());
     emit_keyed(&mut forked, 2, rel, obj);
     assert_eq!(
         forked.fold().fingerprint(),
         forked.replay_check().unwrap().fingerprint()
     );
-    let _ = (fp, rebuilt);
     let _ = fs::remove_dir_all(&dir);
 }
 

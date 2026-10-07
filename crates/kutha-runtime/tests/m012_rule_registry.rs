@@ -255,7 +255,7 @@ fn retract_register_rule_drops_eligibility_at_later_cut() {
     let claim_q = derived.receipt.event_ids[0];
     assert!(rt.derivation_eligible_at(claim_q, TransactionTime::MAX, ValidTime::from(2017)));
 
-    rt.emit(Op::Retract { event_id: rule_id }).unwrap();
+    rt.emit_retract_dict(rule_id).unwrap();
 
     let after = rt.log().len();
     let err = rt

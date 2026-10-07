@@ -1,8 +1,10 @@
 //! Horn evaluation over live product triples (M016 S03 / RULE-02).
 //! Named bodies are pins only; they do not auto-fire.
 
+use crate::fold::{leftover_halves, vt_intersect};
 use crate::quantum::{Runtime, RuntimeError};
 use kutha_common::{Event, EventId, Op, RuleAst, RuleAtom, RuleTerm, TermDictionary, TermId};
+use std::collections::HashSet;
 
 const MAX_VAR: usize = 16;
 
@@ -80,20 +82,66 @@ impl Runtime {
                 patch_from,
                 patch_to,
             } => {
-                let mut out = self.retract_derived(event, *event_id);
+                let retracts = self.retract_derived(event, *event_id);
+                let except: HashSet<EventId> = retracts
+                    .iter()
+                    .filter_map(|e| match &e.op {
+                        Op::Retract { event_id: rid } => Some(*rid),
+                        _ => None,
+                    })
+                    .collect();
+                let mut fires = Vec::new();
                 if let Some(idx) = self.fold.fact_index_by_event_id(*event_id) {
                     let fact = &self.fold.facts()[idx];
-                    let (s, r) = (fact.subject, fact.relation);
-                    out.extend(self.horn_fires(
-                        event.id,
-                        event.ingested_at,
-                        s,
-                        r,
-                        *object,
-                        *patch_from,
-                        *patch_to,
-                    )?);
+                    let (s, r, old_o) = (fact.subject, fact.relation, fact.object());
+                    if let Some((inter_from, inter_to)) =
+                        vt_intersect(fact.valid_from, fact.valid_to, *patch_from, *patch_to)
+                    {
+                        let (prefix, suffix) = leftover_halves(
+                            fact.valid_from,
+                            fact.valid_to,
+                            inter_from,
+                            inter_to,
+                        );
+                        if let Some((vf, vt)) = prefix {
+                            fires.extend(self.horn_fires_except(
+                                event.id,
+                                event.ingested_at,
+                                s,
+                                r,
+                                old_o,
+                                vf,
+                                vt,
+                                &except,
+                            )?);
+                        }
+                        fires.extend(self.horn_fires_except(
+                            event.id,
+                            event.ingested_at,
+                            s,
+                            r,
+                            *object,
+                            inter_from,
+                            inter_to,
+                            &except,
+                        )?);
+                        if let Some((vf, vt)) = suffix {
+                            fires.extend(self.horn_fires_except(
+                                event.id,
+                                event.ingested_at,
+                                s,
+                                r,
+                                old_o,
+                                vf,
+                                vt,
+                                &except,
+                            )?);
+                        }
+                    }
                 }
+                // Fires first, retracts last → LIFO cascade applies retracts before re-fires.
+                let mut out = fires;
+                out.extend(retracts);
                 Ok(out)
             }
             _ => Ok(vec![]),
@@ -145,6 +193,29 @@ impl Runtime {
         valid_from: u64,
         valid_to: Option<u64>,
     ) -> Result<Vec<Event>, RuntimeError> {
+        self.horn_fires_except(
+            caused_by,
+            ingested_at,
+            subject,
+            relation,
+            object,
+            valid_from,
+            valid_to,
+            &HashSet::new(),
+        )
+    }
+
+    fn horn_fires_except(
+        &self,
+        caused_by: EventId,
+        ingested_at: u64,
+        subject: TermId,
+        relation: TermId,
+        object: TermId,
+        valid_from: u64,
+        valid_to: Option<u64>,
+        except: &HashSet<EventId>,
+    ) -> Result<Vec<Event>, RuntimeError> {
         let mut out = Vec::new();
         for (pin, ast) in self.live_horns(valid_from, relation) {
             let RuleAst::Horn { head, premises } = ast else {
@@ -178,6 +249,7 @@ impl Runtime {
                         ingested_at,
                         valid_from,
                         valid_to,
+                        except,
                     ) {
                         out.push(ev);
                     }
@@ -247,11 +319,18 @@ impl Runtime {
         ingested_at: u64,
         valid_from: u64,
         valid_to: Option<u64>,
+        except: &HashSet<EventId>,
     ) -> Option<Event> {
         let rel = self.dict.id(&head.relation)?;
         let subject = instantiate(&head.subject, bind, &self.dict)?;
         let object = instantiate(&head.object, bind, &self.dict)?;
-        if self.fold.has_live_triple(subject, rel, object) {
+        let blocked = if except.is_empty() {
+            self.fold.has_live_triple(subject, rel, object)
+        } else {
+            self.fold
+                .has_live_triple_except(subject, rel, object, except)
+        };
+        if blocked {
             return None;
         }
         let name = if head.relation == "knownBy" {

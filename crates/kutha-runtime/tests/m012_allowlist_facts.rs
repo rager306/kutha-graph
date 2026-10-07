@@ -139,7 +139,7 @@ fn retract_allow_relation_drops_admit_at_later_cut() {
     })
     .unwrap();
 
-    rt.emit(Op::Retract { event_id: allow_id }).unwrap();
+    rt.emit_retract_dict(allow_id).unwrap();
 
     let after = rt.log().len();
     let err = rt

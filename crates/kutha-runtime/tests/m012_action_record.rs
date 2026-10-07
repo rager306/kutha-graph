@@ -189,10 +189,7 @@ fn action_cites_admission_pin_and_rejects_public_emit() {
     assert_eq!(n, rt.log().len());
 
     let admission_id: EventId = jid.parse().expect("admission EventId");
-    rt.emit(Op::Retract {
-        event_id: admission_id,
-    })
-    .unwrap();
+    rt.emit_retract_dict(admission_id).unwrap();
     let n = rt.log().len();
     let err = rt
         .record_action(&jid, TransactionTime::MAX, ValidTime::from(2017))

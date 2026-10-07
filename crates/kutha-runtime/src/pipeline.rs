@@ -2,7 +2,7 @@
 use crate::quantum::{PersistedQuantumOutcome, QuantumOutcome, Runtime, RuntimeError, disposition};
 use crate::receipt::{QuantumReceipt, digest_to_hex};
 use kutha_common::{
-    Event, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE, Op,
+    Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE, Op,
     OutcomeDisposition, RuleAst, WallTime, blob_digest_matches, policy_version_hash,
 };
 
@@ -295,6 +295,15 @@ impl Runtime {
             },
             ReceiptMode::Dictionary,
         )
+    }
+
+    /// Retract a dictionary / reserved fact (constructor path). User `emit(Retract)` of
+    /// `kutha:*` is `MetaOpRejected` (M020 S04).
+    pub fn emit_retract_dict(
+        &mut self,
+        event_id: EventId,
+    ) -> Result<QuantumOutcome, RuntimeError> {
+        self.pipeline_kind(Op::Retract { event_id }, ReceiptMode::Dictionary)
     }
 
     /// Allow a product relation name as a `kutha:allows` fact (D-01).

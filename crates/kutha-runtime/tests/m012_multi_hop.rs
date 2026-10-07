@@ -154,7 +154,7 @@ fn two_hop_ineligible_when_parent_rule_retracted() {
         "hop2 must start eligible"
     );
 
-    rt.emit(Op::Retract { event_id: rule_pq }).unwrap();
+    rt.emit_retract_dict(rule_pq).unwrap();
 
     assert!(
         rt.fold()

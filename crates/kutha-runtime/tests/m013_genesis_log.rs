@@ -38,7 +38,7 @@ fn retract_seeded_related_to_fails_closed_after() {
         _ => None,
     });
     if let Some(id) = retract_id {
-        rt.emit(Op::Retract { event_id: id }).unwrap();
+        rt.emit_retract_dict(id).unwrap();
     }
 
     let relation = rt.intern("relatedTo");

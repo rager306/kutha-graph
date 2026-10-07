@@ -85,10 +85,7 @@ fn admission_and_policy_visible_on_as_of_after_later_pin() {
     );
 
     let admission_id: EventId = jid.parse().expect("admission EventId");
-    rt.emit(Op::Retract {
-        event_id: admission_id,
-    })
-    .unwrap();
+    rt.emit_retract_dict(admission_id).unwrap();
     let later = rt.fold().dictionary_as_of(ValidTime::from(2010));
     assert!(
         !later.iter().any(|&(_, rel, _)| rel == admission),
@@ -124,7 +121,7 @@ fn genesis_allow_visible_on_as_of() {
     });
     let cut = rt.log().len();
     if let Some(id) = retract_id {
-        rt.emit(Op::Retract { event_id: id }).unwrap();
+        rt.emit_retract_dict(id).unwrap();
     }
     let relation = rt.intern("relatedTo");
     let subject = rt.intern("alice-dict");

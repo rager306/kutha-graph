@@ -195,17 +195,33 @@ impl GraphFold {
         relation: TermId,
         object: TermId,
     ) -> bool {
+        self.has_live_triple_except(subject, relation, object, &std::collections::HashSet::new())
+    }
+
+    /// Like [`Self::has_live_triple`], ignoring facts whose `event_id` is in `except`
+    /// (same-batch retracts scheduled before re-fire).
+    pub(crate) fn has_live_triple_except(
+        &self,
+        subject: TermId,
+        relation: TermId,
+        object: TermId,
+        except: &std::collections::HashSet<EventId>,
+    ) -> bool {
         if !self.hot_maps_warm {
             return self.facts.iter().any(|f| {
                 self.hot_examine.bump();
                 f.invalidated_at.is_none()
+                    && !except.contains(&f.event_id)
                     && f.subject == subject
                     && f.relation == relation
                     && f.object() == object
             });
         }
         match self.live_triples.get(&(subject, relation, object)) {
-            Some(&idx) => self.facts[idx].invalidated_at.is_none(),
+            Some(list) => list.iter().any(|&idx| {
+                let f = &self.facts[idx];
+                f.invalidated_at.is_none() && !except.contains(&f.event_id)
+            }),
             None => false,
         }
     }
@@ -216,8 +232,11 @@ impl GraphFold {
         self.facts[idx].invalidated_at = Some(at.into().as_u64());
         let fact = &self.facts[idx];
         let key = (fact.subject, fact.relation, fact.object());
-        if self.live_triples.get(&key) == Some(&idx) {
-            self.live_triples.remove(&key);
+        if let Some(list) = self.live_triples.get_mut(&key) {
+            list.retain(|i| *i != idx);
+            if list.is_empty() {
+                self.live_triples.remove(&key);
+            }
         }
     }
 

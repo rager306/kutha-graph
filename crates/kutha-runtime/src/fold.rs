@@ -64,7 +64,7 @@ pub(crate) fn vt_intersect(
 }
 
 /// Leftover halves of fact VT minus a non-empty intersection (prefix, suffix). Skip empty halves.
-fn leftover_halves(
+pub(crate) fn leftover_halves(
     fact_from: u64,
     fact_to: Option<u64>,
     inter_from: u64,
@@ -257,9 +257,9 @@ pub struct GraphFold {
     /// Fact indices grouped by minting `event_id` (ingest lookup lease).
     #[serde(skip)]
     pub(crate) fact_by_event: IngestMap<EventId, FactIdxList>,
-    /// Live (subject, relation, object) triples for residual cascade checks.
+    /// Live (subject, relation, object) → fact indices (co-live VT residuals).
     #[serde(skip)]
-    pub(crate) live_triples: IngestMap<(TermId, TermId, TermId), usize>,
+    pub(crate) live_triples: IngestMap<(TermId, TermId, TermId), FactIdxList>,
     /// `kutha:allows` fact indices by delivery_key (product relation name). ADR-040
     /// droppable lease, rebuilt from `facts`. Not fingerprint / JSON. Maintained on
     /// every fact push even under [`FoldIndexMode::Lazy`] so admit stays O(allows);
@@ -498,7 +498,9 @@ impl GraphFold {
             .push(idx);
         if fact.invalidated_at.is_none() {
             self.live_triples
-                .insert((fact.subject, fact.relation, fact.object()), idx);
+                .entry((fact.subject, fact.relation, fact.object()))
+                .or_default()
+                .push(idx);
         }
     }
 

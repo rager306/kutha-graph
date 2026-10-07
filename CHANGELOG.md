@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-07 — Product: Horn/fold residuals (Phase 66)
+
+### Product
+
+- CorrectInterval re-derives Horn on prefix/suffix (old object) and patch (new); same-batch retract ids ignored for mint; LIFO applies retracts before fires.
+- `live_triples` is a co-live multimap (`FactIdxList`); invalidate drops one idx.
+- User `Retract` of reserved/`kutha:*` → `MetaOpRejected`; `emit_retract_dict` for constructors.
+- `open_retract_reemit_indexes_match_fingerprint` asserts persist+open fingerprint.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-07 — Process: lease M020 S04 (GSD Phase 66)
 
 ### Process
