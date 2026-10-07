@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-07 — Process: lease M021 S01 (GSD Phase 68)
+
+### Process
+
+- Active Milestone **M021**, Active Slice **S01** (`L_delivery=M020-closed`): wedge decisions — TR-02 three-moments pin, C01 pack-fact Assert spike, matrix kill for C01/HORN-KC/ASOF/TR-02; fold unchanged. Plan `.compound-engineering/artifacts/plans/2026-10-07-m021-wedge-decisions.md`. Honeycomb stays Proposed.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-07 — Process: close M020 / v0.14
 
 ### Process
