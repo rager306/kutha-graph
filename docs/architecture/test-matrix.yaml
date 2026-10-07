@@ -571,33 +571,34 @@ rows:
     layer: decision
     oracle:
       - known04_horn_fires_when_premise_hidden_on_early_cut
-    kill_mutation: none
-    status: blocked
+    kill_mutation: invert known04 to require no mint / re-derive on as_known_on
+    status: killed
     gate: default
-    owner: HORN-KC-01
-    source: audit-code-tests §3 / ADR audit §2
+    owner: M021-S01
+    source: Phase 46 lock / Phase 68 matrix kill
   - id: SEM-c01-decision
     plane: product
-    invariant: C01 sunset / tempus regit actum is a pack stamp (not fifth axis, not Horn, not valid_to-as-application)
+    invariant: C01 sunset / tempus regit actum is a pack stamp (not fifth axis, not Horn, not valid_to-as-application); pack Assert appliesTo encodes window
     layer: decision
     oracle:
       - fixg01_c01_sunset_inexpressible_as_horn
-    kill_mutation: none
-    status: blocked
+      - c01_applies_to_assert_encodes_application_window
+    kill_mutation: fifth axis or RuleTerm Const calendar sunset
+    status: killed
     gate: default
-    owner: C01
-    source: ADR audit §2 FIXG-01
+    owner: M021-S01
+    source: Phase 46 lock / Phase 68 spike
   - id: SEM-asof-elig
     plane: product
     invariant: as_of stays support-live; eligibility is derivation_eligible_at; query lists ineligible live triples
     layer: decision
     oracle:
       - asof_elig01_as_of_contains_derived_when_ineligible
-    kill_mutation: none
-    status: blocked
+    kill_mutation: filter as_of by derivation_eligible_at
+    status: killed
     gate: default
-    owner: ASOF-ELIG-01
-    source: ADR audit §2
+    owner: M021-S01
+    source: Phase 46 lock / Phase 68 matrix kill
   - id: SEM-det02-ids
     plane: product
     invariant: two Runtime ingest of the same Horn fixture mint equal derived Behavior EventIds; user Assert stays Event::new v7
@@ -611,14 +612,15 @@ rows:
     source: M018 S03 / DET-02 / Phase 47
   - id: SEM-tr02-legal
     plane: product
-    invariant: legal TR-02 force vs publication vs decision clocks
+    invariant: TR-02 force=VT; publication=TtAnchor/as_known_on; case decision=as_of(vt); no silent substitution
     layer: decision
-    oracle: []
-    kill_mutation: none
-    status: blocked
+    oracle:
+      - tr02_force_vt_publication_anchor_decision_as_of
+    kill_mutation: treat as_of as publication or add fifth peer clock
+    status: killed
     gate: default
-    owner: TR-02
-    source: ADR-090 / D-03 seed
+    owner: M021-S01
+    source: ADR-090 TR-02 / Phase 68
   - id: SEM-horn-correct
     plane: product
     invariant: Correct of a Horn premise retracts or re-mints Behavior

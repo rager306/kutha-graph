@@ -36,6 +36,7 @@ process: docs/process/governor-intake.md
 # 2026-10-05 restage (M019 S07 Phase 62: semantic/logic oracles; cells still Proposed): ADR-013, ADR-041, ADR-060; map/delivery/capability unchanged.
 # 2026-10-06 restage (M018 S02 Phase 46: C01 (a) / HORN-KC / ASOF-ELIG): ADR-013, ADR-023; map/delivery/capability unchanged.
 # 2026-10-06 restage (M018 S03 Phase 47: hash-stable derived ids, Correct re-derive, hop admit): ADR-013, ADR-014, ADR-023; map/delivery/capability unchanged.
+# 2026-10-07 restage (M021 S01 Phase 68: TR-02 / C01 pack-fact pins; matrix kill): ADR-013, ADR-090; map/delivery/capability unchanged.
 # 2026-10-06 restage (M018 S04 Phase 48: I-F15/I-F16 oracles, GATE-01 BENCH-controller): ADR-041, ADR-023; map/delivery/capability unchanged.
 
 locks:
@@ -206,6 +207,9 @@ cells:
       - det02_two_ingest_derived_event_ids_equal
       - horn_correct_derived_not_live_after_premise_correct
       - horn_correct_interval_derived_not_live_after_patch
+      # Phase 68 / M021 S01 — TR-02 + C01 pack Assert; cell still Proposed
+      - tr02_force_vt_publication_anchor_decision_as_of
+      - c01_applies_to_assert_encodes_application_window
 
   - id: ADR-014
     axis: Time
@@ -512,7 +516,9 @@ cells:
     capability: none
     depends_on: [ADR-000, ADR-001, ADR-002]
     locks: [D1, D10]
-    evidence: []
+    evidence:
+      # Phase 68 / M021 S01 — TR-02 mapping only; full ontology still frozen
+      - tr02_force_vt_publication_anchor_decision_as_of
 
   - id: ADR-091
     axis: Packaging

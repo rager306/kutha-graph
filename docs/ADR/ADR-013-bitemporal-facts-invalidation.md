@@ -170,3 +170,13 @@ This subsection does not rewrite D013-1…D013-4. Cell remains **Proposed**.
 ### Evidence (2026-10-06; Phase 47 / M018 S03; Proposed)
 
 Derived Horn EventIds are hash-stable (`Event::stable_derived`, prefix `kutha-derived-id`). User Assert stays `Event::new` UUID v7. `Correct` / `CorrectInterval` of a Horn premise `retract_derived` then `horn_fires` on the corrected triple; stale derived is not live at the post-correct cut. Oracles: `det02_two_ingest_derived_event_ids_equal`, `horn_correct_derived_not_live_after_premise_correct`, `horn_correct_interval_derived_not_live_after_patch`. This subsection does not rewrite D013-1…D013-4. Cell remains **Proposed**.
+
+### Verdict (2026-10-07; Phase 68 / M021 S01; Proposed)
+
+Confirm Phase 46: C01 is pack stamp (a). Pack expresses application-end as ordinary `Assert` (e.g. `appliesTo` with its own VT) — not Horn Const, not a fifth axis, not `valid_to` of the text treated as application-end by core. Oracles: `fixg01_c01_sunset_inexpressible_as_horn`, `c01_applies_to_assert_encodes_application_window`.
+
+Confirm HORN-KC ingest-at-head and ASOF support-live (`known04_*`, `asof_elig01_*`). Matrix SEM-c01-decision / SEM-horn-kc / SEM-asof-elig move to `killed`.
+
+TR-02 (cross-cite ADR-090): force = VT of the force/applicability fact; publication/knowledge = `TtAnchor` → `as_known_on`; case decision clock = `as_of(vt)` argument. Oracle: `tr02_force_vt_publication_anchor_decision_as_of`. No fifth peer axis in core.
+
+This subsection does not rewrite D013-1…D013-4. Cell remains **Proposed**.

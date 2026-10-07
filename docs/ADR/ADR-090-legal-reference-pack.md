@@ -228,12 +228,24 @@ Target contract, from docs/architecture/semantic-gap-review.md (F13): TR-02 (no 
 4. Dictionary taxonomy for L_AGENT (norm/decision/commitment/procedure) vs Memanto-style product surface — keep engine-shaped.
 5. Whether Quantum Receipts (ADR-014 class) bind AmendmentEvent digests into sealed RVF exports.
 
+## Evidence (2026-10-07; Phase 68 / M021 S01; Proposed)
+
+**TR-02 mapping on two core axes (no silent substitution):**
+
+| Legal moment | Kutha surface | Not |
+|--------------|---------------|-----|
+| Force / legal effect | VT of the in-force or applicability fact (`valid_from` / `valid_to`) | A fifth algebraic clock |
+| Publication / knowledge | `Op::TtAnchor(wall)` + `as_known_on` | Using `as_of` as “when we heard” |
+| Case decision / act time | `as_of(vt)` query argument | Substituting publication wall for force VT |
+
+Oracle: `tr02_force_vt_publication_anchor_decision_as_of` in `m021_wedge_decisions.rs`. C01 application windows stay pack Assert stamps (ADR-013 Verdict 2026-10-07). Full ADR-090 ontology remains frozen until STATE thaws a legal pack. Cell remains **Proposed**.
+
 ## Related Decisions
 
 - ADR-000 — D1 log SoT, D3 dict agents, D4 bi-temporal, D5 materializations, D8 legal vertical sketch
 - ADR-001 — vision; legal vertical; RVF not hot SoT
 - ADR-002 — STCA packs / behaviors / budgets
-- ADR-013 (planned) — Assert/Retract/Correct + native bi-temporal
+- ADR-013 — Assert/Retract/Correct + native bi-temporal (C01 / TR-02 Evidence 2026-10-07)
 - ADR-091 (planned) — RVF portable capsules
 - External references (compatibility, not Kutha canon): law-nexus ADR-0009, 0016–0023; RuVector RVF docs; de Martim CTV research (arXiv:2506.07853) as cited by law-nexus
 
