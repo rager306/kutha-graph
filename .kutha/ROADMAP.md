@@ -205,8 +205,8 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 **Opened:** 2026-10-07. Plan: `.compound-engineering/artifacts/plans/2026-10-07-m021-wedge-decisions.md`. Process tag `v0.15`. Closes owner-gated TR-02 / C01 pack-fact pins and Retract-all-live residual. Honeycomb stays Proposed. Not Cypher/HNSW.
 
-- [ ] **S01: Wedge decisions** `risk:medium` `depends:[]`
-  > After this: TR-02 three-moments pin; C01 appliesTo Assert spike; SEM-c01/horn-kc/asof/tr02 `killed`; ADR-013/090 Evidence; fold unchanged.
+- [x] **S01: Wedge decisions** `risk:medium` `depends:[]`
+  > After this: TR-02 three-moments pin; C01 appliesTo Assert spike; SEM-c01/horn-kc/asof/tr02 `killed`; ADR-013/090 Evidence; fold unchanged. Landed: `m021_wedge_decisions.rs`; ADR Evidence 2026-10-07; matrix killed; independent `68-VERIFICATION.md`.
 - [ ] **S02: Retract all live** `risk:high` `depends:[S01]`
   > After this: Retract(event_id) clears all live residuals for that id; RED first; bench ≤10%.
 - [ ] **S03: Close** `risk:low` `depends:[S02]`

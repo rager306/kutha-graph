@@ -17,9 +17,10 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 ## Phases
 
-- [ ] **Phase 68: Wedge decisions** — TR-02 / C01 pack-fact pins; matrix kill (S01)
+- [x] **Phase 68: Wedge decisions** — TR-02 / C01 pack-fact pins; matrix kill (S01)
   - **Goal:** D-TR-02 and C01 Assert spike pinned; SEM rows killed; ADR Evidence; fold unchanged; honeycomb Proposed
-  - **Plans:** pending
+  - **Plans:** 1/1 executed; independent `68-VERIFICATION.md` passed
+  - [x] 68-01-PLAN.md
 - [ ] **Phase 69: Retract all live** — CorrectInterval multi-residual Retract (S02)
   - **Goal:** Retract(event_id) clears all live residuals; RED first; bench ≤10%; honeycomb Proposed
   - **Plans:** pending

@@ -7,9 +7,9 @@
 
 ### Decisions and pins (Phase 68, S01)
 
-- [ ] **TR-02-01**: Force = VT; publication = `TtAnchor` / `as_known_on`; case decision clock = `as_of(vt)` argument; named oracle; no fifth axis
-- [ ] **C01-02**: Pack expresses sunset / application window as Assert (`appliesTo` VT); FIXG-01 still fails as Horn; Phase 46 (a) confirmed
-- [ ] **MATRIX-01**: SEM-c01-decision, SEM-horn-kc, SEM-asof-elig, SEM-tr02-legal are `killed` with oracles (Phase 46 pins reused where they already exist)
+- [x] **TR-02-01**: Force = VT; publication = `TtAnchor` / `as_known_on`; case decision clock = `as_of(vt)` argument; named oracle; no fifth axis
+- [x] **C01-02**: Pack expresses sunset / application window as Assert (`appliesTo` VT); FIXG-01 still fails as Horn; Phase 46 (a) confirmed
+- [x] **MATRIX-01**: SEM-c01-decision, SEM-horn-kc, SEM-asof-elig, SEM-tr02-legal are `killed` with oracles (Phase 46 pins reused where they already exist)
 
 ### Fold defect (Phase 69, S02)
 
