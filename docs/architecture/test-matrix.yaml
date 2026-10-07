@@ -633,6 +633,18 @@ rows:
     gate: default
     owner: M018-S03
     source: M018 S03 / HORN-CORR-01 / Phase 47
+  - id: SEM-retract-all-live
+    plane: product
+    invariant: Retract(event_id) invalidates every live Fact sharing that event id (CorrectInterval residuals)
+    layer: kill
+    oracle:
+      - retract_correct_interval_event_id_clears_all_residuals
+      - retract_assert_event_id_still_clears_single_row
+    kill_mutation: Retract uses fact_index_by_event_id first-live only
+    status: killed
+    gate: default
+    owner: M021-S02
+    source: M020 residual / Phase 69
 
   - id: SEM-cascade-order
     plane: product

@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-07 — Product: Retract all live residuals (Phase 69)
+
+### Product
+
+- `Op::Retract { event_id }` invalidates every live Fact with that event id (CorrectInterval prefix/patch/suffix). Oracles: `retract_correct_interval_event_id_clears_all_residuals`, `retract_assert_event_id_still_clears_single_row`. Bench (`KUTHA_BENCH_N=10000`): `ingest_plain.n` 132950275→120718182, `as_of.n` 315267→242161 (≤10% vs Phase 66 post).
+
+### Trajectory
+
+- Matrix `SEM-retract-all-live` killed. Honeycomb stays Proposed.
+
 ## 2026-10-07 — Process: lease M021 S02 (GSD Phase 69)
 
 ### Process

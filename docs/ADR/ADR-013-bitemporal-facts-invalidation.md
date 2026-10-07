@@ -171,6 +171,10 @@ This subsection does not rewrite D013-1…D013-4. Cell remains **Proposed**.
 
 Derived Horn EventIds are hash-stable (`Event::stable_derived`, prefix `kutha-derived-id`). User Assert stays `Event::new` UUID v7. `Correct` / `CorrectInterval` of a Horn premise `retract_derived` then `horn_fires` on the corrected triple; stale derived is not live at the post-correct cut. Oracles: `det02_two_ingest_derived_event_ids_equal`, `horn_correct_derived_not_live_after_premise_correct`, `horn_correct_interval_derived_not_live_after_patch`. This subsection does not rewrite D013-1…D013-4. Cell remains **Proposed**.
 
+### Evidence (2026-10-07; Phase 69 / M021 S02; Proposed)
+
+`Op::Retract { event_id }` invalidates **every** live Fact whose `event_id` matches (CorrectInterval may mint prefix/patch/suffix residuals sharing one id). `fact_index_by_event_id` remains first-live for Correct / CorrectInterval targeting. Oracles: `retract_correct_interval_event_id_clears_all_residuals`, `retract_assert_event_id_still_clears_single_row`. D013-1…D013-4 unchanged. Cell remains **Proposed**.
+
 ### Verdict (2026-10-07; Phase 68 / M021 S01; Proposed)
 
 Confirm Phase 46: C01 is pack stamp (a). Pack expresses application-end as ordinary `Assert` (e.g. `appliesTo` with its own VT) — not Horn Const, not a fifth axis, not `valid_to` of the text treated as application-end by core. Oracles: `fixg01_c01_sunset_inexpressible_as_horn`, `c01_applies_to_assert_encodes_application_window`.

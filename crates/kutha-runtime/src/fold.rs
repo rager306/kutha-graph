@@ -696,10 +696,28 @@ impl GraphFold {
                 });
             }
             Op::Retract { event_id } => {
-                if let Some(idx) = self.fact_index_by_event_id(*event_id) {
-                    if self.facts[idx].invalidated_at.is_none() {
-                        self.invalidate_fact_at(idx, event.ingested_at);
-                    }
+                // Invalidate every live residual minted by this event (CorrectInterval
+                // may leave prefix/patch/suffix rows sharing one event_id).
+                let live_idxs: Vec<usize> = if !self.hot_maps_warm {
+                    self.facts
+                        .iter()
+                        .enumerate()
+                        .filter(|(_, f)| {
+                            self.hot_examine.bump();
+                            f.event_id == *event_id && f.invalidated_at.is_none()
+                        })
+                        .map(|(i, _)| i)
+                        .collect()
+                } else if let Some(idxs) = self.fact_by_event.get(event_id) {
+                    idxs.iter()
+                        .copied()
+                        .filter(|&i| self.facts[i].invalidated_at.is_none())
+                        .collect()
+                } else {
+                    Vec::new()
+                };
+                for idx in live_idxs {
+                    self.invalidate_fact_at(idx, event.ingested_at);
                 }
             }
             Op::Correct {
