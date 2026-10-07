@@ -876,6 +876,6 @@ pub use crate::persist_append::{
 #[doc(hidden)]
 pub use crate::segment::{
     HEADER_LEN as SEGMENT_HEADER_LEN, MANIFEST_REL, Manifest, SEGMENT_MAX_BYTES,
-    SEGMENT_MAX_EVENTS, reset_test_segment_limits, rewrite_segment_with_seal_trailer,
-    set_test_segment_limits, write_test_segmented,
+    SEGMENT_MAX_EVENTS, abort_write_segment_before_rename, reset_test_segment_limits,
+    rewrite_segment_with_seal_trailer, set_test_segment_limits, write_test_segmented,
 };

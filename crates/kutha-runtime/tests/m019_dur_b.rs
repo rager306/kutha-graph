@@ -135,20 +135,27 @@ fn export_jsonl_takes_lock_before_reading() {
 fn write_segment_file_streams_frames() {
     let src = include_str!("../src/segment.rs");
     let fn_start = src
-        .find("fn write_segment_file")
-        .expect("write_segment_file must exist");
+        .find("fn write_segment_file_commit")
+        .expect("write_segment_file_commit must exist");
     let body = &src[fn_start..];
-    let create = body
-        .find("File::create")
-        .expect("write_segment_file must create the segment file");
+    let replace = body
+        .find("replace_via_tmp")
+        .expect("write_segment_file_commit must use replace_via_tmp");
     let write = body
         .find("f.write_all(&frame)")
-        .expect("write_segment_file must write each frame");
-    assert!(create < write, "must create the file before writing frames");
+        .expect("write_segment_file_commit must write each frame");
+    assert!(
+        replace < write,
+        "must open tmp via replace_via_tmp before writing frames"
+    );
     let prefix = &body[..write];
     assert!(
         !prefix.contains("frames.extend") && !prefix.contains("all_frames"),
         "must not concatenate frames before the write"
+    );
+    assert!(
+        !prefix.contains("File::create(path)"),
+        "must not truncate the final segment path in place"
     );
 }
 

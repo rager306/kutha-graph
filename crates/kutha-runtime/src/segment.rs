@@ -17,7 +17,7 @@ use sha2::{Digest, Sha256};
 use std::cell::Cell;
 use std::fs::{self, File};
 use std::io::Write;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub(crate) const MAGIC: &[u8; 8] = b"KUTHASEG";
 pub(crate) const VERSION: u32 = 1;
@@ -171,62 +171,91 @@ pub(crate) fn seal_frame(
     Err(invalid("seal trailer size did not converge"))
 }
 
+fn segment_tmp_path(path: &Path) -> PathBuf {
+    let mut os = path.as_os_str().to_owned();
+    os.push(".tmp");
+    PathBuf::from(os)
+}
+
 fn write_segment_file(
     path: &Path,
     events: &[Event],
     sealed: bool,
     prev: [u8; 32],
 ) -> std::io::Result<(Option<SealedMeta>, [u8; 32])> {
+    write_segment_file_commit(path, events, sealed, prev, true)
+}
+
+/// Test seam (PA-02): write the segment temp sibling then return Err without renaming dest.
+#[doc(hidden)]
+pub fn abort_write_segment_before_rename(
+    path: &Path,
+    events: &[Event],
+    sealed: bool,
+    prev: [u8; 32],
+) -> std::io::Result<()> {
+    write_segment_file_commit(path, events, sealed, prev, false).map(|_| ())
+}
+
+fn write_segment_file_commit(
+    path: &Path,
+    events: &[Event],
+    sealed: bool,
+    prev: [u8; 32],
+    commit: bool,
+) -> std::io::Result<(Option<SealedMeta>, [u8; 32])> {
     if sealed && events.is_empty() {
         return Err(invalid("sealed segment must contain at least one event"));
     }
-    let mut h = prev;
-    let mut frames_len = 0u64;
-    let mut f = File::create(path)?;
-    write_header(&mut f, prev)?;
-    for e in events {
-        let frame = wal::frame_bytes(e)?;
-        h = chain_absorb(h, &frame);
-        f.write_all(&frame)?;
-        frames_len = frames_len.saturating_add(frame.len() as u64);
-    }
-    let chain = hex32(h);
-    let body_len = HEADER_LEN + frames_len;
-    let trailer = if sealed {
-        Some(seal_frame(
-            events.len() as u64,
-            events[0].id,
-            events[events.len() - 1].id,
-            body_len,
-            &chain,
-        )?)
-    } else {
-        None
-    };
-    let bytes = body_len + trailer.as_ref().map(|t| t.len() as u64).unwrap_or(0);
-    if let Some(t) = &trailer {
-        f.write_all(t)?;
-    }
-    f.sync_all()?;
-    if sealed {
-        Ok((
-            Some(SealedMeta {
-                name: path
-                    .file_name()
-                    .and_then(|n| n.to_str())
-                    .unwrap_or("seg.log")
-                    .to_string(),
+    let mut tip = prev;
+    let mut meta: Option<SealedMeta> = None;
+    let name = path
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or("seg.log")
+        .to_string();
+    let tmp = segment_tmp_path(path);
+    replace_via_tmp(path, &tmp, commit, |f| {
+        let mut h = prev;
+        let mut frames_len = 0u64;
+        write_header(f, prev)?;
+        for e in events {
+            let frame = wal::frame_bytes(e)?;
+            h = chain_absorb(h, &frame);
+            f.write_all(&frame)?;
+            frames_len = frames_len.saturating_add(frame.len() as u64);
+        }
+        let chain = hex32(h);
+        let body_len = HEADER_LEN + frames_len;
+        let trailer = if sealed {
+            Some(seal_frame(
+                events.len() as u64,
+                events[0].id,
+                events[events.len() - 1].id,
+                body_len,
+                &chain,
+            )?)
+        } else {
+            None
+        };
+        let bytes = body_len + trailer.as_ref().map(|t| t.len() as u64).unwrap_or(0);
+        if let Some(t) = &trailer {
+            f.write_all(t)?;
+        }
+        tip = h;
+        if sealed {
+            meta = Some(SealedMeta {
+                name: name.clone(),
                 first: events[0].id,
                 last: events[events.len() - 1].id,
                 count: events.len() as u64,
                 bytes,
                 chain,
-            }),
-            h,
-        ))
-    } else {
-        Ok((None, h))
-    }
+            });
+        }
+        Ok(())
+    })?;
+    Ok((meta, tip))
 }
 
 pub(crate) fn write_manifest(dir: &Path, manifest: &Manifest) -> std::io::Result<()> {

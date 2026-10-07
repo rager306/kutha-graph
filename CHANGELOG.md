@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-07 — Product: atomic segment rewrite (Phase 65)
+
+### Product
+
+- `write_segment_file` writes `seg-*.log.tmp`, `sync_all`, then rename (`replace_via_tmp`); no in-place truncate of sealed/active segments. `rewrite_segment_with_seal_trailer` and `write_test_segmented` inherit the path. Test seam `abort_write_segment_before_rename` leaves dest intact.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-07 — Process: lease M020 S03 (GSD Phase 65)
 
 ### Process

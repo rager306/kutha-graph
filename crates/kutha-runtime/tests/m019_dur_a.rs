@@ -249,8 +249,8 @@ fn seg_manifest_tmp_sync_all_before_rename() {
         .expect_err("stop after persist_log / write_manifest");
     let delta = store::replace_via_tmp_file_sync_count().saturating_sub(before);
     assert_eq!(
-        delta, 1,
-        "write_manifest is the only replace_via_tmp in persist_log; tmp sync_all count={delta}"
+        delta, 2,
+        "persist_log: one active segment + manifest each replace_via_tmp; tmp sync_all count={delta}"
     );
     assert!(dir.join(store::MANIFEST_REL).exists());
     assert!(!dir.join("manifest.json.tmp").exists());
