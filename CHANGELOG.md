@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-07 — Process: close M020 S03 (Phase 65)
+
+### Process
+
+- `L_delivery=M020-S03-done`, Active Slice **None**. Independent `65-VERIFICATION.md` passed. Segment rewrite is tmp+fsync+rename; bench ≤10% on `ingest_plain.n` / `as_of.n`.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-07 — Product: atomic segment rewrite (Phase 65)
 
 ### Product
