@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-07 — Process: close M021 / v0.15
+
+### Process
+
+- `L_delivery=M021-closed`, Active Slice **None**. Phases 68–70 independently verified. Audit `.planning/milestones/v0.15-MILESTONE-AUDIT.md`. Crate SemVer stays 0.0.0.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-07 — Product: Retract all live residuals (Phase 69)
 
 ### Product
