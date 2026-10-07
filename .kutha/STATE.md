@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M020
-**Active Slice:** S02
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M020-S01-done
+L_delivery=M020-S02-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M020 S01 done; S02 leased (harness fail-closed) | Capability proven / Cypher started |
+| L_delivery | M020 S02 done (harness fail-closed); S03+ unleased | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**Lease M020 S02 / GSD Phase 64 (harness fail-closed).** `L_delivery=M020-S01-done`. Scope: nameless dictionary row, missing cite, bad JSONL line, `min_phase` without NN-, empty heading glob → findings; RED selftest first. No product crates. Honeycomb stays Proposed. Not Cypher/HNSW.
+**M020 S02 closed 2026-10-07** (GSD Phase 64). Independent `64-VERIFICATION.md` passed. `L_delivery=M020-S02-done`, Active Slice **None**. Next lease: M020 S03 (persist atomic rewrite). Honeycomb stays Proposed. Not Cypher/HNSW.
 
 ## Thaw map
 

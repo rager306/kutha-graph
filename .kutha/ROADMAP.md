@@ -194,7 +194,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 - [x] **S01: Hygiene** `risk:low` `depends:[]`
   > After this: `cargo fmt --check` green; dead `line_at` removed; stale Next-action / ROADMAP pointers fixed; `ce-skills-ru` handoff override committed or dropped; no product behaviour change.
-- [ ] **S02: Harness fail-closed** `risk:medium` `depends:[S01]`
+- [x] **S02: Harness fail-closed** `risk:medium` `depends:[S01]`
   > After this: nameless dictionary row, missing cite file, bad JSONL line, `min_phase` without NN-, empty heading glob are findings (not silent pass); each has a RED selftest mutation first.
 - [ ] **S03: Persist atomic rewrite** `risk:high` `depends:[S02]`
   > After this: `persist_log` / seal rewrite write `*.tmp`, fsync, rename; manifest last; failpoint/crash-window oracle; bench gate ≤10% on `ingest_plain.n` / `as_of.n`.
