@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-07 — Process: close M020 S04 (Phase 66)
+
+### Process
+
+- `L_delivery=M020-S04-done`, Active Slice **None**. Independent `66-VERIFICATION.md` passed. CorrectInterval residual re-derive, co-live `live_triples`, Retract `kutha:*` gate, fingerprint oracle; bench ≤10%.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-07 — Product: Horn/fold residuals (Phase 66)
 
 ### Product

@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M020
-**Active Slice:** S04
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M020-S03-done
+L_delivery=M020-S04-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M020 S03 done; S04 leased (Horn/fold residuals) | Capability proven / Cypher started |
+| L_delivery | M020 S04 done (Horn/fold); S05+ unleased | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**Lease M020 S04 / GSD Phase 66 (Horn/fold residuals).** `L_delivery=M020-S03-done`. Scope: CorrectInterval residual re-derive; co-live-safe `live_triples`; Retract admit gate for reserved/`kutha:*`; real fingerprint oracle for `open_retract_reemit` stub; named pins; bench ≤10%. Honeycomb stays Proposed. Not Cypher/HNSW.
+**M020 S04 closed 2026-10-07** (GSD Phase 66). Independent `66-VERIFICATION.md` passed. `L_delivery=M020-S04-done`, Active Slice **None**. Next lease: M020 S05 (process contract). Honeycomb stays Proposed. Not Cypher/HNSW.
 
 ## Thaw map
 

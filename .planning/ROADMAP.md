@@ -32,9 +32,10 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
   - **Goal:** crash mid-`persist_log` leaves openable store or clean failure; named oracle; bench ≤10%; honeycomb stays Proposed
   - **Plans:** 1/1 executed; independent `65-VERIFICATION.md` passed
   - [x] 65-01-PLAN.md — segment replace_via_tmp, abort oracle, bench gate
-- [ ] **Phase 66: Horn and fold residuals** — CorrectInterval, live_triples, Retract gate, oracle stub (S04)
+- [x] **Phase 66: Horn and fold residuals** — CorrectInterval, live_triples, Retract gate, oracle stub (S04)
   - **Goal:** residual re-derive; co-live-safe triple lease; MetaOpRejected on reserved Retract; real fingerprint assert; pins; bench ≤10%; honeycomb stays Proposed
-  - **Plans:** 0/1
+  - **Plans:** 1/1 executed; independent `66-VERIFICATION.md` passed
+  - [x] 66-01-PLAN.md — multimap, CorrectInterval re-derive, Retract gate, fingerprint oracle
 - [ ] **Phase 67: Process contract** — lease/bench/verify rules; M020 close (S05)
   - **Goal:** lease = STATE+CHANGELOG; product close records bench; re-verify after VERIFICATION edits; M020 closed; honeycomb stays Proposed
   - **Plans:** 0/1
@@ -46,4 +47,4 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 | v0.01–v0.13 | 1–62 | shipped |
 | v0.14 | 63–67 | active |
 
-**Next:** Lease M020 S04 / Phase 66 (Horn/fold residuals).
+**Next:** Lease M020 S05 / Phase 67 (process contract + M020 close).

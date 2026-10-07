@@ -198,7 +198,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
   > After this: nameless dictionary row, missing cite file, bad JSONL line, `min_phase` without NN-, empty heading glob are findings (not silent pass); each has a RED selftest mutation first.
 - [x] **S03: Persist atomic rewrite** `risk:high` `depends:[S02]`
   > After this: `persist_log` / seal rewrite write `*.tmp`, fsync, rename; manifest last; failpoint/crash-window oracle; bench gate ≤10% on `ingest_plain.n` / `as_of.n`.
-- [ ] **S04: Horn and fold residuals** `risk:high` `depends:[S03]`
+- [x] **S04: Horn and fold residuals** `risk:high` `depends:[S03]`
   > After this: CorrectInterval prefix/suffix re-derive; co-live-safe `live_triples`; Retract admit gate for reserved/`kutha:*`; real fingerprint oracle replaces `open_retract_reemit` stub; named pins; bench gate ≤10%.
 - [ ] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
