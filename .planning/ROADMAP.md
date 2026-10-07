@@ -30,7 +30,8 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
   - [x] 64-01-PLAN.md — fail-closed dict id, cite path, JSONL fold, min_phase dirname, empty heading glob
 - [ ] **Phase 65: Persist atomic rewrite** — tmp+fsync+rename; failpoint; bench (S03)
   - **Goal:** crash mid-`persist_log` leaves openable store or clean failure; named oracle; bench ≤10%; honeycomb stays Proposed
-  - **Plans:** 0/1
+  - **Plans:** 1 plan
+  - [ ] 65-01-PLAN.md — segment replace_via_tmp, abort oracle, bench gate
 - [ ] **Phase 66: Horn and fold residuals** — CorrectInterval, live_triples, Retract gate, oracle stub (S04)
   - **Goal:** residual re-derive; co-live-safe triple lease; MetaOpRejected on reserved Retract; real fingerprint assert; pins; bench ≤10%; honeycomb stays Proposed
   - **Plans:** 0/1
@@ -45,4 +46,4 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 | v0.01–v0.13 | 1–62 | shipped |
 | v0.14 | 63–67 | active |
 
-**Next:** Lease M020 S03 / Phase 65 (persist atomic rewrite).
+**Next:** Phase 65 execute (`65-01-PLAN.md`); `.kutha/STATE.md` leases M020 S03.
