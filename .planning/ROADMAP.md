@@ -16,7 +16,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 - ✅ **v0.11 Wedge unblock** — Phases 45–48 (harness M018) — shipped 2026-10-06
 - ✅ **v0.12 Log durability protocol** — Phases 49–55 (harness M002) — shipped 2026-10-04
 - ✅ **v0.13 Post-M002 coherence** — Phases 56–62 (harness M019) — shipped 2026-10-05
-- 🔄 **v0.14 Audit correction** — Phases 63–67 (harness M020) — active
+- ✅ **v0.14 Audit correction** — Phases 63–67 (harness M020) — shipped 2026-10-07
 
 ## Phases
 
@@ -36,15 +36,16 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
   - **Goal:** residual re-derive; co-live-safe triple lease; MetaOpRejected on reserved Retract; real fingerprint assert; pins; bench ≤10%; honeycomb stays Proposed
   - **Plans:** 1/1 executed; independent `66-VERIFICATION.md` passed
   - [x] 66-01-PLAN.md — multimap, CorrectInterval re-derive, Retract gate, fingerprint oracle
-- [ ] **Phase 67: Process contract** — lease/bench/verify rules; M020 close (S05)
+- [x] **Phase 67: Process contract** — lease/bench/verify rules; M020 close (S05)
   - **Goal:** lease = STATE+CHANGELOG; product close records bench; re-verify after VERIFICATION edits; M020 closed; honeycomb stays Proposed
-  - **Plans:** 0/1
+  - **Plans:** 1/1 executed; independent `67-VERIFICATION.md` passed
+  - [x] 67-01-PLAN.md — contract rules + M020 close
 
 ## Progress
 
 | Milestone | Phases | Status |
 |-----------|--------|--------|
 | v0.01–v0.13 | 1–62 | shipped |
-| v0.14 | 63–67 | active |
+| v0.14 | 63–67 | shipped |
 
-**Next:** Lease M020 S05 / Phase 67 (process contract + M020 close).
+**Next:** controller decision (M020 closed).

@@ -2,24 +2,24 @@
 gsd_state_version: "1.0"
 milestone: v0.14
 milestone_name: Audit correction
-status: active
-stopped_at: Phase 66 closed; ready to lease Phase 67
-last_updated: "2026-10-07T15:40:00.000Z"
+status: shipped
+stopped_at: M020 / v0.14 closed
+last_updated: "2026-10-07T16:15:00.000Z"
 progress:
   total_phases: 5
-  completed_phases: 4
-  total_plans: 4
-  completed_plans: 4
+  completed_phases: 5
+  total_plans: 5
+  completed_plans: 5
 ---
 
 # Project State
 
-**Milestone:** v0.14 Audit correction (harness M020)
-**Phase:** 66 closed
-**Status:** Active — S04 done; next lease S05 / Phase 67
+**Milestone:** v0.14 Audit correction (harness M020) — **shipped**
+**Phase:** 67 closed
+**Status:** Complete — all phases independently verified
 
-**Last activity:** 2026-10-07 — Phase 66 independently verified PASS
+**Last activity:** 2026-10-07 — M020 closed (`L_delivery=M020-closed`)
 
-Stopped at: Phase 66 closed (`66-VERIFICATION.md`)
-Next: Lease M020 S05; process contract + M020 close
+Stopped at: milestone complete
+Next: controller decision for next lease
 Plan source: `.compound-engineering/artifacts/plans/2026-10-07-audit-correction-plan.md`
