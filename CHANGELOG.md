@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-07 — Process: lease M020 S05 (GSD Phase 67)
+
+### Process
+
+- Active Milestone **M020**, Active Slice **S05** (`L_delivery=M020-S04-done`): process contract — lease commit file set, bench at product close, re-verify after VERIFICATION edits; then close M020. Honeycomb stays Proposed.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-07 — Process: close M020 S04 (Phase 66)
 
 ### Process
