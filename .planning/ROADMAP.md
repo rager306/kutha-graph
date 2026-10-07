@@ -22,7 +22,8 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 - [ ] **Phase 63: Hygiene** — fmt, dead `line_at`, stale pointers, `ce-skills-ru` (S01, no product behaviour)
   - **Goal:** `cargo fmt --check` green; remove unused `rust_source.line_at`; fix stale Next-action / planning pointers; land or drop `ce-skills-ru` handoff override; honeycomb stays Proposed
-  - **Plans:** 0/1
+  - **Plans:** 1/1 executed; independent `63-VERIFICATION.md` pending
+  - [x] 63-01-PLAN.md — fmt, delete line_at, land ce-skills-ru
 - [ ] **Phase 64: Harness fail-closed** — silent-pass paths become findings (S02)
   - **Goal:** nameless dictionary row, missing cite, bad JSONL, `min_phase` without NN-, empty heading glob fail closed; RED selftest first; honeycomb stays Proposed
   - **Plans:** 0/1

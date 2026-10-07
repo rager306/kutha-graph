@@ -7,6 +7,8 @@ alwaysApply: true
 
 Chat with the user is Russian. Compound Engineering skill `description` fields are English. Match the utterance below, then **Read that skill and follow it**. Do not replace a CE skill with a homemade protocol.
 
+**`ce-handoff` destination override (project rule, equals a user-chosen destination):** the skill's default managed store is OS-evictable `/tmp/compound-engineering-<uid>/`. In this repo write the handoff to `.compound-engineering/artifacts/handoffs/<topic>.md` instead (AGENTS.md § Artifacts), keep the `ce-handoff/v1` frontmatter, do not also create a `/tmp` copy, and give that repo-relative path in the resume command.
+
 The git user-rule is **safety only**: no force-push, no `--no-verify`, no commit unless asked. It is not the commit workflow.
 
 | User said (any of) | Open and follow |
