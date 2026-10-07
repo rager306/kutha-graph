@@ -13,11 +13,11 @@
 
 ### Fold defect (Phase 69, S02)
 
-- [ ] **RETRACT-01**: `Op::Retract { event_id }` invalidates every live Fact with that event id (CorrectInterval multi-residual); RED first; bench ≤10%
+- [x] **RETRACT-01**: `Op::Retract { event_id }` invalidates every live Fact with that event id (CorrectInterval multi-residual); RED first; bench ≤10%
 
 ### Close (Phase 70, S03)
 
-- [ ] **CLOSE-01**: M021 closed; Active None; audit note; honeycomb Proposed
+- [x] **CLOSE-01**: M021 closed; Active None; audit note; honeycomb Proposed
 
 ## Out of Scope (this milestone)
 
