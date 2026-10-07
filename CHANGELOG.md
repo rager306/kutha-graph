@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-07 — Process: lease M020 S04 (GSD Phase 66)
+
+### Process
+
+- Active Milestone **M020**, Active Slice **S04** (`L_delivery=M020-S03-done`): Horn/fold residuals — CorrectInterval re-derive, co-live-safe `live_triples`, Retract gate for `kutha:*`, fingerprint oracle, pins, bench ≤10%. Honeycomb stays Proposed.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-07 — Process: close M020 S03 (Phase 65)
 
 ### Process
