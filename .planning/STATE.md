@@ -1,25 +1,23 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.14
-milestone_name: Audit correction
-status: shipped
-stopped_at: M020 / v0.14 closed
-last_updated: "2026-10-07T16:15:00.000Z"
+milestone: v0.15
+milestone_name: Wedge decisions
+status: active
+stopped_at: null
+last_updated: "2026-10-07T12:30:00.000Z"
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 5
-  completed_plans: 5
+  total_phases: 3
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
 
-**Milestone:** v0.14 Audit correction (harness M020) — **shipped**
-**Phase:** 67 closed
-**Status:** Complete — all phases independently verified
+**Milestone:** v0.15 Wedge decisions (harness M021)
+**Phase:** 68 ready
+**Status:** Active — controller leased S01 next
 
-**Last activity:** 2026-10-07 — M020 closed (`L_delivery=M020-closed`)
+**Last activity:** 2026-10-07 — M021 opened; verdicts locked in `68-CONTEXT.md`
 
-Stopped at: milestone complete
-Next: controller decision for next lease
-Plan source: `.compound-engineering/artifacts/plans/2026-10-07-audit-correction-plan.md`
+Plan source: `.compound-engineering/artifacts/plans/2026-10-07-m021-wedge-decisions.md`

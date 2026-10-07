@@ -4,7 +4,7 @@
 
 GSD overlay tracks the steel thread already in crates — not honeycomb waterfall. Harness delivery stays in `.kutha/STATE.md` / `.kutha/ROADMAP.md`.
 
-v0.01–v0.13 shipped. **v0.14 Audit correction** (harness M020) is active.
+v0.01–v0.14 shipped. **v0.15 Wedge decisions** (harness M021) is active.
 
 ## Id map
 
@@ -12,40 +12,26 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 ## Milestones
 
-- ✅ **v0.01–v0.13** — shipped — see `./milestones/` where archived
-- ✅ **v0.11 Wedge unblock** — Phases 45–48 (harness M018) — shipped 2026-10-06
-- ✅ **v0.12 Log durability protocol** — Phases 49–55 (harness M002) — shipped 2026-10-04
-- ✅ **v0.13 Post-M002 coherence** — Phases 56–62 (harness M019) — shipped 2026-10-05
-- ✅ **v0.14 Audit correction** — Phases 63–67 (harness M020) — shipped 2026-10-07
+- ✅ **v0.01–v0.14** — shipped — see `./milestones/` where archived
+- 🔄 **v0.15 Wedge decisions** — Phases 68–70 (harness M021) — active
 
 ## Phases
 
-- [x] **Phase 63: Hygiene** — fmt, dead `line_at`, stale pointers, `ce-skills-ru` (S01, no product behaviour)
-  - **Goal:** `cargo fmt --check` green; remove unused `rust_source.line_at`; fix stale Next-action / planning pointers; land or drop `ce-skills-ru` handoff override; honeycomb stays Proposed
-  - **Plans:** 1/1 executed; independent `63-VERIFICATION.md` passed
-  - [x] 63-01-PLAN.md — fmt, delete line_at, land ce-skills-ru
-- [x] **Phase 64: Harness fail-closed** — silent-pass paths become findings (S02)
-  - **Goal:** nameless dictionary row, missing cite, bad JSONL, `min_phase` without NN-, empty heading glob fail closed; RED selftest first; honeycomb stays Proposed
-  - **Plans:** 1/1 executed; independent `64-VERIFICATION.md` passed
-  - [x] 64-01-PLAN.md — fail-closed dict id, cite path, JSONL fold, min_phase dirname, empty heading glob
-- [x] **Phase 65: Persist atomic rewrite** — tmp+fsync+rename; failpoint; bench (S03)
-  - **Goal:** crash mid-`persist_log` leaves openable store or clean failure; named oracle; bench ≤10%; honeycomb stays Proposed
-  - **Plans:** 1/1 executed; independent `65-VERIFICATION.md` passed
-  - [x] 65-01-PLAN.md — segment replace_via_tmp, abort oracle, bench gate
-- [x] **Phase 66: Horn and fold residuals** — CorrectInterval, live_triples, Retract gate, oracle stub (S04)
-  - **Goal:** residual re-derive; co-live-safe triple lease; MetaOpRejected on reserved Retract; real fingerprint assert; pins; bench ≤10%; honeycomb stays Proposed
-  - **Plans:** 1/1 executed; independent `66-VERIFICATION.md` passed
-  - [x] 66-01-PLAN.md — multimap, CorrectInterval re-derive, Retract gate, fingerprint oracle
-- [x] **Phase 67: Process contract** — lease/bench/verify rules; M020 close (S05)
-  - **Goal:** lease = STATE+CHANGELOG; product close records bench; re-verify after VERIFICATION edits; M020 closed; honeycomb stays Proposed
-  - **Plans:** 1/1 executed; independent `67-VERIFICATION.md` passed
-  - [x] 67-01-PLAN.md — contract rules + M020 close
+- [ ] **Phase 68: Wedge decisions** — TR-02 / C01 pack-fact pins; matrix kill (S01)
+  - **Goal:** D-TR-02 and C01 Assert spike pinned; SEM rows killed; ADR Evidence; fold unchanged; honeycomb Proposed
+  - **Plans:** pending
+- [ ] **Phase 69: Retract all live** — CorrectInterval multi-residual Retract (S02)
+  - **Goal:** Retract(event_id) clears all live residuals; RED first; bench ≤10%; honeycomb Proposed
+  - **Plans:** pending
+- [ ] **Phase 70: M021 close** — audit + Active None (S03)
+  - **Goal:** M021 closed; id map shipped; honeycomb Proposed
+  - **Plans:** pending
 
 ## Progress
 
 | Milestone | Phases | Status |
 |-----------|--------|--------|
-| v0.01–v0.13 | 1–62 | shipped |
-| v0.14 | 63–67 | shipped |
+| v0.01–v0.14 | 1–67 | shipped |
+| v0.15 | 68–70 | active |
 
-**Next:** controller decision (M020 closed).
+**Next:** Phase 68 / M021 S01.
