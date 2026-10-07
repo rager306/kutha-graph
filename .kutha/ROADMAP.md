@@ -192,7 +192,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 **Success:** hygiene green (`cargo fmt`); harness silent-pass paths fail closed with RED selftests; `persist_log` is crash-atomic (tmp+rename); CorrectInterval residuals re-derive; `live_triples` co-live safe; user Retract cannot kill `kutha:*`; process lease/bench/verify rules match practice; independent VERIFICATION per phase.
 
-- [ ] **S01: Hygiene** `risk:low` `depends:[]`
+- [x] **S01: Hygiene** `risk:low` `depends:[]`
   > After this: `cargo fmt --check` green; dead `line_at` removed; stale Next-action / ROADMAP pointers fixed; `ce-skills-ru` handoff override committed or dropped; no product behaviour change.
 - [ ] **S02: Harness fail-closed** `risk:medium` `depends:[S01]`
   > After this: nameless dictionary row, missing cite file, bad JSONL line, `min_phase` without NN-, empty heading glob are findings (not silent pass); each has a RED selftest mutation first.
