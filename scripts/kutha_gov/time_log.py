@@ -155,11 +155,15 @@ def fold_log(path: Path) -> HarnessFold:
     if not path.is_file():
         return picture
     seq = 0
-    for line in path.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
+    for line_no, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        line = raw.strip()
         if not line:
             continue
-        event = HarnessEvent.from_json(json.loads(line))
+        try:
+            row = json.loads(line)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"{path}: invalid JSONL at line {line_no}: {exc}") from exc
+        event = HarnessEvent.from_json(row)
         picture.apply(event)
         seq += 1
     return picture

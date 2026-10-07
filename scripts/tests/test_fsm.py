@@ -242,8 +242,9 @@ class FsmTests(unittest.TestCase):
         with self.assertRaises(ValueError) as ctx:
             fold_log(path)
         msg = str(ctx.exception)
-        self.assertIn("line 2", msg)
-        self.assertNotIn("Expecting value: line 1 column 1", msg)
+        self.assertIn("invalid JSONL at line 2", msg)
+        self.assertIsInstance(ctx.exception, ValueError)
+        self.assertNotIsInstance(ctx.exception, json.JSONDecodeError)
 
     def test_fsm_fold_log_bad_jsonl_fails_observed(self) -> None:
         import json

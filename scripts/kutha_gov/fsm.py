@@ -422,7 +422,14 @@ def _execute(
             )
         return "done"
     if kind == "fold_log":
-        fold_log(ctx.root / LOG_REL)
+        try:
+            fold_log(ctx.root / LOG_REL)
+        except ValueError as exc:
+            outcome.findings.append(
+                Finding("fold_log", Severity.HIGH, "fold", str(exc))
+            )
+            outcome.observations.append(("fold_log", "fail"))
+            return "fail"
         return "ok"
     if kind == "decide":
         high = sum(r.high_count for r in outcome.results) + sum(

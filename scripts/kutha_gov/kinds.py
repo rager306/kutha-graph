@@ -196,7 +196,7 @@ def _file_contains_one(check: str, step: Step, path: str, text: str, result: Che
 def _kind_file_contains(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
     pattern = _str(step, "glob")
     if pattern:
-        hits = _glob_max_lines_hits(step, ctx.root)
+        hits = _glob_max_lines_hits(step, ctx.root, check=check, result=result)
         if not hits:
             result.scanned += 1
             if step.get("allow_empty"):
@@ -325,10 +325,9 @@ def _kind_glob_absent(check: str, step: Step, ctx: Context, result: CheckResult)
         if not path.is_file():
             continue
         rel = path.relative_to(ctx.root).as_posix()
-        if min_phase > 0:
-            nn = _planning_phase_nn(rel)
-            if nn is None or nn < min_phase:
-                continue
+        gate = _min_phase_gate(check, rel, min_phase, result)
+        if gate != "keep":
+            continue
         text = _casefold(step, path.read_text(encoding="utf-8"))
         result.scanned += 1
         for needle in needles:
@@ -406,6 +405,17 @@ def _kind_markdown_heading_tag(check: str, step: Step, ctx: Context, result: Che
         tag = match.group("tag")
         if tag == "Accepted":
             accepted.append(rel)
+    if pattern and parent.is_dir() and result.scanned == 0:
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                _category(step, "glob-empty"),
+                f"glob {pattern!r} matched no files",
+                pattern,
+            )
+        )
+        return
     if forbid_prefix:
         honeycomb = [
             rel
@@ -1569,7 +1579,12 @@ def _kind_cite_equals(check: str, step: Step, ctx: Context, result: CheckResult)
         )
         if cite_re is None:
             return
-        for path in _cite_files(item, ctx):
+        cite_path = item.get("path")
+        files = _cite_files(item, ctx)
+        if isinstance(cite_path, str) and cite_path.strip() and not files:
+            _high_missing(check, cite_path.strip(), result)
+            continue
+        for path in files:
             rel = _relpath(path, ctx)
             result.scanned += 1
             text = path.read_text(encoding="utf-8")
@@ -1745,7 +1760,47 @@ def _planning_phase_nn(rel: str) -> int | None:
     return int(match.group(1))
 
 
-def _glob_max_lines_hits(step: Step, root: Path) -> list[Path]:
+def _under_planning_phases(rel: str) -> bool:
+    parts = Path(rel).as_posix().split("/")
+    return len(parts) >= 3 and parts[0] == ".planning" and parts[1] == "phases"
+
+
+def _min_phase_gate(
+    check: str,
+    rel: str,
+    min_phase: int,
+    result: CheckResult | None,
+) -> str:
+    """Return 'keep', 'skip', or 'bad' for a path under min_phase filtering."""
+    if min_phase <= 0:
+        return "keep"
+    if not _under_planning_phases(rel):
+        return "skip"
+    nn = _planning_phase_nn(rel)
+    if nn is None:
+        if result is not None:
+            result.findings.append(
+                Finding(
+                    check,
+                    Severity.HIGH,
+                    "min-phase",
+                    f"phase dirname lacks NN- prefix: {rel}",
+                    rel,
+                )
+            )
+        return "bad"
+    if nn < min_phase:
+        return "skip"
+    return "keep"
+
+
+def _glob_max_lines_hits(
+    step: Step,
+    root: Path,
+    *,
+    check: str | None = None,
+    result: CheckResult | None = None,
+) -> list[Path]:
     pattern = _str(step, "glob")
     if not pattern:
         return []
@@ -1755,10 +1810,9 @@ def _glob_max_lines_hits(step: Step, root: Path) -> list[Path]:
         if not path.is_file():
             continue
         rel = path.relative_to(root).as_posix()
-        if min_phase > 0:
-            nn = _planning_phase_nn(rel)
-            if nn is None or nn < min_phase:
-                continue
+        gate = _min_phase_gate(check or "", rel, min_phase, result)
+        if gate != "keep":
+            continue
         hits.append(path)
     return hits
 
@@ -1798,7 +1852,7 @@ def _kind_glob_max_lines(check: str, step: Step, ctx: Context, result: CheckResu
         )
         return
     min_hits = glob_max_lines_effective_min_hits(step, ctx.root)
-    hits = _glob_max_lines_hits(step, ctx.root)
+    hits = _glob_max_lines_hits(step, ctx.root, check=check, result=result)
     if len(hits) < min_hits:
         result.scanned += 1
         message = _fmt(
@@ -1915,7 +1969,7 @@ def _kind_frontmatter_paths_exist(
     check: str, step: Step, ctx: Context, result: CheckResult
 ) -> None:
     field = _str(step, "field", "read_only_inputs")
-    hits = _glob_max_lines_hits(step, ctx.root)
+    hits = _glob_max_lines_hits(step, ctx.root, check=check, result=result)
     if not hits:
         result.scanned += 1
         if step.get("allow_empty"):

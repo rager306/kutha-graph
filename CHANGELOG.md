@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-07 — Harness fail-closed (Phase 64)
+
+### Process
+
+- Dictionary row without `id` → `LoadErrorCheck` HIGH (`get_checks`).
+- `cite_equals` cite `path` missing → HIGH `missing` (not an empty loop).
+- `fold_log` invalid JSONL → `ValueError` with 1-based line; FSM `fold_log` observes `fail`.
+- `min_phase>0` under `.planning/phases/` without `NN-` dirname → HIGH.
+- `markdown_heading_tag` empty glob with existing parent → HIGH.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-07 — Process: lease M020 S02 (GSD Phase 64)
 
 ### Process

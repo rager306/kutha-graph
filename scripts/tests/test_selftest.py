@@ -544,7 +544,7 @@ class SelftestTests(unittest.TestCase):
                     "steps": [
                         {
                             "kind": "glob_max_lines",
-                            "glob": ".planning/phases/*-*/*.md",
+                            "glob": ".planning/phases/*/*.md",
                             "min_phase": 1,
                             "max": 200,
                             "min_hits": 0,
@@ -558,7 +558,10 @@ class SelftestTests(unittest.TestCase):
         result = check.run(Context(root=root))
         self.assertGreaterEqual(result.high_count, 1)
         self.assertTrue(
-            any("nophase" in (f.message or "") or "nophase" in (f.path or "") for f in result.findings),
+            any(
+                "nophase" in (f.message or "") or "nophase" in (f.file or "")
+                for f in result.findings
+            ),
             msg=result.findings,
         )
 

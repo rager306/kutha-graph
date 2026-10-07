@@ -89,8 +89,13 @@ def get_checks(root: Path | None = None) -> dict[str, Check]:
         if not isinstance(row, dict):
             continue
         check = DictCheck(row)
-        if check.name:
-            found[check.name] = check
+        if not check.name:
+            return {
+                LoadErrorCheck.name: LoadErrorCheck(
+                    "dictionary check row missing id"
+                )
+            }
+        found[check.name] = check
     if not found:
         return {LoadErrorCheck.name: LoadErrorCheck("dictionary.checks is empty")}
     return found
