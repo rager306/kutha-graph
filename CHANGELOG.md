@@ -11,6 +11,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - `cargo fmt --all` clears Phase 47 indent debt in `eval.rs` (`retract_derived` / `horn_fires`). No behaviour change.
 - Removed dead `scripts/kutha_gov/rust_source.line_at` (zero callers).
 - Landed `.cursor/rules/ce-skills-ru.mdc` `ce-handoff` destination override to `.compound-engineering/artifacts/handoffs/`.
+- README Status row names Active Milestone **M020** (`state-readme`).
 
 ### Trajectory
 
