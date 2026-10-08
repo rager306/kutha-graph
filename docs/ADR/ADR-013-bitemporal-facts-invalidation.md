@@ -175,6 +175,17 @@ Derived Horn EventIds are hash-stable (`Event::stable_derived`, prefix `kutha-de
 
 `Op::Retract { event_id }` invalidates **every** live Fact whose `event_id` matches (CorrectInterval may mint prefix/patch/suffix residuals sharing one id). `fact_index_by_event_id` remains first-live for Correct / CorrectInterval targeting. Oracles: `retract_correct_interval_event_id_clears_all_residuals`, `retract_assert_event_id_still_clears_single_row`. D013-1…D013-4 unchanged. Cell remains **Proposed**.
 
+### Clarification (2026-10-08; Phase 79 / M024 S01; Proposed)
+
+Fold identity for Correct/Retract by `event_id` (G-A02 / G-A05 / G-A07):
+
+1. **Live gate:** user `Retract` / `Correct` / `CorrectInterval` require at least one **live** residual for the id; otherwise `UnknownFact` (fail-closed). Dead ids (including Retract of the original Assert after CorrectInterval) no longer silent-no-op.
+2. **Multi-residual Correct:** invalidate every live residual under the id and mint **one** replacement with the Correct payload (claim-level whole correct).
+3. **Multi-residual CorrectInterval:** `IntervalPatchRejected` — interval patch targets exactly one live VT window.
+4. **G-A07:** after CI, clear windows via `Retract(ci_id)` (already all-live); `Retract(original)` is dead → UnknownFact.
+
+`live_fact_indices_by_event_id` is the selector; `fact_index_by_event_id` stays first-live-or-dead for admission/lookup. Oracles: `m024_fold_identity.rs`. D013-1…D013-4 unchanged. Cell remains **Proposed**.
+
 ### Verdict (2026-10-07; Phase 68 / M021 S01; Proposed)
 
 Confirm Phase 46: C01 is pack stamp (a). Pack expresses application-end as ordinary `Assert` (e.g. `appliesTo` with its own VT) — not Horn Const, not a fifth axis, not `valid_to` of the text treated as application-end by core. Oracles: `fixg01_c01_sunset_inexpressible_as_horn`, `c01_applies_to_assert_encodes_application_window`.

@@ -367,8 +367,9 @@ fn interval_patch_not_live_does_not_append() {
             patch_to: Some(PATCH_TO),
         })
         .unwrap_err();
+    // M024: dead id is UnknownFact (live gate), not IntervalPatchRejected on a dead row.
     assert!(
-        matches!(err, RuntimeError::IntervalPatchRejected { event_id } if event_id == minting),
+        matches!(err, RuntimeError::UnknownFact { event_id } if event_id == minting),
         "{err:?}"
     );
     assert_eq!(

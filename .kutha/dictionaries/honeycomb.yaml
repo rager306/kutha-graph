@@ -39,6 +39,7 @@ process: docs/process/governor-intake.md
 # 2026-10-07 restage (M021 S01 Phase 68: TR-02 / C01 pack-fact pins; matrix kill): ADR-013, ADR-090; map/delivery/capability unchanged.
 # 2026-10-07 restage (M021 S02 Phase 69: Retract-all-live): ADR-013; map/delivery/capability unchanged.
 # 2026-10-08 restage (M023 S01 Phase 75: keyed retry Correct lineage): ADR-011; map/delivery/capability unchanged.
+# 2026-10-08 restage (M024 S01 Phase 79: fold identity live-gate / multi-residual Correct): ADR-013; map/delivery/capability unchanged.
 # 2026-10-06 restage (M018 S04 Phase 48: I-F15/I-F16 oracles, GATE-01 BENCH-controller): ADR-041, ADR-023; map/delivery/capability unchanged.
 
 locks:
@@ -215,6 +216,11 @@ cells:
       # Phase 69 / M021 S02 — Retract all live residuals; cell still Proposed
       - retract_correct_interval_event_id_clears_all_residuals
       - retract_assert_event_id_still_clears_single_row
+      # Phase 79 / M024 S01 — fold identity live-gate + multi-residual Correct; cell still Proposed
+      - retract_dead_event_id_fails_closed
+      - correct_dead_event_id_fails_closed
+      - correct_multi_residual_event_id_collapses_to_one
+      - correct_interval_multi_residual_fails_closed
 
   - id: ADR-014
     axis: Time

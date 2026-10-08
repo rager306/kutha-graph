@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-08 — Process: close M024 S01 / lease S02 (Phase 80)
+
+### Process
+
+- S01 done (`79-VERIFICATION.md`). Active Slice **S02** (`L_delivery=M024-S01-done`): write-path atomicity.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
+## 2026-10-08 — Product: fold identity live-gate and multi-residual Correct (Phase 79)
+
+### Product
+
+- User Retract/Correct/CorrectInterval require a live residual (`UnknownFact` on dead ids). `Correct` on a multi-residual event_id invalidates all live rows and mints one replacement. `CorrectInterval` with ≠1 live residual is `IntervalPatchRejected`. Helper `live_fact_indices_by_event_id`. Oracles: `m024_fold_identity.rs`; naive model aligned; `interval_patch_not_live` expects `UnknownFact`. ADR-013 Clarification 2026-10-08. Bench (`KUTHA_BENCH_N=10000`): `ingest_plain.n` 127137526→126105754 (−0.8%); `as_of.n` 295462→281565 (−4.7%).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-013 evidence restaged.
+
 ## 2026-10-08 — Process: lease M024 S01 (GSD Phase 79)
 
 ### Process

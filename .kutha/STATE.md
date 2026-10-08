@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M024
-**Active Slice:** S01
+**Active Slice:** S02
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M023-closed
+L_delivery=M024-S01-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M023 CLOSED; M024 S01 leased (fold identity) | Capability proven / Cypher started |
+| L_delivery | M024 S01-done; S02 leased (write-path atomicity) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M024 S01 / GSD Phase 79** — fold identity decisions + RED oracles + implement: live-gated Retract/Correct; Correct multi-residual → one replacement; CorrectInterval multi-residual fail-closed. Honeycomb stays Proposed.
+**M024 S02 / GSD Phase 80** — write-path atomicity: intern Define crash window / receipt shape. Honeycomb stays Proposed.
 
 ## Thaw map
 

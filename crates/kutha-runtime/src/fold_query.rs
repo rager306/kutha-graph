@@ -156,6 +156,8 @@ impl GraphFold {
     }
 
     /// First Fact minted (or residual-replaced) by `event_id`. Prefer a live row.
+    /// Falls back to a dead row so callers can distinguish "never known" from "dead".
+    /// User Retract/Correct gates must use [`Self::live_fact_indices_by_event_id`].
     pub(crate) fn fact_index_by_event_id(&self, event_id: EventId) -> Option<usize> {
         if !self.hot_maps_warm {
             return self
@@ -175,6 +177,30 @@ impl GraphFold {
             .copied()
             .find(|&i| self.facts[i].invalidated_at.is_none())
             .or_else(|| idxs.last().copied())
+    }
+
+    /// Every live residual minted under `event_id` (CorrectInterval may share one id).
+    pub(crate) fn live_fact_indices_by_event_id(&self, event_id: EventId) -> Vec<usize> {
+        if !self.hot_maps_warm {
+            return self
+                .facts
+                .iter()
+                .enumerate()
+                .filter(|(_, f)| {
+                    self.hot_examine.bump();
+                    f.event_id == event_id && f.invalidated_at.is_none()
+                })
+                .map(|(i, _)| i)
+                .collect();
+        }
+        match self.fact_by_event.get(&event_id) {
+            Some(idxs) => idxs
+                .iter()
+                .copied()
+                .filter(|&i| self.facts[i].invalidated_at.is_none())
+                .collect(),
+            None => Vec::new(),
+        }
     }
 
     /// Whether any Fact (live or not) carries this claim id.

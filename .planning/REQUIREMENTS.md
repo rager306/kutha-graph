@@ -1,31 +1,22 @@
 # Requirements: Kutha
 
-**Milestones:** v0.17 / harness M023 shipped 2026-10-08 (Phase 72 claim corrected). Next milestone unleased. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.17 / harness M023 shipped 2026-10-08. **v0.18 / harness M024** active. Lease: `.kutha/STATE.md`.
 
-## v0.17 Requirements (M023)
+## v0.18 Requirements (M024)
 
-### Restore green (Phase 75, S01)
+### Fold identity (Phase 79, S01)
 
-- [x] **GREEN-01**: `delivery_key_retry` short-circuits while any live fact of the keyed Assert's claim carries the key (follows `Correct`/`CorrectInterval`); remints only when none is live. `m013_write_path` keyed-correct pair and `m022_keyed_retry` green; new oracle: keyed retry after Retract of a CorrectInterval id
-- [x] **GREEN-02**: naive model in `m019_sem_model` invalidates every live residual on Retract; a seed forces CorrectInterval-then-Retract
-- [x] **GREEN-03**: `m019_dur_a` tests do not fail in the workspace run (isolated scratch or serialized); `cargo test --workspace --offline --no-fail-fast` zero failures on repeated runs; bench <=10%
+- [x] **FOLD-01**: Retract/Correct/CorrectInterval on a dead or unknown id → `UnknownFact` (fail-closed)
+- [x] **FOLD-02**: Correct on multi-residual event_id invalidates all live residuals and mints one replacement
+- [x] **FOLD-03**: CorrectInterval on ≠1 live residual → `IntervalPatchRejected`; ADR-013 Clarification recorded
 
-### Close gate (Phase 76, S02)
+### Write-path (Phase 80, S02)
 
-- [x] **GATE-02**: 72-VERIFICATION, v0.16 audit, CHANGELOG correct the false verified claim; close checklist requires recorded full workspace tests and full `ci`; governor row proves it
-
-### Living overlay (Phase 77, S03)
-
-- [x] **DOC-TRUTH-01**: overlay and stale lines listed in the M023 S03 slice match HEAD; ADRs stay Proposed
-
-### Close (Phase 78, S04)
-
-- [x] **CLOSE-02**: M023 closed; Active None; audit note
+- [ ] **WRITE-01**: intern Define crash window characterized or committed with quantum; receipt shape decision recorded
 
 ## Out of Scope (this milestone)
 
 | Feature | Reason |
 |---------|--------|
-| Fold identity decisions (Correct on multi-residual id, unknown id) | Next milestone (post-M022 roadmap M024) |
-| Typed clocks, answer envelope, demo CLI | Later (M025) |
-| Cypher / HNSW / legal pack / Pi Durable | Thaw map |
+| Typed clocks / answer envelope / demo CLI | M025 |
+| Cypher / HNSW / legal pack | Thaw map |

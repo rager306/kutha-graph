@@ -99,16 +99,18 @@ impl Runtime {
     }
 
     fn gate_user_op(&self, op: &Op) -> Result<(), RuntimeError> {
+        // G-A05: Retract/Correct require at least one *live* residual. Dead ids
+        // are UnknownFact (fail-closed), not a silent fold no-op.
         if let Op::Retract { event_id } = op {
             self.ingest_examine.bump();
-            if self.fold.fact_index_by_event_id(*event_id).is_none() {
+            if self.fold.live_fact_indices_by_event_id(*event_id).is_empty() {
                 return Err(RuntimeError::UnknownFact {
                     event_id: *event_id,
                 });
             }
         } else if let Op::Correct { event_id, .. } | Op::CorrectInterval { event_id, .. } = op {
             self.ingest_examine.bump();
-            if self.fold.fact_index_by_event_id(*event_id).is_none() {
+            if self.fold.live_fact_indices_by_event_id(*event_id).is_empty() {
                 return Err(RuntimeError::UnknownFact {
                     event_id: *event_id,
                 });
@@ -122,10 +124,14 @@ impl Runtime {
         } = op
         {
             self.ingest_examine.bump();
-            let idx = self
-                .fold
-                .fact_index_by_event_id(*event_id)
-                .expect("UnknownFact gate already ran");
+            // G-A02: interval patch targets exactly one live VT window.
+            let live = self.fold.live_fact_indices_by_event_id(*event_id);
+            if live.len() != 1 {
+                return Err(RuntimeError::IntervalPatchRejected {
+                    event_id: *event_id,
+                });
+            }
+            let idx = live[0];
             let fact = &self.fold.facts()[idx];
             if fact.invalidated_at.is_some()
                 || patch_to.is_some_and(|t| *patch_from >= t)

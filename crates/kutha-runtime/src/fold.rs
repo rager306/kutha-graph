@@ -698,24 +698,7 @@ impl GraphFold {
             Op::Retract { event_id } => {
                 // Invalidate every live residual minted by this event (CorrectInterval
                 // may leave prefix/patch/suffix rows sharing one event_id).
-                let live_idxs: Vec<usize> = if !self.hot_maps_warm {
-                    self.facts
-                        .iter()
-                        .enumerate()
-                        .filter(|(_, f)| {
-                            self.hot_examine.bump();
-                            f.event_id == *event_id && f.invalidated_at.is_none()
-                        })
-                        .map(|(i, _)| i)
-                        .collect()
-                } else if let Some(idxs) = self.fact_by_event.get(event_id) {
-                    idxs.iter()
-                        .copied()
-                        .filter(|&i| self.facts[i].invalidated_at.is_none())
-                        .collect()
-                } else {
-                    Vec::new()
-                };
+                let live_idxs = self.live_fact_indices_by_event_id(*event_id);
                 for idx in live_idxs {
                     self.invalidate_fact_at(idx, event.ingested_at);
                 }
@@ -726,33 +709,38 @@ impl GraphFold {
                 valid_from,
                 valid_to,
             } => {
-                if let Some(idx) = self.fact_index_by_event_id(*event_id) {
-                    if self.facts[idx].invalidated_at.is_none() {
-                        let s = self.facts[idx].subject;
-                        let r = self.facts[idx].relation;
-                        let claim_id = self.facts[idx].claim_id;
-                        let old_object = self.facts[idx].object();
-                        let old_polarity = self.facts[idx].polarity;
-                        let prior_key = self.facts[idx].delivery_key.clone();
-                        self.invalidate_fact_at(idx, event.ingested_at);
-                        let seq = self.next_seq;
-                        self.next_seq += 1;
-                        self.push_fact(Fact {
-                            seq,
-                            subject: s,
-                            relation: r,
-                            object: *object,
-                            valid_from: *valid_from,
-                            valid_to: *valid_to,
-                            ingested_at: event.ingested_at,
-                            invalidated_at: None,
-                            claim_id,
-                            event_id: event.id,
-                            delivery_key: prior_key,
-                            polarity: polarity_for_row(old_polarity, old_object, *object),
-                        });
-                    }
+                // G-A02: multi-residual Correct invalidates every live row under
+                // the id and mints one replacement (claim-level whole correct).
+                let live_idxs = self.live_fact_indices_by_event_id(*event_id);
+                if live_idxs.is_empty() {
+                    return;
                 }
+                let head = live_idxs[0];
+                let s = self.facts[head].subject;
+                let r = self.facts[head].relation;
+                let claim_id = self.facts[head].claim_id;
+                let old_object = self.facts[head].object();
+                let old_polarity = self.facts[head].polarity;
+                let prior_key = self.facts[head].delivery_key.clone();
+                for idx in live_idxs {
+                    self.invalidate_fact_at(idx, event.ingested_at);
+                }
+                let seq = self.next_seq;
+                self.next_seq += 1;
+                self.push_fact(Fact {
+                    seq,
+                    subject: s,
+                    relation: r,
+                    object: *object,
+                    valid_from: *valid_from,
+                    valid_to: *valid_to,
+                    ingested_at: event.ingested_at,
+                    invalidated_at: None,
+                    claim_id,
+                    event_id: event.id,
+                    delivery_key: prior_key,
+                    polarity: polarity_for_row(old_polarity, old_object, *object),
+                });
             }
             Op::CorrectInterval {
                 event_id,
@@ -760,9 +748,12 @@ impl GraphFold {
                 patch_from,
                 patch_to,
             } => {
-                let Some(idx) = self.fact_index_by_event_id(*event_id) else {
+                // Pipeline rejects multi-residual CI; fold still requires one live.
+                let live = self.live_fact_indices_by_event_id(*event_id);
+                if live.len() != 1 {
                     return;
-                };
+                }
+                let idx = live[0];
                 if self.facts[idx].invalidated_at.is_some() {
                     return;
                 }

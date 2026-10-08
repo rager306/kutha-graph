@@ -201,6 +201,15 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M024: Fold identity and write semantics — ACTIVE (GSD v0.18)
+
+**Source:** `.compound-engineering/artifacts/plans/2026-10-08-post-m022-roadmap-for-gsd-auto.md`. Process tag `v0.18`. Honeycomb stays Proposed. Not Cypher/HNSW.
+
+- [x] **S01: Fold identity** `risk:high` `depends:[]`
+  > After this: live-gated Retract/Correct; Correct multi-residual → one replacement; CorrectInterval multi fail-closed; ADR-013 Clarification; oracles `m024_fold_identity`; bench ≤10%.
+- [ ] **S02: Write-path atomicity** `risk:medium` `depends:[S01]`
+  > After this: intern Define crash window characterized or committed with quantum; receipt shape decision recorded; GROUP-01 residual unless decided.
+
 ## M023: Green HEAD and truth reset — CLOSED (GSD v0.17)
 
 **Closed:** 2026-10-08. Plan: `.compound-engineering/artifacts/plans/2026-10-08-post-m022-roadmap-for-gsd-auto.md`. Process tag `v0.17`. S01–S04 complete. Audit: `.planning/milestones/v0.17-MILESTONE-AUDIT.md`. Honeycomb stays Proposed. Corrected false M022 Phase 72 verified claim.
@@ -240,7 +249,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M018–M023 CLOSED. One lease at a time. M003+ stay unleased.
+Do not start until STATE names them. M018–M023 CLOSED; **M024 active**. One lease at a time. M003+ stay unleased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -259,7 +268,8 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 13. **M021** — CLOSED (S01–S03, GSD v0.15). Detail above.
 14. **M022** — CLOSED (S01–S04, GSD v0.16). Detail above.
 15. **M023** — CLOSED (S01–S04, GSD v0.17). Detail above.
-16. **M003** — Cypher skin over the already-correct AS OF cut (thaw: M003 leased).
+16. **M024** — ACTIVE (S01–S02, GSD v0.18). Detail above.
+17. **M003** — Cypher skin over the already-correct AS OF cut (thaw: M003 leased).
 17. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
 18. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
 16. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.

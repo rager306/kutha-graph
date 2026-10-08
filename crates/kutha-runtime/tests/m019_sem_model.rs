@@ -36,16 +36,6 @@ impl Naive {
         p
     }
 
-    fn find_live(&self, event_id: EventId) -> Option<usize> {
-        self.rows
-            .iter()
-            .enumerate()
-            .filter(|(_, r)| r.event_id == event_id)
-            .find(|(_, r)| r.invalidated_at.is_none())
-            .map(|(i, _)| i)
-            .or_else(|| self.rows.iter().rposition(|r| r.event_id == event_id))
-    }
-
     fn push(&mut self, r: Row) {
         self.rows.push(r);
     }
@@ -97,15 +87,22 @@ impl Naive {
                 valid_from,
                 valid_to,
             } => {
-                let Some(i) = self.find_live(*event_id) else {
+                // Match GraphFold G-A02: invalidate all live residuals, mint one.
+                let live: Vec<usize> = self
+                    .rows
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, r)| r.event_id == *event_id && r.invalidated_at.is_none())
+                    .map(|(i, _)| i)
+                    .collect();
+                let Some(&head) = live.first() else {
                     return;
                 };
-                if self.rows[i].invalidated_at.is_some() {
-                    return;
+                let s = self.rows[head].subject;
+                let r = self.rows[head].relation;
+                for i in live {
+                    self.rows[i].invalidated_at = Some(event.ingested_at);
                 }
-                let s = self.rows[i].subject;
-                let r = self.rows[i].relation;
-                self.rows[i].invalidated_at = Some(event.ingested_at);
                 self.push(Row {
                     subject: s,
                     relation: r,
@@ -123,9 +120,18 @@ impl Naive {
                 patch_from,
                 patch_to,
             } => {
-                let Some(i) = self.find_live(*event_id) else {
+                // Match pipeline G-A02: multi-residual CI is rejected (no-op here).
+                let live: Vec<usize> = self
+                    .rows
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, r)| r.event_id == *event_id && r.invalidated_at.is_none())
+                    .map(|(i, _)| i)
+                    .collect();
+                if live.len() != 1 {
                     return;
-                };
+                }
+                let i = live[0];
                 if self.rows[i].invalidated_at.is_some() {
                     return;
                 }

@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.17 shipped. Next milestone unleased (read `.kutha/STATE.md`).
+v0.01–v0.17 shipped. **v0.18 Fold identity and write semantics** (harness M024) is active.
 
 ## Id map
 
@@ -10,17 +10,17 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.17** — shipped (v0.17 / M023 corrected false M022 Phase 72 verified claim)
+- ✅ **v0.01–v0.17** — shipped
+- 🔄 **v0.18 Fold identity and write semantics** — Phases 79–80 (harness M024) — active
 
 ## Phases
 
-- [x] **Phase 75: Restore green** — `75-VERIFICATION.md` passed — keyed retry follows Correct lineage; naive model; flaky durability tests (S01)
-- [x] **Phase 76: Close-gate honesty** — `76-VERIFICATION.md` passed — correct false verified claims; close checklist requires workspace tests + full ci (S02)
-- [x] **Phase 77: Living overlay truth** — `77-VERIFICATION.md` passed — overlay and stale ADR/architecture lines match HEAD (S03)
-- [x] **Phase 78: M023 close** — audit, Active None (S04) — `78-VERIFICATION.md` passed
+- [x] **Phase 79: Fold identity** — `79-VERIFICATION.md` passed — live-gate; multi-residual Correct; CI multi fail-closed (S01)
+- [ ] **Phase 80: Write-path atomicity** — intern Define crash window / receipt shape (S02)
 
 ## Progress
 
 | Milestone | Phases | Status |
 |-----------|--------|--------|
 | v0.01–v0.17 | 1–78 | shipped |
+| v0.18 | 79–80 | active |

@@ -1,3 +1,10 @@
+## v0.18 Fold identity and write semantics (Active: 2026-10-08)
+
+**Phases:** 79–80. Process tag `v0.18`. Live-gated Retract/Correct; multi-residual Correct; CorrectInterval multi fail-closed; write-path atomicity next. Honeycomb stays Proposed.
+**Git range:** `v0.17..` (tag pending)
+
+---
+
 ## v0.17 Green HEAD and truth reset (Shipped: 2026-10-08)
 
 **Phases:** 75–78. Process tag `v0.17`. Restore green (keyed retry Correct lineage; naive Retract-all-live; dur_a parallel scratch), close-gate honesty (`product-close-gate`), living overlay truth, close. Corrects false M022 Phase 72 verified claim. Audit: `.planning/milestones/v0.17-MILESTONE-AUDIT.md`.
