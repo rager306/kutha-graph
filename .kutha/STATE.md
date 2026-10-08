@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M025
-**Active Slice:** S01
+**Active Slice:** S02
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M024-closed
+L_delivery=M025-S01-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M024 closed; M025 S01 leased (`as_known_on` VT decision) | Capability proven / Cypher started |
+| L_delivery | M025 S01-done; S02 leased (clock-safe facade) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M025 S01 / GSD Phase 81** — pin `as_known_on` TT-only by design (G-A08/G-C03); ADR-013 Clarification; semantic-contract agrees. Honeycomb stays Proposed. Not Cypher/HNSW.
+**M025 S02 / GSD Phase 82** — clock-safe facade: typed `as_of` / `as_known_on` call sites; compile_fail wrong-role clocks. Honeycomb stays Proposed. Not Cypher/HNSW.
 
 ## Thaw map
 

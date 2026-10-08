@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.18 shipped. Next milestone is a controller lease (candidate M025 typed clocks / answer envelope — not Cypher/HNSW).
+v0.01–v0.18 shipped. **v0.19 Wedge answer surface** (harness M025) is active.
 
 ## Id map
 
@@ -11,15 +11,18 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 ## Milestones
 
 - ✅ **v0.01–v0.18** — shipped
+- 🔄 **v0.19 Wedge answer surface** — Phases 81–84 (harness M025) — active
 
 ## Phases
 
-- [x] **Phase 79: Fold identity** — `79-VERIFICATION.md` passed — live-gate; multi-residual Correct; CI multi fail-closed (S01)
-- [x] **Phase 80: Write-path atomicity** — `80-VERIFICATION.md` passed — Define SelfCommit crash window; D014-1 digest pin (S02)
+- [x] **Phase 81: as_known_on VT decision** — `81-VERIFICATION.md` passed — TT-only by design pin (S01)
+- [ ] **Phase 82: Clock-safe facade** — typed as_of / as_known_on; compile_fail wrong role (S02)
+- [ ] **Phase 83: Legal answer envelope** — norm_view (S03)
+- [ ] **Phase 84: Demo binary and fixtures** — thin bin + real-text fixtures (S04)
 
 ## Progress
 
 | Milestone | Phases | Status |
 |-----------|--------|--------|
-| v0.01–v0.17 | 1–78 | shipped |
-| v0.18 | 79–80 | shipped |
+| v0.01–v0.18 | 1–80 | shipped |
+| v0.19 | 81–84 | active |

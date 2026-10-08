@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-08 — Process: close M025 S01 / lease S02 (Phase 82)
+
+### Process
+
+- S01 done (`81-VERIFICATION.md`). Active Slice **S02** (`L_delivery=M025-S01-done`): clock-safe facade.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
+## 2026-10-08 — Product: pin as_known_on TT-only by design (Phase 81)
+
+### Product
+
+- Controller decision G-A08/G-C03: `as_known_on` stays TT-only (`known_at` / no VT filter). Pin: not-yet-in-force VT fact appears on `as_known_on` and not on `as_of`; closed VT survives. Oracles: `m025_as_known_on_vt.rs`. No fold behavior change. ADR-013 Clarification 2026-10-08 Phase 81.
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-013 evidence restaged.
+
 ## 2026-10-08 — Process: lease M025 S01 (GSD Phase 81)
 
 ### Process

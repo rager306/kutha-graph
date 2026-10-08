@@ -923,6 +923,18 @@ rows:
     gate: default
     owner: M024-S02
     source: Phase 80 / ADR-014 Clarification 2026-10-08
+  - id: SEM-m025-akn-tt-only
+    plane: product
+    invariant: as_known_on is TT-only by design (future VT visible; closed VT survives)
+    layer: decision
+    oracle:
+      - as_known_on_includes_not_yet_in_force_vt_fact
+      - as_known_on_keeps_closed_vt_that_as_of_sees_in_window
+    kill_mutation: filter known_at by valid_from/valid_to (must fail pin)
+    status: killed
+    gate: default
+    owner: M025-S01
+    source: Phase 81 / ADR-013 Clarification 2026-10-08 G-A08
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

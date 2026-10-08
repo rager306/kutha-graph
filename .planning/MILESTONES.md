@@ -1,3 +1,10 @@
+## v0.19 Wedge answer surface (Active: 2026-10-08)
+
+**Phases:** 81–84. Process tag `v0.19`. `as_known_on` TT-only by design; clock-safe facade; legal answer envelope; demo bin + fixtures. Honeycomb stays Proposed.
+**Git range:** `v0.18..` (tag pending)
+
+---
+
 ## v0.18 Fold identity and write semantics (Shipped: 2026-10-08)
 
 **Phases:** 79–80. Process tag `v0.18`. Live-gated Retract/Correct; multi-residual Correct; CorrectInterval multi fail-closed; Define SelfCommit crash window; D014-1 digest pin. Audit: `.planning/milestones/v0.18-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.

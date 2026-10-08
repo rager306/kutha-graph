@@ -201,6 +201,19 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M025: Wedge answer surface — ACTIVE (GSD v0.19)
+
+**Source:** `.compound-engineering/artifacts/plans/2026-10-08-post-m022-roadmap-for-gsd-auto.md`. Process tag `v0.19`. Honeycomb stays Proposed. Not Cypher/HNSW; not ADR-090 pack thaw.
+
+- [x] **S01: `as_known_on` VT decision** `risk:medium` `gate:controller decision` `depends:[]`
+  > After this: ADR-013 states `as_known_on` is TT-only by design (G-A08/G-C03); pin oracles `m025_as_known_on_vt`; `semantic-contract-validation.md` agrees.
+- [ ] **S02: Clock-safe facade** `risk:high` `depends:[S01]`
+  > After this: `as_of` takes a valid-time type and `as_known_on` a wall/anchor type at public call sites; raw `u64` no longer compiles for the wrong role (compile_fail UI tests); `Op` storage may stay `u64`; no fifth axis; existing pins unchanged; bench ≤10%.
+- [ ] **S03: Legal answer envelope** `risk:high` `depends:[S02]`
+  > After this: `norm_view(vt, wall)` returns triples with eligibility and typed non-success; live ∩ eligible is the facade's job; oracles include retracted-premise and missing-anchor.
+- [ ] **S04: Demo binary and real-text fixtures** `risk:medium` `depends:[S03]`
+  > After this: thin bin answers "norm in force on D, as known on W" over fixture ops; 2–3 real-text statute fixtures as test data only; `I-legal-pack-not-next` stays.
+
 ## M024: Fold identity and write semantics — CLOSED (GSD v0.18)
 
 **Closed:** 2026-10-08. Source: `.compound-engineering/artifacts/plans/2026-10-08-post-m022-roadmap-for-gsd-auto.md`. Process tag `v0.18`. S01–S02 complete. Audit: `.planning/milestones/v0.18-MILESTONE-AUDIT.md`. Honeycomb stays Proposed. Not Cypher/HNSW.
@@ -249,7 +262,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M018–M024 CLOSED. One lease at a time. M003+ stay unleased.
+Do not start until STATE names them. M018–M024 CLOSED; **M025 active**. One lease at a time. M003+ stay unleased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -269,7 +282,8 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 14. **M022** — CLOSED (S01–S04, GSD v0.16). Detail above.
 15. **M023** — CLOSED (S01–S04, GSD v0.17). Detail above.
 16. **M024** — CLOSED (S01–S02, GSD v0.18). Detail above.
-17. **M003** — Cypher skin over the already-correct AS OF cut (thaw: M003 leased).
+17. **M025** — ACTIVE (S01–S04, GSD v0.19). Detail above.
+18. **M003** — Cypher skin over the already-correct AS OF cut (thaw: M003 leased).
 17. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
 18. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
 16. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.

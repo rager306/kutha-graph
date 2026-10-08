@@ -175,6 +175,17 @@ Derived Horn EventIds are hash-stable (`Event::stable_derived`, prefix `kutha-de
 
 `Op::Retract { event_id }` invalidates **every** live Fact whose `event_id` matches (CorrectInterval may mint prefix/patch/suffix residuals sharing one id). `fact_index_by_event_id` remains first-live for Correct / CorrectInterval targeting. Oracles: `retract_correct_interval_event_id_clears_all_residuals`, `retract_assert_event_id_still_clears_single_row`. D013-1…D013-4 unchanged. Cell remains **Proposed**.
 
+### Clarification (2026-10-08; Phase 81 / M025 S01; Proposed)
+
+**G-A08 / G-C03 — `as_known_on` is TT-only by design (pin, not a fix):**
+
+1. `GraphFold::as_known_on(wall)` resolves the greatest `Op::TtAnchor` with `wall` ≤ D, then `known_at(tt)` / `Fact::is_known_at` — **no ValidTime filter**.
+2. A fact ingested at that TT with `valid_from` in the future relative to a VT query can appear in `as_known_on` while absent from `as_of(vt)` (TR-02 trap: knowledge ≠ force).
+3. Closed past VT intervals also remain visible at a knowledge cut (KNOWN-02 / Phase 34). Combining known-on with VT force is a **facade** job (M025 S03 `norm_view`), not a change to this cut.
+4. Reject “`as_known_on` must hide not-yet-in-force VT” as a core fold rule — that would collapse knowledge and force axes.
+
+Oracles: `m025_as_known_on_vt.rs` (`as_known_on_includes_not_yet_in_force_vt_fact`, `as_known_on_keeps_closed_vt_that_as_of_sees_in_window`); prior pins `closed_vt_interval_survives_as_known_on`, `true_on_d_differs_from_known_on_d`. D013-1…D013-4 unchanged. Cell remains **Proposed**.
+
 ### Clarification (2026-10-08; Phase 79 / M024 S01; Proposed)
 
 Fold identity for Correct/Retract by `event_id` (G-A02 / G-A05 / G-A07):
