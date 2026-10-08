@@ -16,7 +16,7 @@
 
 ### Living overlay (Phase 77, S03)
 
-- [ ] **DOC-TRUTH-01**: overlay and stale lines listed in the M023 S03 slice match HEAD; ADRs stay Proposed
+- [x] **DOC-TRUTH-01**: overlay and stale lines listed in the M023 S03 slice match HEAD; ADRs stay Proposed
 
 ### Close (Phase 78, S04)
 

@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M023
-**Active Slice:** S03
+**Active Slice:** S04
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M023-S02-done
+L_delivery=M023-S03-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M023 S02-done; S03 leased (living overlay truth) | Capability proven / Cypher started |
+| L_delivery | M023 S03-done; S04 leased (close) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M023 S03 / GSD Phase 77** — living overlay truth: PROJECT, REQUIREMENTS catalog, WINDOWS, stale ADR/architecture lines, honeycomb evidence match HEAD. Docs/YAML only. Honeycomb stays Proposed.
+**M023 S04 / GSD Phase 78** — close: Active None; M023-closed; audit; recorded workspace tests + full ci. Honeycomb stays Proposed.
 
 ## Thaw map
 

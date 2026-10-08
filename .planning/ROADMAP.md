@@ -17,7 +17,7 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 - [x] **Phase 75: Restore green** — `75-VERIFICATION.md` passed — keyed retry follows Correct lineage; naive model; flaky durability tests (S01)
 - [x] **Phase 76: Close-gate honesty** — `76-VERIFICATION.md` passed — correct false verified claims; close checklist requires workspace tests + full ci (S02)
-- [ ] **Phase 77: Living overlay truth** — overlay and stale ADR/architecture lines match HEAD (S03)
+- [x] **Phase 77: Living overlay truth** — `77-VERIFICATION.md` passed — overlay and stale ADR/architecture lines match HEAD (S03)
 - [ ] **Phase 78: M023 close** — audit, Active None (S04)
 
 ## Progress
