@@ -1,21 +1,24 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.16
-milestone_name: Audit residual honesty
-status: shipped
-stopped_at: M022 / v0.16 closed
-last_updated: "2026-10-08T06:20:00.000Z"
+milestone: v0.17
+milestone_name: Green HEAD and truth reset
+status: active
+stopped_at: null
+last_updated: "2026-10-08T08:00:00.000Z"
 progress:
   total_phases: 4
-  completed_phases: 4
-  total_plans: 4
-  completed_plans: 4
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
 
-**Milestone:** v0.16 Audit residual honesty (harness M022) — **shipped**
-**Status:** Complete
+**Milestone:** v0.17 Green HEAD and truth reset (harness M023)
+**Phase:** 75 ready
+**Status:** Active — controller leases S01 next
 
-Next: controller decision for next lease
-Plan source: `.compound-engineering/artifacts/plans/2026-10-08-m022-audit-residuals.md`
+**Last activity:** 2026-10-08 — M023 opened from post-M022 audits
+
+Plan source: `.compound-engineering/artifacts/plans/2026-10-08-post-m022-roadmap-for-gsd-auto.md`
+Context: `.compound-engineering/artifacts/research/2026-10-08-post-m022-synthesis-context.md`

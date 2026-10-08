@@ -1,12 +1,31 @@
 # Requirements: Kutha
 
-**Milestones:** v0.16 / harness M022 shipped 2026-10-08. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.16 / harness M022 shipped 2026-10-08 (Phase 72 claim corrected by v0.17). **v0.17 / harness M023** active. Lease: `.kutha/STATE.md`.
 
-## v0.16 Requirements (M022) — shipped
+## v0.17 Requirements (M023)
 
-- [x] **DOC-AUDIT-01**
-- [x] **KEY-RETRY-01**
-- [x] **ADM-PIN-01**
-- [x] **SKIP-EMIT-01**
-- [x] **OVERLAP-01**
-- [x] **CLOSE-01**
+### Restore green (Phase 75, S01)
+
+- [ ] **GREEN-01**: `delivery_key_retry` short-circuits while any live fact of the keyed Assert's claim carries the key (follows `Correct`/`CorrectInterval`); remints only when none is live. `m013_write_path` keyed-correct pair and `m022_keyed_retry` green; new oracle: keyed retry after Retract of a CorrectInterval id
+- [ ] **GREEN-02**: naive model in `m019_sem_model` invalidates every live residual on Retract; a seed forces CorrectInterval-then-Retract
+- [ ] **GREEN-03**: `m019_dur_a` tests do not fail in the workspace run (isolated scratch or serialized); `cargo test --workspace --offline --no-fail-fast` zero failures on repeated runs; bench <=10%
+
+### Close gate (Phase 76, S02)
+
+- [ ] **GATE-02**: 72-VERIFICATION, v0.16 audit, CHANGELOG correct the false verified claim; close checklist requires recorded full workspace tests and full `ci`; governor row proves it
+
+### Living overlay (Phase 77, S03)
+
+- [ ] **DOC-TRUTH-01**: overlay and stale lines listed in the M023 S03 slice match HEAD; ADRs stay Proposed
+
+### Close (Phase 78, S04)
+
+- [ ] **CLOSE-02**: M023 closed; Active None; audit note
+
+## Out of Scope (this milestone)
+
+| Feature | Reason |
+|---------|--------|
+| Fold identity decisions (Correct on multi-residual id, unknown id) | Next milestone (post-M022 roadmap M024) |
+| Typed clocks, answer envelope, demo CLI | Later (M025) |
+| Cypher / HNSW / legal pack / Pi Durable | Thaw map |

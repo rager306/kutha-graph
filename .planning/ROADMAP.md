@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.16 shipped. **Next:** controller decision.
+v0.01–v0.16 shipped. **v0.17 Green HEAD and truth reset** (harness M023) is active.
 
 ## Id map
 
@@ -10,19 +10,19 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.15** — shipped
-- ✅ **v0.16 Audit residual honesty** — Phases 71–74 (harness M022) — shipped 2026-10-08
+- ✅ **v0.01–v0.16** — shipped (v0.16 / M022 "verified" claim for Phase 72 is corrected by v0.17)
+- 🔄 **v0.17 Green HEAD and truth reset** — Phases 75–78 (harness M023) — active
 
 ## Phases
 
-- [x] **Phase 71: Audit honesty** — `71-VERIFICATION.md` passed
-- [x] **Phase 72: Keyed retry live** — `72-VERIFICATION.md` passed
-- [x] **Phase 73: Harness emit isolate** — `73-VERIFICATION.md` passed
-- [x] **Phase 74: M022 close** — `74-VERIFICATION.md` passed
+- [ ] **Phase 75: Restore green** — keyed retry follows Correct lineage; naive model; flaky durability tests (S01)
+- [ ] **Phase 76: Close-gate honesty** — correct false verified claims; close checklist requires workspace tests + full ci (S02)
+- [ ] **Phase 77: Living overlay truth** — overlay and stale ADR/architecture lines match HEAD (S03)
+- [ ] **Phase 78: M023 close** — audit, Active None (S04)
 
 ## Progress
 
 | Milestone | Phases | Status |
 |-----------|--------|--------|
-| v0.01–v0.15 | 1–70 | shipped |
-| v0.16 | 71–74 | shipped |
+| v0.01–v0.16 | 1–74 | shipped |
+| v0.17 | 75–78 | active |

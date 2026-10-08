@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-08 — Process: open M023 / v0.17 (green HEAD and truth reset)
+
+### Process
+
+- Post-M022 audits (four read-only reports, CBM and GitNexus reindexed) found HEAD `18151af` red under `cargo test --workspace`: two `m013_write_path` keyed-correct tests regress from M022 Phase 72, `m019_sem_model` naive Retract is stale after M021, three `m019_dur_a` tests flake in the workspace run. M022's "verified" claim for Phase 72 is false until M023 S01–S02 land. Opened roadmap M023 S01–S04 (Phases 75–78), requirements GREEN-01..03, GATE-02, DOC-TRUTH-01, CLOSE-02. Context `.compound-engineering/artifacts/research/2026-10-08-post-m022-synthesis-context.md`; plan `.compound-engineering/artifacts/plans/2026-10-08-post-m022-roadmap-for-gsd-auto.md`. No lease yet; no `crates/` change.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-08 — Process: close M022 / v0.16
 
 ### Process
