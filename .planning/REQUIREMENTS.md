@@ -6,9 +6,9 @@
 
 ### Restore green (Phase 75, S01)
 
-- [ ] **GREEN-01**: `delivery_key_retry` short-circuits while any live fact of the keyed Assert's claim carries the key (follows `Correct`/`CorrectInterval`); remints only when none is live. `m013_write_path` keyed-correct pair and `m022_keyed_retry` green; new oracle: keyed retry after Retract of a CorrectInterval id
-- [ ] **GREEN-02**: naive model in `m019_sem_model` invalidates every live residual on Retract; a seed forces CorrectInterval-then-Retract
-- [ ] **GREEN-03**: `m019_dur_a` tests do not fail in the workspace run (isolated scratch or serialized); `cargo test --workspace --offline --no-fail-fast` zero failures on repeated runs; bench <=10%
+- [x] **GREEN-01**: `delivery_key_retry` short-circuits while any live fact of the keyed Assert's claim carries the key (follows `Correct`/`CorrectInterval`); remints only when none is live. `m013_write_path` keyed-correct pair and `m022_keyed_retry` green; new oracle: keyed retry after Retract of a CorrectInterval id
+- [x] **GREEN-02**: naive model in `m019_sem_model` invalidates every live residual on Retract; a seed forces CorrectInterval-then-Retract
+- [x] **GREEN-03**: `m019_dur_a` tests do not fail in the workspace run (isolated scratch or serialized); `cargo test --workspace --offline --no-fail-fast` zero failures on repeated runs; bench <=10%
 
 ### Close gate (Phase 76, S02)
 

@@ -205,7 +205,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 **Source:** 2026-10-08 post-M022 audits (`.compound-engineering/artifacts/research/2026-10-08-post-m022-synthesis-context.md`). Plan: `.compound-engineering/artifacts/plans/2026-10-08-post-m022-roadmap-for-gsd-auto.md`. Process tag `v0.17`. HEAD `18151af` fails `cargo test --workspace`: two M022 keyed-retry regressions, one stale naive model after M021, three parallel-flaky `m019_dur_a` tests. M022 "verified" is false until this milestone closes. Honeycomb stays Proposed. Not Cypher/HNSW; no new capability.
 
-- [ ] **S01: Restore green** `risk:medium` `depends:[]`
+- [x] **S01: Restore green** `risk:medium` `depends:[]`
   > After this: `delivery_key_retry` follows Correct/CorrectInterval replacements (live keyed support of the same claim short-circuits); m013 keyed-correct pair and `m022_keyed_retry` green; new oracle for keyed retry after Retract of a CorrectInterval id; naive model Retract invalidates all live residuals; `m019_dur_a` flakes isolated; `cargo test --workspace --no-fail-fast` zero failures; bench gate <=10%.
 - [ ] **S02: Close-gate honesty** `risk:low` `depends:[S01]`
   > After this: 72-VERIFICATION, v0.16 audit and CHANGELOG state the regression and fix; gsd-auto-contract close checklist requires a recorded full `cargo test --workspace --no-fail-fast` and full `ci`; a governor row proves it. No crates change.
