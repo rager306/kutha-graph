@@ -21,7 +21,7 @@ Re-read from source; no tree mutations.
 | Process: lease commit not alone | Confirmed (813421e, 8 files) | |
 | Process: M018 closed without bench | Confirmed | Phase 47 edited `crates/`; `BENCH-controller` is `gate: controller`, `oracle: []`, no run recorded. |
 | Eager/Lazy order (#4) | Refuted by audit; not re-run | |
-| Not re-verified | `admission.rs:239-247` keyed retry after retract, `kutha:admission` key mismatch, rollover window `persist_append.rs`, `fsm.py` jobs>1 skip, M019-S07 stale verification, pytest writing live `.kutha/` | Taken from the report; confirm inside the slice. |
+| Not re-verified | `admission.rs:239-247` keyed retry after retract, `kutha:admission` key mismatch, rollover window `persist_append.rs`, `fsm.py` jobs>1 skip, M019-S07 stale verification, pytest writing live `.kutha/` | Triaged 2026-10-08 → M022 plan: keyed-retry **Fix**; admission EventId path **Characterize**; pytest emit **Fix**; overlap fail-closed **Fix**; rollover **Defer**. |
 
 New, found here: `cargo fmt --all -- --check` fails on `crates/kutha-runtime/src/eval.rs` (Phase 47 indentation in `retract_derived` / `horn_fires`). No governor check covers fmt.
 
