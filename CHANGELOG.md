@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-08 — Process: close M023 S01 / lease S02 (Phase 76)
+
+### Process
+
+- S01 done (`75-VERIFICATION.md` independent passed). Active Slice **S02** (`L_delivery=M023-S01-done`): close-gate honesty — correct false M022 Phase 72 verified claim; close checklist requires workspace tests + full ci.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-08 — Product: keyed retry follows Correct lineage (Phase 75)
 
 ### Product

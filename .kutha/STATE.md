@@ -5,7 +5,7 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M023
-**Active Slice:** S01
+**Active Slice:** S02
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M023 S01 leased (green HEAD); prior M022 CLOSED (Phase 72 claim corrected in M023) | Capability proven / Cypher started |
+| L_delivery | M023 S01-done; S02 leased (close-gate honesty) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M023 S01 / GSD Phase 75** — restore green: keyed retry follows Correct lineage (M022 regression), naive model Retract-all-live, `m019_dur_a` flakes; `cargo test --workspace --no-fail-fast` zero failures. Context `.compound-engineering/artifacts/research/2026-10-08-post-m022-synthesis-context.md`. Honeycomb stays Proposed. Not Cypher/HNSW.
+**M023 S02 / GSD Phase 76** — close-gate honesty: correct false Phase 72 verified claims; gsd-auto-contract requires recorded workspace tests + full ci. No crates change. Honeycomb stays Proposed.
 
 ## Thaw map
 
