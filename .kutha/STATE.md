@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M022
-**Active Slice:** S02
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M022-S01-done
+L_delivery=M022-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M022 S02 leased (keyed-retry-live); S01 done | Capability proven / Cypher started |
+| L_delivery | M022 CLOSED (audit residual honesty); next milestone unleased | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M022 S02 / GSD Phase 72** — `delivery_key_retry` requires live fact; RED first; bench ≤10%; admission EventId pin. Honeycomb stays Proposed.
+**M022 CLOSED 2026-10-08** (GSD v0.16, Phases 71–74). Audit `.planning/milestones/v0.16-MILESTONE-AUDIT.md`. Honeycomb stays Proposed. Not Cypher/HNSW. Next lease is a controller decision.
 
 ## Thaw map
 
