@@ -25,7 +25,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.15 | 68–70 | M021 | S01–S03 | wedge decisions close (2026-10-07): TR-02 / C01 pack-fact pins, matrix kill, Retract-all-live | shipped 2026-10-07 |
 | v0.16 | 71–74 | M022 | S01–S04 | audit residual honesty (2026-10-08): stale docs, keyed-retry-live, harness skip_emit/overlap | shipped 2026-10-08 |
 | v0.17 | 75–78 | M023 | S01–S04 | green HEAD and truth reset (post-M022 audits 2026-10-08): keyed-retry/Correct regression, naive model, close-gate honesty, living overlay | shipped 2026-10-08 |
-| v0.18 | 79–80 | M024 | S01–S02 | fold identity live-gate / multi-residual Correct; write-path atomicity | active |
+| v0.18 | 79–80 | M024 | S01–S02 | fold identity live-gate / multi-residual Correct; write-path atomicity | shipped 2026-10-08 |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

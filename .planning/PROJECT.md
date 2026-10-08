@@ -10,11 +10,11 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.18 Fold identity and write semantics (harness M024)
+## Current Milestone: none (awaiting controller lease)
 
-**Active:** Phases 79–80. Source: post-M022 roadmap (fold identity). Not Cypher/HNSW. Crate SemVer stays `0.0.0`.
+**Last shipped:** v0.18 Fold identity and write semantics (M024, Phases 79–80). Crate SemVer stays `0.0.0`.
 
-**Last shipped:** v0.17 Green HEAD and truth reset (M023). **Harness lease:** read `.kutha/STATE.md`. Honeycomb stays Proposed.
+**Harness lease:** read `.kutha/STATE.md` (`L_delivery=M024-closed`). Honeycomb stays Proposed.
 
 
 ## Business Context
@@ -72,6 +72,8 @@ GSD overlay v0.09 (Phases 36–40 — M016 executable rules):
 - [x] **v0.10 Docs honesty and replay integrity (M017 S01–S04):** shipped 2026-10-03 — archive `.planning/milestones/v0.10-*`, tag `v0.10`
 - [x] **v0.12 Log durability protocol (M002 S01–S07):** shipped 2026-10-04 — archive `.planning/milestones/v0.12-*`, tag `v0.12`
 - [x] **v0.13 Post-M002 coherence (M019 S01–S07):** shipped 2026-10-05 — archive `.planning/milestones/v0.13-*`, process tag `v0.13`
+- [x] **v0.14–v0.17** — shipped 2026-10-07…08 (M020–M023); see `.planning/MILESTONES.md`
+- [x] **v0.18 Fold identity and write semantics (M024 S01–S02):** shipped 2026-10-08 — audit `.planning/milestones/v0.18-MILESTONE-AUDIT.md`
 
 ### Standing
 

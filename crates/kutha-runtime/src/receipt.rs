@@ -1,7 +1,12 @@
 use kutha_common::EventId;
 use sha2::{Digest, Sha256};
 
-/// Constant-shape evidence for one emit→idle quantum (ADR-014). Not a blockchain SoT.
+/// Evidence for one emit→idle quantum (ADR-014). Not a blockchain SoT.
+///
+/// **D014-1 (2026-10-08 / M024 S02):** the constant-size commitment is
+/// [`Self::digest`] (32 bytes; hex form 64 chars on the log). `event_ids` is a
+/// **resume lease** that may expose quantum width; stripping it is a later
+/// format bump, not this cell's Accepted gate.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct QuantumReceipt {
     pub event_ids: Vec<EventId>,

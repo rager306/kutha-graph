@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-08 — Process: close M024 / v0.18 (Phase 80)
+
+### Process
+
+- M024 / GSD v0.18 closed. Active Milestone **None**; `L_delivery=M024-closed`. Audit: `.planning/milestones/v0.18-MILESTONE-AUDIT.md`. S02 write-path atomicity characterized (`80-VERIFICATION.md`). Product close CHANGELOG cites Phase 80 bench (`KUTHA_BENCH_N=10000`): median vs Phase 79 post — `ingest_plain.n` 126105754→≈122.5M (−2.9%); `as_of.n` 281565→≈299.6k (+6.4%).
+
+### Trajectory
+
+- Honeycomb stays Proposed. Next lease is a controller decision (not Cypher/HNSW).
+
+## 2026-10-08 — Product: write-path Define SelfCommit and D014-1 digest pin (Phase 80)
+
+### Product
+
+- Characterized intern `Define` as SelfCommit (no QO); `committed_prefix` keeps Defines and drops NeedsOutcome Assert without QO. D014-1 constant commitment pinned to `QuantumReceipt::digest` `[u8; 32]` (hex 64); `event_ids` / `events_in_quantum` remain resume leases (width leak residual). GROUP-01 residual unchanged. Oracles: `m024_write_path.rs`. ADR-014 Clarification 2026-10-08. Bench median (`KUTHA_BENCH_N=10000`, four runs): `ingest_plain.n` ≈122.5M (−2.9% vs Phase 79); `as_of.n` ≈299.6k (+6.4%).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-014 evidence restaged.
+
 ## 2026-10-08 — Process: close M024 S01 / lease S02 (Phase 80)
 
 ### Process

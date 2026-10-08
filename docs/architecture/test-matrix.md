@@ -19,17 +19,17 @@ Each YAML row is one invariant. `oracle` is a list of real `#[test]` function na
 
 ## Counts (this file)
 
-Counted from `test-matrix.yaml` rows on 2026-10-08 (M023 S01). Recount after you edit the YAML; do not invent a coverage percentage.
+Counted from `test-matrix.yaml` rows on 2026-10-08 (M024 close). Recount after you edit the YAML; do not invent a coverage percentage.
 
 | Status | Rows |
 |--------|------|
 | killed | 67 |
-| characterization | 5 |
+| characterization | 7 |
 | gap | 0 |
 | blocked | 0 |
 | spec-only | 4 |
 | gate | 1 |
-| **total** | **77** |
+| **total** | **79** |
 
 Planes: product vs harness. Layers: decision, characterization, property, crash, kill, governor, bench.
 
@@ -44,6 +44,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 **M018-S03 (Horn closure):** Phase 47 — `SEM-det02-ids`, `SEM-horn-correct`, `SEM-horn-correct-char`, `SEM-casc-admit` `killed` (owner `M018-S03`). Oracles: `det02_two_ingest_derived_event_ids_equal`, inverted `horn_correct_*`, `casc01_*`.
 
 **M018-S04 (oracle tightening):** Phase 48 — `ORACLE-if15` / `ORACLE-if16` `killed` (owner `M018-S04`). GATE-01 is `BENCH-controller` (`status: gate`). DIFF-01 stays closed as `SEM-csr-fold-diff`.
+
+**M024 (fold identity + write-path):** Phase 79–80 — `SEM-m024-fold-identity` / `SEM-m024-write-path` `characterization` (owners `M024-S01` / `M024-S02`). Oracles: `m024_fold_identity`, `m024_write_path`.
 
 `unowned` is rejected by the governor check.
 

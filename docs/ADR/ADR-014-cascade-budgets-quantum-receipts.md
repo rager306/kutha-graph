@@ -40,6 +40,17 @@ F11 closed by option A (`Op::QuantumOutcome` + `commit::committed_prefix`). Writ
 
 `commit_user_cascade` admits each follow-on (`ReceiptMode::User`) before `pending.push`. LIFO `pending.pop` is unchanged. A hop that fails `admit` never appears in the log. UnknownRelation only when a matched firing Horn's head is missing from the dict. Oracles: `casc01_disallowed_second_hop_absent_from_log`, `casc01_unknown_head_on_matched_horn_is_err`. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
 
+### Clarification (2026-10-08; Phase 80 / M024 S02; Proposed)
+
+Write-path atomicity for intern Define and D014-1 receipt shape (G-A09 / G-A10):
+
+1. **Define SelfCommit:** `Runtime::intern` appends `Op::Define` without a User quantum / `QuantumOutcome`. `store::committed_prefix` keeps a Define (and other SelfCommit) prefix with no trailing QO. A following product `Assert` (NeedsOutcome) without QO is dropped on open — Defines before that Assert remain.
+2. **D014-1 constant commitment:** `QuantumReceipt::digest` is `[u8; 32]` (hex form 64 chars on the log outcome). Size does not depend on cascade width.
+3. **Width leak residual:** `event_ids: Vec` / `events_in_quantum` remain resume leases that may expose quantum width. Stripping them is a later format bump, not this cell's Accepted gate.
+4. **GROUP-01:** Typed/Dictionary multi-event groups still have no outcome; a mid-group crash can expose a partial SelfCommit prefix (unchanged residual (c)).
+
+Oracles: `m024_write_path.rs`. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

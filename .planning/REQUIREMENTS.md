@@ -1,8 +1,8 @@
 # Requirements: Kutha
 
-**Milestones:** v0.17 / harness M023 shipped 2026-10-08. **v0.18 / harness M024** active. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.17 / harness M023 shipped 2026-10-08. **v0.18 / harness M024** shipped 2026-10-08. Lease: `.kutha/STATE.md`.
 
-## v0.18 Requirements (M024)
+## v0.18 Requirements (M024) — shipped
 
 ### Fold identity (Phase 79, S01)
 
@@ -12,7 +12,7 @@
 
 ### Write-path (Phase 80, S02)
 
-- [ ] **WRITE-01**: intern Define crash window characterized or committed with quantum; receipt shape decision recorded
+- [x] **WRITE-01**: intern Define crash window characterized (SelfCommit; Assert-without-QO dropped); D014-1 digest `[u8;32]` pinned; event_ids width leak + GROUP-01 residual
 
 ## Out of Scope (this milestone)
 

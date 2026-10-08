@@ -895,6 +895,34 @@ rows:
     gate: controller
     owner: M019-S03
     source: Phase 58 PAR-01
+  - id: SEM-m024-fold-identity
+    plane: product
+    invariant: characterization — live-gated Retract/Correct; multi Correct collapses; CI multi fail-closed
+    layer: characterization
+    oracle:
+      - retract_dead_event_id_fails_closed
+      - correct_dead_event_id_fails_closed
+      - correct_multi_residual_event_id_collapses_to_one
+      - correct_interval_multi_residual_fails_closed
+    kill_mutation: none
+    status: characterization
+    gate: default
+    owner: M024-S01
+    source: Phase 79 / ADR-013 Clarification 2026-10-08
+  - id: SEM-m024-write-path
+    plane: product
+    invariant: characterization — Define SelfCommit crash window; D014-1 digest 32 B; event_ids width lease
+    layer: characterization
+    oracle:
+      - intern_define_is_self_commit_without_quantum_outcome
+      - crash_after_assert_keeps_defines_drops_uncommitted_assert
+      - open_after_intern_only_recovers_define_meanings
+      - receipt_digest_len_constant_across_cascade_widths
+    kill_mutation: none
+    status: characterization
+    gate: default
+    owner: M024-S02
+    source: Phase 80 / ADR-014 Clarification 2026-10-08
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

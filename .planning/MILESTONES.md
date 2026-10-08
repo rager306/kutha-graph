@@ -1,7 +1,7 @@
-## v0.18 Fold identity and write semantics (Active: 2026-10-08)
+## v0.18 Fold identity and write semantics (Shipped: 2026-10-08)
 
-**Phases:** 79–80. Process tag `v0.18`. Live-gated Retract/Correct; multi-residual Correct; CorrectInterval multi fail-closed; write-path atomicity next. Honeycomb stays Proposed.
-**Git range:** `v0.17..` (tag pending)
+**Phases:** 79–80. Process tag `v0.18`. Live-gated Retract/Correct; multi-residual Correct; CorrectInterval multi fail-closed; Define SelfCommit crash window; D014-1 digest pin. Audit: `.planning/milestones/v0.18-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+**Git range:** `v0.17..` (process tag pending controller)
 
 ---
 

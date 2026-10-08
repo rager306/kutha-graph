@@ -332,6 +332,10 @@ impl Runtime {
     /// Intern a term string. New strings append `Op::Define` to the live log (fold no-op).
     /// Bootstrap `knows`/`knownBy` and genesis reserved/YAML names stay silent until persist synthesizes them.
     /// Names with prefix `kutha:` are marked as dictionary relations (D-01 / D-05).
+    ///
+    /// SelfCommit `Define` (not a User quantum / no QO). Crash window: Defines stay
+    /// visible via `committed_prefix`; a following NeedsOutcome Assert without QO is
+    /// dropped (M024 S02 / G-A09).
     pub fn intern(&mut self, s: &str) -> TermId {
         if let Some(id) = self.dict.id(s) {
             return id;
