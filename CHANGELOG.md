@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-08 — Product: keyed retry requires live fact (Phase 72)
+
+### Product
+
+- `delivery_key_retry` short-circuits only while the prior keyed Assert is live; after Retract the same key remints. Oracles: `keyed_assert_retry_after_retract_remints_live_support`, `keyed_assert_retry_while_live_short_circuits`. Admission EventId pin: `adm_pin01_admission_status_via_event_id`.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
+## 2026-10-08 — Process: lease M022 S02 (GSD Phase 72)
+
+### Process
+
+- `L_delivery=M022-S01-done`, Active Slice **S02**: keyed-retry requires live fact; admission EventId pin; bench ≤10%. Independent `71-VERIFICATION.md` passed. Honeycomb stays Proposed.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-08 — Process: lease M022 S01 (GSD Phase 71)
 
 ### Process
