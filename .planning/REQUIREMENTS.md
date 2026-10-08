@@ -12,7 +12,7 @@
 
 ### Close gate (Phase 76, S02)
 
-- [ ] **GATE-02**: 72-VERIFICATION, v0.16 audit, CHANGELOG correct the false verified claim; close checklist requires recorded full workspace tests and full `ci`; governor row proves it
+- [x] **GATE-02**: 72-VERIFICATION, v0.16 audit, CHANGELOG correct the false verified claim; close checklist requires recorded full workspace tests and full `ci`; governor row proves it
 
 ### Living overlay (Phase 77, S03)
 

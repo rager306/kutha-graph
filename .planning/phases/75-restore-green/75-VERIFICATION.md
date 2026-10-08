@@ -51,4 +51,4 @@ read_only_inputs:
 
 ## Note
 
-Did not read `75-PLAN.md` / `75-SUMMARY.md`. Three consecutive workspace runs not re-run (scope: one run per reopen instructions).
+Did not read plan or summary artifacts for this phase. Three consecutive workspace runs not re-run (scope: one run per reopen instructions).

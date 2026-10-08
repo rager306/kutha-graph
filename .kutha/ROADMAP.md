@@ -207,7 +207,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 - [x] **S01: Restore green** `risk:medium` `depends:[]`
   > After this: `delivery_key_retry` follows Correct/CorrectInterval replacements (live keyed support of the same claim short-circuits); m013 keyed-correct pair and `m022_keyed_retry` green; new oracle for keyed retry after Retract of a CorrectInterval id; naive model Retract invalidates all live residuals; `m019_dur_a` flakes isolated; `cargo test --workspace --no-fail-fast` zero failures; bench gate <=10%.
-- [ ] **S02: Close-gate honesty** `risk:low` `depends:[S01]`
+- [x] **S02: Close-gate honesty** `risk:low` `depends:[S01]`
   > After this: 72-VERIFICATION, v0.16 audit and CHANGELOG state the regression and fix; gsd-auto-contract close checklist requires a recorded full `cargo test --workspace --no-fail-fast` and full `ci`; a governor row proves it. No crates change.
 - [ ] **S03: Living overlay truth** `risk:low` `depends:[S02]`
   > After this: PROJECT, REQUIREMENTS, MILESTONES, this ROADMAP numbering, WINDOWS, test-matrix.md counts, legal-fixture-recon, semantic-gap-review, semantic-contract-validation, ADR-000/010/011 stale lines, p0-spike-inventory and honeycomb evidence match HEAD; ADRs stay Proposed. Docs/YAML only.
