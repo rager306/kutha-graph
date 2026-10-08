@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M022
+**Active Slice:** S01
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M021 CLOSED (wedge decisions); next milestone unleased | Capability proven / Cypher started |
+| L_delivery | M022 S01 leased (audit residual honesty); prior M021 CLOSED | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M021 CLOSED 2026-10-07** (GSD v0.15, Phases 68–70). Independent VERIFICATIONs through `69-VERIFICATION.md` (Phase 70 is close-only). Residuals: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`. Honeycomb stays Proposed. Not Cypher/HNSW. Next lease is a controller decision.
+**M022 S01 / GSD Phase 71** — strike stale M020 Retract residual from v0.14 audit; record triage. No product behaviour. Honeycomb stays Proposed. Not Cypher/HNSW.
 
 ## Thaw map
 
