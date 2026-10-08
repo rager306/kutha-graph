@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M025
+**Active Slice:** S01
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M024 closed (fold identity + write-path atomicity) | Capability proven / Cypher started |
+| L_delivery | M024 closed; M025 S01 leased (`as_known_on` VT decision) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Controller decision: lease next milestone (candidate M025 typed clocks / answer envelope / demo CLI — not Cypher/HNSW). Honeycomb stays Proposed.
+**M025 S01 / GSD Phase 81** — pin `as_known_on` TT-only by design (G-A08/G-C03); ADR-013 Clarification; semantic-contract agrees. Honeycomb stays Proposed. Not Cypher/HNSW.
 
 ## Thaw map
 

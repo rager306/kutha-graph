@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-08 — Process: lease M025 S01 (GSD Phase 81)
+
+### Process
+
+- Active Milestone **M025**, Active Slice **S01** (`L_delivery=M024-closed`): `as_known_on` VT decision — pin TT-only by design (G-A08/G-C03). Honeycomb stays Proposed.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-08 — Process: close M024 / v0.18 (Phase 80)
 
 ### Process
