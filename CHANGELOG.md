@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-08 — Process: close M025 S02 / lease S03 (Phase 83)
+
+### Process
+
+- S02 done (`82-VERIFICATION.md`). Active Slice **S03** (`L_delivery=M025-S02-done`): legal answer envelope (`norm_view`).
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
+## 2026-10-08 — Product: clock-safe as_of / as_known_on facade (Phase 82)
+
+### Product
+
+- Public `as_of` takes `ValidTime`; `as_known_on` takes `WallTime` (not `impl Into`). Bare `u64` and wrong-role clocks are compile errors (trybuild `ui_clock_facade`). Call sites wrap with `ValidTime::from` / `WallTime::from`. Op storage unchanged. ADR-013 Clarification Phase 82. Bench (`KUTHA_BENCH_N=10000`): pre `ingest_plain.n` 134073571 / `as_of.n` 309416; post median ≈110.6M / ≈282k (within ≤10% gate; fold path unchanged).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-013 evidence restaged.
+
 ## 2026-10-08 — Process: close M025 S01 / lease S02 (Phase 82)
 
 ### Process

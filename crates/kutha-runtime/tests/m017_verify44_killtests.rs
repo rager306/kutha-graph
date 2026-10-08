@@ -1,8 +1,6 @@
 //! Phase 44 independent semantic kill-tests (public API). Differential vs `4d669ca`.
 
-use kutha_common::{
-    Event, Op, RuleAst, RuleAtom, RuleTerm, TermId, TransactionTime, ValidTime, policy_version_hash,
-};
+use kutha_common::{Event, Op, RuleAst, RuleAtom, RuleTerm, TermId, TransactionTime, ValidTime, policy_version_hash};
 use kutha_runtime::{FoldIndexMode, GraphFold, Runtime};
 use std::fs;
 use std::path::PathBuf;
@@ -89,7 +87,7 @@ fn name_triple(rt: &Runtime, s: TermId, r: TermId, o: TermId) -> String {
 
 fn dump_as_of(label: &str, rt: &Runtime) {
     let mut rows: Vec<String> = rt
-        .as_of(2010u64)
+        .as_of(ValidTime::from(2010u64))
         .into_iter()
         .map(|(s, r, o)| name_triple(rt, s, r, o))
         .collect();
@@ -131,7 +129,7 @@ fn live_count(rt: &Runtime, s: TermId, r: TermId, o: TermId) -> usize {
 }
 
 fn has_as_of(rt: &Runtime, s: TermId, r: TermId, o: TermId) -> bool {
-    rt.as_of(2010u64).iter().any(|t| *t == (s, r, o))
+    rt.as_of(ValidTime::from(2010u64)).iter().any(|t| *t == (s, r, o))
 }
 
 fn last_tt(rt: &Runtime) -> u64 {
@@ -351,8 +349,8 @@ fn v44_f_eager_lazy_derived_equal() {
     let lazy = ingest(FoldIndexMode::Lazy);
     dump_as_of("f_eager", &eager);
     dump_as_of("f_lazy", &lazy);
-    let mut ea = eager.as_of(2010u64);
-    let mut la = lazy.as_of(2010u64);
+    let mut ea = eager.as_of(ValidTime::from(2010u64));
+    let mut la = lazy.as_of(ValidTime::from(2010u64));
     ea.sort_unstable();
     la.sort_unstable();
     assert_eq!(ea, la, "Eager and Lazy derived as_of rows must match");

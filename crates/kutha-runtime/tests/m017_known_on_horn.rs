@@ -2,7 +2,7 @@
 //! Horn remaining-premise lookup is `TT = u64::MAX` (log-head). `as_known_on` TT-hides
 //! supports minted after the cut. Do not invert; `eval.rs` is unchanged.
 
-use kutha_common::{Op, RuleAst, RuleAtom, RuleTerm};
+use kutha_common::{Op, RuleAst, RuleAtom, RuleTerm, WallTime};
 use kutha_runtime::Runtime;
 
 fn two_prem_horn() -> RuleAst {
@@ -66,7 +66,7 @@ fn known04_horn_fires_when_premise_hidden_on_early_cut() {
     );
 
     let known_2014 = rt
-        .as_known_on(2014)
+        .as_known_on(WallTime::from(2014))
         .expect("early TtAnchor 2014 must resolve");
     assert!(
         !known_2014.contains(&premise_ab),
@@ -78,7 +78,7 @@ fn known04_horn_fires_when_premise_hidden_on_early_cut() {
     );
 
     let known_2020 = rt
-        .as_known_on(2020)
+        .as_known_on(WallTime::from(2020))
         .expect("late TtAnchor 2020 must resolve");
     assert!(
         known_2020.contains(&premise_ab),

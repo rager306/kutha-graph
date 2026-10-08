@@ -1,6 +1,8 @@
 //! Ingest `.kutha/events.jsonl` onto the product runtime (H2 tenant).
 //! Paths from env: `KUTHA_HARNESS_LOG`, `KUTHA_TENANT_DIR`.
 
+use kutha_common::{ValidTime};
+
 use kutha_runtime::{Runtime, ingest_harness_jsonl, store};
 use std::path::Path;
 use std::process::ExitCode;
@@ -42,7 +44,7 @@ fn main() -> ExitCode {
     let run = rt.intern("harness.run");
     let rel = rt.intern("runStatus");
     let obj = rt.intern(&last_status);
-    let matched = rt.fold().as_of(last_vf).contains(&(run, rel, obj));
+    let matched = rt.fold().as_of(ValidTime::from(last_vf)).contains(&(run, rel, obj));
     if let Err(e) = store::persist(&rt, Path::new(&dir)) {
         eprintln!("tenant: persist {dir}: {e}");
         return ExitCode::from(1);

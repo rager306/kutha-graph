@@ -1,6 +1,7 @@
 //! ANK-03: “true on D” (`as_of` / valid-time) differs from “known on D” (`as_known_on`).
 //! FF5 stays untouched; this file is the named divergence oracle.
 
+use kutha_common::{ValidTime, WallTime};
 mod common;
 
 use kutha_common::Op;
@@ -34,16 +35,16 @@ fn true_on_d_differs_from_known_on_d() {
 
     let statute = (article, in_force, limit_50);
     assert!(
-        rt.as_of(D).contains(&statute),
+        rt.as_of(ValidTime::from(D)).contains(&statute),
         "true on D: as_of(2015) sees the statute (valid_from 2010)"
     );
-    let known_2015 = rt.as_known_on(D).expect("anchor 2014 is at or before 2015");
+    let known_2015 = rt.as_known_on(WallTime::from(D)).expect("anchor 2014 is at or before 2015");
     assert!(
         !known_2015.contains(&statute),
         "known on D: as_known_on(2015) uses 2014 tt, before the statute event"
     );
     let known_2020 = rt
-        .as_known_on(W2)
+        .as_known_on(WallTime::from(W2))
         .expect("anchor 2020 is at or before 2020");
     assert!(
         known_2020.contains(&statute),
@@ -55,7 +56,7 @@ fn true_on_d_differs_from_known_on_d() {
 fn as_known_on_miss_without_anchor() {
     let rt = Runtime::default();
     assert!(
-        rt.as_known_on(D).is_none(),
+        rt.as_known_on(WallTime::from(D)).is_none(),
         "without an anchor at or before D, as_known_on is None"
     );
 }
@@ -65,14 +66,14 @@ fn as_known_on_uses_greatest_anchor_at_or_before() {
     let mut rt = Runtime::default();
     let statute = common::seed_statute_between_anchors(&mut rt);
     let known_d = rt
-        .as_known_on(D)
+        .as_known_on(WallTime::from(D))
         .expect("A1@2014 is at or before D=2015 (W1 < D ≤ W2)");
     assert!(
         !known_d.contains(&statute),
         "W1 < D ≤ W2 resolves A1 tt, before the statute"
     );
     assert!(
-        rt.as_known_on(2013).is_none(),
+        rt.as_known_on(WallTime::from(2013)).is_none(),
         "no anchor at or before 2013"
     );
 }
@@ -80,17 +81,17 @@ fn as_known_on_uses_greatest_anchor_at_or_before() {
 #[test]
 fn as_known_on_persist_open_preserves_answers() {
     let mut rt = Runtime::default();
-    assert!(rt.as_known_on(D).is_none());
+    assert!(rt.as_known_on(WallTime::from(D)).is_none());
     let statute = common::seed_statute_between_anchors(&mut rt);
     let dir = std::path::Path::new("tmp/p32-02-store");
     let _ = std::fs::remove_dir_all(dir);
     std::fs::create_dir_all(dir).unwrap();
     rt.persist(dir).unwrap();
     let opened = Runtime::open(dir).unwrap();
-    assert!(opened.as_known_on(2013).is_none());
-    let known_d = opened.as_known_on(D).expect("A1 rebuilt on open");
+    assert!(opened.as_known_on(WallTime::from(2013)).is_none());
+    let known_d = opened.as_known_on(WallTime::from(D)).expect("A1 rebuilt on open");
     assert!(!known_d.contains(&statute));
-    let known_w2 = opened.as_known_on(W2).expect("A2 rebuilt on open");
+    let known_w2 = opened.as_known_on(WallTime::from(W2)).expect("A2 rebuilt on open");
     assert!(known_w2.contains(&statute));
     let _ = std::fs::remove_dir_all(dir);
 }

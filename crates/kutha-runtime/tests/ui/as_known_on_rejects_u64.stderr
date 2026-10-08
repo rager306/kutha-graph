@@ -1,0 +1,17 @@
+error[E0308]: mismatched types
+ --> tests/ui/as_known_on_rejects_u64.rs:5:28
+  |
+5 |     let _ = rt.as_known_on(2017u64);
+  |                ----------- ^^^^^^^ expected `WallTime`, found `u64`
+  |                |
+  |                arguments to this method are incorrect
+  |
+note: method defined here
+ --> src/quantum.rs
+  |
+  |     pub fn as_known_on(&self, wall: WallTime) -> Option<Vec<(TermId, TermId, TermId)>> {
+  |            ^^^^^^^^^^^
+help: call `Into::into` on this expression to convert `u64` into `kutha_common::event::WallTime`
+  |
+5 |     let _ = rt.as_known_on(2017u64.into());
+  |                                   +++++++

@@ -1,7 +1,7 @@
 //! KNOWN-02: closed VT intervals survive `as_known_on` (FF5-shaped `valid_to`).
 //! FF5 `as_of` assertions stay in `ff5_legal_pit.rs` (untouched).
 
-use kutha_common::{Op, ValidTime};
+use kutha_common::{Op, ValidTime, WallTime};
 use kutha_runtime::Runtime;
 
 const T_OLD: u64 = 2015;
@@ -34,7 +34,7 @@ fn closed_vt_interval_survives_as_known_on() {
         "as_of(2015) sees the closed-interval speed fact in-window"
     );
     let known = rt
-        .as_known_on(T_OLD)
+        .as_known_on(WallTime::from(T_OLD))
         .expect("anchor 2015 is at or before 2015");
     assert!(
         known.contains(&statute),
@@ -76,7 +76,7 @@ fn closed_vt_known_on_persist_open() {
     std::fs::create_dir_all(dir).unwrap();
     rt.persist(dir).unwrap();
     let opened = Runtime::open(dir).unwrap();
-    let known = opened.as_known_on(T_OLD).expect("anchor rebuilt on open");
+    let known = opened.as_known_on(WallTime::from(T_OLD)).expect("anchor rebuilt on open");
     assert!(
         known.contains(&statute),
         "persist/open must keep the closed-interval speed fact on as_known_on"

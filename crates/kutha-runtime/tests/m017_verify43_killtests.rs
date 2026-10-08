@@ -1,6 +1,6 @@
 //! Phase 43 independent kill-tests (public API). Own Mix64 seeds, not the executor's.
 
-use kutha_common::{Op, RuleAst, RuleAtom, RuleTerm, TermId};
+use kutha_common::{Op, RuleAst, RuleAtom, RuleTerm, TermId, ValidTime, WallTime};
 use kutha_runtime::{FoldIndexMode, GraphFold, Runtime};
 use std::fs;
 use std::path::PathBuf;
@@ -134,11 +134,11 @@ fn view_bundle(
         .unwrap_or(0)
         / 2;
     (
-        sorted(rt.as_of(2000u64)),
-        sorted(rt.as_of(2008u64)),
-        opt_sorted(rt.as_known_on(1995u64)),
-        opt_sorted(rt.as_known_on(2014u64)),
-        opt_sorted(rt.as_known_on(2020u64)),
+        sorted(rt.as_of(ValidTime::from(2000u64))),
+        sorted(rt.as_of(ValidTime::from(2008u64))),
+        opt_sorted(rt.as_known_on(WallTime::from(1995u64))),
+        opt_sorted(rt.as_known_on(WallTime::from(2014u64))),
+        opt_sorted(rt.as_known_on(WallTime::from(2020u64))),
         sorted(rt.live_at(u64::MAX, 2010u64)),
         sorted(rt.live_at(mid_tt, 2008u64)),
     )
@@ -262,7 +262,7 @@ fn v43_horn_two_prem_as_known_on_characterization() {
         live_derived(&rt, ada, rel, cid),
         "derived mentors(Ada,Cid) must be live on the current fold"
     );
-    let k2014 = rt.as_known_on(2014u64).expect("anchor 2014");
+    let k2014 = rt.as_known_on(WallTime::from(2014u64)).expect("anchor 2014");
     assert!(
         !has_triple(&k2014, ada, rel, bea),
         "as_known_on(2014) hides the later premise"
@@ -271,7 +271,7 @@ fn v43_horn_two_prem_as_known_on_characterization() {
         !has_triple(&k2014, ada, rel, cid),
         "as_known_on(2014) hides the derived row"
     );
-    let k2020 = rt.as_known_on(2020u64).expect("anchor 2020");
+    let k2020 = rt.as_known_on(WallTime::from(2020u64)).expect("anchor 2020");
     assert!(
         has_triple(&k2020, ada, rel, bea),
         "as_known_on(2020) shows the premise"

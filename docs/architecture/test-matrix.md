@@ -23,13 +23,13 @@ Counted from `test-matrix.yaml` rows on 2026-10-08 (M024 close). Recount after y
 
 | Status | Rows |
 |--------|------|
-| killed | 68 |
+| killed | 69 |
 | characterization | 7 |
 | gap | 0 |
 | blocked | 0 |
 | spec-only | 4 |
 | gate | 1 |
-| **total** | **80** |
+| **total** | **81** |
 
 Planes: product vs harness. Layers: decision, characterization, property, crash, kill, governor, bench.
 
@@ -48,6 +48,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 **M024 (fold identity + write-path):** Phase 79–80 — `SEM-m024-fold-identity` / `SEM-m024-write-path` `characterization` (owners `M024-S01` / `M024-S02`). Oracles: `m024_fold_identity`, `m024_write_path`.
 
 **M025 S01 (as_known_on TT-only):** Phase 81 — `SEM-m025-akn-tt-only` `killed` (owner `M025-S01`). Oracles: `m025_as_known_on_vt`.
+
+**M025 S02 (clock-safe facade):** Phase 82 — `SEM-m025-clock-facade` `killed` (owner `M025-S02`). Oracles: `ui_clock_facade`.
 
 `unowned` is rejected by the governor check.
 

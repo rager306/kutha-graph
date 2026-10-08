@@ -1,6 +1,8 @@
 //! D-04 GREEN (PIPE-03/04): facade-only statute consumer.
 //! Import only the public crate surface. Never edit `.kutha/STATE.md`.
 
+use kutha_common::{ValidTime};
+
 use kutha_runtime::{Runtime, RuntimeError};
 use std::path::Path;
 
@@ -11,7 +13,7 @@ const VF_FIRST: u64 = 2010;
 const VF_SECOND: u64 = 2020;
 
 fn sorted_as_of(rt: &Runtime, vt: u64) -> Vec<(u32, u32, u32)> {
-    let mut v = rt.as_of(vt);
+    let mut v = rt.as_of(ValidTime::from(vt));
     v.sort_unstable();
     v
 }
@@ -42,8 +44,8 @@ fn statute_as_of_via_facade() -> Result<(), RuntimeError> {
     )?;
     rt.assert("art-12-speed", "inForceAs", "30-kmh", VF_SECOND, None)?;
 
-    let old = rt.as_of(T_OLD);
-    let new = rt.as_of(T_NEW);
+    let old = rt.as_of(ValidTime::from(T_OLD));
+    let new = rt.as_of(ValidTime::from(T_NEW));
     assert_ne!(old, new, "AS OF 2015 must differ from AS OF 2021");
     assert_eq!(sorted_as_of(&rt, T_OLD), vec![t50]);
     assert_eq!(sorted_as_of(&rt, T_NEW), vec![t30]);

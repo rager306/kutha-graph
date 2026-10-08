@@ -175,6 +175,17 @@ Derived Horn EventIds are hash-stable (`Event::stable_derived`, prefix `kutha-de
 
 `Op::Retract { event_id }` invalidates **every** live Fact whose `event_id` matches (CorrectInterval may mint prefix/patch/suffix residuals sharing one id). `fact_index_by_event_id` remains first-live for Correct / CorrectInterval targeting. Oracles: `retract_correct_interval_event_id_clears_all_residuals`, `retract_assert_event_id_still_clears_single_row`. D013-1…D013-4 unchanged. Cell remains **Proposed**.
 
+### Clarification (2026-10-08; Phase 82 / M025 S02; Proposed)
+
+**G-C09 / G-B02 — clock-safe public facade:**
+
+1. `Runtime::as_of` / `GraphFold::as_of` take [`ValidTime`] (not `impl Into<ValidTime>`).
+2. `Runtime::as_known_on` / `GraphFold::as_known_on` take [`WallTime`] (not `impl Into<WallTime>`).
+3. Bare `u64` and wrong-role clocks (`as_of(WallTime)`, `as_known_on(ValidTime)`) fail at compile time (trybuild `ui_clock_facade`).
+4. `Op` / `Fact` / `Event` clock fields stay `u64`. Other cuts (`live_at`, `known_at`, CSR) may still take `impl Into` until a later slice. No fifth axis.
+
+Oracles: `ui_clock_facade` / `tests/ui/as_of_rejects_*` / `as_known_on_rejects_*`. D013-1…D013-4 unchanged. Cell remains **Proposed**.
+
 ### Clarification (2026-10-08; Phase 81 / M025 S01; Proposed)
 
 **G-A08 / G-C03 — `as_known_on` is TT-only by design (pin, not a fix):**

@@ -1,0 +1,17 @@
+error[E0308]: mismatched types
+ --> tests/ui/as_of_rejects_u64.rs:5:22
+  |
+5 |     let _ = rt.as_of(2017u64);
+  |                ----- ^^^^^^^ expected `ValidTime`, found `u64`
+  |                |
+  |                arguments to this method are incorrect
+  |
+note: method defined here
+ --> src/quantum.rs
+  |
+  |     pub fn as_of(&self, vt: ValidTime) -> Vec<(TermId, TermId, TermId)> {
+  |            ^^^^^
+help: call `Into::into` on this expression to convert `u64` into `kutha_common::event::ValidTime`
+  |
+5 |     let _ = rt.as_of(2017u64.into());
+  |                             +++++++

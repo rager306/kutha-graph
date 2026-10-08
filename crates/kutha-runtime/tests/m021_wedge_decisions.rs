@@ -1,6 +1,7 @@
 //! M021 S01 / Phase 68 — TR-02 three moments and C01 pack-fact spike.
 //! Does not change fold algebra. FIXG-01 / known04 / asof_elig01 stay authoritative.
 
+use kutha_common::{ValidTime, WallTime};
 use kutha_common::Op;
 use kutha_common::RuleTerm;
 use kutha_runtime::Runtime;
@@ -29,20 +30,20 @@ fn tr02_force_vt_publication_anchor_decision_as_of() {
 
     let triple = (act, in_force, true_);
     assert!(
-        !rt.as_of(2015).contains(&triple),
+        !rt.as_of(ValidTime::from(2015)).contains(&triple),
         "force clock: not in force before valid_from"
     );
     assert!(
-        rt.as_of(2016).contains(&triple),
+        rt.as_of(ValidTime::from(2016)).contains(&triple),
         "force clock: in force at valid_from (case decision via as_of)"
     );
 
-    let known_2015 = rt.as_known_on(2015).expect("anchor 2015");
+    let known_2015 = rt.as_known_on(WallTime::from(2015)).expect("anchor 2015");
     assert!(
         !known_2015.contains(&triple),
         "publication/knowledge: ingest after wall 2015 is hidden on that cut"
     );
-    let known_2017 = rt.as_known_on(2017).expect("anchor 2017");
+    let known_2017 = rt.as_known_on(WallTime::from(2017)).expect("anchor 2017");
     assert!(
         known_2017.contains(&triple),
         "publication/knowledge: later wall sees the ingested force fact"
@@ -77,11 +78,11 @@ fn c01_applies_to_assert_encodes_application_window() {
 
     let triple = (punkt, applies, cases);
     assert!(
-        rt.as_of(2027).contains(&triple),
+        rt.as_of(ValidTime::from(2027)).contains(&triple),
         "pack application window covers 2027"
     );
     assert!(
-        !rt.as_of(2028).contains(&triple),
+        !rt.as_of(ValidTime::from(2028)).contains(&triple),
         "pack application window ends at half-open 2028 — not a fifth axis"
     );
 }

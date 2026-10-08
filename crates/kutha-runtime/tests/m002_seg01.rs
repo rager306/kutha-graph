@@ -1,7 +1,7 @@
 //! M002 S06 / SEG-01 oracles (Phase 54). 54-01: format/open. 54-02: persist +
 //! Persister. 54-03: tamper (real writer), migrate, export_jsonl.
 
-use kutha_common::{Event, EventId, Op};
+use kutha_common::{Event, EventId, Op, ValidTime};
 use kutha_runtime::{Runtime, store};
 use std::fs;
 use std::io::ErrorKind;
@@ -994,7 +994,7 @@ fn interned_terms_between_appends_survive_on_segmented() {
     let opened = store::open(&dir).expect("open after intern-append without checkpoint");
     assert_dict_term_parity(&rt, &opened);
     assert_eq!(opened.fold().fingerprint(), rt.fold().fingerprint());
-    assert_eq!(opened.as_of(VF_FIRST), rt.as_of(VF_FIRST));
+    assert_eq!(opened.as_of(ValidTime::from(VF_FIRST)), rt.as_of(ValidTime::from(VF_FIRST)));
     opened.replay_check().unwrap();
 
     let _ = fs::remove_dir_all(&dir);
@@ -1043,7 +1043,7 @@ fn segmented_replay_parity_with_legacy_full_persist() {
     assert_eq!(log_ids(&opened_s), log_ids(&opened_l));
     assert_dict_term_parity(&opened_l, &opened_s);
     assert_eq!(opened_s.fold().fingerprint(), opened_l.fold().fingerprint());
-    assert_eq!(opened_s.as_of(VF_FIRST), opened_l.as_of(VF_FIRST));
+    assert_eq!(opened_s.as_of(ValidTime::from(VF_FIRST)), opened_l.as_of(ValidTime::from(VF_FIRST)));
     opened_s.replay_check().unwrap();
     opened_l.replay_check().unwrap();
 

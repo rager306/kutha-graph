@@ -13,7 +13,7 @@ use common::sem::{
     pin_error_detector, replay_check_or_shrink, replay_runtime, rm_dir, runtime_stamps,
     seeded_persist_runtime, seeded_runtime, seeds,
 };
-use kutha_common::{Op, RuleAst, RuleAtom, RuleTerm, TermId};
+use kutha_common::{Op, RuleAst, RuleAtom, RuleTerm, TermId, ValidTime};
 use kutha_runtime::{FoldIndexMode, Runtime, RuntimeError, store};
 use std::fs;
 
@@ -109,12 +109,12 @@ fn cascade_order_eager_lazy_inverse_knows() {
         );
     }
     let e_live: Vec<_> = {
-        let mut v = eager.as_of(2017);
+        let mut v = eager.as_of(ValidTime::from(2017));
         v.sort_unstable();
         v
     };
     let l_live: Vec<_> = {
-        let mut v = lazy.as_of(2017);
+        let mut v = lazy.as_of(ValidTime::from(2017));
         v.sort_unstable();
         v
     };

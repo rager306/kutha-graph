@@ -1,4 +1,5 @@
 //! In-crate Runtime invariants (moved out of quantum.rs so src files stay ≤800).
+use kutha_common::WallTime;
 use super::*;
 use kutha_common::Op;
 use std::time::Instant;
@@ -207,7 +208,7 @@ fn snapshot_plus_tail_matches_full_replay() {
     assert!(rt.graph_len() > offset, "non-empty fold-affecting tail");
     let events = rt.log().as_slice().to_vec();
     let restored = Runtime::from_snapshot(snap, events);
-    assert_eq!(restored.as_known_on(2014), rt.as_known_on(2014));
+    assert_eq!(restored.as_known_on(WallTime::from(2014)), rt.as_known_on(WallTime::from(2014)));
     assert_eq!(restored.fold().fingerprint(), rt.fold().fingerprint());
     restored.replay_check().unwrap();
 }
@@ -311,8 +312,8 @@ fn as_known_on_after_anchor_is_some_earlier_wall_is_none() {
     let facts_before = rt.fold().facts().len();
     rt.emit_tt_anchor(2015).unwrap();
     assert_eq!(rt.fold().facts().len(), facts_before);
-    assert!(rt.as_known_on(2015).is_some());
-    assert!(rt.as_known_on(2014).is_none());
+    assert!(rt.as_known_on(WallTime::from(2015)).is_some());
+    assert!(rt.as_known_on(WallTime::from(2014)).is_none());
     let _as_of: Vec<_> = rt.as_of(kutha_common::ValidTime::from(2015));
     assert!(rt.as_known_on(kutha_common::WallTime::from(2015)).is_some());
 }
@@ -321,14 +322,14 @@ fn as_known_on_after_anchor_is_some_earlier_wall_is_none() {
 fn as_known_on_survives_persist_open_and_matches_fold() {
     let mut rt = Runtime::default();
     rt.emit_tt_anchor(2015).unwrap();
-    assert_eq!(rt.as_known_on(2015), rt.fold().as_known_on(2015));
+    assert_eq!(rt.as_known_on(WallTime::from(2015)), rt.fold().as_known_on(WallTime::from(2015)));
     let dir = std::path::Path::new("tmp/p32-01-store");
     let _ = std::fs::remove_dir_all(dir);
     std::fs::create_dir_all(dir).unwrap();
     rt.persist(dir).unwrap();
     let opened = Runtime::open(dir).unwrap();
-    assert!(opened.as_known_on(2015).is_some());
-    assert_eq!(opened.as_known_on(2015), opened.fold().as_known_on(2015));
+    assert!(opened.as_known_on(WallTime::from(2015)).is_some());
+    assert_eq!(opened.as_known_on(WallTime::from(2015)), opened.fold().as_known_on(WallTime::from(2015)));
     let _ = std::fs::remove_dir_all(dir);
 }
 

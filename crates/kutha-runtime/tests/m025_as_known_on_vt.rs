@@ -1,7 +1,7 @@
 //! M025 S01 / Phase 81 — G-A08 / G-C03: `as_known_on` is TT-only by design.
 //! A fact not yet in force on VT still appears at a knowledge cut (TR-02 trap pin).
 
-use kutha_common::{Op, ValidTime};
+use kutha_common::{Op, ValidTime, WallTime};
 use kutha_runtime::Runtime;
 
 /// Future VT (valid_from after the wall cut): `as_of` empty; `as_known_on` contains.
@@ -32,7 +32,7 @@ fn as_known_on_includes_not_yet_in_force_vt_fact() {
         "as_of(2017) must not see valid_from=2020"
     );
     let known = rt
-        .as_known_on(2017)
+        .as_known_on(WallTime::from(2017))
         .expect("TtAnchor 2017 resolves the knowledge cut");
     assert!(
         known.contains(&triple),
@@ -63,7 +63,7 @@ fn as_known_on_keeps_closed_vt_that_as_of_sees_in_window() {
 
     let triple = (art, rel, obj);
     assert!(rt.as_of(ValidTime::from(2015)).contains(&triple));
-    let known = rt.as_known_on(2015).expect("anchor");
+    let known = rt.as_known_on(WallTime::from(2015)).expect("anchor");
     assert!(
         known.contains(&triple),
         "closed VT interval stays visible on TT-only known-on"

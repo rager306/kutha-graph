@@ -1,5 +1,6 @@
 //! ANK-ADM-01: duplicate or backwards `TtAnchor` walls fail closed at admit.
 
+use kutha_common::{WallTime};
 use kutha_runtime::{Runtime, RuntimeError};
 
 #[test]
@@ -70,19 +71,19 @@ fn seed_monotone_statute(
 fn monotone_unique_anchors_persist_open() {
     let mut rt = Runtime::default();
     let statute = seed_monotone_statute(&mut rt);
-    let known_d = rt.as_known_on(2015).expect("A1@2014 at or before 2015");
+    let known_d = rt.as_known_on(WallTime::from(2015)).expect("A1@2014 at or before 2015");
     assert!(!known_d.contains(&statute));
-    assert!(rt.as_known_on(2020).expect("A2@2020").contains(&statute));
+    assert!(rt.as_known_on(WallTime::from(2020)).expect("A2@2020").contains(&statute));
     let dir = std::path::Path::new("tmp/p34-02-store");
     let _ = std::fs::remove_dir_all(dir);
     std::fs::create_dir_all(dir).unwrap();
     rt.persist(dir).unwrap();
     let opened = Runtime::open(dir).unwrap();
-    let known_d = opened.as_known_on(2015).expect("A1 rebuilt");
+    let known_d = opened.as_known_on(WallTime::from(2015)).expect("A1 rebuilt");
     assert!(!known_d.contains(&statute));
     assert!(
         opened
-            .as_known_on(2020)
+            .as_known_on(WallTime::from(2020))
             .expect("A2 rebuilt")
             .contains(&statute)
     );

@@ -1,7 +1,7 @@
 //! M017 S03 / DET-01: seeded LCG mix (D-01). No proptest/bolero.
 //! Eager vs Lazy compare sorted triples, not fingerprints (EventIds differ).
 
-use kutha_common::{EventId, Op, ValidTime};
+use kutha_common::{EventId, Op, ValidTime, WallTime};
 use kutha_runtime::{FoldIndexMode, GraphFold, Runtime, RuntimeError};
 use std::fs;
 use std::path::PathBuf;
@@ -59,7 +59,7 @@ fn view_cuts(rt: &Runtime, last_wall: u64) -> [Vec<(u32, u32, u32)>; 4] {
     [
         sorted(rt.as_of(ValidTime::from(2012))),
         sorted(rt.as_of(ValidTime::from(2017))),
-        sorted(rt.as_known_on(last_wall).unwrap_or_default()),
+        sorted(rt.as_known_on(WallTime::from(last_wall)).unwrap_or_default()),
         sorted(rt.live_at(u64::MAX, ValidTime::from(2012))),
     ]
 }

@@ -1,6 +1,6 @@
 //! Independent Phase 42 kill-tests (verifier). Public API only; not the executor oracles.
 
-use kutha_common::{Event, EventId, Op, OutcomeDisposition, TransactionTime, ValidTime};
+use kutha_common::{Event, EventId, Op, OutcomeDisposition, TransactionTime, ValidTime, WallTime};
 use kutha_runtime::{FoldIndexMode, Justification, PersistedQuantumOutcome, Runtime, store};
 use serde_json::{Value, json};
 use std::fs::{self, File};
@@ -321,13 +321,13 @@ fn e_open_uses_snapshot_index_mode_not_env() {
         "open must not take FoldIndexMode from env"
     );
     let vt = ValidTime::from(2015);
-    let mut a = rt.as_of(vt);
-    let mut b = opened.as_of(vt);
+    let mut a = rt.as_of(ValidTime::from(vt));
+    let mut b = opened.as_of(ValidTime::from(vt));
     a.sort_unstable();
     b.sort_unstable();
     assert_eq!(a, b);
-    let mut ka = rt.as_known_on(2015).expect("anchor");
-    let mut kb = opened.as_known_on(2015).expect("anchor rebuilt");
+    let mut ka = rt.as_known_on(WallTime::from(2015)).expect("anchor");
+    let mut kb = opened.as_known_on(WallTime::from(2015)).expect("anchor rebuilt");
     ka.sort_unstable();
     kb.sort_unstable();
     assert_eq!(ka, kb);
@@ -383,7 +383,7 @@ fn g_closed_vt_as_known_on_differs_live_at_max() {
             _ => None,
         })
         .expect("2015 anchor");
-    let known = rt.as_known_on(2015).expect("TT-only cut");
+    let known = rt.as_known_on(WallTime::from(2015)).expect("TT-only cut");
     assert!(known.contains(&statute), "as_known_on ignores closed VT");
     let live_tt_max = rt.live_at(tt, ValidTime::MAX);
     assert!(

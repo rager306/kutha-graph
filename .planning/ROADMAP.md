@@ -16,7 +16,7 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 ## Phases
 
 - [x] **Phase 81: as_known_on VT decision** — `81-VERIFICATION.md` passed — TT-only by design pin (S01)
-- [ ] **Phase 82: Clock-safe facade** — typed as_of / as_known_on; compile_fail wrong role (S02)
+- [x] **Phase 82: Clock-safe facade** — `82-VERIFICATION.md` passed — ValidTime/WallTime public cuts; trybuild (S02)
 - [ ] **Phase 83: Legal answer envelope** — norm_view (S03)
 - [ ] **Phase 84: Demo binary and fixtures** — thin bin + real-text fixtures (S04)
 

@@ -10,7 +10,7 @@
 
 ### Clock-safe facade (Phase 82, S02)
 
-- [ ] **CLK-01**: Public `as_of` / `as_known_on` reject wrong clock roles at compile time; Op storage may stay `u64`; bench ≤10%
+- [x] **CLK-01**: Public `as_of` / `as_known_on` take `ValidTime` / `WallTime`; bare `u64` and wrong roles fail compile (trybuild); Op storage stays `u64`; bench ≤10%
 
 ### Answer envelope (Phase 83, S03)
 

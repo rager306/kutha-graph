@@ -564,7 +564,8 @@ impl Runtime {
         })
     }
 
-    pub fn as_of(&self, vt: impl Into<ValidTime>) -> Vec<(TermId, TermId, TermId)> {
+    /// AS OF valid-time (`tt = MAX`). See [`GraphFold::as_of`].
+    pub fn as_of(&self, vt: ValidTime) -> Vec<(TermId, TermId, TermId)> {
         self.fold.as_of(vt)
     }
 
@@ -573,7 +574,10 @@ impl Runtime {
     /// Greatest `Op::TtAnchor` with `wall` at or before `wall`, then
     /// [`GraphFold::known_at`] at that transaction time (TT-only; no ValidTime cut).
     /// `None` means no anchor at or before the date.
-    pub fn as_known_on(&self, wall: impl Into<WallTime>) -> Option<Vec<(TermId, TermId, TermId)>> {
+    ///
+    /// Takes [`WallTime`] (not `impl Into`): bare `u64` and wrong-role clocks do
+    /// not compile (M025 S02 / G-C09).
+    pub fn as_known_on(&self, wall: WallTime) -> Option<Vec<(TermId, TermId, TermId)>> {
         self.fold.as_known_on(wall)
     }
 

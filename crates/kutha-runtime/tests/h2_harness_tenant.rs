@@ -1,6 +1,8 @@
 //! H2: harness JSONL is a tenant of the product log. Query AS OF the process.
 //! Delivery facts, not legal norms. Architecture SoT remains docs/ADR/.
 
+use kutha_common::{ValidTime};
+
 use kutha_runtime::{Runtime, store};
 use std::path::Path;
 
@@ -23,8 +25,8 @@ fn h2_harness_status_as_of_t1_differs_from_as_of_t2() {
     let fail = rt.intern("fail");
     let ok = rt.intern("ok");
 
-    let old = rt.fold().as_of(T_FAIL);
-    let new = rt.fold().as_of(T_OK);
+    let old = rt.fold().as_of(ValidTime::from(T_FAIL));
+    let new = rt.fold().as_of(ValidTime::from(T_OK));
     assert_ne!(old, new, "AS OF process T1 must differ from AS OF T2");
     assert!(old.contains(&(run, rel, fail)));
     assert!(!old.contains(&(run, rel, ok)));
@@ -56,7 +58,7 @@ fn h2_same_second_status_as_of_uses_emitted_cut() {
     let rel = rt.intern("runStatus");
     let ok = rt.intern("ok");
     let fail = rt.intern("fail");
-    let live = rt.fold().as_of(cut);
+    let live = rt.fold().as_of(ValidTime::from(cut));
     assert!(
         live.contains(&(run, rel, ok)),
         "AS OF last_valid_from must see the chained last status, not the source unix second"
@@ -92,7 +94,7 @@ fn h2_tenant_persist_round_trip_keeps_as_of() {
     let run = opened.intern("harness.run");
     let rel = opened.intern("runStatus");
     let ok = opened.intern("ok");
-    assert!(opened.fold().as_of(T_OK).contains(&(run, rel, ok)));
+    assert!(opened.fold().as_of(ValidTime::from(T_OK)).contains(&(run, rel, ok)));
     opened.replay_check().unwrap();
     let _ = std::fs::remove_dir_all(&dir);
 }

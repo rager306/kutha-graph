@@ -1,6 +1,6 @@
 //! M017 S02 / REPL-01..04 GREEN oracles. D-07: FF5/FF6/M010–M016 assertions stay in their own files.
 
-use kutha_common::{Event, EventId, Op};
+use kutha_common::{Event, EventId, Op, WallTime};
 use kutha_runtime::{FoldIndexMode, PersistedQuantumOutcome, Runtime, store};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -331,7 +331,7 @@ fn snapshot_index_mode_survives_env_flip() {
     let dir = persist_dir("idx-mode");
     store::persist(&rt, &dir).unwrap();
     let fp = rt.fold().fingerprint();
-    let known = rt.as_known_on(T_OLD).expect("anchor 2015");
+    let known = rt.as_known_on(WallTime::from(T_OLD)).expect("anchor 2015");
 
     let _restore = set_env("KUTHA_FOLD_INDEX_MODE", "lazy");
     let opened = store::open(&dir).expect("open after env flip");
@@ -341,7 +341,7 @@ fn snapshot_index_mode_survives_env_flip() {
         "REPL-04: snapshot pins FoldIndexMode; env must not win"
     );
     assert_eq!(opened.fold().fingerprint(), fp);
-    assert_eq!(opened.as_known_on(T_OLD).expect("anchor rebuilt"), known);
+    assert_eq!(opened.as_known_on(WallTime::from(T_OLD)).expect("anchor rebuilt"), known);
 
     let _ = fs::remove_dir_all(&dir);
 }
@@ -364,7 +364,7 @@ fn as_known_on_differs_from_live_at_max_on_closed_vt() {
     let limit_50 = rt.intern("50-kmh");
     let statute = (article, in_force, limit_50);
     let tt = seed_anchor_tt(&rt);
-    let known = rt.as_known_on(T_OLD).expect("anchor 2015");
+    let known = rt.as_known_on(WallTime::from(T_OLD)).expect("anchor 2015");
     let live_max = rt.live_at(tt, u64::MAX);
     assert_ne!(
         known, live_max,

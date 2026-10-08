@@ -238,7 +238,7 @@ fn derived_q_loses_eligibility_when_last_premise_support_withdrawn() {
 /// Query-plane support-live pin (D-ASOF-ELIG / ASOF-ELIG-01).
 ///
 /// After the last premise-support Retract, `derivation_eligible_at` is false
-/// while `Runtime.as_of(2017)` still lists the derived triple. Eligibility stays
+/// while `Runtime.as_of(ValidTime::from(2017))` still lists the derived triple. Eligibility stays
 /// a separate API; `as_of` is not an eligibility filter.
 /// Distinct from `v44_a_inverse_retract_as_of_earlier` (direct Horn
 /// `retract_derived` of an inverse).
@@ -309,7 +309,7 @@ fn asof_elig01_as_of_contains_derived_when_ineligible() {
         "last positive support gone: Q is ineligible through this derivation"
     );
     assert!(
-        rt.as_of(2017).contains(&(q, rel, true_)),
+        rt.as_of(ValidTime::from(2017)).contains(&(q, rel, true_)),
         "as_of stays support-live: ineligible derived triple remains listed"
     );
     rt.replay_check().unwrap();

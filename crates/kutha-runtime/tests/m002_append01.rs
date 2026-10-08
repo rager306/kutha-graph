@@ -1,7 +1,7 @@
 //! M002 S04 / APPEND-01 oracles (Phase 52).
 //! D-09: RED records current failures; FF5/FF6/M010–M017 assertions stay in their files.
 
-use kutha_common::{Event, EventId, Op};
+use kutha_common::{Event, EventId, Op, ValidTime};
 use kutha_runtime::{Runtime, Snapshot, store};
 use std::fs;
 use std::io::ErrorKind;
@@ -284,7 +284,7 @@ fn append_replay_parity_with_full_persist() {
         opened_b.fold().fingerprint(),
         "append then open must match full persist fingerprint"
     );
-    assert_eq!(opened_a.as_of(VF_FIRST), opened_b.as_of(VF_FIRST));
+    assert_eq!(opened_a.as_of(ValidTime::from(VF_FIRST)), opened_b.as_of(ValidTime::from(VF_FIRST)));
     opened_a.replay_check().unwrap();
     opened_b.replay_check().unwrap();
 
@@ -582,7 +582,7 @@ fn intern_between_appends_survives_open_without_checkpoint() {
     let opened = store::open(&dir).expect("open after intern-append without checkpoint");
     assert_dict_term_parity(&rt, &opened);
     assert_eq!(opened.fold().fingerprint(), rt.fold().fingerprint());
-    assert_eq!(opened.as_of(VF_FIRST), rt.as_of(VF_FIRST));
+    assert_eq!(opened.as_of(ValidTime::from(VF_FIRST)), rt.as_of(ValidTime::from(VF_FIRST)));
     opened.replay_check().unwrap();
 
     let dir_full = persist_dir("gap-a-full");
@@ -616,7 +616,7 @@ fn intern_only_append_reattach_and_open() {
     assert_eq!(opened.dictionary().id("p52-intern-only-b"), Some(t_b));
     assert_dict_term_parity(&rt, &opened);
     assert_eq!(opened.fold().fingerprint(), rt.fold().fingerprint());
-    assert_eq!(opened.as_of(VF_FIRST), rt.as_of(VF_FIRST));
+    assert_eq!(opened.as_of(ValidTime::from(VF_FIRST)), rt.as_of(ValidTime::from(VF_FIRST)));
     opened.replay_check().unwrap();
 
     let _ = fs::remove_dir_all(&dir);
@@ -776,7 +776,7 @@ fn append_twice_then_noop_keeps_prefix_and_matches_persist() {
     assert_eq!(log_ids(&opened), log_ids(&from_full));
     assert_dict_term_parity(&from_full, &opened);
     assert_eq!(opened.fold().fingerprint(), from_full.fold().fingerprint());
-    assert_eq!(opened.as_of(VF_FIRST), from_full.as_of(VF_FIRST));
+    assert_eq!(opened.as_of(ValidTime::from(VF_FIRST)), from_full.as_of(ValidTime::from(VF_FIRST)));
     opened.replay_check().unwrap();
 
     let _ = fs::remove_dir_all(&dir);

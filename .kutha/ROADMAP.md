@@ -207,8 +207,8 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 - [x] **S01: `as_known_on` VT decision** `risk:medium` `gate:controller decision` `depends:[]`
   > After this: ADR-013 states `as_known_on` is TT-only by design (G-A08/G-C03); pin oracles `m025_as_known_on_vt`; `semantic-contract-validation.md` agrees.
-- [ ] **S02: Clock-safe facade** `risk:high` `depends:[S01]`
-  > After this: `as_of` takes a valid-time type and `as_known_on` a wall/anchor type at public call sites; raw `u64` no longer compiles for the wrong role (compile_fail UI tests); `Op` storage may stay `u64`; no fifth axis; existing pins unchanged; bench ≤10%.
+- [x] **S02: Clock-safe facade** `risk:high` `depends:[S01]`
+  > After this: `as_of` takes `ValidTime` and `as_known_on` takes `WallTime` at public call sites; bare `u64` and wrong-role clocks fail compile (trybuild `ui_clock_facade`); `Op` storage stays `u64`; no fifth axis; bench ≤10%.
 - [ ] **S03: Legal answer envelope** `risk:high` `depends:[S02]`
   > After this: `norm_view(vt, wall)` returns triples with eligibility and typed non-success; live ∩ eligible is the facade's job; oracles include retracted-premise and missing-anchor.
 - [ ] **S04: Demo binary and real-text fixtures** `risk:medium` `depends:[S03]`

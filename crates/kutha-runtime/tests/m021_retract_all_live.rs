@@ -1,5 +1,6 @@
 //! M021 S02 / Phase 69 — Retract(event_id) clears every live residual for that id.
 
+use kutha_common::{ValidTime};
 use kutha_common::Op;
 use kutha_runtime::Runtime;
 
@@ -53,15 +54,15 @@ fn retract_correct_interval_event_id_clears_all_residuals() {
     let triple_bob = (alice, knows, bob);
     let triple_carol = (alice, knows, carol);
     assert!(
-        rt.as_of(2012).contains(&triple_bob),
+        rt.as_of(ValidTime::from(2012)).contains(&triple_bob),
         "prefix residual live before retract"
     );
     assert!(
-        rt.as_of(2017).contains(&triple_carol),
+        rt.as_of(ValidTime::from(2017)).contains(&triple_carol),
         "patch residual live before retract"
     );
     assert!(
-        rt.as_of(2021).contains(&triple_bob),
+        rt.as_of(ValidTime::from(2021)).contains(&triple_bob),
         "suffix residual live before retract"
     );
 
@@ -84,15 +85,15 @@ fn retract_correct_interval_event_id_clears_all_residuals() {
     assert_eq!(live_after, 0, "Retract must invalidate all CI residuals");
 
     assert!(
-        !rt.as_of(2012).contains(&triple_bob),
+        !rt.as_of(ValidTime::from(2012)).contains(&triple_bob),
         "Retract(CI id) must clear prefix residual"
     );
     assert!(
-        !rt.as_of(2017).contains(&triple_carol),
+        !rt.as_of(ValidTime::from(2017)).contains(&triple_carol),
         "Retract(CI id) must clear patch residual"
     );
     assert!(
-        !rt.as_of(2021).contains(&triple_bob),
+        !rt.as_of(ValidTime::from(2021)).contains(&triple_bob),
         "Retract(CI id) must clear suffix residual"
     );
 }
@@ -118,7 +119,7 @@ fn retract_assert_event_id_still_clears_single_row() {
         .receipt
         .event_ids[0];
     let triple = (alice, knows, bob);
-    assert!(rt.as_of(2010).contains(&triple));
+    assert!(rt.as_of(ValidTime::from(2010)).contains(&triple));
     rt.emit(Op::Retract { event_id: id }).unwrap();
-    assert!(!rt.as_of(2010).contains(&triple));
+    assert!(!rt.as_of(ValidTime::from(2010)).contains(&triple));
 }

@@ -36,3 +36,4 @@ Post-session notes after M023 close debt + M024 S01–S02 (fold identity + write
 5. Do not promote honeycomb Accepted from governor green.
 6. After S02-style characterization: prefer `committed_prefix` unit oracles for SelfCommit windows; keep open/persist for meaning recovery only.
 7. **Knowledge-cut fixture order:** for “known but not in force”, Assert must be ingested **before** the `TtAnchor` that maps the wall cut (else `ingested_at > tt` hides the fact and the pin looks like a product bug).
+8. **Clock facade migrations:** when tightening `impl Into` → concrete newtypes, exclude naive/model helpers named `as_of` that still take `u64`; insert `use` **after** `//!` module docs (E0753); commit trybuild `.stderr` alongside UI sources.

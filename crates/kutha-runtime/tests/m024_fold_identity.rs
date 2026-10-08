@@ -1,7 +1,7 @@
 //! M024 S01 / Phase 79 — fold identity: live-gated Correct/Retract;
 //! Correct on multi-residual event_id; CorrectInterval multi-residual fail-closed.
 
-use kutha_common::{EventId, Op};
+use kutha_common::{EventId, Op, ValidTime};
 use kutha_runtime::{Runtime, RuntimeError};
 
 fn statute_ci_three_residuals(rt: &mut Runtime) -> (EventId, EventId) {
@@ -127,9 +127,9 @@ fn correct_multi_residual_event_id_collapses_to_one() {
     assert_eq!(live_new[0].valid_to, None);
 
     let triple = (article, in_force, limit_90);
-    assert!(rt.as_of(2012).contains(&triple));
-    assert!(rt.as_of(2017).contains(&triple));
-    assert!(rt.as_of(2021).contains(&triple));
+    assert!(rt.as_of(ValidTime::from(2012)).contains(&triple));
+    assert!(rt.as_of(ValidTime::from(2017)).contains(&triple));
+    assert!(rt.as_of(ValidTime::from(2021)).contains(&triple));
 }
 
 /// G-A02: CorrectInterval targeting an id with >1 live residual fails closed

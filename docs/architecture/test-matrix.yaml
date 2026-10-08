@@ -935,6 +935,17 @@ rows:
     gate: default
     owner: M025-S01
     source: Phase 81 / ADR-013 Clarification 2026-10-08 G-A08
+  - id: SEM-m025-clock-facade
+    plane: product
+    invariant: public as_of/as_known_on reject wrong-role clocks and bare u64
+    layer: decision
+    oracle:
+      - as_of_and_as_known_on_reject_wrong_role_and_bare_u64
+    kill_mutation: restore impl Into so as_of(u64) / as_of(WallTime) compile
+    status: killed
+    gate: default
+    owner: M025-S02
+    source: Phase 82 / ADR-013 Clarification 2026-10-08 G-C09
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

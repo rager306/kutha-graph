@@ -1,6 +1,8 @@
 //! H4: process-relations membership editions as a chained tenant projection.
 //! Overlay dogfood, not a legal pack. Tip YAML remains the admit lease.
 
+use kutha_common::{ValidTime};
+
 use kutha_runtime::Runtime;
 
 const CUT_A: u64 = 1000;
@@ -10,7 +12,7 @@ fn snapshot_has(rt: &mut Runtime, at: u64, object: &str) -> bool {
     let subj = rt.intern("process.relations");
     let rel = rt.intern("processAllows");
     let obj = rt.intern(object);
-    rt.fold().as_of(at).contains(&(subj, rel, obj))
+    rt.fold().as_of(ValidTime::from(at)).contains(&(subj, rel, obj))
 }
 
 #[test]

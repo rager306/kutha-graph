@@ -21,6 +21,9 @@ smallvec.workspace = true
 # default-features=false: no snappy/lz4/zstd/zlib/bzip2 (those are rocksdb defaults).
 rocksdb = { version = "0.22", optional = true, default-features = false }
 
+[dev-dependencies]
+trybuild = "1.0"
+
 [[bench]]
 name = "baseline"
 harness = false

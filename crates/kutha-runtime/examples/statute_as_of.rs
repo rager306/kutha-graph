@@ -1,5 +1,7 @@
 //! D-04 GREEN (PIPE-04): statute AS OF via the public Runtime facade only.
 
+use kutha_common::{ValidTime};
+
 use kutha_runtime::{Runtime, RuntimeError};
 use std::path::Path;
 
@@ -8,8 +10,8 @@ fn main() -> Result<(), RuntimeError> {
     let first = rt.assert("art-12-speed", "inForceAs", "50-kmh", 2010, Some(2020))?;
     rt.assert("art-12-speed", "inForceAs", "30-kmh", 2020, None)?;
 
-    let old = rt.as_of(2015);
-    let new = rt.as_of(2021);
+    let old = rt.as_of(ValidTime::from(2015));
+    let new = rt.as_of(ValidTime::from(2021));
     assert_ne!(old, new, "AS OF 2015 must differ from AS OF 2021");
     let _live = rt.live_at(u64::MAX, 2015);
 

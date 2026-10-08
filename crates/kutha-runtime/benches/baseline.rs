@@ -1,7 +1,7 @@
 //! M013 S01 / Phase 22: std-only baseline bench (`harness = false`).
 //! No criterion. Measures relatedTo (no inverse cascade). Validates answers.
 
-use kutha_common::{EventId, Op, TermId};
+use kutha_common::{EventId, Op, TermId, ValidTime};
 use kutha_runtime::{FoldIndexMode, Runtime, store};
 use std::collections::BTreeMap;
 use std::env;
@@ -176,7 +176,7 @@ fn main() {
         }
 
         let t1 = Instant::now();
-        let _ = rt.fold().as_of(2010);
+        let _ = rt.fold().as_of(ValidTime::from(2010));
         put(
             &mut metrics,
             &format!("as_of.{suffix}"),

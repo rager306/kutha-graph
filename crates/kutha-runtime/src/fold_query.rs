@@ -79,7 +79,10 @@ impl GraphFold {
 
     /// AS OF valid-time on the current transaction picture (`tt = MAX`).
     /// Product picture: dictionary (`kutha:`) relations are excluded (D-05).
-    pub fn as_of(&self, vt: impl Into<ValidTime>) -> Vec<(TermId, TermId, TermId)> {
+    ///
+    /// Takes [`ValidTime`] (not `impl Into`): bare `u64` and wrong-role clocks
+    /// (`WallTime` / `TransactionTime`) do not compile (M025 S02 / G-C09).
+    pub fn as_of(&self, vt: ValidTime) -> Vec<(TermId, TermId, TermId)> {
         self.live_at(u64::MAX, vt)
     }
 
@@ -103,8 +106,11 @@ impl GraphFold {
     /// Greatest `Op::TtAnchor` with `wall` at or before `wall`, then
     /// [`Self::known_at`] at that transaction time (TT-only; no ValidTime cut).
     /// `None` means no anchor at or before the date.
-    pub fn as_known_on(&self, wall: impl Into<WallTime>) -> Option<Vec<(TermId, TermId, TermId)>> {
-        let wall = wall.into().as_u64();
+    ///
+    /// Takes [`WallTime`] (not `impl Into`): bare `u64` and wrong-role clocks
+    /// (`ValidTime` / `TransactionTime`) do not compile (M025 S02 / G-C09).
+    pub fn as_known_on(&self, wall: WallTime) -> Option<Vec<(TermId, TermId, TermId)>> {
+        let wall = wall.as_u64();
         let tt = *self.tt_anchors.range(..=wall).next_back()?.1;
         Some(self.known_at(tt))
     }

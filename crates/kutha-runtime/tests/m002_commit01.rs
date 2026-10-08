@@ -1,7 +1,7 @@
 //! M002 S05 / COMMIT-01 oracles (Phase 53). Option A: QuantumOutcome is the marker.
 //! D-07: RED records current failures; FF5/FF6/M010–M017 / m002_snap01 / m002_append01 stay.
 
-use kutha_common::{Event, EventId, KUTHA_ALLOWS, KUTHA_RESERVED_RELS, Op, OutcomeDisposition};
+use kutha_common::{Event, EventId, KUTHA_ALLOWS, KUTHA_RESERVED_RELS, Op, OutcomeDisposition, ValidTime};
 use kutha_runtime::{Runtime, Snapshot, store};
 use std::fs;
 use std::io::ErrorKind;
@@ -110,7 +110,7 @@ fn payload_without_outcome_is_not_visible() {
     let dir = persist_dir("payload");
     store::persist(&rt, &dir).unwrap();
     let committed_fp = rt.fold().fingerprint();
-    let committed_as_of = rt.as_of(VF_FIRST);
+    let committed_as_of = rt.as_of(ValidTime::from(VF_FIRST));
     let committed_ids = log_ids(&rt);
     let mut p = store::Persister::attach(&rt, &dir).unwrap();
     emit_product_assert(&mut rt, "p53-payload-article", "p53-payload-80");
@@ -122,7 +122,7 @@ fn payload_without_outcome_is_not_visible() {
         committed_fp,
         "uncommitted payload must not fold"
     );
-    assert_eq!(opened.as_of(VF_FIRST), committed_as_of);
+    assert_eq!(opened.as_of(ValidTime::from(VF_FIRST)), committed_as_of);
     assert_eq!(log_ids(&opened), committed_ids);
     opened.replay_check().unwrap();
 
@@ -139,7 +139,7 @@ fn complete_quantum_with_outcome_is_visible() {
     p.append(&rt).unwrap();
     let opened = store::open(&dir).unwrap();
     assert_eq!(opened.fold().fingerprint(), rt.fold().fingerprint());
-    assert_eq!(opened.as_of(VF_FIRST), rt.as_of(VF_FIRST));
+    assert_eq!(opened.as_of(ValidTime::from(VF_FIRST)), rt.as_of(ValidTime::from(VF_FIRST)));
     assert_eq!(log_ids(&opened), log_ids(&rt));
     opened.replay_check().unwrap();
 
@@ -255,7 +255,7 @@ fn product_assert_without_any_outcome_is_hidden() {
     assert!(
         opened.dictionary().id("p53-noqo-80").is_none()
             || !opened
-                .as_of(VF_FIRST)
+                .as_of(ValidTime::from(VF_FIRST))
                 .iter()
                 .any(|(_, _, o)| opened.dictionary().lookup(*o) == Some("p53-noqo-80")),
         "product Assert without any QuantumOutcome must not be visible"

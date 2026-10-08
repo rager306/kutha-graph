@@ -7,7 +7,7 @@
 //! segmented/migrated. No wall-clock oracle; persist scratch names are pid + atomic.
 #![allow(dead_code)]
 
-use kutha_common::{Event, EventId, Op, TermId};
+use kutha_common::{Event, EventId, Op, TermId, ValidTime, WallTime};
 use kutha_runtime::{FoldIndexMode, GraphFold, Runtime, RuntimeError, store};
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
@@ -222,7 +222,7 @@ pub fn sorted_live(rt: &Runtime, tt: u64, vt: u64) -> Vec<(TermId, TermId, TermI
 }
 
 pub fn sorted_as_of(rt: &Runtime, vt: u64) -> Vec<(TermId, TermId, TermId)> {
-    let mut t = rt.as_of(vt);
+    let mut t = rt.as_of(ValidTime::from(vt));
     t.sort_unstable();
     t
 }
@@ -1012,7 +1012,7 @@ pub fn assert_views_stable(rt: &Runtime, meta: &MixMeta, seed: u32, case: usize)
         assert_csr_matches_fold(rt, u64::MAX, *vt, seed, case + 10 + i);
     }
     if let Some(wall) = meta.last_wall {
-        let Some(mut known) = rt.as_known_on(wall) else {
+        let Some(mut known) = rt.as_known_on(WallTime::from(wall)) else {
             fail_seed(
                 seed,
                 case + 30,

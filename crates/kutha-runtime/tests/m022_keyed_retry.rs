@@ -1,5 +1,6 @@
 //! M022 S02 / Phase 72 — keyed Assert retry only while the prior support is live.
 
+use kutha_common::{ValidTime};
 use kutha_common::Op;
 use kutha_runtime::Runtime;
 
@@ -48,11 +49,11 @@ fn keyed_assert_retry_after_retract_remints_live_support() {
     let subj = rt.intern("subj");
     let bob = rt.intern("Bob");
     let triple = (subj, rel, bob);
-    assert!(rt.as_of(2010).contains(&triple));
+    assert!(rt.as_of(ValidTime::from(2010)).contains(&triple));
 
     rt.emit(Op::Retract { event_id: id }).unwrap();
     assert!(
-        !rt.as_of(2010).contains(&triple),
+        !rt.as_of(ValidTime::from(2010)).contains(&triple),
         "retract must drop the live support"
     );
 
@@ -62,7 +63,7 @@ fn keyed_assert_retry_after_retract_remints_live_support() {
         "after retract, same delivery_key must remint (not events_in_quantum==0)"
     );
     assert!(
-        rt.as_of(2010).contains(&triple),
+        rt.as_of(ValidTime::from(2010)).contains(&triple),
         "reminted keyed Assert must be live"
     );
     assert_ne!(
@@ -117,7 +118,7 @@ fn keyed_assert_retry_after_retract_of_correct_interval_id_remints() {
     let rel = rt.intern("leasedRel");
     let bob = rt.intern("Bob");
     assert!(
-        !rt.as_of(2010).contains(&(subj, rel, bob)),
+        !rt.as_of(ValidTime::from(2010)).contains(&(subj, rel, bob)),
         "retract of the CI id must clear every residual"
     );
 
@@ -126,5 +127,5 @@ fn keyed_assert_retry_after_retract_of_correct_interval_id_remints() {
         remint.events_in_quantum >= 1,
         "all supports dead: same key must remint"
     );
-    assert!(rt.as_of(2010).contains(&(subj, rel, bob)));
+    assert!(rt.as_of(ValidTime::from(2010)).contains(&(subj, rel, bob)));
 }

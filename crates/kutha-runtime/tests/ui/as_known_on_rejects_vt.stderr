@@ -1,0 +1,13 @@
+error[E0308]: mismatched types
+ --> tests/ui/as_known_on_rejects_vt.rs:6:28
+  |
+6 |     let _ = rt.as_known_on(ValidTime::from(2017));
+  |                ----------- ^^^^^^^^^^^^^^^^^^^^^ expected `WallTime`, found `ValidTime`
+  |                |
+  |                arguments to this method are incorrect
+  |
+note: method defined here
+ --> src/quantum.rs
+  |
+  |     pub fn as_known_on(&self, wall: WallTime) -> Option<Vec<(TermId, TermId, TermId)>> {
+  |            ^^^^^^^^^^^

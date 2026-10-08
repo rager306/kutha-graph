@@ -1,5 +1,6 @@
 //! FIXG-01 C01 sunset: application-end is inexpressible as Horn without folding into VT.
 
+use kutha_common::{ValidTime, WallTime};
 use kutha_common::Op;
 use kutha_common::RuleTerm;
 use kutha_runtime::Runtime;
@@ -38,12 +39,12 @@ fn fixg01_c01_sunset_inexpressible_as_horn() {
     rt.emit_tt_anchor(2026).unwrap();
 
     let triple = (punkt, in_force, true_);
-    assert!(rt.as_of(2027).contains(&triple), "VT folding sees 2027");
+    assert!(rt.as_of(ValidTime::from(2027)).contains(&triple), "VT folding sees 2027");
     assert!(
-        !rt.as_of(2028).contains(&triple),
+        !rt.as_of(ValidTime::from(2028)).contains(&triple),
         "half-open valid_to=2028 is not a transitional rule"
     );
-    let known = rt.as_known_on(2026).expect("anchor 2026");
+    let known = rt.as_known_on(WallTime::from(2026)).expect("anchor 2026");
     assert!(
         known.contains(&triple),
         "as_known_on answers at a fixed wall; it does not encode application-end"
