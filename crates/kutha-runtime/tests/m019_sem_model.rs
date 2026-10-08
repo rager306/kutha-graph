@@ -78,7 +78,16 @@ impl Naive {
                 event_id: event.id,
             }),
             Op::Retract { event_id } => {
-                if let Some(i) = self.find_live(*event_id) {
+                // Match GraphFold: invalidate every live residual sharing the id
+                // (CorrectInterval may mint prefix/patch/suffix under one event_id).
+                let live: Vec<usize> = self
+                    .rows
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, r)| r.event_id == *event_id && r.invalidated_at.is_none())
+                    .map(|(i, _)| i)
+                    .collect();
+                for i in live {
                     self.rows[i].invalidated_at = Some(event.ingested_at);
                 }
             }
@@ -396,6 +405,60 @@ fn model_as_of_alias_is_live_at_max() {
     ingest_mix(&mut rt, 42, MixStyle::BehaviorFree);
     let n = Naive::from_events(rt.log().as_slice());
     assert_eq!(n.as_of(2017), n.live_at(u64::MAX, 2017));
+}
+
+/// Forces CorrectInterval residuals then Retract of the CI id so a first-live
+/// naive Retract would leave prefix/suffix rows and disagree with GraphFold.
+#[test]
+fn naive_retract_clears_all_correct_interval_residuals() {
+    let mut rt = Runtime::default();
+    let s = rt.intern("Alice");
+    let r = rt.intern("relatedTo");
+    let o = rt.intern("Bob");
+    let o2 = rt.intern("Carol");
+    let mint = rt
+        .emit(Op::Assert {
+            subject: s,
+            relation: r,
+            object: o,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap()
+        .receipt
+        .event_ids[0];
+    let ci = rt
+        .emit(Op::CorrectInterval {
+            event_id: mint,
+            object: o2,
+            patch_from: 2015,
+            patch_to: Some(2020),
+        })
+        .unwrap()
+        .receipt
+        .event_ids[0];
+    rt.emit(Op::Retract { event_id: ci }).unwrap();
+    let naive = Naive::from_events(rt.log().as_slice());
+    let live_ci: Vec<_> = naive
+        .rows
+        .iter()
+        .filter(|row| row.event_id == ci && row.invalidated_at.is_none())
+        .collect();
+    assert!(
+        live_ci.is_empty(),
+        "naive Retract must clear every CI residual (first-live alone leaves prefix/suffix)"
+    );
+    assert_eq!(
+        product_live(&naive, &rt, u64::MAX, 2012),
+        sorted_as_of(&rt, 2012)
+    );
+    assert_eq!(
+        product_live(&naive, &rt, u64::MAX, 2017),
+        sorted_as_of(&rt, 2017)
+    );
 }
 
 /// Pins that model/fold triples include the object, not only subject.

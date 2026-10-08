@@ -70,3 +70,61 @@ fn keyed_assert_retry_after_retract_remints_live_support() {
         "remint must mint a new EventId"
     );
 }
+
+/// M023 Phase 75: a CorrectInterval replaces the minting fact with residual rows
+/// under the Correct's own event id. The delivery is still live, so a keyed retry
+/// must not append.
+#[test]
+fn keyed_assert_retry_after_correct_interval_short_circuits() {
+    let mut rt = Runtime::default();
+    let first = emit_keyed(&mut rt, "k-ci", "Bob");
+    let id = first.receipt.event_ids[0];
+    let alice = rt.intern("Alice");
+    rt.emit(Op::CorrectInterval {
+        event_id: id,
+        object: alice,
+        patch_from: 2012,
+        patch_to: Some(2015),
+    })
+    .unwrap();
+
+    let n = rt.log().len();
+    let retry = emit_keyed(&mut rt, "k-ci", "Bob");
+    assert_eq!(n, rt.log().len(), "keyed retry must not append after CI");
+    assert_eq!(retry.events_in_quantum, 0);
+}
+
+/// M023 Phase 75: once the CorrectInterval event is retracted, every residual is
+/// dead, so the same key re-mints a live support.
+#[test]
+fn keyed_assert_retry_after_retract_of_correct_interval_id_remints() {
+    let mut rt = Runtime::default();
+    let first = emit_keyed(&mut rt, "k-ci-retract", "Bob");
+    let id = first.receipt.event_ids[0];
+    let alice = rt.intern("Alice");
+    let ci = rt
+        .emit(Op::CorrectInterval {
+            event_id: id,
+            object: alice,
+            patch_from: 2012,
+            patch_to: Some(2015),
+        })
+        .unwrap();
+    let ci_id = ci.receipt.event_ids[0];
+    rt.emit(Op::Retract { event_id: ci_id }).unwrap();
+
+    let subj = rt.intern("subj");
+    let rel = rt.intern("leasedRel");
+    let bob = rt.intern("Bob");
+    assert!(
+        !rt.as_of(2010).contains(&(subj, rel, bob)),
+        "retract of the CI id must clear every residual"
+    );
+
+    let remint = emit_keyed(&mut rt, "k-ci-retract", "Bob");
+    assert!(
+        remint.events_in_quantum >= 1,
+        "all supports dead: same key must remint"
+    );
+    assert!(rt.as_of(2010).contains(&(subj, rel, bob)));
+}

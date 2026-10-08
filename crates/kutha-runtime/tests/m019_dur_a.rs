@@ -46,6 +46,7 @@ const VF_FIRST: u64 = 2010;
 const VF_SECOND: u64 = 2020;
 
 fn persist_dir(label: &str) -> PathBuf {
+    // PID + nanos: workspace runs spawn many binaries that hit tmp/ in parallel.
     let nanos = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap()
@@ -53,7 +54,10 @@ fn persist_dir(label: &str) -> PathBuf {
     let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
         .join("tmp")
-        .join(format!("p60-store-{label}-{nanos}"));
+        .join(format!(
+            "p60-store-{label}-{}-{nanos}",
+            std::process::id()
+        ));
     let _ = fs::remove_dir_all(&dir);
     fs::create_dir_all(&dir).unwrap();
     dir

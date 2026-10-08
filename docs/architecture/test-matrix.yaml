@@ -647,16 +647,20 @@ rows:
     source: M020 residual / Phase 69
   - id: SEM-keyed-retry-live
     plane: product
-    invariant: delivery_key_retry short-circuits only while prior keyed Assert is live; remints after Retract
+    invariant: delivery_key_retry short-circuits while any live fact of the keyed claim carries the key (follows Correct/CorrectInterval); remints when none is live
     layer: kill
     oracle:
       - keyed_assert_retry_after_retract_remints_live_support
       - keyed_assert_retry_while_live_short_circuits
-    kill_mutation: retry ignores fold invalidated_at
+      - keyed_assert_retry_after_correct_interval_short_circuits
+      - keyed_assert_retry_after_retract_of_correct_interval_id_remints
+      - keyed_correct_preserves_delivery_key_and_retry
+      - keyed_correct_interval_preserves_delivery_key_and_retry
+    kill_mutation: retry checks only minting Assert invalidated_at (dies on Correct/CI lineage); retry ignores fold liveness (dies on m022 after Retract)
     status: killed
     gate: default
-    owner: M022-S02
-    source: audit P2 keyed-retry-after-retract / Phase 72
+    owner: M023-S01
+    source: M022 Phase 72 + M023 Phase 75 Correct lineage
 
   - id: SEM-cascade-order
     plane: product
@@ -684,17 +688,18 @@ rows:
     source: audit-code-tests §3 / M019 S07
   - id: SEM-bitemporal-model
     plane: product
-    invariant: naive ADR-013 list-scan agrees with GraphFold live_at/as_of
+    invariant: naive ADR-013 list-scan agrees with GraphFold live_at/as_of (Retract clears all live residuals)
     layer: property
     oracle:
       - bitemporal_model_matches_fold_live_at_and_as_of
       - bitemporal_model_agrees_on_ff5_statute
       - model_as_of_alias_is_live_at_max
       - bitemporal_model_compares_object_not_only_subject
-    kill_mutation: Fact::is_live_at skips ingested_at > tt; skip valid_from dies on Fact::is_live_at vs naive at EDGE_VT (Eager live_at via vt_by_from would mask it); Assert s/o swap dies on (s,r,o) triples; Retract-first GraphFold::replay dies vs ingest stamps
+      - naive_retract_clears_all_correct_interval_residuals
+    kill_mutation: Fact::is_live_at skips ingested_at > tt; skip valid_from dies on Fact::is_live_at vs naive at EDGE_VT (Eager live_at via vt_by_from would mask it); Assert s/o swap dies on (s,r,o) triples; Retract-first GraphFold::replay dies vs ingest stamps; first-live-only naive Retract dies on CI residuals
     status: killed
     gate: default
-    owner: M019-S07
+    owner: M023-S01
     source: M019 S07 / ADR-013
   - id: SEM-order-independence
     plane: product
