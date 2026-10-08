@@ -201,9 +201,9 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M023: Green HEAD and truth reset — ACTIVE (GSD v0.17)
+## M023: Green HEAD and truth reset — CLOSED (GSD v0.17)
 
-**Source:** 2026-10-08 post-M022 audits (`.compound-engineering/artifacts/research/2026-10-08-post-m022-synthesis-context.md`). Plan: `.compound-engineering/artifacts/plans/2026-10-08-post-m022-roadmap-for-gsd-auto.md`. Process tag `v0.17`. HEAD `18151af` fails `cargo test --workspace`: two M022 keyed-retry regressions, one stale naive model after M021, three parallel-flaky `m019_dur_a` tests. M022 "verified" is false until this milestone closes. Honeycomb stays Proposed. Not Cypher/HNSW; no new capability.
+**Closed:** 2026-10-08. Plan: `.compound-engineering/artifacts/plans/2026-10-08-post-m022-roadmap-for-gsd-auto.md`. Process tag `v0.17`. S01–S04 complete. Audit: `.planning/milestones/v0.17-MILESTONE-AUDIT.md`. Honeycomb stays Proposed. Corrected false M022 Phase 72 verified claim.
 
 - [x] **S01: Restore green** `risk:medium` `depends:[]`
   > After this: `delivery_key_retry` follows Correct/CorrectInterval replacements (live keyed support of the same claim short-circuits); m013 keyed-correct pair and `m022_keyed_retry` green; new oracle for keyed retry after Retract of a CorrectInterval id; naive model Retract invalidates all live residuals; `m019_dur_a` flakes isolated; `cargo test --workspace --no-fail-fast` zero failures; bench gate <=10%.
@@ -211,7 +211,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
   > After this: 72-VERIFICATION, v0.16 audit and CHANGELOG state the regression and fix; gsd-auto-contract close checklist requires a recorded full `cargo test --workspace --no-fail-fast` and full `ci`; a governor row proves it. No crates change.
 - [x] **S03: Living overlay truth** `risk:low` `depends:[S02]`
   > After this: PROJECT, REQUIREMENTS, MILESTONES, this ROADMAP numbering, WINDOWS, test-matrix.md counts, legal-fixture-recon, semantic-gap-review, semantic-contract-validation, ADR-000/010/011 stale lines, p0-spike-inventory and honeycomb evidence match HEAD; ADRs stay Proposed. Docs/YAML only.
-- [ ] **S04: Close** `risk:low` `depends:[S03]`
+- [x] **S04: Close** `risk:low` `depends:[S03]`
   > After this: M023 closed; Active None; audit note; full `ci` and workspace tests recorded.
 
 ## M022: Audit residual honesty — CLOSED (GSD v0.16)
@@ -240,7 +240,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M018–M022 CLOSED; **M023 active**. One lease at a time. M003+ stay unleased.
+Do not start until STATE names them. M018–M023 CLOSED. One lease at a time. M003+ stay unleased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -258,7 +258,7 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 12. **M020** — CLOSED (S01–S05, GSD v0.14). Detail above.
 13. **M021** — CLOSED (S01–S03, GSD v0.15). Detail above.
 14. **M022** — CLOSED (S01–S04, GSD v0.16). Detail above.
-15. **M023** — ACTIVE (S01–S04, GSD v0.17). Detail above.
+15. **M023** — CLOSED (S01–S04, GSD v0.17). Detail above.
 16. **M003** — Cypher skin over the already-correct AS OF cut (thaw: M003 leased).
 17. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
 18. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).

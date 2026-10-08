@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-08 — Process: close M023 / v0.17 (Phase 78)
+
+### Process
+
+- M023 / GSD v0.17 closed. Active Milestone **None**; `L_delivery=M023-closed`. Audit: `.planning/milestones/v0.17-MILESTONE-AUDIT.md`. S01 restored workspace green (keyed retry Correct lineage; naive Retract-all-live; dur_a parallel scratch). S02 close-gate honesty (`product-close-gate`). S03 living overlay truth. Default FSM budget 65→70 (artifact line budget; `.env.example` aligned). Product close CHANGELOG cites Phase 75 bench (`KUTHA_BENCH_N=10000`): `ingest_plain.n` 134180211→117370496 (−12.5%); `as_of.n` 287635→281294 (−2.2%).
+
+### Trajectory
+
+- Honeycomb stays Proposed. Next lease is a controller decision (not Cypher/HNSW).
+
 ## 2026-10-08 — Process: close M023 S03 / lease S04 (Phase 78)
 
 ### Process

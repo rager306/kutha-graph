@@ -1,6 +1,6 @@
 # Requirements: Kutha
 
-**Milestones:** v0.16 / harness M022 shipped 2026-10-08 (Phase 72 claim corrected by v0.17). **v0.17 / harness M023** active. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.17 / harness M023 shipped 2026-10-08 (Phase 72 claim corrected). Next milestone unleased. Lease: `.kutha/STATE.md`.
 
 ## v0.17 Requirements (M023)
 
@@ -20,7 +20,7 @@
 
 ### Close (Phase 78, S04)
 
-- [ ] **CLOSE-02**: M023 closed; Active None; audit note
+- [x] **CLOSE-02**: M023 closed; Active None; audit note
 
 ## Out of Scope (this milestone)
 

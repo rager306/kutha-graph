@@ -1,7 +1,7 @@
-## v0.17 Green HEAD and truth reset (Active: 2026-10-08)
+## v0.17 Green HEAD and truth reset (Shipped: 2026-10-08)
 
-**Phases:** 75–78. Process tag `v0.17`. Restore green (keyed retry Correct lineage; naive Retract-all-live; dur_a parallel scratch), close-gate honesty (`product-close-gate`), living overlay truth, close. Corrects false M022 Phase 72 verified claim.
-**Git range:** `v0.16..` (tag pending close)
+**Phases:** 75–78. Process tag `v0.17`. Restore green (keyed retry Correct lineage; naive Retract-all-live; dur_a parallel scratch), close-gate honesty (`product-close-gate`), living overlay truth, close. Corrects false M022 Phase 72 verified claim. Audit: `.planning/milestones/v0.17-MILESTONE-AUDIT.md`.
+**Git range:** `v0.16..` (process tag pending controller)
 
 ---
 
