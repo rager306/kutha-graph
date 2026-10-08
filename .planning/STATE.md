@@ -15,10 +15,10 @@ progress:
 # Project State
 
 **Milestone:** v0.17 Green HEAD and truth reset (harness M023)
-**Phase:** 75 ready
+**Phase:** 75 awaiting independent verify
 **Status:** Active — controller leases S01 next
 
-**Last activity:** 2026-10-08 — M023 opened from post-M022 audits
+**Last activity:** 2026-10-08 — Phase 75 code in fb80ab5; independent verify next
 
 Plan source: `.compound-engineering/artifacts/plans/2026-10-08-post-m022-roadmap-for-gsd-auto.md`
 Context: `.compound-engineering/artifacts/research/2026-10-08-post-m022-synthesis-context.md`
