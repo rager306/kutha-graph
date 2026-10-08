@@ -1,30 +1,32 @@
 # Requirements: Kutha
 
 **Core Value:** Legal PIT stays falsifiable; governor CI stays honest; one Active Slice — not honeycomb delivery.
-**Milestones:** v0.14 / harness M020 shipped 2026-10-07. **v0.15 / harness M021** active (wedge decisions). Lease: `.kutha/STATE.md`. Prior: archive `.planning/milestones/`.
+**Milestones:** v0.15 / M021 shipped 2026-10-07. **v0.16 / harness M022** active (audit residual honesty). Lease: `.kutha/STATE.md`.
 
-## v0.15 Requirements (M021)
+## v0.16 Requirements (M022)
 
-### Decisions and pins (Phase 68, S01)
+### Audit honesty (Phase 71, S01)
 
-- [x] **TR-02-01**: Force = VT; publication = `TtAnchor` / `as_known_on`; case decision clock = `as_of(vt)` argument; named oracle; no fifth axis
-- [x] **C01-02**: Pack expresses sunset / application window as Assert (`appliesTo` VT); FIXG-01 still fails as Horn; Phase 46 (a) confirmed
-- [x] **MATRIX-01**: SEM-c01-decision, SEM-horn-kc, SEM-asof-elig, SEM-tr02-legal are `killed` with oracles (Phase 46 pins reused where they already exist)
+- [ ] **DOC-AUDIT-01**: v0.14 audit no longer lists Retract CI 1-of-3 as open; M022 plan triage records keyed-retry → Fix and deferred items
 
-### Fold defect (Phase 69, S02)
+### Keyed retry (Phase 72, S02)
 
-- [x] **RETRACT-01**: `Op::Retract { event_id }` invalidates every live Fact with that event id (CorrectInterval multi-residual); RED first; bench ≤10%
+- [ ] **KEY-RETRY-01**: after Retract of a keyed Assert, identical keyed Assert remints a live support; short-circuit only while live; bench ≤10%
+- [ ] **ADM-PIN-01**: `admission_status_at` via admission EventId pin; delivery_key = policy (characterization)
 
-### Close (Phase 70, S03)
+### Harness isolate (Phase 73, S03)
 
-- [x] **CLOSE-01**: M021 closed; Active None; audit note; honeycomb Proposed
+- [ ] **SKIP-EMIT-01**: `Context.skip_emit` skips emit_log/emit_tenant writes; FSM ci unit test uses it
+- [ ] **OVERLAP-01**: jobs>1 + observe_cargo without overlap_with → HIGH
 
-## Out of Scope (this milestone)
+### Close (Phase 74, S04)
+
+- [ ] **CLOSE-01**: M022 closed; Active None; audit note; honeycomb Proposed
+
+## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Cypher / HNSW / legal pack crate | Own thaw gates |
-| Fifth bi-temporal axis | D013-1 / D-TR-02 |
-| Invert Phase 46 HORN-KC / ASOF pins | Locked |
-| Pi Durable agent-task resume | Separate harness plane |
-| SPIKE-LAW-01 real corpus | After C01-02 pin |
+| Rollover seal/manifest heal redesign | Own high-risk slice |
+| Cypher / HNSW / legal pack / SPIKE-LAW | Thaw gates |
+| Pi Durable harness task resume | Separate plane |

@@ -1,25 +1,20 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.15
-milestone_name: Wedge decisions
-status: shipped
-stopped_at: M021 / v0.15 closed
-last_updated: "2026-10-07T13:30:00.000Z"
+milestone: v0.16
+milestone_name: Audit residual honesty
+status: active
+last_updated: "2026-10-08T04:40:00.000Z"
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 3
-  completed_plans: 3
+  total_phases: 4
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
 
-**Milestone:** v0.15 Wedge decisions (harness M021) — **shipped**
-**Phase:** 70 closed
-**Status:** Complete — phases independently verified
+**Milestone:** v0.16 Audit residual honesty (harness M022)
+**Phase:** 71 ready
+**Status:** Active
 
-**Last activity:** 2026-10-07 — M021 closed (`L_delivery=M021-closed`)
-
-Stopped at: milestone complete
-Next: controller decision for next lease
-Plan source: `.compound-engineering/artifacts/plans/2026-10-07-m021-wedge-decisions.md`
+Plan source: `.compound-engineering/artifacts/plans/2026-10-08-m022-audit-residuals.md`

@@ -2,33 +2,27 @@
 
 ## Overview
 
-GSD overlay tracks the steel thread already in crates — not honeycomb waterfall. Harness delivery stays in `.kutha/STATE.md` / `.kutha/ROADMAP.md`.
-
-v0.01–v0.15 shipped. **Next:** controller decision.
+v0.01–v0.15 shipped. **v0.16 Audit residual honesty** (harness M022) is active.
 
 ## Id map
 
-See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP.
+See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.14** — shipped — see `./milestones/` where archived
-- ✅ **v0.15 Wedge decisions** — Phases 68–70 (harness M021) — shipped 2026-10-07
+- ✅ **v0.01–v0.15** — shipped
+- 🔄 **v0.16 Audit residual honesty** — Phases 71–74 (harness M022) — active
 
 ## Phases
 
-- [x] **Phase 68: Wedge decisions** — TR-02 / C01 pack-fact pins; matrix kill (S01)
-  - **Plans:** 1/1; `68-VERIFICATION.md` passed
-- [x] **Phase 69: Retract all live** — CorrectInterval multi-residual Retract (S02)
-  - **Plans:** 1/1; `69-VERIFICATION.md` passed; bench ≤10%
-- [x] **Phase 70: M021 close** — audit + Active None (S03)
-  - **Plans:** 1/1; `70-VERIFICATION.md` passed
+- [ ] **Phase 71: Audit honesty** — strike stale Retract residual; triage (S01)
+- [ ] **Phase 72: Keyed retry live** — delivery_key_retry requires live fact (S02)
+- [ ] **Phase 73: Harness emit isolate** — skip_emit + overlap fail-closed (S03)
+- [ ] **Phase 74: M022 close** — audit + Active None (S04)
 
 ## Progress
 
 | Milestone | Phases | Status |
 |-----------|--------|--------|
-| v0.01–v0.14 | 1–67 | shipped |
-| v0.15 | 68–70 | shipped |
-
-**Next:** controller decision (M021 closed).
+| v0.01–v0.15 | 1–70 | shipped |
+| v0.16 | 71–74 | active |

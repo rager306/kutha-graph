@@ -201,6 +201,19 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M022: Audit residual honesty — ACTIVE (GSD v0.16)
+
+**Opened:** 2026-10-08. Plan: `.compound-engineering/artifacts/plans/2026-10-08-m022-audit-residuals.md`. Process tag `v0.16`. Corrects stale audit claims; keyed-retry-after-retract; harness pytest emit isolation. Honeycomb stays Proposed.
+
+- [ ] **S01: Audit honesty** `risk:low` `depends:[]`
+  > After this: v0.14 audit strikes Retract CI residual; triage table landed.
+- [ ] **S02: Keyed retry live** `risk:high` `depends:[S01]`
+  > After this: delivery_key_retry requires live fact; RED first; bench ≤10%; admission EventId pin.
+- [ ] **S03: Harness emit isolate** `risk:medium` `depends:[S02]`
+  > After this: Context.skip_emit; observe without overlap_with at jobs>1 is HIGH.
+- [ ] **S04: Close** `risk:low` `depends:[S03]`
+  > After this: M022 closed; Active None; audit note.
+
 ## M021: Wedge decisions — CLOSED (GSD v0.15)
 
 **Closed:** 2026-10-07. Plan: `.compound-engineering/artifacts/plans/2026-10-07-m021-wedge-decisions.md`. Process tag `v0.15`. S01–S03 complete; independent VERIFICATIONs 68–70. Audit: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`. Honeycomb stays Proposed. Not Cypher/HNSW.
@@ -231,7 +244,8 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 11. **M019** — CLOSED (S01–S07, GSD v0.13). Detail above.
 12. **M020** — CLOSED (S01–S05, GSD v0.14). Detail above.
 13. **M021** — CLOSED (S01–S03, GSD v0.15). Detail above.
-14. **M003** — Cypher skin over the already-correct AS OF cut.
+14. **M022** — ACTIVE (S01–S04, GSD v0.16). Detail above.
+15. **M003** — Cypher skin over the already-correct AS OF cut.
 14. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
 15. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
 16. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
