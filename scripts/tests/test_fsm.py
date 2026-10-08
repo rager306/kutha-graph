@@ -39,7 +39,7 @@ class FsmTests(unittest.TestCase):
         )
 
     def test_ci_quantum_reaches_ok_on_this_tree(self) -> None:
-        ctx = Context(root=ROOT, skip_cargo=True)
+        ctx = Context(root=ROOT, skip_cargo=True, skip_emit=True)
         machine = load_machine(ROOT)
         budget = machine.budget_default
         self.assertGreaterEqual(budget, 48)
@@ -74,6 +74,62 @@ class FsmTests(unittest.TestCase):
         )
         self.assertEqual(0, outcome.skipped)
         self.assertEqual(len(get_checks(ROOT)), len(outcome.results))
+
+    def test_skip_emit_does_not_call_append_run(self) -> None:
+        from unittest.mock import patch
+
+        from kutha_gov.protocol import Check, CheckResult
+        from kutha_gov.selftest import OK, SelftestRow
+
+        class QuietCheck(Check):
+            name = "quiet"
+            description = "quiet"
+
+            def run(self, ctx: Context) -> CheckResult:
+                return CheckResult(check=self.name)
+
+        ctx = Context(root=ROOT, skip_cargo=True, skip_emit=True)
+        with (
+            patch("kutha_gov.fsm.append_run") as append_run,
+            patch(
+                "kutha_gov.selftest.run_selftest",
+                return_value=([SelftestRow(OK, "probe", 1)], 0),
+            ),
+            patch("kutha_gov.fsm.get_checks", return_value={"quiet": QuietCheck()}),
+        ):
+            outcome = run_quantum(ctx, budget=48, start_event="start")
+        append_run.assert_not_called()
+        self.assertEqual("ok", outcome.terminal)
+        self.assertIn("emit", outcome.trace)
+
+    def test_jobs_gt1_observe_without_overlap_is_high(self) -> None:
+        from unittest.mock import patch
+
+        from kutha_gov.fsm import Machine
+
+        machine = Machine(
+            initial="idle",
+            terminal=frozenset({"ok", "fail"}),
+            budget_default=8,
+            states={
+                "idle": {"kind": "require_file", "path": "Cargo.toml"},
+                "obs": {"kind": "observe_cargo", "bin": "cargo", "args": ["test"]},
+                "ok": {"kind": "terminal"},
+                "fail": {"kind": "terminal"},
+            },
+            transitions=[
+                {"from": "idle", "event": "start", "to": "obs"},
+                {"from": "obs", "event": "done", "to": "ok"},
+                {"from": "obs", "event": "fail", "to": "fail"},
+            ],
+        )
+        ctx = Context(root=ROOT, skip_cargo=False, jobs=2)
+        with patch("kutha_gov.fsm.load_machine", return_value=machine):
+            outcome = run_quantum(ctx, budget=8, start_event="start")
+        self.assertTrue(
+            any(f.category == "overlap-required" for f in outcome.findings),
+            msg=outcome.findings,
+        )
 
     def test_skip_cargo_does_not_call_cargo_or_tenant(self) -> None:
         from unittest.mock import patch

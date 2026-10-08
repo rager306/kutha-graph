@@ -4,11 +4,31 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-08 — Process: close M022 / v0.16
+
+### Process
+
+- `L_delivery=M022-closed`, Active Slice **None**. Phases 71–74 verified. Audit `.planning/milestones/v0.16-MILESTONE-AUDIT.md`. Crate SemVer stays 0.0.0.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
+## 2026-10-08 — Process: harness skip_emit and overlap fail-closed (Phase 73)
+
+### Process
+
+- `Context.skip_emit` skips emit_log/emit_tenant writes; FSM ci unit test uses it. `jobs>1` observe_cargo without `overlap_with` is HIGH (`overlap-required`). VERIFICATION frontmatter repaired for phases 68–71 (artifact-budget / verification-independent).
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-08 — Product: keyed retry requires live fact (Phase 72)
 
 ### Product
 
-- `delivery_key_retry` short-circuits only while the prior keyed Assert is live; after Retract the same key remints. Oracles: `keyed_assert_retry_after_retract_remints_live_support`, `keyed_assert_retry_while_live_short_circuits`. Admission EventId pin: `adm_pin01_admission_status_via_event_id`.
+- `delivery_key_retry` short-circuits only while the prior keyed Assert is live; after Retract the same key remints. Oracles: `keyed_assert_retry_after_retract_remints_live_support`, `keyed_assert_retry_while_live_short_circuits`. Admission EventId pin: `adm_pin01_admission_status_via_event_id`. Bench (`KUTHA_BENCH_N=10000`): `ingest_plain.n` 120718182→113891757 (−5.7% vs Phase 69); `as_of.n` 242161→269744 (+11% one-shot noise; still below Phase 66 post 315267).
 
 ### Trajectory
 

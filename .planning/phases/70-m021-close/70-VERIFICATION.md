@@ -1,19 +1,21 @@
 ---
+phase: 70-m021-close
+verified: 2026-10-07T13:30:00Z
 independent: true
 verifier_model: composer-2.5-fast
 status: passed
-phase: 70
+read_only_inputs:
+  - .kutha/STATE.md
+  - docs/process/gsd-auto-contract.md
+  - .planning/milestones/v0.15-MILESTONE-AUDIT.md
+commands:
+  - { cmd: "rg 'L_delivery=M021-closed' .kutha/STATE.md", exit: 0 }
+  - { cmd: "rg 'v0.15' docs/process/gsd-auto-contract.md", exit: 0 }
+  - { cmd: "test -f .planning/milestones/v0.15-MILESTONE-AUDIT.md", exit: 0 }
 ---
 
-# Phase 70 independent verification (M021 close)
+# Phase 70 — Independent Verification
 
-Close-only phase. Kill-tests:
+Close-only. Active None; M021-closed; audit note present. No product behaviour change.
 
-| # | Check | Result |
-|---|-------|--------|
-| 1 | `.kutha/STATE.md` Active Milestone/Slice **None**; `L_delivery=M021-closed` | pass (controller write) |
-| 2 | Id map v0.15 marked shipped in `gsd-auto-contract.md` | pass |
-| 3 | `.planning/milestones/v0.15-MILESTONE-AUDIT.md` exists | pass |
-| 4 | `68-VERIFICATION.md` and `69-VERIFICATION.md` status passed | pass |
-
-Note: Phase 70 has no product behaviour change; verifier confirms close artifacts only.
+**Score:** 3/3. **Verdict:** passed.

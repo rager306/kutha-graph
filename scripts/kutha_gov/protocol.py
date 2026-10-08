@@ -58,6 +58,8 @@ class Context:
     git_against: str = "auto"
     changed_paths: frozenset[str] | None = None
     skip_cargo: bool = False
+    #: Skip emit_log / emit_tenant side effects (unit tests; parallel to skip_cargo).
+    skip_emit: bool = False
     jobs: int = 1
 
     def read(self, rel_path: str) -> str | None:

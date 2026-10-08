@@ -351,6 +351,17 @@ def _execute(
     if kind == "observe_cargo":
         if _skip_heavy_observe(ctx, outcome):
             return "done"
+        raw_overlap = spec.get("overlap_with")
+        if ctx.jobs > 1 and not (isinstance(raw_overlap, list) and raw_overlap):
+            outcome.findings.append(
+                Finding(
+                    "observe_cargo",
+                    Severity.HIGH,
+                    "overlap-required",
+                    f"{state}: jobs>1 requires overlap_with on observe_cargo (not silent skip)",
+                )
+            )
+            return "done"
         fut = overlap.get("fut")
         if isinstance(fut, Future):
             try:
@@ -369,6 +380,8 @@ def _execute(
         _apply_cargo_pack(outcome, (code, seen_ok, findings))
         return "done"
     if kind == "emit_log":
+        if ctx.skip_emit:
+            return "ok"
         high = sum(r.high_count for r in outcome.results) + sum(
             1 for f in outcome.findings if f.severity is Severity.HIGH
         )
@@ -403,6 +416,8 @@ def _execute(
             )
         return "ok"
     if kind == "emit_tenant":
+        if ctx.skip_emit:
+            return "done"
         if _skip_heavy_observe(ctx, outcome):
             return "done"
         from kutha_gov.tenant import run_tenant_observation
