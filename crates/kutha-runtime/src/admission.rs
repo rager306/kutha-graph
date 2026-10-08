@@ -239,6 +239,14 @@ impl Runtime {
         let Some(existing_id) = self.by_delivery_key.get(key).copied() else {
             return Ok(None);
         };
+        // Retracted keyed Assert must not short-circuit: remint a live support.
+        let live = self
+            .fold
+            .fact_index_by_event_id(existing_id)
+            .is_some_and(|idx| self.fold.facts()[idx].invalidated_at.is_none());
+        if !live {
+            return Ok(None);
+        }
         let Some(e) = self.event_by_id(existing_id) else {
             return Ok(None);
         };
@@ -254,3 +262,4 @@ impl Runtime {
         })
     }
 }
+

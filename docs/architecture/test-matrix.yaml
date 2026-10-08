@@ -645,6 +645,18 @@ rows:
     gate: default
     owner: M021-S02
     source: M020 residual / Phase 69
+  - id: SEM-keyed-retry-live
+    plane: product
+    invariant: delivery_key_retry short-circuits only while prior keyed Assert is live; remints after Retract
+    layer: kill
+    oracle:
+      - keyed_assert_retry_after_retract_remints_live_support
+      - keyed_assert_retry_while_live_short_circuits
+    kill_mutation: retry ignores fold invalidated_at
+    status: killed
+    gate: default
+    owner: M022-S02
+    source: audit P2 keyed-retry-after-retract / Phase 72
 
   - id: SEM-cascade-order
     plane: product
