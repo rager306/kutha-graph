@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-08 — Process: lease M024 S01 (GSD Phase 79)
+
+### Process
+
+- Active Milestone **M024**, Active Slice **S01** (`L_delivery=M023-closed`): fold identity — live-gated Retract/Correct; Correct on multi-residual event_id; CorrectInterval multi-residual fail-closed. Honeycomb stays Proposed.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-08 — Process: close M023 / v0.17 (Phase 78)
 
 ### Process
