@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-08 — Process: lease M023 S01 (GSD Phase 75)
+
+### Process
+
+- Active Milestone **M023**, Active Slice **S01** (`L_delivery=M022-closed`): restore green — keyed retry follows Correct lineage, naive model Retract-all-live, `m019_dur_a` flakes. Honeycomb stays Proposed.
+
+### Trajectory
+
+- Honeycomb stays Proposed. `L_capability` unchanged (FF5).
+
 ## 2026-10-08 — Process: open M023 / v0.17 (green HEAD and truth reset)
 
 ### Process
