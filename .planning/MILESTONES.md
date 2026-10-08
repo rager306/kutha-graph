@@ -1,3 +1,10 @@
+## v0.17 Green HEAD and truth reset (Active: 2026-10-08)
+
+**Phases:** 75–78. Process tag `v0.17`. Restore green (keyed retry Correct lineage; naive Retract-all-live; dur_a parallel scratch), close-gate honesty (`product-close-gate`), living overlay truth, close. Corrects false M022 Phase 72 verified claim.
+**Git range:** `v0.16..` (tag pending close)
+
+---
+
 ## v0.13 Post-M002 coherence (Shipped: 2026-10-05)
 
 **Phases:** 56–62. Process tag `v0.13` (GSD process tag, not a product release). Docs honesty r3, cargo_dep_constraint, governor SMP, test matrix, durability residuals, DIFF-01/DIFF-02/SEM-02. MEM-01 partial (RSS `bytes_per_fact` not explained to a lower bound).

@@ -240,7 +240,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M018–M022 CLOSED; M023 active. One lease at a time. M003+ stay unleased.
+Do not start until STATE names them. M018–M022 CLOSED; **M023 active**. One lease at a time. M003+ stay unleased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -258,9 +258,10 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 12. **M020** — CLOSED (S01–S05, GSD v0.14). Detail above.
 13. **M021** — CLOSED (S01–S03, GSD v0.15). Detail above.
 14. **M022** — CLOSED (S01–S04, GSD v0.16). Detail above.
-15. **M003** — Cypher skin over the already-correct AS OF cut.
-14. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
-15. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
+15. **M023** — ACTIVE (S01–S04, GSD v0.17). Detail above.
+16. **M003** — Cypher skin over the already-correct AS OF cut (thaw: M003 leased).
+17. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
+18. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
 16. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.
 17. *(unnumbered)* Security — ABAC rewrite, grants @T, agent sandbox; required before any enterprise ship.
 18. *(unnumbered)* Packaging, naming and license decision (ADR-092) before any publish.

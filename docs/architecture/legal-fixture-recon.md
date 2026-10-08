@@ -1,6 +1,6 @@
 # Legal fixture reconnaissance (2026-10-01)
 
-> **Status 2026-10-03:** FIXG-01 verdict: C01 is inexpressible as Horn; the decision is open in ADR-013. Lines that say a case needs an M016 transitional rule are historical.
+> **Status 2026-10-08:** FIXG-01 still fails as Horn (characterization). C01 pack stamp decided M018/M021: application window as Assert (`appliesTo` VT); see ADR-013 Evidence and `c01_applies_to_assert_encodes_application_window`. Lines that say the C01 *decision* is open are historical.
 
 **Proposed review, not an ADR**, not delivery authorization. Honeycomb stays **Proposed**. Sister corpus is read in place under `LAW_NEXUS_ROOT` (default `/root/law-nexus`); nothing is copied into kutha-graph.
 

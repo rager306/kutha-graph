@@ -1,10 +1,11 @@
 ---
 schema_version: 1
-open_count: 11
-waived_count: 4
-fixed_count: 1
+open_count: 4
+waived_count: 10
+fixed_count: 2
 total_count: 16
-last_updated: 2026-10-06T15:01:55.029Z
+last_updated: 2026-10-08T10:30:00.000Z
+note: "2026-10-08 M023 S03 recount — many early open rows were process archaeology already closed by later milestones; living open: #9, #13, #14, #16"
 ---
 
 # Broken Windows Ledger
@@ -16,20 +17,20 @@ last_updated: 2026-10-06T15:01:55.029Z
 | id | phase | kind | file | line | description | status | reason | recorded_at | resolved_at |
 |----|-------|------|------|------|-------------|--------|--------|-------------|-------------|
 | 1 | 01 | deviation | .planning/STATE.md |  | state.update-progress wrote percent 0; corrected to 67% in closeout | waived | Historical SDK progress glitch; corrected in closeout; not an M013 blocker | 2026-09-29T07:26:58.548Z | 2026-10-01T08:20:00.000Z |
-| 2 | 01 | deviation | .kutha/STATE.md |  | Plan grep Active Slice: None vs markdown **Active Slice:** None; lease still None | open |  | 2026-09-29T07:32:17.882Z |  |
+| 2 | 01 | deviation | .kutha/STATE.md |  | Plan grep Active Slice: None vs markdown **Active Slice:** None; lease still None | waived | Archaeology: cite-lease / state-readme now enforce Active Slice tokens | 2026-09-29T07:32:17.882Z | 2026-10-08T10:30:00.000Z |
 | 3 | 01 | deviation | .planning/STATE.md |  | SDK state.update-progress wrote 33%; restored 100% after Phase 1 plan closeout | waived | Same SDK progress class as #1; archaeology | 2026-09-29T07:32:18.201Z | 2026-10-01T08:20:00.000Z |
-| 4 | 02 | deviation | .kutha/STATE.md | 8 | Plan verify grep Active Slice: None misses markdown **Active Slice:** None; cite-only, no harness edit | open |  | 2026-09-29T08:23:38.090Z |  |
+| 4 | 02 | deviation | .kutha/STATE.md | 8 | Plan verify grep Active Slice: None misses markdown **Active Slice:** None; cite-only, no harness edit | waived | Same class as #2 | 2026-09-29T08:23:38.090Z | 2026-10-08T10:30:00.000Z |
 | 5 | 03 | deviation | .planning/STATE.md |  | Relabeled Current Plan to numeric N so state.advance-plan can parse (Rule 3) | waived | One-time Rule 3 workaround; document in contract, not a live defect | 2026-09-29T11:06:24.445Z | 2026-10-01T08:20:00.000Z |
 | 6 | 04 | deviation | crates/kutha-runtime/tests/m011_partial_correction.rs |  | Task 2 tdd=true had no RED: tracer already shipped IntervalPatchRejected; tests committed green | waived | Oracle pre-green by prior slice; M013 RED-first contract supersedes | 2026-09-29T15:07:11.391Z | 2026-10-01T08:20:00.000Z |
-| 7 | 04 | deviation | CHANGELOG.md |  | Wave-close ci auto-mode includes uncommitted .kutha/STATE.md; CHANGELOG kept in worktree set for docs-coupling | open |  | 2026-09-29T15:18:13.481Z |  |
+| 7 | 04 | deviation | CHANGELOG.md |  | Wave-close ci auto-mode includes uncommitted .kutha/STATE.md; CHANGELOG kept in worktree set for docs-coupling | waived | docs-coupling + lease=STATE+CHANGELOG now enforce the plane | 2026-09-29T15:18:13.481Z | 2026-10-08T10:30:00.000Z |
 | 8 | 11 | deviation | scripts/kutha_gov/kinds.py |  | Derived cite mutation token changed from __cite_selftest__ to WRONG so the alphanumeric capture actually HIGH | fixed | Intentional selftest mutation so cite HIGH is real; not a product defect | 2026-09-30T10:25:59.675Z | 2026-10-01T08:20:00.000Z |
 | 9 | 20 | deviation | crates/kutha-runtime/tests/m011_e2e_fixture.rs | 181 | Leased helper binds Action at u64::MAX because admission ingest is after t1 | open |  | 2026-10-01T03:34:35.212Z |  |
-| 10 | 27 | deviation | docs/architecture/benchmark-baseline.md |  | D-07 Phase 22 bench ≤10% STOP: ingest +2168% as_of +1566% | open |  | 2026-10-01T17:47:53.285Z |  |
-| 11 | 28 | unmet-truth | .planning/phases/28-independent-verification-and-artifact-budget/28-VERIFICATION.md |  | PROC-02 pending post-execute 28-VERIFICATION (verify-work, independent model per D-08) | open |  | 2026-10-01T18:41:40.853Z |  |
-| 12 | 28 | deviation | docs/process/gsd-auto-contract.md |  | Restored pre-existing uncommitted Gate stacking/reindex edits to HEAD so 28-02 did not change the contract | open |  | 2026-10-01T18:41:41.282Z |  |
+| 10 | 27 | deviation | docs/architecture/benchmark-baseline.md |  | D-07 Phase 22 bench ≤10% STOP: ingest +2168% as_of +1566% | fixed | M016 skipped gate; repaired in v0.10; product closes now record bench numbers | 2026-10-01T17:47:53.285Z | 2026-10-08T10:30:00.000Z |
+| 11 | 28 | unmet-truth | .planning/phases/28-independent-verification-and-artifact-budget/28-VERIFICATION.md |  | PROC-02 pending post-execute 28-VERIFICATION (verify-work, independent model per D-08) | waived | Independent VERIFICATION is process SoT since Phase 28; later milestones use it | 2026-10-01T18:41:40.853Z | 2026-10-08T10:30:00.000Z |
+| 12 | 28 | deviation | docs/process/gsd-auto-contract.md |  | Restored pre-existing uncommitted Gate stacking/reindex edits to HEAD so 28-02 did not change the contract | waived | One-time restore; contract is living SoT | 2026-10-01T18:41:41.282Z | 2026-10-08T10:30:00.000Z |
 | 13 | 47 | deviation | .planning/phases/46-c01-knowledge-cut/46-VERIFICATION.md |  | ci HIGH verification-independent missing exit: needle (pre-existing; out of 47-01 slice) | open |  | 2026-10-06T12:30:20.217Z |  |
 | 14 | 48 | deviation | .kutha/dictionaries/invariants.yaml |  | Rule 3: I-F15/I-F16 claim text with checks.yaml for docs-coupling | open |  | 2026-10-06T15:01:54.157Z |  |
-| 15 | 48 | deviation | .planning/phases/47-horn-determinism-closure/47-VERIFICATION.md |  | Rule 3: repaired 47-VERIFICATION read_only_inputs for verification-independent | open |  | 2026-10-06T15:01:54.624Z |  |
+| 15 | 48 | deviation | .planning/phases/47-horn-determinism-closure/47-VERIFICATION.md |  | Rule 3: repaired 47-VERIFICATION read_only_inputs for verification-independent | waived | Repair landed; not a living defect | 2026-10-06T15:01:54.624Z | 2026-10-08T10:30:00.000Z |
 | 16 | 48 | deviation | crates/kutha-runtime/tests/m016_rule_ast.rs | 80 | Rule 1: emit_allow derive_pq so CASC-01 hop-admit does not fail workspace observe | open |  | 2026-10-06T15:01:55.029Z |  |
 
 ````json

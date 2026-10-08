@@ -10,11 +10,11 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.14 Audit correction (harness M020)
+## Current Milestone: v0.17 Green HEAD and truth reset (harness M023)
 
-**Active:** Phases 63–67. Source: 2026-10-07 whole-repo audit + parent re-verification. Not Cypher/HNSW. Crate SemVer stays `0.0.0`.
+**Active:** Phases 75–78. Source: 2026-10-08 post-M022 audits. Not Cypher/HNSW. Crate SemVer stays `0.0.0`.
 
-**Last shipped:** v0.11 / v0.12 / v0.13. **Harness lease:** read `.kutha/STATE.md`. Honeycomb stays Proposed.
+**Last shipped:** v0.01–v0.16 (M022). Phase 72's "verified" claim was corrected in M023 S01–S02. **Harness lease:** read `.kutha/STATE.md`. Honeycomb stays Proposed.
 
 
 ## Business Context

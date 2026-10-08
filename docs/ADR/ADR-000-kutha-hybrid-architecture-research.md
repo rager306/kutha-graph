@@ -208,7 +208,7 @@ Pointer (2026-10-04): superseded for the physical encoding by SEG-01 (manifest +
 
 ### Clarification (2026-10-04, Phase 56 / M019 S01; Proposed)
 
-D8.1 (snapshots + segmentation) is the shipped direction (`segment::persist_log`). D8.2 "RocksDB/SQLite WAL, batching" is **superseded** as a current mitigation: single-writer is unenforced (no flock / `try_lock`; two `Persister`s on one dir are undefined). Segmentation addresses replay tax, not Rocks WAL. This pointer does not rewrite D1–D10 lock wording.
+D8.1 (snapshots + segmentation) is the shipped direction (`segment::persist_log`). D8.2 "RocksDB/SQLite WAL, batching" is **superseded** as the crash-cousin wording (cousin is `KUTHASEG`/`KUTHAWAL`). **Pointer 2026-10-08:** single-writer is enforced via advisory `kutha.lock` (`File::try_lock`; M019); NFS / cross-host is still uncovered. Segmentation addresses replay tax, not Rocks as an event store. This pointer does not rewrite D1–D10 lock wording.
 
 ### D9. Testing as a first-class capability
 

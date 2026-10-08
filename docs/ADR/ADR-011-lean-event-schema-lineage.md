@@ -36,7 +36,7 @@ OCPM: one event may point at **many typed objects**; flattening to a single `cas
 
 ### D011-1. Lean events; objects are not flattened
 
-P0 event taxonomy stays lean (create / patch / invalidate / `behavior.*` / `llm.*` as named in ADR-000 R5). An event may reference **N objects** (OCPM). Do not require a single process-mining `case_id`. Process variants and conformance, if any, are leases over the log — not a second process DB.
+P0 event taxonomy stays lean. **Pointer 2026-10-08:** shipped `Op` kinds are Assert / Retract / Correct / CorrectInterval / Behavior / Define / QuantumOutcome / JustificationCite / StoreBlob / TtAnchor (not the prose labels create/patch/invalidate/`llm.*` from ADR-000 R5). An event may reference **N objects** (OCPM). Do not require a single process-mining `case_id`. Process variants and conformance, if any, are leases over the log — not a second process DB.
 
 Identifiers for new events: **UUID v7** (ADR-000 D2) for log order friendliness. Graph-internal hop keys are interned integers (D011-2).
 

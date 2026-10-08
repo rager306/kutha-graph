@@ -9,8 +9,7 @@ description: >-
 
 # Codebase Memory (Kutha)
 
-Evidence plane for **code**, not honeycomb ADRs and not governor CI. Follow `.cursor/rules/code-graph-cbm.mdc`. Project name is usually `kutha-graph`.
-
+Evidence plane for **code**, not honeycomb ADRs and not governor CI. Follow `.cursor/rules/code-graph-cbm.mdc`. Canonical project name is `kutha-graph` (also indexed historically as `root-kutha-graph` on the same root — prefer `kutha-graph`).
 Do **not** replace `ce-plan` / `ce-work` / `ce-debug` / `ce-code-review`. Do **not** put MCP steps in plans.
 
 ## Default tools (use these)
@@ -69,3 +68,4 @@ Secondary. Do not dual-query, except M013 refactor phases 24–27 (`docs/process
 2. Paginate `search_graph` (`has_more` / `offset`).
 3. Stale CBM: `check_index_coverage` freshness `metadata_changed` or `not_tracked` → integrator `index_repository`.
 4. `search_code` can see disk text the graph nodes have not caught up to.
+5. **Rust call edges:** CBM and GitNexus both miss many `Self::f()` / `self.field.method()` edges. Do not claim "no callers" from either graph alone — `rg` is the arbiter (2026-10-08 post-M022 audit).
