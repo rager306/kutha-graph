@@ -46,7 +46,9 @@ const VF_FIRST: u64 = 2010;
 const VF_SECOND: u64 = 2020;
 
 fn persist_dir(label: &str) -> PathBuf {
-    // PID + nanos: workspace runs spawn many binaries that hit tmp/ in parallel.
+    // Unique even under same-binary parallel tests (nanos alone can collide).
+    static N: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let seq = N.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
     let nanos = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap()
@@ -55,7 +57,7 @@ fn persist_dir(label: &str) -> PathBuf {
         .join("../..")
         .join("tmp")
         .join(format!(
-            "p60-store-{label}-{}-{nanos}",
+            "p60-store-{label}-{}-{nanos}-{seq}",
             std::process::id()
         ));
     let _ = fs::remove_dir_all(&dir);

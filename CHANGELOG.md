@@ -8,7 +8,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Product
 
-- `delivery_key_retry` short-circuits while any live fact of the keyed claim carries the delivery key (Correct/CorrectInterval replacements), remints only when none is live. Oracles: m013 keyed-correct pair restored; `keyed_assert_retry_after_correct_interval_short_circuits`, `keyed_assert_retry_after_retract_of_correct_interval_id_remints`. Naive model Retract clears all CI residuals. `m019_dur_a` scratch dirs include PID. Bench (`KUTHA_BENCH_N=10000`): `ingest_plain.n` 134180211→117370496 (−12.5%); `as_of.n` 287635→281294 (−2.2%).
+- `delivery_key_retry` short-circuits while any live fact of the keyed claim carries the delivery key (Correct/CorrectInterval replacements), remints only when none is live. Oracles: m013 keyed-correct pair restored; `keyed_assert_retry_after_correct_interval_short_circuits`, `keyed_assert_retry_after_retract_of_correct_interval_id_remints`. Naive model Retract clears all CI residuals. `m019_dur_a` scratch dirs include PID + atomic seq (parallel-safe). Bench (`KUTHA_BENCH_N=10000`): `ingest_plain.n` 134180211→117370496 (−12.5%); `as_of.n` 287635→281294 (−2.2%).
 
 ### Trajectory
 
