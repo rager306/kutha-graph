@@ -1318,7 +1318,7 @@ checks:
     steps:
       - kind: file_contains
         path: docs/process/gsd-auto-contract.md
-        needles: ["## Id map", "GSD version", "v0.06", "v0.07", "v0.08", "v0.09", "v0.12", "v0.13"]
+        needles: ["## Id map", "GSD version", "v0.06", "v0.07", "v0.08", "v0.09", "v0.12", "v0.13", "v0.16", "v0.17"]
         require: all
       - kind: file_contains
         path: .planning/ROADMAP.md
@@ -1334,6 +1334,25 @@ checks:
       - kind: file_absent
         path: .kutha/ROADMAP.md
         needles: ["| GSD version | Phases | Harness"]
+
+  - id: product-close-gate
+    description: >-
+      Product close checklist names workspace cargo tests and full ci;
+      precommit alone is not a product close gate (M022 Phase 72 lesson).
+    steps:
+      - kind: file_contains
+        path: docs/process/gsd-auto-contract.md
+        needles:
+          - "cargo test --workspace --offline --no-fail-fast"
+          - "uv run kutha-gov ci"
+          - "`precommit` alone is not a product close gate"
+        require: all
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: docs/process/gsd-auto-contract.md
+          pattern: "`precommit` alone is not a product close gate"
+          with: "`precommit` is enough for product close"
 
   - id: i-f1-outcomes
     description: I-F1 — log-native outcomes and justifications (semantic-gap review)

@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-08 — Process: close-gate honesty (Phase 76)
+
+### Process
+
+- Corrected false M022 Phase 72 "verified" claim (`72-VERIFICATION.md` passed-with-correction; v0.16 audit S02 note). `gsd-auto-contract` Close requires recorded `cargo test --workspace --offline --no-fail-fast` and full `kutha-gov ci` for product phases; governor check `product-close-gate`. No crates change.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-08 — Process: close M023 S01 / lease S02 (Phase 76)
 
 ### Process
