@@ -1,9 +1,37 @@
-//! D-04 GREEN (PIPE-04): statute AS OF via the public Runtime facade only.
+//! Thin demo: statute AS OF + "norm in force on D, as known on W" via `norm_view`.
+//! Not ADR-070 Cypher. Fixture texts live under `fixtures/statute/` (test data only).
 
-use kutha_common::{ValidTime};
-
-use kutha_runtime::{Runtime, RuntimeError};
+use kutha_common::{ValidTime, WallTime};
+use kutha_runtime::{NormView, Runtime, RuntimeError};
 use std::path::Path;
+
+fn fmt_norm(rt: &Runtime, view: &NormView) -> String {
+    let dict = rt.dictionary();
+    match view {
+        NormView::Ok(triples) => {
+            let parts: Vec<String> = triples
+                .iter()
+                .map(|t| {
+                    format!(
+                        "({} {} {})",
+                        dict.lookup(t.subject).unwrap_or("?"),
+                        dict.lookup(t.relation).unwrap_or("?"),
+                        dict.lookup(t.object).unwrap_or("?")
+                    )
+                })
+                .collect();
+            format!("Ok [{}]", parts.join(", "))
+        }
+        NormView::Conflict { claim, report } => format!(
+            "Conflict(claim={claim}, +={}, -={})",
+            report.positive_supports.len(),
+            report.negative_supports.len()
+        ),
+        NormView::Abstain => "Abstain".into(),
+        NormView::Unknown => "Unknown".into(),
+        NormView::MissingAnchor => "MissingAnchor".into(),
+    }
+}
 
 fn main() -> Result<(), RuntimeError> {
     let mut rt = Runtime::default();
@@ -14,6 +42,33 @@ fn main() -> Result<(), RuntimeError> {
     let new = rt.as_of(ValidTime::from(2021));
     assert_ne!(old, new, "AS OF 2015 must differ from AS OF 2021");
     let _live = rt.live_at(u64::MAX, 2015);
+
+    // Knowledge anchors for the envelope demo (force ∩ knowledge).
+    rt.emit_tt_anchor(2015)?;
+    rt.emit_tt_anchor(2021)?;
+
+    let nv_2015 = rt.norm_view(ValidTime::from(2015), WallTime::from(2015));
+    let nv_2021 = rt.norm_view(ValidTime::from(2021), WallTime::from(2021));
+    println!("norm in force on 2015, as known on 2015 → {}", fmt_norm(&rt, &nv_2015));
+    println!("norm in force on 2021, as known on 2021 → {}", fmt_norm(&rt, &nv_2021));
+    match (&nv_2015, &nv_2021) {
+        (NormView::Ok(a), NormView::Ok(b)) => {
+            assert!(
+                a.iter().any(|t| rt.dictionary().lookup(t.object) == Some("50-kmh")),
+                "2015 envelope must list 50-kmh"
+            );
+            assert!(
+                b.iter().any(|t| rt.dictionary().lookup(t.object) == Some("30-kmh")),
+                "2021 envelope must list 30-kmh"
+            );
+            assert_ne!(
+                a.iter().map(|t| t.object).collect::<Vec<_>>(),
+                b.iter().map(|t| t.object).collect::<Vec<_>>(),
+                "force cuts must differ"
+            );
+        }
+        other => panic!("expected Ok/Ok from norm_view demo, got {other:?}"),
+    }
 
     rt.emit_policy("leased-policy", 2010, None)?;
     let claim = first.receipt.event_ids[0];

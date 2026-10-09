@@ -1,8 +1,8 @@
 # Requirements: Kutha
 
-**Milestones:** v0.18 / harness M024 shipped 2026-10-08. **v0.19 / harness M025** active. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.19 / harness M025 shipped 2026-10-09. Next lease: M026 / v0.20. Lease: `.kutha/STATE.md`.
 
-## v0.19 Requirements (M025)
+## v0.19 Requirements (M025) — complete
 
 ### as_known_on VT (Phase 81, S01)
 
@@ -18,7 +18,7 @@
 
 ### Demo (Phase 84, S04)
 
-- [ ] **DEMO-01**: Thin bin + real-text fixtures; no pack thaw
+- [x] **DEMO-01**: Thin bin + real-text fixtures; no pack thaw
 
 ## Out of Scope (this milestone)
 

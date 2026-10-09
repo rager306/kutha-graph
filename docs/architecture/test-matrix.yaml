@@ -961,6 +961,20 @@ rows:
     gate: default
     owner: M025-S03
     source: Phase 83 / ADR-013 Clarification 2026-10-08 G-B01
+  - id: SEM-m025-demo-fixtures
+    plane: product
+    invariant: thin demo + real-text fixtures drive norm_view without pack thaw
+    layer: decision
+    oracle:
+      - demo_fixtures_are_nonempty_real_text
+      - demo_art12_norm_view_force_cuts_differ
+      - demo_punkt_sunset_norm_view_unknown_after_valid_to
+      - demo_edition_promulgation_knowledge_not_force
+    kill_mutation: make art12 2015/2015 Ok list 30-kmh instead of 50-kmh
+    status: killed
+    gate: default
+    owner: M025-S04
+    source: Phase 84 / fixtures/statute + examples/statute_as_of
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

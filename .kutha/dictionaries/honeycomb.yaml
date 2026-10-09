@@ -44,6 +44,7 @@ process: docs/process/governor-intake.md
 # 2026-10-08 restage (M025 S01 Phase 81: as_known_on TT-only by design): ADR-013; map/delivery/capability unchanged.
 # 2026-10-08 restage (M025 S02 Phase 82: clock-safe as_of/as_known_on facade): ADR-013; map/delivery/capability unchanged.
 # 2026-10-08 restage (M025 S03 Phase 83: norm_view envelope): ADR-013, ADR-090; map/delivery/capability unchanged.
+# 2026-10-08 restage (M025 S04 Phase 84: demo bin + statute fixtures): ADR-013; map/delivery/capability unchanged.
 # 2026-10-06 restage (M018 S04 Phase 48: I-F15/I-F16 oracles, GATE-01 BENCH-controller): ADR-041, ADR-023; map/delivery/capability unchanged.
 
 locks:
@@ -216,6 +217,10 @@ cells:
       - norm_view_ok_lists_assert_in_force_at_knowledge_cut
       - norm_view_unknown_when_fact_not_yet_in_force
       - norm_view_conflict_when_both_polarities_live
+      # Phase 84 / M025 S04 — demo fixtures; cell still Proposed
+      - demo_art12_norm_view_force_cuts_differ
+      - demo_punkt_sunset_norm_view_unknown_after_valid_to
+      - demo_edition_promulgation_knowledge_not_force
       # Phase 62 / M019 S07 — list-scan model vs fold; cell still Proposed
       - bitemporal_model_matches_fold_live_at_and_as_of
       - bitemporal_model_agrees_on_ff5_statute

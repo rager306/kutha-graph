@@ -175,6 +175,16 @@ Derived Horn EventIds are hash-stable (`Event::stable_derived`, prefix `kutha-de
 
 `Op::Retract { event_id }` invalidates **every** live Fact whose `event_id` matches (CorrectInterval may mint prefix/patch/suffix residuals sharing one id). `fact_index_by_event_id` remains first-live for Correct / CorrectInterval targeting. Oracles: `retract_correct_interval_event_id_clears_all_residuals`, `retract_assert_event_id_still_clears_single_row`. D013-1…D013-4 unchanged. Cell remains **Proposed**.
 
+### Clarification (2026-10-08; Phase 84 / M025 S04; Proposed)
+
+**Demo binary + real-text fixtures (not pack thaw):**
+
+1. `examples/statute_as_of` answers "norm in force on D, as known on W" via `Runtime::norm_view` (prints typed envelope).
+2. Three fixture excerpts under `crates/kutha-runtime/fixtures/statute/` are test data only (`m016` pattern); `I-legal-pack-not-next` stays.
+3. Oracles: `m025_demo_fixtures.rs`. Not ADR-070 Cypher; not ADR-090 ontology thaw.
+
+D013-1…D013-4 unchanged. Cell remains **Proposed**.
+
 ### Clarification (2026-10-08; Phase 83 / M025 S03; Proposed)
 
 **G-B01 / G-B04 / G-C10 / R-22 — legal answer envelope `norm_view`:**

@@ -53,6 +53,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M025 S03 (legal answer envelope):** Phase 83 — `SEM-m025-norm-view` `killed` (owner `M025-S03`). Oracles: `m025_norm_view`.
 
+**M025 S04 (demo + fixtures):** Phase 84 — `SEM-m025-demo-fixtures` `killed` (owner `M025-S04`). Oracles: `m025_demo_fixtures`; example `statute_as_of`.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

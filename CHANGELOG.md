@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-09 — Process: close M025 / v0.19 (Phase 84)
+
+### Process
+
+- M025 / GSD v0.19 closed. Active Milestone **None**; `L_delivery=M025-closed`. Audit: `.planning/milestones/v0.19-MILESTONE-AUDIT.md`. S04 demo + fixtures (`84-VERIFICATION.md`). Next controller lease: M026 / v0.20.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
+## 2026-10-09 — Product: demo bin + real-text statute fixtures (Phase 84)
+
+### Product
+
+- `examples/statute_as_of` answers "norm in force on D, as known on W" via `norm_view` (prints typed envelope). Fixtures: `fixtures/statute/{art12_speed,punkt_15_1,edition_promulgation}.txt` (test data only). Oracles: `m025_demo_fixtures`. Matrix `SEM-m025-demo-fixtures`. ADR-013 Clarification Phase 84. `I-legal-pack-not-next` stays.
+
+### Trajectory
+
+- Honeycomb stays Proposed. Pack ontology still frozen.
+
 ## 2026-10-08 — Process: close M025 S03 / lease S04 (Phase 84)
 
 ### Process

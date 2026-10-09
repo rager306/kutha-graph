@@ -1,0 +1,3 @@
+Article 12 (test fixture, not a legal pack). Speed limit on the marked stretch:
+until the 2020 amendment the limit was 50 km/h; from 2020 the limit is 30 km/h.
+Source class: synthetic statute excerpt for Kutha norm_view demos only.

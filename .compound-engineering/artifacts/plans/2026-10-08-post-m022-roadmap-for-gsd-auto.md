@@ -40,7 +40,7 @@ Ids (next free): GSD tag `v0.17` → M023 (Phases 75–), `v0.18` → M024, `v0.
   > After this: `as_of` takes a valid-time type and `as_known_on` a wall/anchor type at public call sites; raw `u64` no longer compiles for the wrong role (compile_fail UI tests, G-B02/G-C09); `Op` storage may stay `u64`; no fifth axis; existing pins `known04_*`, `asof_elig01_*`, `tr02_*` and `c01_*` unchanged; bench gate ≤10%.
 - [x] **S03: Legal answer envelope** `risk:high` `depends:[S02]`
   > After this: a `norm_view(vt, wall)` returns triples with eligibility, `conflict_report_at` and typed non-success (`Conflict`, `Abstain`, `Unknown`, `MissingAnchor`) (G-B01/B04/C10); `as_of` and the ASOF-ELIG-01 decision are unchanged; live ∩ eligible is the facade's job (R-22); oracles include a retracted-premise case and a missing-anchor case.
-- [ ] **S04: Demo binary and real-text fixtures** `risk:medium` `depends:[S03]`
+- [x] **S04: Demo binary and real-text fixtures** `risk:medium` `depends:[S03]`
   > After this: a thin bin (extend `examples/statute_as_of`, not ADR-070) answers "norm in force on D, as known on W" over fixture ops; 2–3 real-text statute fixtures are test data only (`m016` pattern), no pack thaw, `I-legal-pack-not-next` stays.
 
 ## M026: Test strength (can run before or after M024)

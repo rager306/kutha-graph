@@ -201,9 +201,9 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M025: Wedge answer surface — ACTIVE (GSD v0.19)
+## M025: Wedge answer surface — CLOSED (GSD v0.19)
 
-**Source:** `.compound-engineering/artifacts/plans/2026-10-08-post-m022-roadmap-for-gsd-auto.md`. Process tag `v0.19`. Honeycomb stays Proposed. Not Cypher/HNSW; not ADR-090 pack thaw.
+**Closed:** 2026-10-09. Source: `.compound-engineering/artifacts/plans/2026-10-08-post-m022-roadmap-for-gsd-auto.md`. Process tag `v0.19`. S01–S04 complete. Audit: `.planning/milestones/v0.19-MILESTONE-AUDIT.md`. Honeycomb stays Proposed. Not Cypher/HNSW; not ADR-090 pack thaw.
 
 - [x] **S01: `as_known_on` VT decision** `risk:medium` `gate:controller decision` `depends:[]`
   > After this: ADR-013 states `as_known_on` is TT-only by design (G-A08/G-C03); pin oracles `m025_as_known_on_vt`; `semantic-contract-validation.md` agrees.
@@ -211,7 +211,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
   > After this: `as_of` takes `ValidTime` and `as_known_on` takes `WallTime` at public call sites; bare `u64` and wrong-role clocks fail compile (trybuild `ui_clock_facade`); `Op` storage stays `u64`; no fifth axis; bench ≤10%.
 - [x] **S03: Legal answer envelope** `risk:high` `depends:[S02]`
   > After this: `norm_view(vt, wall)` returns triples with eligibility and typed non-success; live ∩ eligible is the facade's job; oracles include retracted-premise and missing-anchor.
-- [ ] **S04: Demo binary and real-text fixtures** `risk:medium` `depends:[S03]`
+- [x] **S04: Demo binary and real-text fixtures** `risk:medium` `depends:[S03]`
   > After this: thin bin answers "norm in force on D, as known on W" over fixture ops; 2–3 real-text statute fixtures as test data only; `I-legal-pack-not-next` stays.
 
 ## M024: Fold identity and write semantics — CLOSED (GSD v0.18)
