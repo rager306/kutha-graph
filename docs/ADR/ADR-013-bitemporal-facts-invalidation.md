@@ -4,6 +4,10 @@
 
 **Proposed** (Time/Query fact semantics — Graphiti *semantics* native, without Graphiti runtime)
 
+### Clarification (2026-10-09; Phase 92 / M032 S01; Proposed)
+
+**Facade `derive()` premise lookup filters live facts only** (CE review P1 #4). `Runtime::derive` selects the latest product fact for the subject with `invalidated_at.is_none()`, matching `retract` / `correct`. A sole retracted premise yields `UnknownFact` (no Behavior). When a later Assert is retracted, derive cites the prior live Assert as `caused_by`. Oracles: `derive_after_sole_premise_retract_fails_closed`, `derive_skips_invalidated_latest_uses_prior_live`. Status stays **Proposed**.
+
 ### Evidence (2026-10-02; Proposed)
 
 M014 shipped typed clocks (`ValidTime` / `TransactionTime` / `WallTime`) and `as_known_on` via `tt_anchor` (`true_on_d_differs_from_known_on_d`). Phase 34 (M015 S01) made the known-on cut TT-only (`closed_vt_interval_survives_as_known_on`) and fail-closed duplicate/backwards walls. FF5 still compares two valid-time windows at transaction-time max; it is not the known-on query. Gap-review F13 clock/anchor ship is in crates.

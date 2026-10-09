@@ -1102,6 +1102,18 @@ rows:
     gate: default
     owner: M031-S01
     source: Phase 91 / CE review #30
+  - id: SEM-m032-derive-live-premise
+    plane: product
+    invariant: derive premise lookup skips invalidated facts (no dead caused_by)
+    layer: decision
+    oracle:
+      - derive_after_sole_premise_retract_fails_closed
+      - derive_skips_invalidated_latest_uses_prior_live
+    kill_mutation: derive find omits invalidated_at.is_none while retract/correct filter live
+    status: killed
+    gate: default
+    owner: M032-S01
+    source: Phase 92 / CE review P1 #4
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

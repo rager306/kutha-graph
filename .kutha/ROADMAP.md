@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M032: Derive live premise — CLOSED (GSD v0.26)
+
+**Closed:** S01 delivered 2026-10-09. Process tag `v0.26`. Honeycomb stays Proposed. CE review P1 #4.
+
+- [x] **S01: Filter invalidated premises in derive()** `risk:high` `depends:[]`
+  > After this: `derive()` premise find requires `invalidated_at.is_none()` (same as retract/correct); sole retract → UnknownFact; later retract leaves prior live Assert as caused_by. RED oracles first. No Cypher/HNSW. Landed: `m032_derive_live_premise.rs`; ADR-013 Clarification Phase 92; `92-VERIFICATION.md`.
+
 ## M031: WAL-tail heal — CLOSED (GSD v0.25)
 
 **Closed:** S01 delivered 2026-10-09. Process tag `v0.25`. Honeycomb stays Proposed. CE review #30.
@@ -306,7 +313,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M018–M031 CLOSED. One lease at a time. M003+ stay unleased.
+Do not start until STATE names them. M018–M032 CLOSED. One lease at a time. M003+ stay unleased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -333,7 +340,8 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 21. **M029** — CLOSED (S01, GSD v0.23). Detail above.
 22. **M030** — CLOSED (S01, GSD v0.24). Detail above.
 23. **M031** — CLOSED (S01, GSD v0.25). Detail above.
-24. **M003** — Cypher skin over the already-correct AS OF cut (thaw: M003 leased).
+24. **M032** — CLOSED (S01, GSD v0.26). Detail above.
+25. **M003** — Cypher skin over the already-correct AS OF cut (thaw: M003 leased).
 17. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
 18. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
 16. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.

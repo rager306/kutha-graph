@@ -573,12 +573,18 @@ impl Runtime {
             self.emit_rule(name, valid_from, None)?;
         }
         let subject = self.intern(subject.as_ref());
+        // Live premises only (CE review #4): match retract/correct. A retracted
+        // fact must not become caused_by for a new Behavior.
         let premise = self
             .fold
             .facts()
             .iter()
             .rev()
-            .find(|f| f.subject == subject && !self.fold.is_dictionary_rel(f.relation))
+            .find(|f| {
+                f.subject == subject
+                    && f.invalidated_at.is_none()
+                    && !self.fold.is_dictionary_rel(f.relation)
+            })
             .ok_or(RuntimeError::UnknownFact {
                 event_id: EventId::nil(),
             })?;

@@ -33,6 +33,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.23 | 89 | M029 | S01 | interrupted rollover seal heal on attach (CE review P1 #3) | shipped 2026-10-09 |
 | v0.24 | 90 | M030 | S01 | retain kutha.lock on non-poison Persister errors (CE review P1 #2) | shipped 2026-10-09 |
 | v0.25 | 91 | M031 | S01 | open_for_append heals jsonl-ahead-of-WAL (CE review #30) | shipped 2026-10-09 |
+| v0.26 | 92 | M032 | S01 | derive() live-premise filter (CE review P1 #4) | shipped 2026-10-09 |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-09 — Product: derive live premise (Phase 92)
+
+### Product
+
+- `Runtime::derive` premise lookup requires `invalidated_at.is_none()`, matching retract/correct. Sole retracted premise → `UnknownFact` (no Behavior); later retract leaves prior live Assert as `caused_by` (CE review P1 #4). Oracles: `m032_derive_live_premise.rs`. Matrix `SEM-m032-derive-live-premise`. ADR-013 Clarification Phase 92. Quiet bench six `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈121.2M / `as_of.n` ≈287.0k vs M031 ≈110.2M / ≈281.3k (+10.0% / +2.0%) and vs Phase 80 ≈122.5M / ≈299.6k (−1.1% / −4.2%).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-013 evidence restaged.
+
+## 2026-10-09 — Process: close M032 / v0.26 (Phase 92)
+
+### Process
+
+- M032 / GSD v0.26 closed. Active Milestone **None**; `L_delivery=M032-closed`. Audit: `.planning/milestones/v0.26-MILESTONE-AUDIT.md`. S01 derive live premise (`92-VERIFICATION.md`). Next controller lease: G2 lineage (#8…) or parked residuals.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-09 — Product: WAL-tail heal (Phase 91)
 
 ### Product

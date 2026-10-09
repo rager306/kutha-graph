@@ -51,6 +51,7 @@ process: docs/process/governor-intake.md
 # 2026-10-09 restage (M029 S01 Phase 89: interrupted rollover seal heal): ADR-012; map/delivery/capability unchanged.
 # 2026-10-09 restage (M030 S01 Phase 90: writer lock retention): ADR-010; map/delivery/capability unchanged.
 # 2026-10-09 restage (M031 S01 Phase 91: WAL-tail heal): ADR-010; map/delivery/capability unchanged.
+# 2026-10-09 restage (M032 S01 Phase 92: derive live premise): ADR-013; map/delivery/capability unchanged.
 # 2026-10-06 restage (M018 S04 Phase 48: I-F15/I-F16 oracles, GATE-01 BENCH-controller): ADR-041, ADR-023; map/delivery/capability unchanged.
 
 locks:
@@ -223,6 +224,9 @@ cells:
       # Phase 81 / M025 S01 — as_known_on TT-only by design; cell still Proposed
       - as_known_on_includes_not_yet_in_force_vt_fact
       - as_known_on_keeps_closed_vt_that_as_of_sees_in_window
+      # Phase 92 / M032 S01 — derive() skips invalidated premises; cell still Proposed
+      - derive_skips_invalidated_latest_uses_prior_live
+      - derive_after_sole_premise_retract_fails_closed
       # Phase 82 / M025 S02 — clock-safe facade trybuild; cell still Proposed
       - as_of_and_as_known_on_reject_wrong_role_and_bare_u64
       # Phase 83 / M025 S03 — norm_view envelope; cell still Proposed

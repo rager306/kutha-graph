@@ -12,19 +12,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M031-closed
+L_delivery=M032-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M031 closed | Capability proven / Cypher started |
+| L_delivery | M032 closed | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Controller lease from CE review G2 lineage (#4 first) or remaining parked residuals. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+Controller lease from CE review G2 lineage residuals (#8, #9, #10, #11, #13, #29) or parked residuals. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 
