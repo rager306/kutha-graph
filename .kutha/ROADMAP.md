@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M033: CI admission VT — CLOSED (GSD v0.27)
+
+**Closed:** S01 delivered 2026-10-09. Process tag `v0.27`. Honeycomb stays Proposed. CE review P1 #8.
+
+- [x] **S01: Admission any CI residual at row.vt** `risk:high` `depends:[]`
+  > After this: `check_admission_row` uses `live_fact_indices_by_event_id` so patch/suffix VT admits; retracted CI stays `stale_support`. RED oracles first. No Cypher/HNSW. Landed: `m033_ci_admission_vt.rs`; ADR-013 Clarification Phase 93; `93-VERIFICATION.md`.
+
 ## M032: Derive live premise — CLOSED (GSD v0.26)
 
 **Closed:** S01 delivered 2026-10-09. Process tag `v0.26`. Honeycomb stays Proposed. CE review P1 #4.
@@ -313,7 +320,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 ## Later milestones (not active)
 
-Do not start until STATE names them. M018–M032 CLOSED. One lease at a time. M003+ stay unleased.
+Do not start until STATE names them. M018–M033 CLOSED. One lease at a time. M003+ stay unleased.
 
 Proposed order (long horizon, non-authoritative; sequence not calendar; re-derive each step with `/gsd-new-milestone` when leased). Ids are given only to the nearest steps; later waypoints stay unnumbered until a lease creates them (inflation guard).
 
@@ -341,7 +348,8 @@ Proposed order (long horizon, non-authoritative; sequence not calendar; re-deriv
 22. **M030** — CLOSED (S01, GSD v0.24). Detail above.
 23. **M031** — CLOSED (S01, GSD v0.25). Detail above.
 24. **M032** — CLOSED (S01, GSD v0.26). Detail above.
-25. **M003** — Cypher skin over the already-correct AS OF cut (thaw: M003 leased).
+25. **M033** — CLOSED (S01, GSD v0.27). Detail above.
+26. **M003** — Cypher skin over the already-correct AS OF cut (thaw: M003 leased).
 17. **M004** — Science fixture (second vertical → then pack lifecycle has a reason).
 18. *(unnumbered)* Pack lifecycle and Cui allocation — only after two verticals run (rule of three).
 16. **M005** — HNSW fence as retrieve-not-truth; exact AS OF must not be fakeable by ANN.

@@ -4,6 +4,10 @@
 
 **Proposed** (Time/Query fact semantics — Graphiti *semantics* native, without Graphiti runtime)
 
+### Clarification (2026-10-09; Phase 93 / M033 S01; Proposed)
+
+**Admission `stale_support` covers any live CorrectInterval residual at `row.vt`** (CE review P1 #8). `check_admission_row` uses `live_fact_indices_by_event_id` and admits when any residual is live at `(tt=MAX, row.vt)`. A single `fact_index_by_event_id` representative (often the prefix) wrongly denied patch/suffix justifications. Dead CI id still yields `stale_support`. Oracles: `admission_admits_when_cited_ci_residual_covers_patch_vt`, `admission_still_denies_when_no_ci_residual_covers_vt`. Status stays **Proposed**.
+
 ### Clarification (2026-10-09; Phase 92 / M032 S01; Proposed)
 
 **Facade `derive()` premise lookup filters live facts only** (CE review P1 #4). `Runtime::derive` selects the latest product fact for the subject with `invalidated_at.is_none()`, matching `retract` / `correct`. A sole retracted premise yields `UnknownFact` (no Behavior). When a later Assert is retracted, derive cites the prior live Assert as `caused_by`. Oracles: `derive_after_sole_premise_retract_fails_closed`, `derive_skips_invalidated_latest_uses_prior_live`. Status stays **Proposed**.
@@ -231,7 +235,7 @@ Fold identity for Correct/Retract by `event_id` (G-A02 / G-A05 / G-A07):
 3. **Multi-residual CorrectInterval:** `IntervalPatchRejected` — interval patch targets exactly one live VT window.
 4. **G-A07:** after CI, clear windows via `Retract(ci_id)` (already all-live); `Retract(original)` is dead → UnknownFact.
 
-`live_fact_indices_by_event_id` is the selector; `fact_index_by_event_id` stays first-live-or-dead for admission/lookup. Oracles: `m024_fold_identity.rs`. D013-1…D013-4 unchanged. Cell remains **Proposed**.
+`live_fact_indices_by_event_id` is the multi-residual selector (fold identity and, as of Phase 93, admission VT coverage). `fact_index_by_event_id` stays first-live-or-dead for single-representative lookup paths. Oracles: `m024_fold_identity.rs`. D013-1…D013-4 unchanged. Cell remains **Proposed**.
 
 ### Verdict (2026-10-07; Phase 68 / M021 S01; Proposed)
 

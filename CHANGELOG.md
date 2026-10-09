@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-09 — Product: CI admission VT coverage (Phase 93)
+
+### Product
+
+- Admission `stale_support` checks any live CorrectInterval residual at `row.vt` via `live_fact_indices_by_event_id` (not a single `fact_index_by_event_id` representative). Patch/suffix justifications no longer false-deny; retracted CI stays `stale_support` (CE review P1 #8). Oracles: `m033_ci_admission_vt.rs`. Matrix `SEM-m033-ci-admission-vt`. ADR-013 Clarification Phase 93. Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈112.2M / `as_of.n` ≈300.6k vs M032 ≈121.2M / ≈287.0k (−7.4% / +4.7%) and vs Phase 80 ≈122.5M / ≈299.6k (−8.4% / +0.3%).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-013 evidence restaged.
+
+## 2026-10-09 — Process: close M033 / v0.27 (Phase 93)
+
+### Process
+
+- M033 / GSD v0.27 closed. Active Milestone **None**; `L_delivery=M033-closed`. Audit: `.planning/milestones/v0.27-MILESTONE-AUDIT.md`. S01 CI admission VT (`93-VERIFICATION.md`). Next controller lease: G2 lineage (#9…) or parked residuals.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-09 — Product: derive live premise (Phase 92)
 
 ### Product

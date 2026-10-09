@@ -69,6 +69,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M032 S01 (derive live premise):** Phase 92 — `SEM-m032-derive-live-premise` `killed` (owner `M032-S01`). Oracles: `m032_derive_live_premise`.
 
+**M033 S01 (CI admission VT):** Phase 93 — `SEM-m033-ci-admission-vt` `killed` (owner `M033-S01`). Oracles: `m033_ci_admission_vt`.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

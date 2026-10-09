@@ -1114,6 +1114,18 @@ rows:
     gate: default
     owner: M032-S01
     source: Phase 92 / CE review P1 #4
+  - id: SEM-m033-ci-admission-vt
+    plane: product
+    invariant: admission stale_support admits when any CI residual covers row.vt
+    layer: decision
+    oracle:
+      - admission_admits_when_cited_ci_residual_covers_patch_vt
+      - admission_still_denies_when_no_ci_residual_covers_vt
+    kill_mutation: check_admission_row uses only fact_index_by_event_id representative
+    status: killed
+    gate: default
+    owner: M033-S01
+    source: Phase 93 / CE review P1 #8
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

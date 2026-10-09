@@ -22,11 +22,13 @@ impl Runtime {
     pub(crate) fn check_admission_row(&self, row: &Justification) -> Result<(), RuntimeError> {
         for event_id in &row.source_event_ids {
             self.ingest_examine.bump();
+            // CorrectInterval may mint several live residuals under one event_id.
+            // A single representative (fact_index_by_event_id) can miss patch/suffix VT.
             let live = self
                 .fold
-                .fact_index_by_event_id(*event_id)
-                .map(|idx| self.fold.facts()[idx].is_live_at(u64::MAX, row.vt))
-                .unwrap_or(false);
+                .live_fact_indices_by_event_id(*event_id)
+                .iter()
+                .any(|&i| self.fold.facts()[i].is_live_at(u64::MAX, row.vt));
             if !live {
                 return Err(RuntimeError::AdmissionDenied {
                     justification_id: row.justification_id.clone(),
