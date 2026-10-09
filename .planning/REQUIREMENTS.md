@@ -1,6 +1,12 @@
 # Requirements: Kutha
 
-**Milestones:** v0.20 / harness M026 shipped 2026-10-09. Next lease: controller decision. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.21 / harness M027 shipped 2026-10-09. Next lease: controller decision. Lease: `.kutha/STATE.md`.
+
+## v0.21 Requirements (M027)
+
+### Trajectory honesty (Phase 87, S01)
+
+- [x] **TRAJ-01**: `killed` rows with characterization-shaped `kill_mutation` HIGH; ROADMAP `— ACTIVE` forbidden while Active Milestone is None
 
 ## v0.20 Requirements (M026) — complete
 

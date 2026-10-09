@@ -13,7 +13,7 @@ process: docs/process/governor-intake.md
 
 invariants:
   - id: I-trajectory
-    claim: "Active Milestone is None or a ROADMAP M### id; Active Slice is None or an unchecked ROADMAP S## id"
+    claim: "Active Milestone is None or a ROADMAP M### id; Active Slice is None or an unchecked ROADMAP S## id; ROADMAP must not say ACTIVE while the milestone is None"
     source: ".kutha/STATE.md"
     disposition: check
     check: trajectory
@@ -297,7 +297,7 @@ invariants:
     check: product-close-gate
 
   - id: I-test-matrix-kind
-    claim: "Test-matrix consistency cannot be expressed as yaml_map_list (ROADMAP slice ids are M###-S##, not literal tokens; killed requires a non-none kill_mutation)"
+    claim: "Test-matrix consistency cannot be expressed as yaml_map_list (ROADMAP slice ids are M###-S##, not literal tokens; killed requires a non-none kill_mutation that is not characterization-shaped)"
     source: "docs/process/governor-intake.md"
     disposition: kind
     kind: test_matrix

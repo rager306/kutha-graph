@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-09 — Process: close M027 / v0.21 (Phase 87)
+
+### Process
+
+- M027 / GSD v0.21 closed. Active Milestone **None**; `L_delivery=M027-closed`. Audit: `.planning/milestones/v0.21-MILESTONE-AUDIT.md`. S01 trajectory honesty (`87-VERIFICATION.md`). Next controller lease: parked residuals.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
+## 2026-10-09 — Process: trajectory honesty (Phase 87)
+
+### Process
+
+- `killed` rows with characterization-shaped `kill_mutation` (mirror/alias/honor-system/env-floor) are HIGH. ROADMAP `— ACTIVE` is forbidden while Active Milestone is None. `cite-lease` cites ROADMAP ACTIVE headings. Reused `test_matrix` / `glob_absent` / `cite_equals`. No new Python class. No crates.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-09 — Process: lease M027 S01 / GSD Phase 87
 
 ### Process

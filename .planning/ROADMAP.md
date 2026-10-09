@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.20 shipped. Next controller lease: parked residuals or a new plan wave.
+v0.01–v0.21 shipped. Next controller lease: parked residuals or a new plan wave.
 
 ## Id map
 
@@ -10,17 +10,16 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.19** — shipped
-- ✅ **v0.20 Test strength** — Phases 85–86 (harness M026) — shipped 2026-10-09
+- ✅ **v0.01–v0.20** — shipped
+- ✅ **v0.21 Trajectory honesty** — Phase 87 (harness M027) — shipped 2026-10-09
 
-## Phases (v0.20)
+## Phases (v0.21)
 
-- [x] **Phase 85: Generators and missing oracles** — `85-VERIFICATION.md` passed — Coverage mix + G-C04/C05/C11 (S01)
-- [x] **Phase 86: Matrix honesty** — `86-VERIFICATION.md` passed — honor-system / tautology relabel (S02)
+- [x] **Phase 87: Characterization kills + idle ACTIVE** — `87-VERIFICATION.md` passed
 
 ## Progress
 
 | Milestone | Phases | Status |
 |-----------|--------|--------|
-| v0.01–v0.19 | 1–84 | shipped |
-| v0.20 | 85–86 | shipped |
+| v0.01–v0.20 | 1–86 | shipped |
+| v0.21 | 87 | shipped |

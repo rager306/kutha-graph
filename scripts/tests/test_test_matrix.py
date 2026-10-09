@@ -177,6 +177,15 @@ class TestMatrixCheckTests(unittest.TestCase):
         cats = _highs(_scratch(matrix=matrix))
         self.assertIn("matrix-killed", cats)
 
+    def test_killed_with_characterization_shaped_kill_is_high(self) -> None:
+        matrix = _VALID_MATRIX.replace(
+            "kill_mutation: write sidecar in place without tmp+rename",
+            "kill_mutation: mirrors is_known_at filter — not an independent kill",
+            1,
+        )
+        cats = _highs(_scratch(matrix=matrix))
+        self.assertIn("matrix-killed-characterization", cats)
+
     def test_blocked_row_plus_ignore_is_high(self) -> None:
         rust = _ORACLE_RS.replace(
             "#[test]\nfn known04_horn_fires_when_premise_hidden_on_early_cut()",

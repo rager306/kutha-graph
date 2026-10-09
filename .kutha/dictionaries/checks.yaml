@@ -34,6 +34,15 @@ checks:
         label: Active Slice
         require_template: "- [ ] **{id}:"
         require_message: "Active Slice {id} is leased but ROADMAP marks it done (missing `{needle}`); close the lease or reopen the checkbox"
+      - kind: glob_absent
+        glob: .kutha/ROADMAP.md
+        needles:
+          - "— ACTIVE"
+        unless_file_contains:
+          file: .kutha/STATE.md
+          needle: "**Active Milestone:** M"
+        category: lease
+        message: "ROADMAP marks a milestone ACTIVE while STATE Active Milestone is None"
 
   - id: lifecycles
     description: STATE names three orthogonal lifecycles
@@ -1211,6 +1220,12 @@ checks:
             pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3}[a-z]?)\b'
           - path: docs/ADR/README.md
             pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3}[a-z]?)\b'
+          - path: .kutha/ROADMAP.md
+            pattern: 'Active Milestone(?:\*\*)?(?:\s+is|\s+stays)?(?::\*\*|:)?\s+\**?(M\d{3}[a-z]?)\b'
+          - path: .kutha/ROADMAP.md
+            pattern: '(?m)^## (M\d{3}[a-z]?):[^\n]*\bACTIVE\b'
+          - path: .kutha/ROADMAP.md
+            pattern: '\*\*(M\d{3}[a-z]?)\*\*\s+—\s+ACTIVE'
 
   - id: refs-resolve
     description: >-
@@ -1498,7 +1513,8 @@ checks:
   - id: test-matrix
     description: >-
       test-matrix.yaml named oracles exist and statuses are internally consistent
-      (not a coverage number; not product correctness)
+      (not a coverage number; not product correctness). killed forbids none and
+      characterization-shaped kill_mutation text.
     steps:
       - kind: test_matrix
         path: docs/architecture/test-matrix.yaml

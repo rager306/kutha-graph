@@ -2410,6 +2410,11 @@ def _kind_cargo_dep_constraint(check: str, step: Step, ctx: Context, result: Che
 
 
 _MATRIX_STATUSES = frozenset({"killed", "characterization", "gap", "blocked", "spec-only", "gate"})
+_MATRIX_CHAR_KILL = re.compile(
+    r"mirror|alias|tautolog|honor[- ]system|env[- ]floor|"
+    r"not an independent kill|not a fold kill|not domain",
+    re.IGNORECASE,
+)
 _MATRIX_PLANES = frozenset({"product", "harness"})
 _MATRIX_LAYERS = frozenset(
     {"decision", "characterization", "property", "crash", "kill", "governor", "bench"}
@@ -2615,6 +2620,24 @@ def _kind_test_matrix(check: str, step: Step, ctx: Context, result: CheckResult)
                 Severity.HIGH,
                 "matrix-killed",
                 f"{path} killed rows with kill_mutation none: {', '.join(killed_none)}",
+                path,
+            )
+        )
+        return
+    killed_char = [
+        str(row["id"])
+        for row in maps
+        if str(row["status"]) == "killed"
+        and _MATRIX_CHAR_KILL.search(str(row["kill_mutation"]))
+    ]
+    if killed_char:
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "matrix-killed-characterization",
+                f"{path} killed rows with characterization-shaped kill_mutation: "
+                f"{', '.join(killed_char)}",
                 path,
             )
         )
