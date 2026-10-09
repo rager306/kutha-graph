@@ -588,6 +588,48 @@ fn collect_new(p: &Persister, runtime: &Runtime) -> std::io::Result<Vec<Event>> 
     Ok(out)
 }
 
+/// Legacy jsonl+WAL: true when [`Persister::attach_holding`] would fail because
+/// the on-disk tip disagrees with the opened runtime (jsonl ahead of WAL, or
+/// record-count skew). Segmented stores always return false.
+///
+/// Used by `open_for_append` so heal is not limited to `dropped_uncommitted>0`
+/// (CE review #30: complete jsonl quantum with a short WAL opens with dropped=0).
+pub(crate) fn legacy_attach_needs_rewrite(
+    dir: &Path,
+    runtime: &Runtime,
+) -> std::io::Result<bool> {
+    if dir.join(MANIFEST_REL).exists() {
+        return Ok(false);
+    }
+    let jsonl_path = dir.join(EVENTS_JSONL);
+    let wal_path = dir.join(EVENTS_WAL);
+    if !jsonl_path.exists() || !wal_path.exists() {
+        return Ok(false);
+    }
+    let encoded = crate::store::encoded_log(runtime);
+    if encoded.is_empty() {
+        return Ok(false);
+    }
+    let jsonl_len = fs::metadata(&jsonl_path)?.len();
+    let wal_len = fs::metadata(&wal_path)?.len();
+    let jsonl_records = jsonl_newline_count(&jsonl_path)?;
+    if jsonl_records != encoded.len() {
+        return Ok(true);
+    }
+    let last_event = match last_jsonl_event(&jsonl_path, jsonl_len) {
+        Ok(e) => e,
+        Err(_) => return Ok(true),
+    };
+    let last_frame_len = match wal::frame_bytes(&last_event) {
+        Ok(b) => b.len() as u64,
+        Err(_) => return Ok(true),
+    };
+    match wal::last_event_id_at_end(&wal_path, wal_len, last_frame_len) {
+        Ok(wid) => Ok(wid != last_event.id),
+        Err(_) => Ok(true),
+    }
+}
+
 fn jsonl_newline_count(path: &Path) -> std::io::Result<usize> {
     let bytes = fs::read(path)?;
     Ok(bytes.iter().filter(|b| **b == b'\n').count())

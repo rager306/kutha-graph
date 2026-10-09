@@ -19,7 +19,7 @@ Each YAML row is one invariant. `oracle` is a list of real `#[test]` function na
 
 ## Counts (this file)
 
-Counted from `test-matrix.yaml` rows on 2026-10-09 (M030 S01). Recount after you edit the YAML; do not invent a coverage percentage.
+Counted from `test-matrix.yaml` rows on 2026-10-09 (M031 S01). Recount after you edit the YAML; do not invent a coverage percentage.
 
 | Status | Rows |
 |--------|------|
@@ -64,6 +64,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 **M029 S01 (rollover seal heal):** Phase 89 — `SEM-m029-rollover-heal` `killed` (owner `M029-S01`). Oracles: `m029_rollover_heal`.
 
 **M030 S01 (writer lock retention):** Phase 90 — `SEM-m030-writer-lock` `killed` (owner `M030-S01`). Oracles: `m030_writer_lock`.
+
+**M031 S01 (WAL-tail heal):** Phase 91 — `SEM-m031-wal-tail-heal` `killed` (owner `M031-S01`). Oracles: `m031_wal_tail_heal`.
 
 `unowned` is rejected by the governor check.
 

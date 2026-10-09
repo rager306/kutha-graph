@@ -1,6 +1,12 @@
 # Requirements: Kutha
 
-**Milestones:** v0.24 / harness M030 shipped 2026-10-09. Next lease: controller decision. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.25 / harness M031 shipped 2026-10-09. Next lease: controller decision. Lease: `.kutha/STATE.md`.
+
+## v0.25 Requirements (M031) — complete
+
+### WAL-tail heal (Phase 91, S01)
+
+- [x] **HEAL-02**: after Jsonl failpoint (jsonl ahead of WAL, dropped==0), `open_for_append` rewrites and attaches
 
 ## v0.24 Requirements (M030) — complete
 
@@ -14,31 +20,10 @@
 
 - [x] **HEAL-01**: after RolloverTrailer / RolloverNewHeader crash, `open_for_append` finishes the seal and can append
 
-## v0.22 Requirements (M028) — complete
-
-### Dictionary retract on open (Phase 88, S01)
-
-- [x] **REV-01**: trailing `emit_retract_dict` of a `kutha:*` Assert survives persist/open (revoked allow stays revoked)
-
-## v0.21 Requirements (M027) — complete
-
-### Trajectory honesty (Phase 87, S01)
-
-- [x] **TRAJ-01**: `killed` rows with characterization-shaped `kill_mutation` HIGH; ROADMAP `— ACTIVE` forbidden while Active Milestone is None
-
-## v0.20 Requirements (M026) — complete
-
-### Generators (Phase 85, S01)
-
-- [x] **GEN-01**: `MixStyle::Coverage` reaches Retract-before-Assert, overlap, keyed retry, derived Correct/Retract, empty ops; oracles G-C04/C05/C11 with kill_mutation
-
-### Matrix honesty (Phase 86, S02)
-
-- [x] **MAT-01**: Honor-system and tautology rows re-labelled or given real mutants
-
 ## Out of Scope (this milestone)
 
 | Feature | Reason |
 |---------|--------|
-| WAL-tail heal (#30) | Next G1 residual |
+| G2 lineage (#4…) | Next controller lease |
 | Product fold / Cypher / HNSW | Thaw map |
+| Cached verified tip on open | Deferred (tenant ≪ 100MB) |

@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-09 — Product: WAL-tail heal (Phase 91)
+
+### Product
+
+- `open_for_append` heals when legacy jsonl tip is ahead of WAL even if `dropped_uncommitted==0` (`legacy_attach_needs_rewrite` → `persist_unlocked`, then attach). Jsonl failpoint no longer wedges incremental append (CE review #30). Oracles: `m031_wal_tail_heal.rs`. Matrix `SEM-m031-wal-tail-heal`. ADR-010 Clarification Phase 91. Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈110.2M / `as_of.n` ≈281.3k vs M030 ≈116.2M / ≈303.3k (−5.1% / −7.3%) and vs Phase 80 ≈122.5M / ≈299.6k (−10.0% / −6.1%).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-010 evidence restaged.
+
+## 2026-10-09 — Process: close M031 / v0.25 (Phase 91)
+
+### Process
+
+- M031 / GSD v0.25 closed. Active Milestone **None**; `L_delivery=M031-closed`. Audit: `.planning/milestones/v0.25-MILESTONE-AUDIT.md`. S01 WAL-tail heal (`91-VERIFICATION.md`). Next controller lease: G2 lineage (#4) or parked residuals.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-09 — Product: writer lock retention (Phase 90)
 
 ### Product

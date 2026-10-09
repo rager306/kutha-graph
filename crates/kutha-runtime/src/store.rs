@@ -617,7 +617,11 @@ pub fn open_report(dir: &Path) -> std::io::Result<(Runtime, OpenReport)> {
     ))
 }
 
-/// If the on-disk tail is uncommitted, rewrite files to the committed prefix then attach.
+/// Rewrite files when the opened prefix needs heal, then attach.
+///
+/// Heal runs when `committed_prefix` hid events, or when a legacy store's
+/// jsonl tip is ahead of WAL so attach would fail despite `dropped==0`
+/// (CE review #30).
 pub fn open_for_append(dir: &Path) -> std::io::Result<(Runtime, Persister)> {
     open_for_append_until(dir, None)
 }
@@ -638,7 +642,11 @@ fn open_for_append_until(
     fs::create_dir_all(dir)?;
     let lock = acquire_store_write_lock(dir)?;
     let (rt, report) = open_report(dir)?;
-    if report.dropped_uncommitted > 0 {
+    // Heal when COMMIT-01 hid a suffix, or when jsonl tip is ahead of WAL so
+    // attach would fail despite dropped_uncommitted==0 (CE review #30).
+    let needs_heal = report.dropped_uncommitted > 0
+        || crate::persist_append::legacy_attach_needs_rewrite(dir, &rt)?;
+    if needs_heal {
         persist_unlocked(&rt, dir, stop_after)?;
     }
     let persister = Persister::attach_holding(&rt, dir, Some(lock))?;

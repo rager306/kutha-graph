@@ -1091,6 +1091,17 @@ rows:
     gate: default
     owner: M030-S01
     source: Phase 90 / CE review P1 #2
+  - id: SEM-m031-wal-tail-heal
+    plane: product
+    invariant: open_for_append rewrites when jsonl tip is ahead of WAL even if dropped_uncommitted is 0
+    layer: crash
+    oracle:
+      - open_for_append_heals_jsonl_ahead_of_wal
+    kill_mutation: open_for_append heals only when dropped_uncommitted>0
+    status: killed
+    gate: default
+    owner: M031-S01
+    source: Phase 91 / CE review #30
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

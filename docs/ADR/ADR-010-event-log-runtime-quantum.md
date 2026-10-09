@@ -8,6 +8,10 @@
 
 **Non-poison append/checkpoint errors keep `kutha.lock`** (CE review P1 #2 / WRITER-01). Fail-closed `InvalidData` still poisons the `Persister` and releases the lock so a heal writer can attach. Injected failpoints and other `ErrorKind::Other` errors do not poison and do not release: a second writer gets `WouldBlock` while the live `Persister` remains. `Drop` still unlocks (crash = process gone). Oracles: `failpoint_append_keeps_lock_and_writer_usable`, `failpoint_then_checkpoint_still_holds_lock`; heal tests `drop` the crashed writer before `open_for_append` / `migrate`. Status stays **Proposed**.
 
+### Clarification (2026-10-09; Phase 91 / M031 S01; Proposed)
+
+**`open_for_append` heals jsonl-ahead-of-WAL** (CE review #30). Incremental append writes jsonl before WAL frames; a crash after the Jsonl step leaves a complete covering jsonl tip that `load_events_d04` prefers with `dropped_uncommitted==0`, so the old heal gate skipped rewrite while `attach` failed on the WAL last-EventId check. Heal now also runs when `legacy_attach_needs_rewrite` detects that attach tip checks would reject the opened runtime (rewrite via `persist_unlocked`, then attach). Oracles: `open_for_append_heals_jsonl_ahead_of_wal`. Status stays **Proposed**.
+
 ### Evidence (2026-10-02; Proposed)
 
 Historical (superseded by the 2026-10-04 blocks below): M013 routes Assert/Retract/Correct/Behavior and dictionary constructors through `pipeline` (`pipeline.rs`). `rg append_meta crates/` is empty. Oracle: `unknown_relation_rejected_for_assert_justification_and_action` (`m013_write_path.rs`).
