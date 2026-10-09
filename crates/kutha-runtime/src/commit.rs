@@ -11,8 +11,9 @@ pub enum CommitClass {
 }
 
 /// Exhaustive match (no `_`). Product `Assert` is `NeedsOutcome`; reserved `kutha:*`
-/// dictionary asserts are reclassified in [`committed_prefix`] because `TermId` is
-/// an intern integer and `op_commit_class(&Op)` cannot see names.
+/// dictionary asserts (and Retract of those asserts) are reclassified in
+/// [`committed_prefix`] because `TermId` is an intern integer and
+/// `op_commit_class(&Op)` cannot see names.
 pub fn op_commit_class(op: &Op) -> CommitClass {
     match op {
         Op::Assert { .. }
@@ -28,11 +29,21 @@ pub fn op_commit_class(op: &Op) -> CommitClass {
     }
 }
 
-fn class_with_dict(op: &Op, dict: &TermDictionary) -> CommitClass {
-    if let Op::Assert { relation, .. } = op {
-        if dict
-            .lookup(*relation)
-            .is_some_and(|n| n.starts_with("kutha:"))
+fn is_kutha_assert(op: &Op, dict: &TermDictionary) -> bool {
+    matches!(op, Op::Assert { relation, .. } if dict
+        .lookup(*relation)
+        .is_some_and(|n| n.starts_with("kutha:")))
+}
+
+fn class_with_dict(op: &Op, dict: &TermDictionary, events: &[Event]) -> CommitClass {
+    if is_kutha_assert(op, dict) {
+        return CommitClass::SelfCommit;
+    }
+    if let Op::Retract { event_id } = op {
+        if events
+            .iter()
+            .find(|e| e.id == *event_id)
+            .is_some_and(|e| is_kutha_assert(&e.op, dict))
         {
             return CommitClass::SelfCommit;
         }
@@ -62,7 +73,7 @@ pub fn committed_prefix(events: Vec<Event>) -> Vec<Event> {
         .unwrap_or(0);
     let mut end = events.len();
     for (i, e) in events.iter().enumerate().skip(start) {
-        if class_with_dict(&e.op, &dict) == CommitClass::NeedsOutcome {
+        if class_with_dict(&e.op, &dict, &events) == CommitClass::NeedsOutcome {
             end = i;
             break;
         }

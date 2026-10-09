@@ -19,17 +19,17 @@ Each YAML row is one invariant. `oracle` is a list of real `#[test]` function na
 
 ## Counts (this file)
 
-Counted from `test-matrix.yaml` rows on 2026-10-09 (M026 close). Recount after you edit the YAML; do not invent a coverage percentage.
+Counted from `test-matrix.yaml` rows on 2026-10-09 (M028 S01). Recount after you edit the YAML; do not invent a coverage percentage.
 
 | Status | Rows |
 |--------|------|
-| killed | 74 |
+| killed | 75 |
 | characterization | 11 |
 | gap | 0 |
 | blocked | 0 |
 | spec-only | 4 |
 | gate | 1 |
-| **total** | **90** |
+| **total** | **91** |
 
 Planes: product vs harness. Layers: decision, characterization, property, crash, kill, governor, bench.
 
@@ -58,6 +58,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 **M026 S01 (generators / missing oracles):** Phase 85 — `SEM-m026-generators` / `SEM-m026-gc04-assert-id` / `SEM-m026-gc05-facade` / `SEM-m026-gc11-empty` `killed` (owner `M026-S01`). Oracles: `m026_generators`.
 
 **M026 S02 (matrix honesty):** Phase 86 — honor-system rows re-labelled or given real product mutants; tautologies moved to `characterization` (`SEM-naive-as-of-alias`, `SEM-known-at-mirror`, `SEM-seed-budget`; `SEM-seeded-det` → characterization). Oracles: `m026_matrix_honesty`.
+
+**M028 S01 (dict retract on open):** Phase 88 — `SEM-m028-dict-retract` `killed` (owner `M028-S01`). Oracles: `m028_dict_retract`.
 
 `unowned` is rejected by the governor check.
 

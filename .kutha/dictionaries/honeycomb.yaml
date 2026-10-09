@@ -47,6 +47,7 @@ process: docs/process/governor-intake.md
 # 2026-10-08 restage (M025 S04 Phase 84: demo bin + statute fixtures): ADR-013; map/delivery/capability unchanged.
 # 2026-10-09 restage (M026 S01 Phase 85: generators + G-C04/C05/C11): ADR-023; map/delivery/capability unchanged.
 # 2026-10-09 restage (M026 S02 Phase 86: matrix honesty): ADR-023; map/delivery/capability unchanged.
+# 2026-10-09 restage (M028 S01 Phase 88: dict Retract SelfCommit): ADR-014; map/delivery/capability unchanged.
 # 2026-10-06 restage (M018 S04 Phase 48: I-F15/I-F16 oracles, GATE-01 BENCH-controller): ADR-041, ADR-023; map/delivery/capability unchanged.
 
 locks:
@@ -271,6 +272,9 @@ cells:
       - crash_after_assert_keeps_defines_drops_uncommitted_assert
       - open_after_intern_only_recovers_define_meanings
       - receipt_digest_len_constant_across_cascade_widths
+      # Phase 88 / M028 S01 — dict Retract SelfCommit; cell still Proposed
+      - trailing_emit_retract_dict_survives_persist_open
+      - trailing_dict_retract_without_user_qo_survives_open
 
   - id: ADR-020
     axis: Space

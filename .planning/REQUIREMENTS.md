@@ -1,8 +1,14 @@
 # Requirements: Kutha
 
-**Milestones:** v0.21 / harness M027 shipped 2026-10-09. Next lease: controller decision. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.22 / harness M028 shipped 2026-10-09. Next lease: controller decision. Lease: `.kutha/STATE.md`.
 
-## v0.21 Requirements (M027)
+## v0.22 Requirements (M028) — complete
+
+### Dictionary retract on open (Phase 88, S01)
+
+- [x] **REV-01**: trailing `emit_retract_dict` of a `kutha:*` Assert survives persist/open (revoked allow stays revoked)
+
+## v0.21 Requirements (M027) — complete
 
 ### Trajectory honesty (Phase 87, S01)
 

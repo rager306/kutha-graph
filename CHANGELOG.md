@@ -4,6 +4,36 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-09 — Product: dict Retract SelfCommit (Phase 88)
+
+### Product
+
+- Retract of a `kutha:*` Assert is SelfCommit in `class_with_dict` (same as the target Assert). Trailing `emit_retract_dict` survives persist/open; revoked allow stays `UnknownRelation`. Dictionary mode still writes no `QuantumOutcome`. Oracles: `m028_dict_retract.rs`. Matrix `SEM-m028-dict-retract`. ADR-014 Clarification Phase 88. Bench four `--quick` runs (`KUTHA_BENCH_N=10000`): median `ingest_plain.n` ≈126.9M / `as_of.n` ≈302.1k vs Phase 80 ≈122.5M / ≈299.6k (+3.6% / +0.8%). Vs M025 post ≈110.6M / ≈282k ingest median is noisier (samples 108.0–146.0M); fold path unchanged.
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-014 evidence restaged.
+
+## 2026-10-09 — Process: close M028 / v0.22 (Phase 88)
+
+### Process
+
+- M028 / GSD v0.22 closed. Active Milestone **None**; `L_delivery=M028-closed`. Audit: `.planning/milestones/v0.22-MILESTONE-AUDIT.md`. S01 dict retract on open (`88-VERIFICATION.md`). Next controller lease: parked residuals / review P1.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
+## 2026-10-09 — Process: lease M028 S01 / GSD Phase 88
+
+### Process
+
+- Active Milestone **M028**, Active Slice **S01** (`L_delivery=M027-closed`): trailing dictionary Retract on open (CE review P0 #1).
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-09 — Process: close M027 / v0.21 (Phase 87)
 
 ### Process

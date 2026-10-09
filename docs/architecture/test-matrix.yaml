@@ -1055,6 +1055,18 @@ rows:
     gate: default
     owner: M026-S01
     source: Phase 85 / G-C11
+  - id: SEM-m028-dict-retract
+    plane: product
+    invariant: trailing emit_retract_dict of kutha:* Assert survives persist/open
+    layer: crash
+    oracle:
+      - trailing_emit_retract_dict_survives_persist_open
+      - trailing_dict_retract_without_user_qo_survives_open
+    kill_mutation: class_with_dict treats Retract as NeedsOutcome even when the target is a kutha:* Assert
+    status: killed
+    gate: default
+    owner: M028-S01
+    source: Phase 88 / CE review P0 #1
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

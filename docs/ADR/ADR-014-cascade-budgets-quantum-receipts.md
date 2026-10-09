@@ -51,6 +51,10 @@ Write-path atomicity for intern Define and D014-1 receipt shape (G-A09 / G-A10):
 
 Oracles: `m024_write_path.rs`. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
 
+### Clarification (2026-10-09; Phase 88 / M028 S01; Proposed)
+
+**Retract of a `kutha:*` Assert is SelfCommit** (CE review P0 #1). `class_with_dict` already treated reserved Asserts as SelfCommit; Retract of those asserts stayed `NeedsOutcome`, so `committed_prefix` dropped a trailing `emit_retract_dict` and `open` resurrected the allow. Dictionary mode still writes no `QuantumOutcome`. Oracles: `trailing_emit_retract_dict_survives_persist_open`, `trailing_dict_retract_without_user_qo_survives_open`. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18
