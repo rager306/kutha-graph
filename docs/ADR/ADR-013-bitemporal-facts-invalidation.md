@@ -4,6 +4,10 @@
 
 **Proposed** (Time/Query fact semantics — Graphiti *semantics* native, without Graphiti runtime)
 
+### Clarification (2026-10-09; Phase 94 / M034 S01; Proposed)
+
+**Correct Horn follow-ons mirror CorrectInterval except-set and fire order** (CE review P1 #9). `rule_follow_ons` for `Op::Correct` builds a retract except-set, calls `horn_fires_except`, and orders fires-then-retracts so LIFO applies retracts before re-fires. A same-triple Correct (e.g. VT-only) no longer loses its derived inverse to suppression by the still-live old row. Object-changing Correct re-fires the new inverse. Oracles: `correct_same_triple_keeps_derived_inverse_live`, `correct_object_change_re_fires_new_inverse`. Status stays **Proposed**.
+
 ### Clarification (2026-10-09; Phase 93 / M033 S01; Proposed)
 
 **Admission `stale_support` covers any live CorrectInterval residual at `row.vt`** (CE review P1 #8). `check_admission_row` uses `live_fact_indices_by_event_id` and admits when any residual is live at `(tt=MAX, row.vt)`. A single `fact_index_by_event_id` representative (often the prefix) wrongly denied patch/suffix justifications. Dead CI id still yields `stale_support`. Oracles: `admission_admits_when_cited_ci_residual_covers_patch_vt`, `admission_still_denies_when_no_ci_residual_covers_vt`. Status stays **Proposed**.

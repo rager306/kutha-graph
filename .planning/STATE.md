@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.27
-milestone_name: CI admission VT
+milestone: v0.28
+milestone_name: Correct Horn re-fire
 status: complete
 stopped_at: null
-last_updated: "2026-10-09T12:30:00.000Z"
+last_updated: "2026-10-09T12:45:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.27 CI admission VT (harness M033)  
-**Phase:** 93 complete  
-**Status:** M033 closed — CE review P1 #8
+**Milestone:** v0.28 Correct Horn re-fire (harness M034)  
+**Phase:** 94 complete  
+**Status:** M034 closed — CE review P1 #9

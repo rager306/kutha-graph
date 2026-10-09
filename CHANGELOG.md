@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-09 — Product: Correct Horn re-fire (Phase 94)
+
+### Product
+
+- `rule_follow_ons` for `Op::Correct` mirrors CorrectInterval: retract except-set, `horn_fires_except`, fires-then-retracts so LIFO retracts before re-fires. Same-triple Correct (e.g. VT-only) keeps the derived inverse; object-changing Correct re-fires the new inverse (CE review P1 #9). Oracles: `m034_correct_refire.rs`. Matrix `SEM-m034-correct-refire`. ADR-013 Clarification Phase 94. Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈113.6M / `as_of.n` ≈328.9k vs M033 ≈112.2M / ≈300.6k (+1.2% / +9.4%) and vs Phase 80 ≈122.5M / ≈299.6k (−7.3% / +9.8%).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-013 evidence restaged.
+
+## 2026-10-09 — Process: close M034 / v0.28 (Phase 94)
+
+### Process
+
+- M034 / GSD v0.28 closed. Active Milestone **None**; `L_delivery=M034-closed`. Audit: `.planning/milestones/v0.28-MILESTONE-AUDIT.md`. S01 Correct Horn re-fire (`94-VERIFICATION.md`). Next controller lease: G2 lineage (#10…) or parked residuals.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-09 — Product: CI admission VT coverage (Phase 93)
 
 ### Product

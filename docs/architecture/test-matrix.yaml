@@ -1126,6 +1126,18 @@ rows:
     gate: default
     owner: M033-S01
     source: Phase 93 / CE review P1 #8
+  - id: SEM-m034-correct-refire
+    plane: product
+    invariant: Correct follow-ons re-fire Horn with except-set (same-triple kept)
+    layer: decision
+    oracle:
+      - correct_same_triple_keeps_derived_inverse_live
+      - correct_object_change_re_fires_new_inverse
+    kill_mutation: Correct branch uses horn_fires without except and retracts-then-fires order
+    status: killed
+    gate: default
+    owner: M034-S01
+    source: Phase 94 / CE review P1 #9
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

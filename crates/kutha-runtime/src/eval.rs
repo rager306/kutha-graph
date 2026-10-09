@@ -60,11 +60,22 @@ impl Runtime {
                 valid_from,
                 valid_to,
             } => {
-                let mut out = self.retract_derived(event, *event_id);
+                // Mirror CorrectInterval: except-set + fires-then-retracts so a
+                // same-triple Correct (e.g. VT-only) is not suppressed by the
+                // still-live old derived row before LIFO applies the retract.
+                let retracts = self.retract_derived(event, *event_id);
+                let except: HashSet<EventId> = retracts
+                    .iter()
+                    .filter_map(|e| match &e.op {
+                        Op::Retract { event_id: rid } => Some(*rid),
+                        _ => None,
+                    })
+                    .collect();
+                let mut fires = Vec::new();
                 if let Some(idx) = self.fold.fact_index_by_event_id(*event_id) {
                     let fact = &self.fold.facts()[idx];
                     let (s, r) = (fact.subject, fact.relation);
-                    out.extend(self.horn_fires(
+                    fires.extend(self.horn_fires_except(
                         event.id,
                         event.ingested_at,
                         s,
@@ -72,8 +83,11 @@ impl Runtime {
                         *object,
                         *valid_from,
                         *valid_to,
+                        &except,
                     )?);
                 }
+                let mut out = fires;
+                out.extend(retracts);
                 Ok(out)
             }
             Op::CorrectInterval {

@@ -35,6 +35,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.25 | 91 | M031 | S01 | open_for_append heals jsonl-ahead-of-WAL (CE review #30) | shipped 2026-10-09 |
 | v0.26 | 92 | M032 | S01 | derive() live-premise filter (CE review P1 #4) | shipped 2026-10-09 |
 | v0.27 | 93 | M033 | S01 | CI multi-residual admission VT (CE review P1 #8) | shipped 2026-10-09 |
+| v0.28 | 94 | M034 | S01 | Correct Horn re-fire except-set (CE review P1 #9) | shipped 2026-10-09 |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

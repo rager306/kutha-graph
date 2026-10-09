@@ -71,6 +71,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M033 S01 (CI admission VT):** Phase 93 — `SEM-m033-ci-admission-vt` `killed` (owner `M033-S01`). Oracles: `m033_ci_admission_vt`.
 
+**M034 S01 (Correct horn re-fire):** Phase 94 — `SEM-m034-correct-refire` `killed` (owner `M034-S01`). Oracles: `m034_correct_refire`.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)
