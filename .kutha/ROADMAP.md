@@ -209,7 +209,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
   > After this: ADR-013 states `as_known_on` is TT-only by design (G-A08/G-C03); pin oracles `m025_as_known_on_vt`; `semantic-contract-validation.md` agrees.
 - [x] **S02: Clock-safe facade** `risk:high` `depends:[S01]`
   > After this: `as_of` takes `ValidTime` and `as_known_on` takes `WallTime` at public call sites; bare `u64` and wrong-role clocks fail compile (trybuild `ui_clock_facade`); `Op` storage stays `u64`; no fifth axis; bench ≤10%.
-- [ ] **S03: Legal answer envelope** `risk:high` `depends:[S02]`
+- [x] **S03: Legal answer envelope** `risk:high` `depends:[S02]`
   > After this: `norm_view(vt, wall)` returns triples with eligibility and typed non-success; live ∩ eligible is the facade's job; oracles include retracted-premise and missing-anchor.
 - [ ] **S04: Demo binary and real-text fixtures** `risk:medium` `depends:[S03]`
   > After this: thin bin answers "norm in force on D, as known on W" over fixture ops; 2–3 real-text statute fixtures as test data only; `I-legal-pack-not-next` stays.

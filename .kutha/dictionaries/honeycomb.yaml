@@ -43,6 +43,7 @@ process: docs/process/governor-intake.md
 # 2026-10-08 restage (M024 S02 Phase 80: Define SelfCommit crash window / D014-1 digest pin): ADR-014; map/delivery/capability unchanged.
 # 2026-10-08 restage (M025 S01 Phase 81: as_known_on TT-only by design): ADR-013; map/delivery/capability unchanged.
 # 2026-10-08 restage (M025 S02 Phase 82: clock-safe as_of/as_known_on facade): ADR-013; map/delivery/capability unchanged.
+# 2026-10-08 restage (M025 S03 Phase 83: norm_view envelope): ADR-013, ADR-090; map/delivery/capability unchanged.
 # 2026-10-06 restage (M018 S04 Phase 48: I-F15/I-F16 oracles, GATE-01 BENCH-controller): ADR-041, ADR-023; map/delivery/capability unchanged.
 
 locks:
@@ -209,6 +210,12 @@ cells:
       - as_known_on_keeps_closed_vt_that_as_of_sees_in_window
       # Phase 82 / M025 S02 — clock-safe facade trybuild; cell still Proposed
       - as_of_and_as_known_on_reject_wrong_role_and_bare_u64
+      # Phase 83 / M025 S03 — norm_view envelope; cell still Proposed
+      - norm_view_missing_anchor_when_no_tt_anchor
+      - norm_view_abstains_when_derived_ineligible_after_premise_retract
+      - norm_view_ok_lists_assert_in_force_at_knowledge_cut
+      - norm_view_unknown_when_fact_not_yet_in_force
+      - norm_view_conflict_when_both_polarities_live
       # Phase 62 / M019 S07 — list-scan model vs fold; cell still Proposed
       - bitemporal_model_matches_fold_live_at_and_as_of
       - bitemporal_model_agrees_on_ff5_statute
@@ -543,6 +550,9 @@ cells:
     evidence:
       # Phase 68 / M021 S01 — TR-02 mapping only; full ontology still frozen
       - tr02_force_vt_publication_anchor_decision_as_of
+      # Phase 83 / M025 S03 — TR-06 thin envelope only; full ontology still frozen
+      - norm_view_missing_anchor_when_no_tt_anchor
+      - norm_view_abstains_when_derived_ineligible_after_premise_retract
 
   - id: ADR-091
     axis: Packaging

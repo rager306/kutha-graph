@@ -946,6 +946,21 @@ rows:
     gate: default
     owner: M025-S02
     source: Phase 82 / ADR-013 Clarification 2026-10-08 G-C09
+  - id: SEM-m025-norm-view
+    plane: product
+    invariant: norm_view force∩knowledge∩eligibility with typed non-success
+    layer: decision
+    oracle:
+      - norm_view_missing_anchor_when_no_tt_anchor
+      - norm_view_abstains_when_derived_ineligible_after_premise_retract
+      - norm_view_ok_lists_assert_in_force_at_knowledge_cut
+      - norm_view_unknown_when_fact_not_yet_in_force
+      - norm_view_conflict_when_both_polarities_live
+    kill_mutation: omit eligibility filter so retracted-premise derived appears in Ok
+    status: killed
+    gate: default
+    owner: M025-S03
+    source: Phase 83 / ADR-013 Clarification 2026-10-08 G-B01
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

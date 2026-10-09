@@ -14,7 +14,7 @@
 
 ### Answer envelope (Phase 83, S03)
 
-- [ ] **ENV-01**: `norm_view(vt, wall)` with eligibility and typed non-success
+- [x] **ENV-01**: `norm_view(vt, wall)` with eligibility and typed non-success
 
 ### Demo (Phase 84, S04)
 

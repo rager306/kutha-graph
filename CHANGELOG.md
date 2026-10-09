@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-08 — Process: close M025 S03 / lease S04 (Phase 84)
+
+### Process
+
+- S03 done (`83-VERIFICATION.md`). Active Slice **S04** (`L_delivery=M025-S03-done`): demo binary + real-text fixtures.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
+## 2026-10-08 — Product: legal answer envelope norm_view (Phase 83)
+
+### Product
+
+- `Runtime::norm_view(ValidTime, WallTime)` → `NormView` (`Ok` / `Conflict` / `Abstain` / `Unknown` / `MissingAnchor`). Force ∩ knowledge ∩ eligibility (R-22); reuses `knowledge_tt_at`, `live_facts_at`, `derivation_eligible_at`, `conflict_report_at`. `as_of` / ASOF-ELIG-01 unchanged. Oracles: `m025_norm_view`. ADR-013 / ADR-090 Clarifications; matrix `SEM-m025-norm-view`.
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-013/090 evidence restaged; pack ontology still frozen.
+
 ## 2026-10-08 — Process: close M025 S02 / lease S03 (Phase 83)
 
 ### Process

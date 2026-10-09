@@ -34,8 +34,8 @@ pub use leapfrog::{AdjacencyIter, leapfrog_intersect};
 pub use log::EventLog;
 pub use materializer::{CsrMaterializer, Materializer};
 pub use quantum::{
-    ActionRecord, ConflictReport, Justification, OutcomeDisposition, PersistedQuantumOutcome,
-    QuantumOutcome, Runtime, RuntimeError, disposition,
+    ActionRecord, ConflictReport, Justification, NormTriple, NormView, OutcomeDisposition,
+    PersistedQuantumOutcome, QuantumOutcome, Runtime, RuntimeError, disposition,
 };
 pub use receipt::{QuantumReceipt, digest_to_hex};
 pub use snapshot::Snapshot;

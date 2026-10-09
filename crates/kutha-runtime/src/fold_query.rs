@@ -101,6 +101,14 @@ impl GraphFold {
             .collect()
     }
 
+    /// Greatest `TtAnchor` wall ≤ `wall` → knowledge transaction time.
+    ///
+    /// Shared by [`Self::as_known_on`] and [`crate::Runtime::norm_view`].
+    pub fn knowledge_tt_at(&self, wall: WallTime) -> Option<u64> {
+        let wall = wall.as_u64();
+        self.tt_anchors.range(..=wall).next_back().map(|(_, &tt)| tt)
+    }
+
     /// Product triples as known on a wall date.
     ///
     /// Greatest `Op::TtAnchor` with `wall` at or before `wall`, then
@@ -110,8 +118,7 @@ impl GraphFold {
     /// Takes [`WallTime`] (not `impl Into`): bare `u64` and wrong-role clocks
     /// (`ValidTime` / `TransactionTime`) do not compile (M025 S02 / G-C09).
     pub fn as_known_on(&self, wall: WallTime) -> Option<Vec<(TermId, TermId, TermId)>> {
-        let wall = wall.as_u64();
-        let tt = *self.tt_anchors.range(..=wall).next_back()?.1;
+        let tt = self.knowledge_tt_at(wall)?;
         Some(self.known_at(tt))
     }
 

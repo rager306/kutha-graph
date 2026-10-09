@@ -175,6 +175,17 @@ Derived Horn EventIds are hash-stable (`Event::stable_derived`, prefix `kutha-de
 
 `Op::Retract { event_id }` invalidates **every** live Fact whose `event_id` matches (CorrectInterval may mint prefix/patch/suffix residuals sharing one id). `fact_index_by_event_id` remains first-live for Correct / CorrectInterval targeting. Oracles: `retract_correct_interval_event_id_clears_all_residuals`, `retract_assert_event_id_still_clears_single_row`. D013-1…D013-4 unchanged. Cell remains **Proposed**.
 
+### Clarification (2026-10-08; Phase 83 / M025 S03; Proposed)
+
+**G-B01 / G-B04 / G-C10 / R-22 — legal answer envelope `norm_view`:**
+
+1. `Runtime::norm_view(vt, wall)` resolves knowledge TT via greatest `TtAnchor` ≤ wall (`GraphFold::knowledge_tt_at`), then `live_at(tt, vt)`.
+2. Behavior-derived facts require `derivation_eligible_at`; Assert facts pass. Live ∩ eligible is the facade's job — `as_of` and ASOF-ELIG-01 stay support-live.
+3. Typed outcomes: `Ok(NormTriple…)` / `Conflict` (both polarities) / `Abstain` (live but none eligible) / `Unknown` (empty force∩knowledge) / `MissingAnchor` (no anchor). No Incomplete in this slice.
+4. Cross-cite ADR-090 TR-06; pack ontology stays frozen.
+
+Oracles: `m025_norm_view.rs`. D013-1…D013-4 unchanged. Cell remains **Proposed**.
+
 ### Clarification (2026-10-08; Phase 82 / M025 S02; Proposed)
 
 **G-C09 / G-B02 — clock-safe public facade:**

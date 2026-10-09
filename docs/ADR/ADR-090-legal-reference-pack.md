@@ -228,6 +228,10 @@ Target contract, from docs/architecture/semantic-gap-review.md (F13): TR-02 (no 
 4. Dictionary taxonomy for L_AGENT (norm/decision/commitment/procedure) vs Memanto-style product surface — keep engine-shaped.
 5. Whether Quantum Receipts (ADR-014 class) bind AmendmentEvent digests into sealed RVF exports.
 
+## Clarification (2026-10-08; Phase 83 / M025 S03; Proposed)
+
+**TR-06 thin product surface (not pack thaw):** `Runtime::norm_view(vt, wall)` returns typed outcomes `Ok` / `Conflict` / `Abstain` / `Unknown` / `MissingAnchor` (Incomplete deferred). Force ∩ knowledge ∩ eligibility facade; `as_of` unchanged. Oracles: `m025_norm_view.rs`. Full ontology / S3–S6 remain frozen. Cell remains **Proposed**.
+
 ## Evidence (2026-10-07; Phase 68 / M021 S01; Proposed)
 
 **TR-02 mapping on two core axes (no silent substitution):**

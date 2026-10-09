@@ -183,6 +183,39 @@ pub struct ConflictReport {
     pub negative_supports: Vec<u64>,
 }
 
+/// One product fact in a successful [`NormView`] (M025 S03 / G-B01).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct NormTriple {
+    pub subject: TermId,
+    pub relation: TermId,
+    pub object: TermId,
+    pub claim_id: EventId,
+    pub event_id: EventId,
+    /// Always true in [`NormView::Ok`]; eligibility was the admission gate.
+    pub eligible: bool,
+}
+
+/// Legal answer envelope: force (VT) ∩ knowledge (wall) ∩ eligibility (R-22).
+///
+/// Does not change [`Runtime::as_of`] or ASOF-ELIG-01. Typed non-success per
+/// TR-06 / G-B04 / G-C10 (no Incomplete in this thin slice).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum NormView {
+    /// Eligible live product facts at the force∩knowledge cut.
+    Ok(Vec<NormTriple>),
+    /// Both polarities live for a claim intersecting the cut.
+    Conflict {
+        claim: EventId,
+        report: ConflictReport,
+    },
+    /// Live facts exist but none pass eligibility (e.g. retracted-premise derived).
+    Abstain,
+    /// Anchor present; force∩knowledge has no product facts.
+    Unknown,
+    /// No `TtAnchor` at or before the wall.
+    MissingAnchor,
+}
+
 /// Authoritative row for `quantum_outcomes.jsonl` (D-O1). Not a droppable lease.
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct PersistedQuantumOutcome {
@@ -579,6 +612,74 @@ impl Runtime {
     /// not compile (M025 S02 / G-C09).
     pub fn as_known_on(&self, wall: WallTime) -> Option<Vec<(TermId, TermId, TermId)>> {
         self.fold.as_known_on(wall)
+    }
+
+    /// Norm in force on `vt`, as known on `wall` (M025 S03 / Phase 83).
+    ///
+    /// Resolves knowledge TT from the greatest `TtAnchor` ≤ `wall`, then
+    /// `live_at(tt, vt)`. Behavior-derived facts require
+    /// [`Self::derivation_eligible_at`]; Assert facts pass. Conflict (both
+    /// polarities) wins over Ok. `as_of` / ASOF-ELIG-01 unchanged.
+    pub fn norm_view(&self, vt: ValidTime, wall: WallTime) -> NormView {
+        let Some(tt) = self.fold.knowledge_tt_at(wall) else {
+            return NormView::MissingAnchor;
+        };
+        let vt_u = vt.as_u64();
+        let live = self.fold.live_facts_at(tt, vt);
+        if live.is_empty() {
+            return NormView::Unknown;
+        }
+
+        let mut seen_claims = std::collections::BTreeSet::new();
+        for f in &live {
+            if !seen_claims.insert(f.claim_id) {
+                continue;
+            }
+            let report = self.conflict_report_at(
+                f.claim_id,
+                TransactionTime::from(tt),
+                ValidTime::from(vt_u),
+            );
+            if !report.positive_supports.is_empty() && !report.negative_supports.is_empty() {
+                return NormView::Conflict {
+                    claim: f.claim_id,
+                    report,
+                };
+            }
+        }
+
+        let mut eligible = Vec::new();
+        for f in live {
+            let is_behavior = matches!(
+                self.event_by_id(f.event_id).map(|e| &e.op),
+                Some(Op::Behavior { .. })
+            );
+            let ok = if is_behavior {
+                self.derivation_eligible_at(
+                    f.claim_id,
+                    TransactionTime::from(tt),
+                    ValidTime::from(vt_u),
+                )
+            } else {
+                true
+            };
+            if ok {
+                eligible.push(NormTriple {
+                    subject: f.subject,
+                    relation: f.relation,
+                    object: f.object(),
+                    claim_id: f.claim_id,
+                    event_id: f.event_id,
+                    eligible: true,
+                });
+            }
+        }
+
+        if eligible.is_empty() {
+            NormView::Abstain
+        } else {
+            NormView::Ok(eligible)
+        }
     }
 
     pub fn live_at(

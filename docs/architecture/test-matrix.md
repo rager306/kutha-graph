@@ -51,6 +51,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M025 S02 (clock-safe facade):** Phase 82 — `SEM-m025-clock-facade` `killed` (owner `M025-S02`). Oracles: `ui_clock_facade`.
 
+**M025 S03 (legal answer envelope):** Phase 83 — `SEM-m025-norm-view` `killed` (owner `M025-S03`). Oracles: `m025_norm_view`.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)
