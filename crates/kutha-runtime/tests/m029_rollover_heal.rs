@@ -101,6 +101,8 @@ fn open_for_append_heals_after_rollover_trailer_crash() {
     let opened = store::open(&dir).expect("read path must still open after mid-rollover");
     assert_eq!(opened.fold().fingerprint(), committed_fp);
 
+    // Crash = process gone: Drop unlocks. Live writers keep kutha.lock on Other (M030).
+    drop(p);
     let (mut healed, mut writer) =
         store::open_for_append(&dir).expect("open_for_append must finish interrupted rollover");
     assert_eq!(healed.fold().fingerprint(), committed_fp);
@@ -126,6 +128,7 @@ fn open_for_append_heals_after_rollover_new_header_crash() {
     let opened = store::open(&dir).expect("read path must still open after mid-rollover");
     assert_eq!(opened.fold().fingerprint(), committed_fp);
 
+    drop(p);
     let (mut healed, mut writer) =
         store::open_for_append(&dir).expect("open_for_append must finish interrupted rollover");
     assert_eq!(healed.fold().fingerprint(), committed_fp);

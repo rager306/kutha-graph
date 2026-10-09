@@ -1079,6 +1079,18 @@ rows:
     gate: default
     owner: M029-S01
     source: Phase 89 / CE review P1 #3
+  - id: SEM-m030-writer-lock
+    plane: product
+    invariant: non-poison Other append/checkpoint errors keep kutha.lock while Persister lives
+    layer: crash
+    oracle:
+      - failpoint_append_keeps_lock_and_writer_usable
+      - failpoint_then_checkpoint_still_holds_lock
+    kill_mutation: append/checkpoint Err path always release_write_lock including ErrorKind::Other
+    status: killed
+    gate: default
+    owner: M030-S01
+    source: Phase 90 / CE review P1 #2
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

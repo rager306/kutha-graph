@@ -4,6 +4,10 @@
 
 **Proposed** (Time-band physics — log as SoT and one emit→idle quantum; not product runtime)
 
+### Clarification (2026-10-09; Phase 90 / M030 S01; Proposed)
+
+**Non-poison append/checkpoint errors keep `kutha.lock`** (CE review P1 #2 / WRITER-01). Fail-closed `InvalidData` still poisons the `Persister` and releases the lock so a heal writer can attach. Injected failpoints and other `ErrorKind::Other` errors do not poison and do not release: a second writer gets `WouldBlock` while the live `Persister` remains. `Drop` still unlocks (crash = process gone). Oracles: `failpoint_append_keeps_lock_and_writer_usable`, `failpoint_then_checkpoint_still_holds_lock`; heal tests `drop` the crashed writer before `open_for_append` / `migrate`. Status stays **Proposed**.
+
 ### Evidence (2026-10-02; Proposed)
 
 Historical (superseded by the 2026-10-04 blocks below): M013 routes Assert/Retract/Correct/Behavior and dictionary constructors through `pipeline` (`pipeline.rs`). `rg append_meta crates/` is empty. Oracle: `unknown_relation_rejected_for_assert_justification_and_action` (`m013_write_path.rs`).

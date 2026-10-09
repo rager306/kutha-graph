@@ -41,9 +41,11 @@ pub enum AppendStep {
 /// Incremental framed append after a full [`crate::store::persist`] or [`crate::store::open`] (D-02).
 ///
 /// A fail-closed `append` (`ErrorKind::InvalidData`, e.g. tail-guard mismatch)
-/// poisons this object: later `append` / `checkpoint` / `close` return that
-/// same kind and write nothing. Heal is a new [`crate::store::open_for_append`].
-/// Injected failpoints stay `ErrorKind::Other` and do not poison.
+/// poisons this object and releases `kutha.lock`: later `append` / `checkpoint`
+/// / `close` return that same kind and write nothing. Heal is a new
+/// [`crate::store::open_for_append`]. Injected failpoints stay `ErrorKind::Other`,
+/// do not poison, and **keep** the write lock so a second writer cannot attach
+/// while this `Persister` is still alive (CE review P1 #2).
 pub struct Persister {
     dir: PathBuf,
     durable_count: usize,
@@ -172,7 +174,8 @@ impl Persister {
         match self.checkpoint_until(runtime, None) {
             Ok(()) => Ok(()),
             Err(e) => {
-                self.release_write_lock();
+                self.poison_if_fail_closed(&e);
+                self.release_lock_if_poisoned();
                 Err(e)
             }
         }
@@ -181,6 +184,14 @@ impl Persister {
     fn release_write_lock(&mut self) {
         if let Some(lock) = self.write_lock.take() {
             let _ = lock.unlock();
+        }
+    }
+
+    /// Single-writer lock is released only on the fail-closed (poison) path.
+    /// Transient / injected (`Other`) errors keep the lock; [`Drop`] still unlocks.
+    fn release_lock_if_poisoned(&mut self) {
+        if self.poisoned.is_some() {
+            self.release_write_lock();
         }
     }
 
@@ -200,7 +211,7 @@ impl Persister {
             Ok(()) => Ok(()),
             Err(e) => {
                 self.poison_if_fail_closed(&e);
-                self.release_write_lock();
+                self.release_lock_if_poisoned();
                 Err(e)
             }
         }

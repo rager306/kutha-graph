@@ -317,6 +317,8 @@ fn open_for_append_heals_then_appends() {
         Err(e) => assert_eq!(e.kind(), ErrorKind::InvalidData),
     }
 
+    // Crash = process gone: Drop unlocks. Live writers keep kutha.lock on Other (M030).
+    drop(p);
     let (mut healed, mut p) = store::open_for_append(&dir)
         .expect("open_for_append must persist the committed prefix then attach");
     assert_eq!(healed.fold().fingerprint(), committed_fp);

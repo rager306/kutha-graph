@@ -941,6 +941,8 @@ fn open_for_append_heals_and_appends_on_segmented() {
     emit_product_assert(&mut rt, "p54-heal-article", "p54-heal-80");
     crash_omit_last(&mut p, &rt);
 
+    // Crash = process gone: Drop unlocks. Live writers keep kutha.lock on Other (M030).
+    drop(p);
     let (mut healed, mut p) = store::open_for_append(&dir)
         .expect("open_for_append must persist the committed prefix then attach");
     assert_eq!(healed.fold().fingerprint(), committed_fp);
@@ -1349,6 +1351,7 @@ fn migrate_drops_uncommitted_suffix_and_reports() {
     let mut p = store::Persister::attach(&rt, &dir).unwrap();
     emit_product_assert(&mut rt, "art-mig-drop", "99-kmh");
     crash_omit_last(&mut p, &rt);
+    drop(p);
     let report = store::migrate(&dir).unwrap();
     assert!(
         report.dropped_uncommitted > 0,

@@ -1,6 +1,12 @@
 # Requirements: Kutha
 
-**Milestones:** v0.23 / harness M029 shipped 2026-10-09. Next lease: controller decision. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.24 / harness M030 shipped 2026-10-09. Next lease: controller decision. Lease: `.kutha/STATE.md`.
+
+## v0.24 Requirements (M030) — complete
+
+### Writer lock retention (Phase 90, S01)
+
+- [x] **LOCK-01**: non-poison `Other` append/checkpoint errors keep `kutha.lock`; poison still releases for heal
 
 ## v0.23 Requirements (M029) — complete
 
@@ -34,6 +40,5 @@
 
 | Feature | Reason |
 |---------|--------|
-| Persister lock-on-error (#2) | Next G1 residual |
 | WAL-tail heal (#30) | Next G1 residual |
 | Product fold / Cypher / HNSW | Thaw map |

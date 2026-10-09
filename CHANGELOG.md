@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-09 — Product: writer lock retention (Phase 90)
+
+### Product
+
+- Non-poison `Persister` append/checkpoint errors keep `kutha.lock` (`release_lock_if_poisoned`); fail-closed `InvalidData` still poisons and releases for heal (CE review P1 #2). Heal/migrate oracles `drop` the crashed writer before re-taking the lock. Oracles: `m030_writer_lock.rs`. Matrix `SEM-m030-writer-lock`. ADR-010 Clarification Phase 90. Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈116.2M / `as_of.n` ≈303.3k vs M029 ≈127.2M / ≈283.0k (−8.6% / +7.2%) and vs Phase 80 ≈122.5M / ≈299.6k (−5.1% / +1.2%).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-010 evidence restaged.
+
+## 2026-10-09 — Process: close M030 / v0.24 (Phase 90)
+
+### Process
+
+- M030 / GSD v0.24 closed. Active Milestone **None**; `L_delivery=M030-closed`. Audit: `.planning/milestones/v0.24-MILESTONE-AUDIT.md`. S01 writer lock retention (`90-VERIFICATION.md`). Next controller lease: G1 #30 or G2 lineage.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-09 — Product: interrupted rollover seal heal (Phase 89)
 
 ### Product
