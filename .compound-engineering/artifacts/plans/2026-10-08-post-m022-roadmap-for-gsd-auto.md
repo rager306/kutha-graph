@@ -47,7 +47,7 @@ Ids (next free): GSD tag `v0.17` → M023 (Phases 75–), `v0.18` → M024, `v0.
 
 **Source:** G-C02, C04, C05, C08, C11, kill-claim honesty. No product behavior change unless an oracle exposes a bug (then a fix slice).
 
-- [ ] **S01: Generators and missing oracles** `risk:medium` `depends:[]`
+- [x] **S01: Generators and missing oracles** `risk:medium` `depends:[]`
   > After this: `ingest_mix` reaches Retract before Assert, Correct/Retract of derived `Behavior` ids, overlapping Asserts on one (s,r), keyed retry and empty log; oracles for user Assert `EventId` stability across persist/open (G-C04), facade `retract/correct/derive` with two live facts (G-C05), empty-runtime persist/open (G-C11); every new oracle is RED against a mutant first.
 - [ ] **S02: Matrix honesty** `risk:low` `depends:[S01]`
   > After this: honor-system rows (`SEM-horn-kc`, `SEM-seeded-det`, `SEM-c01-decision`, `SEM-tr02-legal`, `DUR-wrong-role-active`, `DUR-sealed-trailer-lie`) are re-labelled `characterization` or given a real product mutant; tautologies (`model_as_of_alias_is_live_at_max`, `known_at_equals_is_known_at_filter`, `assert_seed_budget`) are replaced or relabelled; optional one-off `cargo-mutants` run on `fold.rs`/`admission.rs` is recorded as verifier evidence, not a gate.

@@ -96,6 +96,14 @@ The matrix is a map of oracles, not a coverage number. Governor green ≠ ADR Ac
 
 `ORACLE-if15` and `ORACLE-if16` are killed. GATE-01 equals `BENCH-controller` (existing `gsd-auto-contract` Bench gate at product close; `status: gate`). Status stays **Proposed**.
 
+### Clarification (2026-10-09; Phase 85 / M026 S01; Proposed)
+
+**Generators and missing oracles (G-C04 / G-C05 / G-C11):**
+
+1. `MixStyle::Coverage` extends `ingest_mix` without changing BehaviorFree/WithHorn LCG schedules: Retract-before-Assert, overlapping Asserts, keyed retry, Correct/Retract of derived Behavior, empty `n_ops=0`.
+2. Oracles: `m026_generators.rs` (user Assert EventId persist/open; facade retract/correct/derive with two live facts; empty-runtime persist/open).
+3. Matrix rows `SEM-m026-*` are `killed` with non-`none` kill_mutation. Cell remains **Proposed**.
+
 ## Open questions
 
 Decided 2026-10-06 (Phase 46 / M018 S02; recorded in ADR-013; this cell stays Proposed):

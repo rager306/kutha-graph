@@ -975,6 +975,54 @@ rows:
     gate: default
     owner: M025-S04
     source: Phase 84 / fixtures/statute + examples/statute_as_of
+  - id: SEM-m026-generators
+    plane: product
+    invariant: Coverage mix reaches Retract-before-Assert, overlap, keyed retry, derived Correct/Retract
+    layer: decision
+    oracle:
+      - ingest_mix_coverage_reaches_named_gaps
+      - ingest_mix_coverage_empty_ops_is_anchor_only
+      - coverage_retract_before_assert_is_unknown_fact
+    kill_mutation: skip coverage_step i=0 so saw_retract_before_assert stays false
+    status: killed
+    gate: default
+    owner: M026-S01
+    source: Phase 85 / MixStyle::Coverage
+  - id: SEM-m026-gc04-assert-id
+    plane: product
+    invariant: user Assert EventId stable across persist/open
+    layer: decision
+    oracle:
+      - user_assert_event_id_stable_across_persist_open
+    kill_mutation: reassign Assert EventId on open (must fail pin)
+    status: killed
+    gate: default
+    owner: M026-S01
+    source: Phase 85 / G-C04
+  - id: SEM-m026-gc05-facade
+    plane: product
+    invariant: facade retract/correct/derive with two live facts picks latest
+    layer: decision
+    oracle:
+      - facade_retract_latest_of_two_live_same_subject_vf
+      - facade_correct_latest_of_two_live_same_subject_relation_vf
+      - facade_derive_uses_latest_live_premise
+    kill_mutation: retract all same-subject+vf facts instead of latest-only
+    status: killed
+    gate: default
+    owner: M026-S01
+    source: Phase 85 / G-C05
+  - id: SEM-m026-gc11-empty
+    plane: product
+    invariant: empty runtime persist/open keeps empty as_of
+    layer: decision
+    oracle:
+      - empty_runtime_persist_open_keeps_empty_as_of
+    kill_mutation: seed a product Assert during empty open
+    status: killed
+    gate: default
+    owner: M026-S01
+    source: Phase 85 / G-C11
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

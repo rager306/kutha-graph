@@ -1,29 +1,21 @@
 # Requirements: Kutha
 
-**Milestones:** v0.19 / harness M025 shipped 2026-10-09. Next lease: M026 / v0.20. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.19 / harness M025 shipped 2026-10-09. **v0.20 / harness M026** active. Lease: `.kutha/STATE.md`.
 
-## v0.19 Requirements (M025) — complete
+## v0.20 Requirements (M026)
 
-### as_known_on VT (Phase 81, S01)
+### Generators (Phase 85, S01)
 
-- [x] **AKN-01**: ADR-013 states `as_known_on` is TT-only by design; pin oracle for not-yet-in-force VT; semantic-contract agrees
+- [x] **GEN-01**: `MixStyle::Coverage` reaches Retract-before-Assert, overlap, keyed retry, derived Correct/Retract, empty ops; oracles G-C04/C05/C11 with kill_mutation
 
-### Clock-safe facade (Phase 82, S02)
+### Matrix honesty (Phase 86, S02)
 
-- [x] **CLK-01**: Public `as_of` / `as_known_on` take `ValidTime` / `WallTime`; bare `u64` and wrong roles fail compile (trybuild); Op storage stays `u64`; bench ≤10%
-
-### Answer envelope (Phase 83, S03)
-
-- [x] **ENV-01**: `norm_view(vt, wall)` with eligibility and typed non-success
-
-### Demo (Phase 84, S04)
-
-- [x] **DEMO-01**: Thin bin + real-text fixtures; no pack thaw
+- [ ] **MAT-01**: Honor-system and tautology rows re-labelled or given real mutants
 
 ## Out of Scope (this milestone)
 
 | Feature | Reason |
 |---------|--------|
+| Product fold changes | Only if oracle exposes a bug |
 | Cypher / HNSW / ADR-090 pack | Thaw map |
-| Five-axis clocks | D013-1 |
-| Pi Durable | Parked |
+| cargo-mutants as CI gate | Verifier evidence only |

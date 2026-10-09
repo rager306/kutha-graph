@@ -248,6 +248,9 @@ pub enum MixStyle {
     BehaviorFree,
     /// Mix `relatedTo` and `knows` (genesis inverse_knows may fire).
     WithHorn,
+    /// M026 S01: reaches Retract-before-Assert, overlap, keyed retry, derived Correct/Retract.
+    /// Does not alter BehaviorFree/WithHorn LCG schedules used by DET pins.
+    Coverage,
 }
 
 pub fn persist_style(i: usize) -> MixStyle {
@@ -320,6 +323,14 @@ pub struct MixMeta {
     pub saw_assert: bool,
     pub min_vf: u64,
     pub max_vf: u64,
+    /// Coverage-style only: Retract attempted while pool empty (fail-closed).
+    pub saw_retract_before_assert: bool,
+    /// Coverage-style only: two Asserts same (s,r), different objects.
+    pub saw_overlapping_assert: bool,
+    /// Coverage-style only: keyed Assert short-circuit retry.
+    pub saw_keyed_retry: bool,
+    /// Coverage-style only: Correct or Retract of a Behavior-derived id.
+    pub saw_derived_correct_or_retract: bool,
 }
 
 fn emit_assert(
@@ -330,6 +341,18 @@ fn emit_assert(
     valid_from: u64,
     valid_to: Option<u64>,
 ) -> EventId {
+    emit_assert_keyed(rt, subject, relation, object, valid_from, valid_to, None)
+}
+
+fn emit_assert_keyed(
+    rt: &mut Runtime,
+    subject: TermId,
+    relation: TermId,
+    object: TermId,
+    valid_from: u64,
+    valid_to: Option<u64>,
+    delivery_key: Option<String>,
+) -> EventId {
     let out = rt
         .emit(Op::Assert {
             subject,
@@ -338,11 +361,129 @@ fn emit_assert(
             valid_from,
             valid_to,
             claim: None,
-            delivery_key: None,
+            delivery_key,
             polarity: None,
         })
         .unwrap_or_else(|e| panic!("Assert failed: {e}"));
     out.receipt.event_ids[0]
+}
+
+/// Explicit Coverage draws (M026 S01). Returns true when the step handled `i`.
+fn coverage_step(
+    rt: &mut Runtime,
+    meta: &mut MixMeta,
+    pool: &mut Vec<EventId>,
+    subjects: &[TermId],
+    related: TermId,
+    knows: TermId,
+    obj_a: TermId,
+    obj_b: TermId,
+    i: u32,
+) -> bool {
+    match i {
+        0 => {
+            // Retract before any Assert: empty pool → fail-closed UnknownFact.
+            let err = rt
+                .emit(Op::Retract {
+                    event_id: EventId::nil(),
+                })
+                .expect_err("Retract before Assert must fail closed");
+            assert!(
+                matches!(err, RuntimeError::UnknownFact { .. }),
+                "expected UnknownFact, got {err:?}"
+            );
+            meta.saw_retract_before_assert = true;
+            true
+        }
+        1 => {
+            // Overlapping Asserts: same (s,r), different objects, overlapping VT.
+            let subj = subjects[0];
+            let a = emit_assert(rt, subj, related, obj_a, 2010, Some(2022));
+            let b = emit_assert(rt, subj, related, obj_b, 2015, None);
+            pool.push(a);
+            pool.push(b);
+            meta.saw_assert = true;
+            meta.saw_overlapping_assert = true;
+            note_vf(meta, 2010);
+            note_vf(meta, 2015);
+            true
+        }
+        2 => {
+            // Keyed retry: second identical delivery_key short-circuits (no second mint).
+            let subj = subjects[1];
+            let key = "m026-coverage-key".to_string();
+            let first = emit_assert_keyed(
+                rt,
+                subj,
+                related,
+                obj_a,
+                2012,
+                None,
+                Some(key.clone()),
+            );
+            let before = rt.log().len();
+            let second = emit_assert_keyed(rt, subj, related, obj_a, 2012, None, Some(key));
+            assert_eq!(
+                first, second,
+                "keyed retry must return the same EventId"
+            );
+            assert_eq!(
+                before,
+                rt.log().len(),
+                "keyed retry must not append a second Assert"
+            );
+            pool.push(first);
+            meta.saw_assert = true;
+            meta.saw_keyed_retry = true;
+            note_vf(meta, 2012);
+            true
+        }
+        3 => {
+            // Assert knows → inverse Behavior; Correct then Retract the derived id.
+            let subj = subjects[2];
+            let prem = emit_assert(rt, subj, knows, obj_a, 2011, None);
+            pool.push(prem);
+            meta.saw_assert = true;
+            note_vf(meta, 2011);
+            let derived = rt
+                .log()
+                .iter()
+                .filter(|e| matches!(&e.op, Op::Behavior { .. }))
+                .map(|e| e.id)
+                .last();
+            let Some(derived_id) = derived else {
+                // Genesis may not fire inverse for this subject; skip softly.
+                return true;
+            };
+            match rt.emit(Op::Correct {
+                event_id: derived_id,
+                object: obj_b,
+                valid_from: 2011,
+                valid_to: None,
+            }) {
+                Ok(out) => {
+                    if let Some(new_id) = out.receipt.event_ids.first() {
+                        pool.push(*new_id);
+                    }
+                    meta.saw_derived_correct_or_retract = true;
+                }
+                Err(RuntimeError::UnknownFact { .. }) => {
+                    // Fall through to Retract of the derived id.
+                    if rt.emit(Op::Retract { event_id: derived_id }).is_ok() {
+                        meta.saw_derived_correct_or_retract = true;
+                    }
+                }
+                Err(e) => panic!("Correct derived seed coverage: {e}"),
+            }
+            if !meta.saw_derived_correct_or_retract {
+                if rt.emit(Op::Retract { event_id: derived_id }).is_ok() {
+                    meta.saw_derived_correct_or_retract = true;
+                }
+            }
+            true
+        }
+        _ => false,
+    }
 }
 
 fn note_vf(meta: &mut MixMeta, vf: u64) {
@@ -364,16 +505,35 @@ pub fn ingest_mix_n(rt: &mut Runtime, seed: u32, style: MixStyle, n_ops: u32) ->
         saw_assert: false,
         min_vf: u64::MAX,
         max_vf: 0,
+        saw_retract_before_assert: false,
+        saw_overlapping_assert: false,
+        saw_keyed_retry: false,
+        saw_derived_correct_or_retract: false,
     };
     let _ = rt.emit_tt_anchor(2014u64);
 
+    // Empty-log path: n_ops == 0 leaves only the seed anchor (G-C11 sibling).
+    if n_ops == 0 {
+        if meta.min_vf == u64::MAX {
+            meta.min_vf = 2010;
+            meta.max_vf = 2014;
+        }
+        return meta;
+    }
+
     for i in 0..n_ops {
+        if style == MixStyle::Coverage {
+            if coverage_step(rt, &mut meta, &mut pool, &subjects, related, knows, obj_a, obj_b, i)
+            {
+                continue;
+            }
+        }
         let draw = lcg.draw100();
         let subj = subjects[lcg.pick(subjects.len())];
         let rel = match style {
             MixStyle::BehaviorFree => related,
-            MixStyle::WithHorn if draw.is_multiple_of(3) => knows,
-            MixStyle::WithHorn => related,
+            MixStyle::WithHorn | MixStyle::Coverage if draw.is_multiple_of(3) => knows,
+            MixStyle::WithHorn | MixStyle::Coverage => related,
         };
         let valid_from = 2010 + u64::from(i % 5);
         let valid_to = if draw.is_multiple_of(5) {
@@ -1225,7 +1385,7 @@ pub fn scan_mix_coverage(rt: &Runtime, meta: &MixMeta, style: MixStyle) -> MixCo
         retract: usize::from(saw_r),
         correct: usize::from(saw_c),
         interval: usize::from(saw_i),
-        horn: usize::from(saw_h && style == MixStyle::WithHorn),
+        horn: usize::from(saw_h && matches!(style, MixStyle::WithHorn | MixStyle::Coverage)),
         vt_inside: cuts
             .iter()
             .filter(|vt| vt_cut_inside(**vt, meta.min_vf, meta.max_vf))

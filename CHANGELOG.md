@@ -4,6 +4,36 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-09 — Process: close M026 S01 / lease S02 (Phase 86)
+
+### Process
+
+- S01 done (`85-VERIFICATION.md`). Active Slice **S02** (`L_delivery=M026-S01-done`): matrix honesty.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
+## 2026-10-09 — Product: MixStyle::Coverage + G-C04/C05/C11 oracles (Phase 85)
+
+### Product
+
+- `MixStyle::Coverage` in `ingest_mix` (Retract-before-Assert, overlapping Asserts, keyed retry, derived Correct/Retract, empty `n_ops`). Oracles: `m026_generators` (G-C04 Assert EventId persist/open; G-C05 facade latest-only; G-C11 empty persist/open). BehaviorFree/WithHorn LCG unchanged. Matrix `SEM-m026-*`. ADR-023 Clarification Phase 85. No fold behavior change.
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-023 evidence restaged.
+
+## 2026-10-09 — Process: lease M026 S01 / GSD Phase 85
+
+### Process
+
+- Active Milestone **M026**, Active Slice **S01** (`L_delivery=M025-closed`): generators and missing oracles.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-09 — Process: close M025 / v0.19 (Phase 84)
 
 ### Process

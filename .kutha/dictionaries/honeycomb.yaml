@@ -45,6 +45,7 @@ process: docs/process/governor-intake.md
 # 2026-10-08 restage (M025 S02 Phase 82: clock-safe as_of/as_known_on facade): ADR-013; map/delivery/capability unchanged.
 # 2026-10-08 restage (M025 S03 Phase 83: norm_view envelope): ADR-013, ADR-090; map/delivery/capability unchanged.
 # 2026-10-08 restage (M025 S04 Phase 84: demo bin + statute fixtures): ADR-013; map/delivery/capability unchanged.
+# 2026-10-09 restage (M026 S01 Phase 85: generators + G-C04/C05/C11): ADR-023; map/delivery/capability unchanged.
 # 2026-10-06 restage (M018 S04 Phase 48: I-F15/I-F16 oracles, GATE-01 BENCH-controller): ADR-041, ADR-023; map/delivery/capability unchanged.
 
 locks:
@@ -321,6 +322,11 @@ cells:
       - casc01_unknown_head_on_matched_horn_is_err
       # Phase 48 / M018 S04 — I-F15 visit bound cited from ADR-041; cell still Proposed
       - extra_relatedto_horn_visits_constant_in_n
+      # Phase 85 / M026 S01 — generator coverage + G-C04/C05/C11; cell still Proposed
+      - ingest_mix_coverage_reaches_named_gaps
+      - user_assert_event_id_stable_across_persist_open
+      - facade_retract_latest_of_two_live_same_subject_vf
+      - empty_runtime_persist_open_keeps_empty_as_of
 
   - id: ADR-030
     axis: Composition
