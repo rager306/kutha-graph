@@ -48,6 +48,7 @@ process: docs/process/governor-intake.md
 # 2026-10-09 restage (M026 S01 Phase 85: generators + G-C04/C05/C11): ADR-023; map/delivery/capability unchanged.
 # 2026-10-09 restage (M026 S02 Phase 86: matrix honesty): ADR-023; map/delivery/capability unchanged.
 # 2026-10-09 restage (M028 S01 Phase 88: dict Retract SelfCommit): ADR-014; map/delivery/capability unchanged.
+# 2026-10-09 restage (M029 S01 Phase 89: interrupted rollover seal heal): ADR-012; map/delivery/capability unchanged.
 # 2026-10-06 restage (M018 S04 Phase 48: I-F15/I-F16 oracles, GATE-01 BENCH-controller): ADR-041, ADR-023; map/delivery/capability unchanged.
 
 locks:
@@ -185,6 +186,9 @@ cells:
       - export_jsonl_after_writer_drops_equals_log
       - write_segment_file_streams_frames
       - persist_drops_encoded_log_before_snapshot
+      # Phase 89 / M029 S01 — interrupted rollover seal heal; cell still Proposed
+      - open_for_append_heals_after_rollover_trailer_crash
+      - open_for_append_heals_after_rollover_new_header_crash
 
   - id: ADR-013
     axis: Time

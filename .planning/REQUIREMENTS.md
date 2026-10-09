@@ -1,6 +1,12 @@
 # Requirements: Kutha
 
-**Milestones:** v0.22 / harness M028 shipped 2026-10-09. Next lease: controller decision. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.23 / harness M029 shipped 2026-10-09. Next lease: controller decision. Lease: `.kutha/STATE.md`.
+
+## v0.23 Requirements (M029) — complete
+
+### Interrupted rollover seal heal (Phase 89, S01)
+
+- [x] **HEAL-01**: after RolloverTrailer / RolloverNewHeader crash, `open_for_append` finishes the seal and can append
 
 ## v0.22 Requirements (M028) — complete
 
@@ -28,6 +34,6 @@
 
 | Feature | Reason |
 |---------|--------|
-| Product fold changes | Only if oracle exposes a bug |
-| Cypher / HNSW / ADR-090 pack | Thaw map |
-| cargo-mutants as CI gate | Verifier evidence only |
+| Persister lock-on-error (#2) | Next G1 residual |
+| WAL-tail heal (#30) | Next G1 residual |
+| Product fold / Cypher / HNSW | Thaw map |

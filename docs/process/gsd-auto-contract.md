@@ -30,6 +30,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.20 | 85–86 | M026 | S01–S02 | test strength: generators/missing oracles; matrix honesty | shipped 2026-10-09 |
 | v0.21 | 87 | M027 | S01 | trajectory honesty: characterization-shaped kills; idle ROADMAP ACTIVE | shipped 2026-10-09 |
 | v0.22 | 88 | M028 | S01 | trailing dictionary Retract SelfCommit (CE review P0 #1) | shipped 2026-10-09 |
+| v0.23 | 89 | M029 | S01 | interrupted rollover seal heal on attach (CE review P1 #3) | shipped 2026-10-09 |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

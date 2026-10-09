@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-09 — Product: interrupted rollover seal heal (Phase 89)
+
+### Product
+
+- `heal_interrupted_active_seal` finishes a mid-rollover seal trailer on attach (promote sealed active, empty next segment, rewrite manifest). `open_for_append` no longer fails with WAL tail mismatch after `RolloverTrailer` / `RolloverNewHeader` crashes (CE review P1 #3). Oracles: `m029_rollover_heal.rs`. Matrix `SEM-m029-rollover-heal`. ADR-012 Clarification Phase 89. Bench three `--quick` runs (`KUTHA_BENCH_N=10000`): median `ingest_plain.n` ≈127.2M / `as_of.n` ≈283.0k vs Phase 80 ≈122.5M / ≈299.6k (+3.8% / −5.5%).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-012 evidence restaged.
+
+## 2026-10-09 — Process: close M029 / v0.23 (Phase 89)
+
+### Process
+
+- M029 / GSD v0.23 closed. Active Milestone **None**; `L_delivery=M029-closed`. Audit: `.planning/milestones/v0.23-MILESTONE-AUDIT.md`. S01 interrupted rollover seal heal (`89-VERIFICATION.md`). Next controller lease: G1 #2 / #30 or G2 lineage.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-09 — Product: dict Retract SelfCommit (Phase 88)
 
 ### Product

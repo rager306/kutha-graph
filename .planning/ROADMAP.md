@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.22 shipped. Next controller lease: parked residuals or a new plan wave.
+v0.01–v0.23 shipped. Next controller lease: CE review G1 (#2, #30) or G2 lineage.
 
 ## Id map
 
@@ -10,16 +10,16 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.21** — shipped
-- ✅ **v0.22 Dictionary retract on open** — Phase 88 (harness M028) — shipped 2026-10-09
+- ✅ **v0.01–v0.22** — shipped
+- ✅ **v0.23 Interrupted rollover seal heal** — Phase 89 (harness M029) — shipped 2026-10-09
 
-## Phases (v0.22)
+## Phases (v0.23)
 
-- [x] **Phase 88: Trailing dict Retract SelfCommit** — `88-VERIFICATION.md` passed
+- [x] **Phase 89: Finish seal trailer on attach** — `89-VERIFICATION.md` passed
 
 ## Progress
 
 | Milestone | Phases | Status |
 |-----------|--------|--------|
-| v0.01–v0.21 | 1–87 | shipped |
-| v0.22 | 88 | shipped |
+| v0.01–v0.22 | 1–88 | shipped |
+| v0.23 | 89 | shipped |

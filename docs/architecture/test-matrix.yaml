@@ -1067,6 +1067,18 @@ rows:
     gate: default
     owner: M028-S01
     source: Phase 88 / CE review P0 #1
+  - id: SEM-m029-rollover-heal
+    plane: product
+    invariant: open_for_append finishes interrupted rollover seal trailer then appends
+    layer: crash
+    oracle:
+      - open_for_append_heals_after_rollover_trailer_crash
+      - open_for_append_heals_after_rollover_new_header_crash
+    kill_mutation: attach_segmented seeks last_event_id_at_end into seal trailer without heal
+    status: killed
+    gate: default
+    owner: M029-S01
+    source: Phase 89 / CE review P1 #3
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

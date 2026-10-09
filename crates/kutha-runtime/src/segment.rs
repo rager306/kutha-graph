@@ -588,6 +588,80 @@ pub(crate) fn inspect_active(path: &Path) -> std::io::Result<ActiveTip> {
     })
 }
 
+/// Finish an interrupted rollover: active has a complete seal trailer but the
+/// manifest still names it as active (crash after trailer sync, before or during
+/// new-header / manifest rename). Returns true when a heal wrote the manifest.
+pub(crate) fn heal_interrupted_active_seal(dir: &Path) -> std::io::Result<bool> {
+    let mut manifest = read_manifest(dir)?;
+    let active_path = dir.join(&manifest.active);
+    let bytes = fs::read(&active_path)?;
+    let scan = scan_segment(&bytes, false)?;
+    let Some(t) = scan.trailer else {
+        return Ok(false);
+    };
+    let file_len = bytes.len() as u64;
+    if t.n != scan.events.len() as u64 {
+        return Err(invalid("interrupted seal trailer count mismatch"));
+    }
+    let first = scan
+        .events
+        .first()
+        .ok_or_else(|| invalid("interrupted seal on empty active"))?
+        .id;
+    let last = scan
+        .events
+        .last()
+        .ok_or_else(|| invalid("interrupted seal on empty active"))?
+        .id;
+    if t.first != first || t.last != last {
+        return Err(invalid("interrupted seal trailer id mismatch"));
+    }
+    let chain = hex32(scan.chain);
+    if t.chain != chain {
+        return Err(invalid("interrupted seal trailer chain mismatch"));
+    }
+    if t.bytes != file_len {
+        return Err(invalid("interrupted seal trailer bytes mismatch"));
+    }
+    if scan.consumed as u64 != file_len {
+        return Err(invalid("extra bytes after interrupted seal trailer"));
+    }
+
+    let old_name = manifest.active.clone();
+    let old_seq = parse_seg_seq(&old_name)?;
+    let new_name = segment_name(old_seq.saturating_add(1));
+    let new_path = dir.join(&new_name);
+    if new_path.exists() {
+        let tip = inspect_active(&new_path)?;
+        if tip.events != 0 {
+            return Err(invalid(
+                "orphan next segment after interrupted seal is not empty",
+            ));
+        }
+        if tip.chain != scan.chain {
+            return Err(invalid(
+                "orphan next segment chain disagrees with sealed tip",
+            ));
+        }
+    } else {
+        let mut f = File::create(&new_path)?;
+        write_header(&mut f, scan.chain)?;
+        f.sync_data()?;
+    }
+
+    manifest.sealed.push(SealedMeta {
+        name: old_name,
+        first,
+        last,
+        count: t.n,
+        bytes: file_len,
+        chain,
+    });
+    manifest.active = new_name;
+    write_manifest(dir, &manifest)?;
+    Ok(true)
+}
+
 fn split_events(events: &[Event]) -> std::io::Result<Vec<&[Event]>> {
     if events.is_empty() {
         return Ok(vec![events]);

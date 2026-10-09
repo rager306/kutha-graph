@@ -450,6 +450,9 @@ fn attach_segmented(
     dir: &Path,
     write_lock: Option<File>,
 ) -> std::io::Result<Persister> {
+    // CE review P1 #3: seal trailer synced before manifest rename wedges attach
+    // (`last_event_id_at_end` seeks into the trailer). Finish the rollover first.
+    let _ = segment::heal_interrupted_active_seal(dir)?;
     let manifest = segment::read_manifest(dir)?;
     let active_path = dir.join(&manifest.active);
     let encoded = encoded_log(runtime);

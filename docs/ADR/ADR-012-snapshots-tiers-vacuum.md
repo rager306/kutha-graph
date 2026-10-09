@@ -4,6 +4,10 @@
 
 **Proposed** (Time/Data placement vs policy GC of the log; not product storage runtime)
 
+### Clarification (2026-10-09; Phase 89 / M029 S01; Proposed)
+
+**Interrupted rollover seal is finished on attach** (CE review P1 #3). When the active segment already carries a complete seal trailer but `manifest.json` still names it active (crash after trailer sync, before or during new-header / manifest rename), `heal_interrupted_active_seal` promotes that file into `sealed`, ensures an empty next active linked on the tip chain, and rewrites the manifest. `open` already skipped the trailer; `open_for_append` / `attach` no longer seek into trailer bytes via `last_event_id_at_end`. Oracles: `open_for_append_heals_after_rollover_trailer_crash`, `open_for_append_heals_after_rollover_new_header_crash`. Status stays **Proposed**.
+
 ### Evidence (2026-10-02; Proposed)
 
 Historical (superseded by the 2026-10-04 blocks below): `events.jsonl` persist replaces via same-directory temp file + `rename` (`store.rs` `replace_events_jsonl`). Quantum outcome and justification sidecars remain separate files (gap-review F1: log atomic, sidecars not). **2026-10-03 note:** snapshot/WAL in-place truncate is false; see Evidence 2026-10-03.

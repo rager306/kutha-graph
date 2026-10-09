@@ -19,17 +19,17 @@ Each YAML row is one invariant. `oracle` is a list of real `#[test]` function na
 
 ## Counts (this file)
 
-Counted from `test-matrix.yaml` rows on 2026-10-09 (M028 S01). Recount after you edit the YAML; do not invent a coverage percentage.
+Counted from `test-matrix.yaml` rows on 2026-10-09 (M029 S01). Recount after you edit the YAML; do not invent a coverage percentage.
 
 | Status | Rows |
 |--------|------|
-| killed | 75 |
+| killed | 76 |
 | characterization | 11 |
 | gap | 0 |
 | blocked | 0 |
 | spec-only | 4 |
 | gate | 1 |
-| **total** | **91** |
+| **total** | **92** |
 
 Planes: product vs harness. Layers: decision, characterization, property, crash, kill, governor, bench.
 
@@ -60,6 +60,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 **M026 S02 (matrix honesty):** Phase 86 — honor-system rows re-labelled or given real product mutants; tautologies moved to `characterization` (`SEM-naive-as-of-alias`, `SEM-known-at-mirror`, `SEM-seed-budget`; `SEM-seeded-det` → characterization). Oracles: `m026_matrix_honesty`.
 
 **M028 S01 (dict retract on open):** Phase 88 — `SEM-m028-dict-retract` `killed` (owner `M028-S01`). Oracles: `m028_dict_retract`.
+
+**M029 S01 (rollover seal heal):** Phase 89 — `SEM-m029-rollover-heal` `killed` (owner `M029-S01`). Oracles: `m029_rollover_heal`.
 
 `unowned` is rejected by the governor check.
 
