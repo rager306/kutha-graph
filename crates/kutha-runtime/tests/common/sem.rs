@@ -122,6 +122,7 @@ pub fn seed_count() -> usize {
         .max(DEFAULT_SEEDS)
 }
 
+/// Env seed floor (`KUTHA_SEEDS`), not domain semantics (M026 S02 characterization).
 /// Governor `rust_test_asserts`: named tests must contain `assert*` in-body.
 pub fn assert_seed_budget() {
     let n = seed_count();

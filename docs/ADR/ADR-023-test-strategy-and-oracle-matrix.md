@@ -104,6 +104,14 @@ The matrix is a map of oracles, not a coverage number. Governor green ≠ ADR Ac
 2. Oracles: `m026_generators.rs` (user Assert EventId persist/open; facade retract/correct/derive with two live facts; empty-runtime persist/open).
 3. Matrix rows `SEM-m026-*` are `killed` with non-`none` kill_mutation. Cell remains **Proposed**.
 
+### Clarification (2026-10-09; Phase 86 / M026 S02; Proposed)
+
+**Matrix honesty (kill-claim / tautology):**
+
+1. Honor-system / overstated kills: `SEM-seeded-det` → `characterization`; `SEM-horn-kc` / `SEM-c01-decision` / `SEM-tr02-legal` / `DUR-wrong-role-active` / `DUR-sealed-trailer-lie` keep `killed` with kill_mutation text matching the real product injection.
+2. Tautologies relabelled `characterization`: `SEM-naive-as-of-alias`, `SEM-known-at-mirror`, `SEM-seed-budget` (oracle `seed_budget_is_env_floor_not_domain`).
+3. Optional `cargo-mutants` on `fold.rs`/`admission.rs` remains verifier evidence, not a gate (not run this slice). Cell remains **Proposed**.
+
 ## Open questions
 
 Decided 2026-10-06 (Phase 46 / M018 S02; recorded in ADR-013; this cell stays Proposed):

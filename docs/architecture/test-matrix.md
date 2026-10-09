@@ -19,17 +19,17 @@ Each YAML row is one invariant. `oracle` is a list of real `#[test]` function na
 
 ## Counts (this file)
 
-Counted from `test-matrix.yaml` rows on 2026-10-08 (M024 close). Recount after you edit the YAML; do not invent a coverage percentage.
+Counted from `test-matrix.yaml` rows on 2026-10-09 (M026 close). Recount after you edit the YAML; do not invent a coverage percentage.
 
 | Status | Rows |
 |--------|------|
-| killed | 69 |
-| characterization | 7 |
+| killed | 74 |
+| characterization | 11 |
 | gap | 0 |
 | blocked | 0 |
 | spec-only | 4 |
 | gate | 1 |
-| **total** | **81** |
+| **total** | **90** |
 
 Planes: product vs harness. Layers: decision, characterization, property, crash, kill, governor, bench.
 
@@ -57,16 +57,18 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M026 S01 (generators / missing oracles):** Phase 85 — `SEM-m026-generators` / `SEM-m026-gc04-assert-id` / `SEM-m026-gc05-facade` / `SEM-m026-gc11-empty` `killed` (owner `M026-S01`). Oracles: `m026_generators`.
 
+**M026 S02 (matrix honesty):** Phase 86 — honor-system rows re-labelled or given real product mutants; tautologies moved to `characterization` (`SEM-naive-as-of-alias`, `SEM-known-at-mirror`, `SEM-seed-budget`; `SEM-seeded-det` → characterization). Oracles: `m026_matrix_honesty`.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)
 
 | Decision | Row | Lock |
 |----------|-----|------|
-| HORN-KC-01 | `SEM-horn-kc` | `killed` — ingest-at-head; pin `known04_*` (do not invert) |
-| C01 | `SEM-c01-decision` | `killed` — pack stamp + `c01_applies_to_assert_encodes_application_window`; FIXG-01 stays |
+| HORN-KC-01 | `SEM-horn-kc` | `killed` — ingest-at-head; product mutant `live_horns` at cut TT (M026 S02) |
+| C01 | `SEM-c01-decision` | `killed` — pack stamp; mutant `RuleTerm::constant` calendar (M026 S02) |
 | ASOF-ELIG-01 | `SEM-asof-elig` | `killed` — support-live; pin `asof_elig01_*` |
-| TR-02 | `SEM-tr02-legal` | `killed` — force=VT; publication=`as_known_on`; decision=`as_of`; pin `tr02_*` |
+| TR-02 | `SEM-tr02-legal` | `killed` — force=VT; mutant VT-filter on `as_known_on` (M026 S02) |
 
 No `blocked` decision rows remain. Do not mark them `#[ignore]`. Full ADR-090 ontology stays frozen until STATE thaws a legal pack.
 

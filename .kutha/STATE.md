@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M026
-**Active Slice:** S02
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M026-S01-done
+L_delivery=M026-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M026 S01-done; S02 leased (matrix honesty) | Capability proven / Cypher started |
+| L_delivery | M026 closed (S01–S02); next lease is controller decision | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**M026 S02 / GSD Phase 86** — matrix honesty: re-label honor-system / tautology rows or give real mutants. Honeycomb stays Proposed.
+**Controller lease** — parked residuals or a new plan wave (see `.compound-engineering/artifacts/plans/2026-10-08-post-m022-roadmap-for-gsd-auto.md` § Parked). Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

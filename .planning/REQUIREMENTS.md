@@ -1,8 +1,8 @@
 # Requirements: Kutha
 
-**Milestones:** v0.19 / harness M025 shipped 2026-10-09. **v0.20 / harness M026** active. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.20 / harness M026 shipped 2026-10-09. Next lease: controller decision. Lease: `.kutha/STATE.md`.
 
-## v0.20 Requirements (M026)
+## v0.20 Requirements (M026) — complete
 
 ### Generators (Phase 85, S01)
 
@@ -10,7 +10,7 @@
 
 ### Matrix honesty (Phase 86, S02)
 
-- [ ] **MAT-01**: Honor-system and tautology rows re-labelled or given real mutants
+- [x] **MAT-01**: Honor-system and tautology rows re-labelled or given real mutants
 
 ## Out of Scope (this milestone)
 

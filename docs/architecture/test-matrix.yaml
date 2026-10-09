@@ -294,11 +294,11 @@ rows:
     layer: crash
     oracle:
       - wrong_role_active_names_sealed_file_fails_closed
-    kill_mutation: skip sequence + skip named active + skip snapshot-ahead/tt-anchor/replay/sidecar (single-check removal is covered by neighbouring checks)
+    kill_mutation: accept manifest.active naming a sealed segment filename (must fail InvalidData)
     status: killed
     gate: default
     owner: M019-S05
-    source: audit-code-tests §2
+    source: audit-code-tests §2 / M026 S02 honesty
   - id: DUR-two-writer
     plane: product
     invariant: two Persister::attach on one dir fail closed
@@ -339,11 +339,11 @@ rows:
     layer: crash
     oracle:
       - sealed_trailer_bytes_lie_fails_closed
-    kill_mutation: skip sealed trailer checks + do not propagate scan.chain + skip sealed and read_active prev (single-check removal is covered by neighbouring checks)
+    kill_mutation: accept sealed trailer.bytes rewritten to match a truncated body
     status: killed
     gate: default
     owner: M019-S05
-    source: audit-code-tests §2 residual
+    source: audit-code-tests §2 residual / M026 S02 honesty
   - id: DUR-migrate-concurrent
     plane: product
     invariant: concurrent persist on the same legacy dir during migrate
@@ -463,17 +463,17 @@ rows:
     source: D-03 seed
   - id: SEM-seeded-det
     plane: product
-    invariant: seeded LCG persist/open compares sorted triples, not EventIds
-    layer: property
+    invariant: characterization — seeded LCG persist/open compares sorted triples, not EventIds (kill was test-edit, not a product mutant)
+    layer: characterization
     oracle:
       - det01_all_seeds_replay_eager_lazy_persist_open
       - det01_seed1_replay_eager_lazy_persist_open
       - det01_delivery_key_retry_identical_log
-    kill_mutation: compare EventIds or drop the seed loop
-    status: killed
+    kill_mutation: none
+    status: characterization
     gate: default
-    owner: M017-S03
-    source: D-03 seed / DET-01
+    owner: M026-S02
+    source: D-03 seed / DET-01 / M026 S02 honesty
   - id: SEM-replay-provenance
     plane: product
     invariant: replay_check / provenance digest detect tamper and cite swap
@@ -567,15 +567,15 @@ rows:
 
   - id: SEM-horn-kc
     plane: product
-    invariant: Horn ingest-at-head (search_prems / live_horns at u64::MAX); as_known_on never re-derives
+    invariant: Horn ingest-at-head (search_prems / live_horns at u64::MAX)
     layer: decision
     oracle:
       - known04_horn_fires_when_premise_hidden_on_early_cut
-    kill_mutation: invert known04 to require no mint / re-derive on as_known_on
+    kill_mutation: live_horns/search_prems at cut TT instead of u64::MAX (must fail known04 mint-at-head)
     status: killed
     gate: default
     owner: M021-S01
-    source: Phase 46 lock / Phase 68 matrix kill
+    source: Phase 46 lock / Phase 68 / M026 S02 honesty
   - id: SEM-c01-decision
     plane: product
     invariant: C01 sunset / tempus regit actum is a pack stamp (not fifth axis, not Horn, not valid_to-as-application); pack Assert appliesTo encodes window
@@ -583,11 +583,11 @@ rows:
     oracle:
       - fixg01_c01_sunset_inexpressible_as_horn
       - c01_applies_to_assert_encodes_application_window
-    kill_mutation: fifth axis or RuleTerm Const calendar sunset
+    kill_mutation: RuleTerm::constant accepts calendar date strings (must fail fixg01)
     status: killed
     gate: default
     owner: M021-S01
-    source: Phase 46 lock / Phase 68 spike
+    source: Phase 46 lock / Phase 68 / M026 S02 honesty
   - id: SEM-asof-elig
     plane: product
     invariant: as_of stays support-live; eligibility is derivation_eligible_at; query lists ineligible live triples
@@ -616,11 +616,11 @@ rows:
     layer: decision
     oracle:
       - tr02_force_vt_publication_anchor_decision_as_of
-    kill_mutation: treat as_of as publication or add fifth peer clock
+    kill_mutation: as_known_on applies valid_from/valid_to filter (must fail tr02 publication≠force)
     status: killed
     gate: default
     owner: M021-S01
-    source: ADR-090 TR-02 / Phase 68
+    source: ADR-090 TR-02 / Phase 68 / M026 S02 honesty
   - id: SEM-horn-correct
     plane: product
     invariant: Correct of a Horn premise retracts or re-mints Behavior
@@ -693,7 +693,6 @@ rows:
     oracle:
       - bitemporal_model_matches_fold_live_at_and_as_of
       - bitemporal_model_agrees_on_ff5_statute
-      - model_as_of_alias_is_live_at_max
       - bitemporal_model_compares_object_not_only_subject
       - naive_retract_clears_all_correct_interval_residuals
     kill_mutation: Fact::is_live_at skips ingested_at > tt; skip valid_from dies on Fact::is_live_at vs naive at EDGE_VT (Eager live_at via vt_by_from would mask it); Assert s/o swap dies on (s,r,o) triples; Retract-first GraphFold::replay dies vs ingest stamps; first-live-only naive Retract dies on CI residuals
@@ -701,6 +700,39 @@ rows:
     gate: default
     owner: M023-S01
     source: M019 S07 / ADR-013
+  - id: SEM-naive-as-of-alias
+    plane: product
+    invariant: characterization — Naive::as_of is live_at(MAX, vt) (mirror / tautology; not a fold kill)
+    layer: characterization
+    oracle:
+      - model_as_of_alias_is_live_at_max
+    kill_mutation: none
+    status: characterization
+    gate: default
+    owner: M026-S02
+    source: M026 S02 honesty / tautology relabel
+  - id: SEM-known-at-mirror
+    plane: product
+    invariant: characterization — known_at equals is_known_at + product filter (mirror of fold_query impl)
+    layer: characterization
+    oracle:
+      - known_at_equals_is_known_at_filter
+    kill_mutation: none
+    status: characterization
+    gate: default
+    owner: M026-S02
+    source: M026 S02 honesty / tautology relabel
+  - id: SEM-seed-budget
+    plane: product
+    invariant: characterization — KUTHA_SEEDS floor is env policy, not domain semantics
+    layer: characterization
+    oracle:
+      - seed_budget_is_env_floor_not_domain
+    kill_mutation: none
+    status: characterization
+    gate: default
+    owner: M026-S02
+    source: M026 S02 honesty / tautology relabel
   - id: SEM-order-independence
     plane: product
     invariant: permuting disjoint-subject Asserts does not change (s,r,o,vt)

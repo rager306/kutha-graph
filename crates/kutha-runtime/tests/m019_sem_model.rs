@@ -405,6 +405,7 @@ fn bitemporal_model_agrees_on_ff5_statute() {
     assert!(new.contains(&(article, in_force, limit_30)));
 }
 
+/// Characterization (M026 S02): Naive::as_of is defined as live_at(MAX, vt) — mirror, not a fold kill.
 #[test]
 fn model_as_of_alias_is_live_at_max() {
     let mut rt = Runtime::default();

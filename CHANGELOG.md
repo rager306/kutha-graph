@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-09 — Process: close M026 / v0.20 (Phase 86)
+
+### Process
+
+- M026 / GSD v0.20 closed. Active Milestone **None**; `L_delivery=M026-closed`. Audit: `.planning/milestones/v0.20-MILESTONE-AUDIT.md`. S02 matrix honesty (`86-VERIFICATION.md`). Next controller lease: parked residuals / new plan.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
+## 2026-10-09 — Product: matrix honesty relabel (Phase 86)
+
+### Product
+
+- Honor-system kills: `SEM-seeded-det` → characterization; decision/DUR rows keep `killed` with kill_mutation matching real product injection. Tautologies → `SEM-naive-as-of-alias` / `SEM-known-at-mirror` / `SEM-seed-budget`. Oracle: `m026_matrix_honesty`. Matrix 90 rows. ADR-023 Clarification Phase 86. cargo-mutants not run (non-gate). No fold behavior change.
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-023 evidence restaged.
+
 ## 2026-10-09 — Process: close M026 S01 / lease S02 (Phase 86)
 
 ### Process

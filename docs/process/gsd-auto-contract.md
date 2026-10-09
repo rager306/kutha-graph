@@ -27,7 +27,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.17 | 75–78 | M023 | S01–S04 | green HEAD and truth reset (post-M022 audits 2026-10-08): keyed-retry/Correct regression, naive model, close-gate honesty, living overlay | shipped 2026-10-08 |
 | v0.18 | 79–80 | M024 | S01–S02 | fold identity live-gate / multi-residual Correct; write-path atomicity | shipped 2026-10-08 |
 | v0.19 | 81–84 | M025 | S01–S04 | as_known_on TT-only pin; clock-safe facade; norm_view envelope; demo bin | shipped 2026-10-09 |
-| v0.20 | 85–86 | M026 | S01–S02 | test strength: generators/missing oracles; matrix honesty | not leased |
+| v0.20 | 85–86 | M026 | S01–S02 | test strength: generators/missing oracles; matrix honesty | shipped 2026-10-09 |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

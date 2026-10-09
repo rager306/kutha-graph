@@ -201,13 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M026: Test strength — ACTIVE (GSD v0.20)
+## M026: Test strength — CLOSED (GSD v0.20)
 
-**Source:** `.compound-engineering/artifacts/plans/2026-10-08-post-m022-roadmap-for-gsd-auto.md`. Process tag `v0.20`. Honeycomb stays Proposed. No product behavior change unless an oracle exposes a bug.
+**Closed:** 2026-10-09. Source: `.compound-engineering/artifacts/plans/2026-10-08-post-m022-roadmap-for-gsd-auto.md`. Process tag `v0.20`. S01–S02 complete. Audit: `.planning/milestones/v0.20-MILESTONE-AUDIT.md`. Honeycomb stays Proposed. No product behavior change unless an oracle exposes a bug.
 
 - [x] **S01: Generators and missing oracles** `risk:medium` `depends:[]`
   > After this: `ingest_mix` Coverage reaches Retract-before-Assert, Correct/Retract of derived Behavior ids, overlapping Asserts, keyed retry, empty log; oracles G-C04/C05/C11; every new oracle has a kill_mutation.
-- [ ] **S02: Matrix honesty** `risk:low` `depends:[S01]`
+- [x] **S02: Matrix honesty** `risk:low` `depends:[S01]`
   > After this: honor-system and tautology rows re-labelled or given real mutants; optional cargo-mutants note is verifier evidence, not a gate.
 
 ## M025: Wedge answer surface — CLOSED (GSD v0.19)

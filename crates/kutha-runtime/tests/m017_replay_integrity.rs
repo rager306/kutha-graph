@@ -374,6 +374,7 @@ fn as_known_on_differs_from_live_at_max_on_closed_vt() {
     assert!(!live_max.contains(&statute));
 }
 
+/// Characterization (M026 S02): known_at mirrors is_known_at + product filter — not an independent kill.
 #[test]
 fn known_at_equals_is_known_at_filter() {
     let rt = seed_runtime();
