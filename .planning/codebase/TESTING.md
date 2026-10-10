@@ -113,7 +113,7 @@ class HarnessTests(unittest.TestCase):
 - Fail-closed cases: assert **both** the error variant **and** that SoT did not grow (`log().len()`, empty fold)
 - Temporal fitness: use opaque integer valid-times (`2010`, `2015`, `2021`), not wall-clock “now”
 - End many scenarios with `rt.replay_check().unwrap()` when mutation must stay replay-safe
-- Python live-tree smoke: `test_ci_green_on_this_tree` / `test_no_high_on_live_tree` call real dictionaries on repo root
+- Python live-tree smoke: `test_ci_fsm_reaches_ok_with_stubbed_observe` (stub cargo/tenant, FSM only) / `test_no_high_on_live_tree` (dictionary checks). Live observe is `uv run kutha-gov ci` or `KUTHA_LIVE_CARGO=1`.
 
 ## Mocking
 
@@ -211,7 +211,7 @@ rg 'required:' -A30 .kutha/dictionaries/fsm.yaml
 - Python FSM quantum path: `test_ci_quantum_reaches_ok_on_this_tree` expects full trace including `observe_cargo` and named evidence tuples
 
 **E2E Tests:**
-- `uv run kutha-gov ci` / `HarnessTests.test_ci_green_on_this_tree` — full dictionary + observe + emit/fold on the live tree
+- `uv run kutha-gov ci` — full dictionary + real observe_cargo + emit/fold. Pytest `test_ci_fsm_reaches_ok_with_stubbed_observe` is stub-scoped FSM only.
 - Not a browser/UI E2E stack — Not applicable for frontend
 
 **Governor checks (static tests-as-policy):**

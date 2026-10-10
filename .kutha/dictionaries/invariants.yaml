@@ -296,6 +296,12 @@ invariants:
     disposition: check
     check: product-close-gate
 
+  - id: I-stub-ci-honest-name
+    claim: "A pytest quantum that stubs cargo/tenant must not be named as live-tree green; live observe_cargo is kutha-gov ci or KUTHA_LIVE_CARGO=1"
+    source: ".planning/phases/99-stub-ci-honest-name/99-CONTEXT.md"
+    disposition: check
+    check: stub-ci-honest-name
+
   - id: I-test-matrix-kind
     claim: "Test-matrix consistency cannot be expressed as yaml_map_list (ROADMAP slice ids are M###-S##, not literal tokens; killed requires a non-none kill_mutation that is not characterization-shaped)"
     source: "docs/process/governor-intake.md"

@@ -1189,6 +1189,17 @@ rows:
     gate: default
     owner: M038-S01
     source: Phase 98 / CE review P2 #29
+  - id: SEM-m039-stub-ci-honest
+    plane: harness
+    invariant: stub cargo pytest quantum is not named as live-tree green
+    layer: governor
+    oracle:
+      - stub-ci-honest-name
+    kill_mutation: restore def test_ci_green_on_this_tree as the stub quantum name
+    status: killed
+    gate: default
+    owner: M039-S01
+    source: Phase 99 / CE review P1 #7
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

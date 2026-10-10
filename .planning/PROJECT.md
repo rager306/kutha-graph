@@ -10,11 +10,11 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.32 policy delivery-key namespace (harness M038) — complete
+## Current Milestone: v0.33 stub CI honest name (harness M039) — complete
 
-**Shipped:** Phase 98 / S01. Source: CE full-branch review P2 #29. Not Cypher/HNSW. Crate SemVer stays `0.0.0`.
+**Shipped:** Phase 99 / S01. Source: CE full-branch review P1 #7. Not Cypher/HNSW. Crate SemVer stays `0.0.0`.
 
-**Last shipped:** v0.32 policy delivery-key namespace (M038). **Harness lease:** read `.kutha/STATE.md`. Honeycomb stays Proposed.
+**Last shipped:** v0.33 stub CI honest name (M039). **Harness lease:** read `.kutha/STATE.md`. Honeycomb stays Proposed.
 
 
 ## Business Context

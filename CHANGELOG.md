@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Process: stub CI honest name (Phase 99)
+
+### Process
+
+- Split the pytest PATH-stub quantum from a lying `test_ci_green_on_this_tree` name. Stub cargo/tenant now only proves FSM observe scheduling (`test_ci_fsm_reaches_ok_with_stubbed_observe`). Live `observe_cargo` is `uv run kutha-gov ci` or opt-in `KUTHA_LIVE_CARGO=1` (`test_ci_observe_cargo_live`). Governor check `stub-ci-honest-name` (`glob_absent` + `file_contains`); invariant `I-stub-ci-honest-name`. Matrix `SEM-m039-stub-ci-honest`. CE review P1 #7.
+
+### Trajectory
+
+- Honeycomb stays Proposed. Test-matrix plane stays harness oracle.
+
+## 2026-10-10 — Process: close M039 / v0.33 (Phase 99)
+
+### Process
+
+- M039 / GSD v0.33 closed. Active Milestone **None**; `L_delivery=M039-closed`. Audit: `.planning/milestones/v0.33-MILESTONE-AUDIT.md`. S01 stub CI honest name (`99-VERIFICATION.md`). Next controller lease: G3 remaining (#16, #17, #6…) or parked residuals.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-10 — Product: policy delivery-key namespace (Phase 98)
 
 ### Product

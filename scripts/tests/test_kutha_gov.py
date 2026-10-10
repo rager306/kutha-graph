@@ -73,23 +73,52 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(1, len(highs))
         self.assertEqual("unknown-kind", highs[0].category)
 
-    def test_ci_green_on_this_tree(self) -> None:
-        # Hermetic: stub cargo/tenant. Live cargo under timeout_sec 180 times out on a
-        # cold edition-2024 rebuild (pytest log: observe_cargo=180111, empty stdout).
-        # Controller standalone `kutha-gov ci` remains the real-tree cargo proof.
+    def test_stub_ci_is_not_named_green_on_this_tree(self) -> None:
+        src = Path(__file__).read_text(encoding="utf-8")
+        lying = "def test_ci_" + "green_on_this_tree"
+        self.assertNotIn(
+            lying,
+            src,
+            "stubbed cargo quantum must not claim live-tree green (CE review P1 #7)",
+        )
+
+    def test_ci_fsm_reaches_ok_with_stubbed_observe(self) -> None:
+        # Stub cargo/tenant: proves FSM visits observe_cargo, not live-tree green.
+        # Exit may be nonzero when other HIGHs already exist (skip_heavy_observe).
+        # Live observe_cargo is `uv run kutha-gov ci` or KUTHA_LIVE_CARGO=1.
+        from contextlib import redirect_stdout
+        from io import StringIO
+
         bindir, tenant = _stub_ci_bins()
         previous_path = os.environ.get("PATH", "")
         previous_tenant = os.environ.get("KUTHA_TENANT_BIN")
+        buf = StringIO()
         try:
             os.environ["PATH"] = bindir + os.pathsep + previous_path
             os.environ["KUTHA_TENANT_BIN"] = tenant
-            self.assertEqual(0, main(["--root", str(ROOT), "ci"]))
+            with redirect_stdout(buf):
+                main(["--root", str(ROOT), "ci"])
+            cargo_on_path = Path(bindir) / "cargo"
+            self.assertTrue(cargo_on_path.is_file(), "stub cargo must be first on PATH")
+            out = buf.getvalue()
+            self.assertIn("observe_cargo", out)
+            self.assertNotIn("observe-missing", out)
+            self.assertIn("stub-ci-honest-name", out)
+            self.assertRegex(out, r"OK\s+stub-ci-honest-name")
         finally:
             os.environ["PATH"] = previous_path
             if previous_tenant is None:
                 os.environ.pop("KUTHA_TENANT_BIN", None)
             else:
                 os.environ["KUTHA_TENANT_BIN"] = previous_tenant
+
+    @unittest.skipUnless(
+        os.environ.get("KUTHA_LIVE_CARGO") == "1",
+        "set KUTHA_LIVE_CARGO=1 to run real observe_cargo (serial; not pytest default)",
+    )
+    def test_ci_observe_cargo_live(self) -> None:
+        self.assertIsNone(os.environ.get("KUTHA_TENANT_BIN"))
+        self.assertEqual(0, main(["--root", str(ROOT), "ci"]))
 
     def test_no_high_on_live_tree(self) -> None:
         for name, chk in get_checks(ROOT).items():

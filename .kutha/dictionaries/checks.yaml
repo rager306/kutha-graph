@@ -1369,6 +1369,32 @@ checks:
           pattern: "`precommit` alone is not a product close gate"
           with: "`precommit` is enough for product close"
 
+  - id: stub-ci-honest-name
+    description: >-
+      Pytest full-quantum with stub cargo must not be named as live-tree green
+      (CE review P1 #7). Live observe remains kutha-gov ci / KUTHA_LIVE_CARGO.
+    steps:
+      - kind: glob_absent
+        glob: scripts/tests/test_kutha_gov.py
+        needles:
+          - "def test_ci_green_on_this_tree("
+        category: oracle
+        message: "stubbed CI quantum still uses lying name test_ci_green_on_this_tree"
+      - kind: file_contains
+        path: scripts/tests/test_kutha_gov.py
+        needles:
+          - "def test_ci_fsm_reaches_ok_with_stubbed_observe"
+          - "KUTHA_LIVE_CARGO"
+        require: all
+        category: oracle
+        message: "stub-scoped FSM test or live cargo opt-in missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/tests/test_kutha_gov.py
+          pattern: "def test_ci_fsm_reaches_ok_with_stubbed_observe"
+          with: "def test_ci_green_on_this_tree"
+
   - id: i-f1-outcomes
     description: I-F1 — log-native outcomes and justifications (semantic-gap review)
     steps:
