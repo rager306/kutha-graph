@@ -1399,6 +1399,35 @@ checks:
           pattern: "def test_ci_fsm_reaches_ok_with_stubbed_observe"
           with: "def test_ci_green_on_this_tree"
 
+  - id: glob-absent-comment-policy
+    description: >-
+      glob_absent applies one comment policy (# and //) whether or not
+      unless_line_contains is set (CE review P2 #22).
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/kinds.py
+        needles:
+          - "def _line_is_comment"
+          - "One comment policy with or without unless_line_contains"
+        require: all
+        category: oracle
+        message: "glob_absent comment policy missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_kutha_gov.py
+        needles:
+          - "test_hash_comment_only_needle_passes_without_unless_line"
+          - "test_slash_comment_only_needle_passes_without_unless_line"
+          - "test_code_line_needle_high_without_unless_line"
+        require: all
+        category: oracle
+        message: "glob_absent comment oracles missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/kinds.py
+          pattern: "def _line_is_comment\\(line: str\\) -> bool:"
+          with: "def _line_is_not_comment(line: str) -> bool:"
+
   - id: nameless-dict-retain
     description: >-
       A checks.yaml row without id must not discard already-parsed valid checks

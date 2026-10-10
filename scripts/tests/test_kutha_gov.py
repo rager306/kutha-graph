@@ -947,6 +947,56 @@ class GlobAbsentUnlessTests(unittest.TestCase):
         )
         self.assertEqual(["glob-absent"], _rust_highs(result))
 
+    def test_hash_comment_only_needle_passes_without_unless_line(self) -> None:
+        # CE #22: comment exemption must not depend on unless_line_contains.
+        root = _rust_tree({"notes.md": "# forbidden-token here\n"})
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_absent",
+                "glob": "notes.md",
+                "needles": ["forbidden-token"],
+            },
+        )
+        self.assertEqual([], _rust_highs(result))
+
+    def test_slash_comment_only_needle_passes_without_unless_line(self) -> None:
+        root = _rust_tree({"src/x.rs": "// forbidden-token here\n"})
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_absent",
+                "glob": "src/*.rs",
+                "needles": ["forbidden-token"],
+            },
+        )
+        self.assertEqual([], _rust_highs(result))
+
+    def test_code_line_needle_high_without_unless_line(self) -> None:
+        root = _rust_tree({"src/x.rs": "let forbidden-token = 1;\n"})
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_absent",
+                "glob": "src/*.rs",
+                "needles": ["forbidden-token"],
+            },
+        )
+        self.assertEqual(["glob-absent"], _rust_highs(result))
+
+    def test_hash_comment_only_still_passes_with_unless_line(self) -> None:
+        root = _rust_tree({"notes.md": "# forbidden-token here\n"})
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_absent",
+                "glob": "notes.md",
+                "needles": ["forbidden-token"],
+                "unless_line_contains": "allow-this",
+            },
+        )
+        self.assertEqual([], _rust_highs(result))
+
 
 class RustTestAssertsTests(unittest.TestCase):
     def test_rust_test_asserts_high_when_fn_missing(self) -> None:

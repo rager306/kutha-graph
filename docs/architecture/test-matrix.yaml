@@ -1280,6 +1280,17 @@ rows:
     gate: default
     owner: M044-S01
     source: Phase 104 / CE review P2 #20
+  - id: SEM-m045-glob-absent-comment
+    plane: harness
+    invariant: glob_absent comment exemption (# and //) does not depend on unless_line_contains
+    layer: governor
+    oracle:
+      - glob-absent-comment-policy
+    kill_mutation: restore whole-file folded-in-text match when unless_line_contains is unset
+    status: killed
+    gate: default
+    owner: M045-S01
+    source: Phase 105 / CE review P2 #22
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

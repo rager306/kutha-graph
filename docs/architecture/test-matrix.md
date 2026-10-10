@@ -85,6 +85,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M044 S01 (nameless dict retain):** Phase 104 — `SEM-m044-nameless-dict-retain` `killed` (owner `M044-S01`). Oracle: `nameless-dict-retain`.
 
+**M045 S01 (glob_absent comment policy):** Phase 105 — `SEM-m045-glob-absent-comment` `killed` (owner `M045-S01`). Oracle: `glob-absent-comment-policy`.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

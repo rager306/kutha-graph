@@ -312,10 +312,15 @@ def _unless_file_contains_skip(step: Step, ctx: Context) -> bool:
     return needle in text
 
 
+def _line_is_comment(line: str) -> bool:
+    """True for `#` or `//` comment lines (leading whitespace ignored)."""
+    stripped = line.lstrip()
+    return stripped.startswith("#") or stripped.startswith("//")
+
+
 def _line_has_needle_without_allow(line: str, needle: str, allow: str) -> bool:
     """True when `needle` appears on a non-comment line that lacks `allow`."""
-    stripped = line.lstrip()
-    if stripped.startswith("#"):
+    if _line_is_comment(line):
         return False
     if needle not in line:
         return False
@@ -342,13 +347,11 @@ def _kind_glob_absent(check: str, step: Step, ctx: Context, result: CheckResult)
         result.scanned += 1
         for needle in needles:
             folded = _casefold(step, needle)
-            if allow:
-                hit = any(
-                    _line_has_needle_without_allow(line, folded, allow_folded)
-                    for line in text.splitlines()
-                )
-            else:
-                hit = folded in text
+            # One comment policy with or without unless_line_contains (CE #22).
+            hit = any(
+                _line_has_needle_without_allow(line, folded, allow_folded)
+                for line in text.splitlines()
+            )
             if hit:
                 message = _fmt(
                     _str(step, "message", "found {needle}"),

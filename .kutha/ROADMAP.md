@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M045: glob_absent comment policy — CLOSED (GSD v0.39)
+
+**Closed:** S01 delivered 2026-10-10. Process tag `v0.39`. Honeycomb stays Proposed. CE review P2 #22.
+
+- [x] **S01: One comment policy with or without unless_line_contains** `risk:low` `depends:[]`
+  > After this: `glob_absent` skips `#` and `//` comment lines for needles whether or not `unless_line_contains` is set. RED oracles first. No Cypher/HNSW. Landed: `glob-absent-comment-policy`; `105-VERIFICATION.md`.
+
 ## M044: nameless dict retain — CLOSED (GSD v0.38)
 
 **Closed:** S01 delivered 2026-10-10. Process tag `v0.38`. Honeycomb stays Proposed. CE review P2 #20.

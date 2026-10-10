@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Process: glob_absent comment policy (Phase 105)
+
+### Process
+
+- `glob_absent` uses one per-line comment policy (`#` and `//`) whether or not `unless_line_contains` is set. Check `glob-absent-comment-policy`; matrix `SEM-m045-glob-absent-comment`. CE review P2 #22.
+
+### Trajectory
+
+- M045 / GSD v0.39 closed. Active Milestone **None**; `L_delivery=M045-closed`. Audit: `.planning/milestones/v0.39-MILESTONE-AUDIT.md`. **#6 remains decision-gate** (human). Next: G3 #23… or parked residuals.
+
 ## 2026-10-10 — Process: nameless dict retain (Phase 104)
 
 ### Process

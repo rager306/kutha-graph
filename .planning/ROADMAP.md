@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.38 shipped. Next controller lease: G3 #22 (then decision-gate #6 remains human).
+v0.01–v0.39 shipped. Next controller lease: G3 remaining (#23…) or parked residuals. #6 stays decision-gate.
 
 ## Id map
 
@@ -10,12 +10,12 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.37** — shipped
-- ✅ **v0.38 nameless dict retain** — Phase 104 (harness M044) — shipped 2026-10-10
+- ✅ **v0.01–v0.38** — shipped
+- ✅ **v0.39 glob_absent comment policy** — Phase 105 (harness M045) — shipped 2026-10-10
 
-## Phases (v0.38)
+## Phases (v0.39)
 
-- [x] **Phase 104: Nameless dict retain** — `104-VERIFICATION.md` passed
+- [x] **Phase 105: glob_absent comment policy** — `105-VERIFICATION.md` passed
 
 ## Progress
 
