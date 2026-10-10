@@ -108,12 +108,11 @@ fn snapshot_mid_cut_tail_assert_and_anchor_recovers_known_on() {
 fn graph_fold_replay_as_known_on_matches_live() {
     let mut rt = Runtime::default();
     let statute = common::seed_statute_between_anchors(&mut rt);
-    let mut replayed = GraphFold::replay(rt.log().as_slice());
+    let replayed = GraphFold::replay_with_dict(rt.log().as_slice(), rt.dictionary());
     assert!(
         replayed.as_known_on(WallTime::from(W2)).is_some(),
-        "GraphFold::replay must apply TtAnchor before dictionary bind"
+        "GraphFold::replay_with_dict must apply TtAnchor and bind reserved"
     );
-    replayed.bind_reserved(rt.dictionary());
     assert_eq!(replayed.as_known_on(WallTime::from(D)), rt.fold().as_known_on(WallTime::from(D)));
     assert_eq!(replayed.as_known_on(WallTime::from(W2)), rt.fold().as_known_on(WallTime::from(W2)));
     let known_w2 = replayed.as_known_on(WallTime::from(W2)).expect("replay applies TtAnchor");

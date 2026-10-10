@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.28
-milestone_name: Correct Horn re-fire
+milestone: v0.29
+milestone_name: Replay dict bind
 status: complete
 stopped_at: null
-last_updated: "2026-10-09T12:45:00.000Z"
+last_updated: "2026-10-10T03:20:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.28 Correct Horn re-fire (harness M034)  
-**Phase:** 94 complete  
-**Status:** M034 closed — CE review P1 #9
+**Milestone:** v0.29 Replay dict bind (harness M035)  
+**Phase:** 95 complete  
+**Status:** M035 closed — CE review P1 #10

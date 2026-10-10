@@ -10,11 +10,11 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.28 Correct Horn re-fire (harness M034) — complete
+## Current Milestone: v0.29 Replay dict bind (harness M035) — complete
 
-**Shipped:** Phase 94 / S01. Source: CE full-branch review P1 #9. Not Cypher/HNSW. Crate SemVer stays `0.0.0`.
+**Shipped:** Phase 95 / S01. Source: CE full-branch review P1 #10. Not Cypher/HNSW. Crate SemVer stays `0.0.0`.
 
-**Last shipped:** v0.28 Correct Horn re-fire (M034). **Harness lease:** read `.kutha/STATE.md`. Honeycomb stays Proposed.
+**Last shipped:** v0.29 Replay dict bind (M035). **Harness lease:** read `.kutha/STATE.md`. Honeycomb stays Proposed.
 
 
 ## Business Context

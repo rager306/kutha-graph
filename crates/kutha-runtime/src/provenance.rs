@@ -17,7 +17,9 @@ fn tt_anchors_digest(anchors: &std::collections::BTreeMap<u64, u64>) -> [u8; 32]
 
 impl Runtime {
     pub fn replay_check(&self) -> Result<GraphFold, RuntimeError> {
-        let rebuilt = GraphFold::replay(self.log.as_slice());
+        // Bind reserved kutha:* so the returned fold matches live product queries
+        // (as_of / known_at). Fingerprint is unchanged — it walks facts directly.
+        let rebuilt = GraphFold::replay_with_dict(self.log.as_slice(), &self.dict);
         let expected = self.fold.fingerprint();
         let actual = rebuilt.fingerprint();
         if expected != actual {

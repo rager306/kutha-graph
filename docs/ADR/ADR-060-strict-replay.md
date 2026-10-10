@@ -4,6 +4,10 @@
 
 **Proposed** (Verify — D9 test class; fold-from-log is the proof, not a debugger sidecar)
 
+### Clarification (2026-10-10; Phase 95 / M035 S01; Proposed)
+
+**Query-ready replay binds reserved `kutha:*` from the live TermDictionary** (CE review P1 #10). `GraphFold::replay` remains fingerprint-safe and dictionary-blind. `GraphFold::replay_with_dict` and `Runtime::replay_check` call `bind_reserved` so product `as_of` / `known_at` exclude genesis allows. Bare replay still diverges on purpose (characterization oracle). Oracles: `bare_replay_as_of_includes_dictionary_facts`, `replay_with_dict_as_of_matches_live`, `replay_check_returns_bound_fold`. Status stays **Proposed**.
+
 ### Evidence (2026-10-02; Proposed)
 
 Historical (superseded by the 2026-10-04 blocks below): Behavior lineage and provenance oracles remain (`replay_rejects_behavior_without_prior_cause`, provenance fingerprint tests). Full execution replay and log-native quantum outcomes are still partial (sidecars; gap-review F1/F9). **2026-10-03 note:** Horn execution replay shipped in M016; ADS receipts and `Unavailable` did not — see Evidence 2026-10-03.

@@ -809,11 +809,24 @@ impl GraphFold {
         }
     }
 
+    /// Rebuild fold facts from `events` without binding reserved `kutha:*` ids.
+    ///
+    /// Fingerprint-safe (fingerprint walks `facts` directly). Product queries
+    /// (`as_of` / `known_at`) need [`Self::replay_with_dict`] or a later
+    /// [`Self::bind_reserved`] — otherwise dictionary_rels stay empty and
+    /// genesis allows leak into the product picture (CE review P1 #10).
     pub fn replay(events: &[Event]) -> Self {
         let mut fold = Self::default();
         for e in events {
             fold.apply(e);
         }
+        fold
+    }
+
+    /// Replay then bind reserved relations from the live term dictionary.
+    pub fn replay_with_dict(events: &[Event], dict: &TermDictionary) -> Self {
+        let mut fold = Self::replay(events);
+        fold.bind_reserved(dict);
         fold
     }
 

@@ -1138,6 +1138,19 @@ rows:
     gate: default
     owner: M034-S01
     source: Phase 94 / CE review P1 #9
+  - id: SEM-m035-replay-dict-bind
+    plane: product
+    invariant: query-ready replay binds reserved kutha:* (bare replay stays dictionary-blind)
+    layer: decision
+    oracle:
+      - bare_replay_as_of_includes_dictionary_facts
+      - replay_with_dict_as_of_matches_live
+      - replay_check_returns_bound_fold
+    kill_mutation: replay_check returns GraphFold::replay without bind_reserved
+    status: killed
+    gate: default
+    owner: M035-S01
+    source: Phase 95 / CE review P1 #10
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

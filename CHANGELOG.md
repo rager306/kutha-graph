@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Product: replay dict bind (Phase 95)
+
+### Product
+
+- `GraphFold::replay_with_dict` binds reserved `kutha:*` after replay; `Runtime::replay_check` returns that fold so product `as_of` matches live. Bare `replay` stays fingerprint-safe and dictionary-blind (characterization) (CE review P1 #10). Oracles: `m035_replay_dict_bind.rs`. Matrix `SEM-m035-replay-dict-bind`. ADR-060 Clarification Phase 95. Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈111.5M / `as_of.n` ≈322.3k vs M034 ≈113.6M / ≈328.9k (−1.8% / −2.0%) and vs Phase 80 ≈122.5M / ≈299.6k (−9.0% / +7.6%).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-060 evidence restaged.
+
+## 2026-10-10 — Process: close M035 / v0.29 (Phase 95)
+
+### Process
+
+- M035 / GSD v0.29 closed. Active Milestone **None**; `L_delivery=M035-closed`. Audit: `.planning/milestones/v0.29-MILESTONE-AUDIT.md`. S01 replay dict bind (`95-VERIFICATION.md`). Next controller lease: G2 lineage (#11…) or parked residuals.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-09 — Product: Correct Horn re-fire (Phase 94)
 
 ### Product

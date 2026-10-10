@@ -73,6 +73,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M034 S01 (Correct horn re-fire):** Phase 94 — `SEM-m034-correct-refire` `killed` (owner `M034-S01`). Oracles: `m034_correct_refire`.
 
+**M035 S01 (replay dict bind):** Phase 95 — `SEM-m035-replay-dict-bind` `killed` (owner `M035-S01`). Oracles: `m035_replay_dict_bind`.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)
