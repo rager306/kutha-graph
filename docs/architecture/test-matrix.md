@@ -91,6 +91,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M047 S01 (observe-skipped breadcrumb):** Phase 107 — `SEM-m047-observe-skipped` `killed` (owner `M047-S01`). Oracle: `observe-skipped-breadcrumb`.
 
+**M048 S01 (parallel Context flags):** Phase 108 — `SEM-m048-parallel-context-flags` `killed` (owner `M048-S01`). Oracle: `parallel-context-flags`.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

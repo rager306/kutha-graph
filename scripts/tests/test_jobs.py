@@ -182,6 +182,45 @@ class JobsParityTests(unittest.TestCase):
         self.assertIn("HIGH", out_1)
         self.assertIn("low", out_1.lower())
 
+    def test_eval_check_worker_propagates_skip_emit_and_changed_paths(self) -> None:
+        # CE #48: parallel worker Context must not drop skip_emit / changed_paths.
+        from kutha_gov.parallel import _eval_check_worker
+        from kutha_gov.protocol import Check, CheckResult, Context, Finding, Severity
+
+        class Probe(Check):
+            name = "ctx-probe"
+            description = "records Context control fields"
+
+            def run(self, ctx: Context) -> CheckResult:
+                result = CheckResult(check=self.name)
+                paths = ",".join(sorted(ctx.changed_paths or ()))
+                result.findings.append(
+                    Finding(
+                        self.name,
+                        Severity.LOW,
+                        "ctx-flags",
+                        f"skip_emit={ctx.skip_emit};paths={paths}",
+                    )
+                )
+                return result
+
+        result = _eval_check_worker(
+            (
+                Probe(),
+                str(ROOT),
+                False,
+                "auto",
+                False,
+                True,
+                frozenset({"a.md", "b.md"}),
+            )
+        )
+        messages = [f.message for f in result.findings]
+        self.assertTrue(
+            any("skip_emit=True" in m and "a.md,b.md" in m for m in messages),
+            msg=messages,
+        )
+
     def test_mini_tree_check_raise_is_check_error_jobs_1_and_2(self) -> None:
         # CE #23: check.run exceptions are check-error under both serial and parallel.
         root = _write_mini(

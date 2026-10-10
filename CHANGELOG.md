@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Process: parallel Context flags (Phase 108)
+
+### Process
+
+- `_eval_check_worker` payload carries `skip_emit` and `changed_paths` so jobs>1 matches serial Context control fields. FSM / `.env.example` budget 72→73. Check `parallel-context-flags`; matrix `SEM-m048-parallel-context-flags`. CE review P2 #48.
+
+### Trajectory
+
+- M048 / GSD v0.42 closed. Active Milestone **None**; `L_delivery=M048-closed`. Audit: `.planning/milestones/v0.42-MILESTONE-AUDIT.md`. #6 decision-gate unchanged. Next: #38 (or owner pick).
+
 ## 2026-10-10 — Process: observe-skipped breadcrumb (Phase 107)
 
 ### Process

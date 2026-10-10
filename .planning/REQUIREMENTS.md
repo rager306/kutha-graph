@@ -1,18 +1,18 @@
 # Requirements: Kutha
 
-**Milestones:** v0.41 / harness M047 shipped 2026-10-10. Next lease: G3 #48. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.42 / harness M048 shipped 2026-10-10. Next lease: G3 #38 (or owner pick). Lease: `.kutha/STATE.md`.
 
-## v0.41 Requirements (M047) — complete
+## v0.42 Requirements (M048) — complete
 
-### Observe-skipped breadcrumb (Phase 107, S01)
+### Parallel Context flags (Phase 108, S01)
 
-- [x] **OBS-SKIP-01**: suppressed observe_cargo leaves LOW observe-skipped with state and cause
-- [x] **OBS-SKIP-02**: observation relation stays allowlisted `cargo`; budget 72; governor check
+- [x] **PAR-CTX-01**: worker payload carries skip_emit and changed_paths
+- [x] **PAR-CTX-02**: budget 73; governor check `parallel-context-flags`
 
 ## Out of Scope (this milestone)
 
 | Feature | Reason |
 |---------|--------|
-| G3 #48 skip_emit/changed_paths | Next slice |
+| G3 #38 | Next residual |
 | G3 #6 | Decision-gate (human) |
 | Product fold / Cypher / HNSW | Thaw map |

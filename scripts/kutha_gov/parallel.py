@@ -59,17 +59,22 @@ def worker_error_result(check: str, exc: BaseException) -> CheckResult:
     return result
 
 
-def _eval_check_worker(payload: tuple[Check, str, bool, str, bool]) -> CheckResult:
+def _eval_check_worker(
+    payload: tuple[Check, str, bool, str, bool, bool, frozenset[str] | None],
+) -> CheckResult:
     """Same exception → check-error mapping as eval_check (CE #23).
 
     worker-error stays for transport failures around fut.result(), not check.run.
+    skip_emit / changed_paths must match the caller Context (CE #48).
     """
-    check, root, fail_on_warn, git_against, skip_cargo = payload
+    check, root, fail_on_warn, git_against, skip_cargo, skip_emit, changed_paths = payload
     ctx = Context(
         root=Path(root),
         fail_on_warn=fail_on_warn,
         git_against=git_against,
         skip_cargo=skip_cargo,
+        skip_emit=skip_emit,
+        changed_paths=changed_paths,
         jobs=1,
     )
     return eval_check(check, ctx)
@@ -96,6 +101,8 @@ def run_checks_parallel(
                         ctx.fail_on_warn,
                         ctx.git_against,
                         ctx.skip_cargo,
+                        ctx.skip_emit,
+                        ctx.changed_paths,
                     ),
                 ): name
                 for name, chk in selected

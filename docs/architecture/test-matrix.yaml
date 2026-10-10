@@ -1313,6 +1313,17 @@ rows:
     gate: default
     owner: M047-S01
     source: Phase 107 / CE review P2 #39
+  - id: SEM-m048-parallel-context-flags
+    plane: harness
+    invariant: parallel worker Context carries skip_emit and changed_paths from the caller
+    layer: governor
+    oracle:
+      - parallel-context-flags
+    kill_mutation: rebuild worker Context without skip_emit / changed_paths
+    status: killed
+    gate: default
+    owner: M048-S01
+    source: Phase 108 / CE review P2 #48
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

@@ -1458,6 +1458,38 @@ checks:
           pattern: '"observe-skipped"'
           with: '"observe-silent"'
 
+  - id: parallel-context-flags
+    description: >-
+      Parallel worker Context carries skip_emit and changed_paths from the caller
+      (CE review P2 #48).
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/parallel.py
+        needles:
+          - "skip_emit / changed_paths must match the caller Context"
+          - "skip_emit=skip_emit"
+          - "changed_paths=changed_paths"
+          - "ctx.skip_emit"
+          - "ctx.changed_paths"
+        require: all
+        category: oracle
+        message: "parallel Context flag plumbing missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_jobs.py
+        needles:
+          - "test_eval_check_worker_propagates_skip_emit_and_changed_paths"
+          - "skip_emit=True"
+          - "a.md,b.md"
+        require: all
+        category: oracle
+        message: "parallel Context flag oracle missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/parallel.py
+          pattern: "skip_emit=skip_emit,"
+          with: "skip_emit=False,"
+
   - id: glob-absent-comment-policy
     description: >-
       glob_absent applies one comment policy (# and //) whether or not

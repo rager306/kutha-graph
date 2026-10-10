@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M048: parallel Context flags — CLOSED (GSD v0.42)
+
+**Closed:** S01 delivered 2026-10-10. Process tag `v0.42`. Honeycomb stays Proposed. CE review P2 #48.
+
+- [x] **S01: Worker Context carries skip_emit and changed_paths** `risk:low` `depends:[]`
+  > After this: `_eval_check_worker` payload includes both fields; FSM budget 73. RED oracles first. No Cypher/HNSW. Landed: `parallel-context-flags`; `108-VERIFICATION.md`.
+
 ## M047: observe-skipped breadcrumb — CLOSED (GSD v0.41)
 
 **Closed:** S01 delivered 2026-10-10. Process tag `v0.41`. Honeycomb stays Proposed. CE review P2 #39.
