@@ -321,6 +321,12 @@ invariants:
     disposition: check
     check: glob-absent-comment-policy
 
+  - id: I-parallel-check-error-parity
+    claim: "Dictionary check.run exceptions map to check-error under both jobs=1 and jobs>1; worker-error is transport-only"
+    source: ".planning/phases/106-parallel-check-error-parity/106-CONTEXT.md"
+    disposition: check
+    check: parallel-check-error-parity
+
   - id: I-test-matrix-kind
     claim: "Test-matrix consistency cannot be expressed as yaml_map_list (ROADMAP slice ids are M###-S##, not literal tokens; killed requires a non-none kill_mutation that is not characterization-shaped)"
     source: "docs/process/governor-intake.md"

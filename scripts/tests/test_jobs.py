@@ -182,7 +182,8 @@ class JobsParityTests(unittest.TestCase):
         self.assertIn("HIGH", out_1)
         self.assertIn("low", out_1.lower())
 
-    def test_mini_tree_worker_raise_is_worker_error_high(self) -> None:
+    def test_mini_tree_check_raise_is_check_error_jobs_1_and_2(self) -> None:
+        # CE #23: check.run exceptions are check-error under both serial and parallel.
         root = _write_mini(
             [
                 {
@@ -205,12 +206,14 @@ class JobsParityTests(unittest.TestCase):
             ],
             {"a.md": "X\n", "b.md": "X\n"},
         )
-        code, out, err = _capture(["--jobs", "2", "--root", str(root), "precommit"])
-        self.assertEqual(1, code, msg=out + err)
-        joined = out + err
-        self.assertIn("worker-error", joined)
-        self.assertIn("boom-regex", joined)
-        self.assertIn("HIGH", joined)
+        for jobs in ("1", "2"):
+            code, out, err = _capture(["--jobs", jobs, "--root", str(root), "precommit"])
+            self.assertEqual(1, code, msg=f"jobs={jobs}: {out}{err}")
+            joined = out + err
+            self.assertIn("check-error", joined, msg=f"jobs={jobs}: {joined}")
+            self.assertNotIn("worker-error", joined, msg=f"jobs={jobs}: {joined}")
+            self.assertIn("boom-regex", joined)
+            self.assertIn("HIGH", joined)
 
     def test_selftest_mini_tree_jobs_1_matches_jobs_n(self) -> None:
         root = _write_mini(

@@ -1291,6 +1291,17 @@ rows:
     gate: default
     owner: M045-S01
     source: Phase 105 / CE review P2 #22
+  - id: SEM-m046-parallel-check-error
+    plane: harness
+    invariant: check.run exceptions are check-error for jobs=1 and jobs>1; worker-error is transport-only
+    layer: governor
+    oracle:
+      - parallel-check-error-parity
+    kill_mutation: restore bare check.run in _eval_check_worker without eval_check wrapper
+    status: killed
+    gate: default
+    owner: M046-S01
+    source: Phase 106 / CE review P2 #23
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

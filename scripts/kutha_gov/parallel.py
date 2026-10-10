@@ -60,8 +60,11 @@ def worker_error_result(check: str, exc: BaseException) -> CheckResult:
 
 
 def _eval_check_worker(payload: tuple[Check, str, bool, str, bool]) -> CheckResult:
+    """Same exception → check-error mapping as eval_check (CE #23).
+
+    worker-error stays for transport failures around fut.result(), not check.run.
+    """
     check, root, fail_on_warn, git_against, skip_cargo = payload
-    _delay_if_requested(check.name)
     ctx = Context(
         root=Path(root),
         fail_on_warn=fail_on_warn,
@@ -69,9 +72,7 @@ def _eval_check_worker(payload: tuple[Check, str, bool, str, bool]) -> CheckResu
         skip_cargo=skip_cargo,
         jobs=1,
     )
-    result = check.run(ctx)
-    result.check = check.name
-    return result
+    return eval_check(check, ctx)
 
 
 def run_checks_parallel(

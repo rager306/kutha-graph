@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Process: parallel check-error parity (Phase 106)
+
+### Process
+
+- `_eval_check_worker` reuses `eval_check` so `check.run` exceptions are `check-error` under jobs=1 and jobs>1; `worker-error` stays transport-only. FSM / `.env.example` budget 70→71. Check `parallel-check-error-parity`; matrix `SEM-m046-parallel-check-error`. CE review P2 #23.
+
+### Trajectory
+
+- M046 / GSD v0.40 closed. Active Milestone **None**; `L_delivery=M046-closed`. Audit: `.planning/milestones/v0.40-MILESTONE-AUDIT.md`. #6 decision-gate unchanged. Next: #39.
+
 ## 2026-10-10 — Process: glob_absent comment policy (Phase 105)
 
 ### Process

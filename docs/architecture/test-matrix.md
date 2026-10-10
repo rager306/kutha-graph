@@ -87,6 +87,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M045 S01 (glob_absent comment policy):** Phase 105 — `SEM-m045-glob-absent-comment` `killed` (owner `M045-S01`). Oracle: `glob-absent-comment-policy`.
 
+**M046 S01 (parallel check-error parity):** Phase 106 — `SEM-m046-parallel-check-error` `killed` (owner `M046-S01`). Oracle: `parallel-check-error-parity`.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M046: parallel check-error parity — CLOSED (GSD v0.40)
+
+**Closed:** S01 delivered 2026-10-10. Process tag `v0.40`. Honeycomb stays Proposed. CE review P2 #23.
+
+- [x] **S01: check.run exceptions are check-error under jobs=1 and jobs>1** `risk:low` `depends:[]`
+  > After this: `_eval_check_worker` reuses `eval_check`; `worker-error` is transport-only; FSM budget 71. RED oracles first. No Cypher/HNSW. Landed: `parallel-check-error-parity`; `106-VERIFICATION.md`.
+
 ## M045: glob_absent comment policy — CLOSED (GSD v0.39)
 
 **Closed:** S01 delivered 2026-10-10. Process tag `v0.39`. Honeycomb stays Proposed. CE review P2 #22.
