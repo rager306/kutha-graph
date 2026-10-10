@@ -1258,6 +1258,17 @@ rows:
     gate: default
     owner: M042-S01
     source: Phase 102 / ADR-023 Clarification M042
+  - id: SEM-m043-fsm-quantum-honest
+    plane: harness
+    invariant: skip_cargo FSM quantum is not named as live-tree ok; live asserts cargo/tenant/ff5
+    layer: governor
+    oracle:
+      - fsm-quantum-honest-name
+    kill_mutation: restore def test_ci_quantum_reaches_ok_on_this_tree as the skip_cargo quantum name
+    status: killed
+    gate: default
+    owner: M043-S01
+    source: Phase 103 / CE review P1 #17
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

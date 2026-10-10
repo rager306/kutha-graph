@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Process: FSM quantum honest name (Phase 103)
+
+### Process
+
+- Renamed skip_cargo FSM quantum to `test_ci_quantum_scheduling_reaches_ok_with_skips` (empty observations). Live `test_ci_quantum_observations_live` asserts cargo/tenant/ff5 under `KUTHA_LIVE_CARGO=1`. Governor check `fsm-quantum-honest-name`; invariant `I-fsm-quantum-honest-name`. Matrix `SEM-m043-fsm-quantum-honest`. CE review P1 #17.
+
+### Trajectory
+
+- M043 / GSD v0.37 closed. Active Milestone **None**; `L_delivery=M043-closed`. Audit: `.planning/milestones/v0.37-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
 ## 2026-10-10 — Product: m028×layouts + shrink corpus (Phase 102)
 
 ### Product

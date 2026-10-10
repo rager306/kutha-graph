@@ -81,6 +81,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M042 S01 (m028×layouts + shrink corpus):** Phase 102 — `SEM-m042-dict-retract-layouts` / `SEM-m042-shrink-corpus` `killed` (owner `M042-S01`). Oracles: `m042_m028_layouts`.
 
+**M043 S01 (FSM quantum honest name):** Phase 103 — `SEM-m043-fsm-quantum-honest` `killed` (owner `M043-S01`). Oracle: `fsm-quantum-honest-name`.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

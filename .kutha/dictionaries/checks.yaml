@@ -1399,6 +1399,35 @@ checks:
           pattern: "def test_ci_fsm_reaches_ok_with_stubbed_observe"
           with: "def test_ci_green_on_this_tree"
 
+  - id: fsm-quantum-honest-name
+    description: >-
+      FSM quantum pytest with skip_cargo must not claim live-tree ok by name
+      (CE review P1 #17). Live cargo/tenant/ff5 stays KUTHA_LIVE_CARGO / kutha-gov ci.
+    steps:
+      - kind: glob_absent
+        glob: scripts/tests/test_fsm.py
+        needles:
+          - "def test_ci_quantum_reaches_ok_on_this_tree("
+        category: oracle
+        message: "skip_cargo FSM quantum still uses lying name test_ci_quantum_reaches_ok_on_this_tree"
+      - kind: file_contains
+        path: scripts/tests/test_fsm.py
+        needles:
+          - "def test_ci_quantum_scheduling_reaches_ok_with_skips"
+          - "def test_ci_quantum_observations_live"
+          - '("cargo", "ok")'
+          - '("tenant", "ok")'
+          - "ff5_as_of_t1_differs_from_as_of_t2_on_statute_log"
+        require: all
+        category: oracle
+        message: "scheduling-only FSM quantum or live observation asserts missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/tests/test_fsm.py
+          pattern: "def test_ci_quantum_scheduling_reaches_ok_with_skips"
+          with: "def test_ci_quantum_reaches_ok_on_this_tree"
+
   - id: i-f1-outcomes
     description: I-F1 — log-native outcomes and justifications (semantic-gap review)
     steps:

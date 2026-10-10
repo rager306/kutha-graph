@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.36
-milestone_name: m028 layouts + shrink corpus
+milestone: v0.37
+milestone_name: FSM quantum honest name
 status: complete
 stopped_at: null
-last_updated: "2026-10-10T13:45:00.000Z"
+last_updated: "2026-10-10T14:40:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.36 m028×layouts + shrink corpus (harness M042)  
-**Phase:** 102 complete  
-**Status:** M042 closed — ADR-023 Clarification Phase 102
+**Milestone:** v0.37 FSM quantum honest name (harness M043)  
+**Phase:** 103 complete  
+**Status:** M043 closed — CE review P1 #17

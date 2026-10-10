@@ -38,7 +38,10 @@ class FsmTests(unittest.TestCase):
             msg=outcome.findings,
         )
 
-    def test_ci_quantum_reaches_ok_on_this_tree(self) -> None:
+    def test_ci_quantum_scheduling_reaches_ok_with_skips(self) -> None:
+        # skip_cargo/skip_emit: proves FSM visits observe/emit states by name only.
+        # Live cargo/tenant/ff5 observations: KUTHA_LIVE_CARGO=1
+        # (test_ci_quantum_observations_live) or `uv run kutha-gov ci`.
         ctx = Context(root=ROOT, skip_cargo=True, skip_emit=True)
         machine = load_machine(ROOT)
         budget = machine.budget_default
@@ -67,6 +70,7 @@ class FsmTests(unittest.TestCase):
             ],
             outcome.trace,
         )
+        self.assertEqual([], outcome.observations)
         self.assertEqual(0, outcome.high)
         self.assertTrue(
             any(rel == "h5_selftest" for rel, _obj in outcome.evidence),
@@ -74,6 +78,22 @@ class FsmTests(unittest.TestCase):
         )
         self.assertEqual(0, outcome.skipped)
         self.assertEqual(len(get_checks(ROOT)), len(outcome.results))
+
+    @unittest.skipUnless(
+        os.environ.get("KUTHA_LIVE_CARGO") == "1",
+        "set KUTHA_LIVE_CARGO=1 to run live cargo/tenant/ff5 quantum observations",
+    )
+    def test_ci_quantum_observations_live(self) -> None:
+        ctx = Context(root=ROOT, skip_cargo=False, skip_emit=False)
+        machine = load_machine(ROOT)
+        outcome = run_quantum(ctx, budget=machine.budget_default, start_event="start")
+        self.assertEqual("ok", outcome.terminal)
+        self.assertIn(("cargo", "ok"), outcome.observations)
+        self.assertIn(("tenant", "ok"), outcome.observations)
+        self.assertIn(
+            ("ff5_as_of_t1_differs_from_as_of_t2_on_statute_log", "ok"),
+            outcome.evidence,
+        )
 
     def test_skip_emit_does_not_call_append_run(self) -> None:
         from unittest.mock import patch

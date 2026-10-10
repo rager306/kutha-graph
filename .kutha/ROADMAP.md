@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M043: FSM quantum honest name — CLOSED (GSD v0.37)
+
+**Closed:** S01 delivered 2026-10-10. Process tag `v0.37`. Honeycomb stays Proposed. CE review P1 #17.
+
+- [x] **S01: skip_cargo quantum is scheduling-only; live asserts cargo/tenant/ff5** `risk:low` `depends:[]`
+  > After this: pytest skip quantum named `test_ci_quantum_scheduling_reaches_ok_with_skips`; lying name forbidden; live observations via `KUTHA_LIVE_CARGO=1`. RED oracles first. No Cypher/HNSW. Landed: `fsm-quantum-honest-name`; `103-VERIFICATION.md`.
+
 ## M042: m028×layouts + shrink corpus — CLOSED (GSD v0.36)
 
 **Closed:** S01 delivered 2026-10-10. Process tag `v0.36`. Honeycomb stays Proposed. ADR-023 Clarification Phase 102.
