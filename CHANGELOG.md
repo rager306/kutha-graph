@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Product/Process: Op compat documented break (Phase 110)
+
+### Product
+
+- Characterization oracles `m050_op_compat`: main-era `AllowRelation` / `RegisterRule` / `PinPolicy` / `RecordAdmission` / `RecordAction` JSON fail to deserialize; modern `kutha:*` Assert round-trips. No serde TermId remap in this slice.
+
+### Process
+
+- Controller policy **documented break; serde backfill deferred** in `docs/process/op-compat.md`. FSM / `.env.example` budget 74→75. Check `op-compat-policy`; matrix `SEM-m050-op-compat-policy`. CE review P1 #14 (minimum path + fail-open pin).
+
+### Trajectory
+
+- M050 / GSD v0.44 closed. Active Milestone **None**; `L_delivery=M050-closed`. Audit: `.planning/milestones/v0.44-MILESTONE-AUDIT.md`. #6 decision-gate unchanged. Next: G4 #24 or leased Op backfill.
+
 ## 2026-10-10 — Process: skip-cargo log marker (Phase 109)
 
 ### Process

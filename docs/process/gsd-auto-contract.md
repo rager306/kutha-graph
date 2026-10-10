@@ -51,6 +51,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.41 | 107 | M047 | S01 | observe-skipped breadcrumb (CE review P2 #39) | shipped 2026-10-10 |
 | v0.42 | 108 | M048 | S01 | parallel Context flags (CE review P2 #48) | shipped 2026-10-10 |
 | v0.43 | 109 | M049 | S01 | skip-cargo log marker (CE review P2 #38) | shipped 2026-10-10 |
+| v0.44 | 110 | M050 | S01 | Op compat documented break (CE review P1 #14) | shipped 2026-10-10 |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

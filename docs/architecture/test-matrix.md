@@ -95,6 +95,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M049 S01 (skip-cargo log marker):** Phase 109 — `SEM-m049-skip-cargo-log-marker` `killed` (owner `M049-S01`). Oracle: `skip-cargo-log-marker`.
 
+**M050 S01 (Op compat policy):** Phase 110 — `SEM-m050-op-compat-policy` `killed` (owner `M050-S01`). Oracles: `legacy_allow_relation_op_fails_to_deserialize`, `modern_kutha_allows_assert_roundtrips`.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

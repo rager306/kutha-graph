@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M050: Op compat documented break — CLOSED (GSD v0.44)
+
+**Closed:** S01 delivered 2026-10-10. Process tag `v0.44`. Honeycomb stays Proposed. CE review P1 #14.
+
+- [x] **S01: Document Op wire break; pin fail-open for legacy meta-ops** `risk:low` `depends:[]`
+  > After this: `docs/process/op-compat.md` records documented-break policy; `m050_op_compat` oracles; FSM budget 75. Serde TermId remap deferred. No Cypher/HNSW. Landed: `op-compat-policy`; `110-VERIFICATION.md`.
+
 ## M049: skip-cargo log marker — CLOSED (GSD v0.43)
 
 **Closed:** S01 delivered 2026-10-10. Process tag `v0.43`. Honeycomb stays Proposed. CE review P2 #38.

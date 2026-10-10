@@ -1,18 +1,19 @@
 # Requirements: Kutha
 
-**Milestones:** v0.43 / harness M049 shipped 2026-10-10. Next lease: G4 #14 (compat policy). Lease: `.kutha/STATE.md`.
+**Milestones:** v0.44 / harness M050 shipped 2026-10-10. Next lease: G4 #24 or Op backfill. Lease: `.kutha/STATE.md`.
 
-## v0.43 Requirements (M049) — complete
+## v0.44 Requirements (M050) — complete
 
-### Skip-cargo log marker (Phase 109, S01)
+### Op compat policy (Phase 110, S01)
 
-- [x] **SKIP-LOG-01**: emit_tenant skip records tenant=skipped + fold tip
-- [x] **SKIP-LOG-02**: budget 74; governor check `skip-cargo-log-marker`
+- [x] **OP-COMPAT-01**: documented break — legacy meta-ops fail deserialize
+- [x] **OP-COMPAT-02**: modern kutha:* Assert round-trips; policy doc; budget 75
 
 ## Out of Scope (this milestone)
 
 | Feature | Reason |
 |---------|--------|
-| G4 #14 Op compat | Needs policy decision |
+| Serde TermId remap / migrate | Deferred follow-on |
+| G4 #24 pin scheme | Next residual |
 | G3 #6 | Decision-gate (human) |
-| Product fold / Cypher / HNSW | Thaw map |
+| Cypher / HNSW | Thaw map |
