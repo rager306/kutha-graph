@@ -244,6 +244,10 @@ cells:
       - correct_of_ineligible_derived_still_abstains_in_norm_view
       - correct_interval_of_ineligible_derived_still_abstains_in_norm_view
       - correct_of_eligible_derived_still_ok_in_norm_view
+      # Phase 98 / M038 S01 — delivery-key retry namespaced by relation; cell still Proposed
+      - emit_policy_repin_after_justification_is_idempotent
+      - emit_policy_repin_without_justification_still_idempotent
+      - same_delivery_key_different_relation_do_not_conflict
       # Phase 82 / M025 S02 — clock-safe facade trybuild; cell still Proposed
       - as_of_and_as_known_on_reject_wrong_role_and_bare_u64
       # Phase 83 / M025 S03 — norm_view envelope; cell still Proposed

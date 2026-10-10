@@ -227,18 +227,26 @@ impl Runtime {
     }
 
     /// Identical keyed Assert returns the original EventId without appending (ING-01 / D-01).
+    /// Lookup is namespaced by relation so shared pin strings across
+    /// `kutha:policy` / `kutha:admission` / product relations do not collide.
     pub(crate) fn delivery_key_retry(
         &self,
         op: &Op,
     ) -> Result<Option<QuantumOutcome>, RuntimeError> {
-        let Op::Assert { delivery_key, .. } = op else {
+        let Op::Assert {
+            relation,
+            delivery_key,
+            ..
+        } = op
+        else {
             return Ok(None);
         };
         let Some(key) = Self::delivery_key_active(delivery_key) else {
             return Ok(None);
         };
         self.ingest_examine.bump();
-        let Some(existing_id) = self.by_delivery_key.get(key).copied() else {
+        let Some(existing_id) = self.by_delivery_key.get(&(*relation, key.to_string())).copied()
+        else {
             return Ok(None);
         };
         // Retracted keyed Assert must not short-circuit: remint a live support.

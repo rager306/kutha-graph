@@ -1176,6 +1176,19 @@ rows:
     gate: default
     owner: M037-S01
     source: Phase 97 / CE review P1 #13
+  - id: SEM-m038-policy-delivery-namespace
+    plane: product
+    invariant: by_delivery_key retry namespaced by relation (policy re-pin after admission)
+    layer: decision
+    oracle:
+      - emit_policy_repin_after_justification_is_idempotent
+      - emit_policy_repin_without_justification_still_idempotent
+      - same_delivery_key_different_relation_do_not_conflict
+    kill_mutation: global last-wins by_delivery_key on key string alone
+    status: killed
+    gate: default
+    owner: M038-S01
+    source: Phase 98 / CE review P2 #29
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

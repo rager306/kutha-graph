@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.31 shipped. Next controller lease: CE review G2 residual (#29) or parked residuals / G3 governor oracles.
+v0.01–v0.32 shipped. Next controller lease: parked residuals / G3 governor oracles (CE G2 lineage closed).
 
 ## Id map
 
@@ -10,12 +10,12 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.30** — shipped
-- ✅ **v0.31 norm_view claim-lineage eligibility** — Phase 97 (harness M037) — shipped 2026-10-10
+- ✅ **v0.01–v0.31** — shipped
+- ✅ **v0.32 policy delivery-key namespace** — Phase 98 (harness M038) — shipped 2026-10-10
 
-## Phases (v0.31)
+## Phases (v0.32)
 
-- [x] **Phase 97: Claim-lineage eligibility in norm_view** — `97-VERIFICATION.md` passed
+- [x] **Phase 98: Relation-namespaced delivery-key retry** — `98-VERIFICATION.md` passed
 
 ## Progress
 

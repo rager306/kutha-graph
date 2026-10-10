@@ -1,6 +1,12 @@
 # Requirements: Kutha
 
-**Milestones:** v0.31 / harness M037 shipped 2026-10-10. Next lease: controller decision. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.32 / harness M038 shipped 2026-10-10. Next lease: controller decision. Lease: `.kutha/STATE.md`.
+
+## v0.32 Requirements (M038) — complete
+
+### Policy delivery-key namespace (Phase 98, S01)
+
+- [x] **DK-NS-01**: `by_delivery_key` namespaced by relation; policy re-pin after admission idempotent
 
 ## v0.31 Requirements (M037) — complete
 
@@ -14,15 +20,9 @@
 
 - [x] **DEDUP-01**: disjoint VT windows mint separate derived; overlapping still suppress
 
-## v0.29 Requirements (M035) — complete
-
-### Replay dict bind (Phase 95, S01)
-
-- [x] **REPLAY-01**: `replay_with_dict` / `replay_check` bind reserved; bare `replay` stays dictionary-blind
-
 ## Out of Scope (this milestone)
 
 | Feature | Reason |
 |---------|--------|
-| Remaining G2 (#29) | Next controller lease |
+| G3 governor oracles / parked residuals | Next controller lease |
 | Product fold / Cypher / HNSW | Thaw map |

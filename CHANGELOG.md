@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Product: policy delivery-key namespace (Phase 98)
+
+### Product
+
+- Ingest lease `by_delivery_key` keys `(relation, delivery_key)` so `kutha:admission` Asserts that pin the policy hash do not overwrite the `kutha:policy` registry slot. Identical `emit_policy` re-pin after `record_justification` is idempotent; same key on different relations does not `DeliveryKeyConflict` (CE review P2 #29). Admission keeps the policy pin on `delivery_key`. Oracles: `m038_policy_delivery_namespace.rs`. Matrix `SEM-m038-policy-delivery-namespace`. ADR-050 Clarification Phase 98. Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈108.9M / `as_of.n` ≈303.0k vs M037 ≈110.4M / ≈280.9k (−1.4% / +7.9%) and vs Phase 80 ≈122.5M / ≈299.6k (−11.1% / +1.1%).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-050 evidence restaged.
+
+## 2026-10-10 — Process: close M038 / v0.32 (Phase 98)
+
+### Process
+
+- M038 / GSD v0.32 closed. Active Milestone **None**; `L_delivery=M038-closed`. Audit: `.planning/milestones/v0.32-MILESTONE-AUDIT.md`. S01 delivery-key namespace (`98-VERIFICATION.md`). CE G2 lineage closed. Next controller lease: parked residuals / G3 governor oracles.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-10 — Product: norm_view claim-lineage eligibility (Phase 97)
 
 ### Product

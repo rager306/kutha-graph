@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.31
-milestone_name: norm_view claim-lineage eligibility
+milestone: v0.32
+milestone_name: policy delivery-key namespace
 status: complete
 stopped_at: null
-last_updated: "2026-10-10T04:30:00.000Z"
+last_updated: "2026-10-10T05:00:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.31 norm_view claim-lineage eligibility (harness M037)  
-**Phase:** 97 complete  
-**Status:** M037 closed — CE review P1 #13
+**Milestone:** v0.32 policy delivery-key namespace (harness M038)  
+**Phase:** 98 complete  
+**Status:** M038 closed — CE review P2 #29

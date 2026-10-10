@@ -27,12 +27,13 @@ impl Runtime {
         for (i, e) in self.log.as_slice().iter().enumerate() {
             self.by_event_id.insert(e.id, i);
             if let Op::Assert {
+                relation,
                 delivery_key: Some(k),
                 ..
             } = &e.op
             {
                 if !k.is_empty() {
-                    self.by_delivery_key.insert(k.clone(), e.id);
+                    self.by_delivery_key.insert((*relation, k.clone()), e.id);
                 }
             }
         }
@@ -42,12 +43,13 @@ impl Runtime {
         let pos = self.log.len();
         self.by_event_id.insert(event.id, pos);
         if let Op::Assert {
+            relation,
             delivery_key: Some(k),
             ..
         } = &event.op
         {
             if !k.is_empty() {
-                self.by_delivery_key.insert(k.clone(), event.id);
+                self.by_delivery_key.insert((*relation, k.clone()), event.id);
             }
         }
         self.log.append(event);

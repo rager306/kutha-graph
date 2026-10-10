@@ -295,8 +295,10 @@ pub struct Runtime {
     pub(crate) outcomes: Vec<PersistedQuantumOutcome>,
     /// Log position by EventId (lease; rebuilt on hydrate / fork).
     pub(crate) by_event_id: IngestMap<EventId, usize>,
-    /// Delivery key → EventId for identical Assert retry (lease).
-    pub(crate) by_delivery_key: IngestMap<String, EventId>,
+    /// `(relation, delivery_key)` → EventId for identical Assert retry (lease).
+    /// Namespaced by relation so policy / admission / action / product pins that
+    /// share a key string do not collide (M038 / CE #29).
+    pub(crate) by_delivery_key: IngestMap<(TermId, String), EventId>,
     /// Rows visited on ingest lookup paths (tests; not SoT).
     pub(crate) ingest_examine: IngestExamine,
 }

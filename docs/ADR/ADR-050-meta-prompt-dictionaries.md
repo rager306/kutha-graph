@@ -4,6 +4,10 @@
 
 **Proposed** (Agent control plane — design graduation of ADR-000 D3; not a dedicated literature noun; not runtime)
 
+### Clarification (2026-10-10; Phase 98 / M038 S01; Proposed)
+
+**Delivery-key retry is namespaced by relation** (CE review P2 #29). The ingest lease `by_delivery_key` keys `(relation, delivery_key)` so `kutha:admission` Asserts that pin `delivery_key = policy_version` do not overwrite the `kutha:policy` registry slot. Identical `emit_policy` re-pin after `record_justification` stays idempotent; same key string on different relations does not `DeliveryKeyConflict`. Admission facts keep the policy pin on `delivery_key` (ADR-051 cite). Oracles: `emit_policy_repin_after_justification_is_idempotent`, `emit_policy_repin_without_justification_still_idempotent`, `same_delivery_key_different_relation_do_not_conflict`. Status stays **Proposed**.
+
 ### Evidence (2026-10-02; Proposed)
 
 `relations.yaml` is read only when bootstrapping a new log; `admit` consults `fold.relation_allowed_at` for product names (`admission.rs`, `m013_genesis_log.rs`). Five reserved `kutha:` dictionary relations in the spike — not the frozen six-dictionary product model.

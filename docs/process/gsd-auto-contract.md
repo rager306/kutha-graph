@@ -39,6 +39,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.29 | 95 | M035 | S01 | replay binds reserved dict (CE review P1 #10) | shipped 2026-10-10 |
 | v0.30 | 96 | M036 | S01 | VT-aware Horn live-triple dedup (CE review P1 #11) | shipped 2026-10-10 |
 | v0.31 | 97 | M037 | S01 | norm_view claim-lineage eligibility (CE review P1 #13) | shipped 2026-10-10 |
+| v0.32 | 98 | M038 | S01 | policy delivery-key namespace (CE review P2 #29) | shipped 2026-10-10 |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
