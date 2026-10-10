@@ -112,6 +112,14 @@ The matrix is a map of oracles, not a coverage number. Governor green ≠ ADR Ac
 2. Tautologies relabelled `characterization`: `SEM-naive-as-of-alias`, `SEM-known-at-mirror`, `SEM-seed-budget` (oracle `seed_budget_is_env_floor_not_domain`).
 3. Optional `cargo-mutants` on `fold.rs`/`admission.rs` remains verifier evidence, not a gate (not run this slice). Cell remains **Proposed**.
 
+### Clarification (2026-10-10; Phase 101 / M041 S01; Proposed)
+
+**Adapter identity + shrink gate (Helix-informed; extend existing `sem.rs`, not a parallel ReplayEngine):**
+
+1. Independent `Naive` (`m019_sem_model`), `shrink_events` / `replay_runtime`, and layout schedule already exist. Extensions: `candidate_deps_hold`, `shrink_events_ddmin`, `try_persist_with_layout` (Rollover seam reject ≠ oracle fail), optional `KUTHA_SAVE_SHRUNK`.
+2. **Two EventId expectations:** `expected_persist_event_ids` = export_jsonl Define-prefix encoding; `expected_open_event_ids` = non-Define live ids after `persist`+`open` (Defines leave the opened log). Do not compare raw live ids to opened ids, and do not use the export helper for the open path.
+3. Oracle `persist_roundtrip_trace_identity_across_layouts` pins open EventId identity across Legacy/Segmented/Rollover/Migrated. `SEM-seeded-det` stays characterization (triples); identity for open is `SEM-m041-persist-trace-identity`. Cell remains **Proposed**.
+
 ## Open questions
 
 Decided 2026-10-06 (Phase 46 / M018 S02; recorded in ADR-013; this cell stays Proposed):

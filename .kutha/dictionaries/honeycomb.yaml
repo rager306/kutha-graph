@@ -56,6 +56,7 @@ process: docs/process/governor-intake.md
 # 2026-10-09 restage (M034 S01 Phase 94: Correct horn re-fire): ADR-013; map/delivery/capability unchanged.
 # 2026-10-10 restage (M035 S01 Phase 95: replay dict bind): ADR-060; map/delivery/capability unchanged.
 # 2026-10-10 restage (M036 S01 Phase 96: VT-aware Horn dedup): ADR-013; map/delivery/capability unchanged.
+# 2026-10-10 restage (M041 S01 Phase 101: persist-trace identity + shrink ddmin): ADR-023; map/delivery/capability unchanged.
 # 2026-10-06 restage (M018 S04 Phase 48: I-F15/I-F16 oracles, GATE-01 BENCH-controller): ADR-041, ADR-023; map/delivery/capability unchanged.
 
 locks:
@@ -372,6 +373,10 @@ cells:
       - seed_budget_is_env_floor_not_domain
       - model_as_of_alias_is_live_at_max
       - known_at_equals_is_known_at_filter
+      # Phase 101 / M041 S01 — open EventId identity + shrink ddmin; cell still Proposed
+      - persist_roundtrip_trace_identity_across_layouts
+      - candidate_deps_hold_rejects_orphan_retract
+      - shrink_events_ddmin_drops_middle_when_prefix_biased
 
   - id: ADR-030
     axis: Composition

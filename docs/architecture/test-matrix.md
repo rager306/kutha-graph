@@ -19,17 +19,17 @@ Each YAML row is one invariant. `oracle` is a list of real `#[test]` function na
 
 ## Counts (this file)
 
-Counted from `test-matrix.yaml` rows on 2026-10-09 (M032 S01). Recount after you edit the YAML; do not invent a coverage percentage.
+Counted from `test-matrix.yaml` rows on 2026-10-10 (M041 S01). Recount after you edit the YAML; do not invent a coverage percentage.
 
 | Status | Rows |
 |--------|------|
-| killed | 76 |
+| killed | 89 |
 | characterization | 11 |
 | gap | 0 |
 | blocked | 0 |
 | spec-only | 4 |
 | gate | 1 |
-| **total** | **92** |
+| **total** | **105** |
 
 Planes: product vs harness. Layers: decision, characterization, property, crash, kill, governor, bench.
 
@@ -76,6 +76,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 **M035 S01 (replay dict bind):** Phase 95 — `SEM-m035-replay-dict-bind` `killed` (owner `M035-S01`). Oracles: `m035_replay_dict_bind`.
 
 **M036 S01 (VT-aware Horn dedup):** Phase 96 — `SEM-m036-vt-aware-dedup` `killed` (owner `M036-S01`). Oracles: `m036_vt_aware_dedup`.
+
+**M041 S01 (persist-trace identity + shrink gate):** Phase 101 — `SEM-m041-persist-trace-identity` / `SEM-m041-shrink-ddmin` `killed` (owner `M041-S01`). Oracles: `m041_persist_trace_identity`. Open path uses `expected_open_event_ids` (not export Define-prefix).
 
 `unowned` is rejected by the governor check.
 

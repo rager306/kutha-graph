@@ -1211,6 +1211,30 @@ rows:
     gate: default
     owner: M040-S01
     source: Phase 100 / CE review P1 #16
+  - id: SEM-m041-persist-trace-identity
+    plane: product
+    invariant: persist+open preserves non-Define EventId order across PersistLayout (Legacy/Segmented/Rollover/Migrated)
+    layer: property
+    oracle:
+      - persist_roundtrip_trace_identity_across_layouts
+    kill_mutation: reassign one non-Define EventId on open for any layout
+    status: killed
+    gate: default
+    owner: M041-S01
+    source: Phase 101 / ADR-023 Clarification M041
+  - id: SEM-m041-shrink-ddmin
+    plane: product
+    invariant: shrink candidates require referential deps; chunk-ddmin strips middle noise; Rollover seam reject is not oracle fail
+    layer: property
+    oracle:
+      - candidate_deps_hold_rejects_orphan_retract
+      - shrink_events_ddmin_drops_middle_when_prefix_biased
+      - try_persist_rollover_tiny_does_not_panic
+    kill_mutation: candidate_deps_hold always returns true; shrink_events_ddmin returns the full input vector
+    status: killed
+    gate: default
+    owner: M041-S01
+    source: Phase 101 / ADR-023 Clarification M041
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

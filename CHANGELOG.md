@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Product: persist-trace identity + shrink gate (Phase 101)
+
+### Product
+
+- `common/sem.rs`: `candidate_deps_hold`, `shrink_events_ddmin`, `try_persist_with_layout`, `expected_open_event_ids`, `persist_ids_disagree`, optional `KUTHA_SAVE_SHRUNK`. `fail_shrunk` uses ddmin; `persist_stamps_disagree` rejects invalid/Rollover-seam candidates instead of panicking. Oracle `m041_persist_trace_identity` pins non-Define EventId order across Legacy/Segmented/Rollover/Migrated. Matrix `SEM-m041-persist-trace-identity`, `SEM-m041-shrink-ddmin`.
+
+### Trajectory
+
+- ADR-023 Clarification Phase 101 (Proposed). Honeycomb evidence restaged. Export Define-prefix helper stays distinct from open-path ids.
+
+## 2026-10-10 — Process: close M041 / v0.35 (Phase 101)
+
+### Process
+
+- M041 / GSD v0.35 closed. Active Milestone **None**; `L_delivery=M041-closed`. Audit: `.planning/milestones/v0.35-MILESTONE-AUDIT.md`. S01 persist-trace identity (`101-VERIFICATION.md`). Next controller lease: G3 remaining (#17…) or parked residuals.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-10 — Process: vacuous planning gates (Phase 100)
 
 ### Process

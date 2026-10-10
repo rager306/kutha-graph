@@ -713,6 +713,69 @@ where
     best
 }
 
+/// Referential deps for shrink candidates (test-only). Hydrate `.ok()` is not enough:
+/// `from_dict_and_events` still applies orphan Retract/Correct without Err.
+pub fn candidate_deps_hold(prefix: &[Event]) -> bool {
+    use std::collections::BTreeSet;
+    let ids: BTreeSet<EventId> = prefix.iter().map(|e| e.id).collect();
+    for e in prefix {
+        match &e.op {
+            Op::Retract { event_id }
+            | Op::Correct { event_id, .. }
+            | Op::CorrectInterval { event_id, .. } => {
+                if !ids.contains(event_id) {
+                    return false;
+                }
+            }
+            _ => {}
+        }
+    }
+    true
+}
+
+/// Chunk-ddmin after `shrink_events`. Invalid candidates (deps) are skipped — not
+/// treated as oracle success. Oracle panics propagate (no catch_unwind).
+pub fn shrink_events_ddmin<F>(events: &[Event], mut pred_fails: F) -> Vec<Event>
+where
+    F: FnMut(&[Event]) -> bool,
+{
+    let mut gated = |cand: &[Event]| -> bool {
+        candidate_deps_hold(cand) && pred_fails(cand)
+    };
+    let mut best = shrink_events(events, &mut gated);
+    let mut gran = 2usize;
+    while gran <= best.len() {
+        let chunk = best.len().div_ceil(gran);
+        let mut reduced = false;
+        let mut start = 0;
+        while start < best.len() {
+            let end = (start + chunk).min(best.len());
+            let mut cand = best.clone();
+            cand.drain(start..end);
+            if cand.is_empty() {
+                start = end;
+                continue;
+            }
+            if !candidate_deps_hold(&cand) {
+                start = end;
+                continue;
+            }
+            if pred_fails(&cand) {
+                best = cand;
+                reduced = true;
+                break;
+            }
+            start = end;
+        }
+        if reduced {
+            gran = 2;
+        } else {
+            gran = gran.saturating_mul(2);
+        }
+    }
+    best
+}
+
 pub fn replay_runtime(rt: &Runtime, events: &[Event]) -> Runtime {
     Runtime::from_dict_and_events(
         rt.dictionary().strings().to_vec(),
@@ -856,7 +919,27 @@ pub fn assert_swap_not_silent(rt: &Runtime, events: &[Event], seed: u32, case: u
     }
 }
 
+pub fn maybe_save_shrunk(seed: u32, events: &[Event]) {
+    let Ok(root) = env::var("KUTHA_SAVE_SHRUNK") else {
+        return;
+    };
+    let bytes = match serde_json::to_vec(events) {
+        Ok(b) => b,
+        Err(_) => return,
+    };
+    let mut h: u64 = 0xcbf2_9ce4_8422_2325;
+    for b in &bytes {
+        h ^= u64::from(*b);
+        h = h.wrapping_mul(0x100_0000_01b3);
+    }
+    let dir = PathBuf::from(&root);
+    let _ = fs::create_dir_all(&dir);
+    let path = dir.join(format!("seed-{seed}-{:012x}.json", h & 0xffff_ffff_ffff));
+    let _ = fs::write(&path, &bytes);
+}
+
 pub fn fail_seed(seed: u32, case: usize, events: &[Event], msg: &str) -> ! {
+    maybe_save_shrunk(seed, events);
     eprintln!(
         "SEM fail seed={seed} case={case} n={} ops={}",
         events.len(),
@@ -870,7 +953,7 @@ pub fn fail_shrunk<F>(seed: u32, case: usize, events: &[Event], pred_fails: F, m
 where
     F: FnMut(&[Event]) -> bool,
 {
-    let shrunk = shrink_events(events, pred_fails);
+    let shrunk = shrink_events_ddmin(events, pred_fails);
     fail_seed(seed, case, &shrunk, msg);
 }
 
@@ -928,6 +1011,27 @@ pub fn persist_with_layout(rt: &Runtime, dir: &Path, layout: PersistLayout) -> u
     }
 }
 
+/// Persist for shrink predicates: keep the original layout; reject candidates that
+/// cannot reach layout preconditions (Rollover needs ≥2 sealed). Reject ≠ oracle fail.
+pub fn try_persist_with_layout(rt: &Runtime, dir: &Path, layout: PersistLayout) -> bool {
+    match layout {
+        PersistLayout::Rollover => {
+            let _g = tiny_segment_limits();
+            if store::persist(rt, dir).is_err() {
+                return false;
+            }
+            if !dir.join(store::MANIFEST_REL).exists() {
+                return false;
+            }
+            sealed_count(dir) >= 2
+        }
+        other => {
+            persist_with_layout(rt, dir, other);
+            true
+        }
+    }
+}
+
 pub fn jsonl_event_ids(path: &Path) -> Vec<EventId> {
     let text = fs::read_to_string(path).unwrap();
     text.lines()
@@ -962,6 +1066,17 @@ pub fn expected_persist_event_ids(rt: &Runtime) -> Vec<EventId> {
         }
     }
     out
+}
+
+/// EventIds after `persist`+`open`: Define ops are not retained on the opened log
+/// (meanings recover via dict / stable-Define encoding). Non-Define live ids only.
+/// Distinct from `expected_persist_event_ids` (export_jsonl Define prefix).
+pub fn expected_open_event_ids(rt: &Runtime) -> Vec<EventId> {
+    rt.log()
+        .iter()
+        .filter(|e| !matches!(e.op, Op::Define { .. }))
+        .map(|e| e.id)
+        .collect()
 }
 
 pub fn assert_export_preserves_event_order(src: &Path, rt: &Runtime, seed: u32, case: usize) {
@@ -1045,11 +1160,59 @@ pub fn persist_stamps_disagree(
     layout: PersistLayout,
     seed: u32,
 ) -> bool {
-    let live = replay_runtime(rt, events);
+    if !candidate_deps_hold(events) {
+        return false;
+    }
+    let live = match Runtime::from_dict_and_events(
+        rt.dictionary().strings().to_vec(),
+        events.to_vec(),
+        rt.max_cascade,
+    ) {
+        Ok(r) => r,
+        Err(_) => return false,
+    };
     let dir = persist_dir(&format!("shrink-{seed}"));
-    persist_with_layout(&live, &dir, layout);
+    if !try_persist_with_layout(&live, &dir, layout) {
+        rm_dir(&dir);
+        return false;
+    }
     let bad = match store::open(&dir) {
         Ok(opened) => runtime_stamps(&live) != runtime_stamps(&opened),
+        Err(_) => true,
+    };
+    rm_dir(&dir);
+    bad
+}
+
+/// Opened EventId order disagrees with non-Define live ids (persist+open path).
+pub fn persist_ids_disagree(
+    rt: &Runtime,
+    events: &[Event],
+    layout: PersistLayout,
+    seed: u32,
+) -> bool {
+    if !candidate_deps_hold(events) {
+        return false;
+    }
+    let live = match Runtime::from_dict_and_events(
+        rt.dictionary().strings().to_vec(),
+        events.to_vec(),
+        rt.max_cascade,
+    ) {
+        Ok(r) => r,
+        Err(_) => return false,
+    };
+    let dir = persist_dir(&format!("ids-{seed}"));
+    if !try_persist_with_layout(&live, &dir, layout) {
+        rm_dir(&dir);
+        return false;
+    }
+    let want = expected_open_event_ids(&live);
+    let bad = match store::open(&dir) {
+        Ok(opened) => {
+            let got: Vec<EventId> = opened.log().iter().map(|e| e.id).collect();
+            got != want
+        }
         Err(_) => true,
     };
     rm_dir(&dir);
