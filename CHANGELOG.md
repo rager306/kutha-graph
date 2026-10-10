@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Process: observe-skipped breadcrumb (Phase 107)
+
+### Process
+
+- Suppressed `observe_cargo` (skip_cargo / prior-high / overlap-after-high) appends a LOW `observe-skipped` finding naming FSM state and cause; observation stays allowlisted `cargo=skipped` so emit_log does not fail-closed. FSM / `.env.example` budget 71→72. Check `observe-skipped-breadcrumb`; matrix `SEM-m047-observe-skipped`. CE review P2 #39.
+
+### Trajectory
+
+- M047 / GSD v0.41 closed. Active Milestone **None**; `L_delivery=M047-closed`. Audit: `.planning/milestones/v0.41-MILESTONE-AUDIT.md`. #6 decision-gate unchanged. Next: #48.
+
 ## 2026-10-10 — Process: parallel check-error parity (Phase 106)
 
 ### Process

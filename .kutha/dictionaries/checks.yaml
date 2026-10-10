@@ -1428,6 +1428,36 @@ checks:
           pattern: "return eval_check\\(check, ctx\\)"
           with: "return check.run(ctx)"
 
+  - id: observe-skipped-breadcrumb
+    description: >-
+      Suppressed observe_cargo leaves a LOW observe-skipped finding naming state
+      and cause; observation uses allowlisted cargo (CE review P2 #39).
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/fsm.py
+        needles:
+          - "def _note_observe_skipped"
+          - '"observe-skipped"'
+          - 'outcome.observations.append(("cargo", "skipped"))'
+        require: all
+        category: oracle
+        message: "observe-skipped breadcrumb missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_fsm.py
+        needles:
+          - "test_second_observe_cargo_notes_skip_after_prior_high"
+          - 'category == "observe-skipped"'
+          - "prior-high"
+        require: all
+        category: oracle
+        message: "observe-skipped oracle missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/fsm.py
+          pattern: '"observe-skipped"'
+          with: '"observe-silent"'
+
   - id: glob-absent-comment-policy
     description: >-
       glob_absent applies one comment policy (# and //) whether or not

@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.40
-milestone_name: parallel check-error parity
+milestone: v0.41
+milestone_name: observe-skipped breadcrumb
 status: complete
 stopped_at: null
-last_updated: "2026-10-10T16:10:00.000Z"
+last_updated: "2026-10-10T16:30:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.40 parallel check-error parity (harness M046)  
-**Phase:** 106 complete  
-**Status:** M046 closed — CE review P2 #23
+**Milestone:** v0.41 observe-skipped breadcrumb (harness M047)  
+**Phase:** 107 complete  
+**Status:** M047 closed — CE review P2 #39

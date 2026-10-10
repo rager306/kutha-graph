@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M047: observe-skipped breadcrumb — CLOSED (GSD v0.41)
+
+**Closed:** S01 delivered 2026-10-10. Process tag `v0.41`. Honeycomb stays Proposed. CE review P2 #39.
+
+- [x] **S01: Suppressed observe_cargo leaves LOW observe-skipped** `risk:low` `depends:[]`
+  > After this: `_note_observe_skipped` on skip/prior-high/overlap-after-high; observation uses allowlisted `cargo`; FSM budget 72. RED oracles first. No Cypher/HNSW. Landed: `observe-skipped-breadcrumb`; `107-VERIFICATION.md`.
+
 ## M046: parallel check-error parity — CLOSED (GSD v0.40)
 
 **Closed:** S01 delivered 2026-10-10. Process tag `v0.40`. Honeycomb stays Proposed. CE review P2 #23.

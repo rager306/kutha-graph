@@ -1302,6 +1302,17 @@ rows:
     gate: default
     owner: M046-S01
     source: Phase 106 / CE review P2 #23
+  - id: SEM-m047-observe-skipped
+    plane: harness
+    invariant: suppressed observe_cargo leaves LOW observe-skipped naming state and cause; observation uses allowlisted cargo
+    layer: governor
+    oracle:
+      - observe-skipped-breadcrumb
+    kill_mutation: drop _note_observe_skipped calls so second observe stays silent
+    status: killed
+    gate: default
+    owner: M047-S01
+    source: Phase 107 / CE review P2 #39
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

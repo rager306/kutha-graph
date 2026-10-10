@@ -11,7 +11,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from kutha_gov.checks import get_checks  # noqa: E402
 from kutha_gov.config import resolve_budget  # noqa: E402
 from kutha_gov.fsm import load_machine, run_quantum, step_kind  # noqa: E402
-from kutha_gov.protocol import Context, Severity  # noqa: E402
+from kutha_gov.protocol import Context, Finding, Severity  # noqa: E402
 
 
 class FsmTests(unittest.TestCase):
@@ -70,7 +70,10 @@ class FsmTests(unittest.TestCase):
             ],
             outcome.trace,
         )
-        self.assertEqual([], outcome.observations)
+        self.assertEqual(
+            [("cargo", "skipped"), ("cargo", "skipped")],
+            outcome.observations,
+        )
         self.assertEqual(0, outcome.high)
         self.assertTrue(
             any(rel == "h5_selftest" for rel, _obj in outcome.evidence),
@@ -151,6 +154,68 @@ class FsmTests(unittest.TestCase):
             msg=outcome.findings,
         )
 
+    def test_second_observe_cargo_notes_skip_after_prior_high(self) -> None:
+        # CE #39: suppressed second observe_cargo must leave LOW observe-skipped.
+        from unittest.mock import patch
+
+        from kutha_gov.fsm import Machine
+
+        machine = Machine(
+            initial="idle",
+            terminal=frozenset({"ok", "fail"}),
+            budget_default=8,
+            states={
+                "idle": {"kind": "noop"},
+                "obs1": {
+                    "kind": "observe_cargo",
+                    "bin": "cargo",
+                    "args": ["test"],
+                    "required": ["never_seen"],
+                },
+                "obs2": {
+                    "kind": "observe_cargo",
+                    "bin": "cargo",
+                    "args": ["test"],
+                    "required": ["also_never"],
+                },
+                "ok": {"kind": "terminal"},
+                "fail": {"kind": "terminal"},
+            },
+            transitions=[
+                {"from": "idle", "event": "start", "to": "obs1"},
+                {"from": "obs1", "event": "done", "to": "obs2"},
+                {"from": "obs2", "event": "done", "to": "fail"},
+                {"from": "obs1", "event": "fail", "to": "fail"},
+                {"from": "obs2", "event": "fail", "to": "fail"},
+            ],
+        )
+        high = Finding("observe_cargo", Severity.HIGH, "observe-fail", "first cargo failed")
+        calls: list[str] = []
+
+        def fake_cargo(root: object, spec: object) -> tuple[int, list[str], list[Finding]]:
+            del root, spec
+            calls.append("run")
+            return 1, [], [high]
+
+        ctx = Context(root=ROOT, skip_cargo=False, skip_emit=True, jobs=1)
+        with (
+            patch("kutha_gov.fsm.load_machine", return_value=machine),
+            patch("kutha_gov.observe.run_cargo_observation", side_effect=fake_cargo),
+        ):
+            outcome = run_quantum(ctx, budget=8, start_event="start")
+        self.assertEqual(1, len(calls), "second observe must not invoke cargo")
+        self.assertTrue(
+            any(
+                f.severity is Severity.LOW
+                and f.category == "observe-skipped"
+                and "obs2" in f.message
+                and "prior-high" in f.message
+                for f in outcome.findings
+            ),
+            msg=outcome.findings,
+        )
+        self.assertIn(("cargo", "skipped"), outcome.observations)
+
     def test_skip_cargo_does_not_call_cargo_or_tenant(self) -> None:
         from unittest.mock import patch
 
@@ -179,7 +244,14 @@ class FsmTests(unittest.TestCase):
         tenant.assert_not_called()
         selftest.assert_called()
         self.assertEqual("ok", outcome.terminal)
-        self.assertEqual([], outcome.observations)
+        self.assertEqual(
+            [("cargo", "skipped"), ("cargo", "skipped")],
+            outcome.observations,
+        )
+        self.assertTrue(
+            any(f.category == "observe-skipped" for f in outcome.findings),
+            msg=outcome.findings,
+        )
         self.assertTrue(any(rel == "h5_selftest" for rel, _obj in outcome.evidence))
         self.assertIn("observe_cargo", outcome.trace)
         self.assertIn("observe_rocks", outcome.trace)
@@ -217,7 +289,17 @@ class FsmTests(unittest.TestCase):
         selftest.assert_called()
         self.assertEqual("fail", outcome.terminal)
         self.assertGreater(outcome.high, 0)
-        self.assertEqual([], outcome.observations)
+        self.assertEqual(
+            [("cargo", "skipped"), ("cargo", "skipped")],
+            outcome.observations,
+        )
+        self.assertTrue(
+            any(
+                f.category == "observe-skipped" and "prior-high" in f.message
+                for f in outcome.findings
+            ),
+            msg=outcome.findings,
+        )
         self.assertTrue(any(rel == "h5_selftest" for rel, _obj in outcome.evidence))
         self.assertIn("run_selftest", outcome.trace)
         self.assertIn("observe_cargo", outcome.trace)

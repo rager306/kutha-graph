@@ -143,6 +143,23 @@ def _skip_heavy_observe(ctx: Context, outcome: QuantumOutcome) -> bool:
     return ctx.skip_cargo or _high_so_far(outcome)
 
 
+def _note_observe_skipped(outcome: QuantumOutcome, state: str, cause: str) -> None:
+    """LOW breadcrumb when an observe_cargo state does not run (CE #39).
+
+    Relation stays allowlisted `cargo` (same as `_apply_cargo_pack`); state+cause
+    live in the finding message so emit_log does not fail-closed on unknown rels.
+    """
+    outcome.findings.append(
+        Finding(
+            "observe_cargo",
+            Severity.LOW,
+            "observe-skipped",
+            f"{state}: skipped ({cause})",
+        )
+    )
+    outcome.observations.append(("cargo", "skipped"))
+
+
 def _overlap_specs(machine: Machine) -> list[tuple[str, Step]]:
     specs: list[tuple[str, Step]] = []
     for name, spec in machine.states.items():
@@ -350,6 +367,8 @@ def _execute(
         return "done"
     if kind == "observe_cargo":
         if _skip_heavy_observe(ctx, outcome):
+            cause = "skip_cargo" if ctx.skip_cargo else "prior-high"
+            _note_observe_skipped(outcome, state, cause)
             return "done"
         raw_overlap = spec.get("overlap_with")
         if ctx.jobs > 1 and not (isinstance(raw_overlap, list) and raw_overlap):
@@ -371,6 +390,7 @@ def _execute(
             if isinstance(pipeline, dict):
                 packed = pipeline.get(state)
                 if packed is None:
+                    _note_observe_skipped(outcome, state, "overlap-after-high")
                     return "done"
                 _apply_cargo_pack(outcome, packed)
                 return "done"

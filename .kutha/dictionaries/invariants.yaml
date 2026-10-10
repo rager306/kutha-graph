@@ -327,6 +327,12 @@ invariants:
     disposition: check
     check: parallel-check-error-parity
 
+  - id: I-observe-skipped-breadcrumb
+    claim: "Suppressed observe_cargo leaves a LOW observe-skipped finding with state and cause; cargo observation stays allowlisted"
+    source: ".planning/phases/107-observe-skipped-breadcrumb/107-CONTEXT.md"
+    disposition: check
+    check: observe-skipped-breadcrumb
+
   - id: I-test-matrix-kind
     claim: "Test-matrix consistency cannot be expressed as yaml_map_list (ROADMAP slice ids are M###-S##, not literal tokens; killed requires a non-none kill_mutation that is not characterization-shaped)"
     source: "docs/process/governor-intake.md"

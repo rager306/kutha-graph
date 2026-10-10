@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.40 shipped. Next controller lease: G3 #39 (then #48). #6 stays decision-gate.
+v0.01–v0.41 shipped. Next controller lease: G3 #48. #6 stays decision-gate.
 
 ## Id map
 
@@ -10,12 +10,12 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.39** — shipped
-- ✅ **v0.40 parallel check-error parity** — Phase 106 (harness M046) — shipped 2026-10-10
+- ✅ **v0.01–v0.40** — shipped
+- ✅ **v0.41 observe-skipped breadcrumb** — Phase 107 (harness M047) — shipped 2026-10-10
 
-## Phases (v0.40)
+## Phases (v0.41)
 
-- [x] **Phase 106: parallel check-error parity** — `106-VERIFICATION.md` passed
+- [x] **Phase 107: observe-skipped breadcrumb** — `107-VERIFICATION.md` passed
 
 ## Progress
 
