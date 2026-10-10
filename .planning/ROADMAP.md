@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.30 shipped. Next controller lease: CE review G2 lineage residuals (#13…) or parked residuals.
+v0.01–v0.31 shipped. Next controller lease: CE review G2 residual (#29) or parked residuals / G3 governor oracles.
 
 ## Id map
 
@@ -10,16 +10,13 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.29** — shipped
-- ✅ **v0.30 VT-aware Horn dedup** — Phase 96 (harness M036) — shipped 2026-10-10
+- ✅ **v0.01–v0.30** — shipped
+- ✅ **v0.31 norm_view claim-lineage eligibility** — Phase 97 (harness M037) — shipped 2026-10-10
 
-## Phases (v0.30)
+## Phases (v0.31)
 
-- [x] **Phase 96: VT-aware Horn live-triple dedup** — `96-VERIFICATION.md` passed
+- [x] **Phase 97: Claim-lineage eligibility in norm_view** — `97-VERIFICATION.md` passed
 
 ## Progress
 
-| Milestone | Phases | Status |
-|-----------|--------|--------|
-| v0.01–v0.29 | 1–95 | shipped |
-| v0.30 | 96 | shipped |
+See `.planning/STATE.md` and `.kutha/STATE.md`.

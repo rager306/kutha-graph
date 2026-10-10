@@ -623,9 +623,12 @@ impl Runtime {
     /// Norm in force on `vt`, as known on `wall` (M025 S03 / Phase 83).
     ///
     /// Resolves knowledge TT from the greatest `TtAnchor` ≤ `wall`, then
-    /// `live_at(tt, vt)`. Behavior-derived facts require
-    /// [`Self::derivation_eligible_at`]; Assert facts pass. Conflict (both
-    /// polarities) wins over Ok. `as_of` / ASOF-ELIG-01 unchanged.
+    /// `live_at(tt, vt)`. Claim lineage keyed on `claim_id`: when
+    /// `event_by_id(claim_id)` is `Op::Behavior`, require
+    /// [`Self::derivation_eligible_at`] (Correct/CorrectInterval replacements
+    /// keep `claim_id` but mint under Correct ids — M037 / CE #13). Assert
+    /// claims pass. Conflict (both polarities) wins over Ok. `as_of` /
+    /// ASOF-ELIG-01 unchanged.
     pub fn norm_view(&self, vt: ValidTime, wall: WallTime) -> NormView {
         let Some(tt) = self.fold.knowledge_tt_at(wall) else {
             return NormView::MissingAnchor;
@@ -656,11 +659,13 @@ impl Runtime {
 
         let mut eligible = Vec::new();
         for f in live {
-            let is_behavior = matches!(
-                self.event_by_id(f.event_id).map(|e| &e.op),
+            // Key off claim lineage, not minting event type: Correct/CI keep
+            // claim_id of the Behavior while minting a new event_id.
+            let is_derived_claim = matches!(
+                self.event_by_id(f.claim_id).map(|e| &e.op),
                 Some(Op::Behavior { .. })
             );
-            let ok = if is_behavior {
+            let ok = if is_derived_claim {
                 self.derivation_eligible_at(
                     f.claim_id,
                     TransactionTime::from(tt),

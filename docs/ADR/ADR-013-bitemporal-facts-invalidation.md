@@ -4,6 +4,10 @@
 
 **Proposed** (Time/Query fact semantics — Graphiti *semantics* native, without Graphiti runtime)
 
+### Clarification (2026-10-10; Phase 97 / M037 S01; Proposed)
+
+**`norm_view` eligibility keys off claim lineage** (CE review P1 #13). A live residual is derivation-gated when `event_by_id(f.claim_id)` is `Op::Behavior`, not when the minting `event_id` is Behavior. Correct/CorrectInterval preserve `claim_id` while minting under Correct ids; minting-event checks skipped `derivation_eligible_at` and laundered ineligible derived facts into `Ok`. Assert claim roots still pass. Oracles: `correct_of_ineligible_derived_still_abstains_in_norm_view`, `correct_interval_of_ineligible_derived_still_abstains_in_norm_view`, `correct_of_eligible_derived_still_ok_in_norm_view`. Status stays **Proposed**.
+
 ### Clarification (2026-10-10; Phase 96 / M036 S01; Proposed)
 
 **Horn live-triple dedup is VT-aware** (CE review P1 #11). `has_live_triple` / `has_live_triple_except` take the candidate `(valid_from, valid_to)` and block only when a live residual overlaps via `vt_intersect`. Disjoint VT windows of the same triple each mint a derived inverse; overlapping windows still suppress. Oracles: `disjoint_vt_windows_mint_separate_derived_inverses`, `overlapping_vt_windows_still_suppress_duplicate_derived`. Status stays **Proposed**.

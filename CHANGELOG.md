@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Product: norm_view claim-lineage eligibility (Phase 97)
+
+### Product
+
+- `Runtime::norm_view` gates derivation eligibility on claim lineage (`event_by_id(f.claim_id)` is `Op::Behavior`), not minting event type. Correct/CorrectInterval of an ineligible derived claim stay Abstain; eligible Correct stays Ok (CE review P1 #13). Oracles: `m037_norm_view_claim_lineage.rs`. Matrix `SEM-m037-norm-view-claim-lineage`. ADR-013 Clarification Phase 97. Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈110.4M / `as_of.n` ≈280.9k vs M036 ≈118.8M / ≈272.3k (−7.1% / +3.2%) and vs Phase 80 ≈122.5M / ≈299.6k (−9.9% / −6.2%).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-013 evidence restaged.
+
+## 2026-10-10 — Process: close M037 / v0.31 (Phase 97)
+
+### Process
+
+- M037 / GSD v0.31 closed. Active Milestone **None**; `L_delivery=M037-closed`. Audit: `.planning/milestones/v0.31-MILESTONE-AUDIT.md`. S01 claim-lineage eligibility (`97-VERIFICATION.md`). Next controller lease: G2 #29 or parked residuals / G3 governor oracles.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-10 — Product: VT-aware Horn dedup (Phase 96)
 
 ### Product

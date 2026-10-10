@@ -10,11 +10,11 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.30 VT-aware Horn dedup (harness M036) — complete
+## Current Milestone: v0.31 norm_view claim-lineage eligibility (harness M037) — complete
 
-**Shipped:** Phase 96 / S01. Source: CE full-branch review P1 #11. Not Cypher/HNSW. Crate SemVer stays `0.0.0`.
+**Shipped:** Phase 97 / S01. Source: CE full-branch review P1 #13. Not Cypher/HNSW. Crate SemVer stays `0.0.0`.
 
-**Last shipped:** v0.30 VT-aware Horn dedup (M036). **Harness lease:** read `.kutha/STATE.md`. Honeycomb stays Proposed.
+**Last shipped:** v0.31 norm_view claim-lineage eligibility (M037). **Harness lease:** read `.kutha/STATE.md`. Honeycomb stays Proposed.
 
 
 ## Business Context

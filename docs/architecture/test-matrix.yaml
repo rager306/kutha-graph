@@ -1163,6 +1163,19 @@ rows:
     gate: default
     owner: M036-S01
     source: Phase 96 / CE review P1 #11
+  - id: SEM-m037-norm-view-claim-lineage
+    plane: product
+    invariant: norm_view eligibility keys off claim_id Behavior lineage not minting event
+    layer: decision
+    oracle:
+      - correct_of_ineligible_derived_still_abstains_in_norm_view
+      - correct_interval_of_ineligible_derived_still_abstains_in_norm_view
+      - correct_of_eligible_derived_still_ok_in_norm_view
+    kill_mutation: gate eligibility on minting event_id Op::Behavior (skip Correct replacements)
+    status: killed
+    gate: default
+    owner: M037-S01
+    source: Phase 97 / CE review P1 #13
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step
