@@ -1235,6 +1235,29 @@ rows:
     gate: default
     owner: M041-S01
     source: Phase 101 / ADR-023 Clarification M041
+  - id: SEM-m042-dict-retract-layouts
+    plane: product
+    invariant: trailing emit_retract_dict stays revoked after persist+open on every PersistLayout
+    layer: crash
+    oracle:
+      - trailing_dict_retract_survives_all_persist_layouts
+      - trailing_dict_retract_solo_survives_all_persist_layouts
+    kill_mutation: class_with_dict treats Retract as NeedsOutcome even when the target is a kutha:* Assert
+    status: killed
+    gate: default
+    owner: M042-S01
+    source: Phase 102 / ADR-023 Clarification M042 / CE P0 #1
+  - id: SEM-m042-shrink-corpus
+    plane: product
+    invariant: save_shrunk_to/load_shrunk content-addressed JSON roundtrip
+    layer: property
+    oracle:
+      - shrink_corpus_roundtrip_load_matches_saved
+    kill_mutation: load_shrunk returns empty Vec without reading file bytes
+    status: killed
+    gate: default
+    owner: M042-S01
+    source: Phase 102 / ADR-023 Clarification M042
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

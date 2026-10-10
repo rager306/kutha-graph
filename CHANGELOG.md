@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Product: m028×layouts + shrink corpus (Phase 102)
+
+### Product
+
+- Trailing `emit_retract_dict` stays revoked after persist+open on Legacy/Segmented/Rollover/Migrated (`m042_m028_layouts`; Rollover padded for tiny-segment seam). `save_shrunk_to` / `load_shrunk` content-addressed JSON roundtrip; `maybe_save_shrunk` delegates to `save_shrunk_to`. Matrix `SEM-m042-dict-retract-layouts`, `SEM-m042-shrink-corpus`.
+
+### Trajectory
+
+- ADR-023 Clarification Phase 102 (Proposed). Honeycomb evidence restaged. Extends CE P0 #1 beyond single-layout `m028_dict_retract`.
+
+## 2026-10-10 — Process: close M042 / v0.36 (Phase 102)
+
+### Process
+
+- M042 / GSD v0.36 closed. Active Milestone **None**; `L_delivery=M042-closed`. Audit: `.planning/milestones/v0.36-MILESTONE-AUDIT.md`. S01 layouts + corpus (`102-VERIFICATION.md`). Next controller lease: G3 remaining (#17…) or parked residuals.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-10 — Product: persist-trace identity + shrink gate (Phase 101)
 
 ### Product

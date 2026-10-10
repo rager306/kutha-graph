@@ -19,17 +19,17 @@ Each YAML row is one invariant. `oracle` is a list of real `#[test]` function na
 
 ## Counts (this file)
 
-Counted from `test-matrix.yaml` rows on 2026-10-10 (M041 S01). Recount after you edit the YAML; do not invent a coverage percentage.
+Counted from `test-matrix.yaml` rows on 2026-10-10 (M042 S01). Recount after you edit the YAML; do not invent a coverage percentage.
 
 | Status | Rows |
 |--------|------|
-| killed | 89 |
+| killed | 91 |
 | characterization | 11 |
 | gap | 0 |
 | blocked | 0 |
 | spec-only | 4 |
 | gate | 1 |
-| **total** | **105** |
+| **total** | **107** |
 
 Planes: product vs harness. Layers: decision, characterization, property, crash, kill, governor, bench.
 
@@ -78,6 +78,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 **M036 S01 (VT-aware Horn dedup):** Phase 96 — `SEM-m036-vt-aware-dedup` `killed` (owner `M036-S01`). Oracles: `m036_vt_aware_dedup`.
 
 **M041 S01 (persist-trace identity + shrink gate):** Phase 101 — `SEM-m041-persist-trace-identity` / `SEM-m041-shrink-ddmin` `killed` (owner `M041-S01`). Oracles: `m041_persist_trace_identity`. Open path uses `expected_open_event_ids` (not export Define-prefix).
+
+**M042 S01 (m028×layouts + shrink corpus):** Phase 102 — `SEM-m042-dict-retract-layouts` / `SEM-m042-shrink-corpus` `killed` (owner `M042-S01`). Oracles: `m042_m028_layouts`.
 
 `unowned` is rejected by the governor check.
 

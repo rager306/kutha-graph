@@ -120,6 +120,13 @@ The matrix is a map of oracles, not a coverage number. Governor green ≠ ADR Ac
 2. **Two EventId expectations:** `expected_persist_event_ids` = export_jsonl Define-prefix encoding; `expected_open_event_ids` = non-Define live ids after `persist`+`open` (Defines leave the opened log). Do not compare raw live ids to opened ids, and do not use the export helper for the open path.
 3. Oracle `persist_roundtrip_trace_identity_across_layouts` pins open EventId identity across Legacy/Segmented/Rollover/Migrated. `SEM-seeded-det` stays characterization (triples); identity for open is `SEM-m041-persist-trace-identity`. Cell remains **Proposed**.
 
+### Clarification (2026-10-10; Phase 102 / M042 S01; Proposed)
+
+**P0 retract × layouts + shrink corpus:**
+
+1. Trailing `emit_retract_dict` must keep the relation revoked after persist+open on **every** `PersistLayout` (Legacy/Segmented/Rollover/Migrated), not only default `store::persist`. Rollover cases pad enough fold-affecting events so the tiny-segment seam is reachable with Retract still trailing.
+2. Corpus helpers `save_shrunk_to` / `load_shrunk` round-trip JSON under content-addressed names; `KUTHA_SAVE_SHRUNK` remains opt-in write from `fail_seed`. Cell remains **Proposed**.
+
 ## Open questions
 
 Decided 2026-10-06 (Phase 46 / M018 S02; recorded in ADR-013; this cell stays Proposed):

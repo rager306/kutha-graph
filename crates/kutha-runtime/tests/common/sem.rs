@@ -919,23 +919,30 @@ pub fn assert_swap_not_silent(rt: &Runtime, events: &[Event], seed: u32, case: u
     }
 }
 
-pub fn maybe_save_shrunk(seed: u32, events: &[Event]) {
-    let Ok(root) = env::var("KUTHA_SAVE_SHRUNK") else {
-        return;
-    };
-    let bytes = match serde_json::to_vec(events) {
-        Ok(b) => b,
-        Err(_) => return,
-    };
+/// Content-addressed path under `root`: `seed-{seed}-{sha12}.json`.
+pub fn save_shrunk_to(root: &Path, seed: u32, events: &[Event]) -> PathBuf {
+    let bytes = serde_json::to_vec(events).expect("serialize shrunk events");
     let mut h: u64 = 0xcbf2_9ce4_8422_2325;
     for b in &bytes {
         h ^= u64::from(*b);
         h = h.wrapping_mul(0x100_0000_01b3);
     }
-    let dir = PathBuf::from(&root);
-    let _ = fs::create_dir_all(&dir);
-    let path = dir.join(format!("seed-{seed}-{:012x}.json", h & 0xffff_ffff_ffff));
-    let _ = fs::write(&path, &bytes);
+    let _ = fs::create_dir_all(root);
+    let path = root.join(format!("seed-{seed}-{:012x}.json", h & 0xffff_ffff_ffff));
+    fs::write(&path, &bytes).expect("write shrunk corpus");
+    path
+}
+
+pub fn load_shrunk(path: &Path) -> Result<Vec<Event>, String> {
+    let bytes = fs::read(path).map_err(|e| format!("read {}: {e}", path.display()))?;
+    serde_json::from_slice(&bytes).map_err(|e| format!("decode {}: {e}", path.display()))
+}
+
+pub fn maybe_save_shrunk(seed: u32, events: &[Event]) {
+    let Ok(root) = env::var("KUTHA_SAVE_SHRUNK") else {
+        return;
+    };
+    let _ = save_shrunk_to(Path::new(&root), seed, events);
 }
 
 pub fn fail_seed(seed: u32, case: usize, events: &[Event], msg: &str) -> ! {

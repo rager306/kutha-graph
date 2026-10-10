@@ -57,6 +57,7 @@ process: docs/process/governor-intake.md
 # 2026-10-10 restage (M035 S01 Phase 95: replay dict bind): ADR-060; map/delivery/capability unchanged.
 # 2026-10-10 restage (M036 S01 Phase 96: VT-aware Horn dedup): ADR-013; map/delivery/capability unchanged.
 # 2026-10-10 restage (M041 S01 Phase 101: persist-trace identity + shrink ddmin): ADR-023; map/delivery/capability unchanged.
+# 2026-10-10 restage (M042 S01 Phase 102: m028×layouts + shrink corpus): ADR-023; map/delivery/capability unchanged.
 # 2026-10-06 restage (M018 S04 Phase 48: I-F15/I-F16 oracles, GATE-01 BENCH-controller): ADR-041, ADR-023; map/delivery/capability unchanged.
 
 locks:
@@ -377,6 +378,10 @@ cells:
       - persist_roundtrip_trace_identity_across_layouts
       - candidate_deps_hold_rejects_orphan_retract
       - shrink_events_ddmin_drops_middle_when_prefix_biased
+      # Phase 102 / M042 S01 — dict retract × layouts + shrink corpus; cell still Proposed
+      - trailing_dict_retract_survives_all_persist_layouts
+      - trailing_dict_retract_solo_survives_all_persist_layouts
+      - shrink_corpus_roundtrip_load_matches_saved
 
   - id: ADR-030
     axis: Composition
