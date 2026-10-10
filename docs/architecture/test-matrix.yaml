@@ -1200,6 +1200,17 @@ rows:
     gate: default
     owner: M039-S01
     source: Phase 99 / CE review P1 #7
+  - id: SEM-m040-vacuous-planning-gates
+    plane: harness
+    invariant: live CONTEXT without VERIFICATION does not vacuous-pass verification-independent
+    layer: governor
+    oracle:
+      - verification-independent
+    kill_mutation: restore allow_empty true on verification-independent file_contains
+    status: killed
+    gate: default
+    owner: M040-S01
+    source: Phase 100 / CE review P1 #16
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

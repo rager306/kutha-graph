@@ -193,9 +193,19 @@ def _file_contains_one(check: str, step: Step, path: str, text: str, result: Che
         )
 
 
+def _when_glob_idle(step: Step, root: Path) -> bool:
+    """True when when_glob_exists is set and matches no files (idle gate)."""
+    when_glob = _str(step, "when_glob_exists")
+    if not when_glob:
+        return False
+    return not any(path.is_file() for path in root.glob(when_glob))
+
+
 def _kind_file_contains(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
     pattern = _str(step, "glob")
     if pattern:
+        if _when_glob_idle(step, ctx.root):
+            return
         hits = _glob_max_lines_hits(step, ctx.root, check=check, result=result)
         if not hits:
             result.scanned += 1
@@ -1969,6 +1979,8 @@ def _kind_frontmatter_paths_exist(
     check: str, step: Step, ctx: Context, result: CheckResult
 ) -> None:
     field = _str(step, "field", "read_only_inputs")
+    if _when_glob_idle(step, ctx.root):
+        return
     hits = _glob_max_lines_hits(step, ctx.root, check=check, result=result)
     if not hits:
         result.scanned += 1

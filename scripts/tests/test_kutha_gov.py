@@ -1724,6 +1724,51 @@ class VerificationIndependentTests(unittest.TestCase):
         )
         self.assertEqual(["glob-empty"], _rust_highs(result))
 
+    def test_verification_context_without_verification_is_high(self) -> None:
+        # CE review P1 #16: live CONTEXT + missing VERIFICATION must not vacuous-pass.
+        root = _rust_tree({".planning/phases/22-x/22-CONTEXT.md": "ctx\n"})
+        result = _rust_run(
+            root,
+            {
+                "kind": "file_contains",
+                "glob": ".planning/phases/*-*/*-VERIFICATION.md",
+                "min_phase": 22,
+                "when_glob_exists": ".planning/phases/*-*/*-CONTEXT.md",
+                "needles": ["independent: true"],
+                "require": "all",
+            },
+        )
+        self.assertEqual(["glob-empty"], _rust_highs(result))
+
+    def test_verification_idle_without_context_skips(self) -> None:
+        root = _rust_tree({})
+        result = _rust_run(
+            root,
+            {
+                "kind": "file_contains",
+                "glob": ".planning/phases/*-*/*-VERIFICATION.md",
+                "min_phase": 22,
+                "when_glob_exists": ".planning/phases/*-*/*-CONTEXT.md",
+                "needles": ["independent: true"],
+                "require": "all",
+            },
+        )
+        self.assertEqual([], _rust_highs(result))
+
+    def test_frontmatter_context_without_verification_is_high(self) -> None:
+        root = _rust_tree({".planning/phases/22-x/22-CONTEXT.md": "ctx\n"})
+        result = _rust_run(
+            root,
+            {
+                "kind": "frontmatter_paths_exist",
+                "glob": ".planning/phases/*-*/*-VERIFICATION.md",
+                "min_phase": 22,
+                "when_glob_exists": ".planning/phases/*-*/*-CONTEXT.md",
+                "field": "read_only_inputs",
+            },
+        )
+        self.assertEqual(["glob-empty"], _rust_highs(result))
+
     def test_frontmatter_paths_exist_high_on_missing_input(self) -> None:
         body = "---\nindependent: true\nread_only_inputs:\n  - docs/missing.md\n---\n# verify\n"
         root = _rust_tree({".planning/phases/22-x/22-VERIFICATION.md": body})

@@ -41,6 +41,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.31 | 97 | M037 | S01 | norm_view claim-lineage eligibility (CE review P1 #13) | shipped 2026-10-10 |
 | v0.32 | 98 | M038 | S01 | policy delivery-key namespace (CE review P2 #29) | shipped 2026-10-10 |
 | v0.33 | 99 | M039 | S01 | stub CI quantum honest name (CE review P1 #7) | shipped 2026-10-10 |
+| v0.34 | 100 | M040 | S01 | vacuous planning gates (CE review P1 #16) | shipped 2026-10-10 |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

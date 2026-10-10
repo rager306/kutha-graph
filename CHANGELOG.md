@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Process: vacuous planning gates (Phase 100)
+
+### Process
+
+- `verification-independent` no longer uses `allow_empty`. Content steps gate on live CONTEXT via `when_glob_exists`; idle without CONTEXT skips. `_when_glob_idle` in `kinds.py` for `file_contains` and `frontmatter_paths_exist`. Unit oracles: CONTEXT without VERIFICATION → HIGH. Matrix `SEM-m040-vacuous-planning-gates`. CE review P1 #16.
+
+### Trajectory
+
+- Honeycomb stays Proposed. Governor-intake idle/live contract restated.
+
+## 2026-10-10 — Process: close M040 / v0.34 (Phase 100)
+
+### Process
+
+- M040 / GSD v0.34 closed. Active Milestone **None**; `L_delivery=M040-closed`. Audit: `.planning/milestones/v0.34-MILESTONE-AUDIT.md`. S01 vacuous planning gates (`100-VERIFICATION.md`). Next controller lease: G3 remaining (#17, #6…) or parked residuals.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-10 — Process: stub CI honest name (Phase 99)
 
 ### Process

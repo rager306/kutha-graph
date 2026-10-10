@@ -279,8 +279,9 @@ invariants:
     claim: >-
       Live-phase VERIFICATION files from phase 22 onward do not list plan or summary
       artifact paths, carry independent frontmatter, and list only existing
-      read_only_inputs paths
-    source: ".planning/phases/28-independent-verification-and-artifact-budget/28-CONTEXT.md"
+      read_only_inputs paths; live CONTEXT without VERIFICATION is HIGH (no allow_empty;
+      when_glob_exists on CONTEXT) — CE review P1 #16
+    source: ".planning/phases/100-vacuous-planning-gates/100-CONTEXT.md"
     disposition: check
     check: verification-independent
 

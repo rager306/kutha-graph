@@ -1304,9 +1304,13 @@ checks:
   - id: verification-independent
     description: >-
       Live-phase VERIFICATION files must not list plan or summary artifact paths
-      and must carry independence frontmatter (D-05).
+      and must carry independence frontmatter (D-05). When live CONTEXT exists,
+      missing VERIFICATION is HIGH (CE review P1 #16); idle without CONTEXT skips.
     selftest:
-      skip: "derivable only when live VERIFICATION files exist"
+      skip: >-
+        selftest copy drops tmp/, .planning/milestones, and .compound-engineering
+        cited by archived phase VERIFICATION read_only_inputs; CE #16 idle/live
+        contract is proved by VerificationIndependentTests
     steps:
       - kind: glob_absent
         glob: .planning/phases/*-*/*-VERIFICATION.md
@@ -1317,13 +1321,13 @@ checks:
       - kind: file_contains
         glob: .planning/phases/*-*/*-VERIFICATION.md
         min_phase: 22
-        allow_empty: true
+        when_glob_exists: .planning/phases/*-*/*-CONTEXT.md
         needles: ["independent: true", "verifier_model", "commands:", "read_only_inputs:", "exit:"]
         require: all
       - kind: frontmatter_paths_exist
         glob: .planning/phases/*-*/*-VERIFICATION.md
         min_phase: 22
-        allow_empty: true
+        when_glob_exists: .planning/phases/*-*/*-CONTEXT.md
         field: read_only_inputs
 
   - id: id-map-cite
