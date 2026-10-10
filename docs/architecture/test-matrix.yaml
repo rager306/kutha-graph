@@ -1269,6 +1269,17 @@ rows:
     gate: default
     owner: M043-S01
     source: Phase 103 / CE review P1 #17
+  - id: SEM-m044-nameless-dict-retain
+    plane: harness
+    invariant: nameless check id keeps prior valid checks and adds LoadErrorCheck with row index
+    layer: governor
+    oracle:
+      - nameless-dict-retain
+    kill_mutation: restore early return that replaces the dictionary with only LoadErrorCheck
+    status: killed
+    gate: default
+    owner: M044-S01
+    source: Phase 104 / CE review P2 #20
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

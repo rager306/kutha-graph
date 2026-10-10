@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M044: nameless dict retain — CLOSED (GSD v0.38)
+
+**Closed:** S01 delivered 2026-10-10. Process tag `v0.38`. Honeycomb stays Proposed. CE review P2 #20.
+
+- [x] **S01: Nameless check id keeps prior valid checks** `risk:low` `depends:[]`
+  > After this: `get_checks` continues past rows without `id`; `LoadErrorCheck` cites row index alongside survivors. RED oracles first. No Cypher/HNSW. Landed: `nameless-dict-retain`; `104-VERIFICATION.md`.
+
 ## M043: FSM quantum honest name — CLOSED (GSD v0.37)
 
 **Closed:** S01 delivered 2026-10-10. Process tag `v0.37`. Honeycomb stays Proposed. CE review P1 #17.

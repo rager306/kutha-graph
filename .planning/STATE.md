@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.37
-milestone_name: FSM quantum honest name
+milestone: v0.38
+milestone_name: nameless dict retain
 status: complete
 stopped_at: null
-last_updated: "2026-10-10T14:40:00.000Z"
+last_updated: "2026-10-10T15:35:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.37 FSM quantum honest name (harness M043)  
-**Phase:** 103 complete  
-**Status:** M043 closed — CE review P1 #17
+**Milestone:** v0.38 nameless dict retain (harness M044)  
+**Phase:** 104 complete  
+**Status:** M044 closed — CE review P2 #20

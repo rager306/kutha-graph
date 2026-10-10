@@ -83,6 +83,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M043 S01 (FSM quantum honest name):** Phase 103 — `SEM-m043-fsm-quantum-honest` `killed` (owner `M043-S01`). Oracle: `fsm-quantum-honest-name`.
 
+**M044 S01 (nameless dict retain):** Phase 104 — `SEM-m044-nameless-dict-retain` `killed` (owner `M044-S01`). Oracle: `nameless-dict-retain`.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

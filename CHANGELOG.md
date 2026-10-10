@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Process: nameless dict retain (Phase 104)
+
+### Process
+
+- `get_checks` keeps already-parsed valid checks when a sibling row lacks `id`; `LoadErrorCheck` cites the row index alongside survivors (no whole-dictionary discard). Check `nameless-dict-retain`; matrix `SEM-m044-nameless-dict-retain`. CE review P2 #20.
+
+### Trajectory
+
+- M044 / GSD v0.38 closed. Active Milestone **None**; `L_delivery=M044-closed`. Audit: `.planning/milestones/v0.38-MILESTONE-AUDIT.md`. #6 remains decision-gate. Next: #22.
+
 ## 2026-10-10 — Process: Cargo profiles for kache + mold
 
 ### Process

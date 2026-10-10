@@ -85,17 +85,18 @@ def get_checks(root: Path | None = None) -> dict[str, Check]:
     if not isinstance(rows, list):
         return {LoadErrorCheck.name: LoadErrorCheck("dictionary.checks must be a list")}
     found: dict[str, Check] = {}
-    for row in rows:
+    nameless: list[str] = []
+    for index, row in enumerate(rows):
         if not isinstance(row, dict):
             continue
         check = DictCheck(row)
         if not check.name:
-            return {
-                LoadErrorCheck.name: LoadErrorCheck(
-                    "dictionary check row missing id"
-                )
-            }
+            # Keep valid checks; fail closed via LoadError alongside them (CE #20).
+            nameless.append(f"dictionary check row {index} missing id")
+            continue
         found[check.name] = check
+    if nameless:
+        found[LoadErrorCheck.name] = LoadErrorCheck("; ".join(nameless))
     if not found:
         return {LoadErrorCheck.name: LoadErrorCheck("dictionary.checks is empty")}
     return found

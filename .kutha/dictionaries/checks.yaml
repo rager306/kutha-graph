@@ -1399,6 +1399,34 @@ checks:
           pattern: "def test_ci_fsm_reaches_ok_with_stubbed_observe"
           with: "def test_ci_green_on_this_tree"
 
+  - id: nameless-dict-retain
+    description: >-
+      A checks.yaml row without id must not discard already-parsed valid checks
+      (CE review P2 #20). LoadErrorCheck is added alongside survivors.
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/dictionary.py
+        needles:
+          - "nameless.append"
+          - "Keep valid checks"
+        require: all
+        category: oracle
+        message: "get_checks still early-returns on nameless id (discards valid checks): {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_selftest.py
+        needles:
+          - "valid rows must survive a nameless sibling"
+          - "row 1 missing id"
+        require: all
+        category: oracle
+        message: "nameless-dict retain oracle missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/dictionary.py
+          pattern: "nameless.append\\(f\"dictionary check row \\{index\\} missing id\"\\)"
+          with: "return {LoadErrorCheck.name: LoadErrorCheck(\"dictionary check row missing id\")}"
+
   - id: fsm-quantum-honest-name
     description: >-
       FSM quantum pytest with skip_cargo must not claim live-tree ok by name

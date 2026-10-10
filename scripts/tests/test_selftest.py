@@ -494,9 +494,14 @@ class SelftestTests(unittest.TestCase):
         from kutha_gov.protocol import Context
 
         checks = get_checks(root)
-        self.assertEqual([LoadErrorCheck.name], list(checks))
+        self.assertEqual({"ok-check", LoadErrorCheck.name}, set(checks))
+        self.assertIn("ok-check", checks, "valid rows must survive a nameless sibling (CE #20)")
         result = checks[LoadErrorCheck.name].run(Context(root=root))
         self.assertGreaterEqual(result.high_count, 1)
+        self.assertTrue(
+            any("row 1 missing id" in f.message for f in result.findings),
+            msg=result.findings,
+        )
 
     def test_missing_cite_path_is_high(self) -> None:
         from kutha_gov.protocol import Context

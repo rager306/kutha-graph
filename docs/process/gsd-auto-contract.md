@@ -45,6 +45,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.35 | 101 | M041 | S01 | persist-trace identity + shrink ddmin (ADR-023) | shipped 2026-10-10 |
 | v0.36 | 102 | M042 | S01 | m028×layouts + shrink corpus (ADR-023 / P0 #1) | shipped 2026-10-10 |
 | v0.37 | 103 | M043 | S01 | FSM quantum honest name (CE review P1 #17) | shipped 2026-10-10 |
+| v0.38 | 104 | M044 | S01 | nameless dict retain (CE review P2 #20) | shipped 2026-10-10 |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
