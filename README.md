@@ -36,7 +36,7 @@ uv run kutha-gov map
 uv run pytest
 ```
 
-If this host sets `rustc-wrapper = "sccache"` and the wrapper cannot run, use `cargo --config 'build.rustc-wrapper=""' test --workspace` (same override the harness may need via `RUSTC_WRAPPER=`).
+This host’s Cargo uses **kache** as `rustc-wrapper` and **mold** as linker (`~/.cargo/config.toml`). Workspace `Cargo.toml` sets `profile.dev` to `line-tables-only` and disables dep DWARF/incremental so `target/` stays small across harness `tmp/` copies. If the wrapper cannot run, use `cargo --config 'build.rustc-wrapper=""' test --workspace` (same override via `RUSTC_WRAPPER=`).
 
 ## Layout
 

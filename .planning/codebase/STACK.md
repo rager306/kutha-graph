@@ -76,10 +76,10 @@ Do **not** put Python inside `kutha-runtime`. Do **not** introduce TypeScript/No
 - Copy `.env.example` → `.env` (gitignored). Loaders: `scripts/kutha_gov/config.py` (`load_dotenv`) and `crates/kutha-runtime/src/allow.rs` (`apply_dotenv`). CLI flags override env for harness budget / fail-on-warn
 - Product env: `KUTHA_RELATIONS_PATH`, `KUTHA_MAX_CASCADE`, `KUTHA_HARNESS_LOG`, `KUTHA_TENANT_DIR`
 - Harness env: `KUTHA_GOV_BUDGET`, `KUTHA_GOV_FAIL_ON_WARN`, `KUTHA_GOV_CARGO_TIMEOUT_SEC`, `KUTHA_HARNESS_RELATIONS_PATH`, `KUTHA_TENANT_BIN`, `KUTHA_TENANT_TIMEOUT_SEC`
-- Build-adjacent: `CARGO_TARGET_DIR`, optional empty `RUSTC_WRAPPER=` when sccache is broken (documented in `README.md`)
+- Build-adjacent: `CARGO_TARGET_DIR`; host wrapper is **kache** (not sccache) + **mold** linker; optional empty `RUSTC_WRAPPER=` if the wrapper cannot run (`README.md`)
 
 **Build:**
-- `Cargo.toml` — workspace members `crates/kutha-common`, `crates/kutha-runtime`
+- `Cargo.toml` — workspace members `crates/kutha-common`, `crates/kutha-runtime`; `profile.dev` / `profile.release` tuned for kache + mold (line-tables-only, dep DWARF off, thin LTO)
 - `crates/*/Cargo.toml` — per-crate deps
 - `pyproject.toml` — harness package, tool configs (ruff/ty/pyrefly/pytest)
 - `.compound-engineering/config.yaml` — CE `docs_root: .compound-engineering/artifacts` (process artifacts, not product SoT)

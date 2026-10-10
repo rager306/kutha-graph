@@ -17,3 +17,19 @@ crc32fast = "1"
 rustc-hash = "2"
 smallvec = "1"
 kutha-common = { path = "crates/kutha-common" }
+
+# Profile tuning synced with kache + mold (2026-10-10):
+# - non-workspace deps without DWARF: smaller target/ across tmp/ mutation copies.
+#   package."*" does not apply to workspace members (kutha-common / kutha-runtime).
+# - incremental = false for deps is a no-op under kache (it strips incremental
+#   anyway) but states intent for hosts still on sccache.
+[profile.dev]
+debug = "line-tables-only" # backtraces keep file:line; no full DWARF
+
+[profile.dev.package."*"]
+debug = false
+incremental = false
+
+[profile.release]
+lto = "thin"
+strip = true
