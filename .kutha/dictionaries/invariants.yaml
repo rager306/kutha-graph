@@ -339,6 +339,12 @@ invariants:
     disposition: check
     check: parallel-context-flags
 
+  - id: I-skip-cargo-log-marker
+    claim: "skip_cargo / prior-high emit_tenant records tenant=skipped so fold tip is not a stale full-evidence tenant"
+    source: ".planning/phases/109-skip-cargo-log-marker/109-CONTEXT.md"
+    disposition: check
+    check: skip-cargo-log-marker
+
   - id: I-test-matrix-kind
     claim: "Test-matrix consistency cannot be expressed as yaml_map_list (ROADMAP slice ids are M###-S##, not literal tokens; killed requires a non-none kill_mutation that is not characterization-shaped)"
     source: "docs/process/governor-intake.md"

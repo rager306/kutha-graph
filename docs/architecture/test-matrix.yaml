@@ -1324,6 +1324,17 @@ rows:
     gate: default
     owner: M048-S01
     source: Phase 108 / CE review P2 #48
+  - id: SEM-m049-skip-cargo-log-marker
+    plane: harness
+    invariant: skip_cargo / prior-high records cargo=skipped and tenant=skipped so fold tip is not stale full-evidence
+    layer: governor
+    oracle:
+      - skip-cargo-log-marker
+    kill_mutation: emit_tenant skip returns without tenant=skipped observation
+    status: killed
+    gate: default
+    owner: M049-S01
+    source: Phase 109 / CE review P2 #38
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

@@ -1455,8 +1455,8 @@ checks:
       mutations:
         - op: replace_regex
           path: scripts/kutha_gov/fsm.py
-          pattern: '"observe-skipped"'
-          with: '"observe-silent"'
+          pattern: 'outcome.observations.append\(\("cargo", "skipped"\)\)'
+          with: 'outcome.observations.append(("cargo", "ok"))'
 
   - id: parallel-context-flags
     description: >-
@@ -1489,6 +1489,36 @@ checks:
           path: scripts/kutha_gov/parallel.py
           pattern: "skip_emit=skip_emit,"
           with: "skip_emit=False,"
+
+  - id: skip-cargo-log-marker
+    description: >-
+      skip_cargo / prior-high emit_tenant leaves allowlisted tenant=skipped so fold
+      tip is not a stale full-evidence tenant (CE review P2 #38).
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/fsm.py
+        needles:
+          - "CE #38: skip-cargo / prior-high must not leave a stale last_tenant tip"
+          - 'outcome.observations.append(("tenant", "skipped"))'
+          - 'append_observe(ctx.root, "tenant", "skipped")'
+        require: all
+        category: oracle
+        message: "skip-cargo tenant marker missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_fsm.py
+        needles:
+          - 'self.assertEqual("skipped", picture.last_cargo)'
+          - 'self.assertEqual("skipped", picture.last_tenant)'
+          - '("tenant", "skipped")'
+        require: all
+        category: oracle
+        message: "skip-cargo fold marker oracle missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/fsm.py
+          pattern: 'append_observe\(ctx\.root, "tenant", "skipped"\)'
+          with: 'append_observe(ctx.root, "tenant", "ok")'
 
   - id: glob-absent-comment-policy
     description: >-

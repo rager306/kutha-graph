@@ -245,7 +245,11 @@ class FsmTests(unittest.TestCase):
         selftest.assert_called()
         self.assertEqual("ok", outcome.terminal)
         self.assertEqual(
-            [("cargo", "skipped"), ("cargo", "skipped")],
+            [
+                ("cargo", "skipped"),
+                ("cargo", "skipped"),
+                ("tenant", "skipped"),
+            ],
             outcome.observations,
         )
         self.assertTrue(
@@ -257,6 +261,11 @@ class FsmTests(unittest.TestCase):
         self.assertIn("observe_rocks", outcome.trace)
         self.assertIn("emit_tenant", outcome.trace)
         self.assertIn("run_selftest", outcome.trace)
+        from kutha_gov.time_log import LOG_REL, fold_log
+
+        picture = fold_log(ROOT / LOG_REL)
+        self.assertEqual("skipped", picture.last_cargo)
+        self.assertEqual("skipped", picture.last_tenant)
 
     def test_high_from_checks_skips_cargo_after_selftest(self) -> None:
         from unittest.mock import patch
@@ -290,7 +299,11 @@ class FsmTests(unittest.TestCase):
         self.assertEqual("fail", outcome.terminal)
         self.assertGreater(outcome.high, 0)
         self.assertEqual(
-            [("cargo", "skipped"), ("cargo", "skipped")],
+            [
+                ("cargo", "skipped"),
+                ("cargo", "skipped"),
+                ("tenant", "skipped"),
+            ],
             outcome.observations,
         )
         self.assertTrue(

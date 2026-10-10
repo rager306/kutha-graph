@@ -93,6 +93,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M048 S01 (parallel Context flags):** Phase 108 — `SEM-m048-parallel-context-flags` `killed` (owner `M048-S01`). Oracle: `parallel-context-flags`.
 
+**M049 S01 (skip-cargo log marker):** Phase 109 — `SEM-m049-skip-cargo-log-marker` `killed` (owner `M049-S01`). Oracle: `skip-cargo-log-marker`.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

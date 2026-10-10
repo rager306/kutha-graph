@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M049: skip-cargo log marker — CLOSED (GSD v0.43)
+
+**Closed:** S01 delivered 2026-10-10. Process tag `v0.43`. Honeycomb stays Proposed. CE review P2 #38.
+
+- [x] **S01: skip_cargo emit records tenant=skipped for fold tip** `risk:low` `depends:[]`
+  > After this: emit_tenant skip path appends allowlisted `tenant=skipped`; fold tip is not a stale full-evidence tenant; FSM budget 74. RED oracles first. No Cypher/HNSW. Landed: `skip-cargo-log-marker`; `109-VERIFICATION.md`.
+
 ## M048: parallel Context flags — CLOSED (GSD v0.42)
 
 **Closed:** S01 delivered 2026-10-10. Process tag `v0.42`. Honeycomb stays Proposed. CE review P2 #48.

@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Process: skip-cargo log marker (Phase 109)
+
+### Process
+
+- When `emit_tenant` is suppressed by skip_cargo / prior-high, record allowlisted `tenant=skipped` (LOW `observe-skipped` + `append_observe`) so fold tip is not a stale full-evidence tenant. Cargo tip already becomes `skipped` via Phase 107. FSM / `.env.example` budget 73→74. Check `skip-cargo-log-marker`; matrix `SEM-m049-skip-cargo-log-marker`. CE review P2 #38.
+
+### Trajectory
+
+- M049 / GSD v0.43 closed. Active Milestone **None**; `L_delivery=M049-closed`. Audit: `.planning/milestones/v0.43-MILESTONE-AUDIT.md`. G3 apply-queue + advisory #38 closed. #6 decision-gate unchanged. Next: G4 #14 (compat policy).
+
 ## 2026-10-10 — Process: parallel Context flags (Phase 108)
 
 ### Process

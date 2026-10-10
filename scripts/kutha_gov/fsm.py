@@ -439,6 +439,26 @@ def _execute(
         if ctx.skip_emit:
             return "done"
         if _skip_heavy_observe(ctx, outcome):
+            # CE #38: skip-cargo / prior-high must not leave a stale last_tenant tip.
+            cause = "skip_cargo" if ctx.skip_cargo else "prior-high"
+            outcome.findings.append(
+                Finding(
+                    "emit_tenant",
+                    Severity.LOW,
+                    "observe-skipped",
+                    f"emit_tenant: skipped ({cause})",
+                )
+            )
+            outcome.observations.append(("tenant", "skipped"))
+            if not append_observe(ctx.root, "tenant", "skipped"):
+                outcome.findings.append(
+                    Finding(
+                        "emit_tenant",
+                        Severity.HIGH,
+                        "unknown-relation",
+                        "unknown process relation 'tenant' (not in allowlist) — fail-closed",
+                    )
+                )
             return "done"
         from kutha_gov.tenant import run_tenant_observation
 
