@@ -4,6 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-10 — Product: VT-aware Horn dedup (Phase 96)
+
+### Product
+
+- `has_live_triple` / `has_live_triple_except` take candidate VT and block only on `vt_intersect` overlap. Disjoint VT windows of the same triple each mint a derived inverse; overlapping windows still suppress (CE review P1 #11). Oracles: `m036_vt_aware_dedup.rs`. Matrix `SEM-m036-vt-aware-dedup`. ADR-013 Clarification Phase 96. Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈118.8M / `as_of.n` ≈272.3k vs M035 ≈111.5M / ≈322.3k (+6.5% / −15.5%) and vs Phase 80 ≈122.5M / ≈299.6k (−3.0% / −9.1%).
+
+### Trajectory
+
+- Honeycomb stays Proposed. ADR-013 evidence restaged.
+
+## 2026-10-10 — Process: close M036 / v0.30 (Phase 96)
+
+### Process
+
+- M036 / GSD v0.30 closed. Active Milestone **None**; `L_delivery=M036-closed`. Audit: `.planning/milestones/v0.30-MILESTONE-AUDIT.md`. S01 VT-aware Horn dedup (`96-VERIFICATION.md`). Next controller lease: G2 lineage (#13…) or parked residuals.
+
+### Trajectory
+
+- Honeycomb stays Proposed.
+
 ## 2026-10-10 — Product: replay dict bind (Phase 95)
 
 ### Product

@@ -339,10 +339,17 @@ impl Runtime {
         let subject = instantiate(&head.subject, bind, &self.dict)?;
         let object = instantiate(&head.object, bind, &self.dict)?;
         let blocked = if except.is_empty() {
-            self.fold.has_live_triple(subject, rel, object)
-        } else {
             self.fold
-                .has_live_triple_except(subject, rel, object, except)
+                .has_live_triple(subject, rel, object, valid_from, valid_to)
+        } else {
+            self.fold.has_live_triple_except(
+                subject,
+                rel,
+                object,
+                valid_from,
+                valid_to,
+                except,
+            )
         };
         if blocked {
             return None;

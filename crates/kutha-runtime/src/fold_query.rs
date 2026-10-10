@@ -227,39 +227,56 @@ impl GraphFold {
         self.claim_facts.contains_key(&claim)
     }
 
-    /// Live triple presence for residual cascade checks (knows → knownBy).
+    /// Live triple presence overlapping `valid_from`/`valid_to` (Horn dedup).
     pub(crate) fn has_live_triple(
         &self,
         subject: TermId,
         relation: TermId,
         object: TermId,
+        valid_from: u64,
+        valid_to: Option<u64>,
     ) -> bool {
-        self.has_live_triple_except(subject, relation, object, &std::collections::HashSet::new())
+        self.has_live_triple_except(
+            subject,
+            relation,
+            object,
+            valid_from,
+            valid_to,
+            &std::collections::HashSet::new(),
+        )
     }
 
     /// Like [`Self::has_live_triple`], ignoring facts whose `event_id` is in `except`
-    /// (same-batch retracts scheduled before re-fire).
+    /// (same-batch retracts scheduled before re-fire). Dedup is VT-aware: only a live
+    /// residual whose VT overlaps the candidate window blocks (CE review P1 #11).
     pub(crate) fn has_live_triple_except(
         &self,
         subject: TermId,
         relation: TermId,
         object: TermId,
+        valid_from: u64,
+        valid_to: Option<u64>,
         except: &std::collections::HashSet<EventId>,
     ) -> bool {
+        let overlaps = |f: &crate::fold::Fact| {
+            f.invalidated_at.is_none()
+                && !except.contains(&f.event_id)
+                && f.subject == subject
+                && f.relation == relation
+                && f.object() == object
+                && crate::fold::vt_intersect(f.valid_from, f.valid_to, valid_from, valid_to)
+                    .is_some()
+        };
         if !self.hot_maps_warm {
             return self.facts.iter().any(|f| {
                 self.hot_examine.bump();
-                f.invalidated_at.is_none()
-                    && !except.contains(&f.event_id)
-                    && f.subject == subject
-                    && f.relation == relation
-                    && f.object() == object
+                overlaps(f)
             });
         }
         match self.live_triples.get(&(subject, relation, object)) {
             Some(list) => list.iter().any(|&idx| {
-                let f = &self.facts[idx];
-                f.invalidated_at.is_none() && !except.contains(&f.event_id)
+                self.hot_examine.bump();
+                overlaps(&self.facts[idx])
             }),
             None => false,
         }

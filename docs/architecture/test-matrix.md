@@ -75,6 +75,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M035 S01 (replay dict bind):** Phase 95 — `SEM-m035-replay-dict-bind` `killed` (owner `M035-S01`). Oracles: `m035_replay_dict_bind`.
 
+**M036 S01 (VT-aware Horn dedup):** Phase 96 — `SEM-m036-vt-aware-dedup` `killed` (owner `M036-S01`). Oracles: `m036_vt_aware_dedup`.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

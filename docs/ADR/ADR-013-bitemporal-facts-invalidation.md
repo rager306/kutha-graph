@@ -4,6 +4,10 @@
 
 **Proposed** (Time/Query fact semantics — Graphiti *semantics* native, without Graphiti runtime)
 
+### Clarification (2026-10-10; Phase 96 / M036 S01; Proposed)
+
+**Horn live-triple dedup is VT-aware** (CE review P1 #11). `has_live_triple` / `has_live_triple_except` take the candidate `(valid_from, valid_to)` and block only when a live residual overlaps via `vt_intersect`. Disjoint VT windows of the same triple each mint a derived inverse; overlapping windows still suppress. Oracles: `disjoint_vt_windows_mint_separate_derived_inverses`, `overlapping_vt_windows_still_suppress_duplicate_derived`. Status stays **Proposed**.
+
 ### Clarification (2026-10-09; Phase 94 / M034 S01; Proposed)
 
 **Correct Horn follow-ons mirror CorrectInterval except-set and fire order** (CE review P1 #9). `rule_follow_ons` for `Op::Correct` builds a retract except-set, calls `horn_fires_except`, and orders fires-then-retracts so LIFO applies retracts before re-fires. A same-triple Correct (e.g. VT-only) no longer loses its derived inverse to suppression by the still-live old row. Object-changing Correct re-fires the new inverse. Oracles: `correct_same_triple_keeps_derived_inverse_live`, `correct_object_change_re_fires_new_inverse`. Status stays **Proposed**.

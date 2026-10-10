@@ -1151,6 +1151,18 @@ rows:
     gate: default
     owner: M035-S01
     source: Phase 95 / CE review P1 #10
+  - id: SEM-m036-vt-aware-dedup
+    plane: product
+    invariant: Horn has_live_triple dedup requires VT overlap (disjoint windows re-fire)
+    layer: decision
+    oracle:
+      - disjoint_vt_windows_mint_separate_derived_inverses
+      - overlapping_vt_windows_still_suppress_duplicate_derived
+    kill_mutation: has_live_triple ignores valid_from/valid_to (bare triple presence)
+    status: killed
+    gate: default
+    owner: M036-S01
+    source: Phase 96 / CE review P1 #11
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step
