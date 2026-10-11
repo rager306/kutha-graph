@@ -107,7 +107,9 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M053 S01 (CE review regressions):** Phase 116 — `SEM-m053-hydrate-outcomes`, `SEM-m053-persist-dir-anchor`, `SEM-m053-rollover-layout-seam`, `SEM-m053-legacy-meta-ops-fail-open` `killed` (owner `M053-S01`). Map: `docs/process/ce-review-regression-map.md`.
 
-**M054 S01 (Horn soundness):** Phase 117 — `SEM-m054-horn-correct-eligible`, `SEM-m054-horn-nontrigger-retract`, `SEM-m054-horn-vt-intersect`, `SEM-m054-horn-residual-dedup`, `SEM-m054-horn-no-dup-retract` `killed` (owner `M054-S01`). Residual classes remain `gap` under M054-S02–S05.
+**M054 S01 (Horn soundness):** Phase 117 — `SEM-m054-horn-correct-eligible`, `SEM-m054-horn-nontrigger-retract`, `SEM-m054-horn-vt-intersect`, `SEM-m054-horn-residual-dedup`, `SEM-m054-horn-no-dup-retract` `killed` (owner `M054-S01`).
+
+**M054 S02 (Persist durability):** Phase 118 — `SEM-m054-persist-torn-heal`, `SEM-m054-persist-gen-unique` `killed` (owner `M054-S02`). `SEM-gap-persist-poison` (#6) stays `gap` until decision-gate. Residual classes remain `gap` under M054-S03–S05.
 
 `unowned` is rejected by the governor check.
 

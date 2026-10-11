@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Product/Process: Persist durability (Phase 118) + lease M054-S03
+
+### Product
+
+- #9 `open_for_append` heals torn empty active (scan consumed vs physical) before append. #10 `persist_log` writes generation-unique segment names, fsyncs, then atomically swaps the manifest. Oracles `m054_persist_durability` (3). **#6 poison stays decision-gate.**
+- Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈105.9M / `as_of.n` ≈269.8k vs Phase 117 ≈111.8M / ≈266.2k (−5.3% / +1.4%) and vs Phase 80 ≈122.5M / ≈299.6k (−13.6% / −9.9%).
+
+### Process
+
+- Matrix killed: `SEM-m054-persist-torn-heal` / `persist-gen-unique`. Gap `SEM-gap-persist-poison` (#6). `118-VERIFICATION.md` passed.
+
+### Trajectory
+
+- M054-S02 done. Active Slice **S03** (`L_delivery=M054-S02-done`): governor honesty #14/#22/#23/#34. Honeycomb stays Proposed.
+
 ## 2026-10-11 — Product/Process: Horn soundness (Phase 117) + lease M054-S02
 
 ### Product

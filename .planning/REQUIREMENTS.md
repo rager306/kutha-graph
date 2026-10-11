@@ -12,13 +12,20 @@
 - [x] **HORN-05**: dedup by covered VT / proof identity; uncovered residuals emit
 - [x] **HORN-DUP**: Correct cascade does not duplicate derived Retract EventId
 
-### S02 — Persist durability (Phase 118) — leased
+### S02 — Persist durability (Phase 118) — complete
 
-- [ ] **PERS-09**: torn empty active heal before append
-- [ ] **PERS-10**: generation-unique segment names before manifest swap
+- [x] **PERS-09**: torn empty active heal before append
+- [x] **PERS-10**: generation-unique segment names before manifest swap
 - [ ] **PERS-06**: blocked until human decision-gate lifts
 
-### S03–S05
+### S03 — Governor honesty (Phase 119) — leased
+
+- [ ] **GOV-14**: artifact-budget PLAN gate non-vacuous
+- [ ] **GOV-22**: matrix schema rejection
+- [ ] **GOV-23**: matrix row typing rejection
+- [ ] **GOV-34**: pool at-most-once on submit failure
+
+### S04–S05
 
 See ROADMAP slice After-this lines; requirements filled when each slice is leased.
 

@@ -29,7 +29,9 @@ Pin scheme (full-branch #24 / M051) stays `SEM-m051-pin-compat-policy` — disti
 
 | Class | Findings | Matrix id | Owner |
 |-------|----------|-----------|-------|
-| Persist durability | #6 #9 #10 | `SEM-gap-persist-durability` | M054-S02 |
+| Persist #9 torn heal | #9 | `SEM-m054-persist-torn-heal` | M054-S02 |
+| Persist #10 gen-unique | #10 | `SEM-m054-persist-gen-unique` | M054-S02 |
+| Persist #6 poison (gate) | #6 | `SEM-gap-persist-poison` | M054-S02 |
 | Governor honesty | #14 #22 #23 #34 | `SEM-gap-governor-honesty` | M054-S03 |
 | Scaling + bench | #15 #16 #17 #19 #25 #27 | `SEM-gap-scaling-bench` | M054-S04 |
 | ID + structure | #24 #12 #20 #21 | `SEM-gap-id-and-structure` | M054-S05 |

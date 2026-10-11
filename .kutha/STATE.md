@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M054
-**Active Slice:** S02
+**Active Slice:** S03
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M054-S01-done
+L_delivery=M054-S02-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M054-S01 done; S02 leased | Capability proven / Cypher started |
+| L_delivery | M054-S02 done; S03 leased | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M054-S02 Persist durability — CE #9 torn-tail heal + #10 generation-unique segments. **#6 poison stays decision-gate** (human; not leased). Matrix `SEM-gap-persist-durability`. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+M054-S03 Governor honesty — CE #14/#22/#23/#34. Matrix `SEM-gap-governor-honesty`. **#6 decision-gate** stays human. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

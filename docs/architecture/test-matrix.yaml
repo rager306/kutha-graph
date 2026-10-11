@@ -1499,16 +1499,39 @@ rows:
     owner: M054-S01
     source: Phase 117 / m019 drop-tamper regression after #3
   # Residual problem classes (gap) — owners are later M054 slices
-  - id: SEM-gap-persist-durability
+  - id: SEM-m054-persist-torn-heal
     plane: product
-    invariant: segmented poison-after-failure, torn active-tail heal, generation-unique persist names
+    invariant: open_for_append heals torn empty active (scan consumed vs physical length) before append so reopen sees the new tip
+    layer: crash
+    oracle:
+      - open_for_append_heals_torn_empty_active_then_append_survives_reopen
+    kill_mutation: torn empty active keeps physical length with active_events=0 so append writes after corrupt bytes
+    status: killed
+    gate: default
+    owner: M054-S02
+    source: Phase 118 / CE whole-repo #9
+  - id: SEM-m054-persist-gen-unique
+    plane: product
+    invariant: persist_log writes generation-unique segment names; crash before manifest swap keeps old generation openable
+    layer: crash
+    oracle:
+      - persist_log_uses_generation_unique_segment_names
+      - persist_crash_before_manifest_swap_keeps_old_generation_openable
+    kill_mutation: persist_log rewrites stable seg-N paths before publishing manifest.json
+    status: killed
+    gate: default
+    owner: M054-S02
+    source: Phase 118 / CE whole-repo #10
+  - id: SEM-gap-persist-poison
+    plane: product
+    invariant: segmented poison-after-failure after post-write append errors (CE #6)
     layer: crash
     oracle: []
-    kill_mutation: pending CE whole-repo #6 #9 #10 apply-queue
+    kill_mutation: pending CE whole-repo #6 decision-gate
     status: gap
     gate: default
     owner: M054-S02
-    source: CE whole-repo 2026-10-11 triage Segmented persist group
+    source: CE whole-repo 2026-10-11 #6 decision-gate (human)
   - id: SEM-gap-governor-honesty
     plane: harness
     invariant: artifact-budget PLAN gate, matrix schema/row typing, pool at-most-once on submit failure
