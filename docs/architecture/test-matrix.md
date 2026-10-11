@@ -19,17 +19,17 @@ Each YAML row is one invariant. `oracle` is a list of real `#[test]` function na
 
 ## Counts (this file)
 
-Counted from `test-matrix.yaml` rows on 2026-10-10 (M042 S01). Recount after you edit the YAML; do not invent a coverage percentage.
+Counted from `test-matrix.yaml` rows on 2026-10-11 (M052 S02). Recount after you edit the YAML; do not invent a coverage percentage.
 
 | Status | Rows |
 |--------|------|
-| killed | 91 |
+| killed | 92 |
 | characterization | 11 |
 | gap | 0 |
 | blocked | 0 |
 | spec-only | 4 |
 | gate | 1 |
-| **total** | **107** |
+| **total** | **108** |
 
 Planes: product vs harness. Layers: decision, characterization, property, crash, kill, governor, bench.
 
@@ -98,6 +98,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 **M050 S01 (Op compat policy):** Phase 110 — `SEM-m050-op-compat-policy` `killed` (owner `M050-S01`). Oracles: `legacy_allow_relation_op_fails_to_deserialize`, `modern_kutha_allows_assert_roundtrips`.
 
 **M051 S01 (pin scheme stability):** Phase 111 — `SEM-m051-pin-compat-policy` `killed` (owner `M051-S01`). Oracles: `ident_pin_matches_hardcoded_v1_vector`, `ident_pin_diverges_from_legacy_utf8_domain_vector`, `nonident_pin_matches_hardcoded_domain_utf8_vector`.
+
+**M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 `unowned` is rejected by the governor check.
 

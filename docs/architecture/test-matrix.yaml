@@ -1360,6 +1360,18 @@ rows:
     gate: default
     owner: M051-S01
     source: Phase 111 / CE review P1 #24
+  - id: SEM-m052-cascade-atomic
+    plane: product
+    invariant: later-hop rule_follow_ons or admit error leaves log, fold, and outcomes unchanged; success commits hops with QuantumOutcome
+    layer: kill
+    oracle:
+      - later_hop_unknown_head_leaves_log_fold_outcomes_unchanged
+      - inverse_knows_cascade_writes_quantum_outcome
+    kill_mutation: commit_user_cascade commits each hop before later rule_follow_ons so a later UnknownRelation leaves Assert in fold+log without QuantumOutcome
+    status: killed
+    gate: default
+    owner: M052-S02
+    source: Phase 113 / CE review P1 #8
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

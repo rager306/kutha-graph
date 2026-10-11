@@ -11,6 +11,10 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - Added `m052_cascade_atomic` oracles: a later-hop Horn whose head is never interned (`ghostRel`) must `Err` without growing log, fold, or outcomes; inverse_knows still writes `QuantumOutcome`.
 - Fixed `commit_user_cascade`: a later-hop `rule_follow_ons` / admit error rolls back through `fork_at` so log, fold, and outcomes stay unchanged; the staged hop sequence and `QuantumOutcome` commit together on success.
 
+### Process
+
+- Matrix row `SEM-m052-cascade-atomic` (owner `M052-S02`). No new governor check; budget stays 76.
+
 ### Trajectory
 
 - Honeycomb cells remain **Proposed**. Lease stays with the controller (`.kutha/STATE.md` untouched). M052-S02 / CE whole-repo P1 #8.
