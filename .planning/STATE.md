@@ -1,45 +1,25 @@
 ---
 gsd_state_version: "1.0"
 milestone: v0.46
-current_phase: 112
+milestone_name: CE whole-repo wave 1
 status: active
-stopped_at: Completed 113-01-PLAN.md
-last_updated: "2026-10-11T06:07:29.278Z"
-state_head: f3cfcab70ebb47bd8bf837e43486fed48f30bd11
+stopped_at: null
+last_updated: "2026-10-11T06:15:00.000Z"
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 2
   total_plans: 4
-  completed_plans: 1
-  percent: 0
-milestone_name: CE whole-repo wave 1
+  completed_plans: 2
+  percent: 50
 ---
 
 # Project State
 
 **Milestone:** v0.46 CE whole-repo wave 1 (harness M052)  
-**Phase:** 113 complete (112 still planned — controller)  
-**Status:** M052-S02 cascade atomicity delivered; next Phase 114 lock-before-heal
-
-## Current Position
-
-Phase: 113-cascade-atomicity
-Current Plan: 1
-Total Plans in Phase: 1
-
-## Performance Metrics
-
-| Plan | Duration | Tasks | Files |
-|------|----------|-------|-------|
-| Phase 113 P01 | 61 | 3 tasks | 6 files |
+**Phase:** 114 leased (112+113 complete)  
+**Status:** S01 triage + S02 cascade done; next lock-before-heal (#7)
 
 ## Decisions
 
-- [Phase 113]: Rollback user cascade via fork_at on later-hop Err; hops+QuantumOutcome commit together on success.
-- [Phase 113]: No new governor check; budget stays 76. ROADMAP names M052-S02 without leasing STATE.
-
-## Session
-
-**Last session:** 2026-10-11T06:07:29.226Z
-**Stopped at:** Completed 113-01-PLAN.md
-**Resume file:** None
+- Whole-repo #1 demoted (advisor-correction); not fix-first.
+- Phase 113: rollback cascade via `fork_at` on later-hop Err.

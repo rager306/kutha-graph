@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M052
+**Active Slice:** M052-S03
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M051-closed
+L_delivery=M052-S02-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M051 closed | Capability proven / Cypher started |
+| L_delivery | M052-S02 done; S03 leased | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Controller lease: G4 #26 (clock `Into` facade) or Op serde backfill (named follow-on in `docs/process/op-compat.md`). Pin scheme #24 closed in `docs/process/pin-compat.md`. **#6 decision-gate** stays human. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+Execute GSD Phase 114 (lock before heal, CE whole-repo #7). S01 triage + S02 cascade atomicity closed. Whole-repo #1 stays demoted (`advisor-correction.md`). **#6 decision-gate** stays human. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

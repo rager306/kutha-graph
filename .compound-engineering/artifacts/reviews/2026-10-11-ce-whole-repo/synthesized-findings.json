@@ -1,0 +1,1367 @@
+{
+ "run_id": "20261011-004437-64cb5b1f",
+ "run_dir": "/tmp/compound-engineering-0/ce-code-review/20261011-004437-64cb5b1f",
+ "scope": {
+  "branch": "chore/m013-roadmap-reset",
+  "base": "72004349ac649fdc2ee44c52126f1acfa54390a7",
+  "head_sha": "dd38c9589760407f7c179d5f46586ae1221b4d0e",
+  "mode": "standalone",
+  "tree_is_reviewed_head": true
+ },
+ "intent": {
+  "summary": "Close milestones M023-M108 and fix prior CE-review findings on persist/open recovery and governor silent-pass oracles. Must not regress durability/semantic oracles, matrix honesty, or lease/honeycomb discipline.",
+  "confidence": "inferred"
+ },
+ "mechanics": {
+  "compact_in": 64,
+  "first_pass": {
+   "findings": 54,
+   "malformed": 5,
+   "suppressed": 4,
+   "pre_existing": 0
+  },
+  "malformed_cause": "reviewer off-schema compact shapes (file_path/line_start keys, priority/float-confidence/string-severity scales, missing autofix_class/owner/requires_verification/first_evidence); repaired by normalizing to the dispatch-reviewers.md compact shape from each reviewer artifact",
+  "confidence_map": "anchor kept where stated (75/100); security anchors 75/50 kept numeric; off-scale 90/95 remapped DOWN to 75 (never raised); testing priority 1 -> P2, priority 2 -> P3; security high -> P1, medium -> P2; performance -> P2; api-contract Op-decode -> P1, UUID -> P2; project-standards -> P3",
+  "semantic_groups": 13,
+  "rerun_in": 48,
+  "rerun_out": {
+   "findings": 44,
+   "malformed": 0,
+   "suppressed": 4,
+   "pre_existing": 0
+  },
+  "first_evidence_backfilled_helper": 0,
+  "first_evidence_recovered_from_artifacts": 64,
+  "suppressed_by_confidence": {
+   "50": 4
+  }
+ },
+ "peer": {
+  "outcome": "in-process-fallback",
+  "artifact": null,
+  "coverage": "adversarial lens: in-process fallback (cross-model peer not run: codex editorial model gpt-6-luna not advertised by installed ACP agent pre-egress; no other eligible attested-different target)"
+ },
+ "findings": [
+  {
+   "#": 1,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "crates/kutha-common/src/event.rs",
+   "first_evidence": "crates/kutha-common/src/event.rs:236: `StoreBlob {`",
+   "independent_reviewers": [
+    "api-contract"
+   ],
+   "line": 235,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "api-contract"
+   ],
+   "severity": "P1",
+   "title": "Preserve decoding for removed Op variants",
+   "why_it_matters": "Stores written by the base revision can contain AllowRelation, RegisterRule, PinPolicy, RecordAdmission, or RecordAction events, but the replacement enum now proceeds directly to `StoreBlob`/`TtAnchor` and every open path deserializes directly into the new `Event`. Opening JSONL therefore returns InvalidData at the first old row; WAL recovery truncates there and then the JSONL fallback fails; sealed segments fail as non-Event frames. This makes existing persisted stores and `store::migrate` unreadable rather than migrating their dictionary records. Retain legacy decode-only variants (or a versioned wire enum) and translate them before commit classification/folding.",
+   "evidence": [
+    "crates/kutha-runtime/src/store.rs:502: `v.push(serde_json::from_str(text).map_err(json_err)?);`",
+    "crates/kutha-runtime/src/wal.rs:166: `match serde_json::from_slice::<Event>(&payload) {`",
+    "crates/kutha-runtime/src/segment.rs:425: `match serde_json::from_slice::<Event>(payload) {`"
+   ]
+  },
+  {
+   "#": 2,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/src/eval.rs",
+   "first_evidence": "crates/kutha-runtime/src/eval.rs:252-259 -- search_prems is called with vt=valid_from and a skipped trigger index",
+   "independent_reviewers": [
+    "adversarial"
+   ],
+   "line": 265,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial"
+   ],
+   "severity": "P1",
+   "suggested_fix": "Compute the conjunction of all premise windows and the live rule-pin window for each firing, emit only covered residuals, and make replay validate the complete output interval. Add expired-premise and disjoint-interval oracles.",
+   "title": "Horn output inherits the trigger VT interval instead of intersecting every premise and rule window",
+   "why_it_matters": "horn_fires_except searches the remaining premises only at the trigger valid_from and emits the derived Behavior with the trigger's full valid interval. If premise P covers [0,10) and trigger Q covers [5,inf), the head is minted as [5,inf) even though P is dead after 10; horn_behavior_reproducible repeats the same point check at valid_from, so replay accepts the overlong derived fact and later cuts report unsupported conclusions.",
+   "evidence": [
+    "crates/kutha-runtime/src/eval.rs:252-259 -- search_prems is called with vt=valid_from and a skipped trigger index",
+    "crates/kutha-runtime/src/eval.rs:443-475 -- search_at tests live_facts_at(tt, vt) at that one point only",
+    "crates/kutha-runtime/src/eval.rs:259-265 -- head_event receives the trigger valid_from/valid_to unchanged",
+    "crates/kutha-runtime/src/eval.rs:356-374 -- the derived Behavior stores the unchanged interval",
+    "crates/kutha-runtime/src/eval.rs:379-420 -- replay reproducibility also searches only at valid_from"
+   ]
+  },
+  {
+   "#": 3,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/src/eval.rs",
+   "first_evidence": "crates/kutha-runtime/src/eval.rs:252-265 -- search_prems returns only bindings and passes one caused_by through",
+   "independent_reviewers": [
+    "adversarial"
+   ],
+   "line": 365,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial"
+   ],
+   "severity": "P1",
+   "suggested_fix": "Record the full matched premise witness or claim-support set on each Horn-derived claim, invalidate derived rows when any premise dies, and make replay/eligibility validate the complete rule body at the requested TT/VT cut. Add a P-before-Q then retract-P cascade test, not only the existing trigger-retract oracle.",
+   "title": "Multi-premise Horn lineage records only the triggering premise, so a later non-trigger retract leaves dead derived claims live",
+   "why_it_matters": "A two-premise rule stores only the triggering Assert event in Behavior.caused_by after search_prems proves the other premises; retracting the non-trigger premise then skips retract_derived because no Behavior points at it. The derived claim and any rule chained from it remain live, derivation_eligible_at validates only the surviving trigger chain, and NormView can continue to present the conclusion as supported after its proof is gone.",
+   "evidence": [
+    "crates/kutha-runtime/src/eval.rs:252-265 -- search_prems returns only bindings and passes one caused_by through",
+    "crates/kutha-runtime/src/eval.rs:356-374 -- head_event emits Op::Behavior with that single caused_by",
+    "crates/kutha-runtime/src/eval.rs:164-189 -- retract_derived matches Behaviors only when caused_by == retracted premise",
+    "crates/kutha-runtime/src/provenance.rs:149-181 -- eligibility walks only caused_by/claim support and not every Horn premise",
+    "crates/kutha-runtime/tests/m016_rule_eval.rs:69-81 -- the n-ary oracle retracts mid_id, the trigger, and never retracts the earlier premise"
+   ]
+  },
+  {
+   "#": 4,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/src/eval.rs",
+   "first_evidence": "crates/kutha-runtime/src/eval.rs:79 --                         event.id,",
+   "independent_reviewers": [
+    "adversarial",
+    "correctness"
+   ],
+   "line": 79,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial",
+    "correctness"
+   ],
+   "severity": "P1",
+   "suggested_fix": "Define correction events as premise-bearing lineage nodes by resolving their live replacement Fact and claim identity in derivation_eligible_at, including every CorrectInterval residual at the queried VT. Add norm_view and admission assertions for Correct and prefix, patch, and suffix CorrectInterval re-fires.",
+   "title": "Preserve eligible lineage for correction re-fires",
+   "why_it_matters": "When a Horn premise is corrected, rule_follow_ons emits the replacement Behavior with caused_by set to the Correct or CorrectInterval event. derivation_eligible_at explicitly rejects those op kinds as causes, so NormView treats the newly derived replacement as ineligible even though the corrected premise and rule pin are live. The refire is emitted but hidden from the normative view.",
+   "evidence": [
+    "crates/kutha-runtime/src/eval.rs:72-86 -- Correct refire passes event.id as caused_by",
+    "crates/kutha-runtime/src/eval.rs:109-145 -- CorrectInterval prefix, patch, and suffix refires do the same",
+    "crates/kutha-runtime/src/provenance.rs:164-173 -- derivation eligibility returns false for Correct and CorrectInterval causes",
+    "crates/kutha-runtime/src/quantum.rs:656-675 -- NormView applies that eligibility gate to every Behavior claim",
+    "crates/kutha-runtime/tests/m037_norm_view_claim_lineage.rs -- the current tests do not prove an eligible corrected refire",
+    "crates/kutha-runtime/src/eval.rs:79 --                         event.id,",
+    "crates/kutha-runtime/src/eval.rs:133 --                             event.id,",
+    "crates/kutha-runtime/src/fold.rs:740 --                     event_id: event.id,",
+    "crates/kutha-runtime/src/provenance.rs:164-165 -- Correct and CorrectInterval causes return false",
+    "crates/kutha-runtime/src/quantum.rs:670-671 -- norm_view invokes derivation_eligible_at for derived claims"
+   ]
+  },
+  {
+   "#": 5,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/src/fold_query.rs",
+   "first_evidence": "crates/kutha-runtime/src/fold_query.rs:252-268 -- any vt_intersect makes has_live_triple_except true",
+   "independent_reviewers": [
+    "adversarial"
+   ],
+   "line": 267,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial"
+   ],
+   "severity": "P1",
+   "suggested_fix": "Deduplicate by covered VT regions and proof identity: emit only uncovered interval residuals and retain or recompute alternative supports before retracting a head. Add overlapping-window and surviving-second-proof oracles.",
+   "title": "Overlap-only Horn dedup suppresses uncovered VT residuals and alternative proof supports",
+   "why_it_matters": "has_live_triple blocks an entire candidate whenever any live triple overlaps the candidate interval. A valid firing covering [0,15) is discarded because an existing head covers [10,20), leaving [0,10) unsupported. Two independent assertions proving the same head likewise mint only the first Behavior; retracting the first premise retracts that sole row and the conclusion disappears even though the second proof remains live.",
+   "evidence": [
+    "crates/kutha-runtime/src/fold_query.rs:252-268 -- any vt_intersect makes has_live_triple_except true",
+    "crates/kutha-runtime/src/eval.rs:342-355 -- blocked candidates return None with no residual emission",
+    "crates/kutha-runtime/src/eval.rs:164-189 -- retract_derived removes the sole Behavior for its recorded cause",
+    "crates/kutha-runtime/src/eval.rs:237-284 -- no later refire searches surviving supports after that retract",
+    "crates/kutha-runtime/src/fold.rs:46-61 -- vt_intersect maps None to u64::MAX then rejects from >= to_raw",
+    "crates/kutha-runtime/src/fold.rs:146-158 -- is_live_at accepts valid_from == u64::MAX when valid_to is None",
+    "crates/kutha-runtime/src/fold_query.rs:261-268 -- Horn dedup uses that intersection test",
+    "crates/kutha-runtime/src/pipeline.rs:129-140 -- CorrectInterval admission uses the same overlap predicate",
+    "crates/kutha-common/src/event.rs:49 -- ValidTime::MAX is the public boundary"
+   ]
+  },
+  {
+   "#": 6,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/src/persist_append.rs",
+   "first_evidence": "crates/kutha-runtime/src/persist_append.rs:392 --             self.active_events = self.active_events.saturating_add(1);",
+   "independent_reviewers": [
+    "adversarial",
+    "correctness",
+    "reliability"
+   ],
+   "line": 392,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial",
+    "correctness",
+    "reliability"
+   ],
+   "severity": "P1",
+   "suggested_fix": "Track whether append_segmented has started mutating disk and, on any later error before remember_appended completes, poison and release the Persister so recovery must use a fresh open_for_append; alternatively reconcile the physical tip and durable counters before permitting a retry. Replace the current length-only retry assertions with an exact EventId sequence assertion.",
+   "title": "Poison segmented writers after post-write append failures",
+   "why_it_matters": "A WalWrite or WalSync error leaves the segmented tail fields and file advanced while durable_count and durable_graph_count still describe the old prefix. Because ErrorKind::Other is treated as retryable, the documented same-object retry passes tail_guard, selects the same pending batch again, and appends duplicate EventIds; repeated transient failures amplify the duplicate log like an unsafe retry storm. Poisoning after a possibly partial side effect prevents a caller from treating an uncertain write as cleanly retryable.",
+   "evidence": [
+    "crates/kutha-runtime/src/persist_append.rs:371-401 -- frames update physical cursor before WalWrite/WalSync error points",
+    "crates/kutha-runtime/src/persist_append.rs:530-552 -- remember_appended advances durable counters only after success",
+    "crates/kutha-runtime/src/persist_append.rs:162-166 -- only InvalidData poisons the Persister",
+    "crates/kutha-runtime/src/persist_append.rs:557-587 -- collect_new selects the same suffix from stale durable counters",
+    "crates/kutha-runtime/tests/m030_writer_lock.rs:82-86 -- retry asserts only after.log().len() > opened.log().len()",
+    "crates/kutha-runtime/src/rocks_index.rs:321-322 -- EventId locator count must match the physical tip count",
+    "crates/kutha-runtime/src/persist_append.rs:392 --             self.active_events = self.active_events.saturating_add(1);",
+    "crates/kutha-runtime/src/persist_append.rs:401 --         after_step(stop_after, AppendStep::WalSync)?;",
+    "crates/kutha-runtime/src/persist_append.rs:274 --         remember_appended(self, runtime, batch)?;",
+    "crates/kutha-runtime/src/persist_append.rs:540 --     p.durable_count += new_events.len();",
+    "crates/kutha-runtime/tests/m030_writer_lock.rs:82 --     p.append(&rt).expect(\"retry append after non-poison failpoint\");",
+    "provenance: 4f8bdc23 rager306 2026-10-04 introduced the segmented state mutation and post-write failpoint sequence in the branch-added file."
+   ]
+  },
+  {
+   "#": 7,
+   "autofix_class": "gated_auto",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/src/persist_append.rs",
+   "first_evidence": "crates/kutha-runtime/src/persist_append.rs:88 --         let mut prepared = Self::attach_holding(runtime, dir, None)?;",
+   "independent_reviewers": [
+    "adversarial",
+    "correctness",
+    "reliability"
+   ],
+   "line": 88,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial",
+    "correctness",
+    "reliability"
+   ],
+   "severity": "P1",
+   "suggested_fix": "Make the pre-lock attach phase strictly read-only: acquire kutha.lock before invoking heal_interrupted_active_seal, or split attach_segmented so validation may run first but all rollover healing runs only after the lock is held. Add a test that keeps the failed rollover Persister alive while a second attach is denied and asserts no store bytes changed.",
+   "title": "Acquire the writer lock before rollover healing",
+   "why_it_matters": "Public attach calls attach_holding before acquire_store_write_lock; attach_segmented immediately runs heal_interrupted_active_seal, which can create the next segment and publish a new manifest. While a live writer pauses between a synced seal trailer and manifest rename, a losing concurrent attach can publish that manifest first and then fail WouldBlock. The live writer then rereads the already-advanced manifest and pushes its old segment again, or reopen rejects the result as a non-contiguous sealed sequence.",
+   "evidence": [
+    "crates/kutha-runtime/src/persist_append.rs:87-91 -- attach_holding runs before the lock",
+    "crates/kutha-runtime/src/persist_append.rs:99-100 -- segmented attach_holding dispatches to attach_segmented",
+    "crates/kutha-runtime/src/persist_append.rs:464-466 -- attach_segmented invokes heal_interrupted_active_seal",
+    "crates/kutha-runtime/src/segment.rs:633-661 -- healer creates or validates next segment and publishes the manifest",
+    "crates/kutha-runtime/src/persist_append.rs:438-448 -- rollover rereads the manifest and pushes its cached old segment",
+    "crates/kutha-runtime/src/segment.rs:553-558 -- duplicate sequence fails open as sealed sequence not contiguous",
+    "crates/kutha-runtime/src/persist_append.rs:88 --         let mut prepared = Self::attach_holding(runtime, dir, None)?;",
+    "crates/kutha-runtime/src/persist_append.rs:89 --         let lock = crate::store::acquire_store_write_lock(dir)?;",
+    "crates/kutha-runtime/src/persist_append.rs:466 --     let _ = segment::heal_interrupted_active_seal(dir)?;",
+    "crates/kutha-runtime/src/segment.rs:661 --     write_manifest(dir, &manifest)?;",
+    "provenance: 97430c5b rager306 2026-10-05 introduced the attach-before-lock order; 96f8c34 rager306 2026-10-09 later put rollover healing inside that pre-lock call."
+   ]
+  },
+  {
+   "#": 8,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/src/pipeline.rs",
+   "first_evidence": "crates/kutha-runtime/src/pipeline.rs:267 --             let follow = self.rule_follow_ons(&event)?;",
+   "independent_reviewers": [
+    "adversarial",
+    "correctness"
+   ],
+   "line": 267,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial",
+    "correctness"
+   ],
+   "severity": "P1",
+   "suggested_fix": "Build and admit the complete bounded cascade in temporary state before committing any event, then commit the staged sequence and outcome together. Add a two-hop case where the first follow-on is valid and the second rule head is unknown, asserting Err leaves fold and log unchanged.",
+   "title": "Make user cascades atomic on later-hop rule errors",
+   "why_it_matters": "commit_user_cascade computes each event's follow-ons, admits those follow-ons, and commits the current event inside the loop. If the first Assert is valid but a queued follow-on triggers an unknown Horn head, emit returns Err after commit_event has already placed the first event in the log and fold. No QuantumOutcome is written, so a later open hides the prefix while the live Runtime still exposes it until restart.",
+   "evidence": [
+    "crates/kutha-runtime/src/pipeline.rs:255-275 -- commit_event(event) runs inside the loop after later follow-on admission",
+    "crates/kutha-runtime/src/pipeline.rs:267-270 -- rule_follow_ons errors abort the loop before outcome persistence",
+    "crates/kutha-runtime/src/pipeline.rs:278-280 -- the QuantumOutcome is persisted only after the loop completes",
+    "crates/kutha-runtime/src/eval.rs:252-255 -- an unknown Horn head returns UnknownRelation",
+    "crates/kutha-runtime/src/commit.rs:23 -- Assert and Behavior are NeedsOutcome, so reopen trims the visible prefix",
+    "crates/kutha-runtime/src/pipeline.rs:267 --             let follow = self.rule_follow_ons(&event)?;",
+    "crates/kutha-runtime/src/pipeline.rs:271 --             self.commit_event(event);",
+    "crates/kutha-runtime/src/pipeline.rs:279 --         self.persist_outcome_event();",
+    "crates/kutha-runtime/src/eval.rs:253-254 -- an unknown head returns RuntimeError::UnknownRelation",
+    "crates/kutha-runtime/src/commit.rs:23 -- Assert and Behavior are NeedsOutcome"
+   ]
+  },
+  {
+   "#": 9,
+   "autofix_class": "gated_auto",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/src/segment.rs",
+   "first_evidence": "crates/kutha-runtime/src/segment.rs:587 --         file_len: bytes.len() as u64,",
+   "independent_reviewers": [
+    "adversarial",
+    "correctness",
+    "reliability"
+   ],
+   "line": 587,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial",
+    "correctness",
+    "reliability"
+   ],
+   "severity": "P1",
+   "suggested_fix": "Add a segmented-tail heal predicate that compares the active scan consumed length with the physical file length and include it in needs_heal while kutha.lock is held; let persist_unlocked rewrite the opened committed prefix before attach_holding. Cover the existing writer_torn_active_tail fixture with open_for_append followed by an append and exact reopen comparison.",
+   "title": "Heal torn empty active segments before accepting appends",
+   "why_it_matters": "A successful append after a torn first frame in an empty active segment disappears on reopen. scan_segment drops the incomplete frame, but inspect_active reports the physical byte length; attach records that length with active_events zero, tail_guard returns early, and the next frame is appended after the corrupt bytes that every later scan stops at.",
+   "evidence": [
+    "crates/kutha-runtime/src/segment.rs:397-401 -- an incomplete active frame breaks instead of erroring",
+    "crates/kutha-runtime/src/segment.rs:444 --         consumed: off,",
+    "crates/kutha-runtime/src/segment.rs:587 --         file_len: bytes.len() as u64,",
+    "crates/kutha-runtime/src/persist_append.rs:327-329 -- tail_guard returns Ok when active_events == 0",
+    "crates/kutha-runtime/src/persist_append.rs:509 --         wal_len: tip.file_len,"
+   ]
+  },
+  {
+   "#": 10,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/src/segment.rs",
+   "first_evidence": "crates/kutha-runtime/src/segment.rs:700 --     for (i, chunk) in chunks.iter().enumerate() {",
+   "independent_reviewers": [
+    "adversarial",
+    "correctness"
+   ],
+   "line": 700,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial",
+    "correctness"
+   ],
+   "severity": "P1",
+   "suggested_fix": "Write every segment under generation-unique names, fsync them, then atomically replace the manifest as the sole visibility switch. Delete obsolete generation files only after the new manifest and directory entry are durable.",
+   "title": "Keep old manifest generations intact during full persist",
+   "why_it_matters": "persist_log loops over stable seg-N paths and rewrites each file before publishing manifest.json. A crash or returned sync error after an early rename but before the manifest swap leaves the durable old manifest describing counts, byte lengths, or chains that no longer match the replacement segment, so the next open fails even though a previously valid manifest remains.",
+   "evidence": [
+    "crates/kutha-runtime/src/segment.rs:695-717 -- chunks are written to stable names before write_manifest",
+    "crates/kutha-runtime/src/segment.rs:199-233 -- write_segment_file commits by renaming each destination",
+    "crates/kutha-runtime/src/store.rs:405-423 -- replace_via_tmp renames and syncs each destination independently",
+    "crates/kutha-runtime/src/store.rs:348-365 -- segmented persist calls persist_log before remaining sidecars",
+    "crates/kutha-runtime/src/segment.rs:517-545 -- open validates manifest counts, bytes, and chain against files",
+    "crates/kutha-runtime/src/segment.rs:700 --     for (i, chunk) in chunks.iter().enumerate() {",
+    "crates/kutha-runtime/src/segment.rs:704 --         let (meta, tip) = write_segment_file(&dir.join(&name), chunk, is_sealed, prev)?;",
+    "crates/kutha-runtime/src/segment.rs:714 --     write_manifest(",
+    "crates/kutha-runtime/src/segment.rs:218 --     replace_via_tmp(path, &tmp, commit, |f| {",
+    "crates/kutha-runtime/src/store.rs:418-422 -- replace_via_tmp renames each destination and syncs its parent"
+   ]
+  },
+  {
+   "#": 11,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/src/store.rs",
+   "first_evidence": "crates/kutha-runtime/src/store.rs:675-694 -- only the snapshot branch calls rt.replay_check",
+   "independent_reviewers": [
+    "adversarial"
+   ],
+   "line": 691,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial"
+   ],
+   "severity": "P1",
+   "suggested_fix": "Run execution replay validation after every reconstruction path and before finish_open returns. Extend the empty-pin kill test to open the same log with snapshot.json absent via Define and terms fallback.",
+   "title": "Snapshot-free open paths bypass execution replay and accept logs that snapshot-backed open rejects",
+   "why_it_matters": "open_hydrated calls replay_check only after Runtime::from_snapshot. The Define-backed and terms-backed reconstruction branches build the Runtime with from_dict_and_events and return finish_open directly; finish_open hydrates and checks sidecars but not execution replay. Removing or losing snapshot.json therefore converts a tampered or unreproducible Behavior log from InvalidData into a successful open, while the fold fingerprint can remain unchanged.",
+   "evidence": [
+    "crates/kutha-runtime/src/store.rs:675-694 -- only the snapshot branch calls rt.replay_check",
+    "crates/kutha-runtime/src/store.rs:695-712 -- Define and terms branches return finish_open without replay_check",
+    "crates/kutha-runtime/src/hydrate.rs:113-151 -- from_dict_and_events rebuilds state and does not validate execution replay",
+    "crates/kutha-runtime/src/provenance.rs:19-40 -- replay_check contains the Behavior reproducibility gate",
+    "crates/kutha-runtime/tests/m016_s04_kill.rs:123-140 -- the existing kill test invokes from_snapshot/replay_check, not no-snapshot open"
+   ]
+  },
+  {
+   "#": 12,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/tests/common/sem.rs",
+   "first_evidence": "crates/kutha-runtime/tests/common/sem.rs:1 -- //! M019 S07 shared LCG, stamps, mix ingest, persist layouts.",
+   "independent_reviewers": [
+    "maintainability"
+   ],
+   "line": 1,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "maintainability"
+   ],
+   "severity": "P1",
+   "suggested_fix": "Replace the flat file with sem/generator.rs for seeds, mix generation, and coverage; sem/oracles.rs for stamp, CSR, temporal-view, and hydration checks; sem/shrink.rs for candidate reduction and failure reporting; and sem/persistence.rs for layouts, import/export, and segment-tamper fixtures. Update each test to import its narrow module and do not retain sem as a catch-all re-export facade.",
+   "title": "Split the oversized SEM helper module (Divergent Change)",
+   "why_it_matters": "The new shared test dependency is already 1,566 lines and makes generator, temporal-oracle, shrinker, persistence, and segment-corruption changes share one flat namespace. Narrow consumers prove these concerns can change independently, so every future SEM edit now carries avoidable navigation, review, and merge-conflict cost.",
+   "evidence": [
+    "crates/kutha-runtime/tests/common/sem.rs:1 -- //! M019 S07 shared LCG, stamps, mix ingest, persist layouts.",
+    "git diff --numstat 72004349 -- crates/kutha-runtime/tests/common/sem.rs reports 1566 additions and 0 deletions; the base revision has no such file, and the reviewed file is 1566 lines.",
+    "crates/kutha-runtime/tests/m026_generators.rs:6 imports only MixStyle, ingest_mix, and ingest_mix_n, while crates/kutha-runtime/tests/m042_m028_layouts.rs:7-10 imports only layout, persistence, directory, and corpus helpers.",
+    "crates/kutha-runtime/tests/m019_sem_model.rs:8-10 consumes model/view helpers, while crates/kutha-runtime/tests/m019_sem_meta.rs:7-14 consumes the separate tamper and persistence family."
+   ]
+  },
+  {
+   "#": 13,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "file": "crates/kutha-runtime/src/admission.rs",
+   "first_evidence": "if name.starts_with(\"kutha:\") {\n            return Ok(());\n        }",
+   "independent_reviewers": [
+    "security"
+   ],
+   "line": 140,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "security"
+   ],
+   "severity": "P1",
+   "title": "Allowlist bypass via kutha: prefix (OWASP A01, CWE-284)",
+   "why_it_matters": "OWASP A01 Broken Access Control (CWE-284): any caller reaching Runtime::emit with relation kutha:evil bypasses the FF6/M012 unknown-relation allowlist entirely, while non-prefixed unknown relations are correctly rejected.",
+   "evidence": [
+    "if name.starts_with(\"kutha:\") {\n            return Ok(());\n        }",
+    "if let Op::Assert { relation, .. } = op {\n            if self\n                .dict\n                .lookup(*relation)\n                .is_some_and(|n| n == KUTHA_ADMISSION || n == KUTHA_ACTION)\n            {\n                return Err(RuntimeError::MetaOpRejected);\n            }"
+   ]
+  },
+  {
+   "#": 14,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": ".kutha/dictionaries/checks.yaml",
+   "first_evidence": ".kutha/dictionaries/checks.yaml:1275-1280 -- PLAN glob, min_hits, and identical when_glob_exists",
+   "independent_reviewers": [
+    "adversarial"
+   ],
+   "line": 1279,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Gate PLAN presence on an independent live-phase marker such as CONTEXT, and add a per-phase correspondence check so every live CONTEXT has a PLAN. Extend selftest with a mutation that removes only PLAN files.",
+   "title": "The artifact-budget PLAN minimum is disabled by the same empty PLAN glob it is meant to require",
+   "why_it_matters": "The PLAN step declares min_hits 1 but makes when_glob_exists the identical PLAN glob. When no PLAN exists, glob_max_lines_effective_min_hits returns 0, len(hits) < 0 is false, and the step performs no max-line scan. A checkout containing live CONTEXT, SUMMARY, and VERIFICATION artifacts but no PLAN can pass artifact-budget even though invariant I-artifact-budget requires min_hits 1 while phases are live; selftest cannot derive a PLAN-presence mutation from the same empty glob.",
+   "evidence": [
+    ".kutha/dictionaries/checks.yaml:1275-1280 -- PLAN glob, min_hits, and identical when_glob_exists",
+    "scripts/kutha_gov/kinds.py:1845-1850 -- an empty when_glob_exists turns effective min_hits into 0",
+    "scripts/kutha_gov/kinds.py:1868-1883 -- zero hits with min_hits 0 emits no HIGH finding",
+    "scripts/kutha_gov/selftest.py:581-595 -- no mutation is derived when effective min_hits is 0",
+    ".kutha/dictionaries/invariants.yaml:272-276 -- I-artifact-budget states min_hits 1 when phases are live"
+   ]
+  },
+  {
+   "#": 15,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/benches/baseline.rs",
+   "first_evidence": "crates/kutha-runtime/benches/baseline.rs:305: `match (rss_before, vm_rss_bytes()) {`",
+   "independent_reviewers": [
+    "performance"
+   ],
+   "line": 305,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "performance"
+   ],
+   "severity": "P2",
+   "title": "Measure the dedicated sample before reading RSS",
+   "why_it_matters": "The second `vm_rss_bytes()` sample is taken before the N-sized `sample` runtime is constructed, but its retained-RSS delta is divided by that later runtime live count. The reported `bytes_per_fact` therefore excludes the memory of its denominator graph and instead includes allocator retention from all earlier benchmark workloads and persistence runs, so the derived one-million-fact memory budget is not a measurement of per-fact storage. Run the sample in an isolated process, or capture a before/after RSS pair around that sample while it is alive.",
+   "evidence": [
+    "crates/kutha-runtime/benches/baseline.rs:309-311 constructs and fills `sample` only after the `after` RSS value is captured.",
+    "docs/architecture/benchmark-baseline.md:76-80 multiplies `bytes_per_fact` by target N to publish the memory budget."
+   ]
+  },
+  {
+   "#": 16,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/src/eval.rs",
+   "first_evidence": "crates/kutha-runtime/src/eval.rs:167: `for e in self.log.iter() {`",
+   "independent_reviewers": [
+    "performance"
+   ],
+   "line": 165,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "performance"
+   ],
+   "severity": "P2",
+   "title": "Index derived children before processing retractions",
+   "why_it_matters": "Every Retract, Correct, and CorrectInterval dispatches to `retract_derived`, which walks the complete runtime event log to find Behavior rows whose `caused_by` equals the target event. A retraction with no derived children still scans all events, so repeated corrections or retractions over a growing runtime are O(N\u00b2). Maintain a `caused_by -> live Behavior event ids` index during commit and hydration, then inspect only the target premise children.",
+   "evidence": [
+    "crates/kutha-runtime/src/eval.rs:53: `Op::Retract { event_id } => Ok(self.retract_derived(event, *event_id)),`",
+    "crates/kutha-runtime/src/eval.rs:64: `let retracts = self.retract_derived(event, *event_id);`",
+    "crates/kutha-runtime/src/eval.rs:93: `let retracts = self.retract_derived(event, *event_id);`"
+   ]
+  },
+  {
+   "#": 17,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/src/eval.rs",
+   "first_evidence": "crates/kutha-runtime/src/eval.rs:479: `for f in rt.fold.live_facts_at(tt, vt) {`",
+   "independent_reviewers": [
+    "performance"
+   ],
+   "line": 475,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "performance"
+   ],
+   "severity": "P2",
+   "title": "Probe Horn premises through relation-keyed candidates",
+   "why_it_matters": "For every remaining Horn premise, `search_at` calls `live_facts_at`, which materializes a vector after walking every `vt_by_from` bucket at or before the valid-time cut, and recursive candidates repeat that full scan. A two-premise rule can therefore rescan and allocate the N-fact live set for each candidate from the first premise, making normal rule firing quadratic in graph size; longer rules compound the walk. Iterate a relation-keyed live-fact index and choose the next bound premise without rebuilding the global live set.",
+   "evidence": [
+    "crates/kutha-runtime/src/fold_query.rs:52-62: `collect_live_facts_at` walks `vt_by_from.range(..=vt)` and collects a Vec.",
+    "crates/kutha-runtime/src/eval.rs:489: a matching candidate recursively calls `search_at` for the next premise.",
+    "CBM/source trace verified `search_at` <- `search_prems` <- `horn_fires_except` <- `rule_follow_ons` <- the user cascade."
+   ]
+  },
+  {
+   "#": 18,
+   "autofix_class": "gated_auto",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/src/fold_query.rs",
+   "first_evidence": "crates/kutha-runtime/src/fold_query.rs:267 --                 && crate::fold::vt_intersect(f.valid_from, f.valid_to, valid_from, valid_to)",
+   "independent_reviewers": [
+    "adversarial",
+    "correctness"
+   ],
+   "line": 267,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial",
+    "correctness"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Represent unbounded ends without collapsing them to a finite sentinel during overlap checks, or special-case None so [u64::MAX, None) intersects itself. Add duplicate and disjoint Horn cases at ValidTime::MAX.",
+   "title": "Treat open intervals starting at ValidTime::MAX as overlapping",
+   "why_it_matters": "has_live_triple blocks an entire candidate whenever any live triple overlaps the candidate interval. A valid firing covering [0,15) is discarded because an existing head covers [10,20), leaving [0,10) unsupported. Two independent assertions proving the same head likewise mint only the first Behavior; retracting the first premise retracts that sole row and the conclusion disappears even though the second proof remains live.",
+   "evidence": [
+    "crates/kutha-runtime/src/fold_query.rs:252-268 -- any vt_intersect makes has_live_triple_except true",
+    "crates/kutha-runtime/src/eval.rs:342-355 -- blocked candidates return None with no residual emission",
+    "crates/kutha-runtime/src/eval.rs:164-189 -- retract_derived removes the sole Behavior for its recorded cause",
+    "crates/kutha-runtime/src/eval.rs:237-284 -- no later refire searches surviving supports after that retract",
+    "crates/kutha-runtime/src/fold.rs:46-61 -- vt_intersect maps None to u64::MAX then rejects from >= to_raw",
+    "crates/kutha-runtime/src/fold.rs:146-158 -- is_live_at accepts valid_from == u64::MAX when valid_to is None",
+    "crates/kutha-runtime/src/fold_query.rs:261-268 -- Horn dedup uses that intersection test",
+    "crates/kutha-runtime/src/pipeline.rs:129-140 -- CorrectInterval admission uses the same overlap predicate",
+    "crates/kutha-common/src/event.rs:49 -- ValidTime::MAX is the public boundary",
+    "crates/kutha-runtime/src/fold_query.rs:267 --                 && crate::fold::vt_intersect(f.valid_from, f.valid_to, valid_from, valid_to)",
+    "crates/kutha-runtime/src/fold.rs:52-53 -- open ends are converted to u64::MAX",
+    "crates/kutha-runtime/src/fold.rs:55 --     if from >= to_raw {",
+    "crates/kutha-runtime/src/fold.rs:152-158 -- is_live_at treats [MAX, None) as live at MAX",
+    "crates/kutha-common/src/event.rs:49 --     pub const MAX: Self = Self(u64::MAX);"
+   ]
+  },
+  {
+   "#": 19,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/src/persist_append.rs",
+   "first_evidence": "crates/kutha-runtime/src/persist_append.rs:562: `let encoded = encoded_log(runtime);`",
+   "independent_reviewers": [
+    "performance"
+   ],
+   "line": 557,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "performance"
+   ],
+   "severity": "P2",
+   "title": "Build incremental appends from the undisclosed suffix only",
+   "why_it_matters": "Every `Persister::append` calls `collect_new`, which first calls `encoded_log`; that helper clones every dictionary string and every graph event accumulated so far. `collect_new` then moves the full encoding into another graph vector and clones only the suffix into a third vector. Appending one new event to an N-event runtime therefore costs O(N) CPU and temporary memory, and a stream of small appends becomes O(N\u00b2). Validate the durable tail against the runtime log directly and construct only new Define records plus the graph suffix.",
+   "evidence": [
+    "crates/kutha-runtime/src/persist_append.rs:227: `let new_events = collect_new(self, runtime)?;`",
+    "crates/kutha-runtime/src/store.rs:767-779: `encoded_log` clones every dictionary name and non-Define runtime event.",
+    "CBM inbound trace source-verified `Persister::append` -> `append_until` -> `append_until_inner` -> `collect_new`."
+   ]
+  },
+  {
+   "#": 20,
+   "autofix_class": "gated_auto",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/tests/common/sem.rs",
+   "first_evidence": "crates/kutha-runtime/tests/common/sem.rs:925 --     let mut h: u64 = 0xcbf2_9ce4_8422_2325;",
+   "independent_reviewers": [
+    "maintainability"
+   ],
+   "line": 925,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "maintainability"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Import kutha_common::sha256_hex, compute let digest = sha256_hex(&bytes), build the existing seed-{seed}-{sha12}.json name from &digest[..12], and delete the local FNV accumulator loop.",
+   "title": "Reuse canonical SHA hashing for shrink corpus",
+   "why_it_matters": "The helper labels its filename component `sha12` but independently implements a truncated FNV-1a digest even though the reviewed tree exports one canonical SHA-256 helper. This creates a second content-address rule to maintain and makes corpus filenames misleading to tools or humans that recompute the documented SHA prefix.",
+   "evidence": [
+    "crates/kutha-runtime/tests/common/sem.rs:925 --     let mut h: u64 = 0xcbf2_9ce4_8422_2325;",
+    "crates/kutha-runtime/tests/common/sem.rs:922 -- /// Content-addressed path under `root`: `seed-{seed}-{sha12}.json`.",
+    "crates/kutha-common/src/event.rs:521 -- pub fn sha256_hex(bytes: &[u8]) -> String {",
+    "crates/kutha-common/src/lib.rs exports sha256_hex, and sem.rs already depends on kutha_common, so no new dependency or abstraction is required."
+   ]
+  },
+  {
+   "#": 21,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "scripts/kutha_gov/kinds.py",
+   "first_evidence": "scripts/kutha_gov/kinds.py:2514 -- def _kind_test_matrix(check: str, step: Step, ctx: Context, result: CheckResult) -> None:",
+   "independent_reviewers": [
+    "maintainability"
+   ],
+   "line": 2514,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "maintainability"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Keep run_step and the central RUNNERS registration in kinds.py, but move lines 1766-2092 into a sibling planning/frontmatter implementation module, lines 2093-2426 into a Cargo implementation module, and lines 2427-2842 into a test-matrix implementation module, then import their handlers into RUNNERS. Preserve DictCheck as the only YAML intake and do not add the forbidden scripts/kutha_gov/checks/*.py layout.",
+   "title": "Split policy families out of kinds.py (Long Module)",
+   "why_it_matters": "The governor kernel grew from 1,688 to 2,897 lines in this change. Its new tail combines planning-phase and frontmatter rules, Cargo dependency parsing, and a matrix policy interpreter that reads ROADMAP, FSM/check dictionaries, and Rust tests, so unrelated policy changes now enlarge the review and regression surface of the central dispatcher.",
+   "evidence": [
+    "scripts/kutha_gov/kinds.py:2514 -- def _kind_test_matrix(check: str, step: Step, ctx: Context, result: CheckResult) -> None:",
+    "git diff --numstat 72004349 -- scripts/kutha_gov/kinds.py reports 1235 additions and 26 deletions; wc -l is 2897 now versus 1688 at the base revision.",
+    "scripts/kutha_gov/kinds.py:2353 introduces the independent _kind_cargo_dep_constraint family; scripts/kutha_gov/kinds.py:2437 starts the matrix-specific blocked-owner policy; scripts/tests/test_test_matrix.py already isolates matrix tests.",
+    "docs/process/governor-intake.md:64 forbids per-check scripts/kutha_gov/checks/*.py files, which the proposed sibling family modules preserve."
+   ]
+  },
+  {
+   "#": 22,
+   "autofix_class": "manual",
+   "confidence": 100,
+   "file": "scripts/kutha_gov/kinds.py",
+   "first_evidence": "docs/architecture/test-matrix.yaml:1 -- schema: kutha-test-matrix/v1",
+   "independent_reviewers": [
+    "adversarial",
+    "testing"
+   ],
+   "line": 2529,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial",
+    "testing"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Require schema == kutha-test-matrix/v1 before reading rows and emit HIGH otherwise. Add a wrong-schema governance test.",
+   "title": "Reject unsupported test-matrix schemas",
+   "why_it_matters": "docs/architecture/test-matrix.yaml declares schema kutha-test-matrix/v1, but the handler parses the document and consumes rows without validating that declaration, unlike the checks-dictionary loader that fails closed on an unknown schema. A typo or incompatible future schema with superficially compatible rows can be accepted under semantics the governor does not implement, yielding false green.",
+   "evidence": [
+    "docs/architecture/test-matrix.yaml:1 -- schema: kutha-test-matrix/v1",
+    "scripts/kutha_gov/kinds.py:2521-2529 -- parsed document goes directly to rows",
+    "scripts/kutha_gov/dictionary.py:80-85 -- the checks dictionary rejects unknown schema versions",
+    "scripts/kutha_gov/kinds.py:2530-2536 -- only row-list shape is validated"
+   ]
+  },
+  {
+   "#": 23,
+   "autofix_class": "gated_auto",
+   "confidence": 100,
+   "file": "scripts/kutha_gov/kinds.py",
+   "first_evidence": "scripts/kutha_gov/kinds.py:2537 --     maps = [row for row in rows if isinstance(row, dict)]",
+   "independent_reviewers": [
+    "adversarial",
+    "correctness"
+   ],
+   "line": 2537,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial",
+    "correctness"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Before filtering, emit a HIGH matrix-fields or yaml-select finding when any row is not a mapping, and return. Add scalar-only and mixed scalar/mapping fixtures.",
+   "title": "Reject non-mapping rows in the test matrix",
+   "why_it_matters": "The new test_matrix handler verifies only that rows is a nonempty list, then filters non-dict entries. A row such as a scalar, or a list whose only entries are scalars, is removed before scanned and field validation; the remaining zero maps produce no missing-field finding and the named-oracle loop never runs. Structurally malformed test-matrix YAML can therefore produce a green governance result instead of HIGH.",
+   "evidence": [
+    "scripts/kutha_gov/kinds.py:2524-2536 -- rows must only be a nonempty list",
+    "scripts/kutha_gov/kinds.py:2537-2538 -- non-dict rows are filtered and only maps are scanned",
+    "scripts/kutha_gov/kinds.py:2540-2562 -- missing-field validation runs only over remaining maps",
+    ".kutha/dictionaries/checks.yaml:1795-1805 -- the test-matrix governor check consumes this handler",
+    "scripts/kutha_gov/kinds.py:2537 --     maps = [row for row in rows if isinstance(row, dict)]",
+    "scripts/kutha_gov/kinds.py:2538 --     result.scanned = len(maps)",
+    "scripts/kutha_gov/kinds.py:2540 --     missing_fields: list[str] = []",
+    ".kutha/dictionaries/checks.yaml:1756 --       - kind: test_matrix"
+   ]
+  },
+  {
+   "#": 24,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "file": "crates/kutha-common/src/event.rs",
+   "first_evidence": "crates/kutha-common/src/event.rs:352: `id: Uuid::from_bytes(id_bytes),`",
+   "independent_reviewers": [
+    "api-contract"
+   ],
+   "line": 348,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "api-contract"
+   ],
+   "severity": "P2",
+   "title": "Keep derived EventIds within the documented UUID contract",
+   "why_it_matters": "Hyrum's Law: `EventId` is still publicly documented as a UUID v7 identifier, but every Horn Behavior and follow-on Retract now copies unconstrained SHA-256 bytes into `Uuid`; the random version and variant bits are not normalized to any promised UUID version. Consumers that validate v7 IDs or use their timestamp ordering accept user events but reject or misorder derived events. Define a distinct content-derived ID contract/type (with a migration) or encode the stable digest in an explicitly documented UUID version while preserving the advertised shape.",
+   "evidence": [
+    "crates/kutha-common/src/event.rs:5: `/// UUID v7 event identifier (ADR-000 D2 / ADR-011).`",
+    "crates/kutha-runtime/src/eval.rs:362: `Some(Event::stable_derived(`"
+   ]
+  },
+  {
+   "#": 25,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "file": "crates/kutha-runtime/benches/baseline.rs",
+   "first_evidence": "crates/kutha-runtime/benches/baseline.rs:179:        let _ = rt.fold().as_of(ValidTime::from(2010));",
+   "independent_reviewers": [
+    "adversarial",
+    "testing"
+   ],
+   "line": 179,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial",
+    "testing"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Consume and validate the exact expected triple set outside the timed region, or consume the timed result and verify it before recording the measurement. Keep the production as_of path in the timed call.",
+   "title": "Validate the timed as_of result",
+   "why_it_matters": "The benchmark validates fold().live_count(u64::MAX,2010) and then calls fold().as_of(2010) under timing but throws away the returned triples. A same-cardinality but wrong projection still reaches validated yes, and a broken as_of implementation can also make the benchmark artificially fast because its output is never consumed. The artifact claims to validate answers while validating only a count from a separate query path.",
+   "evidence": [
+    "crates/kutha-runtime/benches/baseline.rs:170-176 -- only live_count is compared to planned",
+    "crates/kutha-runtime/benches/baseline.rs:178-184 -- as_of result is assigned to underscore and discarded",
+    "crates/kutha-runtime/src/fold_query.rs:63-87 -- live_count is only live_at(...).len()",
+    "crates/kutha-runtime/benches/baseline.rs:358-360 -- successful runs print validated yes"
+   ]
+  },
+  {
+   "#": 26,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "file": "crates/kutha-runtime/src/admission.rs",
+   "first_evidence": "crates/kutha-runtime/src/admission.rs:247-259 -- lookup is relation-scoped, then liveness drops the relation",
+   "independent_reviewers": [
+    "adversarial"
+   ],
+   "line": 259,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Require live keyed support from the same relation, or pass relation into has_live_keyed_support and filter facts by relation. Add an oracle with two allowed relations sharing claim and key where retracting B then retrying B must remint.",
+   "title": "Relation-scoped delivery-key retry accepts live support from another relation under the same claim",
+   "why_it_matters": "delivery_key_retry finds the historical event by (relation,key), but liveness delegates to has_live_keyed_support(claim,key), which scans all facts under that claim without checking relation. If relation A and relation B share explicit claim c and key k, retracting B leaves A live; retrying B's original Assert returns a zero-event success without reminting B support. The caller receives an idempotent-looking receipt for a relation whose keyed fact remains retracted.",
+   "evidence": [
+    "crates/kutha-runtime/src/admission.rs:247-259 -- lookup is relation-scoped, then liveness drops the relation",
+    "crates/kutha-runtime/src/fold_query.rs:334-353 -- has_live_keyed_support checks claim and delivery_key only",
+    "crates/kutha-runtime/src/pipeline.rs:203-214 -- a retry outcome short-circuits commit_user_cascade",
+    "crates/kutha-runtime/src/admission.rs:171-180 -- an existing explicit claim is admitted for another relation",
+    "crates/kutha-runtime/tests/m038_policy_delivery_namespace.rs:126-139 -- shared-key coverage uses claim=None, so it does not cover this case"
+   ]
+  },
+  {
+   "#": 27,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "file": "crates/kutha-runtime/src/fold_query.rs",
+   "first_evidence": "crates/kutha-runtime/src/fold_query.rs:412: `self.all_live_facts_at(tt, vt)`",
+   "independent_reviewers": [
+    "performance"
+   ],
+   "line": 403,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "performance"
+   ],
+   "severity": "P2",
+   "title": "Index rule and policy pins instead of scanning all facts",
+   "why_it_matters": "Rule and policy pin checks call `all_live_facts_at`, materializing every live product and dictionary fact before filtering one reserved relation and delivery key. These methods are on derive, provenance, admission, and justification request paths; at the documented one-million-fact target each pin check is O(total historical candidates), even when the registry has only a few rows. Maintain reserved-relation indexes keyed by delivery key, plus the latest live policy pin, and query those indexes at the requested TT/VT cut.",
+   "evidence": [
+    "crates/kutha-runtime/src/pipeline.rs:155: Behavior gating calls `rule_hash_live_at`.",
+    "crates/kutha-runtime/src/quantum.rs:574: `derive` calls `rule_hash_live_at`.",
+    "crates/kutha-runtime/src/admission.rs:58 and justification.rs:70 call `live_policy_pin_at`.",
+    "docs/architecture/benchmark-baseline.md:77: `target N 1000000`."
+   ]
+  },
+  {
+   "#": 28,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "file": "crates/kutha-runtime/src/quantum.rs",
+   "first_evidence": "crates/kutha-runtime/src/fold.rs:710-742 -- Correct preserves claim_id and changes object/valid window",
+   "independent_reviewers": [
+    "adversarial"
+   ],
+   "line": 670,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Validate the live replacement row against the derivation's instantiated head and premise support, or prevent corrections that change a derived proposition from inheriting original derivation eligibility. Add a Correct-derived-object oracle.",
+   "title": "Correcting a derived Behavior lets the replacement triple inherit derivation eligibility without matching the rule head",
+   "why_it_matters": "Correct preserves the original claim_id while minting a replacement Fact with a new event_id and a possibly different object or interval. NormView classifies the row as derived from the original Behavior claim and derivation_eligible_at validates only the original caused_by and pin; it never compares the replacement row's triple to the instantiated rule head. A user can Correct a derived Q(a,b) to Q(a,c) and have Q(a,c) returned as rule-eligible although the rule derives only Q(a,b).",
+   "evidence": [
+    "crates/kutha-runtime/src/fold.rs:710-742 -- Correct preserves claim_id and changes object/valid window",
+    "crates/kutha-runtime/src/quantum.rs:660-675 -- NormView checks eligibility by f.claim_id",
+    "crates/kutha-runtime/src/provenance.rs:149-181 -- eligibility validates the original cause and pin, not the replacement triple",
+    "crates/kutha-runtime/src/eval.rs:379-420 -- replay checks original Behavior output, not corrected replacements"
+   ]
+  },
+  {
+   "#": 29,
+   "autofix_class": "gated_auto",
+   "confidence": 75,
+   "file": "crates/kutha-runtime/src/segment.rs",
+   "first_evidence": "crates/kutha-runtime/src/segment.rs:634 --     if new_path.exists() {",
+   "independent_reviewers": [
+    "adversarial",
+    "correctness"
+   ],
+   "line": 634,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial",
+    "correctness"
+   ],
+   "severity": "P2",
+   "suggested_fix": "When the next path is unreferenced and shorter than a complete header, recreate it with the expected chain header before switching the manifest; continue rejecting a complete nonempty or chain-mismatched orphan. Add failpoints after create and after each header write.",
+   "title": "Replace partial orphan headers during rollover healing",
+   "why_it_matters": "Rollover creates the next segment directly and writes its header with multiple write_all calls before sync. A power loss after File::create but before the complete header leaves an existing short file; heal_interrupted_active_seal sees the path, calls inspect_active, and propagates parse_header's truncated-header error instead of recreating the unreferenced empty successor. Read-only open may still work, but every later open_for_append repeats the same failure.",
+   "evidence": [
+    "crates/kutha-runtime/src/persist_append.rs:431-436 -- rollover creates the next file before header write and sync",
+    "crates/kutha-runtime/src/segment.rs:128-133 -- write_header issues multiple writes before sync_data",
+    "crates/kutha-runtime/src/segment.rs:633-641 -- existing orphan paths go to inspect_active",
+    "crates/kutha-runtime/src/segment.rs:358-360 -- parse_header rejects files shorter than HEADER_LEN",
+    "crates/kutha-runtime/tests/m029_rollover_heal.rs:117-140 -- the test stops only after the complete synced header",
+    "crates/kutha-runtime/src/segment.rs:634 --     if new_path.exists() {",
+    "crates/kutha-runtime/src/segment.rs:635 --         let tip = inspect_active(&new_path)?;",
+    "crates/kutha-runtime/src/persist_append.rs:431-433 -- rollover creates the next file before header write and sync",
+    "crates/kutha-runtime/src/persist_append.rs:466 --     let _ = segment::heal_interrupted_active_seal(dir)?;"
+   ]
+  },
+  {
+   "#": 30,
+   "autofix_class": "gated_auto",
+   "confidence": 75,
+   "file": "crates/kutha-runtime/src/store.rs",
+   "first_evidence": "crates/kutha-runtime/src/store.rs:245 --             fs::remove_file(&man)?;",
+   "independent_reviewers": [
+    "adversarial",
+    "reliability"
+   ],
+   "line": 245,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial",
+    "reliability"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Call sync_dir(dir) immediately after removing manifest.json on the verification-failure rollback path, before returning the verification error, and add a directory-fsync-count or crash-boundary oracle for this rollback.",
+   "title": "Fsync the manifest rollback after migrate verification fails",
+   "why_it_matters": "A migration verification failure returns after deleting manifest.json so the intact legacy log becomes authoritative again, but the directory entry deletion is never fsynced. A power loss after the error can therefore resurrect the already-durable manifest and make the next open select the failed segmented migration instead of the intact legacy files. Syncing the parent directory makes the promised unflip durable rather than only visible to the current process.",
+   "evidence": [
+    "crates/kutha-runtime/src/store.rs:237-247 -- segments are written, verification runs, then manifest is removed without sync_dir",
+    "crates/kutha-runtime/src/segment.rs:249 -- write_manifest durably publishes the manifest earlier in migrate",
+    "crates/kutha-runtime/src/store.rs:598-602 -- manifest presence selects the segmented load path",
+    "docs/ADR/ADR-010-event-log-runtime-quantum.md:45 -- rollback promises the legacy store stays intact",
+    "crates/kutha-runtime/src/store.rs:245 --             fs::remove_file(&man)?;",
+    "docs/ADR/ADR-010-event-log-runtime-quantum.md:45 -- A verify failpoint that corrupts a freshly written segment returns InvalidData and unflips the manifest so the legacy store stays intact.",
+    "crates/kutha-runtime/src/segment.rs:249 -- pub(crate) fn write_manifest(dir: &Path, manifest: &Manifest) -> std::io::Result<()> {",
+    "provenance: 987f2632 rager306 2026-10-04 introduced the verification rollback deletion without a following sync_dir."
+   ]
+  },
+  {
+   "#": 33,
+   "autofix_class": "gated_auto",
+   "confidence": 75,
+   "file": "scripts/kutha_gov/kinds.py",
+   "first_evidence": "scripts/kutha_gov/kinds.py:44 --         \"glob_max_lines\",",
+   "independent_reviewers": [
+    "maintainability"
+   ],
+   "line": 44,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "maintainability"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Make RUNNERS the runtime source of truth: remove ALLOWED_KINDS and have run_step call runner = RUNNERS.get(kind), emitting unknown-kind when runner is None. In selftest.py replace DERIVABLE_KINDS plus the per-kind elif arms with a DERIVERS mapping keyed by kind and derive the advertised set from DERIVERS.keys().",
+   "title": "Collapse duplicate kind dispatch (Repeated Switches)",
+   "why_it_matters": "Each derivable kind added by this patch must be synchronized across the runtime allowlist, runner map, selftest derivability set, mutation switch, and adapter. The current entries happen to align, but run_step indexes RUNNERS after checking a different collection, so registry drift would bypass the intended fail-closed unknown-kind result and the repeated edits make every future kind a Shotgun Surgery change.",
+   "evidence": [
+    "scripts/kutha_gov/kinds.py:44 --         \"glob_max_lines\",",
+    "scripts/kutha_gov/kinds.py:2893 --     \"glob_max_lines\": _kind_glob_max_lines,",
+    "scripts/kutha_gov/selftest.py:47-50 repeats the new kind names in DERIVABLE_KINDS; scripts/kutha_gov/selftest.py:438-453 repeats them again as elif dispatch arms.",
+    "scripts/kutha_gov/kinds.py:57-67 checks membership in ALLOWED_KINDS and then indexes RUNNERS[kind], so the two runtime collections must remain exactly synchronized."
+   ]
+  },
+  {
+   "#": 34,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "file": "scripts/kutha_gov/parallel.py",
+   "first_evidence": "scripts/kutha_gov/parallel.py:95:            futs = {",
+   "independent_reviewers": [
+    "adversarial",
+    "testing"
+   ],
+   "line": 94,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "adversarial",
+    "testing"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Submit incrementally, track accepted futures, and on partial submission failure await or cancel accepted futures before running only missing checks serially. Add a submit-after-first-success failure test.",
+   "title": "Do not rerun submitted checks after pool failure",
+   "why_it_matters": "The futures map is built by one dict comprehension. If `pool.submit` succeeds for an early check and then raises for a later one, assignment to `futs` never completes and `by_name` remains empty; executor shutdown lets the already-submitted check run, after which the outer fallback serially runs every check again. This duplicates expensive or stateful checks exactly on the recovery path, and the current jobs tests cover worker exceptions but not partial submission failure. Build and track submissions incrementally, then test a submit failure after the first accepted future so each check executes once.",
+   "evidence": [
+    "scripts/kutha_gov/parallel.py:95:            futs = {"
+   ]
+  },
+  {
+   "#": 35,
+   "autofix_class": "gated_auto",
+   "confidence": 100,
+   "file": ".planning/milestones/v0.13-phases/58-governor-smp/58-VERIFICATION.md",
+   "first_evidence": ".planning/milestones/v0.13-phases/58-governor-smp/58-VERIFICATION.md:10: `- {cmd: \"python -m kutha_gov --jobs 1|2|4|default --root tmp/p58-head precommit\", exit: 0}`",
+   "independent_reviewers": [
+    "project-standards"
+   ],
+   "line": 10,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": false,
+   "reviewers": [
+    "project-standards"
+   ],
+   "severity": "P3",
+   "title": "Run harness commands through uv",
+   "why_it_matters": "Rule quote (AGENTS.md:50): `Harness (Python **3.13** via **uv** only \u2014 not system `python3`)`. Violating diff line (.planning/milestones/v0.13-phases/58-governor-smp/58-VERIFICATION.md:10): `- {cmd: \"python -m kutha_gov --jobs 1|2|4|default --root tmp/p58-head precommit\", exit: 0}`. Lines 10\u201316 record seven harness invocations through an ambient `python`, so replaying this verification can select the wrong interpreter instead of the pinned Python 3.13 environment; prefix these commands with `uv run` (or use the documented `uv run kutha-gov` entry point).",
+   "evidence": [
+    ".planning/milestones/v0.13-phases/58-governor-smp/58-VERIFICATION.md:10: `- {cmd: \"python -m kutha_gov --jobs 1|2|4|default --root tmp/p58-head precommit\", exit: 0}`"
+   ]
+  },
+  {
+   "#": 36,
+   "autofix_class": "gated_auto",
+   "confidence": 100,
+   "file": "crates/kutha-runtime/fixtures/statute/punkt_15_1.txt",
+   "first_evidence": "crates/kutha-runtime/fixtures/statute/punkt_15_1.txt:1: `\u043f\u0443\u043d\u043a\u0442 15.1 \u0434\u0435\u0439\u0441\u0442\u0432\u0443\u0435\u0442 \u0434\u043e 01.01.2028`",
+   "independent_reviewers": [
+    "project-standards"
+   ],
+   "line": 1,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": false,
+   "reviewers": [
+    "project-standards"
+   ],
+   "severity": "P3",
+   "title": "Keep the statute fixture in one language",
+   "why_it_matters": "Rule quote (AGENTS.md:13): `Do not mix languages inside a single artifact.` Violating diff lines (crates/kutha-runtime/fixtures/statute/punkt_15_1.txt:1-2): `\u043f\u0443\u043d\u043a\u0442 15.1 \u0434\u0435\u0439\u0441\u0442\u0432\u0443\u0435\u0442 \u0434\u043e 01.01.2028` followed by `(law-nexus syn-001 / C01 quote \u2014 test data only; not an ADR-090 pack thaw)`. The newly added fixture mixes Russian payload text with an English annotation in the same artifact, contrary to the repository language contract; keep metadata outside the fixture or make the artifact single-language.",
+   "evidence": [
+    "crates/kutha-runtime/fixtures/statute/punkt_15_1.txt:1: `\u043f\u0443\u043d\u043a\u0442 15.1 \u0434\u0435\u0439\u0441\u0442\u0432\u0443\u0435\u0442 \u0434\u043e 01.01.2028`"
+   ]
+  }
+ ],
+ "pre_existing_findings": [],
+ "suppressed_by_confidence": {
+  "50": 4
+ },
+ "first_evidence_backfilled": 64,
+ "actionable_findings": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  28,
+  29,
+  30,
+  33,
+  34,
+  35,
+  36
+ ],
+ "triage_groups": [
+  {
+   "title": "Segmented persist and open recovery",
+   "findings": [
+    6,
+    7,
+    9,
+    10,
+    29,
+    30
+   ],
+   "context": "Append, rollover, persist, and attach paths share one durability invariant: the manifest is the sole visibility switch.",
+   "preferred_resolution": "Fix #7 (lock before heal) first, then #6 (poison), #9 (torn tail), #10 (generations), #29/#30 (heal + fsync).",
+   "why": "Interruption and concurrency windows overlap; ordering the lock fix first narrows the blast radius of the rest."
+  },
+  {
+   "title": "Cascade atomicity and Horn soundness",
+   "findings": [
+    4,
+    8,
+    3,
+    2,
+    5,
+    18
+   ],
+   "context": "User-cascade commit order plus Horn lineage, VT windows, dedup, and boundary overlap decide what the fold believes.",
+   "preferred_resolution": "Fix #8 (atomic cascade) first, then #4 (correction lineage), #3/#2 (premise witness + VT intersection), #5/#18 (dedup residuals + MAX).",
+   "why": "One staged-commit fix removes the partial-prefix class; lineage/VT fixes then compose on correct cascades."
+  },
+  {
+   "title": "Admission scope, derived eligibility, and open replay",
+   "findings": [
+    11,
+    13,
+    26,
+    28
+   ],
+   "context": "Trust boundaries (admit, replay on open) plus eligibility of corrected/derived claims.",
+   "preferred_resolution": "Fix #13 (kutha: bypass) first, then #11 (replay on all open paths), #28/#26 (derived-eligibility + delivery-key scope).",
+   "why": "Close the admission hole before hardening the paths that depend on admitted content."
+  },
+  {
+   "title": "Governor matrix and artifact-budget honesty",
+   "findings": [
+    14,
+    22,
+    23,
+    34
+   ],
+   "context": "False-green governance: matrix rows, schema, PLAN minimum, and pool double-run.",
+   "preferred_resolution": "Fix #23/#22 (matrix rows + schema) first, then #14 (PLAN gate), #34 (submit incrementally).",
+   "why": "Matrix acceptance is the shared gate; the PLAN and pool fixes remove adjacent silent greens."
+  },
+  {
+   "title": "Hot-path scaling and benchmark honesty",
+   "findings": [
+    15,
+    16,
+    17,
+    19,
+    27,
+    25
+   ],
+   "context": "O(N^2) append/retract/match/pin paths at the 1M-fact target plus two measurement-validity fixes.",
+   "preferred_resolution": "Fix #19 (incremental append) first, then #16/#17/#27 (indexes), #25/#15 (validate as_of + isolate RSS).",
+   "why": "Append cost dominates growth; measurement fixes keep later optimizations honest."
+  },
+  {
+   "title": "Wire compat and ID contract",
+   "findings": [
+    1,
+    24
+   ],
+   "context": "Stores written by the base revision and the public EventId UUID shape.",
+   "preferred_resolution": "Decide migration for #1 (legacy decode variants) first, then #24 (content-derived ID contract).",
+   "why": "The decode decision constrains what the ID contract must cover."
+  },
+  {
+   "title": "Test-helper and governor structure",
+   "findings": [
+    12,
+    20,
+    21,
+    33
+   ],
+   "context": "1566-line SEM helper, 2897-line kinds.py, dispatch duplication, and corpus hashing.",
+   "preferred_resolution": "Handle #12 (SEM split) and #21 (kinds.py split) as refactors, #33 (single RUNNERS source) and #20 (canonical SHA) as small fixes.",
+   "why": "Structural splits are merge-conflict-prone; land the small fixes independently."
+  },
+  {
+   "title": "Verification-doc and fixture hygiene",
+   "findings": [
+    35,
+    36
+   ],
+   "context": "Two quoted scoped-rule violations with trivial fixes.",
+   "preferred_resolution": "Prefix harness commands with uv run (#35); keep fixture single-language (#36).",
+   "why": "Both are one-edit, no-design fixes a downstream caller applies directly."
+  }
+ ],
+ "residual_risks": [
+  "No builds, tests, linters, formatters, or mutation runs were executed, as required by the review contract. All cited lines were verified against the working tree; git diff confirms the cited Rust files and parallel.py are added relative to 72004349, and the cited test-matrix/FSM hunks are additions.",
+  "CBM project kutha-graph was queried before source tracing. check_index_coverage returned metadata_match/no_recorded_issue for every cited test, helper, and consuming production path; this is best-effort graph coverage, so conclusions use the source-verified lines above rather than treating the index as authoritative.",
+  {
+   "classification": "suppressed-cold-path",
+   "detail": "Both builders allocate the temporary `Vec<&Fact>` returned by `live_facts_at` before building CSR buckets. This is measurable at large N, but the visible materializer path is an explicit one-time lease build, so it does not clear the persona threshold without evidence of repeated production rebuilds.",
+   "surface": "CsrLease::from_fold / TypedCsrLease::from_fold"
+  },
+  {
+   "classification": "suppressed-fallback",
+   "detail": "The fallback scans all fold facts, but `bind_reserved` rebuilds the `horns_by_premise` lease and marks it ready; the normal ingest path therefore uses the keyed lease. No production-observable hot fallback was established.",
+   "surface": "Runtime::live_horns_scan"
+  },
+  {
+   "classification": "breaking-intentional",
+   "detail": "The exact ValidTime/WallTime facade parameters are a source break for callers passing bare u64 or the wrong clock. All visible in-repo consumers are migrated and compile-fail tests deliberately pin the narrowing.",
+   "surface": "Runtime::as_of / GraphFold::as_of and as_known_on"
+  },
+  {
+   "classification": "hyrum-semantic-shift",
+   "detail": "For identifier-like rule names the public digest changes from domain+UTF-8 to domain+canonical RuleAst bytes. Visible callers recompute the pin rather than hard-code it, but out-of-repo cached pins require explicit migration/versioning.",
+   "surface": "rule_definition_hash"
+  },
+  {
+   "classification": "additive",
+   "detail": "The envelope and all five variants are new; the visible example dispatches Ok, Conflict, Abstain, Unknown, and MissingAnchor exhaustively. No pre-existing consumer is broken by the addition.",
+   "surface": "NormView / NormTriple / Runtime::norm_view"
+  },
+  {
+   "classification": "unchanged-boundary",
+   "detail": "The JSONL-to-triple mapper is unchanged in this patch; the binary only wraps the query cutoff in ValidTime, so the consumed H2 row shape is unchanged.",
+   "surface": "H2 kutha-tenant typed triples"
+  },
+  "Removed pre-Phase-26 Op variants are an explicitly documented open/migration break in docs/process/op-compat.md and m050_op_compat, not a silent defect; a real migration remains deferred work.",
+  "Legacy Behavior rows without rule_version deserialize but fail the new strict replay gate; this is adjacent to the documented strict-replay policy and needs an explicit vintage decision rather than a silent alias.",
+  "The write lock is process-local flock-based; cross-process or cross-host writers outside this API still need an external coordinator.",
+  "Horn search still binds MAX_VAR=16 and explores live facts at one point; richer rules need explicit limits and complete-window semantics before production rule execution.",
+  "Governor selftest derives mutations only from configured step shapes; presence/correspondence invariants that are not representable as mutations remain proven only by review.",
+  "Parallel worker fallback preserves check results but can duplicate side effects on submission failure until the pool contract is made at-most-once.",
+  "residual-risk dotenv-to-env injection chain (anchor-50, mechanism source-verified): crates/kutha-runtime/src/allow.rs:9-41 apply_dotenv walks 5 ancestors of CARGO_MANIFEST_DIR for .env and injects ANY key via unsafe set_var (admitted race, edition-2024 contract) when unset; crates/kutha-runtime/src/allow.rs:45 KUTHA_RELATIONS_PATH then overrides the allowlist location, and crates/kutha-runtime/src/bin/kutha-tenant.rs:19-20 steers harness-log/tenant-dir from env. A .env writer inherits allowlist + path control. Relevance beyond dev/test shared checkouts is not established; harden by scoping to KUTHA_ keys, returning a config map instead of set_var, and documenting trust-sensitivity.",
+  "residual-risk unbounded tenant ingest (anchor-50, mechanism source-verified): crates/kutha-runtime/src/tenant.rs:127 interns every harness-JSONL object string with no length/count/total-bytes bound after whole-file read_to_string. The default log is own-process state (not an attacker boundary today); cap lengths/rows and stream the file if the source ever leaves operator control."
+ ],
+ "testing_gaps": [
+  "No crash/failpoint execution was run; segmented retry, torn-tail, multi-generation replacement, rollover-orphan, and lock-race paths were source-traced only.",
+  "No two-hop cascade error oracle currently asserts that an Err leaves both the fold and log unchanged.",
+  "Correction re-fire tests do not assert norm_view or admission eligibility for Correct and all CorrectInterval residual regions.",
+  "The MAX-boundary Horn dedup and non-mapping test-matrix inputs are not covered by the reviewed tests.",
+  "The persistence benchmark appends one 1% tail; it does not measure repeated one-event appends as the runtime grows, so the O(N\u00b2) stream shape is hidden.",
+  "No scale benchmark exercises multi-premise Horn matching or repeated retract/correct operations with a large event log.",
+  "`bytes_per_fact` has no isolated-process oracle proving that the measured RSS delta belongs to the runtime used as its denominator.",
+  "No fixture opens or migrates a store serialized by the base enum with each removed Op variant.",
+  "No assertion checks that derived EventIds satisfy the public UUID version/variant contract.",
+  "Retract a non-trigger Horn premise after both premises fire, including a second rule chained from the derived head.",
+  "Horn premises with disjoint or expiring valid-time intervals; derived output must stop at the conjunction boundary.",
+  "Correct and CorrectInterval refires must be visible through NormView and replay for prefix, patch, and suffix residuals.",
+  "Correcting a derived Behavior to a triple the rule does not derive must not inherit eligibility.",
+  "A valid first Assert followed by a later unknown Horn head must leave log and fold unchanged on Err.",
+  "Segmented append retry after WalWrite/WalSync must compare the exact EventId sequence, not only log growth.",
+  "Crash after rollover new-header creation but before the first complete frame must heal or truncate the active tail before append.",
+  "Concurrent Persister::attach while a live writer is between rollover trailer and manifest rename must not mutate the store.",
+  "Full segmented persist interrupted after an early segment rename but before manifest replacement must reopen the old generation.",
+  "Partial orphan next-segment header (0..HEADER_LEN bytes) must be recreated safely by open_for_append.",
+  "Two allowed relations sharing one explicit claim and delivery key: retracting one relation must make its retry remint despite the other relation remaining live.",
+  "Horn dedup must emit uncovered VT residuals and retain alternative proof supports after one premise is retracted.",
+  "Open intervals at ValidTime::MAX must intersect themselves in dedup and CorrectInterval admission.",
+  "No-snapshot open through Define and terms fallbacks must run the same execution replay as snapshot-backed open.",
+  "artifact-budget must fail when live CONTEXT/SUMMARY/VERIFICATION artifacts exist without a matching PLAN.",
+  "test-matrix must reject non-mapping rows and unsupported schema values before oracle checks.",
+  "Process-pool fallback must prove at-most-once execution when submission fails after an accepted future.",
+  "Baseline benchmark must validate the exact timed as_of triple set, not just live_count.",
+  "Migrate verification rollback must fsync the directory after manifest removal.",
+  "P2/75 testing crates/kutha-runtime/tests/m031_wal_tail_heal.rs:67 Assert the JSONL-only anchor survives WAL healing -- The only event beyond the persisted prefix is `TtAnchor(2021)`, but every post-open assertion compares `GraphFold::fingerprint`, which deliberately excludes `tt_anchors`",
+  "P2/75 testing crates/kutha-runtime/tests/m033_ci_admission_vt.rs:115 Keep live residuals in the negative VT-coverage case -- The negative test retracts the cited CorrectInterval event, invalidating all three residuals",
+  "P3/75 testing crates/kutha-runtime/tests/common/sem.rs:1026 Reject persistence errors in the rollover seam test -- `try_persist_with_layout` maps every `store::persist` error to `false`, while `try_persist_rollover_tiny_does_not_panic` maps a missing manifest to zero sealed segments and only checks `ok == (sealed >= 2)`",
+  "P3/75 testing crates/kutha-runtime/tests/common/sem.rs:232 Sample the CorrectInterval upper boundary -- Successful generated CorrectInterval operations create a patch ending at 2020, but `vt_cuts_for` samples the edge, an interior low cut, `max_vf - 1`, and 2025",
+  "P3/75 testing crates/kutha-runtime/tests/common/sem.rs:465 Require the derived correction to commit an event -- The coverage generator marks `saw_derived_correct_or_retract` for any `Ok(out)`, even when the receipt has no event ID",
+  "P3/75 testing crates/kutha-runtime/tests/m019_sem_meta.rs:633 Assert the premise is rolled back on cascade rejection -- The CASC-01 rejection test verifies the `UnknownRelation` error and absence of the derived `ghostHop` Behavior, but never checks that the triggering `knows` Assert was not appended",
+  "P3/75 testing crates/kutha-runtime/tests/m034_correct_refire.rs:60 Verify same-triple Correct changes the VT window -- The initial premise and inverse are already live at 2017, and the test only checks those same facts after shortening the premise to end at 2030",
+  "P3/75 testing crates/kutha-runtime/tests/m037_norm_view_claim_lineage.rs:122 Verify CorrectInterval creates a replacement residual -- After retracting the premise, the CorrectInterval companion never proves that CorrectInterval replaced the original Behavior fact",
+  "P3/75 testing crates/kutha-runtime/tests/m042_m028_layouts.rs:166 Prove shrink-corpus paths depend on content -- The content-addressing test writes one corpus and then writes the identical corpus with the same seed, which proves determinism but not content dependence",
+  "P3/75 testing scripts/tests/test_fsm.py:232 Isolate FSM log assertions from the repository log -- This unit test uses the live repository root with `skip_emit` left at its default `False`; `run_quantum` consequently appends run and tenant observations to the shared ignored `.kutha/events.jsonl`, then asserts the file's last cargo/tenant tips"
+ ],
+ "learnings": [
+  {
+   "type": "known_pattern",
+   "title": "D1 live intern Define with graph-oriented snapshot offset (m010-s03 honored)",
+   "citation": ".compound-engineering/artifacts/solutions/architecture-patterns/m010-s03-live-intern-define.md",
+   "note": "Changed lines match: intern appends Op::Define, snapshot offset uses graph_len; SelfCommit for Define preserves Define-only-suffix survival."
+  },
+  {
+   "type": "known_pattern",
+   "title": "D2 persist Define prefix, honest log_offset, derived sidecar (m010-s02 honored)",
+   "citation": ".compound-engineering/artifacts/solutions/architecture-patterns/m010-s02-define-ops-on-durable-log.md",
+   "note": "Persist prefix + live intern follow the S03 override (graph_len); code correctly does not follow the superseded do-not-auto-append rule."
+  },
+  {
+   "type": "known_pattern",
+   "title": "D3 unknown claim fail-closed + replay caused_by (m011-s02 honored)",
+   "citation": ".compound-engineering/artifacts/solutions/architecture-patterns/m011-s02-claim-lineage.md",
+   "note": "Admission precedes Event construction on the user path; no changed-line contradiction."
+  },
+  {
+   "type": "known_pattern",
+   "title": "D4 portable claim_id with independent supports (m011-s01 honored)",
+   "citation": ".compound-engineering/artifacts/solutions/architecture-patterns/m011-s01-claim-supports.md",
+   "note": "claim_id/event_id separation intact; no changed-line contradiction."
+  },
+  {
+   "type": "known_pattern",
+   "title": "D5 membership editions as one snapshot (honored, effectively-unchanged lines)",
+   "citation": ".compound-engineering/artifacts/solutions/architecture-patterns/process-relation-membership-snapshot-editions.md",
+   "note": "Snapshot shape unchanged (time_log encode_membership_object); correctly not a review finding."
+  }
+ ],
+ "agent_native_gaps": [
+  {
+   "title": "W1 new GSD contract points agents at the non-preferred CBM index name",
+   "file": "docs/process/gsd-auto-contract.md",
+   "line": 79,
+   "anchor": 100,
+   "detail": "Table header uses CBM (root-kutha-graph) while SKILL.md:12 establishes canonical kutha-graph; both resolve today, risk is freshness divergence + inconsistent evidence names. Fix: header to kutha-graph with alias footnote."
+  },
+  {
+   "title": "O1 new governor flags undiscoverable from the system prompt",
+   "file": "AGENTS.md",
+   "line": 55,
+   "anchor": 75,
+   "detail": "Commands block lacks --jobs/--skip-cargo/json while __main__ adds --jobs/--skip-cargo; agents reading only AGENTS.md + SKILL.md miss the parallel surface and --jobs 1 oracle equivalence. Add flags or a pointer line."
+  },
+  {
+   "title": "O2 kutha-tenant direct invocation harness-doc-only (note only, no action)",
+   "file": "crates/kutha-runtime/src/bin/kutha-tenant.rs",
+   "line": 1,
+   "anchor": null,
+   "detail": "Env-only interface gives total user/agent parity by construction; FSM is the normal caller. Re-open if CLI flags are added."
+  }
+ ],
+ "coverage": [
+  "Scope: standalone branch diff chore/m013-roadmap-reset vs merge-base 72004349 (main); 680 tracked files, 59040 changed lines, 12020 exec non-test lines; reviewed head dd38c95; working tree is the reviewed head.",
+  "Untracked files excluded unless staged (14 paths: CE handoffs/plans, prior review receipts 2026-10-07 and 2026-10-09).",
+  "No plan discovered (branch proposal match ambiguous); requirements completeness skipped, noted.",
+  "Learnings researcher read assignment directly (persona asset path not resolved in its runtime); method disclosed in its return. 5 distilled rules all HONORED on changed lines; 0 contradictions, 0 pack-rule findings.",
+  "Cross-model peer: adversarial lens: in-process fallback (cross-model peer not run: codex editorial model gpt-6-luna not advertised by installed ACP agent pre-egress; no other eligible attested-different target).",
+  "Fast pass: no urgent P0/P1 candidates; deep review continued.",
+  "Graph verification: children ran CBM/GitNexus against fresh 2026-10-10 indexes where available; findings quote source-verified lines. Merge leaf re-verified P1 anchors, security claims, and governor mechanisms against the working tree.",
+  "Mechanics: 64 compact findings in -> 54 valid + 5 malformed (off-schema compact shapes; normalized from reviewer artifacts to the dispatch-reviewers.md compact shape) + 4 suppressed at anchor 50. 13 semantic groups merged (same defect + fix path; reviewers/independent_reviewers unioned; mechanics shows independent_reviewers == reviewers throughout). Rerun 48 -> 44 valid + 0 malformed + 4 suppressed. first_evidence recovered from artifacts for 64 findings (helper backfill 0, already supplied).",
+  "Confidence/severity normalization (documented, never raised to carry): off-scale 90/95 remapped down to 75; testing priority 1 -> P2 / 2 -> P3; security high -> P1 / medium -> P2; performance -> P2; api-contract Op-decode -> P1, UUID -> P2; project-standards -> P3. Reviewer autofix_class/owner kept except 5 advisory/human findings with concrete code responses normalized to manual/downstream-resolver per the concrete-P0/P1 rule.",
+  "Settlement: no plan (source none), no session-settled KTDs; nothing discarded as settled conflict. Pre-existing partition empty; direct-dependency reclassification not applicable.",
+  "Soft-bucket demotion: 10 testing-only narrow oracle cases demoted to testing_gaps with consequence preserved (no umbrella primary: oracles exist per test; gaps name the missing assertions). Suppressed anchor-50 set: backdated-admission claim REFUTED against fold.rs:143-159 (TT-liveness enforced at the admission TT cut; revocation is immediate) and discarded; dotenv/paths chain and unbounded-ingest mechanisms confirmed but attacker-relevance beyond dev/test not established -> 2 residual risks.",
+  "No builds, tests, linters, formatters, or mutation runs were executed (report-only contract). Stage 5c skipped (apply_local false).",
+  "Validation: 0 skipped (no cross-model corroboration available; same-model agreement never licenses the shortcut). 34 findings selected for the validator batch (13 P1 + 19 P2 + 2 P3), ordered severity then stable #."
+ ],
+ "validation": {
+  "skipped": 0,
+  "skip_basis": "no finding met the skip rule (requires first_evidence plus an ordinary reviewer and an adversarial-<provider> reviewer with independence_verified:true; in-process reviewers share one serving model so same-model agreement never licenses the shortcut)",
+  "selected": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25,
+   26,
+   27,
+   28,
+   29,
+   30,
+   33,
+   34,
+   35,
+   36
+  ]
+ }
+}

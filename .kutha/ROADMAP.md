@@ -205,10 +205,10 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 **Source:** `.compound-engineering/artifacts/reviews/2026-10-11-ce-whole-repo/` + `advisor-correction.md`. Honeycomb stays Proposed. Whole-repo #1 demoted (documented Op break).
 
-- [ ] **S01: Triage correction** `risk:low` `depends:[]`
-  > After this: advisor-correction demotes #1; fix-first starts at #8; Phase 112 closed.
-- [ ] **S02: Cascade atomicity** `risk:high` `depends:[S01]`
-  > After this: later-hop rule errors leave fold/log unchanged; `m052_cascade_atomic`; Phase 113.
+- [x] **S01: Triage correction** `risk:low` `depends:[]`
+  > After this: advisor-correction demotes #1; fix-first starts at #8; Phase 112 closed. Landed: `advisor-correction.md`; `112-VERIFICATION.md`.
+- [x] **S02: Cascade atomicity** `risk:high` `depends:[S01]`
+  > After this: later-hop rule errors leave fold/log unchanged; `m052_cascade_atomic`; Phase 113. Landed: `SEM-m052-cascade-atomic`; `113-VERIFICATION.md`.
 - [ ] **S03: Lock before heal** `risk:high` `depends:[S02]`
   > After this: attach locks before heal/write; Phase 114.
 - [ ] **S04: Snapshot-free open replay** `risk:high` `depends:[S03]`

@@ -15,7 +15,7 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Phases (v0.46)
 
-- [ ] **Phase 112: Triage correction** — demote #1; pin advisor residual
+- [x] **Phase 112: Triage correction** — demote #1 (`112-VERIFICATION.md` passed)
 - [x] **Phase 113: Cascade atomicity** — CE #8 (`113-VERIFICATION.md` passed)
 - [ ] **Phase 114: Lock before heal** — CE #7
 - [ ] **Phase 115: Snapshot-free open replay** — CE #11

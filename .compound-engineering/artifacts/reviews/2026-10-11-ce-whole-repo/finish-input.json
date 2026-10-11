@@ -1,0 +1,177 @@
+{
+ "collection": {
+  "bound_exceeded": [],
+  "failed_reviewers": [],
+  "fast_pass": {
+   "candidates": [],
+   "emitted_preliminary": false
+  },
+  "returns": "/tmp/compound-engineering-0/ce-code-review/20261011-004437-64cb5b1f/raw-returns.json",
+  "unstructured_returns": [
+   {
+    "path": "/tmp/compound-engineering-0/ce-code-review/20261011-004437-64cb5b1f/learnings.md",
+    "reviewer": "learnings-researcher"
+   },
+   {
+    "path": "/tmp/compound-engineering-0/ce-code-review/20261011-004437-64cb5b1f/agent-native.md",
+    "reviewer": "agent-native-reviewer"
+   }
+  ]
+ },
+ "coverage_notes": [
+  "Scope: standalone branch diff vs merge-base 72004349 (main); 680 tracked files, 59040 changed lines, 12020 exec non-test lines. Files identical to base are pre-existing context, not verdict.",
+  "Untracked files excluded unless staged (14 paths: CE handoffs/plans, prior review receipts 2026-10-07 and 2026-10-09).",
+  "No plan discovered (branch proposal match ambiguous); requirements completeness skipped, noted.",
+  "Learnings researcher read assignment directly (persona asset path not resolved in its runtime); method disclosed in its return.",
+  "Cross-model peer started (codex, requested gpt-6-luna xhigh) but produced no usable output: installed ACP agent does not advertise gpt-6-luna (pre-egress, no content sent). No other eligible attested-different target; adversarial lens covered by in-process fallback.",
+  "Fast pass: no urgent P0/P1 candidates; deep review continued.",
+  "Graph verification: children ran CBM/GitNexus against fresh 2026-10-10 indexes where available; findings quote source-verified lines."
+ ],
+ "docs_root": ".compound-engineering/artifacts",
+ "intent": {
+  "confidence": "inferred",
+  "summary": "Close milestones M023-M108 (keyed retry, fold identity, TT-only as_of, clock-safe facade, norm_view, generators, matrix honesty) and fix prior CE-review findings on persist/open recovery and governor silent-pass oracles. Must not regress durability/semantic oracles, matrix honesty, or lease/honeycomb discipline."
+ },
+ "invocation": {
+  "arguments": "/ce-code-review whole repo, all gitnexus/codebase-memory-mcp tools",
+  "constraints": [
+   "report-only: no apply, no push, no PRs",
+   "whole-repo request honored as branch diff per skill scope; unchanged-from-base files are pre-existing context plus read-only supplement discipline"
+  ]
+ },
+ "mode": {
+  "agent": false,
+  "apply_local": false,
+  "depth": "full",
+  "grouping": "auto"
+ },
+ "peer": {
+  "artifact": null,
+  "coverage": "adversarial lens: in-process fallback (cross-model peer not run: codex editorial model gpt-6-luna not advertised by installed ACP agent pre-egress; no other eligible attested-different target)",
+  "outcome": "in-process-fallback",
+  "preference_source": "default",
+  "route": "codex",
+  "selected": true,
+  "target": "codex"
+ },
+ "plan": {
+  "implementation_units": [],
+  "path": null,
+  "requirements": [],
+  "settled_decisions": [],
+  "source": "none"
+ },
+ "roster": {
+  "packs": {
+   "errors": [],
+   "roots": [],
+   "warnings": []
+  },
+  "selected": [
+   {
+    "reason": "always-on",
+    "reviewer": "correctness",
+    "tier": "session"
+   },
+   {
+    "reason": "AGENTS.md governs all changed files",
+    "reviewer": "project-standards",
+    "tier": "mid"
+   },
+   {
+    "reason": "126 runtime files incl tests plus harness behavior",
+    "reviewer": "testing",
+    "tier": "mid"
+   },
+   {
+    "reason": "12020 exec non-test lines, structural",
+    "reviewer": "maintainability",
+    "tier": "mid"
+   },
+   {
+    "reason": "skills/subagent docs + tenant surface changed",
+    "reviewer": "agent-native",
+    "tier": "mid"
+   },
+   {
+    "reason": "solutions corpus matches persist/claim modules",
+    "reviewer": "learnings",
+    "tier": "mid"
+   },
+   {
+    "reason": "allowlist + tenant + env surface",
+    "reviewer": "security",
+    "tier": "session"
+   },
+   {
+    "reason": "baseline bench + fold/persist hot paths",
+    "reviewer": "performance",
+    "tier": "mid"
+   },
+   {
+    "reason": "tenant/facade consumed boundary",
+    "reviewer": "api-contract",
+    "tier": "mid"
+   },
+   {
+    "reason": "heal/lock/parallel error paths",
+    "reviewer": "reliability",
+    "tier": "mid"
+   },
+   {
+    "reason": "in-process fallback after peer no-output",
+    "reviewer": "adversarial",
+    "tier": "session"
+   }
+  ],
+  "standards": {
+   "criteria": [
+    "AGENTS.md",
+    "CLAUDE.md"
+   ],
+   "fallback_named": false,
+   "not_run_reason": null
+  }
+ },
+ "run_dir": "/tmp/compound-engineering-0/ce-code-review/20261011-004437-64cb5b1f",
+ "run_id": "20261011-004437-64cb5b1f",
+ "scope": {
+  "base": "72004349ac649fdc2ee44c52126f1acfa54390a7",
+  "branch": "chore/m013-roadmap-reset",
+  "diff": "/tmp/compound-engineering-0/ce-code-review/20261011-004437-64cb5b1f/full.diff",
+  "diff_a": "72004349ac649fdc2ee44c52126f1acfa54390a7",
+  "diff_b": null,
+  "files": "/tmp/compound-engineering-0/ce-code-review/20261011-004437-64cb5b1f/files.txt",
+  "head_sha": "dd38c9589760407f7c179d5f46586ae1221b4d0e",
+  "mode": "standalone",
+  "pr": {
+   "base_ref": null,
+   "base_ref_name": null,
+   "body": null,
+   "has_prior_comments": false,
+   "head_ref": null,
+   "head_ref_oid": null,
+   "number": null,
+   "title": null,
+   "url": null
+  },
+  "tree_is_reviewed_head": true,
+  "untracked_excluded": [
+   ".compound-engineering/artifacts/handoffs/ce-code-review-h4-overlay/metadata.json",
+   ".compound-engineering/artifacts/handoffs/ce-code-review-h4-overlay/review.json",
+   ".compound-engineering/artifacts/handoffs/ce-code-review-m011-s03-20260916T082521Z/metadata.json",
+   ".compound-engineering/artifacts/handoffs/ce-code-review-m011-s03-20260916T082521Z/review.json",
+   ".compound-engineering/artifacts/handoffs/m019-closed-v013-next-decisions.md",
+   ".compound-engineering/artifacts/plans/2026-10-01-process-productivity-from-log-audit.md",
+   ".compound-engineering/artifacts/reviews/2026-10-07-whole-repo-audit/metadata.json",
+   ".compound-engineering/artifacts/reviews/2026-10-07-whole-repo-audit/report.md",
+   ".compound-engineering/artifacts/reviews/2026-10-09-ce-full-branch/finish-input.json",
+   ".compound-engineering/artifacts/reviews/2026-10-09-ce-full-branch/metadata.json",
+   ".compound-engineering/artifacts/reviews/2026-10-09-ce-full-branch/report.md",
+   ".compound-engineering/artifacts/reviews/2026-10-09-ce-full-branch/supplement-untracked-unchanged.md",
+   ".compound-engineering/artifacts/reviews/2026-10-09-ce-full-branch/synthesized-findings.json",
+   ".compound-engineering/artifacts/reviews/2026-10-09-ce-full-branch/validator-verdicts.json"
+  ]
+ },
+ "skill_dir": "/root/.omp/plugins/cache/plugins/compound-engineering-plugin___compound-engineering___3.30.4/skills/ce-code-review"
+}

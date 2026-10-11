@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Process: CE whole-repo triage correction (Phase 112)
+
+### Process
+
+- Advisor correction demotes whole-repo finding #1 from P1/fix-first: documented Op wire break (`op-compat.md` + `m050_op_compat`) is intentional; migrate stays deferred residual. Re-verified withdrawals: hydrate rebuilds outcomes; m028 `persist_dir` is manifest-dir+PID+nanos; rollover-shrink keeps layout via `try_persist_with_layout`. Artifact: `.compound-engineering/artifacts/reviews/2026-10-11-ce-whole-repo/advisor-correction.md`.
+
+### Trajectory
+
+- M052 / GSD v0.46 opened with S01–S04. Fix-first starts at cascade #8 (Phase 113). #6 decision-gate unchanged. Honeycomb Proposed.
+
 ## 2026-10-11 — Product: cascade atomicity (Phase 113)
 
 ### Product
