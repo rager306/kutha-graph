@@ -1,5 +1,5 @@
 use crate::quantum::{
-    Justification, PersistedQuantumOutcome, Runtime, RuntimeError, cascade_limit,
+    cascade_limit, Justification, PersistedQuantumOutcome, Runtime, RuntimeError,
 };
 use crate::snapshot::Snapshot;
 use crate::wal;
@@ -688,7 +688,6 @@ fn open_hydrated(dir: &Path, events: Vec<Event>) -> std::io::Result<Runtime> {
                 .map_err(runtime_err)?;
         }
         let rt = Runtime::from_snapshot(snap, events);
-        rt.replay_check().map_err(runtime_err)?;
         return finish_open(rt, outcomes, justifications);
     }
     let defined = defined_names(&events);
@@ -720,6 +719,9 @@ fn finish_open(
     outcomes: Option<Vec<PersistedQuantumOutcome>>,
     justifications: Option<Vec<Justification>>,
 ) -> std::io::Result<Runtime> {
+    // M052-S04 / CE P1 #11: snapshot, Define, terms, and empty reconstruction
+    // all take this choke point; replay must run before sidecar hydrate.
+    rt.replay_check().map_err(runtime_err)?;
     rt.hydrate_from_log();
     if let Some(rows) = outcomes {
         sidecar_or_stale_prefix(
@@ -876,14 +878,14 @@ fn runtime_err(e: RuntimeError) -> std::io::Error {
 }
 
 pub use crate::persist_append::{
-    AppendStep, CHECKPOINT_EVERY, Persister, abort_checkpoint_snapshot_before_rename,
-    append_with_event_failpoint, append_with_failpoint, checkpoint_with_failpoint,
-    pending_append_len, persist_log_sync_count, reset_persist_log_sync_count,
+    abort_checkpoint_snapshot_before_rename, append_with_event_failpoint, append_with_failpoint,
+    checkpoint_with_failpoint, pending_append_len, persist_log_sync_count,
+    reset_persist_log_sync_count, AppendStep, Persister, CHECKPOINT_EVERY,
 };
 
 #[doc(hidden)]
 pub use crate::segment::{
-    HEADER_LEN as SEGMENT_HEADER_LEN, MANIFEST_REL, Manifest, SEGMENT_MAX_BYTES,
-    SEGMENT_MAX_EVENTS, abort_write_segment_before_rename, reset_test_segment_limits,
-    rewrite_segment_with_seal_trailer, set_test_segment_limits, write_test_segmented,
+    abort_write_segment_before_rename, reset_test_segment_limits,
+    rewrite_segment_with_seal_trailer, set_test_segment_limits, write_test_segmented, Manifest,
+    HEADER_LEN as SEGMENT_HEADER_LEN, MANIFEST_REL, SEGMENT_MAX_BYTES, SEGMENT_MAX_EVENTS,
 };
