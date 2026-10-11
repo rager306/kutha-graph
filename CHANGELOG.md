@@ -13,7 +13,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Process
 
-- Matrix row `SEM-m052-cascade-atomic` (owner `M052-S02`). No new governor check; budget stays 76.
+- Matrix row `SEM-m052-cascade-atomic` (owner `M052-S02`). `.kutha/ROADMAP.md` names M052-S02 so the owner resolves. No new governor check; budget stays 76.
 
 ### Trajectory
 

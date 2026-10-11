@@ -201,6 +201,19 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M052: CE whole-repo wave 1 (GSD v0.46)
+
+**Source:** `.compound-engineering/artifacts/reviews/2026-10-11-ce-whole-repo/` + `advisor-correction.md`. Honeycomb stays Proposed. Whole-repo #1 demoted (documented Op break).
+
+- [ ] **S01: Triage correction** `risk:low` `depends:[]`
+  > After this: advisor-correction demotes #1; fix-first starts at #8; Phase 112 closed.
+- [ ] **S02: Cascade atomicity** `risk:high` `depends:[S01]`
+  > After this: later-hop rule errors leave fold/log unchanged; `m052_cascade_atomic`; Phase 113.
+- [ ] **S03: Lock before heal** `risk:high` `depends:[S02]`
+  > After this: attach locks before heal/write; Phase 114.
+- [ ] **S04: Snapshot-free open replay** `risk:high` `depends:[S03]`
+  > After this: all open paths run replay_check; Phase 115.
+
 ## M051: Pin scheme v1 stability vectors — CLOSED (GSD v0.45)
 
 **Closed:** S01 delivered 2026-10-11. Process tag `v0.45`. Honeycomb stays Proposed. CE review P1 #24.
