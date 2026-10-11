@@ -1850,6 +1850,42 @@ def glob_max_lines_effective_min_hits(step: Step, root: Path) -> int:
     return min_hits
 
 
+def _glob_max_lines_correspond(
+    check: str,
+    step: Step,
+    ctx: Context,
+    result: CheckResult,
+    hits: list[Path],
+) -> None:
+    """HIGH when a min_phase-gated correspond_glob file has no peer glob hit in-dir."""
+    correspond = _str(step, "correspond_glob")
+    if not correspond:
+        return
+    marker_step: dict[str, object] = dict(step)
+    marker_step["glob"] = correspond
+    markers = _glob_max_lines_hits(marker_step, ctx.root, check=check, result=result)
+    skip_if = _str(step, "correspond_skip_if")
+    hit_parents = {path.parent for path in hits}
+    missing: list[str] = []
+    for marker in markers:
+        if skip_if and any(path.is_file() for path in marker.parent.glob(skip_if)):
+            continue
+        if marker.parent in hit_parents:
+            continue
+        missing.append(marker.relative_to(ctx.root).as_posix())
+    if not missing:
+        return
+    result.scanned += 1
+    message = _fmt(
+        _str(step, "correspond_message", "{glob} missing peer of {missing}"),
+        glob=_str(step, "glob"),
+        missing=", ".join(missing),
+    )
+    result.findings.append(
+        Finding(check, Severity.HIGH, _category(step, "correspond"), message, correspond)
+    )
+
+
 def _kind_glob_max_lines(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
     pattern = _str(step, "glob")
     maximum = _int(step, "max", -1)
@@ -1866,6 +1902,7 @@ def _kind_glob_max_lines(check: str, step: Step, ctx: Context, result: CheckResu
         return
     min_hits = glob_max_lines_effective_min_hits(step, ctx.root)
     hits = _glob_max_lines_hits(step, ctx.root, check=check, result=result)
+    _glob_max_lines_correspond(check, step, ctx, result, hits)
     if len(hits) < min_hits:
         result.scanned += 1
         message = _fmt(
@@ -2424,6 +2461,7 @@ def _kind_cargo_dep_constraint(check: str, step: Step, ctx: Context, result: Che
                     )
 
 
+_MATRIX_SCHEMA = "kutha-test-matrix/v1"
 _MATRIX_STATUSES = frozenset({"killed", "characterization", "gap", "blocked", "spec-only", "gate"})
 _MATRIX_CHAR_KILL = re.compile(
     r"mirror|alias|tautolog|honor[- ]system|env[- ]floor|"
@@ -2526,11 +2564,36 @@ def _kind_test_matrix(check: str, step: Step, ctx: Context, result: CheckResult)
             Finding(check, Severity.HIGH, "yaml", f"{path} root is not a mapping", path)
         )
         return
+    schema = loaded.get("schema")
+    if schema != _MATRIX_SCHEMA:
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "matrix-schema",
+                f"{path} schema {schema!r} is not {_MATRIX_SCHEMA}",
+                path,
+            )
+        )
+        return
     rows = loaded.get("rows")
     if not isinstance(rows, list) or not rows:
         result.findings.append(
             Finding(
                 check, Severity.HIGH, "yaml-select", f"{path} rows is not a non-empty list", path
+            )
+        )
+        return
+    non_maps = [index for index, row in enumerate(rows) if not isinstance(row, dict)]
+    if non_maps:
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "yaml-select",
+                f"{path} rows contains non-mapping entries at index "
+                f"{', '.join(str(i) for i in non_maps)}",
+                path,
             )
         )
         return

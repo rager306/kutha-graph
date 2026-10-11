@@ -5,7 +5,7 @@ from __future__ import annotations
 import multiprocessing
 import os
 import time
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import Future, ProcessPoolExecutor, as_completed
 from pathlib import Path
 
 from kutha_gov.protocol import Check, CheckResult, Context, Finding, Severity
@@ -80,6 +80,45 @@ def _eval_check_worker(
     return eval_check(check, ctx)
 
 
+def _worker_payload(
+    chk: Check, ctx: Context
+) -> tuple[Check, str, bool, str, bool, bool, frozenset[str] | None]:
+    return (
+        chk,
+        str(ctx.root),
+        ctx.fail_on_warn,
+        ctx.git_against,
+        ctx.skip_cargo,
+        ctx.skip_emit,
+        ctx.changed_paths,
+    )
+
+
+def _pool_fallback(exc: BaseException, *, broken: bool) -> Finding:
+    kind = "broken" if broken else "failed"
+    return Finding(
+        "fsm",
+        Severity.LOW,
+        "pool-fallback",
+        f"process pool {kind} ({type(exc).__name__}: {exc}); unfinished checks ran serial",
+    )
+
+
+def _harvest_accepted(
+    futs: dict[Future[CheckResult], str],
+    by_name: dict[str, CheckResult | None],
+) -> None:
+    """Await or cancel futures already accepted; leave cancelled names for serial."""
+    for fut, name in futs.items():
+        if by_name[name] is not None:
+            continue
+        if fut.done() or not fut.cancel():
+            try:
+                by_name[name] = fut.result()
+            except Exception as exc:
+                by_name[name] = worker_error_result(name, exc)
+
+
 def run_checks_parallel(
     selected: list[tuple[str, Check]], ctx: Context
 ) -> tuple[list[CheckResult], list[Finding]]:
@@ -92,53 +131,31 @@ def run_checks_parallel(
     workers = max(1, min(ctx.jobs, len(selected)))
     try:
         with ProcessPoolExecutor(max_workers=workers, mp_context=_mp_context()) as pool:
-            futs = {
-                pool.submit(
-                    _eval_check_worker,
-                    (
-                        chk,
-                        str(ctx.root),
-                        ctx.fail_on_warn,
-                        ctx.git_against,
-                        ctx.skip_cargo,
-                        ctx.skip_emit,
-                        ctx.changed_paths,
-                    ),
-                ): name
-                for name, chk in selected
-            }
-            try:
-                for fut in as_completed(futs):
-                    name = futs[fut]
-                    try:
-                        by_name[name] = fut.result()
-                    except Exception as exc:
-                        by_name[name] = worker_error_result(name, exc)
-            except Exception as exc:
-                extra.append(
-                    Finding(
-                        "fsm",
-                        Severity.LOW,
-                        "pool-fallback",
-                        f"process pool broken ({type(exc).__name__}: {exc}); "
-                        "unfinished checks ran serial",
-                    )
-                )
-                for name, chk in selected:
-                    if by_name[name] is None:
-                        by_name[name] = eval_check(chk, ctx)
+            futs: dict[Future[CheckResult], str] = {}
+            submit_exc: BaseException | None = None
+            for name, chk in selected:
+                try:
+                    fut = pool.submit(_eval_check_worker, _worker_payload(chk, ctx))
+                except Exception as exc:
+                    submit_exc = exc
+                    break
+                futs[fut] = name
+            if submit_exc is not None:
+                extra.append(_pool_fallback(submit_exc, broken=False))
+                _harvest_accepted(futs, by_name)
+            else:
+                try:
+                    for fut in as_completed(futs):
+                        name = futs[fut]
+                        try:
+                            by_name[name] = fut.result()
+                        except Exception as exc:
+                            by_name[name] = worker_error_result(name, exc)
+                except Exception as exc:
+                    extra.append(_pool_fallback(exc, broken=True))
+                    _harvest_accepted(futs, by_name)
     except Exception as exc:
-        extra.append(
-            Finding(
-                "fsm",
-                Severity.LOW,
-                "pool-fallback",
-                f"process pool failed ({type(exc).__name__}: {exc}); unfinished checks ran serial",
-            )
-        )
-        for name, chk in selected:
-            if by_name[name] is None:
-                by_name[name] = eval_check(chk, ctx)
+        extra.append(_pool_fallback(exc, broken=False))
 
     results: list[CheckResult] = []
     for name, chk in selected:

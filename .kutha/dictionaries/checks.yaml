@@ -1276,7 +1276,9 @@ checks:
         glob: .planning/phases/*-*/*-PLAN.md
         min_phase: 22
         min_hits: 1
-        when_glob_exists: .planning/phases/*-*/*-PLAN.md
+        when_glob_exists: .planning/phases/*-*/*-CONTEXT.md
+        correspond_glob: .planning/phases/*-*/*-CONTEXT.md
+        correspond_skip_if: "*-VERIFICATION.md"
         max: 150
         max_files_per_dir: 2
       - kind: glob_max_lines

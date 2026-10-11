@@ -127,11 +127,14 @@ Artifact-budget glob with non-vacuous match (`artifact-budget` in `checks.yaml`)
   glob: .planning/phases/*-*/*-PLAN.md
   min_phase: 22
   min_hits: 1
+  when_glob_exists: .planning/phases/*-*/*-CONTEXT.md
+  correspond_glob: .planning/phases/*-*/*-CONTEXT.md
+  correspond_skip_if: "*-VERIFICATION.md"
   max: 150
   max_files_per_dir: 2
 ```
 
-`min_hits` is idle vs live: `0` when `.planning/phases/` is empty after a milestone archive, so an empty glob is not a vacuous HIGH. When a live phase CONTEXT exists, set `min_hits: 1` (kind option `when_glob_exists`) so a missing SUMMARY/VERIFICATION/CONTEXT glob is HIGH again. PLAN `min_hits` is gated on the PLAN glob itself: this lease has CONTEXT without a PLAN file, so requiring a PLAN would be a false HIGH. `verification-independent` must not use `allow_empty`: gate content steps with `when_glob_exists` on CONTEXT so idle skips, and live CONTEXT without VERIFICATION is HIGH (CE review P1 #16).
+`min_hits` is idle vs live: `0` when `.planning/phases/` is empty after a milestone archive, so an empty glob is not a vacuous HIGH. When a live phase CONTEXT exists, set `min_hits: 1` (kind option `when_glob_exists`) so a missing SUMMARY/VERIFICATION/CONTEXT/PLAN glob is HIGH again. PLAN presence is gated on the independent CONTEXT marker, not on the PLAN glob itself (CE #14); `correspond_glob` requires a PLAN in each open CONTEXT directory (`correspond_skip_if: "*-VERIFICATION.md"` keeps closed CONTEXT-only phases from false HIGH). `verification-independent` must not use `allow_empty`: gate content steps with `when_glob_exists` on CONTEXT so idle skips, and live CONTEXT without VERIFICATION is HIGH (CE review P1 #16).
 
 `observe_rocks` (FSM kind `observe_cargo`) runs `cargo test -p kutha-runtime --features rocks-index,rocks-index-spike --test m002_rock01 --test m002_rock00 --offline` with `timeout_sec: 420`. Measured 2026-10-04 on this host with a fresh `CARGO_TARGET_DIR`: cold ROCK-01 279.8s (<6 min bound, so the row stays on default `ci`), warm ROCK-01 1.4s, ROCK-00 after the shared compile 8.1s. Not `optional`. Do not enable those features in crate Cargo.toml.
 

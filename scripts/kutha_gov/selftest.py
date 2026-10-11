@@ -436,9 +436,7 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
             if unit:
                 derived.append(unit)
         elif kind == "glob_max_lines":
-            unit = _derive_glob_max_lines(step, work)
-            if unit:
-                derived.append(unit)
+            derived.extend(_derive_glob_max_lines(step, work))
         elif kind == "frontmatter_paths_exist":
             unit = _derive_frontmatter_paths_exist(step, work)
             if unit:
@@ -578,25 +576,28 @@ def _derive_frontmatter_paths_exist(step: Step, work: Path) -> list[Mutation]:
     return [{"op": "replace_regex", "path": path, "pattern": ".*", "with": text}]
 
 
-def _derive_glob_max_lines(step: Step, work: Path) -> list[Mutation]:
+def _derive_glob_max_lines(step: Step, work: Path) -> list[list[Mutation]]:
     from kutha_gov.kinds import (
         _glob_max_lines_hits,
         glob_max_lines_effective_min_hits,
         glob_max_lines_mutation_target,
     )
 
+    units: list[list[Mutation]] = []
     target = glob_max_lines_mutation_target(step, work)
     if target is not None:
         path, text = target
-        return [{"op": "append_text", "path": path, "text": text}]
+        units.append([{"op": "append_text", "path": path, "text": text}])
     min_hits = glob_max_lines_effective_min_hits(step, work)
-    if min_hits > 0:
-        hits = _glob_max_lines_hits(step, work)
-        if len(hits) >= min_hits:
-            return [
-                {"op": "delete_file", "path": path.relative_to(work).as_posix()} for path in hits
-            ]
-    return []
+    pattern = _str(step, "glob")
+    when_glob = _str(step, "when_glob_exists")
+    hits = _glob_max_lines_hits(step, work)
+    independent_gate = bool(when_glob) and when_glob != pattern
+    if min_hits > 0 and hits and (independent_gate or not units):
+        units.append(
+            [{"op": "delete_file", "path": path.relative_to(work).as_posix()} for path in hits]
+        )
+    return units
 
 
 def _derive_refs_resolve(step: Step, work: Path) -> list[Mutation]:
