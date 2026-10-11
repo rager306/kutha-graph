@@ -303,6 +303,10 @@ pub struct Runtime {
     pub(crate) ingest_examine: IngestExamine,
     /// Log rows visited in `retract_derived` (tests; not SoT).
     pub(crate) retract_examine: IngestExamine,
+    /// Live Behavior ids keyed by `caused_by` (droppable; rebuilt from the log).
+    pub(crate) derived_by_cause: IngestMap<EventId, Vec<EventId>>,
+    /// Currently live Horn Behavior event ids (droppable; rebuilt from the log).
+    pub(crate) live_behaviors: Vec<EventId>,
 }
 
 impl Default for Runtime {
@@ -329,6 +333,8 @@ impl Runtime {
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
             retract_examine: IngestExamine::default(),
+            derived_by_cause: IngestMap::default(),
+            live_behaviors: Vec::new(),
         };
         for name in KUTHA_RESERVED_RELS {
             rt.intern_silent(name);

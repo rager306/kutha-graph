@@ -2,7 +2,7 @@
 //! No criterion. Measures relatedTo (no inverse cascade). Validates answers.
 
 use kutha_common::{EventId, Op, TermId, ValidTime};
-use kutha_runtime::{FoldIndexMode, Runtime, store};
+use kutha_runtime::{store, FoldIndexMode, Runtime};
 use std::collections::BTreeMap;
 use std::env;
 use std::path::PathBuf;
@@ -176,13 +176,34 @@ fn main() {
         }
 
         let t1 = Instant::now();
-        let _ = rt.fold().as_of(ValidTime::from(2010));
+        let as_of_triples = rt.fold().as_of(ValidTime::from(2010));
         put(
             &mut metrics,
             &format!("as_of.{suffix}"),
             t1.elapsed().as_nanos(),
             "ns",
         );
+        let relation = rt.dictionary().id("relatedTo").expect("relatedTo");
+        let object = rt.dictionary().id("o").expect("o");
+        let mut expected_as_of = Vec::with_capacity(planned as usize);
+        for i in 0..planned {
+            let s = rt
+                .dictionary()
+                .id(&format!("s{i}"))
+                .unwrap_or_else(|| panic!("interned s{i}"));
+            expected_as_of.push((s, relation, object));
+        }
+        expected_as_of.sort_unstable();
+        let mut got_as_of = as_of_triples;
+        got_as_of.sort_unstable();
+        if got_as_of != expected_as_of {
+            eprintln!(
+                "as_of triples mismatch ({suffix}): got {} expected {}",
+                got_as_of.len(),
+                expected_as_of.len()
+            );
+            process::exit(1);
+        }
 
         let t_claim = Instant::now();
         let supported = rt.fold().claim_supported_at(first_id, u64::MAX, 2010);
@@ -302,19 +323,20 @@ fn main() {
         }
     }
 
-    match (rss_before, vm_rss_bytes()) {
+    // Dedicated sample must stay alive across the after-RSS read (#15).
+    let mut sample = Runtime::with_index_mode(32, index_mode);
+    let _ = fill_plain(&mut sample, n, false);
+    let live = sample.fold().live_count(u64::MAX, 2010) as u64;
+    let rss_after = vm_rss_bytes();
+    match (rss_before, rss_after) {
         (Some(before), Some(after)) if after >= before => {
             let delta = after - before;
-            // Approximate: last graph left retracted; use N*4 planned live peak ≈ factor sum.
-            // Prefer bytes / live_count of a dedicated N-sized unretracted graph.
-            let mut sample = Runtime::with_index_mode(32, index_mode);
-            let _ = fill_plain(&mut sample, n, false);
-            let live = sample.fold().live_count(u64::MAX, 2010) as u64;
             let bpf = if live > 0 { delta / live.max(1) } else { 0 };
             put(&mut metrics, "bytes_per_fact", bpf, "B");
         }
         _ => put(&mut metrics, "bytes_per_fact", "n/a", "n/a"),
     }
+    let _ = sample;
 
     let expected: [&str; 29] = [
         "as_of.2n",

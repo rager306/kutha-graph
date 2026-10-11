@@ -1,9 +1,9 @@
 //! One write path: propose → admit → commit → receipt (D-01).
-use crate::quantum::{PersistedQuantumOutcome, QuantumOutcome, Runtime, RuntimeError, disposition};
-use crate::receipt::{QuantumReceipt, digest_to_hex};
+use crate::quantum::{disposition, PersistedQuantumOutcome, QuantumOutcome, Runtime, RuntimeError};
+use crate::receipt::{digest_to_hex, QuantumReceipt};
 use kutha_common::{
-    Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE, Op,
-    OutcomeDisposition, RuleAst, WallTime, blob_digest_matches, policy_version_hash,
+    blob_digest_matches, policy_version_hash, Event, EventId, Op, OutcomeDisposition, RuleAst,
+    WallTime, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE,
 };
 
 /// How the shared pipeline finishes a committed quantum (D-01 / D-07).
@@ -21,6 +21,8 @@ impl Runtime {
     pub(crate) fn rebuild_log_indexes(&mut self) {
         self.by_event_id.clear();
         self.by_delivery_key.clear();
+        self.derived_by_cause.clear();
+        self.live_behaviors.clear();
         let n = self.log.len();
         self.by_event_id.reserve(n);
         self.by_delivery_key.reserve(n);
@@ -36,7 +38,26 @@ impl Runtime {
                     self.by_delivery_key.insert((*relation, k.clone()), e.id);
                 }
             }
+            if let Op::Behavior { caused_by, .. } = &e.op {
+                self.derived_by_cause
+                    .entry(*caused_by)
+                    .or_default()
+                    .push(e.id);
+            }
         }
+        for e in self.log.as_slice() {
+            if matches!(e.op, Op::Behavior { .. }) && self.behavior_fact_live(e.id) {
+                self.live_behaviors.push(e.id);
+            }
+        }
+    }
+
+    fn unindex_behavior(&mut self, id: EventId) {
+        self.live_behaviors.retain(|x| *x != id);
+        for kids in self.derived_by_cause.values_mut() {
+            kids.retain(|x| *x != id);
+        }
+        self.derived_by_cause.retain(|_, kids| !kids.is_empty());
     }
 
     pub(crate) fn append_indexed(&mut self, event: Event) {
@@ -49,8 +70,23 @@ impl Runtime {
         } = &event.op
         {
             if !k.is_empty() {
-                self.by_delivery_key.insert((*relation, k.clone()), event.id);
+                self.by_delivery_key
+                    .insert((*relation, k.clone()), event.id);
             }
+        }
+        match &event.op {
+            Op::Behavior { caused_by, .. } => {
+                self.derived_by_cause
+                    .entry(*caused_by)
+                    .or_default()
+                    .push(event.id);
+                self.live_behaviors.push(event.id);
+            }
+            Op::Retract { event_id } => {
+                let rid = *event_id;
+                self.unindex_behavior(rid);
+            }
+            _ => {}
         }
         self.log.append(event);
     }
@@ -105,14 +141,22 @@ impl Runtime {
         // are UnknownFact (fail-closed), not a silent fold no-op.
         if let Op::Retract { event_id } = op {
             self.ingest_examine.bump();
-            if self.fold.live_fact_indices_by_event_id(*event_id).is_empty() {
+            if self
+                .fold
+                .live_fact_indices_by_event_id(*event_id)
+                .is_empty()
+            {
                 return Err(RuntimeError::UnknownFact {
                     event_id: *event_id,
                 });
             }
         } else if let Op::Correct { event_id, .. } | Op::CorrectInterval { event_id, .. } = op {
             self.ingest_examine.bump();
-            if self.fold.live_fact_indices_by_event_id(*event_id).is_empty() {
+            if self
+                .fold
+                .live_fact_indices_by_event_id(*event_id)
+                .is_empty()
+            {
                 return Err(RuntimeError::UnknownFact {
                     event_id: *event_id,
                 });
@@ -328,10 +372,7 @@ impl Runtime {
 
     /// Retract a dictionary / reserved fact (constructor path). User `emit(Retract)` of
     /// `kutha:*` is `MetaOpRejected` (M020 S04).
-    pub fn emit_retract_dict(
-        &mut self,
-        event_id: EventId,
-    ) -> Result<QuantumOutcome, RuntimeError> {
+    pub fn emit_retract_dict(&mut self, event_id: EventId) -> Result<QuantumOutcome, RuntimeError> {
         self.pipeline_kind(Op::Retract { event_id }, ReceiptMode::Dictionary)
     }
 

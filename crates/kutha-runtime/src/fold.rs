@@ -1,6 +1,6 @@
 use kutha_common::{
-    Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE, Op,
-    RuleAst, SupportPolarity, TermDictionary, TermId, TransactionTime, ValidTime,
+    Event, EventId, Op, RuleAst, SupportPolarity, TermDictionary, TermId, TransactionTime,
+    ValidTime, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE,
 };
 use rustc_hash::FxHashMap;
 use smallvec::SmallVec;
@@ -272,6 +272,16 @@ pub struct GraphFold {
     /// every rule push even under [`FoldIndexMode::Lazy`] (like `allows_by_name`).
     #[serde(skip)]
     pub(crate) horns_by_premise: IngestMap<String, Vec<HornLeaseSlot>>,
+    /// Fact indices grouped by relation (Horn probe lease). Product hot map:
+    /// follows Eager/Lazy with `vt_by_from`.
+    #[serde(skip)]
+    pub(crate) facts_by_relation: IngestMap<TermId, FactIdxList>,
+    /// `kutha:rule` fact indices by delivery_key (pin). Droppable; Lazy-maintained.
+    #[serde(skip)]
+    pub(crate) rules_by_pin: IngestMap<String, FactIdxList>,
+    /// `kutha:policy` fact indices by delivery_key (pin). Droppable; Lazy-maintained.
+    #[serde(skip)]
+    pub(crate) policies_by_pin: IngestMap<String, FactIdxList>,
     /// True after a rebuild or bind so a miss is "no rule uses this premise",
     /// not "lease never built" (fallback scan).
     #[serde(skip)]
@@ -352,6 +362,9 @@ impl GraphFold {
             live_triples: IngestMap::default(),
             allows_by_name: IngestMap::default(),
             horns_by_premise: IngestMap::default(),
+            facts_by_relation: IngestMap::default(),
+            rules_by_pin: IngestMap::default(),
+            policies_by_pin: IngestMap::default(),
             horn_lease_ready: false,
             dictionary_rels: HashSet::new(),
             rel_allows: None,
@@ -386,6 +399,7 @@ impl GraphFold {
         }
         let prev_allows = self.rel_allows;
         let prev_rule = self.rel_rule;
+        let prev_policy = self.rel_policy;
         self.rel_allows = dict.id(KUTHA_ALLOWS);
         self.rel_rule = dict.id(KUTHA_RULE);
         self.rel_policy = dict.id(KUTHA_POLICY);
@@ -398,6 +412,10 @@ impl GraphFold {
         }
         if self.rel_rule != prev_rule {
             self.rebuild_horn_lease();
+            self.rebuild_rule_pin_lease();
+        }
+        if self.rel_policy != prev_policy {
+            self.rebuild_policy_pin_lease();
         }
     }
 
@@ -482,6 +500,7 @@ impl GraphFold {
         self.claim_facts.reserve(expected_facts);
         self.fact_by_event.reserve(expected_facts);
         self.live_triples.reserve(expected_facts);
+        self.facts_by_relation.reserve(expected_facts);
     }
 
     fn index_slot(&mut self, idx: usize) {
@@ -502,6 +521,8 @@ impl GraphFold {
                 .or_default()
                 .push(idx);
         }
+        let rel = fact.relation;
+        self.facts_by_relation.entry(rel).or_default().push(idx);
     }
 
     fn index_allows_slot(&mut self, idx: usize) {
@@ -587,17 +608,71 @@ impl GraphFold {
         }
     }
 
+    fn index_rule_pin_slot(&mut self, idx: usize) {
+        let Some(rel) = self.rel_rule else {
+            return;
+        };
+        let fact = &self.facts[idx];
+        if fact.relation != rel {
+            return;
+        }
+        let Some(pin) = fact.delivery_key.as_ref() else {
+            return;
+        };
+        self.rules_by_pin.entry(pin.clone()).or_default().push(idx);
+    }
+
+    fn rebuild_rule_pin_lease(&mut self) {
+        self.rules_by_pin.clear();
+        if self.rel_rule.is_none() {
+            return;
+        }
+        for idx in 0..self.facts.len() {
+            self.index_rule_pin_slot(idx);
+        }
+    }
+
+    fn index_policy_pin_slot(&mut self, idx: usize) {
+        let Some(rel) = self.rel_policy else {
+            return;
+        };
+        let fact = &self.facts[idx];
+        if fact.relation != rel {
+            return;
+        }
+        let Some(pin) = fact.delivery_key.as_ref() else {
+            return;
+        };
+        self.policies_by_pin
+            .entry(pin.clone())
+            .or_default()
+            .push(idx);
+    }
+
+    fn rebuild_policy_pin_lease(&mut self) {
+        self.policies_by_pin.clear();
+        if self.rel_policy.is_none() {
+            return;
+        }
+        for idx in 0..self.facts.len() {
+            self.index_policy_pin_slot(idx);
+        }
+    }
+
     fn clear_hot_maps(&mut self) {
         self.vt_by_from.clear();
         self.claim_facts.clear();
         self.fact_by_event.clear();
         self.live_triples.clear();
+        self.facts_by_relation.clear();
     }
 
     fn rebuild_hot_maps(&mut self) {
         self.clear_hot_maps();
         self.rebuild_allows_lease();
         self.rebuild_horn_lease();
+        self.rebuild_rule_pin_lease();
+        self.rebuild_policy_pin_lease();
         self.reserve_ingest_indexes(self.facts.len());
         for idx in 0..self.facts.len() {
             self.index_slot(idx);
@@ -618,6 +693,8 @@ impl GraphFold {
         self.facts.push(fact);
         self.index_allows_slot(idx);
         self.index_horn_slot(idx);
+        self.index_rule_pin_slot(idx);
+        self.index_policy_pin_slot(idx);
         match self.index_mode {
             FoldIndexMode::Eager => {
                 self.index_slot(idx);

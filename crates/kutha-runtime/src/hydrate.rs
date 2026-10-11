@@ -105,6 +105,8 @@ impl Runtime {
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
             retract_examine: IngestExamine::default(),
+            derived_by_cause: IngestMap::default(),
+            live_behaviors: Vec::new(),
         };
         rt.hydrate_from_log();
         rt
@@ -148,6 +150,8 @@ impl Runtime {
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
             retract_examine: IngestExamine::default(),
+            derived_by_cause: IngestMap::default(),
+            live_behaviors: Vec::new(),
         };
         rt.hydrate_from_log();
         Ok(rt)
@@ -176,6 +180,8 @@ impl Runtime {
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
             retract_examine: IngestExamine::default(),
+            derived_by_cause: IngestMap::default(),
+            live_behaviors: Vec::new(),
         };
         rt.hydrate_from_log();
         rt

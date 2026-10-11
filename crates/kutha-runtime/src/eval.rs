@@ -161,28 +161,38 @@ impl Runtime {
     fn retract_derived(&self, trigger: &Event, premise: EventId) -> Vec<Event> {
         let mut out = Vec::new();
         let mut retracting = HashSet::new();
-        for e in self.log.iter() {
+        let children: Vec<EventId> = self
+            .derived_by_cause
+            .get(&premise)
+            .cloned()
+            .unwrap_or_default();
+        for id in children {
             self.retract_examine.bump();
-            let Op::Behavior {
-                caused_by,
-                rule_version,
-                ..
-            } = &e.op
-            else {
+            let Some((event_id, caused_by, rule_version)) = self.log_event(id).and_then(|e| {
+                let Op::Behavior {
+                    caused_by,
+                    rule_version,
+                    ..
+                } = &e.op
+                else {
+                    return None;
+                };
+                Some((e.id, *caused_by, rule_version.clone()))
+            }) else {
                 continue;
             };
-            if *caused_by != premise {
+            if caused_by != premise {
                 continue;
             }
-            let Some(bytes) = self.fold.blobs.get(rule_version) else {
+            let Some(bytes) = self.fold.blobs.get(&rule_version) else {
                 continue;
             };
             if !matches!(RuleAst::from_canonical(bytes), Some(RuleAst::Horn { .. })) {
                 continue;
             }
-            if self.behavior_fact_live(e.id) && retracting.insert(e.id) {
+            if self.behavior_fact_live(event_id) && retracting.insert(event_id) {
                 out.push(Event::stable_derived(
-                    Op::Retract { event_id: e.id },
+                    Op::Retract { event_id },
                     trigger.ingested_at,
                 ));
             }
@@ -192,27 +202,43 @@ impl Runtime {
         // Skip P itself: the trigger Retract already names that id; a second
         // DET-02-stable copy would leave drop-tamper stamps unchanged.
         let except = HashSet::from([premise]);
-        for e in self.log.iter() {
+        let live: Vec<EventId> = self.live_behaviors.clone();
+        for id in live {
             self.retract_examine.bump();
-            let Op::Behavior { .. } = &e.op else {
+            let Some((event_id, is_behavior)) = self
+                .log_event(id)
+                .map(|e| (e.id, matches!(e.op, Op::Behavior { .. })))
+            else {
                 continue;
             };
-            if e.id == premise || retracting.contains(&e.id) || !self.behavior_fact_live(e.id) {
+            if !is_behavior
+                || event_id == premise
+                || retracting.contains(&event_id)
+                || !self.behavior_fact_live(event_id)
+            {
                 continue;
             }
+            let Some(e) = self.log_event(id) else {
+                continue;
+            };
             if self.horn_body_matches_except(e, &except) {
                 continue;
             }
-            retracting.insert(e.id);
+            retracting.insert(event_id);
             out.push(Event::stable_derived(
-                Op::Retract { event_id: e.id },
+                Op::Retract { event_id },
                 trigger.ingested_at,
             ));
         }
         out
     }
 
-    fn behavior_fact_live(&self, event_id: EventId) -> bool {
+    fn log_event(&self, id: EventId) -> Option<&Event> {
+        let pos = *self.by_event_id.get(&id)?;
+        self.log.as_slice().get(pos)
+    }
+
+    pub(crate) fn behavior_fact_live(&self, event_id: EventId) -> bool {
         self.fold
             .fact_index_by_event_id(event_id)
             .and_then(|i| self.fold.facts().get(i))
@@ -590,7 +616,7 @@ fn search_at(
     }
     let prem = &premises[idx];
     let rel = rt.dict.id(&prem.relation)?;
-    for f in rt.fold.live_facts_at(tt, vt) {
+    for f in rt.fold.live_facts_for_relation(rel, tt, vt) {
         rt.fold.horn_examine.bump();
         if except.contains(&f.event_id) {
             continue;

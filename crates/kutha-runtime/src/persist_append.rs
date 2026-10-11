@@ -583,36 +583,48 @@ fn collect_new(p: &Persister, runtime: &Runtime) -> std::io::Result<Vec<Event>> 
     if strings.len() < p.dict_len {
         return Err(invalid("runtime dictionary shorter than durable dict"));
     }
-    let encoded = encoded_log(runtime);
-    for _ in &encoded {
+    let mut out = Vec::new();
+    for name in &strings[p.dict_len..] {
         bump_append_examine();
+        out.push(Event::stable_define(name.clone(), 0));
     }
-    if encoded.len() < p.durable_count && strings.len() == p.dict_len {
-        return Err(invalid("runtime log shorter than durable_count"));
+    for event in graph_suffix_after_durable(p, runtime)? {
+        bump_append_examine();
+        out.push(event);
     }
-    let graph: Vec<Event> = encoded
-        .into_iter()
-        .filter(|e| !matches!(e.op, Op::Define { .. }))
-        .collect();
-    if graph.len() < p.durable_graph_count {
-        return Err(invalid("runtime graph shorter than durable graph"));
+    Ok(out)
+}
+
+fn graph_suffix_after_durable(p: &Persister, runtime: &Runtime) -> std::io::Result<Vec<Event>> {
+    if p.durable_graph_count == 0 {
+        return Ok(runtime
+            .log()
+            .iter()
+            .filter(|e| !matches!(e.op, Op::Define { .. }))
+            .cloned()
+            .collect());
     }
-    if p.durable_graph_count > 0 {
-        let expected = p
-            .last_graph_id
-            .ok_or_else(|| invalid("durable graph tail missing last_graph_id"))?;
-        if graph[p.durable_graph_count - 1].id != expected {
+    let expected = p
+        .last_graph_id
+        .ok_or_else(|| invalid("durable graph tail missing last_graph_id"))?;
+    let pos = *runtime
+        .by_event_id
+        .get(&expected)
+        .ok_or_else(|| invalid("runtime event at durable graph tail has another id"))?;
+    let log = runtime.log().as_slice();
+    match log.get(pos) {
+        Some(e) if e.id == expected && !matches!(e.op, Op::Define { .. }) => {}
+        _ => {
             return Err(invalid(
                 "runtime event at durable graph tail has another id",
             ));
         }
     }
-    let mut out = Vec::new();
-    for name in &strings[p.dict_len..] {
-        out.push(Event::stable_define(name.clone(), 0));
-    }
-    out.extend(graph[p.durable_graph_count..].iter().cloned());
-    Ok(out)
+    Ok(log[pos + 1..]
+        .iter()
+        .filter(|e| !matches!(e.op, Op::Define { .. }))
+        .cloned()
+        .collect())
 }
 
 /// Legacy jsonl+WAL: true when [`Persister::attach_holding`] would fail because

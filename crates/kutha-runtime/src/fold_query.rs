@@ -13,6 +13,34 @@ impl GraphFold {
         self.collect_live_facts_at(tt, vt, LiveFactFilter::Product)
     }
 
+    /// Live product facts of `rel` at `(tt, vt)`. Warm path is O(facts of that
+    /// relation), not O(all live product facts).
+    pub(crate) fn live_facts_for_relation(
+        &self,
+        rel: TermId,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+    ) -> Vec<&Fact> {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
+        if !self.hot_maps_warm {
+            return self
+                .live_facts_at(tt, vt)
+                .into_iter()
+                .filter(|f| f.relation == rel)
+                .collect();
+        }
+        let Some(idxs) = self.facts_by_relation.get(&rel) else {
+            return Vec::new();
+        };
+        idxs.iter()
+            .filter_map(|&idx| {
+                let fact = &self.facts[idx];
+                (fact.is_live_at(tt, vt) && !self.is_dictionary_rel(fact.relation)).then_some(fact)
+            })
+            .collect()
+    }
+
     /// All live facts including dictionary relations (fingerprint/replay walks `facts` directly).
     fn all_live_facts_at(
         &self,
@@ -463,12 +491,19 @@ impl GraphFold {
         tt: impl Into<TransactionTime>,
         vt: impl Into<ValidTime>,
     ) -> bool {
-        let Some(rel) = self.rel_rule else {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
+        if self.rel_rule.is_none() {
             return false;
-        };
-        self.all_live_facts_at(tt, vt)
-            .into_iter()
-            .any(|f| f.relation == rel && f.delivery_key.as_deref() == Some(pin))
+        }
+        if let Some(idxs) = self.rules_by_pin.get(pin) {
+            return idxs.iter().copied().any(|idx| {
+                self.hot_examine.bump();
+                self.facts[idx].is_live_at(tt, vt)
+            });
+        }
+        self.hot_examine.bump();
+        false
     }
 
     /// Fold-cut policy pin: a live `kutha:policy` fact whose delivery_key is `pin`.
@@ -478,12 +513,19 @@ impl GraphFold {
         tt: impl Into<TransactionTime>,
         vt: impl Into<ValidTime>,
     ) -> bool {
-        let Some(rel) = self.rel_policy else {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
+        if self.rel_policy.is_none() {
             return false;
-        };
-        self.all_live_facts_at(tt, vt)
-            .into_iter()
-            .any(|f| f.relation == rel && f.delivery_key.as_deref() == Some(pin))
+        }
+        if let Some(idxs) = self.policies_by_pin.get(pin) {
+            return idxs.iter().copied().any(|idx| {
+                self.hot_examine.bump();
+                self.facts[idx].is_live_at(tt, vt)
+            });
+        }
+        self.hot_examine.bump();
+        false
     }
 
     /// Latest ingested live policy hash at `(tt, vt)`.
@@ -492,12 +534,20 @@ impl GraphFold {
         tt: impl Into<TransactionTime>,
         vt: impl Into<ValidTime>,
     ) -> Option<String> {
-        let rel = self.rel_policy?;
-        self.all_live_facts_at(tt, vt)
-            .into_iter()
-            .filter(|f| f.relation == rel)
-            .max_by_key(|f| f.ingested_at)
-            .and_then(|f| f.delivery_key.clone())
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
+        self.rel_policy?;
+        let mut best: Option<&Fact> = None;
+        for idxs in self.policies_by_pin.values() {
+            for &idx in idxs {
+                self.hot_examine.bump();
+                let f = &self.facts[idx];
+                if f.is_live_at(tt, vt) && best.is_none_or(|b| f.ingested_at >= b.ingested_at) {
+                    best = Some(f);
+                }
+            }
+        }
+        best.and_then(|f| f.delivery_key.clone())
     }
 
     /// Latest ingested live admission status for `justification_id` at `(tt, vt)`.
