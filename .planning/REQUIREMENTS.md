@@ -14,15 +14,15 @@
 - [x] **CASC-08-01**: Later-hop error leaves fold + log + outcomes unchanged
 - [x] **CASC-08-02**: Successful multi-hop cascade still commits + QuantumOutcome
 
-### S03 — Lock before heal (Phase 114)
+### S03 — Lock before heal (Phase 114) — complete
 
-- [ ] **LOCK-07-01**: `Persister::attach` acquires writer lock before any heal/write path
-- [ ] **LOCK-07-02**: Concurrent second attach denied without mutating store bytes
+- [x] **LOCK-07-01**: `Persister::attach` acquires writer lock before any heal/write path
+- [x] **LOCK-07-02**: Concurrent second attach denied without mutating store bytes
 
-### S04 — Snapshot-free open replay (Phase 115)
+### S04 — Snapshot-free open replay (Phase 115) — complete
 
-- [ ] **OPEN-11-01**: Define/terms open run replay validation before `finish_open`
-- [ ] **OPEN-11-02**: Tampered log without snapshot fails open
+- [x] **OPEN-11-01**: Define/terms open run replay validation before `finish_open`
+- [x] **OPEN-11-02**: Tampered log without snapshot fails open
 
 ## Out of Scope (this milestone)
 
