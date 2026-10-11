@@ -125,6 +125,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M056 S03 (delivery-key same-relation):** Phase 125 — `SEM-m056-delivery-key-same-relation` `killed` (owner `M056-S03`).
 
+**M056 S04 (NormView derived Correct):** Phase 126 — `SEM-m056-norm-view-derived-correct` `killed` (owner `M056-S04`).
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

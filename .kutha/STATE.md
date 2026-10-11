@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M056
-**Active Slice:** S04
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M056-S03-done
+L_delivery=M056-S04-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M056-S03 done; M056-S04 leased | Capability proven / Cypher started |
+| L_delivery | M056-S04 done (S05 remains open) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M056-S04: NormView derived Correct eligibility (#28) — Correct of a derived head must not inherit rule eligibility when the live replacement diverges from the Behavior proposition. Then S05 hygiene (#35/#36). Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+Lease M056-S05 (hygiene #35/#36). S01–S04 shipped. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

@@ -246,6 +246,9 @@ cells:
       - correct_of_ineligible_derived_still_abstains_in_norm_view
       - correct_interval_of_ineligible_derived_still_abstains_in_norm_view
       - correct_of_eligible_derived_still_ok_in_norm_view
+      # Phase 126 / M056 S04 — NormView derived Correct head match; cell still Proposed
+      - correct_of_derived_object_change_does_not_inherit_eligibility
+      - correct_interval_of_derived_object_change_does_not_inherit_eligibility
       # Phase 98 / M038 S01 — delivery-key retry namespaced by relation; cell still Proposed
       - emit_policy_repin_after_justification_is_idempotent
       - emit_policy_repin_without_justification_still_idempotent

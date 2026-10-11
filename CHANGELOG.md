@@ -4,6 +4,23 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Trajectory: M056-S04 done (NormView derived Correct eligibility)
+
+### Trajectory
+
+- M056-S04 done (Phase 126). Active Milestone **M056**, Active Slice **None**; `L_delivery=M056-S04-done`. Next lease: M056-S05 (#35/#36). Honeycomb stays Proposed.
+
+## 2026-10-11 — Product/Process: NormView derived Correct eligibility (Phase 126)
+
+### Product
+
+- #28: `norm_view` requires live derived rows to match the Behavior head proposition; Correct/CI object changes no longer inherit rule eligibility. Oracles `m056_norm_view_derived_correct` (2).
+- Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈110.7M / `as_of.n` ≈261.4k vs M056-S03 ≈109.7M / ≈272.6k (+0.9% / −4.1%).
+
+### Process
+
+- Matrix `SEM-m056-norm-view-derived-correct` killed. `126-VERIFICATION.md` passed.
+
 ## 2026-10-11 — Trajectory: lease M056-S04 (NormView derived Correct eligibility)
 
 ### Trajectory

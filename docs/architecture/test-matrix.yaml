@@ -1580,6 +1580,18 @@ rows:
     gate: default
     owner: M056-S03
     source: Phase 125 / CE whole-repo #26
+  - id: SEM-m056-norm-view-derived-correct
+    plane: product
+    invariant: NormView does not treat a Correct/CI of a derived Behavior as rule-eligible when the live row diverges from the Behavior head proposition
+    layer: kill
+    oracle:
+      - correct_of_derived_object_change_does_not_inherit_eligibility
+      - correct_interval_of_derived_object_change_does_not_inherit_eligibility
+    kill_mutation: norm_view gates derived claims on derivation_eligible_at only (ignores Behavior head match)
+    status: killed
+    gate: default
+    owner: M056-S04
+    source: Phase 126 / CE whole-repo #28
   - id: SEM-m054-gov-plan-budget
     plane: harness
     invariant: artifact-budget PLAN gate keys off live CONTEXT and requires per-phase CONTEXT→PLAN correspondence

@@ -646,10 +646,10 @@ impl Runtime {
     /// Resolves knowledge TT from the greatest `TtAnchor` ≤ `wall`, then
     /// `live_at(tt, vt)`. Claim lineage keyed on `claim_id`: when
     /// `event_by_id(claim_id)` is `Op::Behavior`, require
-    /// [`Self::derivation_eligible_at`] (Correct/CorrectInterval replacements
-    /// keep `claim_id` but mint under Correct ids — M037 / CE #13). Assert
-    /// claims pass. Conflict (both polarities) wins over Ok. `as_of` /
-    /// ASOF-ELIG-01 unchanged.
+    /// [`Self::derivation_eligible_at`] and that the live row still matches the
+    /// Behavior head proposition (Correct/CorrectInterval keep `claim_id` but
+    /// may change object — M037 / CE #13; M056 / CE #28). Assert claims pass.
+    /// Conflict (both polarities) wins over Ok. `as_of` / ASOF-ELIG-01 unchanged.
     pub fn norm_view(&self, vt: ValidTime, wall: WallTime) -> NormView {
         let Some(tt) = self.fold.knowledge_tt_at(wall) else {
             return NormView::MissingAnchor;
@@ -682,16 +682,26 @@ impl Runtime {
         for f in live {
             // Key off claim lineage, not minting event type: Correct/CI keep
             // claim_id of the Behavior while minting a new event_id.
-            let is_derived_claim = matches!(
-                self.event_by_id(f.claim_id).map(|e| &e.op),
-                Some(Op::Behavior { .. })
-            );
-            let ok = if is_derived_claim {
+            let behavior_head = match self.event_by_id(f.claim_id).map(|e| &e.op) {
+                Some(Op::Behavior {
+                    subject,
+                    relation,
+                    object,
+                    ..
+                }) => Some((*subject, *relation, *object)),
+                _ => None,
+            };
+            let ok = if let Some((hs, hr, ho)) = behavior_head {
+                // Premise+pin walk alone is not enough: a Correct that changes
+                // the derived proposition must not inherit rule eligibility
+                // (M056 / CE #28). Live row must still match the Behavior head.
                 self.derivation_eligible_at(
                     f.claim_id,
                     TransactionTime::from(tt),
                     ValidTime::from(vt_u),
-                )
+                ) && f.subject == hs
+                    && f.relation == hr
+                    && f.object() == ho
             } else {
                 true
             };
