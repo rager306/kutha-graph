@@ -83,12 +83,13 @@ impl Persister {
     ///
     /// Tail/count checks run before the lock so a dirty uncommitted suffix
     /// stays `InvalidData` (COMMIT-01) even when another writer already holds
-    /// `kutha.lock`. No store files are written before the lock is taken.
+    /// `kutha.lock`. That pre-lock path is read-only: interrupted-seal heal
+    /// and other store writes run only after the lock is taken (CE whole-repo
+    /// P1 #7).
     pub fn attach(runtime: &Runtime, dir: &Path) -> std::io::Result<Self> {
-        let mut prepared = Self::attach_holding(runtime, dir, None)?;
+        let _ = Self::attach_holding(runtime, dir, None)?;
         let lock = crate::store::acquire_store_write_lock(dir)?;
-        prepared.write_lock = Some(lock);
-        Ok(prepared)
+        Self::attach_holding(runtime, dir, Some(lock))
     }
 
     pub(crate) fn attach_holding(
@@ -462,8 +463,11 @@ fn attach_segmented(
     write_lock: Option<File>,
 ) -> std::io::Result<Persister> {
     // CE review P1 #3: seal trailer synced before manifest rename wedges attach
-    // (`last_event_id_at_end` seeks into the trailer). Finish the rollover first.
-    let _ = segment::heal_interrupted_active_seal(dir)?;
+    // (`last_event_id_at_end` seeks into the trailer). Finish the rollover
+    // only while holding kutha.lock (CE whole-repo P1 #7).
+    if write_lock.is_some() {
+        let _ = segment::heal_interrupted_active_seal(dir)?;
+    }
     let manifest = segment::read_manifest(dir)?;
     let active_path = dir.join(&manifest.active);
     let encoded = encoded_log(runtime);
@@ -482,7 +486,10 @@ fn attach_segmented(
             "segment event count disagrees with runtime encoded log (recover with full persist)",
         ));
     }
-    if tip.events > 0 {
+    if tip.has_seal_trailer && write_lock.is_none() {
+        // Read-only pre-lock path: skip last_event_id_at_end (it would seek
+        // into the trailer). The caller takes the lock and re-enters.
+    } else if tip.events > 0 {
         let wid = wal::last_event_id_at_end(&active_path, tip.file_len, last_frame_len)?;
         if last_id != wid {
             return Err(invalid(
@@ -594,10 +601,7 @@ fn collect_new(p: &Persister, runtime: &Runtime) -> std::io::Result<Vec<Event>> 
 ///
 /// Used by `open_for_append` so heal is not limited to `dropped_uncommitted>0`
 /// (CE review #30: complete jsonl quantum with a short WAL opens with dropped=0).
-pub(crate) fn legacy_attach_needs_rewrite(
-    dir: &Path,
-    runtime: &Runtime,
-) -> std::io::Result<bool> {
+pub(crate) fn legacy_attach_needs_rewrite(dir: &Path, runtime: &Runtime) -> std::io::Result<bool> {
     if dir.join(MANIFEST_REL).exists() {
         return Ok(false);
     }

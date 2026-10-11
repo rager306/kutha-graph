@@ -115,7 +115,10 @@ fn assert_writer_lock_error(err: &std::io::Error) {
     );
 }
 
-fn assert_payloads_unchanged(before: &BTreeMap<String, Vec<u8>>, after: &BTreeMap<String, Vec<u8>>) {
+fn assert_payloads_unchanged(
+    before: &BTreeMap<String, Vec<u8>>,
+    after: &BTreeMap<String, Vec<u8>>,
+) {
     assert_eq!(
         before.keys().collect::<Vec<_>>(),
         after.keys().collect::<Vec<_>>(),

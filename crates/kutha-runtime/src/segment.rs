@@ -575,6 +575,7 @@ pub(crate) struct ActiveTip {
     pub chain: [u8; 32],
     pub first_id: Option<EventId>,
     pub file_len: u64,
+    pub has_seal_trailer: bool,
 }
 
 pub(crate) fn inspect_active(path: &Path) -> std::io::Result<ActiveTip> {
@@ -585,6 +586,7 @@ pub(crate) fn inspect_active(path: &Path) -> std::io::Result<ActiveTip> {
         chain: scan.chain,
         first_id: scan.events.first().map(|e| e.id),
         file_len: bytes.len() as u64,
+        has_seal_trailer: scan.trailer.is_some(),
     })
 }
 
