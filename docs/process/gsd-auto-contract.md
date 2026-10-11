@@ -53,7 +53,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.43 | 109 | M049 | S01 | skip-cargo log marker (CE review P2 #38) | shipped 2026-10-10 |
 | v0.44 | 110 | M050 | S01 | Op compat documented break (CE review P1 #14) | shipped 2026-10-10 |
 | v0.45 | 111 | M051 | S01 | pin scheme v1 stability vectors (CE review P1 #24) | shipped 2026-10-11 |
-| v0.46 | 112–115 | M052 | S01–S04 | CE whole-repo wave 1 (advisor demotes #1; #8/#7/#11) | active 2026-10-11 |
+| v0.46 | 112–115 | M052 | S01–S04 | CE whole-repo wave 1 (advisor demotes #1; #8/#7/#11) | shipped 2026-10-11 |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

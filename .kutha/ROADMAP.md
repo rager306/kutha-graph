@@ -201,9 +201,9 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M052: CE whole-repo wave 1 (GSD v0.46)
+## M052: CE whole-repo wave 1 — CLOSED (GSD v0.46)
 
-**Source:** `.compound-engineering/artifacts/reviews/2026-10-11-ce-whole-repo/` + `advisor-correction.md`. Honeycomb stays Proposed. Whole-repo #1 demoted (documented Op break).
+**Closed:** S01–S04 delivered 2026-10-11. Process tag `v0.46`. Honeycomb stays Proposed. Whole-repo #1 demoted (`advisor-correction.md`).
 
 - [x] **S01: Triage correction** `risk:low` `depends:[]`
   > After this: advisor-correction demotes #1; fix-first starts at #8; Phase 112 closed. Landed: `advisor-correction.md`; `112-VERIFICATION.md`.
@@ -211,8 +211,8 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
   > After this: later-hop rule errors leave fold/log unchanged; `m052_cascade_atomic`; Phase 113. Landed: `SEM-m052-cascade-atomic`; `113-VERIFICATION.md`.
 - [x] **S03: Lock before heal** `risk:high` `depends:[S02]`
   > After this: attach locks before heal/write; Phase 114. Landed: `SEM-m052-lock-before-heal`; `114-VERIFICATION.md`.
-- [ ] **S04: Snapshot-free open replay** `risk:high` `depends:[S03]`
-  > After this: all open paths run replay_check; Phase 115. Landed: `SEM-m052-open-replay`; `115-VERIFICATION.md`. Checkbox stays open while `.kutha/STATE.md` still leases S04 (this executor does not close the lease).
+- [x] **S04: Snapshot-free open replay** `risk:high` `depends:[S03]`
+  > After this: all open paths run replay_check; Phase 115. Landed: `SEM-m052-open-replay`; `115-VERIFICATION.md`.
 
 ## M051: Pin scheme v1 stability vectors — CLOSED (GSD v0.45)
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.45 shipped. Active: **v0.46** CE whole-repo wave 1 (post-advisor). #6 stays decision-gate. Whole-repo #1 demoted (documented Op break).
+v0.01–v0.46 shipped. Next controller lease: CE whole-repo residuals (Horn #2–#5, persist #6/#9/#10, governor honesty, EventId #24). #6 stays decision-gate. Whole-repo #1 demoted.
 
 ## Id map
 
@@ -11,7 +11,7 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 ## Milestones
 
 - ✅ **v0.01–v0.45** — shipped
-- 🔄 **v0.46 CE whole-repo wave 1** — Phases 112–115 (harness M052)
+- ✅ **v0.46 CE whole-repo wave 1** — Phases 112–115 (harness M052) — shipped 2026-10-11
 
 ## Phases (v0.46)
 

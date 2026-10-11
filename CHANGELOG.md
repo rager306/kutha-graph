@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Trajectory: M052 / GSD v0.46 closed
+
+### Trajectory
+
+- M052 / GSD v0.46 closed (Phases 112–115). Active Milestone **None**; `L_delivery=M052-closed`. Audit: `.planning/milestones/v0.46-MILESTONE-AUDIT.md`. Whole-repo #1 remains demoted. #6 decision-gate unchanged. Next: remaining CE whole-repo apply-queue (Horn #2–#5, persist #6/#9/#10, governor honesty, EventId #24).
+
+### Process
+
+- Compact `113-01-SUMMARY.md` under the 60-line artifact-budget. Active Slice tokens use `S##` (not `M052-S##`) for trajectory.
+
 ## 2026-10-11 — Product: snapshot-free open replay (Phase 115)
 
 ### Product
