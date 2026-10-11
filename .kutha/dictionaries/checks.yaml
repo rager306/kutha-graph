@@ -33,7 +33,7 @@ checks:
         skip_values: ["None"]
         label: Active Slice
         require_template: "- [ ] **{id}:"
-        require_message: "Active Slice {id} is leased but ROADMAP marks it done (missing `{needle}`); close the lease or reopen the checkbox"
+        require_message: "Active Slice {id} is leased but ROADMAP marks it done (missing `{needle}`); reopen the checkbox in the lease bundle (STATE+CHANGELOG+ROADMAP+README) or close the lease"
       - kind: glob_absent
         glob: .kutha/ROADMAP.md
         needles:

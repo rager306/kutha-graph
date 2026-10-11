@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Trajectory: lease M056-S01 (lease-bundle honesty)
+
+### Trajectory
+
+- Active Milestone **M056**, Active Slice **S01** (`L_delivery=M055-closed`): process debt — lease commit must keep trajectory/state-readme green (STATE + CHANGELOG + ROADMAP open checkbox + README). Product #29/#30 follows as S02. Honeycomb stays Proposed.
+
 ## 2026-10-11 — Trajectory: M055 / GSD v0.49 closed
 
 ### Trajectory
