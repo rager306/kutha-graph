@@ -1,19 +1,19 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.47
-milestone_name: CE review regression enrolment
-status: complete
+milestone: v0.48
+milestone_name: CE residual gaps
+status: active
 stopped_at: null
-last_updated: "2026-10-11T07:30:00.000Z"
+last_updated: "2026-10-11T07:45:00.000Z"
 progress:
-  total_phases: 1
-  completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
+  total_phases: 5
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
 
-**Milestone:** v0.47 CE review regression enrolment (harness M053)  
-**Phase:** 116 complete  
-**Status:** M053 closed — review → matrix regressions + M054 gap map
+**Milestone:** v0.48 CE residual gaps (harness M054)  
+**Phase:** 117 Horn soundness (S01 leased)  
+**Status:** Active — GSD auto one slice at a time

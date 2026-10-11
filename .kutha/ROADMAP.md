@@ -201,20 +201,20 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M054: CE whole-repo residual gaps — BACKLOG (not leased)
+## M054: CE whole-repo residual gaps — ACTIVE (GSD v0.48)
 
-**Not leased.** Gap owners for `docs/architecture/test-matrix.yaml` residual classes. Honeycomb stays Proposed.
+**Active.** Gap apply-queue from `docs/process/ce-review-regression-map.md`. Honeycomb stays Proposed. **#6 decision-gate** stays human (S02 ships #9/#10 only unless the owner lifts #6).
 
 - [ ] **S01: Horn soundness** `risk:high` `depends:[]`
-  > CE #2 #3 #4 #5 — VT intersect, multi-premise witness, correction lineage, residual/proof dedup. Matrix `SEM-gap-horn-soundness`.
+  > CE #4 → #3 → #2 → #5 — correction lineage, multi-premise witness, VT intersect, residual/proof dedup. Matrix `SEM-gap-horn-soundness` → killed. Phase 117.
 - [ ] **S02: Persist durability** `risk:high` `depends:[]`
-  > CE #6 #9 #10 — poison, torn tail, generations. Matrix `SEM-gap-persist-durability`.
+  > CE #9 #10 (and #6 only if decision-gate lifts) — torn tail, generations, optional poison. Matrix `SEM-gap-persist-durability`. Phase 118.
 - [ ] **S03: Governor honesty** `risk:medium` `depends:[]`
-  > CE #14 #22 #23 #34. Matrix `SEM-gap-governor-honesty`.
+  > CE #14 #22 #23 #34. Matrix `SEM-gap-governor-honesty`. Phase 119.
 - [ ] **S04: Scaling and bench honesty** `risk:medium` `depends:[]`
-  > CE #15 #16 #17 #19 #25 #27. Matrix `SEM-gap-scaling-bench`.
+  > CE #15 #16 #17 #19 #25 #27. Matrix `SEM-gap-scaling-bench`. Phase 120.
 - [ ] **S05: ID contract and structure** `risk:medium` `depends:[]`
-  > CE #24 #12 #20 #21. Matrix `SEM-gap-id-and-structure`.
+  > CE #24 #12 #20 #21. Matrix `SEM-gap-id-and-structure`. Phase 121.
 
 ## M053: CE whole-repo regression enrolment — CLOSED (GSD v0.47)
 

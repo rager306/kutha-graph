@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.47 shipped. Next controller lease: M054 gap slice (Horn soundness preferred). #6 stays decision-gate. Whole-repo #1 demoted.
+v0.01–v0.47 shipped. **v0.48 / M054 ACTIVE** — CE residual gaps, one slice per phase. Next: S01 Horn. #6 stays decision-gate.
 
 ## Id map
 
@@ -10,13 +10,16 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.46** — shipped
-- ✅ **v0.47 CE review regression enrolment** — Phase 116 (harness M053) — shipped 2026-10-11
-- ⬚ **M054 residual gaps** — backlog only (not a GSD version until leased)
+- ✅ **v0.01–v0.47** — shipped
+- 🔄 **v0.48 CE residual gaps** — Phases 117–121 (harness M054)
 
-## Phases (v0.47)
+## Phases (v0.48)
 
-- [x] **Phase 116: CE review regressions** — `116-VERIFICATION.md` passed
+- [ ] **Phase 117: Horn soundness** — CE #4/#3/#2/#5 (M054-S01)
+- [ ] **Phase 118: Persist durability** — CE #9/#10 (#6 gate) (M054-S02)
+- [ ] **Phase 119: Governor honesty** — CE #14/#22/#23/#34 (M054-S03)
+- [ ] **Phase 120: Scaling and bench** — CE #15/#16/#17/#19/#25/#27 (M054-S04)
+- [ ] **Phase 121: ID and structure** — CE #24/#12/#20/#21 (M054-S05)
 
 ## Progress
 

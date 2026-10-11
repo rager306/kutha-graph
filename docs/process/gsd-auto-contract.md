@@ -55,6 +55,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.45 | 111 | M051 | S01 | pin scheme v1 stability vectors (CE review P1 #24) | shipped 2026-10-11 |
 | v0.46 | 112–115 | M052 | S01–S04 | CE whole-repo wave 1 (advisor demotes #1; #8/#7/#11) | shipped 2026-10-11 |
 | v0.47 | 116 | M053 | S01 | CE review regression enrolment + M054 gap map | shipped 2026-10-11 |
+| v0.48 | 117–121 | M054 | S01–S05 | CE residual gaps (Horn → persist → governor → scaling → ID) | active 2026-10-11 |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
