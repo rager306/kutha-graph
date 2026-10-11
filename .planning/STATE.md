@@ -1,20 +1,19 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.46
-milestone_name: CE whole-repo wave 1
+milestone: v0.47
+milestone_name: CE review regression enrolment
 status: complete
 stopped_at: null
-last_updated: "2026-10-11T07:00:00.000Z"
+last_updated: "2026-10-11T07:30:00.000Z"
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 4
-  completed_plans: 4
-  percent: 100
+  total_phases: 1
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
 ---
 
 # Project State
 
-**Milestone:** v0.46 CE whole-repo wave 1 (harness M052)  
-**Phase:** 112–115 complete  
-**Status:** M052 closed — advisor demotes #1; shipped #8/#7/#11
+**Milestone:** v0.47 CE review regression enrolment (harness M053)  
+**Phase:** 116 complete  
+**Status:** M053 closed — review → matrix regressions + M054 gap map

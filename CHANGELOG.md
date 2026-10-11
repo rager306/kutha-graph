@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Product/Process: CE review regression enrolment (Phase 116)
+
+### Product
+
+- Regression oracles `m053_ce_review_regressions`: `fork_at` rebuilds outcomes from log QuantumOutcome after wiping the lease; shared `persist_dir` stays under manifest `tmp/` with pid; `try_persist_with_layout(Rollover)` matches sealed>=2 seam; all five removed dictionary meta-ops fail deserialize.
+
+### Process
+
+- Matrix killed rows `SEM-m053-hydrate-outcomes` / `persist-dir-anchor` / `rollover-layout-seam` / `legacy-meta-ops-fail-open`. Gap classes `SEM-gap-horn-soundness` / `persist-durability` / `governor-honesty` / `scaling-bench` / `id-and-structure` owned by unleased M054-S01–S05. Map: `docs/process/ce-review-regression-map.md`.
+
+### Trajectory
+
+- M053 / GSD v0.47 closed. Active Milestone **None**; `L_delivery=M053-closed`. Audit: `.planning/milestones/v0.47-MILESTONE-AUDIT.md`. Next: lease an M054 gap slice. #6 decision-gate unchanged.
+
 ## 2026-10-11 — Trajectory: M052 / GSD v0.46 closed
 
 ### Trajectory

@@ -201,6 +201,28 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M054: CE whole-repo residual gaps — BACKLOG (not leased)
+
+**Not leased.** Gap owners for `docs/architecture/test-matrix.yaml` residual classes. Honeycomb stays Proposed.
+
+- [ ] **S01: Horn soundness** `risk:high` `depends:[]`
+  > CE #2 #3 #4 #5 — VT intersect, multi-premise witness, correction lineage, residual/proof dedup. Matrix `SEM-gap-horn-soundness`.
+- [ ] **S02: Persist durability** `risk:high` `depends:[]`
+  > CE #6 #9 #10 — poison, torn tail, generations. Matrix `SEM-gap-persist-durability`.
+- [ ] **S03: Governor honesty** `risk:medium` `depends:[]`
+  > CE #14 #22 #23 #34. Matrix `SEM-gap-governor-honesty`.
+- [ ] **S04: Scaling and bench honesty** `risk:medium` `depends:[]`
+  > CE #15 #16 #17 #19 #25 #27. Matrix `SEM-gap-scaling-bench`.
+- [ ] **S05: ID contract and structure** `risk:medium` `depends:[]`
+  > CE #24 #12 #20 #21. Matrix `SEM-gap-id-and-structure`.
+
+## M053: CE whole-repo regression enrolment — CLOSED (GSD v0.47)
+
+**Closed:** S01 delivered 2026-10-11. Process tag `v0.47`. Honeycomb stays Proposed.
+
+- [x] **S01: Enrol review regressions and gap map** `risk:low` `depends:[]`
+  > After this: `m053_ce_review_regressions` pins advisor withdrawals + five legacy meta-ops; matrix killed rows + M054 gap classes; `ce-review-regression-map.md`. Landed: Phase 116.
+
 ## M052: CE whole-repo wave 1 — CLOSED (GSD v0.46)
 
 **Closed:** S01–S04 delivered 2026-10-11. Process tag `v0.46`. Honeycomb stays Proposed. Whole-repo #1 demoted (`advisor-correction.md`).

@@ -105,6 +105,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M052 S04 (snapshot-free open replay):** Phase 115 — `SEM-m052-open-replay` `killed` (owner `M052-S04`). Oracles: `snapshot_backed_open_rejects_empty_pin_inverse`, `define_backed_open_without_snapshot_rejects_empty_pin_inverse`, `terms_backed_open_without_snapshot_rejects_empty_pin_inverse`.
 
+**M053 S01 (CE review regressions):** Phase 116 — `SEM-m053-hydrate-outcomes`, `SEM-m053-persist-dir-anchor`, `SEM-m053-rollover-layout-seam`, `SEM-m053-legacy-meta-ops-fail-open` `killed` (owner `M053-S01`). Map: `docs/process/ce-review-regression-map.md`. Residual classes are `gap` under M054-S01–S05.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

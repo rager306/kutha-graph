@@ -1397,6 +1397,102 @@ rows:
     gate: default
     owner: M052-S04
     source: "Phase 115 / CE review P1 #11"
+  # --- M053 / CE whole-repo (2026-10-11) regression enrolment ---
+  - id: SEM-m053-hydrate-outcomes
+    plane: product
+    invariant: fork_at/hydrate rebuilds outcome_records from log QuantumOutcome events after the in-memory lease is wiped
+    layer: kill
+    oracle:
+      - fork_at_rebuilds_outcomes_from_log_quantum_outcomes
+    kill_mutation: hydrate_from_log leaves outcomes empty so wiping outcome_records before fork_at stays empty
+    status: killed
+    gate: default
+    owner: M053-S01
+    source: Phase 116 / CE whole-repo advisor withdrawal (hydrate outcomes)
+  - id: SEM-m053-persist-dir-anchor
+    plane: product
+    invariant: shared persist_dir nests under CARGO_MANIFEST_DIR/../../tmp and includes pid (not process-CWD coupled)
+    layer: kill
+    oracle:
+      - common_persist_dir_anchors_under_manifest_tmp_not_cwd
+    kill_mutation: persist_dir uses std::env::temp_dir or cwd-relative paths without manifest anchor
+    status: killed
+    gate: default
+    owner: M053-S01
+    source: Phase 116 / CE whole-repo advisor withdrawal (m028 persist_dir)
+  - id: SEM-m053-rollover-layout-seam
+    plane: product
+    invariant: try_persist_with_layout(Rollover) is true iff sealed>=2; reject is not an oracle fail
+    layer: kill
+    oracle:
+      - try_persist_with_layout_preserves_rollover_seam_contract
+    kill_mutation: try_persist_with_layout always returns true for Rollover even when sealed<2
+    status: killed
+    gate: default
+    owner: M053-S01
+    source: Phase 116 / CE whole-repo advisor withdrawal (rollover-shrink layout)
+  - id: SEM-m053-legacy-meta-ops-fail-open
+    plane: product
+    invariant: all five removed dictionary meta-ops fail deserialize (documented Op break; advisor demotes #1)
+    layer: kill
+    oracle:
+      - all_five_legacy_dictionary_meta_ops_fail_deserialize
+    kill_mutation: restore any of AllowRelation/RegisterRule/PinPolicy/RecordAdmission/RecordAction on Op
+    status: killed
+    gate: default
+    owner: M053-S01
+    source: Phase 116 / CE whole-repo #1 demoted + M050 policy
+  # Residual problem classes (gap) — owners are unleased M054 backlog slices
+  - id: SEM-gap-horn-soundness
+    plane: product
+    invariant: Horn VT intersection, multi-premise witness, correction lineage eligibility, and residual/proof dedup
+    layer: kill
+    oracle: []
+    kill_mutation: pending CE whole-repo #2 #3 #4 #5 apply-queue
+    status: gap
+    gate: default
+    owner: M054-S01
+    source: CE whole-repo 2026-10-11 triage Cascade/Horn group
+  - id: SEM-gap-persist-durability
+    plane: product
+    invariant: segmented poison-after-failure, torn active-tail heal, generation-unique persist names
+    layer: crash
+    oracle: []
+    kill_mutation: pending CE whole-repo #6 #9 #10 apply-queue
+    status: gap
+    gate: default
+    owner: M054-S02
+    source: CE whole-repo 2026-10-11 triage Segmented persist group
+  - id: SEM-gap-governor-honesty
+    plane: harness
+    invariant: artifact-budget PLAN gate, matrix schema/row typing, pool at-most-once on submit failure
+    layer: governor
+    oracle: []
+    kill_mutation: pending CE whole-repo #14 #22 #23 #34 apply-queue
+    status: gap
+    gate: default
+    owner: M054-S03
+    source: CE whole-repo 2026-10-11 triage Governor honesty group
+  - id: SEM-gap-scaling-bench
+    plane: product
+    invariant: incremental append / retract / premise / pin indexes and honest RSS+as_of bench validation
+    layer: bench
+    oracle: []
+    kill_mutation: pending CE whole-repo #15 #16 #17 #19 #25 #27 apply-queue
+    status: gap
+    gate: default
+    owner: M054-S04
+    source: CE whole-repo 2026-10-11 triage Hot-path scaling group
+  - id: SEM-gap-id-and-structure
+    plane: product
+    invariant: content-derived EventId UUID contract; SEM helper and kinds.py family splits; shrink corpus SHA
+    layer: kill
+    oracle: []
+    kill_mutation: pending CE whole-repo #24 #12 #20 #21 apply-queue
+    status: gap
+    gate: default
+    owner: M054-S05
+    source: CE whole-repo 2026-10-11 triage Wire ID + Test-helper groups
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step
