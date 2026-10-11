@@ -116,9 +116,13 @@ impl Runtime {
 
     /// Derivation eligibility at a named cut. A Behavior-derived claim is
     /// eligible iff the derived fact is live, its pin is a live registry hash,
-    /// and its immediate premise claim is live. When that premise is itself a
-    /// Behavior, eligibility also walks `caused_by` through ancestor Behaviors
-    /// with a visited [`EventId`] set (already-seen id is ineligible).
+    /// and its immediate premise claim is live. `caused_by` Correct /
+    /// CorrectInterval is premise-bearing: the original `event_id` is the
+    /// premise claim (Assert leaf, or walk when that original is a Behavior).
+    /// When the premise is itself a Behavior, eligibility walks `caused_by`
+    /// through ancestor Behaviors with a visited [`EventId`] set (already-seen
+    /// id is ineligible). Correct of an ineligible derived Behavior stays
+    /// ineligible (M037).
     ///
     /// This is not a provenance-polynomial evaluator and is not a MATCH compiler.
     pub fn derivation_eligible_at(
@@ -157,12 +161,18 @@ impl Runtime {
         let Some(cause) = self.event_by_id(caused_by) else {
             return false;
         };
-        let premise = match &cause.op {
-            Op::Assert { claim, .. } => claim.unwrap_or(cause.id),
-            Op::Behavior { .. } => cause.id,
+        let (premise, walk_original) = match &cause.op {
+            Op::Assert { claim, .. } => (claim.unwrap_or(cause.id), None),
+            Op::Behavior { .. } => (cause.id, Some(cause.id)),
+            Op::Correct { event_id, .. } | Op::CorrectInterval { event_id, .. } => {
+                let original = *event_id;
+                let walk = matches!(
+                    self.event_by_id(original).map(|e| &e.op),
+                    Some(Op::Behavior { .. })
+                );
+                (original, walk.then_some(original))
+            }
             Op::Retract { .. }
-            | Op::Correct { .. }
-            | Op::CorrectInterval { .. }
             | Op::Define { .. }
             | Op::QuantumOutcome { .. }
             | Op::JustificationCite { .. }
@@ -175,10 +185,9 @@ impl Runtime {
         if !self.fold.claim_supported_at(premise, tt, vt) {
             return false;
         }
-        match &cause.op {
-            Op::Assert { .. } => true,
-            Op::Behavior { .. } => self.derivation_eligible_at_walk(cause.id, tt, vt, visited),
-            _ => false,
+        match walk_original {
+            Some(id) => self.derivation_eligible_at_walk(id, tt, vt, visited),
+            None => true,
         }
     }
 

@@ -111,12 +111,8 @@ impl Runtime {
                     if let Some((inter_from, inter_to)) =
                         vt_intersect(fact.valid_from, fact.valid_to, *patch_from, *patch_to)
                     {
-                        let (prefix, suffix) = leftover_halves(
-                            fact.valid_from,
-                            fact.valid_to,
-                            inter_from,
-                            inter_to,
-                        );
+                        let (prefix, suffix) =
+                            leftover_halves(fact.valid_from, fact.valid_to, inter_from, inter_to);
                         if let Some((vf, vt)) = prefix {
                             fires.extend(self.horn_fires_except(
                                 event.id,
@@ -164,6 +160,7 @@ impl Runtime {
 
     fn retract_derived(&self, trigger: &Event, premise: EventId) -> Vec<Event> {
         let mut out = Vec::new();
+        let mut retracting = HashSet::new();
         for e in self.log.iter() {
             let Op::Behavior {
                 caused_by,
@@ -182,19 +179,89 @@ impl Runtime {
             if !matches!(RuleAst::from_canonical(bytes), Some(RuleAst::Horn { .. })) {
                 continue;
             }
-            if self
-                .fold
-                .fact_index_by_event_id(e.id)
-                .and_then(|i| self.fold.facts().get(i))
-                .is_some_and(|f| f.invalidated_at.is_none())
-            {
+            if self.behavior_fact_live(e.id) {
+                retracting.insert(e.id);
                 out.push(Event::stable_derived(
                     Op::Retract { event_id: e.id },
                     trigger.ingested_at,
                 ));
             }
         }
+        // Keep a single caused_by. Also drop live Horn heads whose body no
+        // longer matches after treating P as dead (non-trigger witness).
+        let except = HashSet::from([premise]);
+        for e in self.log.iter() {
+            let Op::Behavior { .. } = &e.op else {
+                continue;
+            };
+            if retracting.contains(&e.id) || !self.behavior_fact_live(e.id) {
+                continue;
+            }
+            if self.horn_body_matches_except(e, &except) {
+                continue;
+            }
+            retracting.insert(e.id);
+            out.push(Event::stable_derived(
+                Op::Retract { event_id: e.id },
+                trigger.ingested_at,
+            ));
+        }
         out
+    }
+
+    fn behavior_fact_live(&self, event_id: EventId) -> bool {
+        self.fold
+            .fact_index_by_event_id(event_id)
+            .and_then(|i| self.fold.facts().get(i))
+            .is_some_and(|f| f.invalidated_at.is_none())
+    }
+
+    /// Horn body still matches at `head.valid_from` with `except` treated as dead.
+    /// Named bodies are skipped (treated as still matching).
+    fn horn_body_matches_except(&self, e: &Event, except: &HashSet<EventId>) -> bool {
+        let Op::Behavior {
+            rule_version,
+            subject,
+            relation,
+            object,
+            valid_from,
+            ..
+        } = &e.op
+        else {
+            return true;
+        };
+        let Some(bytes) = self.fold.blobs.get(rule_version) else {
+            return true;
+        };
+        let Some(ast) = RuleAst::from_canonical(bytes) else {
+            return true;
+        };
+        let RuleAst::Horn { head, premises } = ast else {
+            return true;
+        };
+        let Some(head_rel) = self.dict.id(&head.relation) else {
+            return true;
+        };
+        if head_rel != *relation {
+            return true;
+        }
+        let mut bind = [None; MAX_VAR];
+        if !unify_term(&head.subject, *subject, &self.dict, &mut bind) {
+            return true;
+        }
+        if !unify_term(&head.object, *object, &self.dict, &mut bind) {
+            return true;
+        }
+        search_prems(
+            self,
+            &premises,
+            premises.len(),
+            bind,
+            *valid_from,
+            u64::MAX,
+            except,
+        )
+        .is_some()
     }
 
     fn horn_fires(
@@ -231,8 +298,9 @@ impl Runtime {
         except: &HashSet<EventId>,
     ) -> Result<Vec<Event>, RuntimeError> {
         let mut out = Vec::new();
-        for (pin, ast) in self.live_horns(valid_from, relation) {
-            let RuleAst::Horn { head, premises } = ast else {
+        let no_dead = HashSet::new();
+        for horn in self.live_horns(valid_from, relation) {
+            let RuleAst::Horn { head, premises } = horn.ast else {
                 continue;
             };
             for (i, prem) in premises.iter().enumerate() {
@@ -249,31 +317,37 @@ impl Runtime {
                 if !unify_term(&prem.object, object, &self.dict, &mut bind) {
                     continue;
                 }
-                if let Some(bind) = search_prems(self, &premises, i, bind, valid_from, u64::MAX) {
-                    if self.dict.id(&head.relation).is_none() {
-                        return Err(RuntimeError::UnknownRelation {
-                            name: head.relation.clone(),
-                        });
-                    }
-                    if let Some(ev) = self.head_event(
-                        &head,
-                        &pin,
-                        &bind,
-                        caused_by,
-                        ingested_at,
-                        valid_from,
-                        valid_to,
-                        except,
-                    ) {
-                        out.push(ev);
-                    }
+                let Some(hit) =
+                    search_prems(self, &premises, i, bind, valid_from, u64::MAX, &no_dead)
+                else {
+                    continue;
+                };
+                if self.dict.id(&head.relation).is_none() {
+                    return Err(RuntimeError::UnknownRelation {
+                        name: head.relation.clone(),
+                    });
                 }
+                let mut parts = vec![(valid_from, valid_to), (horn.pin_from, horn.pin_to)];
+                parts.extend(hit.windows);
+                let Some((vf, vt)) = conjunct_vt(parts) else {
+                    continue;
+                };
+                out.extend(self.head_event(
+                    &head,
+                    &horn.pin,
+                    &hit.bind,
+                    caused_by,
+                    ingested_at,
+                    vf,
+                    vt,
+                    except,
+                ));
             }
         }
         Ok(out)
     }
 
-    fn live_horns(&self, vt: u64, relation: TermId) -> Vec<(String, RuleAst)> {
+    fn live_horns(&self, vt: u64, relation: TermId) -> Vec<LiveHorn> {
         if self.fold.rel_rule.is_none() {
             return vec![];
         }
@@ -288,7 +362,12 @@ impl Runtime {
                 if !f.is_live_at(u64::MAX, vt) {
                     continue;
                 }
-                out.push((slot.pin.clone(), slot.ast.clone()));
+                out.push(LiveHorn {
+                    pin: slot.pin.clone(),
+                    ast: slot.ast.clone(),
+                    pin_from: f.valid_from,
+                    pin_to: f.valid_to,
+                });
             }
             return out;
         }
@@ -298,7 +377,7 @@ impl Runtime {
         self.live_horns_scan(vt)
     }
 
-    fn live_horns_scan(&self, vt: u64) -> Vec<(String, RuleAst)> {
+    fn live_horns_scan(&self, vt: u64) -> Vec<LiveHorn> {
         let Some(rel) = self.fold.rel_rule else {
             return vec![];
         };
@@ -318,7 +397,12 @@ impl Runtime {
                 continue;
             };
             if matches!(ast, RuleAst::Horn { .. }) {
-                out.push((pin.to_string(), ast));
+                out.push(LiveHorn {
+                    pin: pin.to_string(),
+                    ast,
+                    pin_from: f.valid_from,
+                    pin_to: f.valid_to,
+                });
             }
         }
         out
@@ -334,44 +418,42 @@ impl Runtime {
         valid_from: u64,
         valid_to: Option<u64>,
         except: &HashSet<EventId>,
-    ) -> Option<Event> {
-        let rel = self.dict.id(&head.relation)?;
-        let subject = instantiate(&head.subject, bind, &self.dict)?;
-        let object = instantiate(&head.object, bind, &self.dict)?;
-        let blocked = if except.is_empty() {
-            self.fold
-                .has_live_triple(subject, rel, object, valid_from, valid_to)
-        } else {
-            self.fold.has_live_triple_except(
-                subject,
-                rel,
-                object,
-                valid_from,
-                valid_to,
-                except,
-            )
+    ) -> Vec<Event> {
+        let Some(rel) = self.dict.id(&head.relation) else {
+            return Vec::new();
         };
-        if blocked {
-            return None;
-        }
+        let Some(subject) = instantiate(&head.subject, bind, &self.dict) else {
+            return Vec::new();
+        };
+        let Some(object) = instantiate(&head.object, bind, &self.dict) else {
+            return Vec::new();
+        };
+        let windows = self
+            .fold
+            .uncovered_vt_windows(subject, rel, object, valid_from, valid_to, except);
         let name = if head.relation == "knownBy" {
             "inverse_knows".into()
         } else {
             head.relation.clone()
         };
-        Some(Event::stable_derived(
-            Op::Behavior {
-                name,
-                caused_by,
-                rule_version: pin.to_string(),
-                subject,
-                relation: rel,
-                object,
-                valid_from,
-                valid_to,
-            },
-            ingested_at,
-        ))
+        windows
+            .into_iter()
+            .map(|(vf, vt)| {
+                Event::stable_derived(
+                    Op::Behavior {
+                        name: name.clone(),
+                        caused_by,
+                        rule_version: pin.to_string(),
+                        subject,
+                        relation: rel,
+                        object,
+                        valid_from: vf,
+                        valid_to: vt,
+                    },
+                    ingested_at,
+                )
+            })
+            .collect()
     }
 
     /// Horn-pinned Behavior is reproducible from premises live at `ingested_at`.
@@ -417,9 +499,35 @@ impl Runtime {
             bind,
             *valid_from,
             e.ingested_at,
+            &HashSet::new(),
         )
         .is_some()
     }
+}
+
+struct LiveHorn {
+    pin: String,
+    ast: RuleAst,
+    pin_from: u64,
+    pin_to: Option<u64>,
+}
+
+struct PremMatch {
+    bind: Bind,
+    windows: Vec<(u64, Option<u64>)>,
+}
+
+fn conjunct_vt(
+    windows: impl IntoIterator<Item = (u64, Option<u64>)>,
+) -> Option<(u64, Option<u64>)> {
+    let mut acc: Option<(u64, Option<u64>)> = None;
+    for w in windows {
+        acc = Some(match acc {
+            None => w,
+            Some((a, b)) => vt_intersect(a, b, w.0, w.1)?,
+        });
+    }
+    acc
 }
 
 fn unify_term(term: &RuleTerm, id: TermId, dict: &TermDictionary, bind: &mut Bind) -> bool {
@@ -455,8 +563,9 @@ fn search_prems(
     bind: Bind,
     vt: u64,
     tt: u64,
-) -> Option<Bind> {
-    search_at(rt, premises, 0, skip, bind, vt, tt)
+    except: &HashSet<EventId>,
+) -> Option<PremMatch> {
+    search_at(rt, premises, 0, skip, bind, vt, tt, Vec::new(), except)
 }
 
 fn search_at(
@@ -467,17 +576,22 @@ fn search_at(
     bind: Bind,
     vt: u64,
     tt: u64,
-) -> Option<Bind> {
+    windows: Vec<(u64, Option<u64>)>,
+    except: &HashSet<EventId>,
+) -> Option<PremMatch> {
     if idx >= premises.len() {
-        return Some(bind);
+        return Some(PremMatch { bind, windows });
     }
     if idx == skip {
-        return search_at(rt, premises, idx + 1, skip, bind, vt, tt);
+        return search_at(rt, premises, idx + 1, skip, bind, vt, tt, windows, except);
     }
     let prem = &premises[idx];
     let rel = rt.dict.id(&prem.relation)?;
     for f in rt.fold.live_facts_at(tt, vt) {
         rt.fold.horn_examine.bump();
+        if except.contains(&f.event_id) {
+            continue;
+        }
         if f.relation != rel {
             continue;
         }
@@ -488,7 +602,19 @@ fn search_at(
         if !unify_term(&prem.object, f.object(), &rt.dict, &mut next) {
             continue;
         }
-        if let Some(ok) = search_at(rt, premises, idx + 1, skip, next, vt, tt) {
+        let mut next_windows = windows.clone();
+        next_windows.push((f.valid_from, f.valid_to));
+        if let Some(ok) = search_at(
+            rt,
+            premises,
+            idx + 1,
+            skip,
+            next,
+            vt,
+            tt,
+            next_windows,
+            except,
+        ) {
             return Some(ok);
         }
     }

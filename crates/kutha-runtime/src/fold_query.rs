@@ -2,7 +2,7 @@
 use kutha_common::{EventId, SupportPolarity, TermId, TransactionTime, ValidTime, WallTime};
 use sha2::{Digest, Sha256};
 
-use crate::fold::{Fact, GraphFold, LiveFactFilter};
+use crate::fold::{leftover_halves, vt_intersect, Fact, GraphFold, LiveFactFilter};
 
 impl GraphFold {
     pub(crate) fn live_facts_at(
@@ -106,7 +106,10 @@ impl GraphFold {
     /// Shared by [`Self::as_known_on`] and [`crate::Runtime::norm_view`].
     pub fn knowledge_tt_at(&self, wall: WallTime) -> Option<u64> {
         let wall = wall.as_u64();
-        self.tt_anchors.range(..=wall).next_back().map(|(_, &tt)| tt)
+        self.tt_anchors
+            .range(..=wall)
+            .next_back()
+            .map(|(_, &tt)| tt)
     }
 
     /// Product triples as known on a wall date.
@@ -227,7 +230,7 @@ impl GraphFold {
         self.claim_facts.contains_key(&claim)
     }
 
-    /// Live triple presence overlapping `valid_from`/`valid_to` (Horn dedup).
+    /// Live triple presence whose VT fully covers `valid_from`/`valid_to` (Horn dedup).
     pub(crate) fn has_live_triple(
         &self,
         subject: TermId,
@@ -247,8 +250,9 @@ impl GraphFold {
     }
 
     /// Like [`Self::has_live_triple`], ignoring facts whose `event_id` is in `except`
-    /// (same-batch retracts scheduled before re-fire). Dedup is VT-aware: only a live
-    /// residual whose VT overlaps the candidate window blocks (CE review P1 #11).
+    /// (same-batch retracts scheduled before re-fire). Dedup is cover-aware: only a
+    /// live residual whose VT fully covers the candidate window blocks. Partial
+    /// overlap emits leftover residuals ([`Self::uncovered_vt_windows`]).
     pub(crate) fn has_live_triple_except(
         &self,
         subject: TermId,
@@ -258,28 +262,81 @@ impl GraphFold {
         valid_to: Option<u64>,
         except: &std::collections::HashSet<EventId>,
     ) -> bool {
-        let overlaps = |f: &crate::fold::Fact| {
+        let covers = |f: &crate::fold::Fact| {
             f.invalidated_at.is_none()
                 && !except.contains(&f.event_id)
                 && f.subject == subject
                 && f.relation == relation
                 && f.object() == object
-                && crate::fold::vt_intersect(f.valid_from, f.valid_to, valid_from, valid_to)
-                    .is_some()
+                && vt_fully_covers(f.valid_from, f.valid_to, valid_from, valid_to)
         };
         if !self.hot_maps_warm {
             return self.facts.iter().any(|f| {
                 self.hot_examine.bump();
-                overlaps(f)
+                covers(f)
             });
         }
         match self.live_triples.get(&(subject, relation, object)) {
             Some(list) => list.iter().any(|&idx| {
                 self.hot_examine.bump();
-                overlaps(&self.facts[idx])
+                covers(&self.facts[idx])
             }),
             None => false,
         }
+    }
+
+    /// Candidate VT minus live same-triple windows (except scheduled retracts).
+    /// Empty when a live row fully covers the candidate (see [`Self::has_live_triple_except`]).
+    pub(crate) fn uncovered_vt_windows(
+        &self,
+        subject: TermId,
+        relation: TermId,
+        object: TermId,
+        valid_from: u64,
+        valid_to: Option<u64>,
+        except: &std::collections::HashSet<EventId>,
+    ) -> Vec<(u64, Option<u64>)> {
+        let covered = if except.is_empty() {
+            self.has_live_triple(subject, relation, object, valid_from, valid_to)
+        } else {
+            self.has_live_triple_except(subject, relation, object, valid_from, valid_to, except)
+        };
+        if covered {
+            return Vec::new();
+        }
+        let same = |f: &crate::fold::Fact| {
+            f.invalidated_at.is_none()
+                && !except.contains(&f.event_id)
+                && f.subject == subject
+                && f.relation == relation
+                && f.object() == object
+        };
+        let mut windows = vec![(valid_from, valid_to)];
+        if !self.hot_maps_warm {
+            for f in &self.facts {
+                self.hot_examine.bump();
+                if same(f) {
+                    subtract_vt_window(&mut windows, f.valid_from, f.valid_to);
+                    if windows.is_empty() {
+                        break;
+                    }
+                }
+            }
+            return windows;
+        }
+        if let Some(list) = self.live_triples.get(&(subject, relation, object)) {
+            for &idx in list {
+                self.hot_examine.bump();
+                let f = &self.facts[idx];
+                if same(f) {
+                    subtract_vt_window(&mut windows, f.valid_from, f.valid_to);
+                    if windows.is_empty() {
+                        break;
+                    }
+                }
+            }
+        }
+        windows
     }
 
     /// Mark a fact slot invalidated and drop it from the live-triple lease.
@@ -501,4 +558,34 @@ impl GraphFold {
             .filter(|f| f.relation == rel && f.delivery_key.as_deref() == Some(justification_id))
             .max_by_key(|f| f.ingested_at)
     }
+}
+
+/// Half-open `[exist_from, exist_to)` fully covers `[cand_from, cand_to)`.
+fn vt_fully_covers(
+    exist_from: u64,
+    exist_to: Option<u64>,
+    cand_from: u64,
+    cand_to: Option<u64>,
+) -> bool {
+    exist_from <= cand_from && exist_to.unwrap_or(u64::MAX) >= cand_to.unwrap_or(u64::MAX)
+}
+
+/// Subtract `[cut_from, cut_to)` from each remaining window via [`leftover_halves`].
+fn subtract_vt_window(windows: &mut Vec<(u64, Option<u64>)>, cut_from: u64, cut_to: Option<u64>) {
+    let mut next = Vec::new();
+    for &(w_from, w_to) in windows.iter() {
+        match vt_intersect(w_from, w_to, cut_from, cut_to) {
+            None => next.push((w_from, w_to)),
+            Some((i_from, i_to)) => {
+                let (prefix, suffix) = leftover_halves(w_from, w_to, i_from, i_to);
+                if let Some(p) = prefix {
+                    next.push(p);
+                }
+                if let Some(s) = suffix {
+                    next.push(s);
+                }
+            }
+        }
+    }
+    *windows = next;
 }
