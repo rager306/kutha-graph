@@ -647,7 +647,7 @@ rows:
     source: M020 residual / Phase 69
   - id: SEM-keyed-retry-live
     plane: product
-    invariant: delivery_key_retry short-circuits while any live fact of the keyed claim carries the key (follows Correct/CorrectInterval); remints when none is live
+    invariant: delivery_key_retry short-circuits while a live fact of the keyed claim on the same relation carries the key (follows Correct/CorrectInterval); remints when none is live on that relation
     layer: kill
     oracle:
       - keyed_assert_retry_after_retract_remints_live_support
@@ -656,7 +656,8 @@ rows:
       - keyed_assert_retry_after_retract_of_correct_interval_id_remints
       - keyed_correct_preserves_delivery_key_and_retry
       - keyed_correct_interval_preserves_delivery_key_and_retry
-    kill_mutation: retry checks only minting Assert invalidated_at (dies on Correct/CI lineage); retry ignores fold liveness (dies on m022 after Retract)
+      - keyed_retry_after_retract_does_not_borrow_sibling_relation_live_key
+    kill_mutation: retry checks only minting Assert invalidated_at (dies on Correct/CI lineage); retry ignores fold liveness (dies on m022 after Retract); liveness claim-scoped across relations (dies on m056 #26)
     status: killed
     gate: default
     owner: M023-S01
@@ -1568,6 +1569,17 @@ rows:
     gate: default
     owner: M056-S02
     source: Phase 124 / CE whole-repo #30
+  - id: SEM-m056-delivery-key-same-relation
+    plane: product
+    invariant: delivery_key_retry liveness requires a live keyed support on the same relation (sibling claim+key must not short-circuit a retracted relation)
+    layer: kill
+    oracle:
+      - keyed_retry_after_retract_does_not_borrow_sibling_relation_live_key
+    kill_mutation: has_live_keyed_support ignores relation (claim+key only)
+    status: killed
+    gate: default
+    owner: M056-S03
+    source: Phase 125 / CE whole-repo #26
   - id: SEM-m054-gov-plan-budget
     plane: harness
     invariant: artifact-budget PLAN gate keys off live CONTEXT and requires per-phase CONTEXT→PLAN correspondence

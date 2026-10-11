@@ -251,12 +251,13 @@ impl Runtime {
         };
         // Retracted keyed Assert must not short-circuit: remint a live support.
         // Correct / CorrectInterval move the delivery to rows under their own event
-        // id (same claim_id and delivery_key), so liveness follows the claim.
+        // id (same claim_id, relation, and delivery_key). Liveness is scoped to
+        // this relation so a sibling sharing claim+key cannot mask a retract.
         let live = self
             .fold
             .fact_index_by_event_id(existing_id)
             .map(|idx| self.fold.facts()[idx].claim_id)
-            .is_some_and(|claim| self.fold.has_live_keyed_support(claim, key));
+            .is_some_and(|claim| self.fold.has_live_keyed_support(claim, *relation, key));
         if !live {
             return Ok(None);
         }

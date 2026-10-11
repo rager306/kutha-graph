@@ -414,13 +414,25 @@ impl GraphFold {
             .collect()
     }
 
-    /// Whether any not-yet-invalidated Fact of `claim` carries `delivery_key == key`.
+    /// Whether any not-yet-invalidated Fact of `claim` on `relation` carries
+    /// `delivery_key == key`.
     ///
     /// `Correct` / `CorrectInterval` replace the minting fact with rows under their
-    /// own event id but keep `claim_id` and `delivery_key`, so this follows the
-    /// delivery through corrections (M023 Phase 75).
-    pub(crate) fn has_live_keyed_support(&self, claim: EventId, key: &str) -> bool {
-        let keyed = |f: &Fact| f.invalidated_at.is_none() && f.delivery_key.as_deref() == Some(key);
+    /// own event id but keep `claim_id`, `relation`, and `delivery_key`, so this
+    /// follows the delivery through corrections (M023 Phase 75). Liveness is
+    /// relation-scoped: a sibling relation sharing claim+key must not keep a
+    /// retracted support short-circuitable (M056 / CE #26).
+    pub(crate) fn has_live_keyed_support(
+        &self,
+        claim: EventId,
+        relation: TermId,
+        key: &str,
+    ) -> bool {
+        let keyed = |f: &Fact| {
+            f.relation == relation
+                && f.invalidated_at.is_none()
+                && f.delivery_key.as_deref() == Some(key)
+        };
         if !self.hot_maps_warm {
             return self.facts.iter().any(|f| {
                 self.hot_examine.bump();

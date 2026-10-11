@@ -123,6 +123,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M056 S02 (persist heal):** Phase 124 — `SEM-m056-persist-short-orphan` / `persist-migrate-sync` `killed` (owner `M056-S02`).
 
+**M056 S03 (delivery-key same-relation):** Phase 125 — `SEM-m056-delivery-key-same-relation` `killed` (owner `M056-S03`).
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

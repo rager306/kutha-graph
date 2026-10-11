@@ -4,6 +4,23 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Trajectory: M056-S03 done (delivery-key same-relation)
+
+### Trajectory
+
+- M056-S03 done (Phase 125). Active Milestone **M056**, Active Slice **None**; `L_delivery=M056-S03-done`. Next lease: M056-S04 (#28). Honeycomb stays Proposed.
+
+## 2026-10-11 — Product/Process: delivery-key same-relation (Phase 125)
+
+### Product
+
+- #26: `has_live_keyed_support` is relation-scoped; keyed retry no longer short-circuits a retracted relation via a sibling claim+key. Oracle `m056_delivery_key_same_relation`.
+- Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈109.7M / `as_of.n` ≈272.6k vs M056-S02 ≈107.9M / ≈287.2k (+1.7% / −5.1%).
+
+### Process
+
+- Matrix `SEM-m056-delivery-key-same-relation` killed; SEM-keyed-retry-live cites same-relation. `125-VERIFICATION.md` passed.
+
 ## 2026-10-11 — Trajectory: lease M056-S03 (delivery-key same-relation)
 
 ### Trajectory
