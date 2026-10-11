@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M054
+**Active Slice:** S01
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M053 closed | Capability proven / Cypher started |
+| L_delivery | M053 closed; M054-S01 leased | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Controller lease: M054 backlog gap slice (Horn #2–#5 preferred) or other CE residual. Regression map: `docs/process/ce-review-regression-map.md`. Whole-repo #1 stays demoted. **#6 decision-gate** stays human. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+M054-S01 Horn soundness (CE whole-repo #4 → #3 → #2 → #5). Matrix `SEM-gap-horn-soundness`. Map: `docs/process/ce-review-regression-map.md`. **#6 decision-gate** stays human (not this slice). Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

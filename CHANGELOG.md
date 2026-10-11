@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Trajectory: lease M054-S01 (Horn soundness)
+
+### Trajectory
+
+- Active Milestone **M054**, Active Slice **S01** (`L_delivery=M053-closed`): Horn soundness — CE whole-repo #4/#3/#2/#5 (Phase 117). **#6 decision-gate** stays human. Honeycomb stays Proposed.
+
 ## 2026-10-11 — Product/Process: CE review regression enrolment (Phase 116)
 
 ### Product
