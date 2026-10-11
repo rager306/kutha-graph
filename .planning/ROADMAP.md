@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.47 shipped. **v0.48 / M054 ACTIVE** — CE residual gaps, one slice per phase. Next: S01 Horn. #6 stays decision-gate.
+v0.01–v0.47 shipped. **v0.48 / M054 ACTIVE** — S01 Horn done; S02 Persist leased. #6 stays decision-gate.
 
 ## Id map
 
@@ -15,7 +15,7 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Phases (v0.48)
 
-- [ ] **Phase 117: Horn soundness** — CE #4/#3/#2/#5 (M054-S01)
+- [x] **Phase 117: Horn soundness** — CE #4/#3/#2/#5 (`117-VERIFICATION.md` passed)
 - [ ] **Phase 118: Persist durability** — CE #9/#10 (#6 gate) (M054-S02)
 - [ ] **Phase 119: Governor honesty** — CE #14/#22/#23/#34 (M054-S03)
 - [ ] **Phase 120: Scaling and bench** — CE #15/#16/#17/#19/#25/#27 (M054-S04)

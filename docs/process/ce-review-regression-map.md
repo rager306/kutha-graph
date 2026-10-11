@@ -17,14 +17,18 @@ plus `advisor-correction.md`.
 | Withdrawal: hydrate outcomes | `SEM-m053-hydrate-outcomes` | `fork_at_rebuilds_outcomes_from_log_quantum_outcomes` | M053-S01 |
 | Withdrawal: persist_dir anchor | `SEM-m053-persist-dir-anchor` | `common_persist_dir_anchors_under_manifest_tmp_not_cwd` | M053-S01 |
 | Withdrawal: rollover layout seam | `SEM-m053-rollover-layout-seam` | `try_persist_with_layout_preserves_rollover_seam_contract` | M053-S01 |
+| #4 Correct lineage eligible | `SEM-m054-horn-correct-eligible` | `correct_premise_refire_is_derivation_eligible` | M054-S01 |
+| #3 non-trigger retract | `SEM-m054-horn-nontrigger-retract` | `retract_non_trigger_premise_drops_derived` | M054-S01 |
+| #2 VT intersect | `SEM-m054-horn-vt-intersect` | `horn_head_vt_is_conjunction_of_premises` | M054-S01 |
+| #5 residual dedup | `SEM-m054-horn-residual-dedup` | `overlap_dedup_emits_uncovered_vt_residual` | M054-S01 |
+| #3 cascade dup Retract | `SEM-m054-horn-no-dup-retract` | `correct_cascade_does_not_duplicate_derived_retract` | M054-S01 |
 
 Pin scheme (full-branch #24 / M051) stays `SEM-m051-pin-compat-policy` — distinct from whole-repo EventId #24.
 
-## Open problem classes → gap rows (M054 backlog)
+## Open problem classes → gap rows (M054 remaining)
 
 | Class | Findings | Matrix id | Owner |
 |-------|----------|-----------|-------|
-| Horn soundness | #2 #3 #4 #5 | `SEM-gap-horn-soundness` | M054-S01 |
 | Persist durability | #6 #9 #10 | `SEM-gap-persist-durability` | M054-S02 |
 | Governor honesty | #14 #22 #23 #34 | `SEM-gap-governor-honesty` | M054-S03 |
 | Scaling + bench | #15 #16 #17 #19 #25 #27 | `SEM-gap-scaling-bench` | M054-S04 |

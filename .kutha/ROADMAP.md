@@ -205,8 +205,8 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 **Active.** Gap apply-queue from `docs/process/ce-review-regression-map.md`. Honeycomb stays Proposed. **#6 decision-gate** stays human (S02 ships #9/#10 only unless the owner lifts #6).
 
-- [ ] **S01: Horn soundness** `risk:high` `depends:[]`
-  > CE #4 → #3 → #2 → #5 — correction lineage, multi-premise witness, VT intersect, residual/proof dedup. Matrix `SEM-gap-horn-soundness` → killed. Phase 117.
+- [x] **S01: Horn soundness** `risk:high` `depends:[]`
+  > After this: Correct/CI-caused re-fire eligible; non-trigger retract drops derived; head VT = premise×pin conjunction; full-cover dedup + uncovered residuals; no duplicate derived Retract. Oracles `m054_horn_soundness`. Matrix SEM-m054-horn-* killed. Landed: Phase 117.
 - [ ] **S02: Persist durability** `risk:high` `depends:[]`
   > CE #9 #10 (and #6 only if decision-gate lifts) — torn tail, generations, optional poison. Matrix `SEM-gap-persist-durability`. Phase 118.
 - [ ] **S03: Governor honesty** `risk:medium` `depends:[]`

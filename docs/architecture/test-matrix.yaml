@@ -1442,17 +1442,63 @@ rows:
     gate: default
     owner: M053-S01
     source: Phase 116 / CE whole-repo #1 demoted + M050 policy
-  # Residual problem classes (gap) — owners are unleased M054 backlog slices
-  - id: SEM-gap-horn-soundness
+  # --- M054 / CE residual gaps (2026-10-11) ---
+  - id: SEM-m054-horn-correct-eligible
     plane: product
-    invariant: Horn VT intersection, multi-premise witness, correction lineage eligibility, and residual/proof dedup
+    invariant: Correct/CorrectInterval-caused Horn re-fire stays derivation_eligible when replacement premise and rule pin are live
     layer: kill
-    oracle: []
-    kill_mutation: pending CE whole-repo #2 #3 #4 #5 apply-queue
-    status: gap
+    oracle:
+      - correct_premise_refire_is_derivation_eligible
+    kill_mutation: derivation_eligible_at_walk returns false for Op::Correct / Op::CorrectInterval caused_by
+    status: killed
     gate: default
     owner: M054-S01
-    source: CE whole-repo 2026-10-11 triage Cascade/Horn group
+    source: Phase 117 / CE whole-repo #4
+  - id: SEM-m054-horn-nontrigger-retract
+    plane: product
+    invariant: retracting a non-trigger multi-premise support drops the Horn-derived head
+    layer: kill
+    oracle:
+      - retract_non_trigger_premise_drops_derived
+    kill_mutation: retract_derived only matches caused_by == premise and leaves non-trigger deaths live
+    status: killed
+    gate: default
+    owner: M054-S01
+    source: Phase 117 / CE whole-repo #3
+  - id: SEM-m054-horn-vt-intersect
+    plane: product
+    invariant: Horn head VT is the conjunction of premise windows and the live rule-pin window
+    layer: kill
+    oracle:
+      - horn_head_vt_is_conjunction_of_premises
+    kill_mutation: head_event copies trigger valid_from/valid_to without intersecting remaining premises
+    status: killed
+    gate: default
+    owner: M054-S01
+    source: Phase 117 / CE whole-repo #2
+  - id: SEM-m054-horn-residual-dedup
+    plane: product
+    invariant: overlap-only dedup is replaced by full-cover suppress plus uncovered VT residual emission
+    layer: kill
+    oracle:
+      - overlap_dedup_emits_uncovered_vt_residual
+    kill_mutation: has_live_triple_except blocks on any VT overlap and head_event drops partial firings
+    status: killed
+    gate: default
+    owner: M054-S01
+    source: Phase 117 / CE whole-repo #5
+  - id: SEM-m054-horn-no-dup-retract
+    plane: product
+    invariant: Correct cascade must not mint duplicate derived Retract of the same head EventId
+    layer: kill
+    oracle:
+      - correct_cascade_does_not_duplicate_derived_retract
+    kill_mutation: retract_derived re-emits Retract of premise P when rule_follow_ons(Retract{P}) re-validates body
+    status: killed
+    gate: default
+    owner: M054-S01
+    source: Phase 117 / m019 drop-tamper regression after #3
+  # Residual problem classes (gap) — owners are later M054 slices
   - id: SEM-gap-persist-durability
     plane: product
     invariant: segmented poison-after-failure, torn active-tail heal, generation-unique persist names

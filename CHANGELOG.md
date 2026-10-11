@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Product/Process: Horn soundness (Phase 117) + lease M054-S02
+
+### Product
+
+- Horn #4/#3/#2/#5: Correct/CI-caused re-fire stays `derivation_eligible`; non-trigger retract drops derived; head VT = premise×pin conjunction; full-cover dedup emits uncovered VT residuals; Correct cascade does not duplicate derived Retract. Oracles `m054_horn_soundness` (5).
+- Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈111.8M / `as_of.n` ≈266.2k vs Phase 115 ≈103.9M / ≈299.2k (+7.6% / −11.0%) and vs Phase 80 ≈122.5M / ≈299.6k (−8.7% / −11.1%).
+
+### Process
+
+- Matrix killed: `SEM-m054-horn-correct-eligible` / `nontrigger-retract` / `vt-intersect` / `residual-dedup` / `no-dup-retract`. Gap `SEM-gap-horn-soundness` removed. Map updated. `117-VERIFICATION.md` passed.
+
+### Trajectory
+
+- M054-S01 done. Active Slice **S02** (`L_delivery=M054-S01-done`): persist #9/#10. **#6 decision-gate** stays human. Honeycomb stays Proposed.
+
 ## 2026-10-11 — Trajectory: lease M054-S01 (Horn soundness)
 
 ### Trajectory
