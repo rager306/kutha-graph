@@ -58,6 +58,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.48 | 117–121 | M054 | S01–S05 | CE residual gaps (Horn → persist → governor → scaling → ID) | shipped 2026-10-11 |
 | v0.49 | 122 | M055 | S01 | CE #6 append tip rollback (Other keep-lock; poison after rollover) | shipped 2026-10-11 |
 | v0.50 | 123–127 | M056 | S01–S05 | advisory residuals (lease-bundle → persist #29/#30 → #26/#28 → hygiene) | shipped |
+| v0.51 | 128 | M057 | S01 | docs-coupling STATE→ROADMAP (lease-bundle hole at git_path_implies) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
@@ -71,7 +72,7 @@ v0.06 phases: 22 baseline, 23 legal fixture reconnaissance, 24 fold indexes, 25 
 
 GSD must not edit `.kutha/STATE.md`. The controller (the parent session, not a GSD subagent) owns the lease.
 
-1. **Lease (bundle):** set Active Milestone/Slice and `L_delivery` in `.kutha/STATE.md`. In the **same** lease commit include: `CHANGELOG.md` Trajectory entry (`docs-coupling`); `.kutha/ROADMAP.md` with an open `- [ ] **S##:` checkbox for the leased slice (and the M### section if new); `README.md` Status row naming that Active Milestone/Slice so `state-readme` stays green. Do **not** put `.planning/*`, CONTEXT, or product code in the lease commit — those belong in open/plan/execute commits. A lease that only touches STATE+CHANGELOG is a known false-start: `trajectory`/`state-readme` go HIGH until the bundle lands (M056 lesson).
+1. **Lease (bundle):** set Active Milestone/Slice and `L_delivery` in `.kutha/STATE.md`. In the **same** lease commit include: `CHANGELOG.md` Trajectory entry (`docs-coupling`); `.kutha/ROADMAP.md` with an open `- [ ] **S##:` checkbox for the leased slice (and the M### section if new); `README.md` Status row naming that Active Milestone/Slice so `state-readme` stays green. Do **not** put `.planning/*`, CONTEXT, or product code in the lease commit — those belong in open/plan/execute commits. A lease that only touches STATE+CHANGELOG is a known false-start: `trajectory`/`state-readme` go HIGH until the bundle lands (M056 lesson). `docs-coupling` also HIGH when STATE is in the diff without ROADMAP (M057).
 2. **Run one phase:** `/gsd-autonomous --only N`. Executors commit atomically per task on the feature branch with named files (as in phases 17–21); the final plan's commit carries the `CHANGELOG.md` entry so the docs-coupling check holds. Nobody but the controller edits `.kutha/STATE.md`. Do not run `--from 22 --to 28` in one go: execution stops at the lease and the independent verify gate. CONTEXT exists for every phase, so discuss is skipped.
 3. **Independent verify** (below). A failed kill-test reopens the phase; it is not waived.
 4. **Close:** clear Active Slice, set `L_delivery` to this slice's `-done` token, tick the slice in `.kutha/ROADMAP.md`, add one CHANGELOG entry (product and process kept apart), run `uv run kutha-gov precommit`. For product phases (any edit under `crates/`), also record in `NN-VERIFICATION.md` `commands:` a full `cargo test --workspace --offline --no-fail-fast` with exit 0 and a full `uv run kutha-gov ci` with 0 HIGH. `precommit` alone is not a product close gate (M022 Phase 72 lesson: targeted `m022_*` tests left `m013_write_path` red).

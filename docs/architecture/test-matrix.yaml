@@ -1772,6 +1772,17 @@ rows:
     gate: default
     owner: M054-S05
     source: Phase 121 / CE whole-repo #21
+  - id: SEM-m057-lease-roadmap
+    plane: harness
+    invariant: STATE.md in a git diff requires .kutha/ROADMAP.md in the same diff (docs-coupling lease bundle)
+    layer: governor
+    oracle:
+      - docs-coupling
+    kill_mutation: remove STATE→ROADMAP git_path_implies from docs-coupling (pytest LeaseRoadmapCouplingTests)
+    status: killed
+    gate: default
+    owner: M057-S01
+    source: Phase 128 / M056 lease-bundle residual at docs-coupling
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

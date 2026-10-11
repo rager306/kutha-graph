@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: M057 / GSD v0.51 closed
+
+### Trajectory
+
+- M057 / GSD v0.51 closed (Phase 128). Active Milestone **None**; `L_delivery=M057-closed`. Audit: `.planning/milestones/v0.51-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-12 — Process: STATE→ROADMAP docs-coupling (Phase 128)
+
+### Process
+
+- `docs-coupling` requires `.kutha/ROADMAP.md` when `.kutha/STATE.md` is in the git diff (lease-bundle hole after M056). Pytest `LeaseRoadmapCouplingTests`. Matrix `SEM-m057-lease-roadmap` killed. FSM budget stays 78. `128-VERIFICATION.md` passed.
+
 ## 2026-10-12 — Trajectory: lease M057-S01 (STATE→ROADMAP coupling)
 
 ### Trajectory

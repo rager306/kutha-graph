@@ -818,6 +818,10 @@ checks:
         then_any: ["CHANGELOG.md"]
         message: "STATE.md lease diff without CHANGELOG.md (process plane)"
       - kind: git_path_implies
+        when_any: [".kutha/STATE.md"]
+        then_any: [".kutha/ROADMAP.md"]
+        message: "STATE.md lease diff without .kutha/ROADMAP.md (lease bundle)"
+      - kind: git_path_implies
         when_any: ["docs/architecture/**"]
         then_any: ["CHANGELOG.md"]
         message: "architecture note diff without CHANGELOG.md (Trajectory)"

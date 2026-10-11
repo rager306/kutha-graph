@@ -201,12 +201,14 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M057: Lease-diff ROADMAP coupling — ACTIVE (GSD v0.51)
+## M057: Lease-diff ROADMAP coupling — CLOSED (GSD v0.51)
 
-Process debt after M056: lease-bundle honesty is documented and trajectory-checked, but `docs-coupling` still allows a STATE+CHANGELOG+README diff without `.kutha/ROADMAP.md`.
+**Closed:** S01 delivered 2026-10-12. Process tag `v0.51`. Honeycomb stays Proposed.
 
-- [ ] **S01: STATE diff implies ROADMAP** `risk:low` `depends:[]`
-  > After this: `docs-coupling` HIGH when `.kutha/STATE.md` changes without `.kutha/ROADMAP.md`; matrix `SEM-m057-lease-roadmap` killed. Phase 128.
+Process debt after M056: lease-bundle honesty was documented and trajectory-checked, but `docs-coupling` still allowed a STATE+CHANGELOG+README diff without `.kutha/ROADMAP.md`. `L_delivery=M057-closed`.
+
+- [x] **S01: STATE diff implies ROADMAP** `risk:low` `depends:[]`
+  > After this: `docs-coupling` HIGH when `.kutha/STATE.md` changes without `.kutha/ROADMAP.md`; matrix `SEM-m057-lease-roadmap` killed. Phase 128. Landed.
 
 ## M056: Advisory residual close — CLOSED (GSD v0.50)
 

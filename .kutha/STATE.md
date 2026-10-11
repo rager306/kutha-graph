@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M057
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M056-closed
+L_delivery=M057-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M056 closed; M057 S01 leased | Capability proven / Cypher started |
+| L_delivery | M057 closed (v0.51); prior M056 closed | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M057-S01: docs-coupling must require `.kutha/ROADMAP.md` when `.kutha/STATE.md` is in the diff (M056 lease-bundle hole at git_path_implies). Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+Idle. M057 / GSD v0.51 closed (STATE→ROADMAP docs-coupling). Audit: `.planning/milestones/v0.51-MILESTONE-AUDIT.md`. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Disk-space preflight remains unleased follow-on.
 
 ## Thaw map
 

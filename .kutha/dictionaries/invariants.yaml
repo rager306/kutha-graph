@@ -103,7 +103,7 @@ invariants:
     check: changelog-planes
 
   - id: I-docs-coupling
-    claim: "Plane-bearing git diffs include the owning docs"
+    claim: "Plane-bearing git diffs include the owning docs (STATE lease diffs must include ROADMAP)"
     source: "docs/process/kutha-harness.md"
     disposition: check
     check: docs-coupling

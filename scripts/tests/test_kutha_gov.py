@@ -2050,5 +2050,39 @@ class LeaseBundleHonestyTests(unittest.TestCase):
         self.assertIn("lease-drift", _rust_highs(result))
 
 
+class LeaseRoadmapCouplingTests(unittest.TestCase):
+    """M057 S01: STATE lease diff must include ROADMAP (docs-coupling)."""
+
+    def test_state_diff_without_roadmap_is_high(self) -> None:
+        ctx = Context(
+            root=ROOT,
+            changed_paths=frozenset(
+                {".kutha/STATE.md", "CHANGELOG.md", "README.md"}
+            ),
+        )
+        result = get_checks(ROOT)["docs-coupling"].run(ctx)
+        highs = [f.message for f in result.findings if f.severity is Severity.HIGH]
+        self.assertTrue(
+            any("ROADMAP" in m for m in highs),
+            msg=f"expected ROADMAP coupling HIGH, got {highs!r}",
+        )
+
+    def test_state_diff_with_roadmap_passes_roadmap_rule(self) -> None:
+        ctx = Context(
+            root=ROOT,
+            changed_paths=frozenset(
+                {
+                    ".kutha/STATE.md",
+                    ".kutha/ROADMAP.md",
+                    "CHANGELOG.md",
+                    "README.md",
+                }
+            ),
+        )
+        result = get_checks(ROOT)["docs-coupling"].run(ctx)
+        highs = [f.message for f in result.findings if f.severity is Severity.HIGH]
+        self.assertFalse(any("ROADMAP" in m for m in highs), msg=highs)
+
+
 if __name__ == "__main__":
     unittest.main()

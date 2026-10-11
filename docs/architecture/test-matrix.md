@@ -129,6 +129,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M056 S05 (hygiene):** Phase 127 — `SEM-m056-hygiene-uv-only` / `hygiene-fixture-lang` `killed` (owner `M056-S05`).
 
+**M057 S01 (STATE→ROADMAP):** Phase 128 — `SEM-m057-lease-roadmap` `killed` (owner `M057-S01`).
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)
