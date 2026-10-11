@@ -17,7 +17,7 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 - [x] **Phase 112: Triage correction** — demote #1 (`112-VERIFICATION.md` passed)
 - [x] **Phase 113: Cascade atomicity** — CE #8 (`113-VERIFICATION.md` passed)
-- [ ] **Phase 114: Lock before heal** — CE #7
+- [x] **Phase 114: Lock before heal** — CE #7 (`114-VERIFICATION.md` passed)
 - [ ] **Phase 115: Snapshot-free open replay** — CE #11
 
 ## Progress
