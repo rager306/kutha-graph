@@ -5,7 +5,7 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M056
-**Active Slice:** None
+**Active Slice:** S05
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M056-S04 done (S05 remains open) | Capability proven / Cypher started |
+| L_delivery | M056-S04 done; M056-S05 leased | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Lease M056-S05 (hygiene #35/#36). S01–S04 shipped. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+M056-S05: hygiene — VERIFICATION uv-only (#35); statute fixture single-language (#36). Closes M056 / GSD v0.50. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

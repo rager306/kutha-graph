@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: lease M056-S05 (hygiene)
+
+### Trajectory
+
+- Active Milestone **M056**, Active Slice **S05** (`L_delivery=M056-S04-done`): VERIFICATION uv-only (#35); statute fixture single-language (#36). Honeycomb stays Proposed.
+
 ## 2026-10-11 — Trajectory: M056-S04 done (NormView derived Correct eligibility)
 
 ### Trajectory
