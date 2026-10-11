@@ -24,4 +24,6 @@ Named future slice (controller): serde/open migration that maps the five legacy 
 
 ## Related G4 residuals
 
-Pin scheme rotation (#24), clock `Into` facade (#26), and other contract items stay on the G4 queue after this policy pin. Honeycomb cells stay **Proposed**.
+Pin scheme rotation (#24) is recorded in `docs/process/pin-compat.md` (M051).
+Clock `Into` facade (#26) and other contract items stay on the G4 queue.
+Honeycomb cells stay **Proposed**.

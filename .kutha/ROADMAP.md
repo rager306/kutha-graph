@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M051: Pin scheme v1 stability vectors — CLOSED (GSD v0.45)
+
+**Closed:** S01 delivered 2026-10-11. Process tag `v0.45`. Honeycomb stays Proposed. CE review P1 #24.
+
+- [x] **S01: Document pin scheme v1; hardcoded stability vectors** `risk:low` `depends:[]`
+  > After this: `docs/process/pin-compat.md` records documented rotation; `m051_pin_compat` oracles; FSM budget 76. UTF-8→v1 Behavior migrate deferred. No Cypher/HNSW. Landed: `pin-compat-policy`; `111-VERIFICATION.md`.
+
 ## M050: Op compat documented break — CLOSED (GSD v0.44)
 
 **Closed:** S01 delivered 2026-10-10. Process tag `v0.44`. Honeycomb stays Proposed. CE review P1 #14.

@@ -1347,6 +1347,19 @@ rows:
     gate: default
     owner: M050-S01
     source: Phase 110 / CE review P1 #14
+  - id: SEM-m051-pin-compat-policy
+    plane: product
+    invariant: pin scheme v1 Named AST digests for idents are hardcoded; legacy UTF-8 domain pins diverge; non-ident stays domain+UTF-8
+    layer: kill
+    oracle:
+      - ident_pin_matches_hardcoded_v1_vector
+      - ident_pin_diverges_from_legacy_utf8_domain_vector
+      - nonident_pin_matches_hardcoded_domain_utf8_vector
+    kill_mutation: make rule_definition_hash return rule_body_hash(UTF-8) for idents
+    status: killed
+    gate: default
+    owner: M051-S01
+    source: Phase 111 / CE review P1 #24
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

@@ -1,19 +1,20 @@
 # Requirements: Kutha
 
-**Milestones:** v0.44 / harness M050 shipped 2026-10-10. Next lease: G4 #24 or Op backfill. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.45 / harness M051 shipped 2026-10-11. Next lease: G4 #26 or Op backfill. Lease: `.kutha/STATE.md`.
 
-## v0.44 Requirements (M050) — complete
+## v0.45 Requirements (M051) — complete
 
-### Op compat policy (Phase 110, S01)
+### Pin compat policy (Phase 111, S01)
 
-- [x] **OP-COMPAT-01**: documented break — legacy meta-ops fail deserialize
-- [x] **OP-COMPAT-02**: modern kutha:* Assert round-trips; policy doc; budget 75
+- [x] **PIN-COMPAT-01**: documented rotation to pin scheme v1; no silent UTF-8 remap
+- [x] **PIN-COMPAT-02**: hardcoded ident / legacy / non-ident stability vectors; budget 76
 
 ## Out of Scope (this milestone)
 
 | Feature | Reason |
 |---------|--------|
-| Serde TermId remap / migrate | Deferred follow-on |
-| G4 #24 pin scheme | Next residual |
+| Behavior rule_version migrate UTF-8→v1 | Deferred follow-on |
+| Op serde TermId remap | Deferred (`op-compat.md`) |
+| G4 #26 clock facade | Next residual |
 | G3 #6 | Decision-gate (human) |
 | Cypher / HNSW | Thaw map |

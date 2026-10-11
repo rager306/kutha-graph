@@ -1562,6 +1562,45 @@ checks:
           pattern: "Policy: documented break; serde backfill deferred"
           with: "Policy: silent skip of unknown Op variants"
 
+  - id: pin-compat-policy
+    description: >-
+      G4 CE #24: pin scheme v1 documented rotation — hardcoded stability
+      vectors for ident Named AST pin vs legacy UTF-8 and non-ident.
+    steps:
+      - kind: file_contains
+        path: docs/process/pin-compat.md
+        needles:
+          - "Policy: documented rotation to pin scheme v1"
+          - "no silent remap of legacy UTF-8 pins"
+          - "2dca8c1394bfd203753efd7c991030c23719b41b285aad78ef061103b316596d"
+          - "7ce5d5ad5ca8d5148305d84d3eee3f1356540ad44da56fac9fdde748603436db"
+          - "ac715049d46ceaeae121295921ba657df849db9fee9fdb1203201e7b7ba7a689"
+        require: all
+        category: oracle
+        message: "pin-compat policy doc missing: {missing}"
+      - kind: rust_test_asserts
+        path: crates/kutha-common/tests/m051_pin_compat.rs
+        tests:
+          - ident_pin_matches_hardcoded_v1_vector
+          - ident_pin_diverges_from_legacy_utf8_domain_vector
+          - nonident_pin_matches_hardcoded_domain_utf8_vector
+        category: oracle
+        message: "pin-compat oracles missing {missing}"
+      - kind: file_contains
+        path: crates/kutha-common/src/event.rs
+        needles:
+          - "Pin scheme **v1**"
+          - "docs/process/pin-compat.md"
+        require: all
+        category: oracle
+        message: "rule_definition_hash missing pin scheme v1 doc pointer: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: docs/process/pin-compat.md
+          pattern: "Policy: documented rotation to pin scheme v1"
+          with: "Policy: silent UTF-8 remap of ident pins"
+
   - id: glob-absent-comment-policy
     description: >-
       glob_absent applies one comment policy (# and //) whether or not

@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Product/Process: pin scheme v1 stability vectors (Phase 111)
+
+### Product
+
+- Hardcoded pin stability oracles `m051_pin_compat`: ident `derive_pq` locks Named AST digest; diverges from main-era UTF-8 domain digest; non-ident free string keeps domain+UTF-8. `rule_definition_hash` docstring cites pin scheme v1 (no algorithm change). Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈116.2M / `as_of.n` ≈272.7k vs M038 ≈108.9M / ≈303.0k (+6.7% / −10.0%) and vs Phase 80 ≈122.5M / ≈299.6k (−5.1% / −9.0%).
+
+### Process
+
+- Controller policy **documented rotation to pin scheme v1; no silent remap** in `docs/process/pin-compat.md`. FSM / `.env.example` budget 75→76. Check `pin-compat-policy`; matrix `SEM-m051-pin-compat-policy`. CE review P1 #24.
+
+### Trajectory
+
+- M051 / GSD v0.45 closed. Active Milestone **None**; `L_delivery=M051-closed`. Audit: `.planning/milestones/v0.45-MILESTONE-AUDIT.md`. #6 decision-gate unchanged. Next: G4 #26 or leased Op backfill.
+
 ## 2026-10-10 — Product/Process: Op compat documented break (Phase 110)
 
 ### Product

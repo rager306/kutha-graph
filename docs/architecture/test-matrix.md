@@ -97,6 +97,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M050 S01 (Op compat policy):** Phase 110 — `SEM-m050-op-compat-policy` `killed` (owner `M050-S01`). Oracles: `legacy_allow_relation_op_fails_to_deserialize`, `modern_kutha_allows_assert_roundtrips`.
 
+**M051 S01 (pin scheme stability):** Phase 111 — `SEM-m051-pin-compat-policy` `killed` (owner `M051-S01`). Oracles: `ident_pin_matches_hardcoded_v1_vector`, `ident_pin_diverges_from_legacy_utf8_domain_vector`, `nonident_pin_matches_hardcoded_domain_utf8_vector`.
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

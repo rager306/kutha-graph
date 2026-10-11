@@ -526,6 +526,9 @@ pub fn sha256_hex(bytes: &[u8]) -> String {
 
 /// Pin for a named rule: hash of [`RuleAst::Named`] canonical bytes (RULE-01).
 /// Non-idents keep domain+UTF-8 so free-string Behavior pins stay fail-closed.
+///
+/// Pin scheme **v1** (documented rotation): see `docs/process/pin-compat.md`.
+/// Main-era UTF-8 domain pins for idents are not remapped silently.
 pub fn rule_definition_hash(definition: &str) -> String {
     match RuleAst::named(definition) {
         Some(ast) => ast.hash(),
