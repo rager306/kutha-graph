@@ -201,9 +201,9 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M054: CE whole-repo residual gaps — ACTIVE (GSD v0.48)
+## M054: CE whole-repo residual gaps — CLOSED (GSD v0.48)
 
-**Active.** Gap apply-queue from `docs/process/ce-review-regression-map.md`. Honeycomb stays Proposed. **#6 decision-gate** stays human (S02 ships #9/#10 only unless the owner lifts #6).
+**Closed:** S01–S05 delivered 2026-10-11. Process tag `v0.48`. Honeycomb stays Proposed. **#6 poison** remains decision-gate (`SEM-gap-persist-poison`).
 
 - [x] **S01: Horn soundness** `risk:high` `depends:[]`
   > After this: Correct/CI-caused re-fire eligible; non-trigger retract drops derived; head VT = premise×pin conjunction; full-cover dedup + uncovered residuals; no duplicate derived Retract. Oracles `m054_horn_soundness`. Matrix SEM-m054-horn-* killed. Landed: Phase 117.
@@ -211,10 +211,10 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
   > After this: torn empty active healed on open_for_append; generation-unique segment names before manifest swap. #6 poison stays decision-gate (`SEM-gap-persist-poison`). Oracles `m054_persist_durability`. Landed: Phase 118.
 - [x] **S03: Governor honesty** `risk:medium` `depends:[]`
   > After this: PLAN budget on CONTEXT; matrix schema/rows fail-closed; pool at-most-once. Matrix SEM-m054-gov-* killed. Landed: Phase 119.
-- [ ] **S04: Scaling and bench honesty** `risk:medium` `depends:[]`
-  > CE #15 #16 #17 #19 #25 #27. Matrix `SEM-gap-scaling-bench`. Phase 120.
-- [ ] **S05: ID contract and structure** `risk:medium` `depends:[]`
-  > CE #24 #12 #20 #21. Matrix `SEM-gap-id-and-structure`. Phase 121.
+- [x] **S04: Scaling and bench honesty** `risk:medium` `depends:[]`
+  > After this: RSS sample while dedicated runtime alive; timed as_of validated; retract/Horn/append/pin indexes constant in N. Oracles `m054_scaling_bench`. Matrix SEM-m054-scale-* killed. Landed: Phase 120.
+- [x] **S05: ID contract and structure** `risk:medium` `depends:[]`
+  > After this: UUID v8 derived EventIds; shrink SHA; SEM + kinds family splits. Oracles `m054_event_id` / `m054_id_structure`. Matrix SEM-m054-id-* killed. Landed: Phase 121.
 
 ## M053: CE whole-repo regression enrolment — CLOSED (GSD v0.47)
 

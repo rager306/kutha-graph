@@ -1565,26 +1565,120 @@ rows:
     gate: default
     owner: M054-S03
     source: Phase 119 / CE whole-repo #34
-  - id: SEM-gap-scaling-bench
+  - id: SEM-m054-scale-bench-rss
     plane: product
-    invariant: incremental append / retract / premise / pin indexes and honest RSS+as_of bench validation
+    invariant: bytes_per_fact RSS sample is taken while the dedicated fill_plain runtime is still alive
     layer: bench
-    oracle: []
-    kill_mutation: pending CE whole-repo #15 #16 #17 #19 #25 #27 apply-queue
-    status: gap
+    oracle:
+      - bench_rss_samples_after_dedicated_runtime_is_built
+    kill_mutation: read RSS after dropping the sample runtime so the delta measures the wrong heap
+    status: killed
     gate: default
     owner: M054-S04
-    source: CE whole-repo 2026-10-11 triage Hot-path scaling group
-  - id: SEM-gap-id-and-structure
+    source: Phase 120 / CE whole-repo #15
+  - id: SEM-m054-scale-bench-asof
     plane: product
-    invariant: content-derived EventId UUID contract; SEM helper and kinds.py family splits; shrink corpus SHA
+    invariant: timed as_of result is validated against the expected relatedTo triple set
+    layer: bench
+    oracle:
+      - bench_validates_timed_as_of_triples
+      - as_of_matches_emitted_relatedto_triples
+    kill_mutation: discard timed as_of output without checking triples
+    status: killed
+    gate: default
+    owner: M054-S04
+    source: Phase 120 / CE whole-repo #25
+  - id: SEM-m054-scale-retract-index
+    plane: product
+    invariant: retract_derived examines derived_by_cause / live behaviors constant in unrelated N
     layer: kill
-    oracle: []
-    kill_mutation: pending CE whole-repo #24 #12 #20 #21 apply-queue
-    status: gap
+    oracle:
+      - retract_derived_visits_constant_in_n
+    kill_mutation: retract_derived scans the entire event log for every Retract
+    status: killed
+    gate: default
+    owner: M054-S04
+    source: Phase 120 / CE whole-repo #16
+  - id: SEM-m054-scale-horn-rel
+    plane: product
+    invariant: Horn premise search probes relation-keyed candidates constant in unrelated N
+    layer: kill
+    oracle:
+      - horn_search_visits_constant_in_unrelated_n
+    kill_mutation: search_at iterates all live_facts_at regardless of premise relation
+    status: killed
+    gate: default
+    owner: M054-S04
+    source: Phase 120 / CE whole-repo #17
+  - id: SEM-m054-scale-append-suffix
+    plane: product
+    invariant: incremental persist append examines only the undisclosed log suffix
+    layer: kill
+    oracle:
+      - persist_append_examines_suffix_only
+    kill_mutation: collect_new reclones the full encoded_log on every append
+    status: killed
+    gate: default
+    owner: M054-S04
+    source: Phase 120 / CE whole-repo #19
+  - id: SEM-m054-scale-pin-index
+    plane: product
+    invariant: rule and policy pin lookups are constant in product N
+    layer: kill
+    oracle:
+      - pin_lookups_constant_in_product_n
+    kill_mutation: pin checks scan all live facts for kutha:rule / kutha:policy
+    status: killed
+    gate: default
+    owner: M054-S04
+    source: Phase 120 / CE whole-repo #27
+  - id: SEM-m054-id-uuid-v8
+    plane: product
+    invariant: content-derived EventIds (stable_derived / stable_define) are RFC 9562 UUID v8; user ingest stays v7
+    layer: kill
+    oracle:
+      - derived_event_ids_are_rfc9562_uuid_v8
+      - stable_define_event_ids_are_rfc9562_uuid_v8
+      - user_ingest_event_ids_stay_uuid_v7
+      - stable_derived_is_deterministic
+    kill_mutation: stable_derived packs raw SHA-256 prefix without UUID v8 version/variant nibbles
+    status: killed
     gate: default
     owner: M054-S05
-    source: CE whole-repo 2026-10-11 triage Wire ID + Test-helper groups
+    source: Phase 121 / CE whole-repo #24
+  - id: SEM-m054-id-shrink-sha
+    plane: product
+    invariant: shrink corpus filenames use kutha_common::sha256_hex (not local FNV)
+    layer: kill
+    oracle:
+      - shrink_corpus_filename_uses_sha256_hex
+    kill_mutation: save_shrunk_to hashes with a local FNV accumulator
+    status: killed
+    gate: default
+    owner: M054-S05
+    source: Phase 121 / CE whole-repo #20
+  - id: SEM-m054-id-sem-split
+    plane: product
+    invariant: SEM helper is split into named modules (generator/oracles/shrink/persistence)
+    layer: kill
+    oracle:
+      - sem_helper_is_split_into_named_modules
+    kill_mutation: restore a single flat tests/common/sem.rs megamodule
+    status: killed
+    gate: default
+    owner: M054-S05
+    source: Phase 121 / CE whole-repo #12
+  - id: SEM-m054-id-kinds-split
+    plane: harness
+    invariant: kinds.py keeps run_step/RUNNERS; policy families live in sibling modules
+    layer: governor
+    oracle:
+      - test-matrix
+    kill_mutation: restore planning/cargo/matrix families inline in kinds.py (pytest test_m054_id_structure)
+    status: killed
+    gate: default
+    owner: M054-S05
+    source: Phase 121 / CE whole-repo #21
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

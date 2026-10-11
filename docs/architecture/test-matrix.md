@@ -111,7 +111,11 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M054 S02 (Persist durability):** Phase 118 — `SEM-m054-persist-torn-heal`, `SEM-m054-persist-gen-unique` `killed` (owner `M054-S02`). `SEM-gap-persist-poison` (#6) stays `gap` until decision-gate.
 
-**M054 S03 (Governor honesty):** Phase 119 — `SEM-m054-gov-plan-budget`, `SEM-m054-gov-matrix-schema`, `SEM-m054-gov-pool-once` `killed` (owner `M054-S03`). Residual classes remain `gap` under M054-S04–S05.
+**M054 S03 (Governor honesty):** Phase 119 — `SEM-m054-gov-plan-budget`, `SEM-m054-gov-matrix-schema`, `SEM-m054-gov-pool-once` `killed` (owner `M054-S03`).
+
+**M054 S04 (Scaling + bench):** Phase 120 — `SEM-m054-scale-bench-rss` / `bench-asof` / `retract-index` / `horn-rel` / `append-suffix` / `pin-index` `killed` (owner `M054-S04`).
+
+**M054 S05 (ID + structure):** Phase 121 — `SEM-m054-id-uuid-v8` / `id-shrink-sha` / `id-sem-split` / `id-kinds-split` `killed` (owner `M054-S05`). `SEM-gap-persist-poison` (#6) remains the only CE residual gap.
 
 `unowned` is rejected by the governor check.
 

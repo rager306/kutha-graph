@@ -35,8 +35,16 @@ Pin scheme (full-branch #24 / M051) stays `SEM-m051-pin-compat-policy` — disti
 | Governor #14 PLAN budget | #14 | `SEM-m054-gov-plan-budget` | M054-S03 |
 | Governor #22/#23 matrix | #22 #23 | `SEM-m054-gov-matrix-schema` | M054-S03 |
 | Governor #34 pool once | #34 | `SEM-m054-gov-pool-once` | M054-S03 |
-| Scaling + bench | #15 #16 #17 #19 #25 #27 | `SEM-gap-scaling-bench` | M054-S04 |
-| ID + structure | #24 #12 #20 #21 | `SEM-gap-id-and-structure` | M054-S05 |
+| Scaling #15 RSS | #15 | `SEM-m054-scale-bench-rss` | M054-S04 |
+| Scaling #25 as_of | #25 | `SEM-m054-scale-bench-asof` | M054-S04 |
+| Scaling #16 retract | #16 | `SEM-m054-scale-retract-index` | M054-S04 |
+| Scaling #17 Horn rel | #17 | `SEM-m054-scale-horn-rel` | M054-S04 |
+| Scaling #19 append | #19 | `SEM-m054-scale-append-suffix` | M054-S04 |
+| Scaling #27 pin | #27 | `SEM-m054-scale-pin-index` | M054-S04 |
+| ID #24 UUID v8 | #24 | `SEM-m054-id-uuid-v8` | M054-S05 |
+| ID #20 shrink SHA | #20 | `SEM-m054-id-shrink-sha` | M054-S05 |
+| ID #12 SEM split | #12 | `SEM-m054-id-sem-split` | M054-S05 |
+| ID #21 kinds split | #21 | `SEM-m054-id-kinds-split` | M054-S05 |
 
 Adjacent residuals (#26 #28 #29 #30 #35 #36 and P2 eligibility) stay on the advisory follow-on list until a leased slice names them.
 

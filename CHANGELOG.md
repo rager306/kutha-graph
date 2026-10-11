@@ -4,6 +4,34 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Trajectory: M054 / GSD v0.48 closed
+
+### Trajectory
+
+- M054 / GSD v0.48 closed (Phases 117–121). Active Milestone **None**; `L_delivery=M054-closed`. Audit: `.planning/milestones/v0.48-MILESTONE-AUDIT.md`. **#6 poison** remains decision-gate (`SEM-gap-persist-poison`). Honeycomb stays Proposed.
+
+## 2026-10-11 — Product/Process: ID and structure (Phase 121)
+
+### Product
+
+- #24 content-derived EventIds are RFC 9562 UUID v8 (`stable_derived` / `stable_define`); user ingest stays v7. #20 shrink corpus uses `kutha_common::sha256_hex`. #12 SEM helper split into named modules. Oracles `m054_event_id` + `m054_id_structure`.
+- Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈116.4M / `as_of.n` ≈307.6k vs Phase 120 ≈106.2M / ≈299.9k (+9.6% / +2.6%) and vs Phase 80 ≈122.5M / ≈299.6k (−5.0% / +2.7%).
+
+### Process
+
+- #21 kinds.py family split (`kind_planning` / `kind_cargo` / `kind_matrix`); RUNNERS stay in `kinds.py`. Matrix `SEM-m054-id-*` killed. `121-VERIFICATION.md` passed.
+
+## 2026-10-11 — Product/Process: Scaling and bench honesty (Phase 120)
+
+### Product
+
+- #15/#25 bench: RSS while dedicated sample alive; timed `as_of` triples validated. #16/#17/#19/#27: `derived_by_cause`, relation-keyed Horn probe, append suffix-only, rule/policy pin maps. Oracles `m054_scaling_bench` (7).
+- Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈106.2M / `as_of.n` ≈299.9k vs pre-change `70b76ce` ≈103.2M / ≈285.2k (+2.9% / +5.2%) and vs Phase 80 ≈122.5M / ≈299.6k (−13.3% / +0.1%).
+
+### Process
+
+- Matrix killed: `SEM-m054-scale-bench-rss` / `bench-asof` / `retract-index` / `horn-rel` / `append-suffix` / `pin-index`. `120-VERIFICATION.md` passed.
+
 ## 2026-10-11 — Process: Governor honesty (Phase 119) + lease M054-S04
 
 ### Process
