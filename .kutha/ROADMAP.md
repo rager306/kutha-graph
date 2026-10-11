@@ -201,7 +201,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M056: Advisory residual close — PARTIAL (GSD v0.50)
+## M056: Advisory residual close — ACTIVE (GSD v0.50)
 
 Process debt first (lease-bundle vs trajectory), then persist heal #29/#30, then eligibility #26/#28. Honeycomb stays Proposed. `L_delivery=M056-S03-done`.
 
