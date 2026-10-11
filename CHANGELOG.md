@@ -9,7 +9,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Product
 
 - Added `m052_cascade_atomic` oracles: a later-hop Horn whose head is never interned (`ghostRel`) must `Err` without growing log, fold, or outcomes; inverse_knows still writes `QuantumOutcome`.
-- Fixed `commit_user_cascade`: a later-hop `rule_follow_ons` / admit error rolls back through `fork_at` so log, fold, and outcomes stay unchanged; the staged hop sequence and `QuantumOutcome` commit together on success.
+- Fixed `commit_user_cascade`: a later-hop `rule_follow_ons` / admit error rolls back through `fork_at` so log, fold, and outcomes stay unchanged; the staged hop sequence and `QuantumOutcome` commit together on success. Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈111.4M / `as_of.n` ≈294.1k vs Phase 111 ≈116.2M / ≈272.7k (−4.1% / +7.8%) and vs Phase 80 ≈122.5M / ≈299.6k (−9.1% / −1.8%).
 
 ### Process
 
