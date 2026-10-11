@@ -18,16 +18,25 @@
 - [x] **PERS-10**: generation-unique segment names before manifest swap
 - [ ] **PERS-06**: blocked until human decision-gate lifts
 
-### S03 — Governor honesty (Phase 119) — leased
+### S03 — Governor honesty (Phase 119) — complete
 
-- [ ] **GOV-14**: artifact-budget PLAN gate non-vacuous
-- [ ] **GOV-22**: matrix schema rejection
-- [ ] **GOV-23**: matrix row typing rejection
-- [ ] **GOV-34**: pool at-most-once on submit failure
+- [x] **GOV-14**: artifact-budget PLAN gate non-vacuous
+- [x] **GOV-22**: matrix schema rejection
+- [x] **GOV-23**: matrix row typing rejection
+- [x] **GOV-34**: pool at-most-once on submit failure
 
-### S04–S05
+### S04 — Scaling and bench (Phase 120) — leased
 
-See ROADMAP slice After-this lines; requirements filled when each slice is leased.
+- [ ] **SCALE-15**: RSS sample measured before read
+- [ ] **SCALE-25**: timed as_of result validated
+- [ ] **SCALE-16**: index derived children before retracts
+- [ ] **SCALE-17**: Horn premise relation-keyed probe
+- [ ] **SCALE-19**: incremental append from undisclosed suffix
+- [ ] **SCALE-27**: rule/policy pin index
+
+### S05
+
+See ROADMAP; filled when leased.
 
 ## Out of Scope
 
