@@ -1384,6 +1384,19 @@ rows:
     gate: default
     owner: M052-S03
     source: Phase 114 / CE review P1 #7
+  - id: SEM-m052-open-replay
+    plane: product
+    invariant: snapshot-free Define/terms open runs replay_check; an empty-pin unreproducible log that snapshot-backed open rejects also fails without snapshot.json
+    layer: kill
+    oracle:
+      - snapshot_backed_open_rejects_empty_pin_inverse
+      - define_backed_open_without_snapshot_rejects_empty_pin_inverse
+      - terms_backed_open_without_snapshot_rejects_empty_pin_inverse
+    kill_mutation: finish_open skips replay_check so Define/terms reconstruction after removing snapshot.json admits an empty-pin inverse_knows log that snapshot-backed open rejects
+    status: killed
+    gate: default
+    owner: M052-S04
+    source: "Phase 115 / CE review P1 #11"
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

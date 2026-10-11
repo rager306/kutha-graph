@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Product: snapshot-free open replay (Phase 115)
+
+### Product
+
+- Added `m052_open_replay` oracles: empty-pin `inverse_knows` (RULE-04) is rejected on snapshot-backed open and on Define/terms reconstruction after `snapshot.json` is removed.
+- Fixed `finish_open`: `replay_check` runs on every reconstruction path (snapshot, Define, terms, empty) before sidecar hydrate, so dropping the snapshot lease cannot admit an unreproducible log. Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈103.9M / `as_of.n` ≈299.2k vs Phase 114 ≈106.7M / ≈303.3k (−2.6% / −1.4%) and vs Phase 80 ≈122.5M / ≈299.6k (−15.2% / −0.1%).
+
+### Process
+
+- Matrix row `SEM-m052-open-replay` (owner `M052-S04`). `.kutha/ROADMAP.md` names M052-S04 so the owner resolves. No new governor check; budget stays 76.
+
+### Trajectory
+
+- Honeycomb cells remain **Proposed**. Lease stays with the controller (`.kutha/STATE.md` untouched). M052-S04 / CE whole-repo P1 #11.
+
 ## 2026-10-11 — Product: lock before heal (Phase 114)
 
 ### Product

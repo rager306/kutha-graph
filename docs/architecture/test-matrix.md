@@ -19,17 +19,17 @@ Each YAML row is one invariant. `oracle` is a list of real `#[test]` function na
 
 ## Counts (this file)
 
-Counted from `test-matrix.yaml` rows on 2026-10-11 (M052 S03). Recount after you edit the YAML; do not invent a coverage percentage.
+Counted from `test-matrix.yaml` rows on 2026-10-11 (M052 S04). Recount after you edit the YAML; do not invent a coverage percentage.
 
 | Status | Rows |
 |--------|------|
-| killed | 102 |
+| killed | 103 |
 | characterization | 11 |
 | gap | 0 |
 | blocked | 0 |
 | spec-only | 4 |
 | gate | 1 |
-| **total** | **118** |
+| **total** | **119** |
 
 Planes: product vs harness. Layers: decision, characterization, property, crash, kill, governor, bench.
 
@@ -102,6 +102,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.
+
+**M052 S04 (snapshot-free open replay):** Phase 115 — `SEM-m052-open-replay` `killed` (owner `M052-S04`). Oracles: `snapshot_backed_open_rejects_empty_pin_inverse`, `define_backed_open_without_snapshot_rejects_empty_pin_inverse`, `terms_backed_open_without_snapshot_rejects_empty_pin_inverse`.
 
 `unowned` is rejected by the governor check.
 

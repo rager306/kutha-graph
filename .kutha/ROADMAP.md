@@ -212,7 +212,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S03: Lock before heal** `risk:high` `depends:[S02]`
   > After this: attach locks before heal/write; Phase 114. Landed: `SEM-m052-lock-before-heal`; `114-VERIFICATION.md`.
 - [ ] **S04: Snapshot-free open replay** `risk:high` `depends:[S03]`
-  > After this: all open paths run replay_check; Phase 115.
+  > After this: all open paths run replay_check; Phase 115. Landed: `SEM-m052-open-replay`; `115-VERIFICATION.md`. Checkbox stays open while `.kutha/STATE.md` still leases S04 (this executor does not close the lease).
 
 ## M051: Pin scheme v1 stability vectors — CLOSED (GSD v0.45)
 
