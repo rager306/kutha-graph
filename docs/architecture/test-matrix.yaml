@@ -1372,6 +1372,18 @@ rows:
     gate: default
     owner: M052-S02
     source: Phase 113 / CE review P1 #8
+  - id: SEM-m052-lock-before-heal
+    plane: product
+    invariant: attach does not heal or write before kutha.lock; a losing concurrent attach is WouldBlock with store bytes unchanged
+    layer: kill
+    oracle:
+      - losing_attach_while_writer_holds_lock_does_not_heal
+      - attach_heals_interrupted_seal_after_lock_released
+    kill_mutation: Persister::attach calls attach_holding (heal_interrupted_active_seal) before acquire_store_write_lock so a losing attach publishes a healed manifest then fails WouldBlock
+    status: killed
+    gate: default
+    owner: M052-S03
+    source: Phase 114 / CE review P1 #7
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

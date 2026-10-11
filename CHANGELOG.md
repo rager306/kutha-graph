@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Product: lock before heal (Phase 114)
+
+### Product
+
+- Added `m052_lock_before_heal` oracles: a second `Persister::attach` while the writer holds `kutha.lock` after an interrupted rollover seal is `WouldBlock` with store bytes unchanged; attach still finishes the seal once the lock is free.
+- Fixed `Persister::attach`: pre-lock `attach_holding` is read-only (COMMIT-01 `InvalidData` on a dirty tail still wins over `WouldBlock`); `heal_interrupted_active_seal` runs only after `acquire_store_write_lock`. Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈106.7M / `as_of.n` ≈303.3k vs Phase 113 ≈111.4M / ≈294.1k (−4.2% / +3.1%) and vs Phase 80 ≈122.5M / ≈299.6k (−12.9% / +1.2%).
+
+### Process
+
+- Matrix row `SEM-m052-lock-before-heal` (owner `M052-S03`). `.kutha/ROADMAP.md` names M052-S03 so the owner resolves. No new governor check; budget stays 76.
+
+### Trajectory
+
+- Honeycomb cells remain **Proposed**. Lease stays with the controller (`.kutha/STATE.md` untouched). M052-S03 / CE whole-repo P1 #7.
+
 ## 2026-10-11 — Process: CE whole-repo triage correction (Phase 112)
 
 ### Process
