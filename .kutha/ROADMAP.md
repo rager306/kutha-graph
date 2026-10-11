@@ -201,9 +201,11 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M056: Advisory residual close — ACTIVE (GSD v0.50)
+## M056: Advisory residual close — CLOSED (GSD v0.50)
 
-Process debt first (lease-bundle vs trajectory), then persist heal #29/#30, then eligibility #26/#28. Honeycomb stays Proposed. `L_delivery=M056-S04-done`.
+**Closed:** S01–S05 delivered 2026-10-12. Process tag `v0.50`. Honeycomb stays Proposed.
+
+Process debt first (lease-bundle vs trajectory), then persist heal #29/#30, then eligibility #26/#28, then hygiene. `L_delivery=M056-closed`.
 
 - [x] **S01: Lease-bundle honesty** `risk:low` `depends:[]`
   > After this: gsd-auto lease commit includes ROADMAP open checkbox + README status so trajectory/state-readme stay green; matrix SEM-m056-lease-bundle killed. Phase 123. Landed.
@@ -213,8 +215,8 @@ Process debt first (lease-bundle vs trajectory), then persist heal #29/#30, then
   > After this: keyed retry requires same-relation live support (#26). Phase 125. Landed.
 - [x] **S04: NormView derived Correct eligibility** `risk:medium` `depends:[S03]`
   > After this: Correct of derived head re-validates replacement vs rule (#28). Phase 126. Landed.
-- [ ] **S05: Hygiene** `risk:low` `depends:[S04]`
-  > After this: VERIFICATION uv-only (#35); statute fixture single-language (#36). Phase 127.
+- [x] **S05: Hygiene** `risk:low` `depends:[S04]`
+  > After this: VERIFICATION uv-only (#35); statute fixture single-language (#36). Phase 127. Landed.
 
 ## M055: Append tip rollback (CE #6) — CLOSED (GSD v0.49)
 

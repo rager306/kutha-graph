@@ -57,7 +57,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.47 | 116 | M053 | S01 | CE review regression enrolment + M054 gap map | shipped 2026-10-11 |
 | v0.48 | 117–121 | M054 | S01–S05 | CE residual gaps (Horn → persist → governor → scaling → ID) | shipped 2026-10-11 |
 | v0.49 | 122 | M055 | S01 | CE #6 append tip rollback (Other keep-lock; poison after rollover) | shipped 2026-10-11 |
-| v0.50 | 123–127 | M056 | S01–S05 | advisory residuals (lease-bundle → persist #29/#30 → #26/#28 → hygiene) | in progress |
+| v0.50 | 123–127 | M056 | S01–S05 | advisory residuals (lease-bundle → persist #29/#30 → #26/#28 → hygiene) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

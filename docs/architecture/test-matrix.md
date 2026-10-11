@@ -127,6 +127,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M056 S04 (NormView derived Correct):** Phase 126 — `SEM-m056-norm-view-derived-correct` `killed` (owner `M056-S04`).
 
+**M056 S05 (hygiene):** Phase 127 — `SEM-m056-hygiene-uv-only` / `hygiene-fixture-lang` `killed` (owner `M056-S05`).
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

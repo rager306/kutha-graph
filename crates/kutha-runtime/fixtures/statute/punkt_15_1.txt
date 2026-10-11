@@ -1,2 +1,1 @@
 пункт 15.1 действует до 01.01.2028
-(law-nexus syn-001 / C01 quote — test data only; not an ADR-090 pack thaw)

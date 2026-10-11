@@ -264,6 +264,7 @@ cells:
       # Phase 84 / M025 S04 — demo fixtures; cell still Proposed
       - demo_art12_norm_view_force_cuts_differ
       - demo_punkt_sunset_norm_view_unknown_after_valid_to
+      - demo_punkt_fixture_is_single_language
       - demo_edition_promulgation_knowledge_not_force
       # Phase 62 / M019 S07 — list-scan model vs fold; cell still Proposed
       - bitemporal_model_matches_fold_live_at_and_as_of

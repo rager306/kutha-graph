@@ -7,13 +7,13 @@ exit: 0
 commands:
   - {cmd: "uv run kutha-gov py", exit: 0}
   - {cmd: "uv run pytest scripts/tests -q", exit: 0}
-  - {cmd: "python -m kutha_gov --jobs 1|2|4|default --root tmp/p58-head precommit", exit: 0}
-  - {cmd: "python -m kutha_gov --jobs 1|2|4|default --root tmp/p58-head ci", exit: 0}
-  - {cmd: "python -m kutha_gov --root tmp/p58-base ci  # e4b80f8", exit: 0}
-  - {cmd: "python -m kutha_gov --jobs 1|default --root tmp/p58-c1 selftest", exit: 0}
-  - {cmd: "python -m kutha_gov --jobs 0|abc|-3 precommit", exit: 2}
-  - {cmd: "python -m kutha_gov --jobs 4 --root tmp/p58-boom precommit", exit: 1}
-  - {cmd: "python -m kutha_gov --jobs 4 --root tmp/p58-kill precommit  # SIGKILL worker", exit: 1}
+  - {cmd: "uv run kutha-gov --jobs 1|2|4|default --root tmp/p58-head precommit", exit: 0}
+  - {cmd: "uv run kutha-gov --jobs 1|2|4|default --root tmp/p58-head ci", exit: 0}
+  - {cmd: "uv run kutha-gov --root tmp/p58-base ci  # e4b80f8", exit: 0}
+  - {cmd: "uv run kutha-gov --jobs 1|default --root tmp/p58-c1 selftest", exit: 0}
+  - {cmd: "uv run kutha-gov --jobs 0|abc|-3 precommit", exit: 2}
+  - {cmd: "uv run kutha-gov --jobs 4 --root tmp/p58-boom precommit", exit: 1}
+  - {cmd: "uv run kutha-gov --jobs 4 --root tmp/p58-kill precommit  # SIGKILL worker", exit: 1}
   - {cmd: "uv run kutha-gov precommit|selftest|ci  # live", exit: 0}
 read_only_inputs:
   - scripts/kutha_gov/parallel.py

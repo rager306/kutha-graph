@@ -1592,6 +1592,39 @@ rows:
     gate: default
     owner: M056-S04
     source: Phase 126 / CE whole-repo #28
+  - id: SEM-m056-hygiene-uv-only
+    plane: harness
+    invariant: VERIFICATION command records invoke kutha-gov via uv, not ambient python -m
+    layer: governor
+    oracle:
+      - verification-uv-only
+    kill_mutation: VERIFICATION frontmatter records python -m kutha_gov
+    status: killed
+    gate: default
+    owner: M056-S05
+    source: Phase 127 / CE whole-repo #35
+  - id: SEM-m056-hygiene-fixture-lang
+    plane: product
+    invariant: statute fixture punkt_15_1.txt is single-language (Russian payload; English metadata outside)
+    layer: kill
+    oracle:
+      - demo_punkt_fixture_is_single_language
+    kill_mutation: English law-nexus annotation line restored in punkt_15_1.txt
+    status: killed
+    gate: default
+    owner: M056-S05
+    source: Phase 127 / CE whole-repo #36
+  - id: SEM-m056-hygiene-fixture-gov
+    plane: harness
+    invariant: statute-fixture-single-lang governor check keeps punkt_15_1.txt free of English metadata needles
+    layer: governor
+    oracle:
+      - statute-fixture-single-lang
+    kill_mutation: selftest restore English law-nexus annotation in punkt_15_1.txt
+    status: killed
+    gate: default
+    owner: M056-S05
+    source: Phase 127 / CE whole-repo #36
   - id: SEM-m054-gov-plan-budget
     plane: harness
     invariant: artifact-budget PLAN gate keys off live CONTEXT and requires per-phase CONTEXT→PLAN correspondence

@@ -357,6 +357,18 @@ invariants:
     disposition: check
     check: pin-compat-policy
 
+  - id: I-verification-uv-only
+    claim: "VERIFICATION command records invoke kutha-gov via uv, not ambient python -m"
+    source: ".planning/phases/127-hygiene/127-CONTEXT.md"
+    disposition: check
+    check: verification-uv-only
+
+  - id: I-statute-fixture-single-lang
+    claim: "Statute fixture punkt_15_1.txt is single-language; English metadata stays outside the payload"
+    source: ".planning/phases/127-hygiene/127-CONTEXT.md"
+    disposition: check
+    check: statute-fixture-single-lang
+
   - id: I-test-matrix-kind
     claim: "Test-matrix consistency cannot be expressed as yaml_map_list (ROADMAP slice ids are M###-S##, not literal tokens; killed requires a non-none kill_mutation that is not characterization-shaped)"
     source: "docs/process/governor-intake.md"

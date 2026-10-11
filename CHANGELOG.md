@@ -4,6 +4,23 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: M056 / GSD v0.50 closed
+
+### Trajectory
+
+- M056 / GSD v0.50 closed (Phases 123–127). Active Milestone **None**; `L_delivery=M056-closed`. Audit: `.planning/milestones/v0.50-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-12 — Product/Process: hygiene (Phase 127)
+
+### Product
+
+- #36: `punkt_15_1.txt` is Russian-only; English metadata lives in `m025_demo_fixtures.rs`. Oracle `demo_punkt_fixture_is_single_language`.
+- Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈118.3M / `as_of.n` ≈393.7k vs M056-S04 ≈110.7M / ≈261.4k (+6.9% / +50.6%; as_of noisy, fixture-only change).
+
+### Process
+
+- #35: archive `58-VERIFICATION.md` commands use `uv run kutha-gov`. Checks `verification-uv-only` / `statute-fixture-single-lang`; invariants; FSM budget 78. Matrix `SEM-m056-hygiene-*` killed. `127-VERIFICATION.md` passed.
+
 ## 2026-10-12 — Trajectory: lease M056-S05 (hygiene)
 
 ### Trajectory

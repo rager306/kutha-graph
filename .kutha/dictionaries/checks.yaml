@@ -1401,6 +1401,52 @@ checks:
           pattern: "def test_ci_fsm_reaches_ok_with_stubbed_observe"
           with: "def test_ci_green_on_this_tree"
 
+  - id: verification-uv-only
+    description: >-
+      VERIFICATION command records invoke kutha-gov via uv (CE whole-repo #35).
+      Ambient python/-m replay can select the wrong interpreter.
+    steps:
+      - kind: glob_absent
+        glob: ".planning/**/*VERIFICATION.md"
+        needles:
+          - "python -m kutha_gov"
+          - "python3 -m kutha_gov"
+        category: oracle
+        message: "VERIFICATION still records ambient python kutha_gov: {needle}"
+    selftest:
+      mutations:
+        # Selftest copy drops `.planning/milestones/`; mutate a living phase VERIFICATION.
+        - op: replace_regex
+          path: .planning/phases/126-norm-view-derived-correct/126-VERIFICATION.md
+          pattern: "uv run kutha-gov ci"
+          with: "python -m kutha_gov ci"
+
+  - id: statute-fixture-single-lang
+    description: >-
+      Statute fixture punkt_15_1.txt stays single-language (CE whole-repo #36).
+      English metadata belongs outside the payload file.
+    steps:
+      - kind: file_absent
+        path: crates/kutha-runtime/fixtures/statute/punkt_15_1.txt
+        needles:
+          - "law-nexus"
+          - "ADR-090"
+          - "test data only"
+        category: oracle
+        message: "statute fixture mixes English metadata into payload: {needle}"
+      - kind: file_contains
+        path: crates/kutha-runtime/fixtures/statute/punkt_15_1.txt
+        needles: ["15.1", "2028"]
+        require: all
+        category: oracle
+        message: "statute fixture missing required payload tokens: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: crates/kutha-runtime/fixtures/statute/punkt_15_1.txt
+          pattern: "(пункт 15\\.1 действует до 01\\.01\\.2028)"
+          with: "\\1\n(law-nexus syn-001 / C01 quote — test data only; not an ADR-090 pack thaw)"
+
   - id: parallel-check-error-parity
     description: >-
       check.run exceptions are check-error under jobs=1 and jobs>1; worker-error

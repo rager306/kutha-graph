@@ -10,6 +10,9 @@ const ART12: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/fixtures/statute/art12_speed.txt"
 ));
+/// Russian-only payload (CE #36). English metadata stays in this module, not
+/// in the fixture file (law-nexus syn-001 / C01 quote — test data only; not an
+/// ADR-090 pack thaw).
 const PUNKT: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/fixtures/statute/punkt_15_1.txt"
@@ -28,6 +31,21 @@ fn demo_fixtures_are_nonempty_real_text() {
     assert!(
         !ART12.contains("ADR-090 pack Accepted"),
         "fixtures must not claim pack thaw"
+    );
+}
+
+/// M056 S05 / CE #36: punkt fixture is single-language (Russian payload only).
+#[test]
+fn demo_punkt_fixture_is_single_language() {
+    assert!(
+        PUNKT.contains("пункт") && PUNKT.contains("действует"),
+        "payload must stay Russian"
+    );
+    assert!(
+        !PUNKT.contains("law-nexus")
+            && !PUNKT.contains("ADR-090")
+            && !PUNKT.contains("test data only"),
+        "English metadata must not live in the fixture file"
     );
 }
 
