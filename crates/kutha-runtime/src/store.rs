@@ -881,9 +881,10 @@ fn runtime_err(e: RuntimeError) -> std::io::Error {
 }
 
 pub use crate::persist_append::{
-    abort_checkpoint_snapshot_before_rename, append_with_event_failpoint, append_with_failpoint,
-    checkpoint_with_failpoint, pending_append_len, persist_log_sync_count,
-    reset_persist_log_sync_count, AppendStep, Persister, CHECKPOINT_EVERY,
+    abort_checkpoint_snapshot_before_rename, append_examine_count, append_with_event_failpoint,
+    append_with_failpoint, checkpoint_with_failpoint, pending_append_len, persist_log_sync_count,
+    reset_append_examine_count, reset_persist_log_sync_count, AppendStep, Persister,
+    CHECKPOINT_EVERY,
 };
 
 #[doc(hidden)]

@@ -162,6 +162,7 @@ impl Runtime {
         let mut out = Vec::new();
         let mut retracting = HashSet::new();
         for e in self.log.iter() {
+            self.retract_examine.bump();
             let Op::Behavior {
                 caused_by,
                 rule_version,
@@ -192,6 +193,7 @@ impl Runtime {
         // DET-02-stable copy would leave drop-tamper stamps unchanged.
         let except = HashSet::from([premise]);
         for e in self.log.iter() {
+            self.retract_examine.bump();
             let Op::Behavior { .. } = &e.op else {
                 continue;
             };

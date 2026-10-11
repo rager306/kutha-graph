@@ -2,10 +2,10 @@
 
 use crate::hydrate::outcomes_from_events;
 use crate::quantum::Runtime;
-use crate::segment::{self, HEADER_LEN, MANIFEST_REL, SealedMeta};
+use crate::segment::{self, SealedMeta, HEADER_LEN, MANIFEST_REL};
 use crate::store::{
-    EVENTS_JSONL, EVENTS_WAL, encoded_log, json_err, replace_snapshot, sync_dir,
-    write_justifications, write_outcomes, write_terms,
+    encoded_log, json_err, replace_snapshot, sync_dir, write_justifications, write_outcomes,
+    write_terms, EVENTS_JSONL, EVENTS_WAL,
 };
 use crate::wal;
 use kutha_common::{Event, EventId, Op};
@@ -16,6 +16,23 @@ use std::path::{Path, PathBuf};
 
 thread_local! {
     static ABORT_CHECKPOINT_SNAPSHOT_RENAME: Cell<bool> = const { Cell::new(false) };
+    static APPEND_EXAMINE: Cell<u64> = const { Cell::new(0) };
+}
+
+fn bump_append_examine() {
+    APPEND_EXAMINE.with(|c| c.set(c.get().saturating_add(1)));
+}
+
+/// Rows considered while building an incremental append batch (tests; not SoT).
+#[doc(hidden)]
+pub fn append_examine_count() -> u64 {
+    APPEND_EXAMINE.with(|c| c.get())
+}
+
+/// Reset the incremental-append examine counter.
+#[doc(hidden)]
+pub fn reset_append_examine_count() {
+    APPEND_EXAMINE.with(|c| c.set(0));
 }
 
 /// Automatic sidecar/snapshot refresh after this many appended events (D-06).
@@ -567,6 +584,9 @@ fn collect_new(p: &Persister, runtime: &Runtime) -> std::io::Result<Vec<Event>> 
         return Err(invalid("runtime dictionary shorter than durable dict"));
     }
     let encoded = encoded_log(runtime);
+    for _ in &encoded {
+        bump_append_examine();
+    }
     if encoded.len() < p.durable_count && strings.len() == p.dict_len {
         return Err(invalid("runtime log shorter than durable_count"));
     }

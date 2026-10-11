@@ -5,8 +5,8 @@ use crate::log::EventLog;
 use crate::materializer::{CsrMaterializer, Materializer};
 use crate::receipt::QuantumReceipt;
 use kutha_common::{
-    Event, EventId, KUTHA_RESERVED_RELS, Op, TermDictionary, TermId, TransactionTime, ValidTime,
-    WallTime, rule_definition_hash,
+    rule_definition_hash, Event, EventId, Op, TermDictionary, TermId, TransactionTime, ValidTime,
+    WallTime, KUTHA_RESERVED_RELS,
 };
 use rustc_hash::FxHashMap;
 use std::fmt;
@@ -301,6 +301,8 @@ pub struct Runtime {
     pub(crate) by_delivery_key: IngestMap<(TermId, String), EventId>,
     /// Rows visited on ingest lookup paths (tests; not SoT).
     pub(crate) ingest_examine: IngestExamine,
+    /// Log rows visited in `retract_derived` (tests; not SoT).
+    pub(crate) retract_examine: IngestExamine,
 }
 
 impl Default for Runtime {
@@ -326,6 +328,7 @@ impl Runtime {
             by_event_id: IngestMap::default(),
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
+            retract_examine: IngestExamine::default(),
         };
         for name in KUTHA_RESERVED_RELS {
             rt.intern_silent(name);
@@ -413,6 +416,16 @@ impl Runtime {
     /// Log/fact rows visited on ingest lookup paths since reset.
     pub fn ingest_examine_count(&self) -> u64 {
         self.ingest_examine.get()
+    }
+
+    /// Reset retract-derived examine counter (integration tests; not fingerprint input).
+    pub fn reset_retract_examine_count(&self) {
+        self.retract_examine.reset();
+    }
+
+    /// Log rows visited in `retract_derived` since reset.
+    pub fn retract_examine_count(&self) -> u64 {
+        self.retract_examine.get()
     }
 
     /// Pre-size ingest index leases for an expected bulk load (bench / importer).

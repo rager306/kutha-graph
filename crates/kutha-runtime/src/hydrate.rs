@@ -2,7 +2,7 @@
 use crate::fold::GraphFold;
 use crate::log::EventLog;
 use crate::quantum::{
-    IngestExamine, PersistedQuantumOutcome, Runtime, RuntimeError, op_affects_fold,
+    op_affects_fold, IngestExamine, PersistedQuantumOutcome, Runtime, RuntimeError,
 };
 use crate::snapshot::Snapshot;
 use kutha_common::{Event, Op, TermDictionary};
@@ -104,6 +104,7 @@ impl Runtime {
             by_event_id: IngestMap::default(),
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
+            retract_examine: IngestExamine::default(),
         };
         rt.hydrate_from_log();
         rt
@@ -146,6 +147,7 @@ impl Runtime {
             by_event_id: IngestMap::default(),
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
+            retract_examine: IngestExamine::default(),
         };
         rt.hydrate_from_log();
         Ok(rt)
@@ -173,6 +175,7 @@ impl Runtime {
             by_event_id: IngestMap::default(),
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
+            retract_examine: IngestExamine::default(),
         };
         rt.hydrate_from_log();
         rt
