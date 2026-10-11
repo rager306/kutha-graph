@@ -218,6 +218,41 @@ class TestMatrixCheckTests(unittest.TestCase):
         self.assertTrue(cats, msg="unparsable matrix must be HIGH")
         self.assertTrue(any(c in {"yaml", "missing"} for c in cats) or cats)
 
+    def test_wrong_schema_is_high(self) -> None:
+        matrix = _VALID_MATRIX.replace(
+            "schema: kutha-test-matrix/v1",
+            "schema: kutha-test-matrix/v0",
+            1,
+        )
+        cats = _highs(_scratch(matrix=matrix))
+        self.assertIn("matrix-schema", cats)
+
+    def test_missing_schema_is_high(self) -> None:
+        matrix = _VALID_MATRIX.replace("schema: kutha-test-matrix/v1\n", "", 1)
+        cats = _highs(_scratch(matrix=matrix))
+        self.assertIn("matrix-schema", cats)
+
+    def test_scalar_rows_are_high(self) -> None:
+        matrix = """\
+schema: kutha-test-matrix/v1
+rows:
+  - just-a-string
+  - 42
+"""
+        cats = _highs(_scratch(matrix=matrix))
+        self.assertTrue(
+            {"yaml-select", "matrix-fields"} & set(cats),
+            msg=cats,
+        )
+
+    def test_mixed_scalar_and_mapping_rows_are_high(self) -> None:
+        matrix = _VALID_MATRIX.replace("rows:\n", "rows:\n  - not-a-map\n", 1)
+        cats = _highs(_scratch(matrix=matrix))
+        self.assertTrue(
+            {"yaml-select", "matrix-fields"} & set(cats),
+            msg=cats,
+        )
+
     def test_live_tree_has_no_high(self) -> None:
         result = _check().run(Context(root=ROOT))
         highs = [f.format() for f in result.findings if f.severity is Severity.HIGH]

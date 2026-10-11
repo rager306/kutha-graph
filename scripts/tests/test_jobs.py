@@ -361,3 +361,58 @@ class JobsOrderingTests(unittest.TestCase):
         self.assertEqual(0, code_n, msg=out_n + err_n)
         self.assertEqual(out_1, out_n)
         self.assertLess(out_n.index("aaa-first"), out_n.index("zzz-second"))
+
+
+class JobsAtMostOnceTests(unittest.TestCase):
+    """CE #34: submit-after-first-success must not re-run accepted checks."""
+
+    def test_submit_after_first_success_runs_missing_serial_once(self) -> None:
+        from concurrent.futures import Future
+        from unittest.mock import patch
+
+        from kutha_gov.parallel import run_checks_parallel
+        from kutha_gov.protocol import Check, CheckResult, Context
+
+        class CountingCheck(Check):
+            def __init__(self, name: str) -> None:
+                self.name = name
+                self.description = name
+                self.runs = 0
+
+            def run(self, ctx: Context) -> CheckResult:
+                self.runs += 1
+                return CheckResult(check=self.name)
+
+        class FailAfterFirstPool:
+            def __init__(self, *args: object, **kwargs: object) -> None:
+                self.n = 0
+
+            def __enter__(self) -> FailAfterFirstPool:
+                return self
+
+            def __exit__(self, *args: object) -> bool:
+                return False
+
+            def submit(self, fn: object, payload: object) -> Future:
+                self.n += 1
+                if self.n > 1:
+                    raise RuntimeError("submit-after-first-success")
+                fut: Future = Future()
+                fut.set_result(fn(payload))  # type: ignore[misc, operator]
+                return fut
+
+        alpha = CountingCheck("alpha")
+        beta = CountingCheck("beta")
+        ctx = Context(root=ROOT, jobs=2)
+        with patch("kutha_gov.parallel.ProcessPoolExecutor", FailAfterFirstPool):
+            results, extra = run_checks_parallel(
+                [("alpha", alpha), ("beta", beta)],
+                ctx,
+            )
+        self.assertEqual(1, alpha.runs, msg="accepted submit must not re-run serial")
+        self.assertEqual(1, beta.runs, msg="missing check runs serial once")
+        self.assertEqual(["alpha", "beta"], [r.check for r in results])
+        self.assertTrue(
+            any(f.category == "pool-fallback" for f in extra),
+            msg=[f.category for f in extra],
+        )

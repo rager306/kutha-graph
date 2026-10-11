@@ -11,12 +11,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 
+import yaml  # noqa: E402
+
 from kutha_gov.__main__ import main  # noqa: E402
 from kutha_gov.checks import get_checks  # noqa: E402
 from kutha_gov.dictionary import DictCheck  # noqa: E402
 from kutha_gov.kinds import run_step  # noqa: E402
 from kutha_gov.protocol import CheckResult, Context, Finding, Severity  # noqa: E402
 from kutha_gov.rust_source import first_assert_macro_span, parse_fns, strip_noise  # noqa: E402
+from kutha_gov.selftest import _derive_mutations  # noqa: E402
 
 
 class HarnessTests(unittest.TestCase):
@@ -1883,6 +1886,120 @@ class VerificationIndependentTests(unittest.TestCase):
             },
         )
         self.assertEqual(["frontmatter"], _rust_highs(result))
+
+
+_PLAN_BUDGET_STEP: dict[str, object] = {
+    "kind": "glob_max_lines",
+    "glob": ".planning/phases/*-*/*-PLAN.md",
+    "min_phase": 22,
+    "min_hits": 1,
+    "when_glob_exists": ".planning/phases/*-*/*-CONTEXT.md",
+    "correspond_glob": ".planning/phases/*-*/*-CONTEXT.md",
+    "max": 150,
+    "max_files_per_dir": 2,
+}
+
+
+def _artifact_budget_plan_step() -> dict[str, object]:
+    loaded = yaml.safe_load(
+        (ROOT / ".kutha" / "dictionaries" / "checks.yaml").read_text(encoding="utf-8")
+    )
+    row = next(c for c in loaded["checks"] if c.get("id") == "artifact-budget")
+    return next(s for s in row["steps"] if str(s.get("glob", "")).endswith("PLAN.md"))
+
+
+class ArtifactBudgetHonestyTests(unittest.TestCase):
+    """CE #14: PLAN min_hits must not idle on the same empty PLAN glob."""
+
+    def test_plan_step_gates_on_context_not_plan_glob(self) -> None:
+        plan = _artifact_budget_plan_step()
+        self.assertEqual(
+            ".planning/phases/*-*/*-CONTEXT.md",
+            plan.get("when_glob_exists"),
+        )
+        self.assertNotEqual(plan.get("when_glob_exists"), plan.get("glob"))
+        self.assertEqual(
+            ".planning/phases/*-*/*-CONTEXT.md",
+            plan.get("correspond_glob"),
+        )
+
+    def test_artifact_budget_context_without_plan_is_high(self) -> None:
+        root = _rust_tree(
+            {
+                ".planning/phases/22-x/22-CONTEXT.md": "ctx\n",
+                ".planning/phases/22-x/22-SUMMARY.md": "sum\n",
+                ".planning/phases/22-x/22-VERIFICATION.md": "ver\n",
+            }
+        )
+        result = get_checks(ROOT)["artifact-budget"].run(Context(root=root))
+        self.assertIn("min-hits", _rust_highs(result))
+
+    def test_artifact_budget_peer_phase_without_plan_is_high(self) -> None:
+        root = _rust_tree(
+            {
+                ".planning/phases/22-a/22-CONTEXT.md": "a\n",
+                ".planning/phases/22-a/22-01-PLAN.md": "plan\n",
+                ".planning/phases/22-a/22-SUMMARY.md": "sum\n",
+                ".planning/phases/22-a/22-VERIFICATION.md": "ver\n",
+                ".planning/phases/23-b/23-CONTEXT.md": "b\n",
+            }
+        )
+        result = get_checks(ROOT)["artifact-budget"].run(Context(root=root))
+        self.assertIn("correspond", _rust_highs(result))
+
+    def test_glob_max_lines_correspond_open_context_without_plan_is_high(self) -> None:
+        root = _rust_tree(
+            {
+                ".planning/phases/22-a/22-CONTEXT.md": "a\n",
+                ".planning/phases/22-a/22-01-PLAN.md": "plan\n",
+                ".planning/phases/23-b/23-CONTEXT.md": "b\n",
+            }
+        )
+        result = _rust_run(root, _PLAN_BUDGET_STEP)
+        self.assertIn("correspond", _rust_highs(result))
+
+    def test_glob_max_lines_correspond_skip_closed_verification_without_plan(self) -> None:
+        root = _rust_tree(
+            {
+                ".planning/phases/22-a/22-CONTEXT.md": "a\n",
+                ".planning/phases/22-a/22-01-PLAN.md": "plan\n",
+                ".planning/phases/22-a/22-SUMMARY.md": "sum\n",
+                ".planning/phases/86-b/86-CONTEXT.md": "b\n",
+                ".planning/phases/86-b/86-VERIFICATION.md": "ver\n",
+            }
+        )
+        step = dict(_PLAN_BUDGET_STEP)
+        step["correspond_skip_if"] = "*-VERIFICATION.md"
+        result = _rust_run(root, step)
+        self.assertEqual([], _rust_highs(result))
+
+    def test_artifact_budget_idle_without_context_allows_empty_plan(self) -> None:
+        root = _rust_tree({})
+        result = get_checks(ROOT)["artifact-budget"].run(Context(root=root))
+        self.assertEqual([], _rust_highs(result))
+
+    def test_selftest_derives_delete_only_plan_files(self) -> None:
+        root = _rust_tree(
+            {
+                ".planning/phases/22-x/22-CONTEXT.md": "ctx\n",
+                ".planning/phases/22-x/22-01-PLAN.md": "plan\n",
+            }
+        )
+        units = _derive_mutations([_PLAN_BUDGET_STEP], root)
+        deletes = [
+            m.get("path")
+            for unit in units
+            for m in unit
+            if m.get("op") == "delete_file"
+        ]
+        self.assertTrue(
+            any(str(path).endswith("-PLAN.md") for path in deletes),
+            msg=f"expected PLAN delete_file mutation, got {units!r}",
+        )
+        self.assertFalse(
+            any(str(path).endswith("-CONTEXT.md") for path in deletes),
+            msg=f"CONTEXT must remain: {units!r}",
+        )
 
 
 if __name__ == "__main__":
