@@ -1532,16 +1532,39 @@ rows:
     gate: default
     owner: M054-S02
     source: CE whole-repo 2026-10-11 #6 decision-gate (human)
-  - id: SEM-gap-governor-honesty
+  - id: SEM-m054-gov-plan-budget
     plane: harness
-    invariant: artifact-budget PLAN gate, matrix schema/row typing, pool at-most-once on submit failure
+    invariant: artifact-budget PLAN gate keys off live CONTEXT and requires per-phase CONTEXT→PLAN correspondence
     layer: governor
-    oracle: []
-    kill_mutation: pending CE whole-repo #14 #22 #23 #34 apply-queue
-    status: gap
+    oracle:
+      - artifact-budget
+    kill_mutation: PLAN min_hits disabled by when_glob_exists on the same empty PLAN glob (pytest test_artifact_budget_context_without_plan_is_high)
+    status: killed
     gate: default
     owner: M054-S03
-    source: CE whole-repo 2026-10-11 triage Governor honesty group
+    source: Phase 119 / CE whole-repo #14
+  - id: SEM-m054-gov-matrix-schema
+    plane: harness
+    invariant: test_matrix rejects schema other than kutha-test-matrix/v1 and non-mapping rows
+    layer: governor
+    oracle:
+      - test-matrix
+    kill_mutation: kinds.test_matrix accepts unknown schema or filters non-dict rows silently (pytest test_wrong_schema_is_high)
+    status: killed
+    gate: default
+    owner: M054-S03
+    source: Phase 119 / CE whole-repo #22 #23
+  - id: SEM-m054-gov-pool-once
+    plane: harness
+    invariant: parallel pool submit failure does not re-run already-submitted checks
+    layer: governor
+    oracle:
+      - parallel-check-error-parity
+    kill_mutation: dict-comprehension submit leaves accepted futures running then serial-reruns all checks (pytest test_submit_after_first_success_runs_missing_serial_once)
+    status: killed
+    gate: default
+    owner: M054-S03
+    source: Phase 119 / CE whole-repo #34
   - id: SEM-gap-scaling-bench
     plane: product
     invariant: incremental append / retract / premise / pin indexes and honest RSS+as_of bench validation

@@ -209,8 +209,8 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
   > After this: Correct/CI-caused re-fire eligible; non-trigger retract drops derived; head VT = premise×pin conjunction; full-cover dedup + uncovered residuals; no duplicate derived Retract. Oracles `m054_horn_soundness`. Matrix SEM-m054-horn-* killed. Landed: Phase 117.
 - [x] **S02: Persist durability** `risk:high` `depends:[]`
   > After this: torn empty active healed on open_for_append; generation-unique segment names before manifest swap. #6 poison stays decision-gate (`SEM-gap-persist-poison`). Oracles `m054_persist_durability`. Landed: Phase 118.
-- [ ] **S03: Governor honesty** `risk:medium` `depends:[]`
-  > CE #14 #22 #23 #34. Matrix `SEM-gap-governor-honesty`. Phase 119.
+- [x] **S03: Governor honesty** `risk:medium` `depends:[]`
+  > After this: PLAN budget on CONTEXT; matrix schema/rows fail-closed; pool at-most-once. Matrix SEM-m054-gov-* killed. Landed: Phase 119.
 - [ ] **S04: Scaling and bench honesty** `risk:medium` `depends:[]`
   > CE #15 #16 #17 #19 #25 #27. Matrix `SEM-gap-scaling-bench`. Phase 120.
 - [ ] **S05: ID contract and structure** `risk:medium` `depends:[]`

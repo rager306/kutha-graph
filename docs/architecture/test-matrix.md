@@ -109,7 +109,9 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M054 S01 (Horn soundness):** Phase 117 — `SEM-m054-horn-correct-eligible`, `SEM-m054-horn-nontrigger-retract`, `SEM-m054-horn-vt-intersect`, `SEM-m054-horn-residual-dedup`, `SEM-m054-horn-no-dup-retract` `killed` (owner `M054-S01`).
 
-**M054 S02 (Persist durability):** Phase 118 — `SEM-m054-persist-torn-heal`, `SEM-m054-persist-gen-unique` `killed` (owner `M054-S02`). `SEM-gap-persist-poison` (#6) stays `gap` until decision-gate. Residual classes remain `gap` under M054-S03–S05.
+**M054 S02 (Persist durability):** Phase 118 — `SEM-m054-persist-torn-heal`, `SEM-m054-persist-gen-unique` `killed` (owner `M054-S02`). `SEM-gap-persist-poison` (#6) stays `gap` until decision-gate.
+
+**M054 S03 (Governor honesty):** Phase 119 — `SEM-m054-gov-plan-budget`, `SEM-m054-gov-matrix-schema`, `SEM-m054-gov-pool-once` `killed` (owner `M054-S03`). Residual classes remain `gap` under M054-S04–S05.
 
 `unowned` is rejected by the governor check.
 

@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Process: Governor honesty (Phase 119) + lease M054-S04
+
+### Process
+
+- #14 artifact-budget PLAN gate keys off CONTEXT + per-phase correspond_glob. #22/#23 test_matrix rejects wrong schema and non-mapping rows. #34 parallel pool submit is at-most-once (missing-only serial fallback). Pytest oracles in `test_kutha_gov` / `test_test_matrix` / `test_jobs`. Matrix `SEM-m054-gov-plan-budget` / `gov-matrix-schema` / `gov-pool-once` killed. `119-VERIFICATION.md` passed. Budget stays 76.
+
+### Trajectory
+
+- M054-S03 done. Active Slice **S04** (`L_delivery=M054-S03-done`): scaling + bench honesty. **#6 decision-gate** stays human. Honeycomb stays Proposed.
+
 ## 2026-10-11 — Product/Process: Persist durability (Phase 118) + lease M054-S03
 
 ### Product
