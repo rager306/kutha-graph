@@ -619,9 +619,10 @@ pub fn open_report(dir: &Path) -> std::io::Result<(Runtime, OpenReport)> {
 
 /// Rewrite files when the opened prefix needs heal, then attach.
 ///
-/// Heal runs when `committed_prefix` hid events, or when a legacy store's
+/// Heal runs when `committed_prefix` hid events, when a legacy store's
 /// jsonl tip is ahead of WAL so attach would fail despite `dropped==0`
-/// (CE review #30).
+/// (CE review #30), or when the active segment's scan consumed length is
+/// shorter than the physical file (CE whole-repo #9 torn empty-active tail).
 pub fn open_for_append(dir: &Path) -> std::io::Result<(Runtime, Persister)> {
     open_for_append_until(dir, None)
 }
@@ -642,10 +643,12 @@ fn open_for_append_until(
     fs::create_dir_all(dir)?;
     let lock = acquire_store_write_lock(dir)?;
     let (rt, report) = open_report(dir)?;
-    // Heal when COMMIT-01 hid a suffix, or when jsonl tip is ahead of WAL so
-    // attach would fail despite dropped_uncommitted==0 (CE review #30).
+    // Heal when COMMIT-01 hid a suffix, when jsonl tip is ahead of WAL so
+    // attach would fail despite dropped_uncommitted==0 (CE review #30), or
+    // when the active scan stopped short of the physical file (CE #9).
     let needs_heal = report.dropped_uncommitted > 0
-        || crate::persist_append::legacy_attach_needs_rewrite(dir, &rt)?;
+        || crate::persist_append::legacy_attach_needs_rewrite(dir, &rt)?
+        || crate::segment::active_scan_needs_heal(dir)?;
     if needs_heal {
         persist_unlocked(&rt, dir, stop_after)?;
     }

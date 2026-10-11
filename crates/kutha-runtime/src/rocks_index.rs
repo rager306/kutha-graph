@@ -5,11 +5,11 @@
 //! `m:sealed` (per-sealed seq+chain), `m:digest` (crc32 of `e:` key||value).
 //! Values are fixed locators / ids / meta — never event payloads.
 
-use crate::segment::{self, HEADER_LEN, MANIFEST_REL, Manifest};
+use crate::segment::{self, Manifest, HEADER_LEN, MANIFEST_REL};
 use crate::store;
 use crc32fast::Hasher;
 use kutha_common::{Event, EventId, Op};
-use rocksdb::{DB, Direction, IteratorMode, Options};
+use rocksdb::{Direction, IteratorMode, Options, DB};
 use std::fs::{self, File};
 use std::io::{self, Error, ErrorKind, Read, Seek, SeekFrom};
 use std::path::{Path, PathBuf};
@@ -359,7 +359,7 @@ fn stored_tip(db: &DB) -> io::Result<Tip> {
 }
 
 fn read_frame(store_dir: &Path, loc: Locator) -> io::Result<Event> {
-    let path = store_dir.join(segment::segment_name(loc.seq));
+    let path = segment::segment_path_for_seq(store_dir, loc.seq)?;
     let mut file = File::open(&path).map_err(|err| {
         if err.kind() == ErrorKind::NotFound {
             invalid(format!("locator segment missing: {}", path.display()))

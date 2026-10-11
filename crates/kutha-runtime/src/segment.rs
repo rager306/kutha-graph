@@ -8,16 +8,18 @@
 //! anchored. Empty/segmented persist writes this layout in plan 54-02; legacy dirs
 //! stay jsonl+WAL.
 
-use crate::store::{json_err, replace_via_tmp};
+use crate::store::{json_err, replace_via_tmp, sync_dir};
 use crate::wal;
 use crc32fast::Hasher;
 use kutha_common::{Event, EventId};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::cell::Cell;
+use std::collections::HashSet;
 use std::fs::{self, File};
 use std::io::Write;
 use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicU64, Ordering};
 
 pub(crate) const MAGIC: &[u8; 8] = b"KUTHASEG";
 pub(crate) const VERSION: u32 = 1;
@@ -123,6 +125,22 @@ fn payload_frame(payload: &[u8]) -> Vec<u8> {
 
 pub(crate) fn segment_name(seq: u32) -> String {
     format!("seg-{seq:08}.log")
+}
+
+fn persist_generation_token() -> u64 {
+    static N: AtomicU64 = AtomicU64::new(1);
+    let n = N.fetch_add(1, Ordering::Relaxed);
+    let nanos = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_nanos() as u64)
+        .unwrap_or(0);
+    n.wrapping_mul(0x9E37_79B9_7F4A_7C15) ^ nanos ^ (std::process::id() as u64).rotate_left(17)
+}
+
+/// Persist writes every segment under a generation-unique name so a crash
+/// before the manifest swap cannot clobber files an older manifest still names.
+fn persist_segment_name(seq: u32) -> String {
+    format!("seg-{seq:08}-{:016x}.log", persist_generation_token())
 }
 
 pub(crate) fn write_header(f: &mut impl Write, prev: [u8; 32]) -> std::io::Result<()> {
@@ -450,11 +468,37 @@ pub(crate) fn parse_seg_seq(name: &str) -> std::io::Result<u32> {
         .strip_prefix("seg-")
         .and_then(|s| s.strip_suffix(".log"))
         .ok_or_else(|| invalid(format!("invalid segment name {name}")))?;
-    if rest.len() != 8 || !rest.as_bytes().iter().all(|b| b.is_ascii_digit()) {
+    let seq_part = match rest.split_once('-') {
+        Some((seq, generation)) => {
+            if generation.is_empty() || !generation.as_bytes().iter().all(|b| b.is_ascii_hexdigit())
+            {
+                return Err(invalid(format!("invalid segment name {name}")));
+            }
+            seq
+        }
+        None => rest,
+    };
+    if seq_part.len() != 8 || !seq_part.as_bytes().iter().all(|b| b.is_ascii_digit()) {
         return Err(invalid(format!("invalid segment name {name}")));
     }
-    rest.parse::<u32>()
+    seq_part
+        .parse::<u32>()
         .map_err(|_| invalid(format!("invalid segment name {name}")))
+}
+
+/// Resolve the live file for `seq` from the manifest (generation-unique names).
+#[cfg(feature = "rocks-index")]
+pub(crate) fn segment_path_for_seq(dir: &Path, seq: u32) -> std::io::Result<PathBuf> {
+    let man = read_manifest(dir)?;
+    if parse_seg_seq(&man.active)? == seq {
+        return Ok(dir.join(&man.active));
+    }
+    for entry in &man.sealed {
+        if parse_seg_seq(&entry.name)? == seq {
+            return Ok(dir.join(&entry.name));
+        }
+    }
+    Err(invalid(format!("no live segment with seq {seq}")))
 }
 
 pub(crate) fn read_manifest(dir: &Path) -> std::io::Result<Manifest> {
@@ -590,6 +634,20 @@ pub(crate) fn inspect_active(path: &Path) -> std::io::Result<ActiveTip> {
     })
 }
 
+/// True when the active segment's scan consumed length is shorter than the
+/// physical file (torn/garbage tail). `open_for_append` rewrites the opened
+/// committed prefix under `kutha.lock` before attach. Legacy jsonl/WAL dirs
+/// always return false.
+pub(crate) fn active_scan_needs_heal(dir: &Path) -> std::io::Result<bool> {
+    if !dir.join(MANIFEST_REL).exists() {
+        return Ok(false);
+    }
+    let manifest = read_manifest(dir)?;
+    let bytes = fs::read(dir.join(&manifest.active))?;
+    let scan = scan_segment(&bytes, false)?;
+    Ok(scan.consumed != bytes.len())
+}
+
 /// Finish an interrupted rollover: active has a complete seal trailer but the
 /// manifest still names it as active (crash after trailer sync, before or during
 /// new-header / manifest rename). Returns true when a heal wrote the manifest.
@@ -691,20 +749,26 @@ fn split_events(events: &[Event]) -> std::io::Result<Vec<&[Event]>> {
 }
 
 /// Rewrite `dir` as sealed segments + one active + `manifest.json`. Does not touch jsonl/WAL.
+///
+/// Each segment is written under a generation-unique name and fsynced; the
+/// manifest rename is the sole visibility switch. Obsolete generation files
+/// are deleted only after the new manifest and directory entry are durable.
 pub(crate) fn persist_log(dir: &Path, events: &[Event]) -> std::io::Result<()> {
     fs::create_dir_all(dir)?;
     let chunks = split_events(events)?;
     let mut seq = 1u32;
     let mut sealed = Vec::new();
     let last_i = chunks.len().saturating_sub(1);
-    let mut active = segment_name(seq);
+    let mut active = persist_segment_name(seq);
     let mut prev = [0u8; 32];
+    let mut live = HashSet::new();
     for (i, chunk) in chunks.iter().enumerate() {
-        let name = segment_name(seq);
+        let name = persist_segment_name(seq);
         seq = seq.saturating_add(1);
         let is_sealed = i != last_i;
         let (meta, tip) = write_segment_file(&dir.join(&name), chunk, is_sealed, prev)?;
         prev = tip;
+        live.insert(name.clone());
         if let Some(meta) = meta {
             sealed.push(meta);
         }
@@ -719,5 +783,21 @@ pub(crate) fn persist_log(dir: &Path, events: &[Event]) -> std::io::Result<()> {
             sealed,
             active,
         },
-    )
+    )?;
+    remove_obsolete_segments(dir, &live)?;
+    sync_dir(dir)?;
+    Ok(())
+}
+
+fn remove_obsolete_segments(dir: &Path, live: &HashSet<String>) -> std::io::Result<()> {
+    for ent in fs::read_dir(dir)? {
+        let ent = ent?;
+        let Ok(name) = ent.file_name().into_string() else {
+            continue;
+        };
+        if name.starts_with("seg-") && name.ends_with(".log") && !live.contains(&name) {
+            fs::remove_file(ent.path())?;
+        }
+    }
+    Ok(())
 }

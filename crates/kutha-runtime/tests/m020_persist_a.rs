@@ -1,7 +1,7 @@
 //! M020 S03 / Phase 65 — atomic segment rewrite (PA-01 / PA-02).
 
 use kutha_common::Op;
-use kutha_runtime::{Runtime, store};
+use kutha_runtime::{store, Runtime};
 use std::ffi::OsString;
 use std::fs;
 use std::os::unix::fs::MetadataExt;
@@ -73,21 +73,29 @@ fn tmp_sibling(path: &Path) -> PathBuf {
     PathBuf::from(os)
 }
 
-/// PA-01: re-persist must replace the active segment via rename (inode changes).
+/// PA-01: re-persist must mint a generation-unique active name (inode changes).
 #[test]
 fn segment_inode_changes_on_persist_rename() {
     let mut rt = seed_runtime();
     let dir = persist_dir("seg-ino");
     store::persist(&rt, &dir).unwrap();
     let path = active_seg(&dir);
+    let name1 = path.file_name().unwrap().to_string_lossy().into_owned();
     let ino1 = fs::metadata(&path).unwrap().ino();
     emit_product_assert(&mut rt, "p65-ino-article", "p65-ino-80");
     store::persist(&rt, &dir).unwrap();
-    let ino2 = fs::metadata(&path).unwrap().ino();
+    let path2 = active_seg(&dir);
+    let name2 = path2.file_name().unwrap().to_string_lossy().into_owned();
+    let ino2 = fs::metadata(&path2).unwrap().ino();
     assert_ne!(
-        ino1, ino2,
-        "active segment must be replaced via tmp+rename (inode must change)"
+        name1, name2,
+        "re-persist must not reuse the previous live segment name"
     );
+    assert!(
+        !path.exists(),
+        "obsolete generation must be deleted after the new manifest is durable"
+    );
+    assert_ne!(ino1, ino2, "new generation active must be a distinct inode");
     let _ = fs::remove_dir_all(&dir);
 }
 
