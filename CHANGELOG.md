@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Trajectory: lease M055-S01 (#6 append tip rollback)
+
+### Trajectory
+
+- Active Milestone **M055**, Active Slice **S01** (`L_delivery=M054-closed`): CE whole-repo #6 — rollback physical tip on post-write append failure before `remember_appended`; keep `Other` lock+retry; poison only after committed rollover. Honeycomb stays Proposed.
+
 ## 2026-10-11 — Trajectory: M054 / GSD v0.48 closed
 
 ### Trajectory
