@@ -6,7 +6,7 @@ mod common;
 
 use std::path::{Path, PathBuf};
 
-use common::sem::{
+use common::sem::persistence::{
     PersistLayout, persist_dir, rm_dir, sealed_count, try_persist_with_layout,
 };
 use kutha_common::Op;

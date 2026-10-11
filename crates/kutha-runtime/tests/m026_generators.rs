@@ -3,7 +3,7 @@
 
 mod common;
 
-use common::sem::{MixStyle, ingest_mix, ingest_mix_n};
+use common::sem::generator::{MixStyle, ingest_mix, ingest_mix_n};
 use kutha_common::{Op, ValidTime};
 use kutha_runtime::{Runtime, RuntimeError};
 use std::path::Path;
@@ -106,10 +106,14 @@ fn facade_retract_latest_of_two_live_same_subject_vf() {
     let o_rel = rt.intern("o-rel");
     let o_force = rt.intern("o-force");
 
-    assert!(rt.as_of(ValidTime::from(2015)).contains(&(subj, related, o_rel)));
-    assert!(rt
-        .as_of(ValidTime::from(2015))
-        .contains(&(subj, in_force, o_force)));
+    assert!(
+        rt.as_of(ValidTime::from(2015))
+            .contains(&(subj, related, o_rel))
+    );
+    assert!(
+        rt.as_of(ValidTime::from(2015))
+            .contains(&(subj, in_force, o_force))
+    );
 
     rt.retract(s, vf).unwrap();
 

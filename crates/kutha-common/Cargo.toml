@@ -4,7 +4,7 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 publish.workspace = true
-description = "Lean events, UUID v7 ids, interned term map (ADR-011)"
+description = "Lean events, UUID event ids (v7 ingest / v8 derived), interned term map (ADR-011)"
 
 [dependencies]
 uuid.workspace = true

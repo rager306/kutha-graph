@@ -7,7 +7,7 @@ status: passed
 read_only_inputs:
   - .planning/phases/85-generators-oracles/85-CONTEXT.md
   - crates/kutha-runtime/tests/m026_generators.rs
-  - crates/kutha-runtime/tests/common/sem.rs
+  - crates/kutha-runtime/tests/common/sem/mod.rs
 commands:
   - { cmd: "cargo test -p kutha-runtime --test m026_generators --offline", exit: 0 }
   - { cmd: "cargo test -p kutha-runtime --test m019_sem_diff mix_generator_coverage --offline", exit: 0 }

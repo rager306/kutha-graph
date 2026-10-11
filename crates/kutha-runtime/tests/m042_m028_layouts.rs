@@ -4,10 +4,10 @@
 
 mod common;
 
-use common::sem::{
-    PersistLayout, load_shrunk, persist_dir, persist_with_layout, rm_dir, save_shrunk_to,
-    tiny_segment_limits,
+use common::sem::persistence::{
+    PersistLayout, persist_dir, persist_with_layout, rm_dir, tiny_segment_limits,
 };
+use common::sem::shrink::{load_shrunk, save_shrunk_to};
 use kutha_common::{Event, Op};
 use kutha_runtime::{Runtime, RuntimeError, store};
 
@@ -40,7 +40,11 @@ fn pad_for_rollover_seam(rt: &mut Runtime) {
     }
 }
 
-fn assert_relation_stays_revoked(opened: &mut Runtime, name: &str, allow_id: kutha_common::EventId) {
+fn assert_relation_stays_revoked(
+    opened: &mut Runtime,
+    name: &str,
+    allow_id: kutha_common::EventId,
+) {
     assert!(
         opened
             .log()
@@ -161,7 +165,11 @@ fn shrink_corpus_roundtrip_load_matches_saved() {
         .collect();
     let root = persist_dir("shrink-corpus");
     let path = save_shrunk_to(&root, 42, &events);
-    assert!(path.exists(), "save_shrunk_to must create {}", path.display());
+    assert!(
+        path.exists(),
+        "save_shrunk_to must create {}",
+        path.display()
+    );
     let loaded = load_shrunk(&path).expect("load_shrunk");
     assert_eq!(loaded, events, "corpus roundtrip must preserve Event bytes");
     // Content-addressed: same payload → same path

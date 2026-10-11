@@ -4,14 +4,23 @@
 
 mod common;
 
-use common::sem::{
-    MixStyle, PersistLayout, assert_export_preserves_event_order, assert_load_bearing,
-    assert_same_stamps_shrunk, assert_seed_budget, assert_swap_not_silent,
-    ensure_tamper_swap_bites, fail_seed, fail_shrunk, flip_manifest_chain,
-    flip_middle_segment_payload, open_fails_closed, open_must_fail_invalid_data, persist_dir,
-    persist_schedule, persist_seed_count, persist_segmented_rollover, persist_with_layout,
-    pin_error_detector, replay_check_or_shrink, replay_runtime, rm_dir, runtime_stamps,
-    seeded_persist_runtime, seeded_runtime, seeds,
+use common::sem::generator::{
+    Lcg, MixStyle, assert_seed_budget, persist_seed_count, seeded_persist_runtime, seeded_runtime,
+    seeds,
+};
+use common::sem::oracles::{
+    assert_load_bearing, assert_same_stamps_shrunk, is_product_rel, persist_stamps_disagree,
+    replay_check_or_shrink, runtime_stamps,
+};
+use common::sem::persistence::{
+    PersistLayout, assert_export_preserves_event_order, flip_manifest_chain,
+    flip_middle_segment_payload, open_export_imported, open_fails_closed,
+    open_must_fail_invalid_data, persist_dir, persist_schedule, persist_segmented_rollover,
+    persist_with_layout, pin_error_detector, rm_dir,
+};
+use common::sem::shrink::{
+    assert_swap_not_silent, ensure_tamper_swap_bites, fail_seed, fail_shrunk, fold_affecting_user,
+    replay_runtime,
 };
 use kutha_common::{Op, RuleAst, RuleAtom, RuleTerm, TermId, ValidTime};
 use kutha_runtime::{FoldIndexMode, Runtime, RuntimeError, store};
@@ -128,7 +137,7 @@ fn named_vt(rt: &Runtime) -> Vec<(String, String, String, u64, Option<u64>)> {
         .fold()
         .facts()
         .iter()
-        .filter(|f| common::sem::is_product_rel(rt, f.relation) && f.invalidated_at.is_none())
+        .filter(|f| is_product_rel(rt, f.relation) && f.invalidated_at.is_none())
         .map(|f| {
             (
                 rt.dictionary().lookup(f.subject).unwrap_or("?").to_string(),
@@ -153,7 +162,7 @@ fn named_vt(rt: &Runtime) -> Vec<(String, String, String, u64, Option<u64>)> {
 fn order_independence_disjoint_subjects() {
     assert_seed_budget();
     for (case, seed) in seeds().into_iter().enumerate() {
-        let mut lcg = common::sem::Lcg::from_seed(seed);
+        let mut lcg = Lcg::from_seed(seed);
         let facts = [("u0", "o0"), ("u1", "o1"), ("u2", "o2"), ("u3", "o3")];
         let emit = |rt: &mut Runtime, pairs: &[(&str, &str)]| {
             let rel = rt.intern("relatedTo");
@@ -252,7 +261,7 @@ fn persist_roundtrip_random_layouts() {
                     seed,
                     i * 2 + pass,
                     rt.log().as_slice(),
-                    |prefix| common::sem::persist_stamps_disagree(&rt, prefix, case.layout, seed),
+                    |prefix| persist_stamps_disagree(&rt, prefix, case.layout, seed),
                     &format!("persist+open {:?}: {e}", case.layout),
                 );
             });
@@ -279,7 +288,7 @@ fn persist_roundtrip_random_layouts() {
             }
             if case.export {
                 let dst = persist_dir("meta-exp");
-                let imported = common::sem::open_export_imported(&dir, &dst);
+                let imported = open_export_imported(&dir, &dst);
                 assert_same_stamps_shrunk(
                     &rt,
                     &imported,
@@ -321,7 +330,7 @@ fn replay_tamper_flip_swap_drop_never_silently_equal() {
         ensure_tamper_swap_bites(&mut rt);
         let orig = runtime_stamps(&rt);
         let events = rt.log().as_slice().to_vec();
-        let users = common::sem::fold_affecting_user(&events, &rt);
+        let users = fold_affecting_user(&events, &rt);
         assert!(
             users.len() >= 2,
             "seed={seed}: need ≥2 fold-affecting product ops to tamper"
@@ -581,19 +590,43 @@ fn horn_correct_interval_prefix_suffix_derived_remain_live() {
     })
     .unwrap();
     assert!(
-        live_triple(&rt, bob, rt.dictionary().id("knownBy").unwrap(), alice, 2012),
+        live_triple(
+            &rt,
+            bob,
+            rt.dictionary().id("knownBy").unwrap(),
+            alice,
+            2012
+        ),
         "prefix residual must keep Bob knownBy Alice at VT 2012"
     );
     assert!(
-        live_triple(&rt, bob, rt.dictionary().id("knownBy").unwrap(), alice, 2021),
+        live_triple(
+            &rt,
+            bob,
+            rt.dictionary().id("knownBy").unwrap(),
+            alice,
+            2021
+        ),
         "suffix residual must keep Bob knownBy Alice at VT 2021"
     );
     assert!(
-        live_triple(&rt, carol, rt.dictionary().id("knownBy").unwrap(), alice, 2017),
+        live_triple(
+            &rt,
+            carol,
+            rt.dictionary().id("knownBy").unwrap(),
+            alice,
+            2017
+        ),
         "patch window must mint Carol knownBy Alice at VT 2017"
     );
     assert!(
-        !live_triple(&rt, bob, rt.dictionary().id("knownBy").unwrap(), alice, 2017),
+        !live_triple(
+            &rt,
+            bob,
+            rt.dictionary().id("knownBy").unwrap(),
+            alice,
+            2017
+        ),
         "Bob inverse must not be live inside the patched interval"
     );
 }

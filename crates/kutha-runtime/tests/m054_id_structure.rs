@@ -2,8 +2,8 @@
 
 mod common;
 
-use common::sem::save_shrunk_to;
-use kutha_common::{sha256_hex, Event};
+use common::sem::shrink::save_shrunk_to;
+use kutha_common::{Event, sha256_hex};
 use std::path::PathBuf;
 
 fn tmp_dir(label: &str) -> PathBuf {
@@ -54,7 +54,13 @@ fn sem_helper_is_split_into_named_modules() {
         !common.join("sem.rs").is_file(),
         "flat tests/common/sem.rs must be replaced by tests/common/sem/"
     );
-    for name in ["mod.rs", "generator.rs", "oracles.rs", "shrink.rs", "persistence.rs"] {
+    for name in [
+        "mod.rs",
+        "generator.rs",
+        "oracles.rs",
+        "shrink.rs",
+        "persistence.rs",
+    ] {
         let path = sem.join(name);
         assert!(path.is_file(), "missing SEM module {}", path.display());
     }

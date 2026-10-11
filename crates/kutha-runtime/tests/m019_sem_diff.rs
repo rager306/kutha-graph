@@ -6,14 +6,19 @@
 
 mod common;
 
-use common::sem::{
-    MixCoverage, MixStyle, PersistLayout, assert_csr_matches_fold,
-    assert_export_preserves_event_order, assert_same_stamps_shrunk, assert_seed_budget,
-    assert_views_stable, fail_shrunk, fold_stamps, ingest_mix, open_export_imported, persist_dir,
-    persist_schedule, persist_seed_count, persist_with_layout, replay_check_or_shrink,
-    replay_runtime, rm_dir, runtime_stamps, scan_mix_coverage, seeded_persist_runtime,
-    seeded_runtime, seeds, vt_cuts_for,
+use common::sem::generator::{
+    MixCoverage, MixStyle, assert_seed_budget, ingest_mix, persist_seed_count, scan_mix_coverage,
+    seeded_persist_runtime, seeded_runtime, seeds,
 };
+use common::sem::oracles::{
+    assert_csr_matches_fold, assert_same_stamps_shrunk, assert_views_stable, fold_stamps,
+    persist_stamps_disagree, replay_check_or_shrink, runtime_stamps, vt_cuts_for,
+};
+use common::sem::persistence::{
+    PersistLayout, assert_export_preserves_event_order, open_export_imported, persist_dir,
+    persist_schedule, persist_with_layout, rm_dir,
+};
+use common::sem::shrink::{fail_shrunk, replay_runtime};
 use kutha_runtime::{FoldIndexMode, GraphFold, Runtime, store};
 
 fn diff_one(seed: u32, style: MixStyle, case_base: usize) {
@@ -75,7 +80,7 @@ fn persist_roundtrip_one(
             seed,
             case,
             rt.log().as_slice(),
-            |prefix| common::sem::persist_stamps_disagree(&rt, prefix, layout, seed),
+            |prefix| persist_stamps_disagree(&rt, prefix, layout, seed),
             &format!("persist+open failed: {e}"),
         );
     });

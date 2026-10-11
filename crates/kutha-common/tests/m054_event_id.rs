@@ -30,8 +30,18 @@ fn derived_event_ids_are_rfc9562_uuid_v8() {
         behavior(1, 0, "pin-a"),
         behavior(2, 7, "pin-b"),
         behavior(99, 3, "pin-c"),
-        Event::stable_derived(Op::Retract { event_id: EventId::nil() }, 4),
-        Event::stable_derived(Op::Retract { event_id: EventId::nil() }, 11),
+        Event::stable_derived(
+            Op::Retract {
+                event_id: EventId::nil(),
+            },
+            4,
+        ),
+        Event::stable_derived(
+            Op::Retract {
+                event_id: EventId::nil(),
+            },
+            11,
+        ),
     ];
     for ev in &samples {
         assert!(

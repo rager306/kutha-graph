@@ -5,10 +5,11 @@
 
 mod common;
 
-use common::sem::{
-    EDGE_VT, MixStyle, assert_seed_budget, fail_seed, fail_shrunk, fold_stamps, ingest_mix,
-    is_product_rel, replay_runtime, runtime_stamps, seeds, sorted_as_of, sorted_live, vt_cuts_for,
+use common::sem::generator::{MixStyle, assert_seed_budget, ingest_mix, seeds};
+use common::sem::oracles::{
+    EDGE_VT, fold_stamps, is_product_rel, runtime_stamps, sorted_as_of, sorted_live, vt_cuts_for,
 };
+use common::sem::shrink::{fail_seed, fail_shrunk, replay_runtime};
 use kutha_common::{Event, EventId, Op, TermId};
 use kutha_runtime::{FoldIndexMode, GraphFold, Runtime};
 

@@ -7,7 +7,7 @@ status: passed
 read_only_inputs:
   - .planning/phases/102-m028-layouts-shrink-corpus/102-CONTEXT.md
   - crates/kutha-runtime/tests/m042_m028_layouts.rs
-  - crates/kutha-runtime/tests/common/sem.rs
+  - crates/kutha-runtime/tests/common/sem/mod.rs
   - docs/architecture/test-matrix.yaml
   - docs/ADR/ADR-023-test-strategy-and-oracle-matrix.md
 commands:

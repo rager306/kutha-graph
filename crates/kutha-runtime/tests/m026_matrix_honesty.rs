@@ -3,7 +3,7 @@
 
 mod common;
 
-use common::sem::assert_seed_budget;
+use common::sem::generator::assert_seed_budget;
 
 /// Characterization: seed floor is env policy (`KUTHA_SEEDS`), not domain semantics.
 #[test]

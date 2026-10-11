@@ -2,7 +2,11 @@ use crate::rule::{RuleAst, rule_body_hash};
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
-/// UUID v7 event identifier (ADR-000 D2 / ADR-011).
+/// Event identifier (ADR-000 D2 / ADR-011).
+///
+/// User ingest ([`Event::new`]) mints UUID v7. Content-derived constructors
+/// ([`Event::stable_derived`], [`Event::stable_define`]) encode a SHA-256
+/// prefix as RFC 9562 UUID v8 (version nibble 8, RFC 4122 variant).
 pub type EventId = Uuid;
 
 /// Interned term (hot-path integer; strings live in the dictionary lease).
@@ -285,19 +289,17 @@ impl Event {
 
     /// Name-stable `Op::Define` for persist encoding (DUR-03).
     ///
-    /// Id is the first 16 bytes of SHA-256(`kutha-define-id` || term bytes).
-    /// Live [`Event::new`] intern still mints UUID v7.
+    /// Id is RFC 9562 UUID v8 from the first 16 bytes of
+    /// SHA-256(`kutha-define-id` || term bytes), with version/variant bits
+    /// overlaid. Live [`Event::new`] intern still mints UUID v7.
     pub fn stable_define(name: impl Into<String>, ingested_at: impl Into<TransactionTime>) -> Self {
         let ingested_at = ingested_at.into().as_u64();
         let name = name.into();
         let mut h = Sha256::new();
         h.update(b"kutha-define-id");
         h.update(name.as_bytes());
-        let digest = h.finalize();
-        let mut id_bytes = [0u8; 16];
-        id_bytes.copy_from_slice(&digest[..16]);
         Self {
-            id: Uuid::from_bytes(id_bytes),
+            id: uuid_v8_from_sha256(&h.finalize()),
             op: Op::Define { name },
             ingested_at,
             object_ids: vec![],
@@ -306,9 +308,10 @@ impl Event {
 
     /// Hash-stable derived `Op::Behavior` / follow-on `Op::Retract` (DET-02).
     ///
-    /// Id is the first 16 bytes of SHA-256(`kutha-derived-id` || pin || ingested_at
-    /// || TermId bindings || ASCII `B`/`R`). Does not hash the triggering user
-    /// Assert UUID v7. Live [`Event::new`] user ingest still mints UUID v7.
+    /// Id is RFC 9562 UUID v8 from the first 16 bytes of SHA-256(`kutha-derived-id`
+    /// || pin || ingested_at || TermId bindings || ASCII `B`/`R`), with
+    /// version/variant bits overlaid. Does not hash the triggering user Assert
+    /// UUID v7. Live [`Event::new`] user ingest still mints UUID v7.
     pub fn stable_derived(op: Op, ingested_at: impl Into<TransactionTime>) -> Self {
         let ingested_at = ingested_at.into().as_u64();
         let mut h = Sha256::new();
@@ -346,10 +349,8 @@ impl Event {
             }
         };
         let digest = h.finalize();
-        let mut id_bytes = [0u8; 16];
-        id_bytes.copy_from_slice(&digest[..16]);
         Self {
-            id: Uuid::from_bytes(id_bytes),
+            id: uuid_v8_from_sha256(&digest),
             op,
             ingested_at,
             object_ids,
@@ -507,6 +508,15 @@ impl Event {
         }
         h.finalize().into()
     }
+}
+
+/// RFC 9562 UUID v8: SHA-256 prefix with version nibble 8 and RFC 4122 variant.
+fn uuid_v8_from_sha256(digest: &[u8]) -> Uuid {
+    let mut id_bytes = [0u8; 16];
+    id_bytes.copy_from_slice(&digest[..16]);
+    id_bytes[6] = (id_bytes[6] & 0x0f) | 0x80;
+    id_bytes[8] = (id_bytes[8] & 0x3f) | 0x80;
+    Uuid::from_bytes(id_bytes)
 }
 
 fn hex32(digest: [u8; 32]) -> String {

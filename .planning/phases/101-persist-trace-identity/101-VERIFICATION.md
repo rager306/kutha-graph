@@ -7,7 +7,7 @@ status: passed
 read_only_inputs:
   - .planning/phases/101-persist-trace-identity/101-CONTEXT.md
   - crates/kutha-runtime/tests/m041_persist_trace_identity.rs
-  - crates/kutha-runtime/tests/common/sem.rs
+  - crates/kutha-runtime/tests/common/sem/mod.rs
   - docs/architecture/test-matrix.yaml
   - docs/ADR/ADR-023-test-strategy-and-oracle-matrix.md
 commands:

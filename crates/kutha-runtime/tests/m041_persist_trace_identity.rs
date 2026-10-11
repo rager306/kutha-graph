@@ -5,11 +5,13 @@
 
 mod common;
 
-use common::sem::{
-    MixStyle, PersistLayout, assert_seed_budget, candidate_deps_hold, expected_open_event_ids,
-    fail_shrunk, ingest_mix, persist_dir, persist_ids_disagree, persist_seed_count,
-    persist_with_layout, rm_dir, sealed_count, seeds, shrink_events_ddmin, try_persist_with_layout,
+use common::sem::generator::{MixStyle, assert_seed_budget, ingest_mix, persist_seed_count, seeds};
+use common::sem::oracles::persist_ids_disagree;
+use common::sem::persistence::{
+    PersistLayout, expected_open_event_ids, persist_dir, persist_with_layout, rm_dir, sealed_count,
+    try_persist_with_layout,
 };
+use common::sem::shrink::{candidate_deps_hold, fail_shrunk, shrink_events_ddmin};
 use kutha_common::{Event, EventId, Op};
 use kutha_runtime::{FoldIndexMode, Runtime, store};
 
@@ -98,7 +100,10 @@ fn try_persist_rollover_tiny_does_not_panic() {
     } else {
         0
     };
-    assert!(ok == (sealed >= 2), "try_persist Rollover iff seam sealed>=2; ok={ok} sealed={sealed}");
+    assert!(
+        ok == (sealed >= 2),
+        "try_persist Rollover iff seam sealed>=2; ok={ok} sealed={sealed}"
+    );
     rm_dir(&dir);
 }
 
