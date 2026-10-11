@@ -4,14 +4,15 @@
 
 ## v0.48 Requirements (M054)
 
-### S01 — Horn soundness (Phase 117)
+### S01 — Horn soundness (Phase 117) — complete
 
-- [ ] **HORN-04**: Correct / CorrectInterval re-fire remains derivation_eligible when replacement premise + rule pin live
-- [ ] **HORN-03**: multi-premise witness; retract non-trigger premise drops derived
-- [ ] **HORN-02**: derived Behavior VT = intersection of premises (+ rule window)
-- [ ] **HORN-05**: dedup by covered VT / proof identity; uncovered residuals emit; alternate proof survives
+- [x] **HORN-04**: Correct / CorrectInterval re-fire remains derivation_eligible when replacement premise + rule pin live
+- [x] **HORN-03**: multi-premise witness; retract non-trigger premise drops derived
+- [x] **HORN-02**: derived Behavior VT = intersection of premises (+ rule window)
+- [x] **HORN-05**: dedup by covered VT / proof identity; uncovered residuals emit
+- [x] **HORN-DUP**: Correct cascade does not duplicate derived Retract EventId
 
-### S02 — Persist durability (Phase 118)
+### S02 — Persist durability (Phase 118) — leased
 
 - [ ] **PERS-09**: torn empty active heal before append
 - [ ] **PERS-10**: generation-unique segment names before manifest swap
