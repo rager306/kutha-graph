@@ -179,8 +179,7 @@ impl Runtime {
             if !matches!(RuleAst::from_canonical(bytes), Some(RuleAst::Horn { .. })) {
                 continue;
             }
-            if self.behavior_fact_live(e.id) {
-                retracting.insert(e.id);
+            if self.behavior_fact_live(e.id) && retracting.insert(e.id) {
                 out.push(Event::stable_derived(
                     Op::Retract { event_id: e.id },
                     trigger.ingested_at,
@@ -189,12 +188,14 @@ impl Runtime {
         }
         // Keep a single caused_by. Also drop live Horn heads whose body no
         // longer matches after treating P as dead (non-trigger witness).
+        // Skip P itself: the trigger Retract already names that id; a second
+        // DET-02-stable copy would leave drop-tamper stamps unchanged.
         let except = HashSet::from([premise]);
         for e in self.log.iter() {
             let Op::Behavior { .. } = &e.op else {
                 continue;
             };
-            if retracting.contains(&e.id) || !self.behavior_fact_live(e.id) {
+            if e.id == premise || retracting.contains(&e.id) || !self.behavior_fact_live(e.id) {
                 continue;
             }
             if self.horn_body_matches_except(e, &except) {

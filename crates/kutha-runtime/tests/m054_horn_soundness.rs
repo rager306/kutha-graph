@@ -1,8 +1,6 @@
 //! M054 S01 / Phase 117 — Horn soundness (CE whole-repo #4 #3 #2 #5).
 
-use kutha_common::{
-    Op, RuleAst, RuleAtom, RuleTerm, TransactionTime, ValidTime, WallTime,
-};
+use kutha_common::{Op, RuleAst, RuleAtom, RuleTerm, TransactionTime, ValidTime, WallTime};
 use kutha_runtime::{NormView, Runtime};
 
 fn two_prem_horn() -> RuleAst {
@@ -113,9 +111,10 @@ fn correct_premise_refire_is_derivation_eligible() {
     match rt.norm_view(ValidTime::from(2017), WallTime::from(2017)) {
         NormView::Ok(triples) => {
             assert!(
-                triples
-                    .iter()
-                    .any(|t| t.subject == bob && t.relation == kb && t.object == alice && t.eligible),
+                triples.iter().any(|t| t.subject == bob
+                    && t.relation == kb
+                    && t.object == alice
+                    && t.eligible),
                 "norm_view must present eligible knownBy after Correct re-fire"
             );
         }
@@ -181,10 +180,7 @@ fn retract_non_trigger_premise_drops_derived() {
         .id;
     assert!(live_triple(&rt, a, rel, c, 2017));
 
-    rt.emit(Op::Retract {
-        event_id: prem_ab,
-    })
-    .unwrap();
+    rt.emit(Op::Retract { event_id: prem_ab }).unwrap();
 
     assert!(
         !live_triple(&rt, a, rel, c, 2017),
@@ -196,6 +192,62 @@ fn retract_non_trigger_premise_drops_derived() {
             .iter()
             .any(|f| f.event_id == derived && f.invalidated_at.is_some()),
         "derived Behavior fact must be invalidated"
+    );
+}
+
+/// #3 — Correct of a live premise must emit one Retract of the old head, not a
+/// DET-02-duplicate copy when the cascade later re-validates that same head.
+#[test]
+fn correct_cascade_does_not_duplicate_derived_retract() {
+    let mut rt = Runtime::default();
+    let alice = rt.intern("Alice");
+    let bob = rt.intern("Bob");
+    let carol = rt.intern("Carol");
+    let knows = rt.intern("knows");
+
+    let prem = rt
+        .emit(Op::Assert {
+            subject: alice,
+            relation: knows,
+            object: bob,
+            valid_from: 2011,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .unwrap()
+        .receipt
+        .event_ids[0];
+
+    let old_inv = rt
+        .log()
+        .iter()
+        .find(|e| {
+            matches!(
+                &e.op,
+                Op::Behavior { caused_by, .. } if caused_by == &prem
+            )
+        })
+        .expect("knows Assert must fire inverse_knows")
+        .id;
+
+    rt.emit(Op::Correct {
+        event_id: prem,
+        object: carol,
+        valid_from: 2013,
+        valid_to: None,
+    })
+    .unwrap();
+
+    let retracts = rt
+        .log()
+        .iter()
+        .filter(|e| matches!(&e.op, Op::Retract { event_id } if *event_id == old_inv))
+        .count();
+    assert_eq!(
+        retracts, 1,
+        "Correct cascade must retract the old inverse once (got {retracts})"
     );
 }
 
