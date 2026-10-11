@@ -692,16 +692,25 @@ pub(crate) fn heal_interrupted_active_seal(dir: &Path) -> std::io::Result<bool> 
     let new_name = segment_name(old_seq.saturating_add(1));
     let new_path = dir.join(&new_name);
     if new_path.exists() {
-        let tip = inspect_active(&new_path)?;
-        if tip.events != 0 {
-            return Err(invalid(
-                "orphan next segment after interrupted seal is not empty",
-            ));
-        }
-        if tip.chain != scan.chain {
-            return Err(invalid(
-                "orphan next segment chain disagrees with sealed tip",
-            ));
+        let orphan_len = fs::metadata(&new_path)?.len();
+        // CE whole-repo #29: crash mid-header-write leaves a short unreferenced
+        // next seg; recreate instead of forwarding to parse_header truncation.
+        if orphan_len < HEADER_LEN {
+            let mut f = File::create(&new_path)?;
+            write_header(&mut f, scan.chain)?;
+            f.sync_data()?;
+        } else {
+            let tip = inspect_active(&new_path)?;
+            if tip.events != 0 {
+                return Err(invalid(
+                    "orphan next segment after interrupted seal is not empty",
+                ));
+            }
+            if tip.chain != scan.chain {
+                return Err(invalid(
+                    "orphan next segment chain disagrees with sealed tip",
+                ));
+            }
         }
     } else {
         let mut f = File::create(&new_path)?;

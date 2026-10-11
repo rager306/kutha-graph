@@ -243,6 +243,9 @@ fn migrate_until(
         let man = dir.join(crate::segment::MANIFEST_REL);
         if man.exists() {
             fs::remove_file(&man)?;
+            // CE whole-repo #30: durable unflip — dir entry must not resurrect
+            // the failed segmented manifest after power loss.
+            sync_dir(dir)?;
         }
         return Err(e);
     }

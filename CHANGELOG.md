@@ -4,6 +4,35 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Trajectory: M056-S02 done (persist heal)
+
+### Trajectory
+
+- M056-S02 done (Phase 124). Active Milestone **M056**, Active Slice **None**; `L_delivery=M056-S02-done`. Next lease: M056-S03 (#26). Honeycomb stays Proposed.
+
+## 2026-10-11 — Product/Process: persist heal residuals (Phase 124)
+
+### Product
+
+- #29: short unreferenced next-segment header (`orphan_len < HEADER_LEN`) recreated on `heal_interrupted_active_seal`. #30: migrate verify-fail removes manifest then `sync_dir`. Oracles `m056_persist_heal` (2).
+- Quiet bench three `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈107.9M / `as_of.n` ≈287.2k vs M055 ≈103.3M / ≈316.4k (+4.5% / −9.2%).
+
+### Process
+
+- Matrix `SEM-m056-persist-short-orphan` / `persist-migrate-sync` killed. `124-VERIFICATION.md` passed.
+
+## 2026-10-11 — Trajectory: close M056-S01; lease M056-S02
+
+### Trajectory
+
+- M056-S01 done (Phase 123 lease-bundle). Active Slice **S02** (`L_delivery=M056-S01-done`): persist heal #29/#30. Honeycomb stays Proposed.
+
+## 2026-10-11 — Process: lease-bundle honesty (Phase 123)
+
+### Process
+
+- gsd-auto lease is a four-surface bundle (STATE + CHANGELOG + ROADMAP open checkbox + README). Trajectory require_message cites the bundle. Pytest `LeaseBundleHonestyTests`. Matrix `SEM-m056-lease-bundle` killed. `123-VERIFICATION.md` passed.
+
 ## 2026-10-11 — Trajectory: lease M056-S01 (lease-bundle honesty)
 
 ### Trajectory

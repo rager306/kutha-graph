@@ -2002,5 +2002,53 @@ class ArtifactBudgetHonestyTests(unittest.TestCase):
         )
 
 
+class LeaseBundleHonestyTests(unittest.TestCase):
+    """M056 S01: lease must keep trajectory/state-readme green (bundle)."""
+
+    def test_contract_names_lease_bundle_surfaces(self) -> None:
+        text = (ROOT / "docs" / "process" / "gsd-auto-contract.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("Lease (bundle)", text)
+        self.assertIn("ROADMAP.md", text)
+        self.assertIn("README.md", text)
+        self.assertIn("M056 lesson", text)
+
+    def test_trajectory_require_message_cites_lease_bundle(self) -> None:
+        loaded = yaml.safe_load(
+            (ROOT / ".kutha" / "dictionaries" / "checks.yaml").read_text(
+                encoding="utf-8"
+            )
+        )
+        row = next(c for c in loaded["checks"] if c.get("id") == "trajectory")
+        step = next(
+            s
+            for s in row["steps"]
+            if s.get("kind") == "pointer_in_other_file"
+            and "require_template" in s
+        )
+        msg = str(step.get("require_message", ""))
+        self.assertIn("lease bundle", msg)
+        self.assertIn("ROADMAP", msg)
+
+    def test_leased_slice_without_open_checkbox_is_high(self) -> None:
+        root = _rust_tree(
+            {
+                ".kutha/STATE.md": (
+                    "**Active Milestone:** M056\n"
+                    "**Active Slice:** S01\n"
+                    "**Phase:** H5\n"
+                ),
+                ".kutha/ROADMAP.md": (
+                    "## M056: x\n"
+                    "- [x] **S01: done already**\n"
+                ),
+                "README.md": "M056\nH5\n",
+            }
+        )
+        result = get_checks(ROOT)["trajectory"].run(Context(root=root))
+        self.assertIn("lease-drift", _rust_highs(result))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1534,6 +1534,40 @@ rows:
     gate: default
     owner: M055-S01
     source: Phase 122 / CE whole-repo #6 tip-rollback decision
+  - id: SEM-m056-lease-bundle
+    plane: harness
+    invariant: leased Active Slice keeps trajectory green only when ROADMAP has an open checkbox and README names the milestone (lease bundle)
+    layer: governor
+    oracle:
+      - trajectory
+      - state-readme
+    kill_mutation: lease commit touches only STATE+CHANGELOG while ROADMAP marks S01 done
+    status: killed
+    gate: default
+    owner: M056-S01
+    source: Phase 123 / M056 lease false-start
+  - id: SEM-m056-persist-short-orphan
+    plane: product
+    invariant: short unreferenced next-segment after rollover header crash is recreated on heal
+    layer: crash
+    oracle:
+      - open_for_append_recreates_short_orphan_next_header
+    kill_mutation: heal_interrupted_active_seal calls inspect_active on orphan_len < HEADER_LEN
+    status: killed
+    gate: default
+    owner: M056-S02
+    source: Phase 124 / CE whole-repo #29
+  - id: SEM-m056-persist-migrate-sync
+    plane: product
+    invariant: migrate verify-fail removes manifest then sync_dir before returning
+    layer: crash
+    oracle:
+      - migrate_verify_fail_syncs_dir_after_manifest_remove
+    kill_mutation: remove_file(manifest) returns Err without sync_dir
+    status: killed
+    gate: default
+    owner: M056-S02
+    source: Phase 124 / CE whole-repo #30
   - id: SEM-m054-gov-plan-budget
     plane: harness
     invariant: artifact-budget PLAN gate keys off live CONTEXT and requires per-phase CONTEXT→PLAN correspondence

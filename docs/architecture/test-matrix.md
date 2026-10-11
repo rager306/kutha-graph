@@ -119,6 +119,10 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M055 S01 (append tip rollback):** Phase 122 — `SEM-gap-persist-poison` (#6) `killed` (owner `M055-S01`). Oracles: `segmented_wal_sync_failpoint_retry_keeps_exact_event_id_sequence`, `segmented_wal_write_failpoint_retry_keeps_exact_event_id_sequence`.
 
+**M056 S01 (lease-bundle):** Phase 123 — `SEM-m056-lease-bundle` `killed` (owner `M056-S01`).
+
+**M056 S02 (persist heal):** Phase 124 — `SEM-m056-persist-short-orphan` / `persist-migrate-sync` `killed` (owner `M056-S02`).
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

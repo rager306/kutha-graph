@@ -35,7 +35,13 @@ Pin scheme (full-branch #24 / M051) stays `SEM-m051-pin-compat-policy` — disti
 
 ## Open problem classes
 
-No CE whole-repo gap rows remain. Adjacent residuals (#26 #28 #29 #30 #35 #36 and P2 eligibility) stay on the advisory follow-on list until a leased slice names them.
+| Class | Findings | Matrix id | Owner |
+|-------|----------|-----------|-------|
+| Delivery-key same-relation | #26 | (pending) | M056-S03 |
+| NormView derived Correct | #28 | (pending) | M056-S04 |
+| Hygiene uv / fixture lang | #35 #36 | (pending) | M056-S05 |
+
+Closed this wave: #29/#30 → `SEM-m056-persist-*` (M056-S02); lease-bundle → `SEM-m056-lease-bundle` (M056-S01).
 
 ## Rule
 

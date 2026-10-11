@@ -201,14 +201,14 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M056: Advisory residual close — ACTIVE (GSD v0.50)
+## M056: Advisory residual close — PARTIAL (GSD v0.50)
 
-Process debt first (lease-bundle vs trajectory), then persist heal #29/#30, then eligibility #26/#28. Honeycomb stays Proposed.
+Process debt first (lease-bundle vs trajectory), then persist heal #29/#30, then eligibility #26/#28. Honeycomb stays Proposed. `L_delivery=M056-S02-done`.
 
-- [ ] **S01: Lease-bundle honesty** `risk:low` `depends:[]`
-  > After this: gsd-auto lease commit includes ROADMAP open checkbox + README status so trajectory/state-readme stay green; matrix SEM-m056-lease-bundle killed. Phase 123.
-- [ ] **S02: Persist heal residuals** `risk:high` `depends:[S01]`
-  > After this: short orphan next-segment header recreated on heal (#29); migrate verify-fail removes manifest then sync_dir (#30). Oracles `m056_persist_heal`. Phase 124.
+- [x] **S01: Lease-bundle honesty** `risk:low` `depends:[]`
+  > After this: gsd-auto lease commit includes ROADMAP open checkbox + README status so trajectory/state-readme stay green; matrix SEM-m056-lease-bundle killed. Phase 123. Landed.
+- [x] **S02: Persist heal residuals** `risk:high` `depends:[S01]`
+  > After this: short orphan next-segment header recreated on heal (#29); migrate verify-fail removes manifest then sync_dir (#30). Oracles `m056_persist_heal`. Phase 124. Landed.
 - [ ] **S03: Delivery-key same-relation** `risk:medium` `depends:[S02]`
   > After this: keyed retry requires same-relation live support (#26). Phase 125.
 - [ ] **S04: NormView derived Correct eligibility** `risk:medium` `depends:[S03]`

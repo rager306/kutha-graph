@@ -5,26 +5,26 @@
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
 **Active Milestone:** M056
-**Active Slice:** S01
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M055-closed
+L_delivery=M056-S02-done
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M055 closed; M056-S01 leased | Capability proven / Cypher started |
+| L_delivery | M056-S02 done (S03–S05 remain open) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M056-S01: process lease-bundle honesty — lease commit must keep trajectory/state-readme green (STATE + CHANGELOG + ROADMAP open checkbox + README status). Then S02 durability #29/#30. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+Lease M056-S03 (delivery-key same-relation #26). S01 lease-bundle + S02 persist heal (#29/#30) shipped. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 
