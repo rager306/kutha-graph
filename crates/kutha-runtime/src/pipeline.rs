@@ -249,6 +249,27 @@ impl Runtime {
     }
 
     fn commit_user_cascade(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
+        let prefix = self.log.len();
+        let next_tt = self.next_tt;
+        match self.commit_user_cascade_apply(op) {
+            Ok(outcome) => Ok(outcome),
+            Err(err) => {
+                self.rollback_user_cascade(prefix, next_tt);
+                Err(err)
+            }
+        }
+    }
+
+    /// Replay the pre-cascade log prefix so a later-hop `rule_follow_ons` / `admit`
+    /// error cannot leave a live Assert without `QuantumOutcome`.
+    fn rollback_user_cascade(&mut self, prefix: usize, next_tt: u64) {
+        if self.log.len() != prefix {
+            *self = self.fork_at(prefix);
+        }
+        self.next_tt = next_tt;
+    }
+
+    fn commit_user_cascade_apply(&mut self, op: Op) -> Result<QuantumOutcome, RuntimeError> {
         let first = Event::new(op, self.next_tt());
         let mut ids = Vec::new();
         let mut digests = Vec::new();
