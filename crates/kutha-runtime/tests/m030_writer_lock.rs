@@ -4,6 +4,7 @@
 
 use kutha_common::Op;
 use kutha_runtime::{Runtime, store};
+use std::collections::HashSet;
 use std::fs;
 use std::io::ErrorKind;
 use std::path::PathBuf;
@@ -79,12 +80,27 @@ fn failpoint_append_keeps_lock_and_writer_usable() {
     assert_writer_lock_error(&second);
 
     // Same Persister stays usable (not poisoned) and still holds the lock.
+    // WalSync may already have framed bytes visible to readers; retry must
+    // reconcile then land each graph EventId once (M055 / CE #6).
     p.append(&rt).expect("retry append after non-poison failpoint");
     let after = store::open(&dir).unwrap();
-    assert!(
-        after.log().as_slice().len() > opened.log().as_slice().len(),
-        "retry append must land new events"
-    );
+    let mut seen = HashSet::new();
+    for id in after.log().iter().map(|e| e.id) {
+        assert!(seen.insert(id), "EventId {id} duplicated after retry");
+    }
+    let want_tip = rt
+        .log()
+        .iter()
+        .filter(|e| !matches!(e.op, Op::Define { .. }))
+        .map(|e| e.id)
+        .last();
+    let got_tip = after
+        .log()
+        .iter()
+        .filter(|e| !matches!(e.op, Op::Define { .. }))
+        .map(|e| e.id)
+        .last();
+    assert_eq!(got_tip, want_tip, "retry must land the runtime graph tip");
     drop(p);
     let _ = fs::remove_dir_all(&dir);
 }

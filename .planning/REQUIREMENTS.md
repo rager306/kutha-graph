@@ -1,6 +1,12 @@
 # Requirements: Kutha
 
-**Milestones:** v0.48 / harness M054 shipped 2026-10-11. Source: `ce-review-regression-map.md` + whole-repo findings. Lease: `.kutha/STATE.md`.
+**Milestones:** v0.48 / M054 and v0.49 / M055 shipped 2026-10-11. Source: `ce-review-regression-map.md` + whole-repo findings. Lease: `.kutha/STATE.md`.
+
+## v0.49 Requirements (M055)
+
+### S01 — Append tip rollback (Phase 122) — complete
+
+- [x] **PERS-06**: post-write Other restores durable memory tip; next append rewinds crash-shaped suffix (no duplicate EventIds); poison only after committed rollover
 
 ## v0.48 Requirements (M054)
 
@@ -16,7 +22,7 @@
 
 - [x] **PERS-09**: torn empty active heal before append
 - [x] **PERS-10**: generation-unique segment names before manifest swap
-- [ ] **PERS-06**: blocked until human decision-gate lifts
+- [x] **PERS-06**: closed under M055 / Phase 122
 
 ### S03 — Governor honesty (Phase 119) — complete
 
@@ -45,6 +51,5 @@
 
 | Feature | Reason |
 |---------|--------|
-| G3 #6 poison without decision | Human decision-gate |
 | Cypher / HNSW | Thaw map |
 | Honeycomb Accepted | Proposed only |

@@ -22,31 +22,20 @@ plus `advisor-correction.md`.
 | #2 VT intersect | `SEM-m054-horn-vt-intersect` | `horn_head_vt_is_conjunction_of_premises` | M054-S01 |
 | #5 residual dedup | `SEM-m054-horn-residual-dedup` | `overlap_dedup_emits_uncovered_vt_residual` | M054-S01 |
 | #3 cascade dup Retract | `SEM-m054-horn-no-dup-retract` | `correct_cascade_does_not_duplicate_derived_retract` | M054-S01 |
+| #9 torn heal | `SEM-m054-persist-torn-heal` | `m054_persist_durability` | M054-S02 |
+| #10 gen-unique | `SEM-m054-persist-gen-unique` | `m054_persist_durability` | M054-S02 |
+| #6 tip rollback | `SEM-gap-persist-poison` | `m055_append_tip_rollback` | M055-S01 |
+| #14 PLAN budget | `SEM-m054-gov-plan-budget` | artifact-budget | M054-S03 |
+| #22/#23 matrix schema | `SEM-m054-gov-matrix-schema` | test_matrix | M054-S03 |
+| #34 pool once | `SEM-m054-gov-pool-once` | parallel pool | M054-S03 |
+| #15/#25/#16/#17/#19/#27 scaling | `SEM-m054-scale-*` | `m054_scaling_bench` | M054-S04 |
+| #24/#20/#12/#21 ID | `SEM-m054-id-*` | `m054_event_id` / `m054_id_structure` | M054-S05 |
 
 Pin scheme (full-branch #24 / M051) stays `SEM-m051-pin-compat-policy` — distinct from whole-repo EventId #24.
 
-## Open problem classes → gap rows (M054 remaining)
+## Open problem classes
 
-| Class | Findings | Matrix id | Owner |
-|-------|----------|-----------|-------|
-| Persist #9 torn heal | #9 | `SEM-m054-persist-torn-heal` | M054-S02 |
-| Persist #10 gen-unique | #10 | `SEM-m054-persist-gen-unique` | M054-S02 |
-| Persist #6 poison (gate) | #6 | `SEM-gap-persist-poison` | M054-S02 |
-| Governor #14 PLAN budget | #14 | `SEM-m054-gov-plan-budget` | M054-S03 |
-| Governor #22/#23 matrix | #22 #23 | `SEM-m054-gov-matrix-schema` | M054-S03 |
-| Governor #34 pool once | #34 | `SEM-m054-gov-pool-once` | M054-S03 |
-| Scaling #15 RSS | #15 | `SEM-m054-scale-bench-rss` | M054-S04 |
-| Scaling #25 as_of | #25 | `SEM-m054-scale-bench-asof` | M054-S04 |
-| Scaling #16 retract | #16 | `SEM-m054-scale-retract-index` | M054-S04 |
-| Scaling #17 Horn rel | #17 | `SEM-m054-scale-horn-rel` | M054-S04 |
-| Scaling #19 append | #19 | `SEM-m054-scale-append-suffix` | M054-S04 |
-| Scaling #27 pin | #27 | `SEM-m054-scale-pin-index` | M054-S04 |
-| ID #24 UUID v8 | #24 | `SEM-m054-id-uuid-v8` | M054-S05 |
-| ID #20 shrink SHA | #20 | `SEM-m054-id-shrink-sha` | M054-S05 |
-| ID #12 SEM split | #12 | `SEM-m054-id-sem-split` | M054-S05 |
-| ID #21 kinds split | #21 | `SEM-m054-id-kinds-split` | M054-S05 |
-
-Adjacent residuals (#26 #28 #29 #30 #35 #36 and P2 eligibility) stay on the advisory follow-on list until a leased slice names them.
+No CE whole-repo gap rows remain. Adjacent residuals (#26 #28 #29 #30 #35 #36 and P2 eligibility) stay on the advisory follow-on list until a leased slice names them.
 
 ## Rule
 

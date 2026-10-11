@@ -201,14 +201,21 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M055: Append tip rollback (CE #6) — CLOSED (GSD v0.49)
+
+**Closed:** S01 delivered 2026-10-11. Process tag `v0.49`. Honeycomb stays Proposed.
+
+- [x] **S01: Tip rollback on post-write Other** `risk:high` `depends:[]`
+  > After this: post-write Other restores durable memory cursor and leaves crash-shaped suffix; next append rewinds before write (no duplicate EventIds); Other keeps kutha.lock; poison only after committed rollover. Oracles `m055_append_tip_rollback`. Matrix `SEM-gap-persist-poison` killed. Landed: Phase 122.
+
 ## M054: CE whole-repo residual gaps — CLOSED (GSD v0.48)
 
-**Closed:** S01–S05 delivered 2026-10-11. Process tag `v0.48`. Honeycomb stays Proposed. **#6 poison** remains decision-gate (`SEM-gap-persist-poison`).
+**Closed:** S01–S05 delivered 2026-10-11. Process tag `v0.48`. Honeycomb stays Proposed. #6 closed under M055.
 
 - [x] **S01: Horn soundness** `risk:high` `depends:[]`
   > After this: Correct/CI-caused re-fire eligible; non-trigger retract drops derived; head VT = premise×pin conjunction; full-cover dedup + uncovered residuals; no duplicate derived Retract. Oracles `m054_horn_soundness`. Matrix SEM-m054-horn-* killed. Landed: Phase 117.
 - [x] **S02: Persist durability** `risk:high` `depends:[]`
-  > After this: torn empty active healed on open_for_append; generation-unique segment names before manifest swap. #6 poison stays decision-gate (`SEM-gap-persist-poison`). Oracles `m054_persist_durability`. Landed: Phase 118.
+  > After this: torn empty active healed on open_for_append; generation-unique segment names before manifest swap. #6 deferred to M055. Oracles `m054_persist_durability`. Landed: Phase 118.
 - [x] **S03: Governor honesty** `risk:medium` `depends:[]`
   > After this: PLAN budget on CONTEXT; matrix schema/rows fail-closed; pool at-most-once. Matrix SEM-m054-gov-* killed. Landed: Phase 119.
 - [x] **S04: Scaling and bench honesty** `risk:medium` `depends:[]`

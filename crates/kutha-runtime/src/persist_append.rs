@@ -62,7 +62,11 @@ pub enum AppendStep {
 /// / `close` return that same kind and write nothing. Heal is a new
 /// [`crate::store::open_for_append`]. Injected failpoints stay `ErrorKind::Other`,
 /// do not poison, and **keep** the write lock so a second writer cannot attach
-/// while this `Persister` is still alive (CE review P1 #2).
+/// while this `Persister` is still alive (CE review P1 #2). Post-write `Other`
+/// restores the in-memory durable cursor and leaves any uncommitted suffix on
+/// disk (crash-shaped); the next `append` rewinds that suffix before writing so
+/// same-object retry cannot duplicate EventIds (CE whole-repo #6). A failure
+/// after a committed rollover seal cannot rewind and poisons instead.
 pub struct Persister {
     dir: PathBuf,
     durable_count: usize,
@@ -85,6 +89,9 @@ pub struct Persister {
     /// `append` / `checkpoint` / `close` on this object return that same
     /// kind and write nothing. Heal is a new `open_for_append`.
     poisoned: Option<ErrorKind>,
+    /// Set when a post-write `Other` left bytes past the durable cursor.
+    /// Next `append` rewinds that suffix; external length skew must not.
+    uncommitted_suffix: bool,
 }
 
 impl Drop for Persister {
@@ -164,6 +171,7 @@ impl Persister {
             chain: [0u8; 32],
             write_lock,
             poisoned: None,
+            uncommitted_suffix: false,
         })
     }
 
@@ -241,6 +249,10 @@ impl Persister {
         stop_after: Option<AppendStep>,
         stop_after_events: Option<usize>,
     ) -> std::io::Result<()> {
+        // CE whole-repo #6: drop any crash-shaped uncommitted suffix left by a
+        // prior Other failure before collecting/writing the next batch.
+        self.reconcile_uncommitted_tip()?;
+
         let new_events = collect_new(self, runtime)?;
         if new_events.is_empty() {
             return Ok(());
@@ -254,39 +266,23 @@ impl Persister {
         let n = write_n.min(new_events.len());
         let batch = &new_events[..n];
 
-        if self.segmented {
-            self.append_segmented(batch, stop_after)?;
+        // Snapshot durable cursor before mutation. On failure before
+        // remember_appended: restore memory only (disk may stay ahead for
+        // crash-shaped open/heal). Next append reconciles. Other stays
+        // retryable and keeps kutha.lock (m030). Rollover seal → poison.
+        let tip = AppendTipSnap::capture(self);
+        let write_result = if self.segmented {
+            self.append_segmented(batch, stop_after)
         } else {
-            let jsonl_path = self.dir.join(EVENTS_JSONL);
-            let wal_path = self.dir.join(EVENTS_WAL);
-
-            {
-                let mut f = OpenOptions::new()
-                    .create(true)
-                    .append(true)
-                    .open(&jsonl_path)?;
-                for e in batch {
-                    serde_json::to_writer(&mut f, e).map_err(json_err)?;
-                    f.write_all(b"\n")?;
-                }
-            }
-            after_step(stop_after, AppendStep::Jsonl)?;
-
-            {
-                let mut f = OpenOptions::new()
-                    .create(true)
-                    .append(true)
-                    .open(&wal_path)?;
-                wal::write_frames(&mut f, batch)?;
-                after_step(stop_after, AppendStep::WalWrite)?;
-                f.sync_data()?;
-                wal::note_log_file_sync();
-            }
-            after_step(stop_after, AppendStep::WalSync)?;
+            self.append_legacy(batch, stop_after)
+        };
+        if let Err(e) = write_result {
+            return self.recover_failed_append_write(tip, e);
         }
 
         if stop_after_events.is_some_and(|want| want < new_events.len()) {
-            return Err(injected_event_failpoint());
+            // Partial event-count failpoint: frames may already be on disk.
+            return self.recover_failed_append_write(tip, injected_event_failpoint());
         }
 
         remember_appended(self, runtime, batch)?;
@@ -295,6 +291,77 @@ impl Persister {
             self.checkpoint_until(runtime, stop_after)?;
         }
         Ok(())
+    }
+
+    /// Truncate a suffix this object left after a post-write `Other` failure.
+    /// External length skew is not healed here — `tail_guard` stays fail-closed.
+    fn reconcile_uncommitted_tip(&mut self) -> std::io::Result<()> {
+        if !self.uncommitted_suffix {
+            return Ok(());
+        }
+        if self.segmented {
+            let path = self.dir.join(&self.active_name);
+            let len = fs::metadata(&path)?.len();
+            if len < self.wal_len {
+                self.uncommitted_suffix = false;
+                return Err(invalid(
+                    "log file length mismatch (recover with full persist)",
+                ));
+            }
+            if len > self.wal_len {
+                let f = OpenOptions::new().write(true).open(&path)?;
+                f.set_len(self.wal_len)?;
+                f.sync_data()?;
+                wal::note_log_file_sync();
+            }
+            self.uncommitted_suffix = false;
+            return Ok(());
+        }
+        let jsonl_path = self.dir.join(EVENTS_JSONL);
+        let wal_path = self.dir.join(EVENTS_WAL);
+        let jsonl_len = fs::metadata(&jsonl_path)?.len();
+        let wal_len = fs::metadata(&wal_path)?.len();
+        if jsonl_len < self.jsonl_len || wal_len < self.wal_len {
+            self.uncommitted_suffix = false;
+            return Err(invalid(
+                "log file length mismatch (recover with full persist)",
+            ));
+        }
+        if jsonl_len > self.jsonl_len {
+            let f = OpenOptions::new().write(true).open(&jsonl_path)?;
+            f.set_len(self.jsonl_len)?;
+            f.sync_data()?;
+            wal::note_log_file_sync();
+        }
+        if wal_len > self.wal_len {
+            let f = OpenOptions::new().write(true).open(&wal_path)?;
+            f.set_len(self.wal_len)?;
+            f.sync_data()?;
+            wal::note_log_file_sync();
+        }
+        self.uncommitted_suffix = false;
+        Ok(())
+    }
+
+    /// After a post-write failure: restore durable memory cursor, or poison.
+    fn recover_failed_append_write(
+        &mut self,
+        tip: AppendTipSnap,
+        err: io::Error,
+    ) -> std::io::Result<()> {
+        if tip.rollover_committed(&self.active_name) {
+            self.poisoned = Some(ErrorKind::InvalidData);
+            self.uncommitted_suffix = false;
+            return Err(io::Error::new(
+                ErrorKind::InvalidData,
+                format!(
+                    "segmented append failed after rollover seal; heal with a new open_for_append ({err})"
+                ),
+            ));
+        }
+        tip.restore_memory(self);
+        self.uncommitted_suffix = true;
+        Err(err)
     }
 
     fn checkpoint_until(
@@ -378,6 +445,40 @@ impl Persister {
         }
         self.active_events >= segment::effective_max_events()
             || self.wal_len.saturating_add(next_frame_len) > segment::effective_max_bytes()
+    }
+
+    fn append_legacy(
+        &mut self,
+        batch: &[Event],
+        stop_after: Option<AppendStep>,
+    ) -> std::io::Result<()> {
+        let jsonl_path = self.dir.join(EVENTS_JSONL);
+        let wal_path = self.dir.join(EVENTS_WAL);
+
+        {
+            let mut f = OpenOptions::new()
+                .create(true)
+                .append(true)
+                .open(&jsonl_path)?;
+            for e in batch {
+                serde_json::to_writer(&mut f, e).map_err(json_err)?;
+                f.write_all(b"\n")?;
+            }
+        }
+        after_step(stop_after, AppendStep::Jsonl)?;
+
+        {
+            let mut f = OpenOptions::new()
+                .create(true)
+                .append(true)
+                .open(&wal_path)?;
+            wal::write_frames(&mut f, batch)?;
+            after_step(stop_after, AppendStep::WalWrite)?;
+            f.sync_data()?;
+            wal::note_log_file_sync();
+        }
+        after_step(stop_after, AppendStep::WalSync)?;
+        Ok(())
     }
 
     fn append_segmented(
@@ -542,7 +643,52 @@ fn attach_segmented(
         chain: tip.chain,
         write_lock,
         poisoned: None,
+        uncommitted_suffix: false,
     })
+}
+
+/// Durable tip cursor before an append mutates disk (CE whole-repo #6).
+struct AppendTipSnap {
+    segmented: bool,
+    active_name: String,
+    wal_len: u64,
+    jsonl_len: u64,
+    active_events: usize,
+    active_first: Option<EventId>,
+    last_id: EventId,
+    last_frame_len: u64,
+    chain: [u8; 32],
+}
+
+impl AppendTipSnap {
+    fn capture(p: &Persister) -> Self {
+        Self {
+            segmented: p.segmented,
+            active_name: p.active_name.clone(),
+            wal_len: p.wal_len,
+            jsonl_len: p.jsonl_len,
+            active_events: p.active_events,
+            active_first: p.active_first,
+            last_id: p.last_id,
+            last_frame_len: p.last_frame_len,
+            chain: p.chain,
+        }
+    }
+
+    fn rollover_committed(&self, current_active: &str) -> bool {
+        self.segmented && self.active_name != current_active
+    }
+
+    fn restore_memory(&self, p: &mut Persister) {
+        p.active_name = self.active_name.clone();
+        p.wal_len = self.wal_len;
+        p.jsonl_len = self.jsonl_len;
+        p.active_events = self.active_events;
+        p.active_first = self.active_first;
+        p.last_id = self.last_id;
+        p.last_frame_len = self.last_frame_len;
+        p.chain = self.chain;
+    }
 }
 
 fn remember_appended(

@@ -1524,14 +1524,16 @@ rows:
     source: Phase 118 / CE whole-repo #10
   - id: SEM-gap-persist-poison
     plane: product
-    invariant: segmented poison-after-failure after post-write append errors (CE #6)
+    invariant: post-write Other restores durable memory cursor and leaves crash-shaped suffix; next append rewinds before write so retry cannot duplicate EventIds; poison only after committed rollover
     layer: crash
-    oracle: []
-    kill_mutation: pending CE whole-repo #6 decision-gate
-    status: gap
+    oracle:
+      - segmented_wal_sync_failpoint_retry_keeps_exact_event_id_sequence
+      - segmented_wal_write_failpoint_retry_keeps_exact_event_id_sequence
+    kill_mutation: post-write Other advances no durable_count but leaves tip so retry appends duplicate EventIds
+    status: killed
     gate: default
-    owner: M054-S02
-    source: CE whole-repo 2026-10-11 #6 decision-gate (human)
+    owner: M055-S01
+    source: Phase 122 / CE whole-repo #6 tip-rollback decision
   - id: SEM-m054-gov-plan-budget
     plane: harness
     invariant: artifact-budget PLAN gate keys off live CONTEXT and requires per-phase CONTEXT→PLAN correspondence

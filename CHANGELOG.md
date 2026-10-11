@@ -4,6 +4,23 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Trajectory: M055 / GSD v0.49 closed
+
+### Trajectory
+
+- M055 / GSD v0.49 closed (Phase 122). Active Milestone **None**; `L_delivery=M055-closed`. Audit: `.planning/milestones/v0.49-MILESTONE-AUDIT.md`. CE #6 tip-rollback shipped; `SEM-gap-persist-poison` killed. Honeycomb stays Proposed.
+
+## 2026-10-11 — Product/Process: append tip rollback (Phase 122)
+
+### Product
+
+- CE whole-repo #6: post-write `Other` restores the durable in-memory tip and leaves a crash-shaped disk suffix; the next `append` rewinds that suffix before write so same-object retry cannot duplicate EventIds. `Other` keeps `kutha.lock` (m030). Failure after a committed rollover seal poisons. Oracles `m055_append_tip_rollback` (2).
+- Quiet bench five `--quick` runs (`KUTHA_BENCH_N=10000`, `taskset -c 0`): median `ingest_plain.n` ≈103.3M / `as_of.n` ≈316.4k vs Phase 121 ≈116.4M / ≈307.6k (−11.3% / +2.9%) and vs Phase 80 ≈122.5M / ≈299.6k (−15.7% / +5.6%).
+
+### Process
+
+- Matrix `SEM-gap-persist-poison` killed (owner `M055-S01`). Map + gsd-auto-contract v0.49. `122-VERIFICATION.md` passed.
+
 ## 2026-10-11 — Trajectory: lease M055-S01 (#6 append tip rollback)
 
 ### Trajectory
