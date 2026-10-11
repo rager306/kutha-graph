@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-11 — Product: cascade atomicity (Phase 113)
+
+### Product
+
+- Added `m052_cascade_atomic` oracles: a later-hop Horn whose head is never interned (`ghostRel`) must `Err` without growing log, fold, or outcomes; inverse_knows still writes `QuantumOutcome`.
+
+### Trajectory
+
+- Honeycomb cells remain **Proposed**. Lease stays with the controller (`.kutha/STATE.md` untouched). M052-S02 / CE whole-repo P1 #8.
+
 ## 2026-10-11 — Product/Process: pin scheme v1 stability vectors (Phase 111)
 
 ### Product
