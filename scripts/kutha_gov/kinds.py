@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 import shutil
 from collections.abc import Callable, Mapping, Sequence
@@ -47,6 +48,7 @@ ALLOWED_KINDS: frozenset[str] = frozenset(
         "test_matrix",
         "disk_free",
         "budget_covers_checks",
+        "env_int_at_least",
     }
 )
 
@@ -2102,6 +2104,137 @@ def budget_covers_checks_mutation_target(
     return path, r"(?m)^(  budget:\s*)\d+\s*$", r"\g<1>1"
 
 
+def _env_int_floor(
+    check: str, step: Step, ctx: Context, result: CheckResult
+) -> int | None:
+    at_least = step.get("at_least")
+    if isinstance(at_least, int):
+        return at_least
+    if not isinstance(at_least, Mapping):
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "env-int-floor",
+                "at_least must be an int or {path, pattern} map",
+            )
+        )
+        return None
+    path = _str(at_least, "path")
+    pattern = _str(at_least, "pattern")
+    if not path:
+        result.findings.append(
+            Finding(check, Severity.HIGH, "env-int-floor", "at_least.path is required")
+        )
+        return None
+    target = ctx.root / path
+    if not target.is_file():
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "env-int-floor",
+                f"at_least path missing: {path}",
+                path,
+            )
+        )
+        return None
+    compiled = _compile_one_group(check, pattern, _spec_flags(at_least, step), result, path)
+    if compiled is None:
+        return None
+    text = target.read_text(encoding="utf-8")
+    match = compiled.search(text)
+    if match is None:
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "env-int-floor",
+                f"at_least pattern matched nothing in {path}",
+                path,
+            )
+        )
+        return None
+    raw = match.group(1)
+    try:
+        return int(raw.strip())
+    except ValueError:
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "env-int-floor",
+                f"at_least capture is not an int: {raw!r}",
+                path,
+            )
+        )
+        return None
+
+
+def _kind_env_int_at_least(
+    check: str, step: Step, ctx: Context, result: CheckResult
+) -> None:
+    """Fail HIGH when a set env int is below a YAML floor (unset passes)."""
+    result.scanned += 1
+    env_name = _str(step, "env")
+    if not env_name:
+        result.findings.append(
+            Finding(check, Severity.HIGH, "env-int-floor", "env is required")
+        )
+        return
+    floor = _env_int_floor(check, step, ctx, result)
+    if floor is None:
+        return
+    if "value" in step:
+        raw_obj = step.get("value")
+        if raw_obj is None or (isinstance(raw_obj, str) and raw_obj.strip() == ""):
+            return
+        raw = str(raw_obj).strip()
+    else:
+        env_raw = os.environ.get(env_name)
+        if env_raw is None or env_raw.strip() == "":
+            return
+        raw = env_raw.strip()
+    try:
+        got = int(raw)
+    except ValueError:
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "env-int-floor",
+                f"{env_name}={raw!r} is not an integer",
+            )
+        )
+        return
+    if got >= floor:
+        return
+    message = _fmt(
+        _str(
+            step,
+            "message",
+            "{env}={got} is below floor {floor}",
+        ),
+        env=env_name,
+        got=got,
+        floor=floor,
+    )
+    result.findings.append(
+        Finding(check, _severity(step), _category(step, "env-int-floor"), message)
+    )
+
+
+def env_int_at_least_mutation_target(
+    step: Step, root: Path
+) -> tuple[str, str, str] | None:
+    """Inject a short step value so the live env floor fails without touching os.environ."""
+    del step
+    path = ".kutha/dictionaries/checks.yaml"
+    if not (root / path).is_file():
+        return None
+    return path, r"(?m)^(\s+- kind: env_int_at_least)\s*$", r"\1\n        value: 1"
+
+
 from kutha_gov.kind_cargo import _kind_cargo_dep_constraint  # noqa: E402
 from kutha_gov.kind_cargo import (  # noqa: E402
     cargo_dep_constraint_mutation_target as cargo_dep_constraint_mutation_target,
@@ -2152,4 +2285,5 @@ RUNNERS: dict[str, Runner] = {
     "test_matrix": _kind_test_matrix,
     "disk_free": _kind_disk_free,
     "budget_covers_checks": _kind_budget_covers_checks,
+    "env_int_at_least": _kind_env_int_at_least,
 }

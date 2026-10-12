@@ -74,6 +74,7 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 | `test_matrix` | interpret `docs/architecture/test-matrix.yaml`: `schema` must be `kutha-test-matrix/v1`; every `rows` entry must be a mapping; named product oracles are asserting `#[test]` (not `#[ignore]`); harness oracles exist in `checks.yaml`; `blocked` owners are on the decision allowlist; `gap` / other slice owners parse as `M###-S##` under that ROADMAP heading; `feature:` gates name an `observe_cargo` FSM state; `killed` forbids `kill_mutation: none` and forbids characterization-shaped kill text (mirror/alias/honor-system/env-floor). Green means the map is internally consistent, not that the product is tested |
 | `disk_free` | filesystem free space for `path` (default `.`) is at least `min_free_gib` GiB (`shutil.disk_usage`); below threshold → HIGH. Threshold lives in YAML, not Python |
 | `budget_covers_checks` | `fsm.yaml` `defaults.budget` (or optional step `budget` override) is ≥ dictionary check count; short budget → HIGH |
+| `env_int_at_least` | when env var is set (or step `value` override), its int must be ≥ `at_least` (int or `{path, pattern}` capture); unset → pass; short/invalid → HIGH |
 
 ## Allowed FSM kinds
 

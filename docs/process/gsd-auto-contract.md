@@ -62,6 +62,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.52 | 129 | M058 | S01 | disk_free preflight (YAML min_free_gib) + VERIFICATION bench markers off gitignored tmp | shipped |
 | v0.53 | 130 | M059 | S01 | budget-template-align (.env.example ↔ fsm defaults.budget via cite_equals) | shipped |
 | v0.54 | 131 | M060 | S01 | budget_covers_checks (fsm defaults.budget ≥ check count in precommit) | shipped |
+| v0.55 | 132 | M061 | S01 | env_int_at_least (live KUTHA_GOV_BUDGET ≥ fsm defaults.budget when set) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

@@ -126,6 +126,12 @@ invariants:
     disposition: check
     check: budget-covers-checks
 
+  - id: I-env-budget-floor
+    claim: "when KUTHA_GOV_BUDGET is set it is at least fsm.yaml defaults.budget"
+    source: "docs/process/kutha-harness.md"
+    disposition: check
+    check: env-budget-floor
+
   - id: I-invariants-ledger
     claim: "Control-loop claims are explicit in the process ledger"
     source: "docs/process/governor-intake.md"

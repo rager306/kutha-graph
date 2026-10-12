@@ -704,6 +704,7 @@ checks:
           - "test_matrix"
           - "disk_free"
           - "budget_covers_checks"
+          - "env_int_at_least"
           - "run_selftest"
           - "invariants.yaml"
           - "bridges.yaml"
@@ -1439,6 +1440,18 @@ checks:
     steps:
       - kind: budget_covers_checks
         message: "defaults.budget={budget} covers {n} checks incompletely (short by {short})"
+
+  - id: env-budget-floor
+    description: >-
+      Live KUTHA_GOV_BUDGET when set must be ≥ fsm.yaml defaults.budget so a
+      stale .env cannot truncate only on ci (precommit runs the full dictionary).
+    steps:
+      - kind: env_int_at_least
+        env: KUTHA_GOV_BUDGET
+        at_least:
+          path: .kutha/dictionaries/fsm.yaml
+          pattern: '(?m)^  budget:\s*(\d+)\s*$'
+        message: "{env}={got} is below fsm defaults.budget={floor}"
 
   - id: verification-uv-only
     description: >-

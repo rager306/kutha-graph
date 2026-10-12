@@ -1816,6 +1816,17 @@ rows:
     gate: default
     owner: M060-S01
     source: Phase 131 / M059 residual short-budget precommit gate
+  - id: SEM-m061-env-budget-floor
+    plane: harness
+    invariant: when KUTHA_GOV_BUDGET is set it is at least fsm.yaml defaults.budget
+    layer: governor
+    oracle:
+      - env-budget-floor
+    kill_mutation: inject step value 1 under env_int_at_least (pytest EnvBudgetFloorTests / selftest derive)
+    status: killed
+    gate: default
+    owner: M061-S01
+    source: Phase 132 / M060 residual live env below fsm
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

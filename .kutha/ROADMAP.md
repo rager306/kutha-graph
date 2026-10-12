@@ -201,6 +201,15 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M061: Live env budget floor — CLOSED (GSD v0.55)
+
+**Closed:** S01 delivered 2026-10-12. Process tag `v0.55`. Honeycomb stays Proposed.
+
+Process debt after M060: `budget_covers_checks` and `budget-template-align` cover fsm/template, but a live `.env` below fsm still truncates only on `ci` (precommit runs the full dictionary). `L_delivery=M061-closed`.
+
+- [x] **S01: env_int_at_least kind** `risk:low` `depends:[]`
+  > After this: kind `env_int_at_least`; check `env-budget-floor`; matrix `SEM-m061-env-budget-floor` killed. Phase 132. Landed.
+
 ## M060: Budget covers check count — CLOSED (GSD v0.54)
 
 **Closed:** S01 delivered 2026-10-12. Process tag `v0.54`. Honeycomb stays Proposed.

@@ -56,6 +56,7 @@ DERIVABLE_KINDS = frozenset(
         "when_match_then_match",
         "disk_free",
         "budget_covers_checks",
+        "env_int_at_least",
     }
 )
 SKIP_DIR_NAMES = frozenset(
@@ -483,6 +484,10 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
             unit = _derive_budget_covers_checks(step, work)
             if unit:
                 derived.append(unit)
+        elif kind == "env_int_at_least":
+            unit = _derive_env_int_at_least(step, work)
+            if unit:
+                derived.append(unit)
     return derived
 
 
@@ -500,6 +505,16 @@ def _derive_budget_covers_checks(step: Step, work: Path) -> list[Mutation]:
     from kutha_gov.kinds import budget_covers_checks_mutation_target
 
     target = budget_covers_checks_mutation_target(step, work)
+    if target is None:
+        return []
+    path, pattern, replacement = target
+    return [{"op": "replace_regex", "path": path, "pattern": pattern, "with": replacement}]
+
+
+def _derive_env_int_at_least(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import env_int_at_least_mutation_target
+
+    target = env_int_at_least_mutation_target(step, work)
     if target is None:
         return []
     path, pattern, replacement = target

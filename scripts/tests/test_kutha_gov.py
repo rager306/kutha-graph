@@ -2074,6 +2074,60 @@ class BudgetCoversChecksTests(unittest.TestCase):
         self.assertEqual([], highs)
 
 
+class EnvBudgetFloorTests(unittest.TestCase):
+    """M061 S01: live KUTHA_GOV_BUDGET when set must be ≥ fsm defaults.budget."""
+
+    def test_env_budget_floor_is_registered(self) -> None:
+        self.assertIn("env-budget-floor", get_checks(ROOT))
+
+    def test_short_env_value_is_high(self) -> None:
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "env_int_at_least",
+                "env": "KUTHA_GOV_BUDGET",
+                "at_least": 80,
+                "value": 1,
+            },
+            Context(root=ROOT),
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertEqual(1, len(highs))
+        self.assertEqual("env-int-floor", highs[0].category)
+
+    def test_unset_env_is_green(self) -> None:
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "env_int_at_least",
+                "env": "KUTHA_GOV_BUDGET_UNSET_PROBE_M061",
+                "at_least": 80,
+            },
+            Context(root=ROOT),
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertEqual([], highs)
+
+    def test_live_env_budget_floor_is_green(self) -> None:
+        old = os.environ.pop("KUTHA_GOV_BUDGET", None)
+        try:
+            from kutha_gov.config import load_dotenv
+
+            load_dotenv(ROOT)
+            result = get_checks(ROOT)["env-budget-floor"].run(Context(root=ROOT))
+            highs = [f for f in result.findings if f.severity is Severity.HIGH]
+            self.assertEqual([], highs)
+        finally:
+            if old is None:
+                os.environ.pop("KUTHA_GOV_BUDGET", None)
+            else:
+                os.environ["KUTHA_GOV_BUDGET"] = old
+
+
 class BudgetTemplateAlignTests(unittest.TestCase):
     """M059 S01: .env.example budget must match fsm.yaml defaults.budget."""
 

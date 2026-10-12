@@ -4,6 +4,24 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: M061 / GSD v0.55 closed
+
+### Trajectory
+
+- M061 / GSD v0.55 closed (Phase 132). Active Milestone **None**; `L_delivery=M061-closed`. Audit: `.planning/milestones/v0.55-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-12 — Process: env_int_at_least (Phase 132)
+
+### Process
+
+- Kind `env_int_at_least` / check `env-budget-floor`: when live `KUTHA_GOV_BUDGET` is set it must be ≥ `fsm.yaml` `defaults.budget` (HIGH; unset passes). Selftest injects `value: 1`. FSM / `.env.example` budget 82. Pytest `EnvBudgetFloorTests`. Matrix `SEM-m061-env-budget-floor` killed.
+
+## 2026-10-12 — Trajectory: lease M061-S01 (env budget floor)
+
+### Trajectory
+
+- Active Milestone **M061**, Active Slice **S01** (`L_delivery=M060-closed`): live `KUTHA_GOV_BUDGET` when set must be ≥ `fsm.yaml` `defaults.budget` (`env_int_at_least`). Honeycomb stays Proposed.
+
 ## 2026-10-12 — Trajectory: M060 / GSD v0.54 closed
 
 ### Trajectory
