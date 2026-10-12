@@ -1533,6 +1533,9 @@ def _wrong_cite_line(pattern: str) -> str:
         return "\nL_capability=WRONG\n"
     if "Active Milestone" in pattern or r"M\d" in pattern:
         return "\nActive Milestone: M999\n"
+    if "KUTHA_GOV_BUDGET" in pattern:
+        # Append a second capture that disagrees with fsm defaults.budget.
+        return "\nKUTHA_GOV_BUDGET=1\n"
     return "\nL_delivery=WRONG\n"
 
 

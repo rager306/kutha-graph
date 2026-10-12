@@ -336,7 +336,10 @@ def _run_mutations(check: DictCheck, work: Path, units: list[list[Mutation]]) ->
                 if target is not None and target not in snaps:
                     snaps[target] = _snapshot(target)
                 _apply_mutation(work, mutation)
-            if not _has_high(check, work):
+            # Thresholds live in checks.yaml steps: re-load so YAML mutations are seen.
+            live = get_checks(work).get(check.name)
+            probe: Check = live if live is not None else check
+            if not _has_high(probe, work):
                 first = unit[0]
                 return SelftestRow(
                     VACUOUS,

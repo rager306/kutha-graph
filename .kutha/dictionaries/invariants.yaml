@@ -370,7 +370,7 @@ invariants:
     check: skip-cargo-log-marker
 
   - id: I-op-compat-policy
-    claim: "Removed dictionary meta-ops are a documented wire break; serde backfill is deferred until a leased migrate"
+    claim: "Removed dictionary meta-ops fail deserialize on open; AllowRelation remaps only via explicit migrate"
     source: ".planning/phases/110-op-compat-policy/110-CONTEXT.md"
     disposition: check
     check: op-compat-policy

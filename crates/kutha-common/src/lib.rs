@@ -3,6 +3,7 @@
 
 mod event;
 mod intern;
+mod op_migrate;
 mod rule;
 
 pub use event::{
@@ -12,4 +13,7 @@ pub use event::{
     policy_version_hash, rule_definition_hash, sha256_hex,
 };
 pub use intern::TermDictionary;
+pub use op_migrate::{
+    allow_relation_to_assert, remap_legacy_event_value, remap_legacy_op_value, OpMigrateError,
+};
 pub use rule::{RuleAst, RuleAtom, RuleTerm, is_rule_ident, rule_body_hash};

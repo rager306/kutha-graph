@@ -201,6 +201,15 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M062: Op wire migrate (AllowRelation) — CLOSED (GSD v0.56)
+
+**Closed:** S01 delivered 2026-10-12. Process tag `v0.56`. Honeycomb stays Proposed.
+
+Owner authorized CE #1 follow-on: explicit migrate off main-era dictionary meta-ops. Thin first slice remaps `AllowRelation` only; `open` stays fail-open (no silent serde aliases). `L_delivery=M062-closed`.
+
+- [x] **S01: AllowRelation → Assert remap** `risk:medium` `depends:[]`
+  > After this: `kutha_common::op_migrate` remaps legacy AllowRelation JSON via caller intern; m050 fail-open oracles kept; matrix `SEM-m062-op-migrate-allow` killed. Phase 133. Landed. Other four meta-ops stay deferred.
+
 ## M061: Live env budget floor — CLOSED (GSD v0.55)
 
 **Closed:** S01 delivered 2026-10-12. Process tag `v0.55`. Honeycomb stays Proposed.

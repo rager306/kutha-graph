@@ -4,6 +4,30 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: M062 / GSD v0.56 closed
+
+### Trajectory
+
+- M062 / GSD v0.56 closed (Phase 133). Active Milestone **None**; `L_delivery=M062-closed`. Audit: `.planning/milestones/v0.56-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-12 — Product: Op migrate AllowRelation (Phase 133)
+
+### Product
+
+- `kutha_common::op_migrate`: explicit `AllowRelation` JSON → `kutha:allows` `Op::Assert` via caller intern (`remap_legacy_op_value` / `remap_legacy_event_value`). No serde aliases on `Op`; m050 fail-open oracles kept. Tests: common unit + `m062_op_migrate`. Bench sample (`KUTHA_BENCH_N=1000`): `ingest_plain.n` ≈24.4ms, `as_of.n` ≈23µs.
+
+## 2026-10-12 — Process: selftest reload + budget cite mutate (Phase 133 companion)
+
+### Process
+
+- Selftest reloads `checks.yaml` after YAML mutations so `disk_free` / `env_int_at_least` derives are not vacuous. `cite_equals` wrong-token for `KUTHA_GOV_BUDGET` appends a disagreeing capture. Policy doc `op-compat.md` records leased AllowRelation migrate.
+
+## 2026-10-12 — Trajectory: lease M062-S01 (Op migrate AllowRelation)
+
+### Trajectory
+
+- Active Milestone **M062**, Active Slice **S01** (`L_delivery=M061-closed`): explicit `AllowRelation` → `kutha:allows` Assert remap; open stays fail-open. Honeycomb stays Proposed.
+
 ## 2026-10-12 — Trajectory: M061 / GSD v0.55 closed
 
 ### Trajectory

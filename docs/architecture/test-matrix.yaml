@@ -1827,6 +1827,18 @@ rows:
     gate: default
     owner: M061-S01
     source: Phase 132 / M060 residual live env below fsm
+  - id: SEM-m062-op-migrate-allow
+    plane: product
+    invariant: legacy AllowRelation JSON remaps to kutha:allows Assert via explicit migrate; Op serde stays fail-open
+    layer: decision
+    oracle:
+      - allow_relation_op_remaps_to_kutha_allows_assert
+      - serde_open_path_still_rejects_allow_relation
+    kill_mutation: delete remap_legacy_op_value so AllowRelation JSON cannot become Assert
+    status: killed
+    gate: default
+    owner: M062-S01
+    source: Phase 133 / CE #1 Op migrate AllowRelation
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

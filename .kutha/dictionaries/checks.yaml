@@ -1622,19 +1622,20 @@ checks:
 
   - id: op-compat-policy
     description: >-
-      G4 CE #14: documented Op wire break — legacy dictionary meta-ops fail
-      deserialize; policy lives in docs/process/op-compat.md.
+      G4 CE #14 / CE #1: documented Op wire break — legacy dictionary meta-ops fail
+      deserialize on open; AllowRelation explicit migrate leased; policy in op-compat.md.
     steps:
       - kind: file_contains
         path: docs/process/op-compat.md
         needles:
-          - "Policy: documented break; serde backfill deferred"
+          - "Policy: documented break; open fail-open; explicit migrate for AllowRelation (serde aliases forbidden)"
           - "AllowRelation"
           - "RegisterRule"
           - "PinPolicy"
           - "RecordAdmission"
           - "RecordAction"
           - "Fail open"
+          - "remap_legacy_op_value"
         require: all
         category: oracle
         message: "op-compat policy doc missing: {missing}"
@@ -1645,6 +1646,23 @@ checks:
           - modern_kutha_allows_assert_roundtrips
         category: oracle
         message: "op-compat oracles missing {missing}"
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m062_op_migrate.rs
+        tests:
+          - allow_relation_op_remaps_to_kutha_allows_assert
+          - serde_open_path_still_rejects_allow_relation
+        category: oracle
+        message: "op-migrate oracles missing {missing}"
+      - kind: file_contains
+        path: crates/kutha-common/src/op_migrate.rs
+        needles:
+          - "remap_legacy_op_value"
+          - "AllowRelation"
+          - "DeferredVariant"
+          - "serde aliases must stay forbidden"
+        require: all
+        category: oracle
+        message: "op_migrate module missing: {missing}"
       - kind: file_absent
         path: crates/kutha-common/src/event.rs
         needles:
@@ -1659,7 +1677,7 @@ checks:
       mutations:
         - op: replace_regex
           path: docs/process/op-compat.md
-          pattern: "Policy: documented break; serde backfill deferred"
+          pattern: "Policy: documented break; open fail-open; explicit migrate for AllowRelation \\(serde aliases forbidden\\)"
           with: "Policy: silent skip of unknown Op variants"
 
   - id: pin-compat-policy

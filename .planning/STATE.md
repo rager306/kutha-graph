@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.55
-milestone_name: Live env budget floor
+milestone: v0.56
+milestone_name: Op migrate AllowRelation
 status: complete
-stopped_at: "132-env-budget-floor"
-last_updated: "2026-10-12T07:05:00.000Z"
+stopped_at: "133-op-migrate-allow"
+last_updated: "2026-10-12T08:30:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.55 Live env budget floor (harness M061) — complete  
-**Phase:** 132 complete  
-**Status:** S01 shipped; M061 / v0.55 closed
+**Milestone:** v0.56 Op migrate AllowRelation (M062) — complete  
+**Phase:** 133 complete  
+**Status:** S01 shipped; M062 / v0.56 closed
