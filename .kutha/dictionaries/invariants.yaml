@@ -114,6 +114,12 @@ invariants:
     disposition: check
     check: disk-free
 
+  - id: I-budget-template-align
+    claim: ".env.example KUTHA_GOV_BUDGET equals fsm.yaml defaults.budget"
+    source: "docs/process/kutha-harness.md"
+    disposition: check
+    check: budget-template-align
+
   - id: I-invariants-ledger
     claim: "Control-loop claims are explicit in the process ledger"
     source: "docs/process/governor-intake.md"

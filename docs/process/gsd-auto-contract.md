@@ -60,6 +60,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.50 | 123–127 | M056 | S01–S05 | advisory residuals (lease-bundle → persist #29/#30 → #26/#28 → hygiene) | shipped |
 | v0.51 | 128 | M057 | S01 | docs-coupling STATE→ROADMAP (lease-bundle hole at git_path_implies) | shipped |
 | v0.52 | 129 | M058 | S01 | disk_free preflight (YAML min_free_gib) + VERIFICATION bench markers off gitignored tmp | shipped |
+| v0.53 | 130 | M059 | S01 | budget-template-align (.env.example ↔ fsm defaults.budget via cite_equals) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

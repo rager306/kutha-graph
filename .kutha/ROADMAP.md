@@ -201,12 +201,14 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M059: Budget template alignment — ACTIVE (GSD v0.53)
+## M059: Budget template alignment — CLOSED (GSD v0.53)
 
-Process debt after M058: local `.env` / `.env.example` can lag `fsm.yaml` defaults.budget and silently truncate the check tail under Cui.
+**Closed:** S01 delivered 2026-10-12. Process tag `v0.53`. Honeycomb stays Proposed.
 
-- [ ] **S01: cite_equals fsm budget ↔ .env.example** `risk:low` `depends:[]`
-  > After this: check `budget-template-align` via existing `cite_equals`; matrix `SEM-m059-budget-template` killed. Phase 130.
+Process debt after M058: `.env.example` could lag `fsm.yaml` defaults.budget and silently truncate the check tail under Cui. `L_delivery=M059-closed`.
+
+- [x] **S01: cite_equals fsm budget ↔ .env.example** `risk:low` `depends:[]`
+  > After this: check `budget-template-align` via existing `cite_equals`; matrix `SEM-m059-budget-template` killed. Phase 130. Landed.
 
 ## M058: Disk-space preflight — CLOSED (GSD v0.52)
 

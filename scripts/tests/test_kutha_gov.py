@@ -2050,6 +2050,37 @@ class LeaseBundleHonestyTests(unittest.TestCase):
         self.assertIn("lease-drift", _rust_highs(result))
 
 
+class BudgetTemplateAlignTests(unittest.TestCase):
+    """M059 S01: .env.example budget must match fsm.yaml defaults.budget."""
+
+    def test_budget_template_align_is_registered(self) -> None:
+        self.assertIn("budget-template-align", get_checks(ROOT))
+
+    def test_stale_env_example_budget_is_high(self) -> None:
+        root = _rust_tree(
+            {
+                ".kutha/dictionaries/fsm.yaml": (
+                    "schema: kutha-harness-fsm/v1\n"
+                    "defaults:\n"
+                    "  budget: 80\n"
+                ),
+                ".env.example": "KUTHA_GOV_BUDGET=79\n",
+            }
+        )
+        result = get_checks(ROOT)["budget-template-align"].run(Context(root=root))
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertTrue(highs, msg="expected cite-mismatch HIGH")
+        self.assertTrue(
+            any("79" in f.message and "80" in f.message for f in highs),
+            msg=repr([f.message for f in highs]),
+        )
+
+    def test_live_precommit_budget_template_align_is_green(self) -> None:
+        result = get_checks(ROOT)["budget-template-align"].run(Context(root=ROOT))
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertEqual([], highs)
+
+
 class DiskFreePreflightTests(unittest.TestCase):
     """M058 S01: disk_free kind fails when free space is below YAML threshold."""
 

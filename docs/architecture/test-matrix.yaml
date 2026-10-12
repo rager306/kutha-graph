@@ -1794,6 +1794,17 @@ rows:
     gate: default
     owner: M058-S01
     source: Phase 129 / M057 residual disk preflight
+  - id: SEM-m059-budget-template
+    plane: harness
+    invariant: .env.example KUTHA_GOV_BUDGET equals fsm.yaml defaults.budget
+    layer: governor
+    oracle:
+      - budget-template-align
+    kill_mutation: set .env.example KUTHA_GOV_BUDGET one below fsm defaults.budget (pytest BudgetTemplateAlignTests)
+    status: killed
+    gate: default
+    owner: M059-S01
+    source: Phase 130 / M058 residual budget lag
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

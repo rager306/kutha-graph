@@ -1417,6 +1417,20 @@ checks:
         category: disk-free
         message: "{path} has {free_gib:.2f} GiB free; min_free_gib={min_free_gib}"
 
+  - id: budget-template-align
+    description: >-
+      .env.example KUTHA_GOV_BUDGET must equal fsm.yaml defaults.budget so a
+      copied .env cannot silently truncate the check tail (M058 residual).
+    steps:
+      - kind: cite_equals
+        source:
+          path: .kutha/dictionaries/fsm.yaml
+          pattern: '(?m)^  budget:\s*(\d+)\s*$'
+        cites:
+          - path: .env.example
+            pattern: '(?m)^KUTHA_GOV_BUDGET=(\d+)\s*$'
+        message: "{path} cites KUTHA_GOV_BUDGET={got} but {source} defaults.budget is {expected}"
+
   - id: verification-uv-only
     description: >-
       VERIFICATION command records invoke kutha-gov via uv (CE whole-repo #35).

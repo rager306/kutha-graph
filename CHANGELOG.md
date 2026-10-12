@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: M059 / GSD v0.53 closed
+
+### Trajectory
+
+- M059 / GSD v0.53 closed (Phase 130). Active Milestone **None**; `L_delivery=M059-closed`. Audit: `.planning/milestones/v0.53-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-12 — Process: budget-template-align (Phase 130)
+
+### Process
+
+- Check `budget-template-align` reuses `cite_equals` so `.env.example` `KUTHA_GOV_BUDGET` equals `fsm.yaml` `defaults.budget`. FSM / template budget 80. Pytest `BudgetTemplateAlignTests`. Matrix `SEM-m059-budget-template` killed. No new kind.
+
 ## 2026-10-12 — Trajectory: lease M059-S01 (budget template align)
 
 ### Trajectory
