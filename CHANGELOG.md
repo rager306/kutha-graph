@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: M066 / GSD v0.60 closed
+
+### Trajectory
+
+- M066 / GSD v0.60 closed (Phase 137). Active Milestone **None**; `L_delivery=M066-closed`. Audit: `.planning/milestones/v0.60-MILESTONE-AUDIT.md`. Five meta-op remaps complete. Honeycomb stays Proposed.
+
+## 2026-10-12 — Product: Op migrate RecordAction (Phase 137)
+
+### Product
+
+- `record_action_to_assert`: legacy `RecordAction` → `kutha:action` Assert (subject=jid, object=target_claim, delivery_key=jid, polarity ±; mirrors `record_action`). Cite fields accepted for shape only. Empty jid/claim fail-closed. Open/serde stay fail-open. Tests: common unit + `m066_op_migrate`. Bench sample (`KUTHA_BENCH_N=1000`): `ingest_plain.n` ≈13.0ms / recheck ≈25.7ms, `as_of.n` ≈29–31µs (noisy host; migrate not on ingest hot path; vs M065 ≈9.2ms / ≈45µs).
+
 ## 2026-10-12 — Trajectory: lease M066-S01 (Op migrate RecordAction)
 
 ### Trajectory

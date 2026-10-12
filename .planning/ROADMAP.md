@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.59 shipped. Honeycomb stays Proposed.
+v0.01–v0.60 shipped. Honeycomb stays Proposed.
 
 ## Id map
 
@@ -17,10 +17,11 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 - ✅ **v0.57 Op migrate RegisterRule** — Phase 134 done (product M063)
 - ✅ **v0.58 Op migrate PinPolicy** — Phase 135 done (product M064)
 - ✅ **v0.59 Op migrate RecordAdmission** — Phase 136 done (product M065)
+- ✅ **v0.60 Op migrate RecordAction** — Phase 137 done (product M066)
 
-## Phases (v0.59)
+## Phases (v0.60)
 
-- [x] **Phase 136: Op migrate RecordAdmission** — `136-VERIFICATION.md` passed
+- [x] **Phase 137: Op migrate RecordAction** — `137-VERIFICATION.md` passed
 
 ## Progress
 

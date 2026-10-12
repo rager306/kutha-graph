@@ -4,8 +4,8 @@
 //! Callers pass an intern callback so TermIds are never guessed.
 
 use crate::{
-    policy_version_hash, Event, EventId, Op, RuleAst, SupportPolarity, TermId, KUTHA_ADMISSION,
-    KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE,
+    policy_version_hash, Event, EventId, Op, RuleAst, SupportPolarity, TermId, KUTHA_ACTION,
+    KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE,
 };
 use serde::Deserialize;
 
@@ -30,6 +30,8 @@ pub enum OpMigrateError {
     EmptyJustificationId,
     /// RecordAdmission policy_version was empty.
     EmptyPolicyVersion,
+    /// RecordAction target_claim was empty.
+    EmptyTargetClaim,
     /// Caller asked for a single Op/Event but remap expands to multiple.
     MultiOpRequired {
         count: usize,
@@ -53,6 +55,9 @@ impl std::fmt::Display for OpMigrateError {
             }
             Self::EmptyPolicyVersion => {
                 write!(f, "RecordAdmission policy_version must be non-empty")
+            }
+            Self::EmptyTargetClaim => {
+                write!(f, "RecordAction target_claim must be non-empty")
             }
             Self::MultiOpRequired { count } => {
                 write!(f, "legacy remap expands to {count} ops; use remap_legacy_ops")
@@ -91,6 +96,28 @@ struct PinPolicyBody {
 struct RecordAdmissionBody {
     justification_id: String,
     admitted: bool,
+    policy_version: String,
+    valid_from: u64,
+    #[serde(default)]
+    valid_to: Option<u64>,
+}
+
+#[derive(Deserialize)]
+struct RecordActionBody {
+    justification_id: String,
+    target_claim: String,
+    #[serde(default)]
+    #[allow(dead_code)]
+    source_claim_ids: Vec<String>,
+    #[serde(default)]
+    #[allow(dead_code)]
+    source_event_ids: Vec<String>,
+    #[serde(default)]
+    #[allow(dead_code)]
+    rule_version: String,
+    admitted: bool,
+    #[serde(default)]
+    #[allow(dead_code)]
     policy_version: String,
     valid_from: u64,
     #[serde(default)]
@@ -225,11 +252,50 @@ pub fn record_admission_to_assert(
     })
 }
 
+/// Build modern `kutha:action` Assert (same shape as runtime `record_action`).
+///
+/// Legacy cite fields (`source_*`, `rule_version`, `policy_version`) are accepted
+/// for shape checks but live on `JustificationCite` / admission in the modern model.
+pub fn record_action_to_assert(
+    justification_id: impl Into<String>,
+    target_claim: impl Into<String>,
+    admitted: bool,
+    valid_from: u64,
+    valid_to: Option<u64>,
+    mut intern: impl FnMut(&str) -> TermId,
+) -> Result<Op, OpMigrateError> {
+    let justification_id = justification_id.into();
+    if justification_id.is_empty() {
+        return Err(OpMigrateError::EmptyJustificationId);
+    }
+    let target_claim = target_claim.into();
+    if target_claim.is_empty() {
+        return Err(OpMigrateError::EmptyTargetClaim);
+    }
+    let subject = intern(&justification_id);
+    let relation = intern(KUTHA_ACTION);
+    let object = intern(&target_claim);
+    let polarity = Some(if admitted {
+        SupportPolarity::Positive
+    } else {
+        SupportPolarity::Negative
+    });
+    Ok(Op::Assert {
+        subject,
+        relation,
+        object,
+        valid_from,
+        valid_to,
+        claim: None,
+        delivery_key: Some(justification_id),
+        polarity,
+    })
+}
+
 /// Remap one legacy dictionary meta-op JSON value into one or more modern [`Op`]s.
 ///
 /// Leased: `AllowRelation` (M062), `RegisterRule` (M063), `PinPolicy` (M064),
-/// `RecordAdmission` (M065). Remaining meta-ops return [`OpMigrateError::DeferredVariant`].
-/// Does not touch `Op`'s serde.
+/// `RecordAdmission` (M065), `RecordAction` (M066). Does not touch `Op`'s serde.
 pub fn remap_legacy_ops(
     value: &serde_json::Value,
     intern: impl FnMut(&str) -> TermId,
@@ -274,7 +340,18 @@ pub fn remap_legacy_ops(
                 intern,
             )?])
         }
-        "RecordAction" => Err(OpMigrateError::DeferredVariant("RecordAction")),
+        "RecordAction" => {
+            let parsed: RecordActionBody = serde_json::from_value(body.clone())
+                .map_err(|_| OpMigrateError::InvalidShape("RecordAction body"))?;
+            Ok(vec![record_action_to_assert(
+                parsed.justification_id,
+                parsed.target_claim,
+                parsed.admitted,
+                parsed.valid_from,
+                parsed.valid_to,
+                intern,
+            )?])
+        }
         other => Err(OpMigrateError::UnknownVariant(other.to_string())),
     }
 }
@@ -293,9 +370,10 @@ pub fn remap_legacy_op_value(
 
 /// Remap a legacy Event JSON whose `op` is a removed meta-op tag.
 ///
-/// Single-op remaps (`AllowRelation`, `RecordAdmission`): one event, legacy id
-/// kept. Multi-op remaps (`RegisterRule`, `PinPolicy`): `StoreBlob` gets a fresh
-/// id; Assert keeps the legacy id. `object_ids` are recomputed.
+/// Single-op remaps (`AllowRelation`, `RecordAdmission`, `RecordAction`): one
+/// event, legacy id kept. Multi-op remaps (`RegisterRule`, `PinPolicy`):
+/// `StoreBlob` gets a fresh id; Assert keeps the legacy id. `object_ids` are
+/// recomputed.
 pub fn remap_legacy_events(
     value: &serde_json::Value,
     intern: impl FnMut(&str) -> TermId,
@@ -576,23 +654,73 @@ mod tests {
     }
 
     #[test]
-    fn record_action_is_deferred() {
+    fn record_action_remaps_like_record_action_api() {
         let mut dict = TermDictionary::default();
+        let claim = "00000000-0000-0000-0000-000000000001";
         let raw = serde_json::json!({
             "RecordAction": {
                 "justification_id": "j",
-                "target_claim": "00000000-0000-0000-0000-000000000000",
+                "target_claim": claim,
                 "source_claim_ids": [],
                 "source_event_ids": [],
                 "rule_version": "r",
                 "admitted": true,
                 "policy_version": "p",
+                "valid_from": 2017,
+                "valid_to": null
+            }
+        });
+        let op = remap_legacy_op_value(&raw, |s| dict.intern(s)).expect("remap");
+        match op {
+            Op::Assert {
+                subject,
+                relation,
+                object,
+                delivery_key,
+                polarity,
+                valid_from,
+                ..
+            } => {
+                assert_eq!(dict.lookup(subject), Some("j"));
+                assert_eq!(dict.lookup(relation), Some(KUTHA_ACTION));
+                assert_eq!(dict.lookup(object), Some(claim));
+                assert_eq!(delivery_key.as_deref(), Some("j"));
+                assert_eq!(polarity, Some(SupportPolarity::Positive));
+                assert_eq!(valid_from, 2017);
+            }
+            other => panic!("expected Assert, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn empty_record_action_fields_are_rejected() {
+        let mut dict = TermDictionary::default();
+        let empty_jid = serde_json::json!({
+            "RecordAction": {
+                "justification_id": "",
+                "target_claim": "00000000-0000-0000-0000-000000000001",
+                "admitted": true,
                 "valid_from": 0,
                 "valid_to": null
             }
         });
-        let err = remap_legacy_ops(&raw, |s| dict.intern(s)).unwrap_err();
-        assert_eq!(err, OpMigrateError::DeferredVariant("RecordAction"));
+        assert_eq!(
+            remap_legacy_ops(&empty_jid, |s| dict.intern(s)).unwrap_err(),
+            OpMigrateError::EmptyJustificationId
+        );
+        let empty_claim = serde_json::json!({
+            "RecordAction": {
+                "justification_id": "j",
+                "target_claim": "",
+                "admitted": false,
+                "valid_from": 0,
+                "valid_to": null
+            }
+        });
+        assert_eq!(
+            remap_legacy_ops(&empty_claim, |s| dict.intern(s)).unwrap_err(),
+            OpMigrateError::EmptyTargetClaim
+        );
     }
 
     #[test]

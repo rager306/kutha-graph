@@ -1875,6 +1875,18 @@ rows:
     gate: default
     owner: M065-S01
     source: Phase 136 / CE #1 Op migrate RecordAdmission
+  - id: SEM-m066-op-migrate-action
+    plane: product
+    invariant: legacy RecordAction JSON remaps to kutha:action Assert via explicit migrate; Op serde stays fail-open
+    layer: decision
+    oracle:
+      - record_action_op_remaps_to_kutha_action_assert
+      - serde_open_path_still_rejects_record_action
+    kill_mutation: delete record_action_to_assert so RecordAction JSON cannot become kutha:action Assert
+    status: killed
+    gate: default
+    owner: M066-S01
+    source: Phase 137 / CE #1 Op migrate RecordAction
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

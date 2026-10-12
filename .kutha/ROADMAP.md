@@ -201,12 +201,14 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M066: Op wire migrate (RecordAction) — OPEN (GSD v0.60)
+## M066: Op wire migrate (RecordAction) — CLOSED (GSD v0.60)
 
-Process debt after M065: `RecordAction` still deferred. Thin slice remaps legacy action JSON to a single `kutha:action` Assert (same shape as `record_action`). Open stays fail-open. Directory rewrite stays deferred.
+**Closed:** S01 delivered 2026-10-12. Process tag `v0.60`. Honeycomb stays Proposed.
 
-- [ ] **S01: RecordAction → kutha:action Assert** `risk:medium` `depends:[]`
-  > After this: `record_action_to_assert` via caller intern; matrix `SEM-m066-op-migrate-action` killed. Phase 137.
+Process debt after M065: `RecordAction` still deferred. Thin slice remaps legacy action JSON to a single `kutha:action` Assert (same shape as `record_action`). Open stays fail-open. `L_delivery=M066-closed`.
+
+- [x] **S01: RecordAction → kutha:action Assert** `risk:medium` `depends:[]`
+  > After this: `record_action_to_assert` via caller intern; matrix `SEM-m066-op-migrate-action` killed. Phase 137. Landed. Directory rewrite stays deferred.
 
 ## M065: Op wire migrate (RecordAdmission) — CLOSED (GSD v0.59)
 
