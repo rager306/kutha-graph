@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import shutil
 from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 
@@ -44,6 +45,7 @@ ALLOWED_KINDS: frozenset[str] = frozenset(
         "frontmatter_paths_exist",
         "cargo_dep_constraint",
         "test_matrix",
+        "disk_free",
     }
 )
 
@@ -1990,6 +1992,58 @@ def _kind_file_max_lines(check: str, step: Step, ctx: Context, result: CheckResu
     )
 
 
+def _kind_disk_free(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
+    """Fail HIGH when free bytes on the filesystem for `path` are below `min_free_gib`."""
+    rel = _str(step, "path", ".")
+    min_gib = _int(step, "min_free_gib", -1)
+    result.scanned += 1
+    if min_gib < 1:
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "disk-free",
+                "min_free_gib must be a positive integer (GiB)",
+            )
+        )
+        return
+    probe = (ctx.root / rel).resolve()
+    if not probe.exists():
+        _high_missing(check, rel, result)
+        return
+    free = shutil.disk_usage(probe).free
+    need = min_gib * 1024**3
+    if free >= need:
+        return
+    free_gib = free / (1024**3)
+    message = _fmt(
+        _str(
+            step,
+            "message",
+            "{path} has {free_gib:.2f} GiB free; min_free_gib={min_free_gib}",
+        ),
+        path=rel,
+        free_gib=free_gib,
+        min_free_gib=min_gib,
+        free=free,
+        need=need,
+    )
+    result.findings.append(
+        Finding(check, _severity(step), _category(step, "disk-free"), message, rel)
+    )
+
+
+def disk_free_mutation_target(step: Step, root: Path) -> tuple[str, str, str] | None:
+    """Bump min_free_gib in checks.yaml so a live disk always fails the check."""
+    min_gib = _int(step, "min_free_gib", -1)
+    if min_gib < 1:
+        return None
+    path = ".kutha/dictionaries/checks.yaml"
+    if not (root / path).is_file():
+        return None
+    return path, r"min_free_gib:\s*\d+", "min_free_gib: 999999"
+
+
 from kutha_gov.kind_cargo import _kind_cargo_dep_constraint  # noqa: E402
 from kutha_gov.kind_cargo import (  # noqa: E402
     cargo_dep_constraint_mutation_target as cargo_dep_constraint_mutation_target,
@@ -2038,4 +2092,5 @@ RUNNERS: dict[str, Runner] = {
     "frontmatter_paths_exist": _kind_frontmatter_paths_exist,
     "cargo_dep_constraint": _kind_cargo_dep_constraint,
     "test_matrix": _kind_test_matrix,
+    "disk_free": _kind_disk_free,
 }

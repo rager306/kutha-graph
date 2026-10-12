@@ -1783,6 +1783,17 @@ rows:
     gate: default
     owner: M057-S01
     source: Phase 128 / M056 lease-bundle residual at docs-coupling
+  - id: SEM-m058-disk-free
+    plane: harness
+    invariant: free disk under the repo filesystem is at least YAML min_free_gib before heavy ci/cargo
+    layer: governor
+    oracle:
+      - disk-free
+    kill_mutation: set min_free_gib to 999999 (pytest DiskFreePreflightTests / selftest derive)
+    status: killed
+    gate: default
+    owner: M058-S01
+    source: Phase 129 / M057 residual disk preflight
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

@@ -14,8 +14,8 @@ read_only_inputs:
   - crates/kutha-runtime/tests/m019_sem_meta.rs
   - crates/kutha-runtime/tests/m013_write_path.rs
   - crates/kutha-runtime/tests/m013_fold_indexes.rs
-  - tmp/bench-pre-66.txt
-  - tmp/bench-post-66.txt
+  - .planning/phases/66-horn-fold-residuals/bench-pre.txt
+  - .planning/phases/66-horn-fold-residuals/bench-post.txt
   - .kutha/STATE.md
 commands:
   - { cmd: "set -a && source .env && set +a && unset CARGO_TARGET_DIR && cargo test -p kutha-runtime --test m019_sem_meta horn_correct_interval_prefix_suffix_derived_remain_live -- --exact", exit: 0 }
@@ -38,7 +38,7 @@ cbm: list_projects kutha-graph; search_graph leftover_halves / has_live_triple /
 | HF-03 Retract `kutha:*` gate | User mode: `admit` rejects `Retract` when fact relation is reserved (`admission.rs` L116–125); dictionary path `emit_retract_dict` uses `ReceiptMode::Dictionary` (`pipeline.rs` L300–306) |
 | HF-03 pin | `public_emit_retract_kutha_allow_is_refused` — cargo test exit 0 |
 | HF-04 fingerprint oracle | `open_retract_reemit_indexes_match_fingerprint` persist-after-mutation; asserts in-memory, post-persist open, and `replay_check` fingerprints (`m013_fold_indexes.rs` L82–125) — cargo test exit 0 |
-| HF-05 bench ≤10% | Pre: `ingest_plain.n` 137712385, `as_of.n` 419823 (`tmp/bench-pre-66.txt`); post: 132950275, 315267 (`tmp/bench-post-66.txt`); Δ −3.4% / −24.9% (faster; no >10% regression) |
+| HF-05 bench ≤10% | Pre: `ingest_plain.n` 137712385, `as_of.n` 419823 (`.planning/phases/66-horn-fold-residuals/bench-pre.txt`); post: 132950275, 315267 (`.planning/phases/66-horn-fold-residuals/bench-post.txt`); Δ −3.4% / −24.9% (faster; no >10% regression) |
 | Lease / STATE | `git diff --exit-code -- .kutha/STATE.md` clean; STATE **M020 S04** leased; fix `ec62ca5` does not touch `.kutha/STATE.md` (lease-only `7e3d753`) |
 
 **Verdict:** PASS — CONTEXT kill-tests satisfied; no PLAN/SUMMARY read.

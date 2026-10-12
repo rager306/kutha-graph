@@ -59,6 +59,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.49 | 122 | M055 | S01 | CE #6 append tip rollback (Other keep-lock; poison after rollover) | shipped 2026-10-11 |
 | v0.50 | 123–127 | M056 | S01–S05 | advisory residuals (lease-bundle → persist #29/#30 → #26/#28 → hygiene) | shipped |
 | v0.51 | 128 | M057 | S01 | docs-coupling STATE→ROADMAP (lease-bundle hole at git_path_implies) | shipped |
+| v0.52 | 129 | M058 | S01 | disk_free preflight (YAML min_free_gib) + VERIFICATION bench markers off gitignored tmp | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
@@ -107,7 +108,7 @@ Executor-written tests and governor observations are evidence, not verification.
 
 - The verifier receives the phase requirements and the public API only. It does not read the PLAN or SUMMARY files.
 - It writes kill-tests: inputs that would pass a lazy implementation and fail a correct one (for example: retract a seeded relation, then admit; re-emit the same keyed Assert at large N and check the scan count; two runs of the same log give the same fingerprint).
-- Output is one `NN-VERIFICATION.md` with frontmatter `independent: true`, `verifier_model`, `commands:` (with exit statuses), and `read_only_inputs:` (requirement and public-API files only, never a PLAN or SUMMARY path). Phase 28 turns the structure into a governor check. `/gsd-verify-work` is the interactive form for the same gate.
+- Output is one `NN-VERIFICATION.md` with frontmatter `independent: true`, `verifier_model`, `commands:` (with exit statuses), and `read_only_inputs:` (requirement and public-API files only, never a PLAN or SUMMARY path). Do not list gitignored scratch (`tmp/**`) in `read_only_inputs:` — store durable bench/evidence under the phase directory (M058 lesson). Phase 28 turns the structure into a governor check. `/gsd-verify-work` is the interactive form for the same gate.
 - Different model family or at least a fresh context from the executor. A phase does not close on its own author's check. Model-family independence is **honor-system**: `independent: true` frontmatter and the governor's path checks prove structure, not that the verifier used a different model family.
 - **Re-verify after VERIFICATION edits:** once `NN-VERIFICATION.md` exists with `status: passed`, any later edit to that file (or to the kill-test commands it cites) invalidates the close. Run a fresh independent verify pass and rewrite/append the report before clearing Active Slice. Do not close on a stale VERIFICATION that was patched by the executor.
 

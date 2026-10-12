@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.51
-milestone_name: Lease-diff ROADMAP coupling
+milestone: v0.52
+milestone_name: Disk-space preflight
 status: complete
-stopped_at: "128-lease-roadmap"
-last_updated: "2026-10-12T03:00:00.000Z"
+stopped_at: "129-disk-free"
+last_updated: "2026-10-12T04:30:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.51 Lease-diff ROADMAP coupling (harness M057) — complete  
-**Phase:** 128 complete  
-**Status:** S01 shipped; M057 / v0.51 closed
+**Milestone:** v0.52 Disk-space preflight (harness M058) — complete  
+**Phase:** 129 complete  
+**Status:** S01 shipped; M058 / v0.52 closed

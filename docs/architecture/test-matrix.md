@@ -131,6 +131,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M057 S01 (STATE→ROADMAP):** Phase 128 — `SEM-m057-lease-roadmap` `killed` (owner `M057-S01`).
 
+**M058 S01 (disk_free):** Phase 129 — `SEM-m058-disk-free` `killed` (owner `M058-S01`).
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

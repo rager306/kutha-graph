@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: M058 / GSD v0.52 closed
+
+### Trajectory
+
+- M058 / GSD v0.52 closed (Phase 129). Active Milestone **None**; `L_delivery=M058-closed`. Audit: `.planning/milestones/v0.52-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-12 — Process: disk_free preflight (Phase 129)
+
+### Process
+
+- Kind `disk_free` / check `disk-free`: free space under the repo filesystem must be ≥ YAML `min_free_gib` (default 2). Selftest derives an absurd threshold. FSM / `.env.example` budget 79. Pytest `DiskFreePreflightTests`. Matrix `SEM-m058-disk-free` killed.
+- Phase 65/66 VERIFICATION bench markers moved from gitignored `tmp/` to tracked phase paths so scratch cleans do not trip `verification-independent`.
+
 ## 2026-10-12 — Trajectory: lease M058-S01 (disk_free preflight)
 
 ### Trajectory

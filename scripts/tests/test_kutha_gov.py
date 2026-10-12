@@ -2050,6 +2050,41 @@ class LeaseBundleHonestyTests(unittest.TestCase):
         self.assertIn("lease-drift", _rust_highs(result))
 
 
+class DiskFreePreflightTests(unittest.TestCase):
+    """M058 S01: disk_free kind fails when free space is below YAML threshold."""
+
+    def test_absurd_min_free_gib_is_high(self) -> None:
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {
+                "kind": "disk_free",
+                "path": ".",
+                "min_free_gib": 999999,
+            },
+            Context(root=ROOT),
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertEqual(1, len(highs))
+        self.assertEqual("disk-free", highs[0].category)
+        self.assertIn("min_free_gib", highs[0].message)
+
+    def test_live_min_free_gib_one_passes(self) -> None:
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {"kind": "disk_free", "path": ".", "min_free_gib": 1},
+            Context(root=ROOT),
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertEqual([], highs)
+
+    def test_disk_free_check_is_registered(self) -> None:
+        self.assertIn("disk-free", get_checks(ROOT))
+
+
 class LeaseRoadmapCouplingTests(unittest.TestCase):
     """M057 S01: STATE lease diff must include ROADMAP (docs-coupling)."""
 

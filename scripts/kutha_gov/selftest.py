@@ -54,6 +54,7 @@ DERIVABLE_KINDS = frozenset(
         "glob_none",
         "glob_paths_in_file",
         "when_match_then_match",
+        "disk_free",
     }
 )
 SKIP_DIR_NAMES = frozenset(
@@ -473,7 +474,21 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
             unit = _derive_when_match_then_match(step, work)
             if unit:
                 derived.append(unit)
+        elif kind == "disk_free":
+            unit = _derive_disk_free(step, work)
+            if unit:
+                derived.append(unit)
     return derived
+
+
+def _derive_disk_free(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import disk_free_mutation_target
+
+    target = disk_free_mutation_target(step, work)
+    if target is None:
+        return []
+    path, pattern, replacement = target
+    return [{"op": "replace_regex", "path": path, "pattern": pattern, "with": replacement}]
 
 
 def _derive_test_matrix(step: Step, work: Path) -> list[Mutation]:

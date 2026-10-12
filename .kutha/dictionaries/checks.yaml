@@ -702,6 +702,7 @@ checks:
           - "frontmatter_paths_exist"
           - "cargo_dep_constraint"
           - "test_matrix"
+          - "disk_free"
           - "run_selftest"
           - "invariants.yaml"
           - "bridges.yaml"
@@ -1404,6 +1405,17 @@ checks:
           path: scripts/tests/test_kutha_gov.py
           pattern: "def test_ci_fsm_reaches_ok_with_stubbed_observe"
           with: "def test_ci_green_on_this_tree"
+
+  - id: disk-free
+    description: >-
+      Fail closed when free disk under the repo filesystem is below YAML
+      min_free_gib (protects heavy ci/cargo from mid-wave ENOSPC).
+    steps:
+      - kind: disk_free
+        path: "."
+        min_free_gib: 2
+        category: disk-free
+        message: "{path} has {free_gib:.2f} GiB free; min_free_gib={min_free_gib}"
 
   - id: verification-uv-only
     description: >-

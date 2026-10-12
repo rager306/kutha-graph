@@ -108,6 +108,12 @@ invariants:
     disposition: check
     check: docs-coupling
 
+  - id: I-disk-free
+    claim: "Heavy ci/cargo refuses to start when free disk is below dictionary min_free_gib"
+    source: "docs/process/governor-intake.md"
+    disposition: check
+    check: disk-free
+
   - id: I-invariants-ledger
     claim: "Control-loop claims are explicit in the process ledger"
     source: "docs/process/governor-intake.md"
