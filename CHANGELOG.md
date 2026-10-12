@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: lease M064-S01 (Op migrate PinPolicy)
+
+### Trajectory
+
+- Active Milestone **M064**, Active Slice **S01** (`L_delivery=M063-closed`): explicit `PinPolicy` → `StoreBlob` + `kutha:policy` Assert; open stays fail-open. Honeycomb stays Proposed.
+
 ## 2026-10-12 — Trajectory: M063 / GSD v0.57 closed
 
 ### Trajectory

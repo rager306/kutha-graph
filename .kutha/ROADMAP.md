@@ -201,6 +201,15 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M064: Op wire migrate (PinPolicy) — CLOSED (GSD v0.58)
+
+**Closed:** S01 delivered 2026-10-12. Process tag `v0.58`. Honeycomb stays Proposed.
+
+Process debt after M063: `PinPolicy` still deferred. Thin slice expands legacy policy JSON to `StoreBlob` + `kutha:policy` Assert (same shape as `emit_policy`). `L_delivery=M064-closed`.
+
+- [x] **S01: PinPolicy → StoreBlob+Assert** `risk:medium` `depends:[]`
+  > After this: `pin_policy_to_ops` via `policy_version_hash`; matrix `SEM-m064-op-migrate-policy` killed. Phase 135. Landed. RecordAdmission/RecordAction stay deferred.
+
 ## M063: Op wire migrate (RegisterRule) — CLOSED (GSD v0.57)
 
 **Closed:** S01 delivered 2026-10-12. Process tag `v0.57`. Honeycomb stays Proposed.

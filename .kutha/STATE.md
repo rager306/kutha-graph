@@ -12,19 +12,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M063-closed
+L_delivery=M064-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M063 closed (v0.57); prior M062 closed | Capability proven / Cypher started |
+| L_delivery | M064 closed (v0.58); prior M063 closed | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Idle. M063 / GSD v0.57 closed (`op_migrate` RegisterRule). Audit: `.planning/milestones/v0.57-MILESTONE-AUDIT.md`. PinPolicy/RecordAdmission/RecordAction migrate deferred. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+Idle. M064 / GSD v0.58 closed (`op_migrate` PinPolicy). Audit: `.planning/milestones/v0.58-MILESTONE-AUDIT.md`. RecordAdmission/RecordAction migrate deferred. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

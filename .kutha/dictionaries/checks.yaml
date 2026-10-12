@@ -1623,20 +1623,20 @@ checks:
   - id: op-compat-policy
     description: >-
       G4 CE #14 / CE #1: documented Op wire break — legacy dictionary meta-ops fail
-      deserialize on open; AllowRelation and RegisterRule explicit migrate leased;
-      policy in op-compat.md.
+      deserialize on open; AllowRelation, RegisterRule, and PinPolicy explicit migrate
+      leased; policy in op-compat.md.
     steps:
       - kind: file_contains
         path: docs/process/op-compat.md
         needles:
-          - "Policy: documented break; open fail-open; explicit migrate for AllowRelation and RegisterRule (serde aliases forbidden)"
+          - "Policy: documented break; open fail-open; explicit migrate for AllowRelation, RegisterRule, and PinPolicy (serde aliases forbidden)"
           - "AllowRelation"
           - "RegisterRule"
           - "PinPolicy"
           - "RecordAdmission"
           - "RecordAction"
           - "Fail open"
-          - "remap_legacy_ops"
+          - "pin_policy_to_ops"
         require: all
         category: oracle
         message: "op-compat policy doc missing: {missing}"
@@ -1661,12 +1661,21 @@ checks:
           - serde_open_path_still_rejects_register_rule
         category: oracle
         message: "op-migrate RegisterRule oracles missing {missing}"
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m064_op_migrate.rs
+        tests:
+          - pin_policy_op_remaps_to_store_blob_and_kutha_policy
+          - serde_open_path_still_rejects_pin_policy
+        category: oracle
+        message: "op-migrate PinPolicy oracles missing {missing}"
       - kind: file_contains
         path: crates/kutha-common/src/op_migrate.rs
         needles:
           - "remap_legacy_ops"
+          - "pin_policy_to_ops"
           - "AllowRelation"
           - "RegisterRule"
+          - "PinPolicy"
           - "DeferredVariant"
           - "serde aliases must stay forbidden"
         require: all
@@ -1686,7 +1695,7 @@ checks:
       mutations:
         - op: replace_regex
           path: docs/process/op-compat.md
-          pattern: "Policy: documented break; open fail-open; explicit migrate for AllowRelation and RegisterRule \\(serde aliases forbidden\\)"
+          pattern: "Policy: documented break; open fail-open; explicit migrate for AllowRelation, RegisterRule, and PinPolicy \\(serde aliases forbidden\\)"
           with: "Policy: silent skip of unknown Op variants"
 
   - id: pin-compat-policy

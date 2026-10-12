@@ -4,7 +4,8 @@
 //! Callers pass an intern callback so TermIds are never guessed.
 
 use crate::{
-    Event, EventId, Op, RuleAst, TermId, KUTHA_ALLOWS, KUTHA_RULE,
+    policy_version_hash, Event, EventId, Op, RuleAst, TermId, KUTHA_ALLOWS, KUTHA_POLICY,
+    KUTHA_RULE,
 };
 use serde::Deserialize;
 
@@ -23,6 +24,8 @@ pub enum OpMigrateError {
     EmptyName,
     /// RegisterRule definition is not a valid named rule ident.
     InvalidRuleDefinition,
+    /// PinPolicy definition was empty.
+    EmptyPolicyDefinition,
     /// Caller asked for a single Op/Event but remap expands to multiple.
     MultiOpRequired {
         count: usize,
@@ -40,6 +43,7 @@ impl std::fmt::Display for OpMigrateError {
             Self::InvalidRuleDefinition => {
                 write!(f, "RegisterRule definition is not a valid named rule ident")
             }
+            Self::EmptyPolicyDefinition => write!(f, "PinPolicy definition must be non-empty"),
             Self::MultiOpRequired { count } => {
                 write!(f, "legacy remap expands to {count} ops; use remap_legacy_ops")
             }
@@ -59,6 +63,14 @@ struct AllowRelationBody {
 
 #[derive(Deserialize)]
 struct RegisterRuleBody {
+    definition: String,
+    valid_from: u64,
+    #[serde(default)]
+    valid_to: Option<u64>,
+}
+
+#[derive(Deserialize)]
+struct PinPolicyBody {
     definition: String,
     valid_from: u64,
     #[serde(default)]
@@ -123,10 +135,43 @@ pub fn register_rule_to_ops(
     ])
 }
 
+/// Build modern `StoreBlob` + `kutha:policy` Assert (same shape as runtime `emit_policy`).
+pub fn pin_policy_to_ops(
+    definition: impl Into<String>,
+    valid_from: u64,
+    valid_to: Option<u64>,
+    mut intern: impl FnMut(&str) -> TermId,
+) -> Result<Vec<Op>, OpMigrateError> {
+    let definition = definition.into();
+    if definition.is_empty() {
+        return Err(OpMigrateError::EmptyPolicyDefinition);
+    }
+    let digest = policy_version_hash(&definition);
+    let bytes = definition.into_bytes();
+    let subject = intern(&digest);
+    let relation = intern(KUTHA_POLICY);
+    Ok(vec![
+        Op::StoreBlob {
+            digest: digest.clone(),
+            bytes,
+        },
+        Op::Assert {
+            subject,
+            relation,
+            object: subject,
+            valid_from,
+            valid_to,
+            claim: None,
+            delivery_key: Some(digest),
+            polarity: None,
+        },
+    ])
+}
+
 /// Remap one legacy dictionary meta-op JSON value into one or more modern [`Op`]s.
 ///
-/// Leased: `AllowRelation` (M062), `RegisterRule` (M063). Remaining meta-ops return
-/// [`OpMigrateError::DeferredVariant`]. Does not touch `Op`'s serde.
+/// Leased: `AllowRelation` (M062), `RegisterRule` (M063), `PinPolicy` (M064).
+/// Remaining meta-ops return [`OpMigrateError::DeferredVariant`]. Does not touch `Op`'s serde.
 pub fn remap_legacy_ops(
     value: &serde_json::Value,
     intern: impl FnMut(&str) -> TermId,
@@ -154,7 +199,11 @@ pub fn remap_legacy_ops(
                 .map_err(|_| OpMigrateError::InvalidShape("RegisterRule body"))?;
             register_rule_to_ops(parsed.definition, parsed.valid_from, parsed.valid_to, intern)
         }
-        "PinPolicy" => Err(OpMigrateError::DeferredVariant("PinPolicy")),
+        "PinPolicy" => {
+            let parsed: PinPolicyBody = serde_json::from_value(body.clone())
+                .map_err(|_| OpMigrateError::InvalidShape("PinPolicy body"))?;
+            pin_policy_to_ops(parsed.definition, parsed.valid_from, parsed.valid_to, intern)
+        }
         "RecordAdmission" => Err(OpMigrateError::DeferredVariant("RecordAdmission")),
         "RecordAction" => Err(OpMigrateError::DeferredVariant("RecordAction")),
         other => Err(OpMigrateError::UnknownVariant(other.to_string())),
@@ -175,8 +224,9 @@ pub fn remap_legacy_op_value(
 
 /// Remap a legacy Event JSON whose `op` is a removed meta-op tag.
 ///
-/// `AllowRelation`: one event, legacy id kept. `RegisterRule`: `StoreBlob` gets a
-/// fresh id; Assert keeps the legacy id. `object_ids` are recomputed.
+/// `AllowRelation`: one event, legacy id kept. Multi-op remaps (`RegisterRule`,
+/// `PinPolicy`): `StoreBlob` gets a fresh id; Assert keeps the legacy id.
+/// `object_ids` are recomputed.
 pub fn remap_legacy_events(
     value: &serde_json::Value,
     intern: impl FnMut(&str) -> TermId,
@@ -316,13 +366,67 @@ mod tests {
     }
 
     #[test]
-    fn pin_policy_is_deferred() {
+    fn pin_policy_remaps_to_blob_and_kutha_policy_assert() {
         let mut dict = TermDictionary::default();
         let raw = serde_json::json!({
-            "PinPolicy": { "definition": "P", "valid_from": 0, "valid_to": null }
+            "PinPolicy": {
+                "definition": "allow-all",
+                "valid_from": 2010,
+                "valid_to": null
+            }
+        });
+        let ops = remap_legacy_ops(&raw, |s| dict.intern(s)).expect("remap");
+        assert_eq!(ops.len(), 2);
+        let digest = policy_version_hash("allow-all");
+        match &ops[0] {
+            Op::StoreBlob { digest: d, bytes } => {
+                assert_eq!(d, &digest);
+                assert_eq!(bytes, b"allow-all");
+            }
+            other => panic!("expected StoreBlob, got {other:?}"),
+        }
+        match &ops[1] {
+            Op::Assert {
+                subject,
+                relation,
+                object,
+                delivery_key,
+                valid_from,
+                ..
+            } => {
+                assert_eq!(subject, object);
+                assert_eq!(dict.lookup(*relation), Some(KUTHA_POLICY));
+                assert_eq!(delivery_key.as_deref(), Some(digest.as_str()));
+                assert_eq!(*valid_from, 2010);
+            }
+            other => panic!("expected Assert, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn empty_pin_policy_definition_is_rejected() {
+        let mut dict = TermDictionary::default();
+        let raw = serde_json::json!({
+            "PinPolicy": { "definition": "", "valid_from": 0, "valid_to": null }
         });
         let err = remap_legacy_ops(&raw, |s| dict.intern(s)).unwrap_err();
-        assert_eq!(err, OpMigrateError::DeferredVariant("PinPolicy"));
+        assert_eq!(err, OpMigrateError::EmptyPolicyDefinition);
+    }
+
+    #[test]
+    fn record_admission_is_deferred() {
+        let mut dict = TermDictionary::default();
+        let raw = serde_json::json!({
+            "RecordAdmission": {
+                "justification_id": "j",
+                "admitted": true,
+                "policy_version": "p",
+                "valid_from": 0,
+                "valid_to": null
+            }
+        });
+        let err = remap_legacy_ops(&raw, |s| dict.intern(s)).unwrap_err();
+        assert_eq!(err, OpMigrateError::DeferredVariant("RecordAdmission"));
     }
 
     #[test]
