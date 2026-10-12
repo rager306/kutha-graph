@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M065: Op wire migrate (RecordAdmission) — OPEN (GSD v0.59)
+
+Process debt after M064: `RecordAdmission` still deferred. Thin slice remaps legacy admission JSON to a single `kutha:admission` Assert (same shape as `record_justification`). Open stays fail-open. RecordAction stays deferred.
+
+- [ ] **S01: RecordAdmission → kutha:admission Assert** `risk:medium` `depends:[]`
+  > After this: `record_admission_to_assert` via caller intern; matrix `SEM-m065-op-migrate-admission` killed. Phase 136.
+
 ## M064: Op wire migrate (PinPolicy) — CLOSED (GSD v0.58)
 
 **Closed:** S01 delivered 2026-10-12. Process tag `v0.58`. Honeycomb stays Proposed.
