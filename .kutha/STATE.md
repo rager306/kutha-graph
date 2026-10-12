@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M059
+**Active Slice:** S01
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M058 closed (v0.52); prior M057 closed | Capability proven / Cypher started |
+| L_delivery | M058 closed; M059 S01 leased | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Idle. M058 / GSD v0.52 closed (`disk_free` preflight). Audit: `.planning/milestones/v0.52-MILESTONE-AUDIT.md`. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+M059-S01: `.env.example` `KUTHA_GOV_BUDGET` must equal `fsm.yaml` `defaults.budget` via `cite_equals` (M058 residual). Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

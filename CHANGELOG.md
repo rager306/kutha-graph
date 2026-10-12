@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: lease M059-S01 (budget template align)
+
+### Trajectory
+
+- Active Milestone **M059**, Active Slice **S01** (`L_delivery=M058-closed`): `.env.example` `KUTHA_GOV_BUDGET` must match `fsm.yaml` `defaults.budget` (`cite_equals`). Honeycomb stays Proposed.
+
 ## 2026-10-12 — Trajectory: M058 / GSD v0.52 closed
 
 ### Trajectory
