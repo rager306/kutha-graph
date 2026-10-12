@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: lease M058-S01 (disk_free preflight)
+
+### Trajectory
+
+- Active Milestone **M058**, Active Slice **S01** (`L_delivery=M057-closed`): dictionary kind `disk_free` with YAML `min_free_gib` before heavy `ci`/`cargo`. Honeycomb stays Proposed.
+
 ## 2026-10-12 — Trajectory: M057 / GSD v0.51 closed
 
 ### Trajectory

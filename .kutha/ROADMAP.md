@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M058: Disk-space preflight — ACTIVE (GSD v0.52)
+
+Process debt after M057: sessions hit 100% disk mid-wave; governor had no dictionary gate before heavy cargo.
+
+- [ ] **S01: disk_free kind + check** `risk:low` `depends:[]`
+  > After this: kind `disk_free` with YAML `min_free_gib`; check `disk-free`; selftest derives absurd threshold; matrix `SEM-m058-disk-free` killed. Phase 129.
+
 ## M057: Lease-diff ROADMAP coupling — CLOSED (GSD v0.51)
 
 **Closed:** S01 delivered 2026-10-12. Process tag `v0.51`. Honeycomb stays Proposed.
