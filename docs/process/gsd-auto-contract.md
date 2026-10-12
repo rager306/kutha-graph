@@ -66,6 +66,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.56 | 133 | M062 | S01 | Op migrate AllowRelation (explicit remap; open fail-open) | shipped |
 | v0.57 | 134 | M063 | S01 | Op migrate RegisterRule (StoreBlob + kutha:rule Assert) | shipped |
 | v0.58 | 135 | M064 | S01 | Op migrate PinPolicy (StoreBlob + kutha:policy Assert) | shipped |
+| v0.59 | 136 | M065 | S01 | Op migrate RecordAdmission (kutha:admission Assert) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

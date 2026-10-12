@@ -1,19 +1,19 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.58
-milestone_name: Op migrate PinPolicy
-status: active
-stopped_at: "135-op-migrate-policy"
-last_updated: "2026-10-12T11:45:00.000Z"
+milestone: v0.59
+milestone_name: Op migrate RecordAdmission
+status: complete
+stopped_at: "136-op-migrate-admission"
+last_updated: "2026-10-12T14:20:00.000Z"
 progress:
   total_phases: 1
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 1
-  completed_plans: 0
+  completed_plans: 1
 ---
 
 # Project State
 
-**Milestone:** v0.58 Op migrate PinPolicy (M064) — active  
-**Phase:** 135 in progress  
-**Status:** S01 leased; execute PinPolicy remap
+**Milestone:** v0.59 Op migrate RecordAdmission (M065) — complete  
+**Phase:** 136 complete  
+**Status:** S01 shipped; M065 / v0.59 closed
