@@ -1805,6 +1805,17 @@ rows:
     gate: default
     owner: M059-S01
     source: Phase 130 / M058 residual budget lag
+  - id: SEM-m060-budget-covers
+    plane: harness
+    invariant: fsm.yaml defaults.budget is at least the dictionary check count
+    layer: governor
+    oracle:
+      - budget-covers-checks
+    kill_mutation: set defaults.budget to 1 (pytest BudgetCoversChecksTests / selftest derive)
+    status: killed
+    gate: default
+    owner: M060-S01
+    source: Phase 131 / M059 residual short-budget precommit gate
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

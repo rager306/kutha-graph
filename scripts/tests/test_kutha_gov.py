@@ -2050,6 +2050,30 @@ class LeaseBundleHonestyTests(unittest.TestCase):
         self.assertIn("lease-drift", _rust_highs(result))
 
 
+class BudgetCoversChecksTests(unittest.TestCase):
+    """M060 S01: fsm defaults.budget must cover dictionary check count."""
+
+    def test_budget_covers_checks_is_registered(self) -> None:
+        self.assertIn("budget-covers-checks", get_checks(ROOT))
+
+    def test_short_fsm_budget_is_high(self) -> None:
+        result = CheckResult(check="probe")
+        run_step(
+            "probe",
+            {"kind": "budget_covers_checks", "budget": 1},
+            Context(root=ROOT),
+            result,
+        )
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertEqual(1, len(highs))
+        self.assertEqual("budget-covers", highs[0].category)
+
+    def test_live_budget_covers_checks_is_green(self) -> None:
+        result = get_checks(ROOT)["budget-covers-checks"].run(Context(root=ROOT))
+        highs = [f for f in result.findings if f.severity is Severity.HIGH]
+        self.assertEqual([], highs)
+
+
 class BudgetTemplateAlignTests(unittest.TestCase):
     """M059 S01: .env.example budget must match fsm.yaml defaults.budget."""
 

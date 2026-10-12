@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.53
-milestone_name: Budget template alignment
+milestone: v0.54
+milestone_name: Budget covers check count
 status: complete
-stopped_at: "130-budget-template"
-last_updated: "2026-10-12T04:45:00.000Z"
+stopped_at: "131-budget-covers"
+last_updated: "2026-10-12T05:15:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.53 Budget template alignment (harness M059) — complete  
-**Phase:** 130 complete  
-**Status:** S01 shipped; M059 / v0.53 closed
+**Milestone:** v0.54 Budget covers check count (harness M060) — complete  
+**Phase:** 131 complete  
+**Status:** S01 shipped; M060 / v0.54 closed

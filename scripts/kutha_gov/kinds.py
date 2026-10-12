@@ -46,6 +46,7 @@ ALLOWED_KINDS: frozenset[str] = frozenset(
         "cargo_dep_constraint",
         "test_matrix",
         "disk_free",
+        "budget_covers_checks",
     }
 )
 
@@ -2044,6 +2045,63 @@ def disk_free_mutation_target(step: Step, root: Path) -> tuple[str, str, str] | 
     return path, r"min_free_gib:\s*\d+", "min_free_gib: 999999"
 
 
+def _kind_budget_covers_checks(
+    check: str, step: Step, ctx: Context, result: CheckResult
+) -> None:
+    """Fail HIGH when fsm defaults.budget is below the dictionary check count."""
+    from kutha_gov.checks import get_checks
+    from kutha_gov.fsm import load_machine
+
+    result.scanned += 1
+    n = len(get_checks(ctx.root))
+    if "budget" in step:
+        budget = _int(step, "budget", -1)
+        if budget < 0:
+            result.findings.append(
+                Finding(
+                    check,
+                    Severity.HIGH,
+                    "budget-covers",
+                    "budget override must be a non-negative integer",
+                )
+            )
+            return
+    else:
+        try:
+            budget = load_machine(ctx.root).budget_default
+        except ValueError as exc:
+            result.findings.append(
+                Finding(check, Severity.HIGH, "budget-covers", str(exc))
+            )
+            return
+    if budget >= n:
+        return
+    message = _fmt(
+        _str(
+            step,
+            "message",
+            "defaults.budget={budget} covers {n} checks incompletely (short by {short})",
+        ),
+        budget=budget,
+        n=n,
+        short=n - budget,
+    )
+    result.findings.append(
+        Finding(check, _severity(step), _category(step, "budget-covers"), message)
+    )
+
+
+def budget_covers_checks_mutation_target(
+    step: Step, root: Path
+) -> tuple[str, str, str] | None:
+    """Lower fsm defaults.budget so the live check count fails the floor."""
+    del step  # step has no path; always mutate fsm.yaml
+    path = ".kutha/dictionaries/fsm.yaml"
+    if not (root / path).is_file():
+        return None
+    return path, r"(?m)^(  budget:\s*)\d+\s*$", r"\g<1>1"
+
+
 from kutha_gov.kind_cargo import _kind_cargo_dep_constraint  # noqa: E402
 from kutha_gov.kind_cargo import (  # noqa: E402
     cargo_dep_constraint_mutation_target as cargo_dep_constraint_mutation_target,
@@ -2093,4 +2151,5 @@ RUNNERS: dict[str, Runner] = {
     "cargo_dep_constraint": _kind_cargo_dep_constraint,
     "test_matrix": _kind_test_matrix,
     "disk_free": _kind_disk_free,
+    "budget_covers_checks": _kind_budget_covers_checks,
 }

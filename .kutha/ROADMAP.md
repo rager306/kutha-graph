@@ -201,12 +201,14 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M060: Budget covers check count — ACTIVE (GSD v0.54)
+## M060: Budget covers check count — CLOSED (GSD v0.54)
 
-Process debt after M059: template/env alignment does not prove `defaults.budget` covers the dictionary; short budget was only caught by ci truncation or a pytest assert.
+**Closed:** S01 delivered 2026-10-12. Process tag `v0.54`. Honeycomb stays Proposed.
 
-- [ ] **S01: budget_covers_checks kind** `risk:low` `depends:[]`
-  > After this: kind `budget_covers_checks`; check `budget-covers-checks`; matrix `SEM-m060-budget-covers` killed. Phase 131.
+Process debt after M059: template/env alignment did not prove `defaults.budget` covers the dictionary; short budget was only caught by ci truncation or a pytest assert. `L_delivery=M060-closed`.
+
+- [x] **S01: budget_covers_checks kind** `risk:low` `depends:[]`
+  > After this: kind `budget_covers_checks`; check `budget-covers-checks`; matrix `SEM-m060-budget-covers` killed. Phase 131. Landed.
 
 ## M059: Budget template alignment — CLOSED (GSD v0.53)
 

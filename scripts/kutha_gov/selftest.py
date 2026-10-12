@@ -55,6 +55,7 @@ DERIVABLE_KINDS = frozenset(
         "glob_paths_in_file",
         "when_match_then_match",
         "disk_free",
+        "budget_covers_checks",
     }
 )
 SKIP_DIR_NAMES = frozenset(
@@ -478,6 +479,10 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
             unit = _derive_disk_free(step, work)
             if unit:
                 derived.append(unit)
+        elif kind == "budget_covers_checks":
+            unit = _derive_budget_covers_checks(step, work)
+            if unit:
+                derived.append(unit)
     return derived
 
 
@@ -485,6 +490,16 @@ def _derive_disk_free(step: Step, work: Path) -> list[Mutation]:
     from kutha_gov.kinds import disk_free_mutation_target
 
     target = disk_free_mutation_target(step, work)
+    if target is None:
+        return []
+    path, pattern, replacement = target
+    return [{"op": "replace_regex", "path": path, "pattern": pattern, "with": replacement}]
+
+
+def _derive_budget_covers_checks(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import budget_covers_checks_mutation_target
+
+    target = budget_covers_checks_mutation_target(step, work)
     if target is None:
         return []
     path, pattern, replacement = target

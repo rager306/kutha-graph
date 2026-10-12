@@ -703,6 +703,7 @@ checks:
           - "cargo_dep_constraint"
           - "test_matrix"
           - "disk_free"
+          - "budget_covers_checks"
           - "run_selftest"
           - "invariants.yaml"
           - "bridges.yaml"
@@ -1430,6 +1431,14 @@ checks:
           - path: .env.example
             pattern: '(?m)^KUTHA_GOV_BUDGET=(\d+)\s*$'
         message: "{path} cites KUTHA_GOV_BUDGET={got} but {source} defaults.budget is {expected}"
+
+  - id: budget-covers-checks
+    description: >-
+      fsm.yaml defaults.budget must be at least the dictionary check count so
+      Cui cannot truncate the tail (precommit gate; complements ci truncation HIGH).
+    steps:
+      - kind: budget_covers_checks
+        message: "defaults.budget={budget} covers {n} checks incompletely (short by {short})"
 
   - id: verification-uv-only
     description: >-

@@ -120,6 +120,12 @@ invariants:
     disposition: check
     check: budget-template-align
 
+  - id: I-budget-covers-checks
+    claim: "fsm.yaml defaults.budget is at least the dictionary check count"
+    source: "docs/process/kutha-harness.md"
+    disposition: check
+    check: budget-covers-checks
+
   - id: I-invariants-ledger
     claim: "Control-loop claims are explicit in the process ledger"
     source: "docs/process/governor-intake.md"

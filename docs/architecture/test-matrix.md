@@ -135,6 +135,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M059 S01 (budget template):** Phase 130 — `SEM-m059-budget-template` `killed` (owner `M059-S01`).
 
+**M060 S01 (budget covers checks):** Phase 131 — `SEM-m060-budget-covers` `killed` (owner `M060-S01`).
+
 `unowned` is rejected by the governor check.
 
 ## Decision rows (M021 S01 / Phase 68)

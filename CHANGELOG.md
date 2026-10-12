@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: M060 / GSD v0.54 closed
+
+### Trajectory
+
+- M060 / GSD v0.54 closed (Phase 131). Active Milestone **None**; `L_delivery=M060-closed`. Audit: `.planning/milestones/v0.54-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-12 — Process: budget_covers_checks (Phase 131)
+
+### Process
+
+- Kind `budget_covers_checks` / check `budget-covers-checks`: `fsm.yaml` defaults.budget must be ≥ dictionary check count (precommit). Selftest lowers budget to 1. FSM / `.env.example` budget 81. Pytest `BudgetCoversChecksTests`. Matrix `SEM-m060-budget-covers` killed.
+
 ## 2026-10-12 — Trajectory: lease M060-S01 (budget covers checks)
 
 ### Trajectory
