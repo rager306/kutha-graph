@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: lease M060-S01 (budget covers checks)
+
+### Trajectory
+
+- Active Milestone **M060**, Active Slice **S01** (`L_delivery=M059-closed`): `fsm.yaml` defaults.budget must be ≥ dictionary check count (`budget_covers_checks`). Honeycomb stays Proposed.
+
 ## 2026-10-12 — Trajectory: M059 / GSD v0.53 closed
 
 ### Trajectory
