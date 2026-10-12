@@ -4,6 +4,24 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: M063 / GSD v0.57 closed
+
+### Trajectory
+
+- M063 / GSD v0.57 closed (Phase 134). Active Milestone **None**; `L_delivery=M063-closed`. Audit: `.planning/milestones/v0.57-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-12 — Product: Op migrate RegisterRule (Phase 134)
+
+### Product
+
+- `remap_legacy_ops` / `register_rule_to_ops`: legacy `RegisterRule` → `StoreBlob` + `kutha:rule` Assert via `RuleAst::named` (mirrors `emit_rule`). Event expand keeps legacy id on Assert. Invalid idents fail closed. Open/serde stay fail-open. Tests: common unit + `m063_op_migrate`. Bench sample (`KUTHA_BENCH_N=1000`): `ingest_plain.n` ≈10.3ms, `as_of.n` ≈28µs.
+
+## 2026-10-12 — Trajectory: lease M063-S01 (Op migrate RegisterRule)
+
+### Trajectory
+
+- Active Milestone **M063**, Active Slice **S01** (`L_delivery=M062-closed`): explicit `RegisterRule` → `StoreBlob` + `kutha:rule` Assert; open stays fail-open. Honeycomb stays Proposed.
+
 ## 2026-10-12 — Trajectory: M062 / GSD v0.56 closed
 
 ### Trajectory

@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.56
-milestone_name: Op migrate AllowRelation
+milestone: v0.57
+milestone_name: Op migrate RegisterRule
 status: complete
-stopped_at: "133-op-migrate-allow"
-last_updated: "2026-10-12T08:30:00.000Z"
+stopped_at: "134-op-migrate-rule"
+last_updated: "2026-10-12T09:35:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.56 Op migrate AllowRelation (M062) — complete  
-**Phase:** 133 complete  
-**Status:** S01 shipped; M062 / v0.56 closed
+**Milestone:** v0.57 Op migrate RegisterRule (M063) — complete  
+**Phase:** 134 complete  
+**Status:** S01 shipped; M063 / v0.57 closed

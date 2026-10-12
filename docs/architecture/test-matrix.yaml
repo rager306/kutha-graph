@@ -1839,6 +1839,18 @@ rows:
     gate: default
     owner: M062-S01
     source: Phase 133 / CE #1 Op migrate AllowRelation
+  - id: SEM-m063-op-migrate-rule
+    plane: product
+    invariant: legacy RegisterRule JSON remaps to StoreBlob plus kutha:rule Assert via explicit migrate; Op serde stays fail-open
+    layer: decision
+    oracle:
+      - register_rule_op_remaps_to_store_blob_and_kutha_rule
+      - serde_open_path_still_rejects_register_rule
+    kill_mutation: delete register_rule_to_ops so RegisterRule JSON cannot become StoreBlob plus Assert
+    status: killed
+    gate: default
+    owner: M063-S01
+    source: Phase 134 / CE #1 Op migrate RegisterRule
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

@@ -64,6 +64,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.54 | 131 | M060 | S01 | budget_covers_checks (fsm defaults.budget ≥ check count in precommit) | shipped |
 | v0.55 | 132 | M061 | S01 | env_int_at_least (live KUTHA_GOV_BUDGET ≥ fsm defaults.budget when set) | shipped |
 | v0.56 | 133 | M062 | S01 | Op migrate AllowRelation (explicit remap; open fail-open) | shipped |
+| v0.57 | 134 | M063 | S01 | Op migrate RegisterRule (StoreBlob + kutha:rule Assert) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

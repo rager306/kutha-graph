@@ -14,6 +14,7 @@ pub use event::{
 };
 pub use intern::TermDictionary;
 pub use op_migrate::{
-    allow_relation_to_assert, remap_legacy_event_value, remap_legacy_op_value, OpMigrateError,
+    allow_relation_to_assert, register_rule_to_ops, remap_legacy_event_value, remap_legacy_events,
+    remap_legacy_op_value, remap_legacy_ops, OpMigrateError,
 };
 pub use rule::{RuleAst, RuleAtom, RuleTerm, is_rule_ident, rule_body_hash};

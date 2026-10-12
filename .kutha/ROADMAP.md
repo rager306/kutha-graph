@@ -201,6 +201,15 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M063: Op wire migrate (RegisterRule) — CLOSED (GSD v0.57)
+
+**Closed:** S01 delivered 2026-10-12. Process tag `v0.57`. Honeycomb stays Proposed.
+
+Process debt after M062: `RegisterRule` still deferred. Thin slice expands legacy rule JSON to `StoreBlob` + `kutha:rule` Assert (same shape as `emit_rule`). `L_delivery=M063-closed`.
+
+- [x] **S01: RegisterRule → StoreBlob+Assert** `risk:medium` `depends:[]`
+  > After this: `remap_legacy_ops` handles RegisterRule via `RuleAst::named`; matrix `SEM-m063-op-migrate-rule` killed. Phase 134. Landed. PinPolicy/RecordAdmission/RecordAction stay deferred.
+
 ## M062: Op wire migrate (AllowRelation) — CLOSED (GSD v0.56)
 
 **Closed:** S01 delivered 2026-10-12. Process tag `v0.56`. Honeycomb stays Proposed.
