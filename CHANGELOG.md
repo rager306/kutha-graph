@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: M064 / GSD v0.58 closed
+
+### Trajectory
+
+- M064 / GSD v0.58 closed (Phase 135). Active Milestone **None**; `L_delivery=M064-closed`. Audit: `.planning/milestones/v0.58-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-12 — Product: Op migrate PinPolicy (Phase 135)
+
+### Product
+
+- `pin_policy_to_ops`: legacy `PinPolicy` → `StoreBlob` + `kutha:policy` Assert via `policy_version_hash` (mirrors `emit_policy`). Empty definition fail-closed. Open/serde stay fail-open. Tests: common unit + `m064_op_migrate`. Bench sample (`KUTHA_BENCH_N=1000`): `ingest_plain.n` ≈10.0ms, `as_of.n` ≈25µs.
+
 ## 2026-10-12 — Trajectory: lease M064-S01 (Op migrate PinPolicy)
 
 ### Trajectory
