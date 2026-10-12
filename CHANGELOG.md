@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-12 — Trajectory: lease M066-S01 (Op migrate RecordAction)
+
+### Trajectory
+
+- Active Milestone **M066**, Active Slice **S01** (`L_delivery=M065-closed`): explicit `RecordAction` → `kutha:action` Assert; open stays fail-open. Directory rewrite stays deferred. Honeycomb stays Proposed.
+
 ## 2026-10-12 — Trajectory: M065 / GSD v0.59 closed
 
 ### Trajectory
