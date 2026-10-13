@@ -201,7 +201,8 @@ pub struct OpWireMigrateReport {
 /// segmented files + manifest (when present), and stale `snapshot.json`, then
 /// stamps [`OP_WIRE_MARKER_REL`]. Idempotent when the marker exists. Open stays
 /// fail-open until this runs. Segmented layout is demoted to legacy jsonl SoT
-/// (operator may later run [`migrate`] for segments again).
+/// (operator may later run [`migrate`] for segments again); demote also removes
+/// every `seg-*.log` including generation-unique orphans (M070).
 pub fn migrate_op_wire(dir: &Path) -> std::io::Result<OpWireMigrateReport> {
     fs::create_dir_all(dir)?;
     let _lock = acquire_store_write_lock(dir)?;
@@ -216,12 +217,8 @@ pub fn migrate_op_wire(dir: &Path) -> std::io::Result<OpWireMigrateReport> {
     let jsonl_path = dir.join(EVENTS_JSONL);
     let wal_path = dir.join(EVENTS_WAL);
     let manifest_path = dir.join(crate::segment::MANIFEST_REL);
-    let segmented = if manifest_path.exists() {
-        Some(crate::segment::read_manifest(dir)?)
-    } else {
-        None
-    };
-    let values = if segmented.is_some() {
+    let segmented = manifest_path.exists();
+    let values = if segmented {
         crate::segment::recover_json_values(dir)?
     } else if jsonl_path.exists() {
         read_jsonl_values(&jsonl_path)?
@@ -235,17 +232,9 @@ pub fn migrate_op_wire(dir: &Path) -> std::io::Result<OpWireMigrateReport> {
     let (out, remapped_lines) = rewrite_op_wire_values(&values)?;
     // Materialize jsonl as SoT; drop prior WAL / segmented layout (legacy frames).
     write_events_jsonl_temp(dir, &out, true)?;
-    if let Some(man) = segmented {
-        for entry in &man.sealed {
-            let p = dir.join(&entry.name);
-            if p.exists() {
-                fs::remove_file(&p)?;
-            }
-        }
-        let active = dir.join(&man.active);
-        if active.exists() {
-            fs::remove_file(&active)?;
-        }
+    if segmented {
+        // Manifest-named files plus generation-unique orphans (rollover/crash leftovers).
+        remove_all_segment_logs(dir)?;
         if manifest_path.exists() {
             fs::remove_file(&manifest_path)?;
         }
@@ -287,6 +276,22 @@ fn read_jsonl_values(path: &Path) -> std::io::Result<Vec<serde_json::Value>> {
     }
     // Torn tail after last newline is dropped (same policy as read_jsonl_events).
     Ok(values)
+}
+
+/// Remove every `seg-*.log` under `dir` (M070). Used after Op-wire demotes a
+/// segmented store to jsonl so generation-unique leftovers cannot linger.
+fn remove_all_segment_logs(dir: &Path) -> std::io::Result<()> {
+    for entry in fs::read_dir(dir)? {
+        let entry = entry?;
+        let name = entry.file_name();
+        let Some(s) = name.to_str() else {
+            continue;
+        };
+        if s.starts_with("seg-") && s.ends_with(".log") {
+            fs::remove_file(entry.path())?;
+        }
+    }
+    Ok(())
 }
 
 fn rewrite_op_wire_values(

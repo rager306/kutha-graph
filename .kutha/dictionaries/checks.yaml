@@ -1705,6 +1705,21 @@ checks:
           - open_still_fails_on_unmigrated_segmented_record_action
         category: oracle
         message: "op-wire segmented migrate oracles missing {missing}"
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m070_op_wire_orphan_seg.rs
+        tests:
+          - migrate_op_wire_removes_orphan_generation_unique_seg_files
+        category: oracle
+        message: "op-wire orphan seg cleanup oracles missing {missing}"
+      - kind: file_contains
+        path: docs/process/op-compat.md
+        needles:
+          - "delivery-key same-relation"
+          - "M070"
+          - "seg-*.log"
+        require: all
+        category: oracle
+        message: "op-compat G4 residual honesty missing: {missing}"
       - kind: file_contains
         path: crates/kutha-common/src/op_migrate.rs
         needles:
@@ -1728,6 +1743,7 @@ checks:
           - "kutha-op-wire/1"
           - "recover_json_values"
           - "manifest.json"
+          - "remove_all_segment_logs"
         require: all
         category: oracle
         message: "migrate_op_wire missing: {missing}"

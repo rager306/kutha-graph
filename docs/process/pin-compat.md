@@ -34,4 +34,7 @@ A migrate that rewrites persisted Behavior `rule_version` from UTF-8 pins to v1 
 
 ## Related G4 residuals
 
-Clock `Into` facade (#26) and other contract items stay on the G4 queue. Op wire break remains in `docs/process/op-compat.md`. Honeycomb cells stay **Proposed**.
+Clock-safe facade shipped as M025 — **not** CE whole-repo finding #26
+(delivery-key same-relation; closed M056-S03). Op wire break and layout migrate
+remain in `docs/process/op-compat.md`. See
+`docs/process/ce-review-regression-map.md`. Honeycomb cells stay **Proposed**.

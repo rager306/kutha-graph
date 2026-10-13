@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.63
-milestone_name: Op wire segmented migrate
+milestone: v0.64
+milestone_name: Op-wire demote orphan cleanup
 status: complete
-stopped_at: "140-op-wire-seg"
-last_updated: "2026-10-13T08:00:00.000Z"
+stopped_at: "141-op-wire-orphan-seg"
+last_updated: "2026-10-13T09:30:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.63 Op wire segmented migrate (M069) — complete  
-**Phase:** 140 complete  
-**Status:** S01 shipped; M069 / v0.63 closed
+**Milestone:** v0.64 Op-wire demote orphan cleanup (M070) — complete  
+**Phase:** 141 complete  
+**Status:** S01 shipped; M070 / v0.64 closed

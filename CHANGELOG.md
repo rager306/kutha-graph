@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-13 — Trajectory: M070 / GSD v0.64 closed
+
+### Trajectory
+
+- M070 / GSD v0.64 closed (Phase 141). Active Milestone **None**; `L_delivery=M070-closed`. Audit: `.planning/milestones/v0.64-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-13 — Product: Op-wire demote orphan cleanup (Phase 141)
+
+### Product
+
+- Segmented `migrate_op_wire` demote calls `remove_all_segment_logs` so every `seg-*.log` is removed (including generation-unique orphans not named by the manifest). Tests: `m070_op_wire_orphan_seg`. Bench sample (`KUTHA_BENCH_N=1000`): `ingest_plain.n` ≈9.1ms, `as_of.n` ≈28µs (noisy host; cleanup not on ingest hot path; vs M069 ≈15.8ms / ≈29µs).
+
+### Process
+
+- Matrix `SEM-m070-op-wire-orphan-seg` killed; `op-compat` / `pin-compat` G4 residual text no longer mislabels CE #26 as clock facade; id map v0.64 / Phase 141.
+
 ## 2026-10-13 — Trajectory: lease M070-S01 (Op-wire demote orphan cleanup)
 
 ### Trajectory

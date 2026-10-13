@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M070
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M069-closed
+L_delivery=M070-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M069 closed (v0.63); M070-S01 leased | Capability proven / Cypher started |
+| L_delivery | M070 closed (v0.64); no active lease | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Lease M070-S01 / GSD v0.64 Phase 141: after segmented `migrate_op_wire`, remove orphan `seg-*.log` (not only manifest-named files); honest G4 residual docs (stale #26 clock facade cite). Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+Owner pick next process/product debt (Op-wire layout + demote hygiene complete). Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

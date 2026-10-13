@@ -1924,6 +1924,17 @@ rows:
     gate: default
     owner: M069-S01
     source: Phase 140 / CE #1 Op wire segmented migrate
+  - id: SEM-m070-op-wire-orphan-seg
+    plane: product
+    invariant: segmented Op-wire demote removes every seg-*.log including generation-unique orphans not named by the manifest
+    layer: decision
+    oracle:
+      - migrate_op_wire_removes_orphan_generation_unique_seg_files
+    kill_mutation: delete remove_all_segment_logs so orphan seg-*.log survive demote
+    status: killed
+    gate: default
+    owner: M070-S01
+    source: Phase 141 / Op-wire demote orphan cleanup
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step
