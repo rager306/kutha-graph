@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M067: Op wire directory migrate — OPEN (GSD v0.61)
+
+Process debt after M066: five meta-op remappers exist but no directory rewrite. Thin slice: explicit `store::migrate_op_wire` on legacy jsonl dirs, stamp `op-wire.v1`, open stays fail-open. Segmented/WAL-only deferred.
+
+- [ ] **S01: migrate_op_wire + format marker** `risk:medium` `depends:[]`
+  > After this: legacy jsonl with meta-ops rewrites via remap helpers; marker makes the step idempotent; matrix `SEM-m067-op-wire-dir` killed. Phase 138.
+
 ## M066: Op wire migrate (RecordAction) — CLOSED (GSD v0.60)
 
 **Closed:** S01 delivered 2026-10-12. Process tag `v0.60`. Honeycomb stays Proposed.
