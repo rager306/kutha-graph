@@ -201,12 +201,14 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M069: Op wire segmented migrate — OPEN (GSD v0.63)
+## M069: Op wire segmented migrate — CLOSED (GSD v0.63)
 
-Process debt after M068: segmented dirs (`manifest.json`) still rejected by `migrate_op_wire`. Thin slice: recover frame JSON Values from sealed+active segments, remap, materialize `events.jsonl`, drop segments/manifest, stamp `op-wire.v1`. Open stays fail-open.
+**Closed:** S01 delivered 2026-10-13. Process tag `v0.63`. Honeycomb stays Proposed.
 
-- [ ] **S01: segmented migrate_op_wire** `risk:medium` `depends:[]`
-  > After this: segmented dirs with meta-op frames rewrite; matrix `SEM-m069-op-wire-seg` killed. Phase 140.
+Process debt after M068: segmented dirs (`manifest.json`) still rejected by `migrate_op_wire`. Thin slice: recover frame JSON Values from sealed+active segments, remap, materialize `events.jsonl`, drop segments/manifest, stamp `op-wire.v1`. Open stays fail-open. `L_delivery=M069-closed`.
+
+- [x] **S01: segmented migrate_op_wire** `risk:medium` `depends:[]`
+  > After this: segmented dirs with meta-op frames rewrite; matrix `SEM-m069-op-wire-seg` killed. Phase 140. Landed. Op-wire layouts complete (jsonl / WAL / segmented).
 
 ## M068: Op wire WAL-only migrate — CLOSED (GSD v0.62)
 

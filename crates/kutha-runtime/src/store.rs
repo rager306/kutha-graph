@@ -189,17 +189,19 @@ pub struct OpWireMigrateReport {
     pub already_migrated: bool,
 }
 
-/// Explicit Op-wire rewrite for a **legacy** store directory (M067/M068).
+/// Explicit Op-wire rewrite for a store directory (M067–M069).
 ///
-/// Sources (no `manifest.json`):
+/// Sources:
 /// - `events.jsonl` lines as JSON values (M067), or
-/// - WAL-only framed JSON payloads via [`wal::recover_json_values`] (M068).
+/// - WAL-only framed JSON payloads via [`wal::recover_json_values`] (M068), or
+/// - segmented `manifest.json` + KUTHASEG frames via [`segment::recover_json_values`] (M069).
 ///
 /// Keeps modern [`Event`]s, remaps removed meta-op envelopes, inserts `Define`
-/// rows for newly interned names, materializes `events.jsonl`, drops the old
-/// WAL and stale `snapshot.json`, and stamps [`OP_WIRE_MARKER_REL`].
-/// Idempotent when the marker exists. Open stays fail-open until this runs.
-/// Segmented dirs (`manifest.json`) stay out of this slice.
+/// rows for newly interned names, materializes `events.jsonl`, drops prior WAL,
+/// segmented files + manifest (when present), and stale `snapshot.json`, then
+/// stamps [`OP_WIRE_MARKER_REL`]. Idempotent when the marker exists. Open stays
+/// fail-open until this runs. Segmented layout is demoted to legacy jsonl SoT
+/// (operator may later run [`migrate`] for segments again).
 pub fn migrate_op_wire(dir: &Path) -> std::io::Result<OpWireMigrateReport> {
     fs::create_dir_all(dir)?;
     let _lock = acquire_store_write_lock(dir)?;
@@ -211,25 +213,43 @@ pub fn migrate_op_wire(dir: &Path) -> std::io::Result<OpWireMigrateReport> {
             already_migrated: true,
         });
     }
-    if dir.join(crate::segment::MANIFEST_REL).exists() {
-        return Err(io_invalid(
-            "migrate_op_wire supports legacy dirs only (no manifest.json)",
-        ));
-    }
     let jsonl_path = dir.join(EVENTS_JSONL);
     let wal_path = dir.join(EVENTS_WAL);
-    let values = if jsonl_path.exists() {
+    let manifest_path = dir.join(crate::segment::MANIFEST_REL);
+    let segmented = if manifest_path.exists() {
+        Some(crate::segment::read_manifest(dir)?)
+    } else {
+        None
+    };
+    let values = if segmented.is_some() {
+        crate::segment::recover_json_values(dir)?
+    } else if jsonl_path.exists() {
         read_jsonl_values(&jsonl_path)?
     } else if wal_path.exists() {
         wal::recover_json_values(&wal_path)?
     } else {
         return Err(io_invalid(
-            "migrate_op_wire requires events.jsonl or events.wal",
+            "migrate_op_wire requires events.jsonl, events.wal, or manifest.json",
         ));
     };
     let (out, remapped_lines) = rewrite_op_wire_values(&values)?;
-    // Materialize jsonl as legacy SoT; drop prior WAL (may hold legacy frames).
+    // Materialize jsonl as SoT; drop prior WAL / segmented layout (legacy frames).
     write_events_jsonl_temp(dir, &out, true)?;
+    if let Some(man) = segmented {
+        for entry in &man.sealed {
+            let p = dir.join(&entry.name);
+            if p.exists() {
+                fs::remove_file(&p)?;
+            }
+        }
+        let active = dir.join(&man.active);
+        if active.exists() {
+            fs::remove_file(&active)?;
+        }
+        if manifest_path.exists() {
+            fs::remove_file(&manifest_path)?;
+        }
+    }
     if wal_path.exists() {
         fs::remove_file(&wal_path)?;
     }
@@ -1006,6 +1026,7 @@ pub use crate::persist_append::{
 #[doc(hidden)]
 pub use crate::segment::{
     abort_write_segment_before_rename, reset_test_segment_limits,
-    rewrite_segment_with_seal_trailer, set_test_segment_limits, write_test_segmented, Manifest,
-    HEADER_LEN as SEGMENT_HEADER_LEN, MANIFEST_REL, SEGMENT_MAX_BYTES, SEGMENT_MAX_EVENTS,
+    rewrite_segment_with_seal_trailer, set_test_segment_limits, write_json_payload_segmented,
+    write_test_segmented, Manifest, HEADER_LEN as SEGMENT_HEADER_LEN, MANIFEST_REL,
+    SEGMENT_MAX_BYTES, SEGMENT_MAX_EVENTS,
 };

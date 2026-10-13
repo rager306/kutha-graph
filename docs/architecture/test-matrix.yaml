@@ -1912,6 +1912,18 @@ rows:
     gate: default
     owner: M068-S01
     source: Phase 139 / CE #1 Op wire WAL-only migrate
+  - id: SEM-m069-op-wire-seg
+    plane: product
+    invariant: segmented dirs rewrite via migrate_op_wire (segment recover_json_values); demote to jsonl + op-wire.v1; open fail-open on sealed legacy meta-op frames
+    layer: decision
+    oracle:
+      - migrate_op_wire_rewrites_segmented_allow_relation
+      - open_still_fails_on_unmigrated_segmented_record_action
+    kill_mutation: delete segment recover_json_values path so sealed meta-op frames cannot be remapped
+    status: killed
+    gate: default
+    owner: M069-S01
+    source: Phase 140 / CE #1 Op wire segmented migrate
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

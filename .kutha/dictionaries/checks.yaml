@@ -1698,6 +1698,13 @@ checks:
           - open_still_fails_on_unmigrated_wal_only_record_action
         category: oracle
         message: "op-wire WAL-only migrate oracles missing {missing}"
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m069_op_wire_seg.rs
+        tests:
+          - migrate_op_wire_rewrites_segmented_allow_relation
+          - open_still_fails_on_unmigrated_segmented_record_action
+        category: oracle
+        message: "op-wire segmented migrate oracles missing {missing}"
       - kind: file_contains
         path: crates/kutha-common/src/op_migrate.rs
         needles:
@@ -1720,6 +1727,7 @@ checks:
           - "OP_WIRE_MARKER_REL"
           - "kutha-op-wire/1"
           - "recover_json_values"
+          - "manifest.json"
         require: all
         category: oracle
         message: "migrate_op_wire missing: {missing}"
@@ -1732,6 +1740,15 @@ checks:
         require: all
         category: oracle
         message: "WAL Op-wire recover path missing: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/segment.rs
+        needles:
+          - "pub(crate) fn recover_json_values"
+          - "write_json_payload_segmented"
+          - "scan_segment_json_values"
+        require: all
+        category: oracle
+        message: "segment Op-wire recover path missing: {missing}"
       - kind: file_absent
         path: crates/kutha-common/src/event.rs
         needles:

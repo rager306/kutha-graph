@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.62
-milestone_name: Op wire WAL-only migrate
+milestone: v0.63
+milestone_name: Op wire segmented migrate
 status: complete
-stopped_at: "139-op-wire-wal"
-last_updated: "2026-10-13T06:30:00.000Z"
+stopped_at: "140-op-wire-seg"
+last_updated: "2026-10-13T08:00:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.62 Op wire WAL-only migrate (M068) — complete  
-**Phase:** 139 complete  
-**Status:** S01 shipped; M068 / v0.62 closed
+**Milestone:** v0.63 Op wire segmented migrate (M069) — complete  
+**Phase:** 140 complete  
+**Status:** S01 shipped; M069 / v0.63 closed

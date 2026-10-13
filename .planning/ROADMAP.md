@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.62 shipped. Honeycomb stays Proposed.
+v0.01–v0.63 shipped. Honeycomb stays Proposed.
 
 ## Id map
 
@@ -20,10 +20,11 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 - ✅ **v0.60 Op migrate RecordAction** — Phase 137 done (product M066)
 - ✅ **v0.61 Op wire directory migrate** — Phase 138 done (product M067)
 - ✅ **v0.62 Op wire WAL-only migrate** — Phase 139 done (product M068)
+- ✅ **v0.63 Op wire segmented migrate** — Phase 140 done (product M069)
 
-## Phases (v0.62)
+## Phases (v0.63)
 
-- [x] **Phase 139: Op wire WAL-only migrate** — `139-VERIFICATION.md` passed
+- [x] **Phase 140: Op wire segmented migrate** — `140-VERIFICATION.md` passed
 
 ## Progress
 

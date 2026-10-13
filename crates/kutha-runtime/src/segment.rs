@@ -335,6 +335,110 @@ pub fn write_test_segmented(
     )
 }
 
+fn event_id_from_payload(payload: &[u8]) -> std::io::Result<EventId> {
+    let value: serde_json::Value = serde_json::from_slice(payload).map_err(json_err)?;
+    let id = value
+        .get("id")
+        .cloned()
+        .ok_or_else(|| invalid("segment payload missing id"))?;
+    serde_json::from_value(id).map_err(json_err)
+}
+
+/// Test/helper: write sealed+active segments whose frames are raw JSON payloads
+/// (may be legacy Ops). Same framing as production segments.
+#[doc(hidden)]
+pub fn write_json_payload_segmented(
+    dir: &Path,
+    sealed_groups: &[&[&[u8]]],
+    active: &[&[u8]],
+) -> std::io::Result<()> {
+    fs::create_dir_all(dir)?;
+    let mut seq = 1u32;
+    let mut prev = [0u8; 32];
+    let mut sealed = Vec::new();
+    for group in sealed_groups {
+        let name = segment_name(seq);
+        seq = seq.saturating_add(1);
+        let (meta, tip) = write_json_payload_segment_file(&dir.join(&name), group, true, prev)?;
+        prev = tip;
+        sealed.push(meta.ok_or_else(|| invalid("sealed write returned no meta"))?);
+    }
+    let active_name = segment_name(seq);
+    write_json_payload_segment_file(&dir.join(&active_name), active, false, prev)?;
+    write_manifest(
+        dir,
+        &Manifest {
+            v: 1,
+            sealed,
+            active: active_name,
+        },
+    )
+}
+
+fn write_json_payload_segment_file(
+    path: &Path,
+    payloads: &[&[u8]],
+    sealed: bool,
+    prev: [u8; 32],
+) -> std::io::Result<(Option<SealedMeta>, [u8; 32])> {
+    if sealed && payloads.is_empty() {
+        return Err(invalid("sealed segment must contain at least one event"));
+    }
+    let mut tip = prev;
+    let mut meta: Option<SealedMeta> = None;
+    let name = path
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or("seg.log")
+        .to_string();
+    let tmp = segment_tmp_path(path);
+    replace_via_tmp(path, &tmp, true, |f| {
+        let mut h = prev;
+        let mut frames_len = 0u64;
+        write_header(f, prev)?;
+        for payload in payloads {
+            let frame = payload_frame(payload);
+            h = chain_absorb(h, &frame);
+            f.write_all(&frame)?;
+            frames_len = frames_len.saturating_add(frame.len() as u64);
+        }
+        let chain = hex32(h);
+        let body_len = HEADER_LEN + frames_len;
+        let trailer = if sealed {
+            let first = event_id_from_payload(payloads[0])?;
+            let last = event_id_from_payload(payloads[payloads.len() - 1])?;
+            Some(seal_frame(
+                payloads.len() as u64,
+                first,
+                last,
+                body_len,
+                &chain,
+            )?)
+        } else {
+            None
+        };
+        let bytes = body_len + trailer.as_ref().map(|t| t.len() as u64).unwrap_or(0);
+        if let Some(t) = &trailer {
+            f.write_all(t)?;
+        }
+        tip = h;
+        if sealed {
+            let first = event_id_from_payload(payloads[0])?;
+            let last = event_id_from_payload(payloads[payloads.len() - 1])?;
+            meta = Some(SealedMeta {
+                name: name.clone(),
+                first,
+                last,
+                count: payloads.len() as u64,
+                bytes,
+                chain,
+            });
+        }
+        Ok(())
+    })?;
+    Ok((meta, tip))
+}
+
 /// Scan a well-formed (non-torn) segment that has no trailer yet and rewrite it sealed.
 #[doc(hidden)]
 pub fn rewrite_segment_with_seal_trailer(path: &Path) -> std::io::Result<()> {
@@ -578,6 +682,87 @@ fn read_active(path: &Path, expected_prev: [u8; 32]) -> std::io::Result<Vec<Even
     }
     let scan = scan_segment(&bytes, false)?;
     Ok(scan.events)
+}
+
+/// Recover segment frame payloads as JSON values (M069 Op-wire).
+///
+/// Unlike [`load_events`], CRC-good payloads that are valid JSON but not a
+/// modern [`Event`] are kept so callers can remap legacy meta-ops. Seal
+/// trailers are skipped. Truncated/CRC-bad tails on the active segment stop
+/// the scan; sealed segments stay fail-closed on CRC/trailer/JSON errors.
+pub(crate) fn recover_json_values(dir: &Path) -> std::io::Result<Vec<serde_json::Value>> {
+    let manifest = read_manifest(dir)?;
+    let mut out = Vec::new();
+    for entry in &manifest.sealed {
+        let bytes = fs::read(dir.join(&entry.name))?;
+        out.extend(scan_segment_json_values(&bytes, true)?);
+    }
+    let bytes = fs::read(dir.join(&manifest.active))?;
+    out.extend(scan_segment_json_values(&bytes, false)?);
+    Ok(out)
+}
+
+fn scan_segment_json_values(
+    bytes: &[u8],
+    sealed: bool,
+) -> std::io::Result<Vec<serde_json::Value>> {
+    let _prev = parse_header(bytes)?;
+    let mut off = HEADER_LEN as usize;
+    let mut out = Vec::new();
+    loop {
+        if off == bytes.len() {
+            if sealed {
+                return Err(invalid("truncated sealed segment (no trailer)"));
+            }
+            break;
+        }
+        if off + 8 > bytes.len() {
+            if sealed {
+                return Err(invalid("truncated sealed segment"));
+            }
+            break;
+        }
+        let len = u32_le(&bytes[off..off + 4])? as usize;
+        let crc_stored = u32_le(&bytes[off + 4..off + 8])?;
+        let end = off
+            .checked_add(8)
+            .and_then(|x| x.checked_add(len))
+            .ok_or_else(|| invalid("segment frame overflow"))?;
+        if end > bytes.len() {
+            if sealed {
+                return Err(invalid("truncated sealed segment"));
+            }
+            break;
+        }
+        let payload = &bytes[off + 8..end];
+        let mut hasher = Hasher::new();
+        hasher.update(payload);
+        if hasher.finalize() != crc_stored {
+            if sealed {
+                return Err(invalid("sealed frame CRC mismatch"));
+            }
+            break;
+        }
+        if trailer_payload(payload).is_some() {
+            if sealed && end != bytes.len() {
+                return Err(invalid("extra bytes after sealed trailer"));
+            }
+            break;
+        }
+        match serde_json::from_slice::<serde_json::Value>(payload) {
+            Ok(v) => {
+                out.push(v);
+                off = end;
+            }
+            Err(_) => {
+                if sealed {
+                    return Err(invalid("sealed frame is not JSON"));
+                }
+                break;
+            }
+        }
+    }
+    Ok(out)
 }
 
 /// Load events from `manifest.json` + named segments. Never reads jsonl/WAL.

@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M069
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M068-closed
+L_delivery=M069-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M068 closed (v0.62); M069-S01 leased | Capability proven / Cypher started |
+| L_delivery | M069 closed (v0.63); no active lease | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Lease M069-S01 / GSD v0.63 Phase 140: extend `migrate_op_wire` to segmented dirs (`manifest.json` + KUTHASEG frames as JSON Values → remap → materialize jsonl + drop segments/manifest + marker); open stays fail-open. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+Owner pick next process/product debt (Op-wire layout arc complete: jsonl / WAL / segmented). Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

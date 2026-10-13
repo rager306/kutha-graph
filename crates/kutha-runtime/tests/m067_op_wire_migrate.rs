@@ -84,21 +84,6 @@ fn migrate_op_wire_rewrites_allow_relation_jsonl_and_stamps_marker() {
 }
 
 #[test]
-fn migrate_op_wire_rejects_segmented_dir() {
-    let dir = tmp_dir("seg");
-    fs::write(dir.join("manifest.json"), "{}\n").expect("manifest");
-    fs::write(dir.join("events.jsonl"), "").expect("jsonl");
-    let err = migrate_op_wire(&dir).expect_err("segmented");
-    assert_eq!(err.kind(), std::io::ErrorKind::InvalidData);
-    assert!(
-        err.to_string().contains("legacy dirs only"),
-        "{}",
-        err
-    );
-    let _ = fs::remove_dir_all(&dir);
-}
-
-#[test]
 fn open_still_fails_on_unmigrated_record_action_line() {
     let dir = tmp_dir("failopen");
     let raw = r#"{"id":"00000000-0000-0000-0000-000000000000","op":{"RecordAction":{"justification_id":"j","target_claim":"00000000-0000-0000-0000-000000000001","admitted":true,"valid_from":0,"valid_to":null}},"ingested_at":1,"object_ids":[]}"#;

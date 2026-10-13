@@ -22,20 +22,22 @@ Reasons serde aliases stay forbidden:
 2. A wrong TermId remap would launder dictionary truth. Remap belongs in an explicit migrate with caller-supplied intern, not a silent serde alias.
 3. CE #14 minimum path recorded the break; M062–M066 lease explicit remaps.
 
-## Directory rewrite (M067 / M068)
+## Directory rewrite (M067 / M068 / M069)
 
-**Shipped:** `store::migrate_op_wire` rewrites a **legacy** store directory
-(no `manifest.json`):
+**Shipped:** `store::migrate_op_wire` rewrites a store directory:
 
 - **jsonl** (M067): line-wise Values via `rewrite_event_json_line`
 - **WAL-only** (M068): frame payloads via `wal::recover_json_values`, then the
   same remap path
+- **segmented** (M069): sealed+active KUTHASEG payloads via
+  `segment::recover_json_values`, then the same remap path; demotes to legacy
+  jsonl (drops segments + `manifest.json`)
 
-Materializes `events.jsonl`, drops the prior WAL and stale `snapshot.json`, and
-stamps `op-wire.v1`. Idempotent when the marker exists. Open stays fail-open
-until the operator runs this step (`recover_events` returns `InvalidData` on a
-CRC-good frame that is valid JSON but not a modern `Event` — no silent drop of
-legacy meta-ops). Segmented dirs (`manifest.json`) stay deferred.
+Materializes `events.jsonl`, drops the prior WAL / segmented layout and stale
+`snapshot.json`, and stamps `op-wire.v1`. Idempotent when the marker exists.
+Open stays fail-open until the operator runs this step (`recover_events` /
+sealed `scan_segment` return `InvalidData` on CRC-good frames that are valid
+JSON but not a modern `Event` — no silent drop of legacy meta-ops).
 
 ## Related G4 residuals
 

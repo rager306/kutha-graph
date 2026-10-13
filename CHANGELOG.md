@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-13 — Trajectory: M069 / GSD v0.63 closed
+
+### Trajectory
+
+- M069 / GSD v0.63 closed (Phase 140). Active Milestone **None**; `L_delivery=M069-closed`. Audit: `.planning/milestones/v0.63-MILESTONE-AUDIT.md`. Op-wire layout arc complete (jsonl / WAL / segmented). Honeycomb stays Proposed.
+
+## 2026-10-13 — Product: Op wire segmented migrate (Phase 140)
+
+### Product
+
+- `migrate_op_wire` segmented path: `segment::recover_json_values` → remap → materialize `events.jsonl`, drop segments + `manifest.json`, stamp `op-wire.v1`. Demotes to legacy jsonl SoT (operator may later `store::migrate`). Open stays fail-open on sealed legacy meta-op frames. Tests: `m069_op_wire_seg`. Bench sample (`KUTHA_BENCH_N=1000`): `ingest_plain.n` ≈15.8ms, `as_of.n` ≈29µs (noisy host; migrate not on ingest hot path; vs M068 ≈15.8ms / ≈52µs).
+
+### Process
+
+- Matrix `SEM-m069-op-wire-seg` killed; `op-compat-policy` oracles + `op-compat.md` cover segmented; id map v0.63 / Phase 140.
+
 ## 2026-10-13 — Trajectory: lease M069-S01 (Op wire segmented migrate)
 
 ### Trajectory
