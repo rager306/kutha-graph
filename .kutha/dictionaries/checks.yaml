@@ -1691,6 +1691,13 @@ checks:
           - open_still_fails_on_unmigrated_record_action_line
         category: oracle
         message: "op-wire directory migrate oracles missing {missing}"
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m068_op_wire_wal.rs
+        tests:
+          - migrate_op_wire_rewrites_wal_only_allow_relation
+          - open_still_fails_on_unmigrated_wal_only_record_action
+        category: oracle
+        message: "op-wire WAL-only migrate oracles missing {missing}"
       - kind: file_contains
         path: crates/kutha-common/src/op_migrate.rs
         needles:
@@ -1712,9 +1719,19 @@ checks:
           - "pub fn migrate_op_wire"
           - "OP_WIRE_MARKER_REL"
           - "kutha-op-wire/1"
+          - "recover_json_values"
         require: all
         category: oracle
         message: "migrate_op_wire missing: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/wal.rs
+        needles:
+          - "pub(crate) fn recover_json_values"
+          - "WAL frame is not a modern Event"
+          - "write_json_payload_wal"
+        require: all
+        category: oracle
+        message: "WAL Op-wire recover path missing: {missing}"
       - kind: file_absent
         path: crates/kutha-common/src/event.rs
         needles:

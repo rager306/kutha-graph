@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-13 — Trajectory: M068 / GSD v0.62 closed
+
+### Trajectory
+
+- M068 / GSD v0.62 closed (Phase 139). Active Milestone **None**; `L_delivery=M068-closed`. Audit: `.planning/milestones/v0.62-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-13 — Product: Op wire WAL-only migrate (Phase 139)
+
+### Product
+
+- `migrate_op_wire` WAL-only path: `wal::recover_json_values` → remap → materialize `events.jsonl`, drop WAL, stamp `op-wire.v1`. `recover_events` returns `InvalidData` on CRC-good frames that are valid JSON but not a modern `Event` (fail-open; no silent drop of legacy meta-ops). Segmented dirs deferred. Tests: `m068_op_wire_wal` + wal unit. Bench sample (`KUTHA_BENCH_N=1000`): `ingest_plain.n` ≈15.8ms, `as_of.n` ≈52µs (noisy host; migrate not on ingest hot path; vs M067 ≈10.9ms / ≈29µs).
+
+### Process
+
+- Matrix `SEM-m068-op-wire-wal` killed; `op-compat-policy` oracles + `op-compat.md` cover WAL-only; id map v0.62 / Phase 139.
+
 ## 2026-10-13 — Trajectory: lease M068-S01 (Op wire WAL-only migrate)
 
 ### Trajectory

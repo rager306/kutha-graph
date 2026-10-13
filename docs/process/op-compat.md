@@ -22,13 +22,20 @@ Reasons serde aliases stay forbidden:
 2. A wrong TermId remap would launder dictionary truth. Remap belongs in an explicit migrate with caller-supplied intern, not a silent serde alias.
 3. CE #14 minimum path recorded the break; M062–M066 lease explicit remaps.
 
-## Directory rewrite (M067)
+## Directory rewrite (M067 / M068)
 
-**Leased:** `store::migrate_op_wire` rewrites a legacy `events.jsonl` directory
-in place (line-wise remap via `rewrite_event_json_line`), drops stale WAL and
-snapshot leases, and stamps `op-wire.v1`. Idempotent when the marker exists.
-Open stays fail-open until the operator runs this step. Segmented dirs and
-WAL-only dirs stay out of this slice.
+**Shipped:** `store::migrate_op_wire` rewrites a **legacy** store directory
+(no `manifest.json`):
+
+- **jsonl** (M067): line-wise Values via `rewrite_event_json_line`
+- **WAL-only** (M068): frame payloads via `wal::recover_json_values`, then the
+  same remap path
+
+Materializes `events.jsonl`, drops the prior WAL and stale `snapshot.json`, and
+stamps `op-wire.v1`. Idempotent when the marker exists. Open stays fail-open
+until the operator runs this step (`recover_events` returns `InvalidData` on a
+CRC-good frame that is valid JSON but not a modern `Event` — no silent drop of
+legacy meta-ops). Segmented dirs (`manifest.json`) stay deferred.
 
 ## Related G4 residuals
 

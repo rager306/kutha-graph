@@ -69,6 +69,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.59 | 136 | M065 | S01 | Op migrate RecordAdmission (kutha:admission Assert) | shipped |
 | v0.60 | 137 | M066 | S01 | Op migrate RecordAction (kutha:action Assert) | shipped |
 | v0.61 | 138 | M067 | S01 | Op wire directory migrate (migrate_op_wire + op-wire.v1) | shipped |
+| v0.62 | 139 | M068 | S01 | Op wire WAL-only migrate (recover_json_values + fail-open frames) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

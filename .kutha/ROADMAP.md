@@ -201,12 +201,14 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M068: Op wire WAL-only migrate — OPEN (GSD v0.62)
+## M068: Op wire WAL-only migrate — CLOSED (GSD v0.62)
 
-Process debt after M067: WAL-only legacy dirs still deferred. Thin slice: `migrate_op_wire` reads WAL frame payloads as JSON Values, remaps, materializes `events.jsonl`, stamps `op-wire.v1`. Segmented dirs stay deferred.
+**Closed:** S01 delivered 2026-10-13. Process tag `v0.62`. Honeycomb stays Proposed.
 
-- [ ] **S01: WAL-only migrate_op_wire** `risk:medium` `depends:[]`
-  > After this: WAL-only dirs with meta-op frames rewrite; matrix `SEM-m068-op-wire-wal` killed. Phase 139.
+Process debt after M067: WAL-only legacy dirs still deferred. Thin slice: `migrate_op_wire` reads WAL frame payloads as JSON Values, remaps, materializes `events.jsonl`, stamps `op-wire.v1`. Segmented dirs stay deferred. `L_delivery=M068-closed`.
+
+- [x] **S01: WAL-only migrate_op_wire** `risk:medium` `depends:[]`
+  > After this: WAL-only dirs with meta-op frames rewrite; matrix `SEM-m068-op-wire-wal` killed. Phase 139. Landed. Segmented dirs deferred.
 
 ## M067: Op wire directory migrate — CLOSED (GSD v0.61)
 

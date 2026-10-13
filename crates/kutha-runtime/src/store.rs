@@ -189,14 +189,17 @@ pub struct OpWireMigrateReport {
     pub already_migrated: bool,
 }
 
-/// Explicit Op-wire rewrite for a **legacy jsonl** store directory (M067).
+/// Explicit Op-wire rewrite for a **legacy** store directory (M067/M068).
 ///
-/// Reads `events.jsonl` line-by-line as JSON values, keeps modern [`Event`]s,
-/// remaps removed meta-op envelopes via `kutha_common::op_migrate`, inserts
-/// `Define` rows for newly interned names, atomically replaces jsonl, drops
-/// stale `events.wal` / `snapshot.json`, and stamps [`OP_WIRE_MARKER_REL`].
+/// Sources (no `manifest.json`):
+/// - `events.jsonl` lines as JSON values (M067), or
+/// - WAL-only framed JSON payloads via [`wal::recover_json_values`] (M068).
+///
+/// Keeps modern [`Event`]s, remaps removed meta-op envelopes, inserts `Define`
+/// rows for newly interned names, materializes `events.jsonl`, drops the old
+/// WAL and stale `snapshot.json`, and stamps [`OP_WIRE_MARKER_REL`].
 /// Idempotent when the marker exists. Open stays fail-open until this runs.
-/// Segmented dirs (`manifest.json`) and WAL-only dirs are out of this slice.
+/// Segmented dirs (`manifest.json`) stay out of this slice.
 pub fn migrate_op_wire(dir: &Path) -> std::io::Result<OpWireMigrateReport> {
     fs::create_dir_all(dir)?;
     let _lock = acquire_store_write_lock(dir)?;
@@ -210,46 +213,25 @@ pub fn migrate_op_wire(dir: &Path) -> std::io::Result<OpWireMigrateReport> {
     }
     if dir.join(crate::segment::MANIFEST_REL).exists() {
         return Err(io_invalid(
-            "migrate_op_wire supports legacy jsonl dirs only (no manifest.json)",
+            "migrate_op_wire supports legacy dirs only (no manifest.json)",
         ));
     }
     let jsonl_path = dir.join(EVENTS_JSONL);
-    if !jsonl_path.exists() {
+    let wal_path = dir.join(EVENTS_WAL);
+    let values = if jsonl_path.exists() {
+        read_jsonl_values(&jsonl_path)?
+    } else if wal_path.exists() {
+        wal::recover_json_values(&wal_path)?
+    } else {
         return Err(io_invalid(
-            "migrate_op_wire requires events.jsonl (WAL-only dirs deferred)",
+            "migrate_op_wire requires events.jsonl or events.wal",
         ));
-    }
-    let bytes = fs::read(&jsonl_path)?;
-    let mut dict = TermDictionary::default();
-    let mut out = Vec::new();
-    let mut remapped_lines = 0usize;
-    let mut start = 0usize;
-    for (i, b) in bytes.iter().enumerate() {
-        if *b != b'\n' {
-            continue;
-        }
-        let line = &bytes[start..i];
-        start = i + 1;
-        if line.iter().all(|c| c.is_ascii_whitespace()) {
-            continue;
-        }
-        let text = std::str::from_utf8(line)
-            .map_err(|e| std::io::Error::new(ErrorKind::InvalidData, e))?;
-        let value: serde_json::Value = serde_json::from_str(text).map_err(json_err)?;
-        let modern = serde_json::from_value::<Event>(value.clone()).is_ok();
-        let rewritten = rewrite_event_json_line(&value, &mut dict).map_err(|e| {
-            std::io::Error::new(ErrorKind::InvalidData, e.to_string())
-        })?;
-        if !modern {
-            remapped_lines += 1;
-        }
-        out.extend(rewritten);
-    }
-    // Torn tail after last newline is dropped (same policy as read_jsonl_events).
+    };
+    let (out, remapped_lines) = rewrite_op_wire_values(&values)?;
+    // Materialize jsonl as legacy SoT; drop prior WAL (may hold legacy frames).
     write_events_jsonl_temp(dir, &out, true)?;
-    let wal = dir.join(EVENTS_WAL);
-    if wal.exists() {
-        fs::remove_file(&wal)?;
+    if wal_path.exists() {
+        fs::remove_file(&wal_path)?;
     }
     let snap = dir.join(SNAPSHOT_JSON);
     if snap.exists() {
@@ -264,6 +246,45 @@ pub fn migrate_op_wire(dir: &Path) -> std::io::Result<OpWireMigrateReport> {
         events_written: out.len(),
         already_migrated: false,
     })
+}
+
+fn read_jsonl_values(path: &Path) -> std::io::Result<Vec<serde_json::Value>> {
+    let bytes = fs::read(path)?;
+    let mut values = Vec::new();
+    let mut start = 0usize;
+    for (i, b) in bytes.iter().enumerate() {
+        if *b != b'\n' {
+            continue;
+        }
+        let line = &bytes[start..i];
+        start = i + 1;
+        if line.iter().all(|c| c.is_ascii_whitespace()) {
+            continue;
+        }
+        let text = std::str::from_utf8(line)
+            .map_err(|e| std::io::Error::new(ErrorKind::InvalidData, e))?;
+        values.push(serde_json::from_str(text).map_err(json_err)?);
+    }
+    // Torn tail after last newline is dropped (same policy as read_jsonl_events).
+    Ok(values)
+}
+
+fn rewrite_op_wire_values(
+    values: &[serde_json::Value],
+) -> std::io::Result<(Vec<Event>, usize)> {
+    let mut dict = TermDictionary::default();
+    let mut out = Vec::new();
+    let mut remapped_lines = 0usize;
+    for value in values {
+        let modern = serde_json::from_value::<Event>(value.clone()).is_ok();
+        let rewritten = rewrite_event_json_line(value, &mut dict)
+            .map_err(|e| std::io::Error::new(ErrorKind::InvalidData, e.to_string()))?;
+        if !modern {
+            remapped_lines += 1;
+        }
+        out.extend(rewritten);
+    }
+    Ok((out, remapped_lines))
 }
 
 /// Convert a legacy jsonl+WAL directory to `manifest.json` + segments.

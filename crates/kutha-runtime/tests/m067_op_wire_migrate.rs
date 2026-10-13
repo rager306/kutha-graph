@@ -91,7 +91,7 @@ fn migrate_op_wire_rejects_segmented_dir() {
     let err = migrate_op_wire(&dir).expect_err("segmented");
     assert_eq!(err.kind(), std::io::ErrorKind::InvalidData);
     assert!(
-        err.to_string().contains("legacy jsonl"),
+        err.to_string().contains("legacy dirs only"),
         "{}",
         err
     );

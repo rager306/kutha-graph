@@ -40,3 +40,5 @@ pub use quantum::{
 pub use receipt::{QuantumReceipt, digest_to_hex};
 pub use snapshot::Snapshot;
 pub use tenant::{IngestReport, TenantError, ingest_harness_jsonl, ingest_harness_jsonl_str};
+#[doc(hidden)]
+pub use wal::write_json_payload_wal;

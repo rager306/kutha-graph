@@ -109,13 +109,7 @@ pub fn append_events(path: &Path, events: &[Event]) -> std::io::Result<()> {
     write_wal(&mut f, events)
 }
 
-/// Recover framed events. A file shorter than magic+version is `InvalidData`
-/// ("truncated WAL header"). Non-`UnexpectedEof` read errors propagate.
-/// Truncated/corrupt last record is dropped (kTolerateCorruptedTail analog).
-pub fn recover_events(path: &Path) -> std::io::Result<Vec<Event>> {
-    if !path.exists() {
-        return Ok(Vec::new());
-    }
+fn open_wal_after_header(path: &Path) -> std::io::Result<File> {
     let mut f = File::open(path)?;
     let mut header = [0u8; 12];
     match f.read_exact(&mut header) {
@@ -142,33 +136,108 @@ pub fn recover_events(path: &Path) -> std::io::Result<Vec<Event>> {
             "unsupported WAL version",
         ));
     }
+    Ok(f)
+}
+
+/// Recover framed events. A file shorter than magic+version is `InvalidData`
+/// ("truncated WAL header"). Non-`UnexpectedEof` read errors propagate.
+/// Truncated/CRC-bad last record is dropped (kTolerateCorruptedTail analog).
+/// A CRC-good frame whose payload is valid JSON but not a modern [`Event`]
+/// is `InvalidData` (Op-wire fail-open — do not silently drop legacy meta-ops).
+pub fn recover_events(path: &Path) -> std::io::Result<Vec<Event>> {
+    if !path.exists() {
+        return Ok(Vec::new());
+    }
+    let mut f = open_wal_after_header(path)?;
     let mut out = Vec::new();
     loop {
-        let mut hdr = [0u8; 8];
-        match f.read_exact(&mut hdr) {
-            Ok(()) => {}
-            Err(e) if e.kind() == std::io::ErrorKind::UnexpectedEof => break,
-            Err(e) => return Err(e),
-        }
-        let len = u32::from_le_bytes(hdr[0..4].try_into().unwrap()) as usize;
-        let crc_stored = u32::from_le_bytes(hdr[4..8].try_into().unwrap());
-        let mut payload = vec![0u8; len];
-        match f.read_exact(&mut payload) {
-            Ok(()) => {}
-            Err(e) if e.kind() == std::io::ErrorKind::UnexpectedEof => break,
-            Err(e) => return Err(e),
-        }
-        let mut hasher = Hasher::new();
-        hasher.update(&payload);
-        if hasher.finalize() != crc_stored {
+        let Some(payload) = read_one_frame_payload(&mut f)? else {
             break;
-        }
+        };
         match serde_json::from_slice::<Event>(&payload) {
             Ok(e) => out.push(e),
+            Err(e) => {
+                if serde_json::from_slice::<serde_json::Value>(&payload).is_ok() {
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::InvalidData,
+                        format!("WAL frame is not a modern Event: {e}"),
+                    ));
+                }
+                break;
+            }
+        }
+    }
+    Ok(out)
+}
+
+/// Recover WAL frame payloads as JSON values (M068 Op-wire).
+///
+/// Unlike [`recover_events`], a payload that is valid JSON but not a modern
+/// [`Event`] is kept so callers can remap legacy meta-ops. Truncated/CRC-bad
+/// tails still stop the scan.
+pub(crate) fn recover_json_values(path: &Path) -> std::io::Result<Vec<serde_json::Value>> {
+    if !path.exists() {
+        return Ok(Vec::new());
+    }
+    let mut f = open_wal_after_header(path)?;
+    let mut out = Vec::new();
+    loop {
+        let Some(payload) = read_one_frame_payload(&mut f)? else {
+            break;
+        };
+        match serde_json::from_slice::<serde_json::Value>(&payload) {
+            Ok(v) => out.push(v),
             Err(_) => break,
         }
     }
     Ok(out)
+}
+
+fn read_one_frame_payload(f: &mut File) -> std::io::Result<Option<Vec<u8>>> {
+    let mut hdr = [0u8; 8];
+    match f.read_exact(&mut hdr) {
+        Ok(()) => {}
+        Err(e) if e.kind() == std::io::ErrorKind::UnexpectedEof => return Ok(None),
+        Err(e) => return Err(e),
+    }
+    let len = u32::from_le_bytes(hdr[0..4].try_into().unwrap()) as usize;
+    let crc_stored = u32::from_le_bytes(hdr[4..8].try_into().unwrap());
+    let mut payload = vec![0u8; len];
+    match f.read_exact(&mut payload) {
+        Ok(()) => {}
+        Err(e) if e.kind() == std::io::ErrorKind::UnexpectedEof => return Ok(None),
+        Err(e) => return Err(e),
+    }
+    let mut hasher = Hasher::new();
+    hasher.update(&payload);
+    if hasher.finalize() != crc_stored {
+        return Ok(None);
+    }
+    Ok(Some(payload))
+}
+
+/// Test/helper: write a WAL whose frames are raw JSON payloads (may be legacy Ops).
+#[doc(hidden)]
+pub fn write_json_payload_wal(path: &Path, payloads: &[&[u8]]) -> std::io::Result<()> {
+    let mut f = OpenOptions::new()
+        .create(true)
+        .truncate(true)
+        .write(true)
+        .open(path)?;
+    f.write_all(MAGIC)?;
+    f.write_all(&VERSION.to_le_bytes())?;
+    for payload in payloads {
+        let mut hasher = Hasher::new();
+        hasher.update(payload);
+        let crc = hasher.finalize();
+        let len = payload.len() as u32;
+        f.write_all(&len.to_le_bytes())?;
+        f.write_all(&crc.to_le_bytes())?;
+        f.write_all(payload)?;
+    }
+    f.sync_all()?;
+    note_log_file_sync();
+    Ok(())
 }
 
 #[cfg(test)]
@@ -205,6 +274,27 @@ mod tests {
         let recovered = recover_events(&path).unwrap();
         assert_eq!(recovered.len(), 1);
         assert_eq!(recovered[0].id, e0.id);
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn recover_rejects_legacy_meta_op_frame() {
+        let dir = std::env::temp_dir().join(format!("kutha-wal-legacy-{}", {
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        }));
+        std::fs::create_dir_all(&dir).unwrap();
+        let path = dir.join("events.wal");
+        let legacy = br#"{"id":"00000000-0000-0000-0000-000000000000","op":{"AllowRelation":{"name":"x","valid_from":0,"valid_to":null}},"ingested_at":1,"object_ids":[]}"#;
+        write_json_payload_wal(&path, &[legacy]).unwrap();
+        let err = recover_events(&path).expect_err("legacy meta-op must fail-open");
+        assert_eq!(err.kind(), std::io::ErrorKind::InvalidData);
+        assert!(
+            err.to_string().contains("not a modern Event"),
+            "{err}"
+        );
         let _ = std::fs::remove_dir_all(&dir);
     }
 }
