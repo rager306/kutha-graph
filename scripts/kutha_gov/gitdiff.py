@@ -31,8 +31,44 @@ def changed_relpaths(root: Path, against: str) -> set[str] | None:
         worktree = _worktree(root)
         if worktree:
             return worktree
+        # Clean tree (M073): branch window vs upstream/main, not last commit alone.
+        # HEAD~1 false-positives docs-coupling when only checks.yaml landed in tip.
+        base = _clean_tree_diff_base(root)
+        if base:
+            return _name_only(
+                root, ["diff", "--name-only", "--diff-filter=ACMR", f"{base}...HEAD"]
+            )
         return _name_only(root, ["diff", "--name-only", "--diff-filter=ACMR", "HEAD~1"])
     return None
+
+
+def _clean_tree_diff_base(root: Path) -> str | None:
+    """Merge-base with upstream or local main/master for clean-tree auto mode."""
+    for candidate in _upstream_candidates(root):
+        mb = _git(root, ["merge-base", "HEAD", candidate])
+        if mb:
+            tip = mb.strip()
+            if tip:
+                return tip
+    return None
+
+
+def _upstream_candidates(root: Path) -> list[str]:
+    names: list[str] = []
+    upstream = _git(root, ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"])
+    if upstream:
+        ref = upstream.strip()
+        if ref and ref != "HEAD":
+            names.append(ref)
+    origin_head = _git(root, ["rev-parse", "--abbrev-ref", "origin/HEAD"])
+    if origin_head:
+        ref = origin_head.strip()
+        if ref and ref not in names:
+            names.append(ref)
+    for local in ("main", "master"):
+        if _git(root, ["rev-parse", "--verify", local]) is not None and local not in names:
+            names.append(local)
+    return names
 
 
 def path_matches(rel: str, pattern: str) -> bool:

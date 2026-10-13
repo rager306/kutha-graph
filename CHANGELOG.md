@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-14 — Trajectory: M073 / GSD v0.67 closed
+
+### Trajectory
+
+- M073 / GSD v0.67 closed (Phase 144). Active Milestone **None**; `L_delivery=M073-closed`. Audit: `.planning/milestones/v0.67-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-14 — Process: Git auto clean-tree coupling window (Phase 144)
+
+### Process
+
+- `gitdiff.changed_relpaths(auto)` on a clean tree uses upstream/main merge-base…HEAD (not HEAD~1 alone) so `docs-coupling` matches the branch window.
+- `kutha-gov ci` summary prints `run_high` / `run_low` for this quantum and `tip_high` / tip cargo/tenant for the fold tip.
+- Check `git-auto-base` + invariant `I-git-auto-base`; FSM / `.env.example` budget 82→83; matrix `SEM-m073-git-auto-base` killed. Pytest: `test_gitdiff_auto`, `test_ci_summary_labels`. Id map v0.67 / Phase 144.
+
 ## 2026-10-14 — Trajectory: lease M073-S01 (Git auto clean-tree coupling window)
 
 ### Trajectory

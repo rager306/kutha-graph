@@ -1961,6 +1961,17 @@ rows:
     gate: default
     owner: M072-S01
     source: Phase 143 / Pin-cite JustificationCite migrate
+  - id: SEM-m073-git-auto-base
+    plane: harness
+    invariant: clean-tree git_against=auto uses upstream merge-base…HEAD (not HEAD~1 alone); ci summary prints run_high and tip_high
+    layer: governor
+    oracle:
+      - git-auto-base
+    kill_mutation: restore HEAD~1-only clean-tree auto so branch mates disappear from docs-coupling window
+    status: killed
+    gate: default
+    owner: M073-S01
+    source: Phase 144 / Git auto clean-tree coupling window
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

@@ -2090,6 +2090,49 @@ checks:
         category: i-f-oracle
         message: "I-F16 horn_correct oracles missing {missing}"
 
+  - id: git-auto-base
+    description: >-
+      Clean-tree git_against=auto uses upstream merge-base…HEAD (not HEAD~1 alone);
+      ci summary prints run_high and tip_high (M073 / Phase 144).
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/gitdiff.py
+        needles:
+          - "_clean_tree_diff_base"
+          - "merge-base"
+          - "...HEAD"
+        require: all
+        category: oracle
+        message: "clean-tree auto merge-base window missing: {missing}"
+      - kind: file_contains
+        path: scripts/kutha_gov/__main__.py
+        needles:
+          - "run_high="
+          - "tip_high="
+        require: all
+        category: oracle
+        message: "ci summary run_high/tip_high labels missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_gitdiff_auto.py
+        needles:
+          - "def test_auto_clean_tree_uses_merge_base_not_head_parent_alone"
+        require: all
+        category: oracle
+        message: "git-auto-base pytest oracle missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_ci_summary_labels.py
+        needles:
+          - "def test_cmd_ci_prints_run_high_and_tip_high"
+        require: all
+        category: oracle
+        message: "ci tip-label pytest oracle missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/gitdiff.py
+          pattern: "\\.\\.\\.HEAD"
+          with: "HEAD~1"
+
   - id: test-matrix
     description: >-
       test-matrix.yaml named oracles exist and statuses are internally consistent

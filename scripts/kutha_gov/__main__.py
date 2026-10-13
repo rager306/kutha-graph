@@ -164,7 +164,7 @@ def cmd_ci(ctx: Context, *, budget: int) -> int:
     if any(rel == "h5_selftest" for rel, _obj in outcome.evidence):
         rung = "H5"
     print(
-        f"\nharness: {outcome.high} HIGH, {outcome.low} LOW, "
+        f"\nharness: run_high={outcome.high} run_low={outcome.low}, "
         f"{len(outcome.results)} checks  ({rung} dogfood)"
     )
     if outcome.skipped:
@@ -174,10 +174,10 @@ def cmd_ci(ctx: Context, *, budget: int) -> int:
         )
     picture = fold_log(ctx.root / LOG_REL)
     print(
-        f"fold: runs={picture.run_count} last={picture.last_run} "
-        f"high={picture.last_high} cargo={picture.last_cargo} "
-        f"tenant={picture.last_tenant}  "
-        f"({LOG_REL} = process log, not product SoT)"
+        f"fold: runs={picture.run_count} tip_last={picture.last_run} "
+        f"tip_high={picture.last_high} tip_cargo={picture.last_cargo} "
+        f"tip_tenant={picture.last_tenant}  "
+        f"({LOG_REL} tip = historical process fold, not this-run SoT)"
     )
     if outcome.terminal != "ok":
         return 1

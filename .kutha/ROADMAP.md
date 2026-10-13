@@ -201,12 +201,14 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M073: Git auto clean-tree coupling window — OPEN (GSD v0.67)
+## M073: Git auto clean-tree coupling window — CLOSED (GSD v0.67)
 
-Process debt after M072: on a clean worktree `git_against=auto` falls back to `HEAD~1`, so `docs-coupling` falsely HIGHs when the last commit touched `checks.yaml` without `invariants.yaml`/`bridges.yaml` even though the branch range is coupled. Thin slice: clean-tree auto uses upstream merge-base…HEAD; `ci` summary separates run HIGH from fold tip.
+**Closed:** S01 delivered 2026-10-14. Process tag `v0.67`. Honeycomb stays Proposed.
 
-- [ ] **S01: auto merge-base + ci tip labels** `risk:low` `depends:[]`
-  > After this: clean-tree `ci` docs-coupling uses branch window; summary shows `run_high` vs fold `tip_high`; matrix `SEM-m073-git-auto-base` killed. Phase 144.
+Process debt after M072: on a clean worktree `git_against=auto` falls back to `HEAD~1`, so `docs-coupling` falsely HIGHs when the last commit touched `checks.yaml` without `invariants.yaml`/`bridges.yaml` even though the branch range is coupled. Thin slice: clean-tree auto uses upstream merge-base…HEAD; `ci` summary separates run HIGH from fold tip. `L_delivery=M073-closed`.
+
+- [x] **S01: auto merge-base + ci tip labels** `risk:low` `depends:[]`
+  > After this: clean-tree `ci` docs-coupling uses branch window; summary shows `run_high` vs fold `tip_high`; matrix `SEM-m073-git-auto-base` killed. Phase 144. Landed.
 
 ## M072: Pin-cite JustificationCite migrate — CLOSED (GSD v0.66)
 

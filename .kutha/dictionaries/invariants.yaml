@@ -404,3 +404,9 @@ invariants:
     source: "docs/process/governor-intake.md"
     disposition: check
     check: test-matrix
+
+  - id: I-git-auto-base
+    claim: "clean-tree git_against=auto uses upstream merge-base…HEAD (not HEAD~1 alone); ci summary prints run_high and tip_high"
+    source: ".planning/phases/144-git-auto-base/144-CONTEXT.md"
+    disposition: check
+    check: git-auto-base

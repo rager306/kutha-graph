@@ -103,6 +103,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M072 S01 (pin-cite JustificationCite migrate):** Phase 143 — `SEM-m072-pin-cite` `killed` (owner `M072-S01`). Oracles: `migrate_pin_cite_rewrites_justification_legacy_utf8_pin`, `migrate_pin_cite_leaves_orphan_legacy_cite_unchanged`, `remap_events_pins_rewrites_cite_when_behavior_evidences_ident`.
 
+**M073 S01 (git auto clean-tree coupling):** Phase 144 — `SEM-m073-git-auto-base` `killed` (owner `M073-S01`). Oracle: `git-auto-base`.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.
