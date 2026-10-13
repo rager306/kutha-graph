@@ -1785,7 +1785,8 @@ checks:
   - id: pin-compat-policy
     description: >-
       G4 CE #24: pin scheme v1 documented rotation — hardcoded stability
-      vectors for ident Named AST pin vs legacy UTF-8 and non-ident.
+      vectors for ident Named AST pin vs legacy UTF-8 and non-ident; explicit
+      migrate_pin_wire (M071) without silent serde remap.
     steps:
       - kind: file_contains
         path: docs/process/pin-compat.md
@@ -1795,6 +1796,8 @@ checks:
           - "2dca8c1394bfd203753efd7c991030c23719b41b285aad78ef061103b316596d"
           - "7ce5d5ad5ca8d5148305d84d3eee3f1356540ad44da56fac9fdde748603436db"
           - "ac715049d46ceaeae121295921ba657df849db9fee9fdb1203201e7b7ba7a689"
+          - "migrate_pin_wire"
+          - "pin-wire.v1"
         require: all
         category: oracle
         message: "pin-compat policy doc missing: {missing}"
@@ -1806,6 +1809,13 @@ checks:
           - nonident_pin_matches_hardcoded_domain_utf8_vector
         category: oracle
         message: "pin-compat oracles missing {missing}"
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m071_pin_wire_migrate.rs
+        tests:
+          - migrate_pin_wire_rewrites_behavior_legacy_utf8_pin
+          - migrate_pin_wire_leaves_v1_pin_unchanged
+        category: oracle
+        message: "pin-wire migrate oracles missing {missing}"
       - kind: file_contains
         path: crates/kutha-common/src/event.rs
         needles:
@@ -1814,6 +1824,24 @@ checks:
         require: all
         category: oracle
         message: "rule_definition_hash missing pin scheme v1 doc pointer: {missing}"
+      - kind: file_contains
+        path: crates/kutha-common/src/pin_migrate.rs
+        needles:
+          - "legacy_ident_rule_pin"
+          - "remap_behavior_rule_version"
+          - "remap_event_pins"
+        require: all
+        category: oracle
+        message: "pin_migrate helpers missing: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/store.rs
+        needles:
+          - "pub fn migrate_pin_wire"
+          - "PIN_WIRE_MARKER_REL"
+          - "kutha-pin-wire/1"
+        require: all
+        category: oracle
+        message: "migrate_pin_wire missing: {missing}"
     selftest:
       mutations:
         - op: replace_regex

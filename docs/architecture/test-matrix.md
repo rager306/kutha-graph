@@ -99,6 +99,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M051 S01 (pin scheme stability):** Phase 111 — `SEM-m051-pin-compat-policy` `killed` (owner `M051-S01`). Oracles: `ident_pin_matches_hardcoded_v1_vector`, `ident_pin_diverges_from_legacy_utf8_domain_vector`, `nonident_pin_matches_hardcoded_domain_utf8_vector`.
 
+**M071 S01 (pin-wire Behavior migrate):** Phase 142 — `SEM-m071-pin-wire` `killed` (owner `M071-S01`). Oracles: `migrate_pin_wire_rewrites_behavior_legacy_utf8_pin`, `migrate_pin_wire_leaves_v1_pin_unchanged`, `remap_derive_pq_legacy_utf8_to_v1`.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

@@ -72,6 +72,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.62 | 139 | M068 | S01 | Op wire WAL-only migrate (recover_json_values + fail-open frames) | shipped |
 | v0.63 | 140 | M069 | S01 | Op wire segmented migrate (segment Values → demote jsonl + marker) | shipped |
 | v0.64 | 141 | M070 | S01 | Op-wire demote orphan seg-*.log cleanup + G4 residual honesty | shipped |
+| v0.65 | 142 | M071 | S01 | Pin-wire Behavior migrate (migrate_pin_wire + pin-wire.v1) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

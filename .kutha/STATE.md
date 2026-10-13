@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M071
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M070-closed
+L_delivery=M071-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M070 closed (v0.64); M071-S01 leased | Capability proven / Cypher started |
+| L_delivery | M071 closed (v0.65) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Lease M071-S01 / GSD v0.65 Phase 142: explicit `migrate_pin_wire` remaps Behavior `rule_version` from legacy UTF-8 ident pins to pin-scheme v1 Named pins; stamp `pin-wire.v1`; no silent serde remap. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+M071 / GSD v0.65 closed. Scout next thin process debt; do not lease Cypher/HNSW or a legal pack (`I-legal-pack-not-next`). Honeycomb stays Proposed.
 
 ## Thaw map
 

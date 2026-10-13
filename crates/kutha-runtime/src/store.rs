@@ -3,7 +3,9 @@ use crate::quantum::{
 };
 use crate::snapshot::Snapshot;
 use crate::wal;
-use kutha_common::{rewrite_event_json_line, Event, EventId, Op, TermDictionary};
+use kutha_common::{
+    remap_event_pins, rewrite_event_json_line, Event, EventId, Op, TermDictionary,
+};
 use serde::de::DeserializeOwned;
 use std::fs::{self, File, OpenOptions};
 use std::io::{BufRead, BufReader, ErrorKind, Write};
@@ -255,6 +257,97 @@ pub fn migrate_op_wire(dir: &Path) -> std::io::Result<OpWireMigrateReport> {
         events_written: out.len(),
         already_migrated: false,
     })
+}
+
+/// Format marker written by [`migrate_pin_wire`] (M071). Idempotency token only;
+/// not product SoT and not a honeycomb Acceptance.
+pub const PIN_WIRE_MARKER_REL: &str = "pin-wire.v1";
+
+/// Bytes stamped into [`PIN_WIRE_MARKER_REL`] after a successful pin-wire rewrite.
+pub const PIN_WIRE_MARKER_BODY: &[u8] = b"kutha-pin-wire/1\n";
+
+/// Report from [`migrate_pin_wire`].
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct PinWireMigrateReport {
+    pub remapped_lines: usize,
+    pub events_written: usize,
+    pub already_migrated: bool,
+}
+
+/// Explicit pin-scheme rewrite for a store directory (M071).
+///
+/// Sources match [`migrate_op_wire`]: `events.jsonl`, WAL-only, or segmented
+/// `manifest.json`. Requires modern [`Event`] JSON (run Op-wire first when
+/// meta-op envelopes remain). Remaps [`Op::Behavior`] `rule_version` when the
+/// pin is a legacy UTF-8 ident digest; stamps [`PIN_WIRE_MARKER_REL`].
+/// Idempotent when the marker exists. Open stays fail-open for admit until
+/// pins match scheme v1; serde itself accepts legacy pin strings.
+pub fn migrate_pin_wire(dir: &Path) -> std::io::Result<PinWireMigrateReport> {
+    fs::create_dir_all(dir)?;
+    let _lock = acquire_store_write_lock(dir)?;
+    let marker = dir.join(PIN_WIRE_MARKER_REL);
+    if marker.exists() {
+        return Ok(PinWireMigrateReport {
+            remapped_lines: 0,
+            events_written: 0,
+            already_migrated: true,
+        });
+    }
+    let jsonl_path = dir.join(EVENTS_JSONL);
+    let wal_path = dir.join(EVENTS_WAL);
+    let manifest_path = dir.join(crate::segment::MANIFEST_REL);
+    let segmented = manifest_path.exists();
+    let values = if segmented {
+        crate::segment::recover_json_values(dir)?
+    } else if jsonl_path.exists() {
+        read_jsonl_values(&jsonl_path)?
+    } else if wal_path.exists() {
+        wal::recover_json_values(&wal_path)?
+    } else {
+        return Err(io_invalid(
+            "migrate_pin_wire requires events.jsonl, events.wal, or manifest.json",
+        ));
+    };
+    let (out, remapped_lines) = rewrite_pin_wire_events(&values)?;
+    write_events_jsonl_temp(dir, &out, true)?;
+    if segmented {
+        remove_all_segment_logs(dir)?;
+        if manifest_path.exists() {
+            fs::remove_file(&manifest_path)?;
+        }
+    }
+    if wal_path.exists() {
+        fs::remove_file(&wal_path)?;
+    }
+    let snap = dir.join(SNAPSHOT_JSON);
+    if snap.exists() {
+        fs::remove_file(&snap)?;
+    }
+    replace_via_tmp(&marker, &dir.join("pin-wire.v1.tmp"), true, |f| {
+        f.write_all(PIN_WIRE_MARKER_BODY)?;
+        Ok(())
+    })?;
+    Ok(PinWireMigrateReport {
+        remapped_lines,
+        events_written: out.len(),
+        already_migrated: false,
+    })
+}
+
+fn rewrite_pin_wire_events(
+    values: &[serde_json::Value],
+) -> std::io::Result<(Vec<Event>, usize)> {
+    let mut out = Vec::with_capacity(values.len());
+    let mut remapped_lines = 0usize;
+    for value in values {
+        let event: Event = serde_json::from_value(value.clone()).map_err(json_err)?;
+        let (event, changed) = remap_event_pins(event);
+        if changed {
+            remapped_lines += 1;
+        }
+        out.push(event);
+    }
+    Ok((out, remapped_lines))
 }
 
 fn read_jsonl_values(path: &Path) -> std::io::Result<Vec<serde_json::Value>> {

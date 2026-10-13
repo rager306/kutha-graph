@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-13 — Trajectory: M071 / GSD v0.65 closed
+
+### Trajectory
+
+- M071 / GSD v0.65 closed (Phase 142). Active Milestone **None**; `L_delivery=M071-closed`. Audit: `.planning/milestones/v0.65-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-13 — Product: Pin-wire Behavior migrate (Phase 142)
+
+### Product
+
+- `kutha_common::pin_migrate` + `store::migrate_pin_wire`: remaps Behavior `rule_version` when pin is legacy UTF-8 ident digest → pin-scheme v1 Named; jsonl/WAL/segmented sources; stamps `pin-wire.v1`. No silent serde remap of `rule_definition_hash`. Tests: `pin_migrate` unit + `m071_pin_wire_migrate`. Bench sample (`KUTHA_BENCH_N=1000`): `ingest_plain.n` ≈9.0ms, `as_of.n` ≈24µs (noisy host; migrate not on ingest hot path; vs M070 ≈9.1ms / ≈28µs).
+
+### Process
+
+- Matrix `SEM-m071-pin-wire` killed; `pin-compat-policy` oracles + `pin-compat.md` cover explicit directory migrate; id map v0.65 / Phase 142.
+
 ## 2026-10-13 — Trajectory: lease M071-S01 (Pin-wire Behavior migrate)
 
 ### Trajectory

@@ -15,7 +15,7 @@ Process note, not an ADR and not honeycomb Acceptance. Controller policy for
 Reasons:
 
 1. Ident pins that equal raw UTF-8 domain digests invalidate the Named AST contract and let lazy encoders pass.
-2. Remapping stored main-era pins onto v1 would launder Behavior `rule_version` without an audited migrate. Operators rebuild or discard caches that still hold UTF-8 pins.
+2. Remapping stored main-era pins onto v1 would launder Behavior `rule_version` without an audited migrate. Operators rebuild or discard caches that still hold UTF-8 pins — until an **explicit** directory migrate runs (M071).
 3. CE #24 minimum path is to **version/document the rotation** and lock **hardcoded stability vectors** so Hyrum drift fails closed in CI.
 
 ## Stability vectors (pin scheme v1)
@@ -28,9 +28,18 @@ Hardcoded in `crates/kutha-common/tests/m051_pin_compat.rs`. Do not recompute in
 | `derive_pq` | legacy UTF-8 (must **not** equal v1) | `7ce5d5ad5ca8d5148305d84d3eee3f1356540ad44da56fac9fdde748603436db` |
 | `not a rule ident!!!` | non-ident → domain+UTF-8 | `ac715049d46ceaeae121295921ba657df849db9fee9fdb1203201e7b7ba7a689` |
 
-## Follow-on (not leased here)
+## Directory rewrite (M071)
 
-A migrate that rewrites persisted Behavior `rule_version` from UTF-8 pins to v1 Named pins needs its own lease and fixtures. Until then, out-of-repo caches holding main-era ident pins stay UnknownRuleVersion under v1 admit.
+**Shipped:** `store::migrate_pin_wire` rewrites a store directory (jsonl / WAL-only /
+segmented sources, same recovery paths as Op-wire). Requires modern `Event`
+JSON (run `migrate_op_wire` first when meta-op envelopes remain). Remaps
+`Op::Behavior` `rule_version` only when `name` is a rule ident and the pin
+equals the legacy domain+UTF-8 digest; stamps `pin-wire.v1`. Idempotent when
+the marker exists. Serde still accepts legacy pin strings on open; admit stays
+fail-closed for UnknownRuleVersion until pins match scheme v1 or this migrate
+runs. Helpers live in `kutha_common::pin_migrate` (`legacy_ident_rule_pin`,
+`remap_behavior_rule_version`, `remap_event_pins`) — not a silent change to
+`rule_definition_hash`.
 
 ## Related G4 residuals
 

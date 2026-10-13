@@ -41,7 +41,8 @@ JSON but not a modern `Event` — no silent drop of legacy meta-ops).
 
 ## Related G4 residuals
 
-Pin scheme rotation (#24) is recorded in `docs/process/pin-compat.md` (M051).
+Pin scheme rotation (#24) is recorded in `docs/process/pin-compat.md` (M051);
+explicit Behavior pin-wire migrate is M071 (`migrate_pin_wire` + `pin-wire.v1`).
 Clock-safe facade shipped as M025 (trybuild `ui_clock_facade`) — **not** CE
 whole-repo finding #26 (that finding was delivery-key same-relation; closed
 M056-S03). Op-wire directory layouts shipped M067–M069; demote orphan

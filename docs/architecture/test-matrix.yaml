@@ -1935,6 +1935,19 @@ rows:
     gate: default
     owner: M070-S01
     source: Phase 141 / Op-wire demote orphan cleanup
+  - id: SEM-m071-pin-wire
+    plane: product
+    invariant: migrate_pin_wire remaps Behavior legacy UTF-8 ident rule_version to pin-scheme v1 Named and stamps pin-wire.v1; v1 pins unchanged; no silent serde remap
+    layer: decision
+    oracle:
+      - migrate_pin_wire_rewrites_behavior_legacy_utf8_pin
+      - migrate_pin_wire_leaves_v1_pin_unchanged
+      - remap_derive_pq_legacy_utf8_to_v1
+    kill_mutation: delete remap_behavior_rule_version so legacy UTF-8 Behavior pins never rewrite
+    status: killed
+    gate: default
+    owner: M071-S01
+    source: Phase 142 / Pin-wire Behavior migrate
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step
