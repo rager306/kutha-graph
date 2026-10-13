@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M068
+**Active Slice:** S01
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M067 closed (v0.61); prior M066 closed | Capability proven / Cypher started |
+| L_delivery | M067 closed (v0.61); M068-S01 leased | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Idle. M067 / GSD v0.61 closed (`migrate_op_wire` + `op-wire.v1`). Audit: `.planning/milestones/v0.61-MILESTONE-AUDIT.md`. Segmented/WAL-only Op-wire migrate deferred. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+Lease M068-S01 / GSD v0.62 Phase 139: extend `migrate_op_wire` to WAL-only legacy dirs (frame JSON Values → remap → materialize jsonl + marker); open stays fail-open. Segmented dirs deferred. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 
