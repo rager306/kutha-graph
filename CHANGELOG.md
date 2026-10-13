@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-13 — Trajectory: lease M070-S01 (Op-wire demote orphan cleanup)
+
+### Trajectory
+
+- Active Milestone **M070**, Active Slice **S01** (`L_delivery=M069-closed`): after segmented `migrate_op_wire`, remove orphan `seg-*.log`; honest G4 residual docs. Honeycomb stays Proposed.
+
 ## 2026-10-13 — Trajectory: M069 / GSD v0.63 closed
 
 ### Trajectory

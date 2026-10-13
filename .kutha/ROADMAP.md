@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M070: Op-wire demote orphan cleanup — OPEN (GSD v0.64)
+
+Process debt after M069: segmented demote deletes only manifest-named segments; generation-unique orphan `seg-*.log` can remain. Thin slice: glob-clean `seg-*.log` after demote; correct stale G4 residual cites (#26 ≠ clock facade).
+
+- [ ] **S01: orphan seg cleanup + G4 doc honesty** `risk:low` `depends:[]`
+  > After this: demote leaves no `seg-*.log`; matrix `SEM-m070-op-wire-orphan-seg` killed; op-compat/pin-compat residual text honest. Phase 141.
+
 ## M069: Op wire segmented migrate — CLOSED (GSD v0.63)
 
 **Closed:** S01 delivered 2026-10-13. Process tag `v0.63`. Honeycomb stays Proposed.
