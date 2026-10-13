@@ -75,6 +75,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.65 | 142 | M071 | S01 | Pin-wire Behavior migrate (migrate_pin_wire + pin-wire.v1) | shipped |
 | v0.66 | 143 | M072 | S01 | Pin-cite JustificationCite migrate (migrate_pin_cite + pin-cite.v1) | shipped |
 | v0.67 | 144 | M073 | S01 | Git auto clean-tree merge-base + ci run_high/tip_high labels | shipped |
+| v0.68 | 145 | M074 | S01 | Agent surface discoverability (CBM name + AGENTS CLI flags) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
@@ -104,8 +105,10 @@ Every milestone that edits `crates/` re-runs `cargo bench -p kutha-runtime --ben
 
 Phases that edit product code (24–27, 30) use CBM and GitNexus together. Phases 22, 23, 28, 29 use CBM only where code is read. This supersedes “GitNexus is secondary” for M013; outside M013 the secondary rule stands.
 
-| Moment | CBM (`root-kutha-graph`) | GitNexus (`kutha-graph`) |
-|--------|--------------------------|--------------------------|
+Canonical CBM project name is `kutha-graph` (historical alias `root-kutha-graph` on the same root — prefer `kutha-graph`; see `.cursor/skills/codebase-memory/SKILL.md`).
+
+| Moment | CBM (`kutha-graph`) | GitNexus (`kutha-graph`) |
+|--------|---------------------|--------------------------|
 | Phase start | `list_projects`, `index_status`, `check_index_coverage` on touched paths | `list_repos`; if behind, `gitnexus analyze --index-only` (controller only) |
 | Plan: blast radius | `search_graph`, inbound `trace_path` on each public symbol to be changed | `impact` upstream on the same symbols; `context` for call and process view |
 | Variant and literal questions | `search_code`, then `rg` as arbiter | not usable (see limits) |

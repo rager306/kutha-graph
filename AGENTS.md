@@ -55,12 +55,15 @@ Harness (Python **3.13** via **uv** only — not system `python3`):
 uv run kutha-gov ci          # FSM quantum: relations → checks → observe → emit → tenant → fold
 uv run kutha-gov selftest    # mutate a copy; unproven fails
 uv run kutha-gov precommit   # dictionary checks only (no cargo, no JSONL)
+uv run kutha-gov json        # check results as JSON (optional --check ID)
 uv run kutha-gov fsm         # print the process machine
 uv run kutha-gov map         # compact L_map index
 uv run kutha-gov py          # ruff + ty + pyrefly
 uv run kutha-gov fold | list | explain …
 uv run pytest
 ```
+
+Flags (ci / precommit / selftest / json where noted): `--jobs N` (parallel checks; `1` = serial oracle), `--skip-cargo` (ci only; not closeout evidence), `--check ID` (single check for json/precommit/selftest), `--budget V` (Cui truncate). Env: `KUTHA_GOV_JOBS`, `KUTHA_GOV_BUDGET`.
 
 Pin: `.python-version`. New governor check or CI phase: YAML row — `.kutha/META.md` and `docs/process/governor-intake.md` (not a new Python class). Hook: `uvx pre-commit install --overwrite` (precommit, not full `ci`).
 

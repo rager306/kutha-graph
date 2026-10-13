@@ -1972,6 +1972,17 @@ rows:
     gate: default
     owner: M073-S01
     source: Phase 144 / Git auto clean-tree coupling window
+  - id: SEM-m074-agent-surface
+    plane: harness
+    invariant: gsd-auto-contract CBM column is kutha-graph; AGENTS.md lists --jobs --skip-cargo kutha-gov json --check
+    layer: governor
+    oracle:
+      - agent-surface
+    kill_mutation: restore CBM (`root-kutha-graph`) column header and drop --jobs from AGENTS.md
+    status: killed
+    gate: default
+    owner: M074-S01
+    source: Phase 145 / Agent surface discoverability
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

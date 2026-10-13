@@ -2090,6 +2090,49 @@ checks:
         category: i-f-oracle
         message: "I-F16 horn_correct oracles missing {missing}"
 
+  - id: agent-surface
+    description: >-
+      Agent-facing docs name the canonical CBM project and live kutha-gov flags
+      (CE whole-repo W1/O1; M074 / Phase 145).
+    steps:
+      - kind: file_contains
+        path: docs/process/gsd-auto-contract.md
+        needles:
+          - "CBM (`kutha-graph`)"
+        require: all
+        category: oracle
+        message: "gsd-auto-contract tool pair missing canonical CBM name: {missing}"
+      - kind: file_absent
+        path: docs/process/gsd-auto-contract.md
+        needles:
+          - "CBM (`root-kutha-graph`)"
+        category: oracle
+        message: "gsd-auto-contract still labels CBM as root-kutha-graph primary: {needle}"
+      - kind: file_contains
+        path: AGENTS.md
+        needles:
+          - "--jobs"
+          - "--skip-cargo"
+          - "kutha-gov json"
+          - "--check"
+        require: all
+        category: oracle
+        message: "AGENTS.md harness surface missing live flags: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_agent_surface.py
+        needles:
+          - "def test_gsd_auto_contract_cbm_column_prefers_kutha_graph"
+          - "def test_agents_md_lists_live_harness_flags"
+        require: all
+        category: oracle
+        message: "agent-surface pytest oracle missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: docs/process/gsd-auto-contract.md
+          pattern: "CBM \\(`kutha-graph`\\)"
+          with: "CBM (`root-kutha-graph`)"
+
   - id: git-auto-base
     description: >-
       Clean-tree git_against=auto uses upstream merge-base…HEAD (not HEAD~1 alone);

@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-14 — Trajectory: M074 / GSD v0.68 closed
+
+### Trajectory
+
+- M074 / GSD v0.68 closed (Phase 145). Active Milestone **None**; `L_delivery=M074-closed`. Audit: `.planning/milestones/v0.68-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-14 — Process: Agent surface discoverability (Phase 145)
+
+### Process
+
+- `docs/process/gsd-auto-contract.md` tool-pair column labels CBM as `kutha-graph` (alias `root-kutha-graph` footnote only).
+- `AGENTS.md` Commands list `kutha-gov json` and flags `--jobs` / `--skip-cargo` / `--check` / `--budget`.
+- Check `agent-surface` + invariant `I-agent-surface`; FSM / `.env.example` budget 83→84; matrix `SEM-m074-agent-surface` killed. Pytest: `test_agent_surface`. Id map v0.68 / Phase 145.
+
 ## 2026-10-14 — Trajectory: lease M074-S01 (Agent surface discoverability)
 
 ### Trajectory
