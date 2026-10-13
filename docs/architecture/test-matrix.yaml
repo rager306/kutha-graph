@@ -1948,6 +1948,19 @@ rows:
     gate: default
     owner: M071-S01
     source: Phase 142 / Pin-wire Behavior migrate
+  - id: SEM-m072-pin-cite
+    plane: product
+    invariant: migrate_pin_cite remaps JustificationCite legacy UTF-8 rule_version to v1 when a rule ident is evidenced in-log; orphan cites unchanged; stamps pin-cite.v1
+    layer: decision
+    oracle:
+      - migrate_pin_cite_rewrites_justification_legacy_utf8_pin
+      - migrate_pin_cite_leaves_orphan_legacy_cite_unchanged
+      - remap_events_pins_rewrites_cite_when_behavior_evidences_ident
+    kill_mutation: delete remap_events_pins cite path so legacy JustificationCite pins never rewrite
+    status: killed
+    gate: default
+    owner: M072-S01
+    source: Phase 143 / Pin-cite JustificationCite migrate
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

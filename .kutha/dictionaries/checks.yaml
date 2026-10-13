@@ -1786,7 +1786,7 @@ checks:
     description: >-
       G4 CE #24: pin scheme v1 documented rotation — hardcoded stability
       vectors for ident Named AST pin vs legacy UTF-8 and non-ident; explicit
-      migrate_pin_wire (M071) without silent serde remap.
+      migrate_pin_wire (M071) and migrate_pin_cite (M072) without silent serde remap.
     steps:
       - kind: file_contains
         path: docs/process/pin-compat.md
@@ -1798,6 +1798,8 @@ checks:
           - "ac715049d46ceaeae121295921ba657df849db9fee9fdb1203201e7b7ba7a689"
           - "migrate_pin_wire"
           - "pin-wire.v1"
+          - "migrate_pin_cite"
+          - "pin-cite.v1"
         require: all
         category: oracle
         message: "pin-compat policy doc missing: {missing}"
@@ -1816,6 +1818,13 @@ checks:
           - migrate_pin_wire_leaves_v1_pin_unchanged
         category: oracle
         message: "pin-wire migrate oracles missing {missing}"
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m072_pin_cite_migrate.rs
+        tests:
+          - migrate_pin_cite_rewrites_justification_legacy_utf8_pin
+          - migrate_pin_cite_leaves_orphan_legacy_cite_unchanged
+        category: oracle
+        message: "pin-cite migrate oracles missing {missing}"
       - kind: file_contains
         path: crates/kutha-common/src/event.rs
         needles:
@@ -1830,6 +1839,8 @@ checks:
           - "legacy_ident_rule_pin"
           - "remap_behavior_rule_version"
           - "remap_event_pins"
+          - "remap_events_pins"
+          - "collect_rule_idents"
         require: all
         category: oracle
         message: "pin_migrate helpers missing: {missing}"
@@ -1839,9 +1850,12 @@ checks:
           - "pub fn migrate_pin_wire"
           - "PIN_WIRE_MARKER_REL"
           - "kutha-pin-wire/1"
+          - "pub fn migrate_pin_cite"
+          - "PIN_CITE_MARKER_REL"
+          - "kutha-pin-cite/1"
         require: all
         category: oracle
-        message: "migrate_pin_wire missing: {missing}"
+        message: "migrate_pin_wire/cite missing: {missing}"
     selftest:
       mutations:
         - op: replace_regex

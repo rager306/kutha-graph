@@ -4,7 +4,8 @@ use crate::quantum::{
 use crate::snapshot::Snapshot;
 use crate::wal;
 use kutha_common::{
-    remap_event_pins, rewrite_event_json_line, Event, EventId, Op, TermDictionary,
+    remap_event_pins, remap_events_pins, rewrite_event_json_line, Event, EventId, Op,
+    TermDictionary,
 };
 use serde::de::DeserializeOwned;
 use std::fs::{self, File, OpenOptions};
@@ -348,6 +349,90 @@ fn rewrite_pin_wire_events(
         out.push(event);
     }
     Ok((out, remapped_lines))
+}
+
+/// Format marker written by [`migrate_pin_cite`] (M072). Idempotency token only;
+/// not product SoT and not a honeycomb Acceptance.
+pub const PIN_CITE_MARKER_REL: &str = "pin-cite.v1";
+
+/// Bytes stamped into [`PIN_CITE_MARKER_REL`] after a successful pin-cite rewrite.
+pub const PIN_CITE_MARKER_BODY: &[u8] = b"kutha-pin-cite/1\n";
+
+/// Report from [`migrate_pin_cite`].
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct PinCiteMigrateReport {
+    pub remapped_lines: usize,
+    pub events_written: usize,
+    pub already_migrated: bool,
+}
+
+/// Explicit JustificationCite pin-scheme rewrite for a store directory (M072).
+///
+/// Sources match [`migrate_pin_wire`]. Builds a legacy→v1 map from rule idents
+/// evidenced by [`Op::Behavior`] names and rule-ident [`Op::Define`]s in the same
+/// log, then remaps [`Op::JustificationCite`] (and any remaining legacy Behavior)
+/// pins via [`remap_events_pins`]. Stamps [`PIN_CITE_MARKER_REL`]. Idempotent when
+/// the marker exists. Cites whose pin has no evidenced ident stay unchanged.
+pub fn migrate_pin_cite(dir: &Path) -> std::io::Result<PinCiteMigrateReport> {
+    fs::create_dir_all(dir)?;
+    let _lock = acquire_store_write_lock(dir)?;
+    let marker = dir.join(PIN_CITE_MARKER_REL);
+    if marker.exists() {
+        return Ok(PinCiteMigrateReport {
+            remapped_lines: 0,
+            events_written: 0,
+            already_migrated: true,
+        });
+    }
+    let jsonl_path = dir.join(EVENTS_JSONL);
+    let wal_path = dir.join(EVENTS_WAL);
+    let manifest_path = dir.join(crate::segment::MANIFEST_REL);
+    let segmented = manifest_path.exists();
+    let values = if segmented {
+        crate::segment::recover_json_values(dir)?
+    } else if jsonl_path.exists() {
+        read_jsonl_values(&jsonl_path)?
+    } else if wal_path.exists() {
+        wal::recover_json_values(&wal_path)?
+    } else {
+        return Err(io_invalid(
+            "migrate_pin_cite requires events.jsonl, events.wal, or manifest.json",
+        ));
+    };
+    let (out, remapped_lines) = rewrite_pin_cite_events(&values)?;
+    write_events_jsonl_temp(dir, &out, true)?;
+    if segmented {
+        remove_all_segment_logs(dir)?;
+        if manifest_path.exists() {
+            fs::remove_file(&manifest_path)?;
+        }
+    }
+    if wal_path.exists() {
+        fs::remove_file(&wal_path)?;
+    }
+    let snap = dir.join(SNAPSHOT_JSON);
+    if snap.exists() {
+        fs::remove_file(&snap)?;
+    }
+    replace_via_tmp(&marker, &dir.join("pin-cite.v1.tmp"), true, |f| {
+        f.write_all(PIN_CITE_MARKER_BODY)?;
+        Ok(())
+    })?;
+    Ok(PinCiteMigrateReport {
+        remapped_lines,
+        events_written: out.len(),
+        already_migrated: false,
+    })
+}
+
+fn rewrite_pin_cite_events(
+    values: &[serde_json::Value],
+) -> std::io::Result<(Vec<Event>, usize)> {
+    let mut parsed = Vec::with_capacity(values.len());
+    for value in values {
+        parsed.push(serde_json::from_value::<Event>(value.clone()).map_err(json_err)?);
+    }
+    Ok(remap_events_pins(parsed))
 }
 
 fn read_jsonl_values(path: &Path) -> std::io::Result<Vec<serde_json::Value>> {

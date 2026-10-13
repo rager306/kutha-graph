@@ -20,6 +20,7 @@ pub use op_migrate::{
     remap_legacy_op_value, remap_legacy_ops, rewrite_event_json_line, OpMigrateError,
 };
 pub use pin_migrate::{
-    legacy_ident_rule_pin, remap_behavior_rule_version, remap_event_pins,
+    collect_rule_idents, legacy_ident_rule_pin, legacy_to_v1_pin_map, remap_behavior_rule_version,
+    remap_event_pins, remap_event_pins_with_map, remap_events_pins,
 };
 pub use rule::{RuleAst, RuleAtom, RuleTerm, is_rule_ident, rule_body_hash};

@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-13 — Trajectory: M072 / GSD v0.66 closed
+
+### Trajectory
+
+- M072 / GSD v0.66 closed (Phase 143). Active Milestone **None**; `L_delivery=M072-closed`. Audit: `.planning/milestones/v0.66-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-13 — Product: Pin-cite JustificationCite migrate (Phase 143)
+
+### Product
+
+- `remap_events_pins` + `store::migrate_pin_cite`: remaps JustificationCite `rule_version` when pin is a legacy UTF-8 ident digest for a rule name evidenced in-log (`Behavior.name` / rule-ident `Define`); stamps `pin-cite.v1`. Orphan cites unchanged. No silent serde remap. Tests: `pin_migrate` unit + `m072_pin_cite_migrate`. Bench sample (`KUTHA_BENCH_N=1000`): `ingest_plain.n` ≈9.6–11.2ms, `as_of.n` ≈40–57µs (noisy host; migrate not on ingest hot path; vs M071 ≈9.0ms / ≈24µs).
+
+### Process
+
+- Matrix `SEM-m072-pin-cite` killed; `pin-compat-policy` oracles + `pin-compat.md` cover cite migrate; id map v0.66 / Phase 143.
+
 ## 2026-10-13 — Trajectory: lease M072-S01 (Pin-cite JustificationCite migrate)
 
 ### Trajectory

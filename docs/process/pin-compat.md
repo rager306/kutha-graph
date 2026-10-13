@@ -28,17 +28,24 @@ Hardcoded in `crates/kutha-common/tests/m051_pin_compat.rs`. Do not recompute in
 | `derive_pq` | legacy UTF-8 (must **not** equal v1) | `7ce5d5ad5ca8d5148305d84d3eee3f1356540ad44da56fac9fdde748603436db` |
 | `not a rule ident!!!` | non-ident → domain+UTF-8 | `ac715049d46ceaeae121295921ba657df849db9fee9fdb1203201e7b7ba7a689` |
 
-## Directory rewrite (M071)
+## Directory rewrite (M071 / M072)
 
-**Shipped:** `store::migrate_pin_wire` rewrites a store directory (jsonl / WAL-only /
-segmented sources, same recovery paths as Op-wire). Requires modern `Event`
-JSON (run `migrate_op_wire` first when meta-op envelopes remain). Remaps
+**Shipped (M071):** `store::migrate_pin_wire` rewrites a store directory (jsonl /
+WAL-only / segmented sources, same recovery paths as Op-wire). Requires modern
+`Event` JSON (run `migrate_op_wire` first when meta-op envelopes remain). Remaps
 `Op::Behavior` `rule_version` only when `name` is a rule ident and the pin
 equals the legacy domain+UTF-8 digest; stamps `pin-wire.v1`. Idempotent when
-the marker exists. Serde still accepts legacy pin strings on open; admit stays
-fail-closed for UnknownRuleVersion until pins match scheme v1 or this migrate
-runs. Helpers live in `kutha_common::pin_migrate` (`legacy_ident_rule_pin`,
-`remap_behavior_rule_version`, `remap_event_pins`) — not a silent change to
+the marker exists.
+
+**Shipped (M072):** `store::migrate_pin_cite` remaps `Op::JustificationCite`
+`rule_version` when the pin equals a legacy UTF-8 ident digest for a rule name
+**evidenced in the same log** (`Behavior.name` or rule-ident `Define`) via
+`remap_events_pins`; stamps `pin-cite.v1`. Cites with no evidenced ident stay
+unchanged (no hardcoded name list). Idempotent when the marker exists.
+
+Serde still accepts legacy pin strings on open; admit stays fail-closed for
+UnknownRuleVersion until pins match scheme v1 or these migrates run. Helpers
+live in `kutha_common::pin_migrate` — not a silent change to
 `rule_definition_hash`.
 
 ## Related G4 residuals
