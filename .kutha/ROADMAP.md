@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M071: Pin-wire Behavior migrate — OPEN (GSD v0.65)
+
+Process debt after M051/M070: pin-compat documents rotation but no directory rewrite for main-era UTF-8 ident pins on Behavior. Thin slice: explicit `migrate_pin_wire` + `pin-wire.v1`; remap only when name is rule ident and pin equals legacy domain+UTF-8.
+
+- [ ] **S01: migrate_pin_wire Behavior rule_version** `risk:medium` `depends:[]`
+  > After this: jsonl/WAL/segmented dirs rewrite legacy Behavior pins to v1; matrix `SEM-m071-pin-wire` killed. Phase 142.
+
 ## M070: Op-wire demote orphan cleanup — CLOSED (GSD v0.64)
 
 **Closed:** S01 delivered 2026-10-13. Process tag `v0.64`. Honeycomb stays Proposed.

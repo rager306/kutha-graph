@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-13 — Trajectory: lease M071-S01 (Pin-wire Behavior migrate)
+
+### Trajectory
+
+- Active Milestone **M071**, Active Slice **S01** (`L_delivery=M070-closed`): explicit `migrate_pin_wire` remaps Behavior `rule_version` legacy UTF-8 ident pins → v1 Named; stamp `pin-wire.v1`. Honeycomb stays Proposed.
+
 ## 2026-10-13 — Trajectory: M070 / GSD v0.64 closed
 
 ### Trajectory
