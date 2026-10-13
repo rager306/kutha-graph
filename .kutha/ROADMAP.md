@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M074: Agent surface discoverability — OPEN (GSD v0.68)
+
+Process debt after M073 (CE whole-repo agent_native_gaps W1/O1): gsd-auto-contract tool-pair table still labels CBM as `root-kutha-graph` while SKILL.md canonical is `kutha-graph`; AGENTS.md Commands omit live CLI flags (`--jobs`, `--skip-cargo`, `json`, `--check`). Thin slice: docs needles + governor check; no crates.
+
+- [ ] **S01: CBM name + AGENTS CLI flags** `risk:low` `depends:[]`
+  > After this: tool pair prefers `kutha-graph`; AGENTS lists parallel/skip/json/check; matrix `SEM-m074-agent-surface` killed. Phase 145.
+
 ## M073: Git auto clean-tree coupling window — CLOSED (GSD v0.67)
 
 **Closed:** S01 delivered 2026-10-14. Process tag `v0.67`. Honeycomb stays Proposed.

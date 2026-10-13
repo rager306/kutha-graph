@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-14 — Trajectory: lease M074-S01 (Agent surface discoverability)
+
+### Trajectory
+
+- Active Milestone **M074**, Active Slice **S01** (`L_delivery=M073-closed`): CBM tool-pair name `kutha-graph` + AGENTS.md harness flags (`--jobs` / `--skip-cargo` / `json` / `--check`). Honeycomb stays Proposed.
+
 ## 2026-10-14 — Trajectory: M073 / GSD v0.67 closed
 
 ### Trajectory
