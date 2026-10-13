@@ -3,7 +3,7 @@ use crate::quantum::{
 };
 use crate::snapshot::Snapshot;
 use crate::wal;
-use kutha_common::{Event, EventId, Op};
+use kutha_common::{rewrite_event_json_line, Event, EventId, Op, TermDictionary};
 use serde::de::DeserializeOwned;
 use std::fs::{self, File, OpenOptions};
 use std::io::{BufRead, BufReader, ErrorKind, Write};
@@ -172,6 +172,98 @@ pub enum MigrateStep {
     Segments,
     Verified,
     WalRemoved,
+}
+
+/// Format marker written by [`migrate_op_wire`] (M067). Idempotency token only;
+/// not product SoT and not a honeycomb Acceptance.
+pub const OP_WIRE_MARKER_REL: &str = "op-wire.v1";
+
+/// Bytes stamped into [`OP_WIRE_MARKER_REL`] after a successful Op-wire rewrite.
+pub const OP_WIRE_MARKER_BODY: &[u8] = b"kutha-op-wire/1\n";
+
+/// Report from [`migrate_op_wire`].
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct OpWireMigrateReport {
+    pub remapped_lines: usize,
+    pub events_written: usize,
+    pub already_migrated: bool,
+}
+
+/// Explicit Op-wire rewrite for a **legacy jsonl** store directory (M067).
+///
+/// Reads `events.jsonl` line-by-line as JSON values, keeps modern [`Event`]s,
+/// remaps removed meta-op envelopes via `kutha_common::op_migrate`, inserts
+/// `Define` rows for newly interned names, atomically replaces jsonl, drops
+/// stale `events.wal` / `snapshot.json`, and stamps [`OP_WIRE_MARKER_REL`].
+/// Idempotent when the marker exists. Open stays fail-open until this runs.
+/// Segmented dirs (`manifest.json`) and WAL-only dirs are out of this slice.
+pub fn migrate_op_wire(dir: &Path) -> std::io::Result<OpWireMigrateReport> {
+    fs::create_dir_all(dir)?;
+    let _lock = acquire_store_write_lock(dir)?;
+    let marker = dir.join(OP_WIRE_MARKER_REL);
+    if marker.exists() {
+        return Ok(OpWireMigrateReport {
+            remapped_lines: 0,
+            events_written: 0,
+            already_migrated: true,
+        });
+    }
+    if dir.join(crate::segment::MANIFEST_REL).exists() {
+        return Err(io_invalid(
+            "migrate_op_wire supports legacy jsonl dirs only (no manifest.json)",
+        ));
+    }
+    let jsonl_path = dir.join(EVENTS_JSONL);
+    if !jsonl_path.exists() {
+        return Err(io_invalid(
+            "migrate_op_wire requires events.jsonl (WAL-only dirs deferred)",
+        ));
+    }
+    let bytes = fs::read(&jsonl_path)?;
+    let mut dict = TermDictionary::default();
+    let mut out = Vec::new();
+    let mut remapped_lines = 0usize;
+    let mut start = 0usize;
+    for (i, b) in bytes.iter().enumerate() {
+        if *b != b'\n' {
+            continue;
+        }
+        let line = &bytes[start..i];
+        start = i + 1;
+        if line.iter().all(|c| c.is_ascii_whitespace()) {
+            continue;
+        }
+        let text = std::str::from_utf8(line)
+            .map_err(|e| std::io::Error::new(ErrorKind::InvalidData, e))?;
+        let value: serde_json::Value = serde_json::from_str(text).map_err(json_err)?;
+        let modern = serde_json::from_value::<Event>(value.clone()).is_ok();
+        let rewritten = rewrite_event_json_line(&value, &mut dict).map_err(|e| {
+            std::io::Error::new(ErrorKind::InvalidData, e.to_string())
+        })?;
+        if !modern {
+            remapped_lines += 1;
+        }
+        out.extend(rewritten);
+    }
+    // Torn tail after last newline is dropped (same policy as read_jsonl_events).
+    write_events_jsonl_temp(dir, &out, true)?;
+    let wal = dir.join(EVENTS_WAL);
+    if wal.exists() {
+        fs::remove_file(&wal)?;
+    }
+    let snap = dir.join(SNAPSHOT_JSON);
+    if snap.exists() {
+        fs::remove_file(&snap)?;
+    }
+    replace_via_tmp(&marker, &dir.join("op-wire.v1.tmp"), true, |f| {
+        f.write_all(OP_WIRE_MARKER_BODY)?;
+        Ok(())
+    })?;
+    Ok(OpWireMigrateReport {
+        remapped_lines,
+        events_written: out.len(),
+        already_migrated: false,
+    })
 }
 
 /// Convert a legacy jsonl+WAL directory to `manifest.json` + segments.

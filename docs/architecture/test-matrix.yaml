@@ -1887,6 +1887,18 @@ rows:
     gate: default
     owner: M066-S01
     source: Phase 137 / CE #1 Op migrate RecordAction
+  - id: SEM-m067-op-wire-dir
+    plane: product
+    invariant: legacy jsonl directories rewrite via migrate_op_wire with op-wire.v1 marker; open stays fail-open until rewrite
+    layer: decision
+    oracle:
+      - migrate_op_wire_rewrites_allow_relation_jsonl_and_stamps_marker
+      - open_still_fails_on_unmigrated_record_action_line
+    kill_mutation: delete migrate_op_wire so legacy jsonl meta-ops cannot be rewritten with a format marker
+    status: killed
+    gate: default
+    owner: M067-S01
+    source: Phase 138 / CE #1 Op wire directory migrate
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

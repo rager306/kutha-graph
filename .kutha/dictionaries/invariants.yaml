@@ -370,7 +370,7 @@ invariants:
     check: skip-cargo-log-marker
 
   - id: I-op-compat-policy
-    claim: "Removed dictionary meta-ops fail deserialize on open; all five meta-ops remap only via explicit migrate"
+    claim: "Removed dictionary meta-ops fail deserialize on open; remaps and migrate_op_wire are explicit; serde aliases forbidden"
     source: ".planning/phases/110-op-compat-policy/110-CONTEXT.md"
     disposition: check
     check: op-compat-policy

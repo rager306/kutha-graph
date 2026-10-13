@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-13 — Trajectory: M067 / GSD v0.61 closed
+
+### Trajectory
+
+- M067 / GSD v0.61 closed (Phase 138). Active Milestone **None**; `L_delivery=M067-closed`. Audit: `.planning/milestones/v0.61-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-13 — Product: Op wire directory migrate (Phase 138)
+
+### Product
+
+- `store::migrate_op_wire`: rewrite legacy `events.jsonl` via `rewrite_event_json_line` (Defines + five meta-op remaps); drop stale WAL/snapshot; stamp `op-wire.v1`. Idempotent. Open stays fail-open. Segmented/WAL-only deferred. Tests: common unit + `m067_op_wire_migrate`. Bench sample (`KUTHA_BENCH_N=1000`): `ingest_plain.n` ≈10.9ms, `as_of.n` ≈29µs.
+
 ## 2026-10-13 — Trajectory: lease M067-S01 (Op wire directory migrate)
 
 ### Trajectory

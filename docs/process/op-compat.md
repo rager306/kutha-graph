@@ -22,9 +22,13 @@ Reasons serde aliases stay forbidden:
 2. A wrong TermId remap would launder dictionary truth. Remap belongs in an explicit migrate with caller-supplied intern, not a silent serde alias.
 3. CE #14 minimum path recorded the break; M062–M066 lease explicit remaps.
 
-## Follow-on (deferred)
+## Directory rewrite (M067)
 
-Directory-level rewrite with a format marker remains unleased. Until that lands, operators must run the explicit remaps (or rebuild/discard) for main-era dirs that still contain removed meta-op tags.
+**Leased:** `store::migrate_op_wire` rewrites a legacy `events.jsonl` directory
+in place (line-wise remap via `rewrite_event_json_line`), drops stale WAL and
+snapshot leases, and stamps `op-wire.v1`. Idempotent when the marker exists.
+Open stays fail-open until the operator runs this step. Segmented dirs and
+WAL-only dirs stay out of this slice.
 
 ## Related G4 residuals
 

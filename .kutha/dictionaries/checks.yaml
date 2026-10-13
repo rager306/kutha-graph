@@ -1637,6 +1637,8 @@ checks:
           - "RecordAction"
           - "Fail open"
           - "record_action_to_assert"
+          - "migrate_op_wire"
+          - "op-wire.v1"
         require: all
         category: oracle
         message: "op-compat policy doc missing: {missing}"
@@ -1682,10 +1684,18 @@ checks:
           - serde_open_path_still_rejects_record_action
         category: oracle
         message: "op-migrate RecordAction oracles missing {missing}"
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m067_op_wire_migrate.rs
+        tests:
+          - migrate_op_wire_rewrites_allow_relation_jsonl_and_stamps_marker
+          - open_still_fails_on_unmigrated_record_action_line
+        category: oracle
+        message: "op-wire directory migrate oracles missing {missing}"
       - kind: file_contains
         path: crates/kutha-common/src/op_migrate.rs
         needles:
           - "remap_legacy_ops"
+          - "rewrite_event_json_line"
           - "record_action_to_assert"
           - "AllowRelation"
           - "RegisterRule"
@@ -1696,6 +1706,15 @@ checks:
         require: all
         category: oracle
         message: "op_migrate module missing: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/store.rs
+        needles:
+          - "pub fn migrate_op_wire"
+          - "OP_WIRE_MARKER_REL"
+          - "kutha-op-wire/1"
+        require: all
+        category: oracle
+        message: "migrate_op_wire missing: {missing}"
       - kind: file_absent
         path: crates/kutha-common/src/event.rs
         needles:

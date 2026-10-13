@@ -416,6 +416,37 @@ pub fn remap_legacy_event_value(
     Ok(events.pop().expect("len == 1"))
 }
 
+/// Rewrite one events.jsonl line for directory Op-wire migrate (M067).
+///
+/// Modern [`Event`] JSON is kept; `Define` names sync into `dict`. Legacy
+/// meta-op envelopes remap via [`remap_legacy_events`], with `Op::Define` rows
+/// inserted for newly interned names so reopen reconstructs the same TermIds.
+pub fn rewrite_event_json_line(
+    value: &serde_json::Value,
+    dict: &mut crate::TermDictionary,
+) -> Result<Vec<Event>, OpMigrateError> {
+    if let Ok(event) = serde_json::from_value::<Event>(value.clone()) {
+        if let Op::Define { name } = &event.op {
+            dict.intern(name);
+        }
+        return Ok(vec![event]);
+    }
+    let before = dict.len();
+    let remapped = remap_legacy_events(value, |s| dict.intern(s))?;
+    let ingested_at = remapped.first().map(|e| e.ingested_at).unwrap_or(0);
+    let mut out = Vec::with_capacity(remapped.len() + (dict.len() - before));
+    for name in dict.strings()[before..].iter() {
+        out.push(Event::new(
+            Op::Define {
+                name: name.clone(),
+            },
+            ingested_at,
+        ));
+    }
+    out.extend(remapped);
+    Ok(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -690,6 +721,32 @@ mod tests {
             }
             other => panic!("expected Assert, got {other:?}"),
         }
+    }
+
+    #[test]
+    fn rewrite_line_inserts_defines_before_remapped_assert() {
+        let mut dict = TermDictionary::default();
+        let id = EventId::nil();
+        let raw = serde_json::json!({
+            "id": id,
+            "op": {
+                "AllowRelation": {
+                    "name": "relatedTo",
+                    "valid_from": 0,
+                    "valid_to": null
+                }
+            },
+            "ingested_at": 3,
+            "object_ids": []
+        });
+        let events = rewrite_event_json_line(&raw, &mut dict).expect("rewrite");
+        assert!(events.len() >= 2);
+        assert!(matches!(&events[0].op, Op::Define { name } if name == "relatedTo"));
+        assert!(matches!(
+            &events.last().unwrap().op,
+            Op::Assert { delivery_key: Some(k), .. } if k == "relatedTo"
+        ));
+        assert_eq!(events.last().unwrap().id, id);
     }
 
     #[test]
