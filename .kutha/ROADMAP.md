@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M072: Pin-cite JustificationCite migrate — OPEN (GSD v0.66)
+
+Process debt after M071: Behavior pins migrate, but JustificationCite `rule_version` can still hold main-era UTF-8 ident digests. Thin slice: explicit `migrate_pin_cite` + `pin-cite.v1`; remap cites when pin equals legacy domain+UTF-8 for a rule ident evidenced in the same log (Behavior.name / rule-ident Define).
+
+- [ ] **S01: migrate_pin_cite JustificationCite rule_version** `risk:medium` `depends:[]`
+  > After this: jsonl/WAL/segmented dirs rewrite legacy cite pins to v1 when name is evidenced; matrix `SEM-m072-pin-cite` killed. Phase 143.
+
 ## M071: Pin-wire Behavior migrate — CLOSED (GSD v0.65)
 
 **Closed:** S01 delivered 2026-10-13. Process tag `v0.65`. Honeycomb stays Proposed.

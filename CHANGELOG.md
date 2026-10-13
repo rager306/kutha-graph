@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-13 — Trajectory: lease M072-S01 (Pin-cite JustificationCite migrate)
+
+### Trajectory
+
+- Active Milestone **M072**, Active Slice **S01** (`L_delivery=M071-closed`): explicit `migrate_pin_cite` remaps JustificationCite `rule_version` legacy UTF-8 ident pins → v1 when a rule name is evidenced in the same log; stamp `pin-cite.v1`. Honeycomb stays Proposed.
+
 ## 2026-10-13 — Trajectory: M071 / GSD v0.65 closed
 
 ### Trajectory
