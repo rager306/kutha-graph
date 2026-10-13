@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-13 — Trajectory: lease M069-S01 (Op wire segmented migrate)
+
+### Trajectory
+
+- Active Milestone **M069**, Active Slice **S01** (`L_delivery=M068-closed`): extend `migrate_op_wire` to segmented dirs (segment frame Values → remap → jsonl + drop segments/manifest + marker); open stays fail-open. Honeycomb stays Proposed.
+
 ## 2026-10-13 — Trajectory: M068 / GSD v0.62 closed
 
 ### Trajectory
