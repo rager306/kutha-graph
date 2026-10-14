@@ -78,6 +78,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.68 | 145 | M074 | S01 | Agent surface discoverability (CBM name + AGENTS CLI flags) | shipped |
 | v0.69 | 146 | M075 | S01 | Pin migrate sequence facade (migrate_pins = wire then cite) | shipped |
 | v0.70 | 147 | M076 | S01 | Compat migrate sequence facade (migrate_compat = op-wire then pins) | shipped |
+| v0.71 | 148 | M077 | S01 | Multi-check CLI select (--check comma-separated ids) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

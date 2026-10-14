@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.70
-milestone_name: Compat migrate sequence facade
+milestone: v0.71
+milestone_name: Multi-check CLI select
 status: complete
-stopped_at: "147-migrate-compat"
-last_updated: "2026-10-14T11:00:00.000Z"
+stopped_at: "148-multi-check"
+last_updated: "2026-10-14T12:50:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.70 Compat migrate sequence facade (M076) — complete  
-**Phase:** 147 complete  
-**Status:** S01 shipped; M076 / v0.70 closed
+**Milestone:** v0.71 Multi-check CLI select (M077) — complete  
+**Phase:** 148 complete  
+**Status:** S01 shipped; M077 / v0.71 closed

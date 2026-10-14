@@ -4,6 +4,25 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-14 — Trajectory: M077 / GSD v0.71 closed
+
+### Trajectory
+
+- Active Milestone/Slice cleared; `L_delivery=M077-closed`. Honeycomb stays Proposed.
+
+## 2026-10-14 — Process: Multi-check CLI select (Phase 148)
+
+### Process
+
+- `_parse_check_ids` + `_select_checks`: comma-separated dictionary check ids for `precommit` / `json` / `selftest` (dedupe; empty/unknown fail-closed). `run_selftest(..., check_ids=)`. Tests: `test_multi_check`. AGENTS documents `ID[,ID…]` and `run_high=` over `ci | tail`.
+- Extended `agent-surface` / `I-agent-surface`; matrix `SEM-m077-multi-check` killed; id map v0.71 / Phase 148.
+
+## 2026-10-14 — Trajectory: lease M077-S01 (Multi-check CLI select)
+
+### Trajectory
+
+- Active Milestone **M077**, Active Slice **S01** (`L_delivery=M076-closed`): `--check` accepts comma-separated dictionary check ids for precommit/json/selftest. Honeycomb stays Proposed.
+
 ## 2026-10-14 — Trajectory: M076 / GSD v0.70 closed
 
 ### Trajectory

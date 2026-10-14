@@ -26,14 +26,37 @@ def _detect_root(start: Path) -> Path:
     return here
 
 
+def _parse_check_ids(spec: str) -> tuple[list[str], int]:
+    """Split comma-separated check ids; empty tokens fail closed (M077)."""
+    parts = [p.strip() for p in spec.split(",")]
+    if not parts or any(p == "" for p in parts):
+        print("empty check id in --check list", file=sys.stderr)
+        return [], 2
+    out: list[str] = []
+    seen: set[str] = set()
+    for part in parts:
+        if part in seen:
+            continue
+        seen.add(part)
+        out.append(part)
+    return out, 0
+
+
 def _select_checks(root: Path, check_id: str | None) -> tuple[dict, int]:
+    """All checks, or a comma-separated subset looked up in the dictionary (M077)."""
     checks = get_checks(root)
     if not check_id:
         return checks, 0
-    if check_id not in checks:
-        print(f"unknown check: {check_id}", file=sys.stderr)
-        return {}, 2
-    return {check_id: checks[check_id]}, 0
+    ids, err = _parse_check_ids(check_id)
+    if err:
+        return {}, err
+    selected: dict = {}
+    for check_name in ids:
+        if check_name not in checks:
+            print(f"unknown check: {check_name}", file=sys.stderr)
+            return {}, 2
+        selected[check_name] = checks[check_name]
+    return selected, 0
 
 
 def _print_check_results(
@@ -239,12 +262,11 @@ def cmd_precommit(ctx: Context, *, check_id: str | None) -> int:
 
 
 def cmd_selftest(root: Path, *, check_id: str | None, jobs: int) -> int:
-    if check_id:
-        checks = get_checks(root)
-        if check_id not in checks:
-            print(f"unknown check: {check_id}", file=sys.stderr)
-            return 2
-    rows, code = run_selftest(root, check_id=check_id, jobs=jobs)
+    selected, err = _select_checks(root, check_id)
+    if err:
+        return err
+    check_ids = None if not check_id else list(selected.keys())
+    rows, code = run_selftest(root, check_ids=check_ids, jobs=jobs)
     for row in rows:
         print(format_row(row))
     return code
@@ -325,8 +347,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--check",
         default=None,
-        metavar="ID",
-        help="Run one check id (json/precommit/selftest; law-nexus --check)",
+        metavar="ID[,ID…]",
+        help=(
+            "Run one or more dictionary check ids, comma-separated "
+            "(json/precommit/selftest)"
+        ),
     )
     parser.add_argument(
         "--skip-cargo",

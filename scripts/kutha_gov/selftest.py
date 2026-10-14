@@ -118,11 +118,25 @@ def copy_harness_tree(src: Path, dst: Path) -> None:
 
 
 def run_selftest(
-    root: Path, check_id: str | None = None, *, jobs: int = 1
+    root: Path,
+    check_id: str | None = None,
+    *,
+    check_ids: list[str] | None = None,
+    jobs: int = 1,
 ) -> tuple[list[SelftestRow], int]:
-    """Copy the tree once (jobs=1) or per check (jobs>=2). Never writes `root`."""
+    """Copy the tree once (jobs=1) or per check (jobs>=2). Never writes `root`.
+
+    Prefer ``check_ids`` (M077 multi-select). Legacy ``check_id`` remains a
+    single-id alias for callers that have not switched.
+    """
     checks = get_checks(root)
-    if check_id is not None:
+    if check_ids is not None:
+        selected: dict[str, Check] = {}
+        for name in check_ids:
+            if name not in checks:
+                return [], 2
+            selected[name] = checks[name]
+    elif check_id is not None:
         if check_id not in checks:
             return [], 2
         selected = {check_id: checks[check_id]}

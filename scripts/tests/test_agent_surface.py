@@ -18,7 +18,14 @@ class AgentSurfaceDiscoverabilityTests(unittest.TestCase):
 
     def test_agents_md_lists_live_harness_flags(self) -> None:
         text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-        for needle in ("--jobs", "--skip-cargo", "kutha-gov json", "--check"):
+        for needle in (
+            "--jobs",
+            "--skip-cargo",
+            "kutha-gov json",
+            "--check",
+            "ID[,ID",
+            "run_high=",
+        ):
             with self.subTest(needle=needle):
                 self.assertIn(needle, text)
 

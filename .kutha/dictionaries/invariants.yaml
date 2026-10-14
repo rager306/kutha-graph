@@ -412,7 +412,7 @@ invariants:
     check: git-auto-base
 
   - id: I-agent-surface
-    claim: "gsd-auto-contract tool pair labels CBM as kutha-graph; AGENTS.md lists --jobs, --skip-cargo, kutha-gov json, and --check"
+    claim: "gsd-auto-contract tool pair labels CBM as kutha-graph; AGENTS.md lists --jobs, --skip-cargo, kutha-gov json, comma-separated --check, and run_high= guidance"
     source: ".planning/phases/145-agent-surface/145-CONTEXT.md"
     disposition: check
     check: agent-surface

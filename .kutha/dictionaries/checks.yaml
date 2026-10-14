@@ -2113,7 +2113,7 @@ checks:
   - id: agent-surface
     description: >-
       Agent-facing docs name the canonical CBM project and live kutha-gov flags
-      (CE whole-repo W1/O1; M074 / Phase 145).
+      including comma-separated --check (CE whole-repo W1/O1; M074 / M077).
     steps:
       - kind: file_contains
         path: docs/process/gsd-auto-contract.md
@@ -2135,9 +2135,19 @@ checks:
           - "--skip-cargo"
           - "kutha-gov json"
           - "--check"
+          - "ID[,ID"
+          - "run_high="
         require: all
         category: oracle
         message: "AGENTS.md harness surface missing live flags: {missing}"
+      - kind: file_contains
+        path: scripts/kutha_gov/__main__.py
+        needles:
+          - "def _parse_check_ids"
+          - "comma-separated"
+        require: all
+        category: oracle
+        message: "multi-check --check parser missing: {missing}"
       - kind: file_contains
         path: scripts/tests/test_agent_surface.py
         needles:
@@ -2146,6 +2156,14 @@ checks:
         require: all
         category: oracle
         message: "agent-surface pytest oracle missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_multi_check.py
+        needles:
+          - "def test_precommit_comma_list_runs_both"
+          - "def test_parse_check_ids_rejects_empty_token"
+        require: all
+        category: oracle
+        message: "multi-check pytest oracle missing: {missing}"
     selftest:
       mutations:
         - op: replace_regex

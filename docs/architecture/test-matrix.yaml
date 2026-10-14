@@ -2005,6 +2005,17 @@ rows:
     gate: default
     owner: M076-S01
     source: Phase 147 / Compat migrate sequence facade
+  - id: SEM-m077-multi-check
+    plane: harness
+    invariant: kutha-gov --check accepts comma-separated dictionary check ids for precommit/json/selftest
+    layer: decision
+    oracle:
+      - agent-surface
+    kill_mutation: restore single-id-only _select_checks so comma lists silently fail or drop ids
+    status: killed
+    gate: default
+    owner: M077-S01
+    source: Phase 148 / Multi-check CLI select
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step
