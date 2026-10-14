@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-15 — Trajectory: M084 / GSD v0.78 closed
+
+### Process
+
+- `.env.example` documents observe-built `debug/kutha-migrate` and optional `KUTHA_MIGRATE_DIR`.
+- Toolchain + `test_env_example_documents_built_migrate`; matrix `SEM-m084-env-migrate-path` killed.
+- Id map v0.78 / Phase 155.
+
+### Trajectory
+
+- `L_delivery=M084-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed.
+
 ## 2026-10-15 — Trajectory: lease M084-S01 (.env.example built migrate path)
 
 ### Trajectory

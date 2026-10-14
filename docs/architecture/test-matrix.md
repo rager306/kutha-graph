@@ -125,6 +125,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M083 S01 (harness CutPort migrate-bin):** Phase 154 — `SEM-m083-harness-migrate-cutport` `killed` (owner `M083-S01`). Oracles: `dogfood`, `agent-surface` (pytest `test_harness_cutport_names_built_migrate`).
 
+**M084 S01 (.env.example built migrate path):** Phase 155 — `SEM-m084-env-migrate-path` `killed` (owner `M084-S01`). Oracles: `toolchain`, `agent-surface` (pytest `test_env_example_documents_built_migrate`).
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

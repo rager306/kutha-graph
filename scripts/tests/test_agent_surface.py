@@ -52,6 +52,11 @@ class AgentSurfaceDiscoverabilityTests(unittest.TestCase):
         self.assertIn("| migrate-bin |", text)
         self.assertIn("debug/kutha-migrate", text)
 
+    def test_env_example_documents_built_migrate(self) -> None:
+        text = (ROOT / ".env.example").read_text(encoding="utf-8")
+        self.assertIn("debug/kutha-migrate", text)
+        self.assertIn("KUTHA_MIGRATE_DIR", text)
+
 
 if __name__ == "__main__":
     unittest.main()

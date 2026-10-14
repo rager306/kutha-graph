@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M084: .env.example built migrate path — OPEN (GSD v0.78)
+## M084: .env.example built migrate path — CLOSED (GSD v0.78)
 
-Process debt after M083: META/AGENTS/harness cite built migrate, but `.env.example` only documents `KUTHA_TENANT_BIN`. Thin slice: comment the observe-built path + optional `KUTHA_MIGRATE_DIR`; toolchain pins it. Honeycomb stays Proposed.
+Process debt after M083: META/AGENTS/harness cite built migrate, but `.env.example` only documents `KUTHA_TENANT_BIN`. Thin slice: comment the observe-built path + optional `KUTHA_MIGRATE_DIR`; toolchain pins it. `L_delivery=M084-closed`.
 
-- [ ] **S01: .env.example migrate discoverability** `risk:low` `depends:[]`
-  > After this: `.env.example` names `debug/kutha-migrate`; matrix `SEM-m084-env-migrate-path` killed. Phase 155.
+- [x] **S01: .env.example migrate discoverability** `risk:low` `depends:[]`
+  > After this: `.env.example` names `debug/kutha-migrate`; matrix `SEM-m084-env-migrate-path` killed. Phase 155. Landed.
 
 ## M083: Harness CutPort migrate-bin — CLOSED (GSD v0.77)
 

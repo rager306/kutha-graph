@@ -660,7 +660,18 @@ checks:
         path: .env.example
       - kind: file_contains
         path: .env.example
-        needles: ["KUTHA_GOV_BUDGET=", "KUTHA_GOV_FAIL_ON_WARN=", "KUTHA_MAX_CASCADE=", "KUTHA_GOV_CARGO_TIMEOUT_SEC=", "KUTHA_TENANT_DIR=", "KUTHA_HARNESS_LOG=", "KUTHA_TENANT_TIMEOUT_SEC=", "KUTHA_HARNESS_RELATIONS_PATH=", "KUTHA_TENANT_BIN="]
+        needles:
+          - "KUTHA_GOV_BUDGET="
+          - "KUTHA_GOV_FAIL_ON_WARN="
+          - "KUTHA_MAX_CASCADE="
+          - "KUTHA_GOV_CARGO_TIMEOUT_SEC="
+          - "KUTHA_TENANT_DIR="
+          - "KUTHA_HARNESS_LOG="
+          - "KUTHA_TENANT_TIMEOUT_SEC="
+          - "KUTHA_HARNESS_RELATIONS_PATH="
+          - "KUTHA_TENANT_BIN="
+          - "debug/kutha-migrate"
+          - "KUTHA_MIGRATE_DIR"
         require: all
         category: env
         message: ".env.example missing harness settings: {missing}"
@@ -2197,6 +2208,7 @@ checks:
           - "def test_agents_md_prefers_built_migrate_bin"
           - "def test_process_notes_prefer_built_migrate_bin"
           - "def test_harness_cutport_names_built_migrate"
+          - "def test_env_example_documents_built_migrate"
         require: all
         category: oracle
         message: "agent-surface pytest oracle missing: {missing}"
