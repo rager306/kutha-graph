@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.75
-milestone_name: Built migrate bin discoverability
+milestone: v0.76
+milestone_name: Process notes built migrate path
 status: complete
-stopped_at: "152-migrate-bin-path"
-last_updated: "2026-10-14T17:20:00.000Z"
+stopped_at: "153-migrate-process-notes"
+last_updated: "2026-10-14T18:05:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.75 Built migrate bin discoverability (M081) — complete  
-**Phase:** 152 complete  
-**Status:** S01 shipped; M081 / v0.75 closed
+**Milestone:** v0.76 Process notes built migrate path (M082) — complete  
+**Phase:** 153 complete  
+**Status:** S01 shipped; M082 / v0.76 closed

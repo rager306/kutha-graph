@@ -1651,6 +1651,7 @@ checks:
           - "op-wire.v1"
           - "migrate_compat"
           - "kutha-migrate"
+          - "debug/kutha-migrate"
         require: all
         category: oracle
         message: "op-compat policy doc missing: {missing}"
@@ -1834,6 +1835,7 @@ checks:
           - "migrate_pins"
           - "migrate_compat"
           - "kutha-migrate"
+          - "debug/kutha-migrate"
         require: all
         category: oracle
         message: "pin-compat policy doc missing: {missing}"
@@ -2185,6 +2187,7 @@ checks:
           - "def test_gsd_auto_contract_cbm_column_prefers_kutha_graph"
           - "def test_agents_md_lists_live_harness_flags"
           - "def test_agents_md_prefers_built_migrate_bin"
+          - "def test_process_notes_prefer_built_migrate_bin"
         require: all
         category: oracle
         message: "agent-surface pytest oracle missing: {missing}"

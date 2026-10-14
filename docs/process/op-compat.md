@@ -48,6 +48,10 @@ all already exist. See `docs/process/pin-compat.md`.
 calls `store::migrate_compat` on `<store-dir>` or `KUTHA_MIGRATE_DIR`. Prints a
 `migrate:` report line; exit 2 on missing dir / bad args. No new remap logic.
 
+**Shipped (M080/M081):** prefer the observe-built path
+`$CARGO_TARGET_DIR/debug/kutha-migrate <store-dir>` (default
+`target/debug/kutha-migrate`) — not a second `cargo run` compile.
+
 ## Related G4 residuals
 
 Pin scheme rotation (#24) is recorded in `docs/process/pin-compat.md` (M051);

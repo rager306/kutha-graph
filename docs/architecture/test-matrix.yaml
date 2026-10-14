@@ -2061,6 +2061,19 @@ rows:
     gate: default
     owner: M081-S01
     source: Phase 152 / Built migrate bin discoverability
+  - id: SEM-m082-migrate-process-notes
+    plane: harness
+    invariant: op-compat and pin-compat process notes cite observe-built debug/kutha-migrate
+    layer: decision
+    oracle:
+      - op-compat-policy
+      - pin-compat-policy
+      - agent-surface
+    kill_mutation: drop debug/kutha-migrate from op-compat.md and pin-compat.md
+    status: killed
+    gate: default
+    owner: M082-S01
+    source: Phase 153 / Process notes built migrate path
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

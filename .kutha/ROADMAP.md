@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M082: Process notes built migrate path — OPEN (GSD v0.76)
+## M082: Process notes built migrate path — CLOSED (GSD v0.76)
 
-Process debt after M081: AGENTS prefers built `kutha-migrate`, but `op-compat.md` / `pin-compat.md` still show bare CLI form. Thin slice: both process notes cite `debug/kutha-migrate`; policy checks pin it. Honeycomb stays Proposed.
+Process debt after M081: AGENTS prefers built `kutha-migrate`, but `op-compat.md` / `pin-compat.md` still show bare CLI form. Thin slice: both process notes cite `debug/kutha-migrate`; policy checks pin it. `L_delivery=M082-closed`.
 
-- [ ] **S01: op-compat + pin-compat built path** `risk:low` `depends:[]`
-  > After this: both notes name `debug/kutha-migrate`; matrix `SEM-m082-migrate-process-notes` killed. Phase 153.
+- [x] **S01: op-compat + pin-compat built path** `risk:low` `depends:[]`
+  > After this: both notes name `debug/kutha-migrate`; matrix `SEM-m082-migrate-process-notes` killed. Phase 153. Landed.
 
 ## M081: Built migrate bin discoverability — CLOSED (GSD v0.75)
 

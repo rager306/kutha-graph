@@ -38,6 +38,15 @@ class AgentSurfaceDiscoverabilityTests(unittest.TestCase):
             text,
         )
 
+    def test_process_notes_prefer_built_migrate_bin(self) -> None:
+        for rel in (
+            "docs/process/op-compat.md",
+            "docs/process/pin-compat.md",
+        ):
+            text = (ROOT / rel).read_text(encoding="utf-8")
+            with self.subTest(rel=rel):
+                self.assertIn("debug/kutha-migrate", text)
+
 
 if __name__ == "__main__":
     unittest.main()

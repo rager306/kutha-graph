@@ -55,6 +55,10 @@ new remap rules). Prefer this when a directory may still hold removed meta-ops.
 **Shipped (M078):** `kutha-migrate` is the operator CLI for that sequence
 (`kutha-migrate <store-dir>` or `KUTHA_MIGRATE_DIR`).
 
+**Shipped (M080/M081):** prefer the observe-built path
+`$CARGO_TARGET_DIR/debug/kutha-migrate <store-dir>` (default
+`target/debug/kutha-migrate`) — not a second `cargo run` compile.
+
 Serde still accepts legacy pin strings on open; admit stays fail-closed for
 UnknownRuleVersion until pins match scheme v1 or these migrates run. Helpers
 live in `kutha_common::pin_migrate` — not a silent change to
