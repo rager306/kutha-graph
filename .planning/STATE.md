@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.68
-milestone_name: Agent surface discoverability
+milestone: v0.69
+milestone_name: Pin migrate sequence facade
 status: complete
-stopped_at: "145-agent-surface"
-last_updated: "2026-10-14T01:30:00.000Z"
+stopped_at: "146-migrate-pins"
+last_updated: "2026-10-14T09:00:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.68 Agent surface discoverability (M074) — complete  
-**Phase:** 145 complete  
-**Status:** S01 shipped; M074 / v0.68 closed
+**Milestone:** v0.69 Pin migrate sequence facade (M075) — complete  
+**Phase:** 146 complete  
+**Status:** S01 shipped; M075 / v0.69 closed

@@ -376,7 +376,7 @@ invariants:
     check: op-compat-policy
 
   - id: I-pin-compat-policy
-    claim: "rule_definition_hash pin scheme v1 is a documented rotation with hardcoded stability vectors; legacy UTF-8 ident pins are not silently remapped"
+    claim: "rule_definition_hash pin scheme v1 is a documented rotation with hardcoded stability vectors; legacy UTF-8 ident pins are not silently remapped; migrate_pins runs wire then cite"
     source: ".planning/phases/111-pin-compat-policy/111-CONTEXT.md"
     disposition: check
     check: pin-compat-policy

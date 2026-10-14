@@ -435,6 +435,24 @@ fn rewrite_pin_cite_events(
     Ok(remap_events_pins(parsed))
 }
 
+/// Combined report from [`migrate_pins`] (wire then cite).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct PinsMigrateReport {
+    pub wire: PinWireMigrateReport,
+    pub cite: PinCiteMigrateReport,
+}
+
+/// Explicit pin-scheme directory rewrite: pin-wire then pin-cite (M075).
+///
+/// Reuses [`migrate_pin_wire`] and [`migrate_pin_cite`] so operators cannot skip
+/// the Behavior step before JustificationCite remap. Idempotent when both
+/// markers already exist. Does not invent new remap rules.
+pub fn migrate_pins(dir: &Path) -> std::io::Result<PinsMigrateReport> {
+    let wire = migrate_pin_wire(dir)?;
+    let cite = migrate_pin_cite(dir)?;
+    Ok(PinsMigrateReport { wire, cite })
+}
+
 fn read_jsonl_values(path: &Path) -> std::io::Result<Vec<serde_json::Value>> {
     let bytes = fs::read(path)?;
     let mut values = Vec::new();

@@ -1983,6 +1983,17 @@ rows:
     gate: default
     owner: M074-S01
     source: Phase 145 / Agent surface discoverability
+  - id: SEM-m075-migrate-pins
+    plane: product
+    invariant: migrate_pins runs pin-wire then pin-cite so Behavior and evidenced JustificationCite legacy pins remap in one call
+    layer: decision
+    oracle:
+      - migrate_pins_rewrites_behavior_then_cite_in_one_call
+    kill_mutation: delete migrate_pins so operators must call wire and cite separately and can skip wire
+    status: killed
+    gate: default
+    owner: M075-S01
+    source: Phase 146 / Pin migrate sequence facade
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

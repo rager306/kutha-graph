@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-14 — Trajectory: M075 / GSD v0.69 closed
+
+### Trajectory
+
+- M075 / GSD v0.69 closed (Phase 146). Active Milestone **None**; `L_delivery=M075-closed`. Audit: `.planning/milestones/v0.69-MILESTONE-AUDIT.md`. Honeycomb stays Proposed.
+
+## 2026-10-14 — Product: Pin migrate sequence facade (Phase 146)
+
+### Product
+
+- `store::migrate_pins` + `PinsMigrateReport`: runs existing `migrate_pin_wire` then `migrate_pin_cite` (reuse; no new remap). Stamps both markers when needed; idempotent when both exist. Test: `m075_migrate_pins`. Bench sample (`KUTHA_BENCH_N=1000`): `ingest_plain.n` ≈15.3ms, `as_of.n` ≈32µs (noisy host; migrate not on ingest hot path; vs M072 ≈9.6–11.2ms / ≈40–57µs).
+
+### Process
+
+- Matrix `SEM-m075-migrate-pins` killed; `pin-compat-policy` + `pin-compat.md` cover `migrate_pins`; id map v0.69 / Phase 146.
+
 ## 2026-10-14 — Trajectory: lease M075-S01 (Pin migrate sequence facade)
 
 ### Trajectory

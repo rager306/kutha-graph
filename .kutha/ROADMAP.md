@@ -201,12 +201,14 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M075: Pin migrate sequence facade — OPEN (GSD v0.69)
+## M075: Pin migrate sequence facade — CLOSED (GSD v0.69)
 
-Process debt after M072/M074: pin-wire and pin-cite are separate directory rewrites; operators can run cite without wire (or forget the order). Thin slice: `store::migrate_pins` calls existing `migrate_pin_wire` then `migrate_pin_cite` (reuse; no new remap logic). Honeycomb stays Proposed.
+**Closed:** S01 delivered 2026-10-14. Process tag `v0.69`. Honeycomb stays Proposed.
 
-- [ ] **S01: migrate_pins wire-then-cite** `risk:low` `depends:[]`
-  > After this: one entry remaps Behavior then JustificationCite; stamps both markers; matrix `SEM-m075-migrate-pins` killed. Phase 146.
+Process debt after M072/M074: pin-wire and pin-cite are separate directory rewrites; operators can run cite without wire (or forget the order). Thin slice: `store::migrate_pins` calls existing `migrate_pin_wire` then `migrate_pin_cite` (reuse; no new remap logic). `L_delivery=M075-closed`.
+
+- [x] **S01: migrate_pins wire-then-cite** `risk:low` `depends:[]`
+  > After this: one entry remaps Behavior then JustificationCite; stamps both markers; matrix `SEM-m075-migrate-pins` killed. Phase 146. Landed.
 
 ## M074: Agent surface discoverability — CLOSED (GSD v0.68)
 

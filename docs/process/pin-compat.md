@@ -43,6 +43,11 @@ the marker exists.
 `remap_events_pins`; stamps `pin-cite.v1`. Cites with no evidenced ident stay
 unchanged (no hardcoded name list). Idempotent when the marker exists.
 
+**Shipped (M075):** `store::migrate_pins` runs `migrate_pin_wire` then
+`migrate_pin_cite` (reuse; no new remap rules) so operators cannot skip the
+Behavior step before cite remap. Both markers stamped when needed; idempotent
+when both already exist.
+
 Serde still accepts legacy pin strings on open; admit stays fail-closed for
 UnknownRuleVersion until pins match scheme v1 or these migrates run. Helpers
 live in `kutha_common::pin_migrate` — not a silent change to
