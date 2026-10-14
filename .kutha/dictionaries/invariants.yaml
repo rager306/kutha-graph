@@ -49,7 +49,7 @@ invariants:
     check: plane-mix-dicts
 
   - id: I-tenant-bin
-    claim: "emit_tenant runs a built kutha-tenant binary, not a second cargo compile"
+    claim: "observe_cargo builds kutha-tenant and kutha-migrate once; emit_tenant runs the built kutha-tenant binary, not a second cargo compile"
     source: "docs/process/kutha-harness.md"
     disposition: check
     check: tenant-bin

@@ -2039,6 +2039,17 @@ rows:
     gate: default
     owner: M079-S01
     source: Phase 150 / Repeatable --check flags
+  - id: SEM-m080-migrate-build
+    plane: harness
+    invariant: observe_cargo build compiles kutha-tenant and kutha-migrate in one cargo invoke
+    layer: decision
+    oracle:
+      - tenant-bin
+    kill_mutation: drop kutha-migrate from observe_cargo build so migrate stays a separate compile
+    status: killed
+    gate: default
+    owner: M080-S01
+    source: Phase 151 / Observe build both operator bins
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

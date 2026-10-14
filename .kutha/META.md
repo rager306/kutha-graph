@@ -84,7 +84,7 @@ Append a state and a transition in `.kutha/dictionaries/fsm.yaml` using an **all
 | `require_file` | path must exist |
 | `run_checks` | interpret the checks dictionary (budget from env / FSM defaults) |
 | `run_selftest` | run `kutha-gov selftest` on a tempfile copy; unproven/vacuous fail closed; evidence `h5_selftest` |
-| `observe_cargo` | run `cargo test` as evidence (not SoT); required test names must appear `... ok`; optional `build:` compiles `kutha-tenant` once |
+| `observe_cargo` | run `cargo test` as evidence (not SoT); required test names must appear `... ok`; optional `build:` compiles `kutha-tenant` and `kutha-migrate` once |
 | `emit_log` | append `harness.run` triples (fail-closed on `kutha-harness-relations/v1`) |
 | `emit_tenant` | ingest process JSONL through the **built** `kutha-tenant` binary (`runStatus` / `observed`); AS OF last *emitted* cut must match last status |
 | `fold_log` | fold the process JSONL |

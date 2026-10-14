@@ -150,9 +150,18 @@ def run_cargo_observation(root: object, spec: Step) -> tuple[int, list[str], lis
         build_code, _build_text, build_findings = _run_cargo(
             cwd,
             build,
-            default_args=["build", "--offline", "-p", "kutha-runtime", "--bin", "kutha-tenant"],
+            default_args=[
+                "build",
+                "--offline",
+                "-p",
+                "kutha-runtime",
+                "--bin",
+                "kutha-tenant",
+                "--bin",
+                "kutha-migrate",
+            ],
             timeout=build_timeout,
-            label="cargo build kutha-tenant",
+            label="cargo build kutha-tenant+kutha-migrate",
         )
         findings.extend(build_findings)
         if code == 0:

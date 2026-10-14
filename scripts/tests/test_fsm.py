@@ -589,12 +589,22 @@ class ObserveBuildTests(unittest.TestCase):
             completed.stderr = ""
             return completed
 
+        dual_bin = [
+            "build",
+            "--offline",
+            "-p",
+            "kutha-runtime",
+            "--bin",
+            "kutha-tenant",
+            "--bin",
+            "kutha-migrate",
+        ]
         spec = {
             "bin": "cargo",
             "args": ["test", "--workspace", "--offline"],
             "build": {
                 "bin": "cargo",
-                "args": ["build", "--offline", "-p", "kutha-runtime", "--bin", "kutha-tenant"],
+                "args": dual_bin,
             },
             "required": ["foo"],
         }
@@ -606,10 +616,45 @@ class ObserveBuildTests(unittest.TestCase):
         self.assertEqual(
             [
                 ["cargo", "test", "--workspace", "--offline"],
-                ["cargo", "build", "--offline", "-p", "kutha-runtime", "--bin", "kutha-tenant"],
+                ["cargo", *dual_bin],
             ],
             calls,
         )
+
+    def test_observe_default_build_includes_migrate(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        from kutha_gov.observe import run_cargo_observation
+
+        calls: list[list[str]] = []
+
+        def fake_run(cmd: list[str], **_kwargs: object) -> MagicMock:
+            calls.append(list(cmd))
+            completed = MagicMock()
+            completed.returncode = 0
+            completed.stdout = "test foo ... ok\n"
+            completed.stderr = ""
+            return completed
+
+        spec = {
+            "bin": "cargo",
+            "args": ["test", "--workspace", "--offline"],
+            "build": {"bin": "cargo"},
+            "required": ["foo"],
+        }
+        with patch("kutha_gov.observe.subprocess.run", side_effect=fake_run):
+            code, _seen, findings = run_cargo_observation(ROOT, spec)
+        self.assertEqual(0, code)
+        self.assertEqual([], findings)
+        self.assertEqual(2, len(calls))
+        build_cmd = calls[1]
+        self.assertEqual("build", build_cmd[1])
+        self.assertIn("kutha-tenant", build_cmd)
+        self.assertIn("kutha-migrate", build_cmd)
+        tenant_at = build_cmd.index("kutha-tenant")
+        migrate_at = build_cmd.index("kutha-migrate")
+        self.assertEqual("--bin", build_cmd[tenant_at - 1])
+        self.assertEqual("--bin", build_cmd[migrate_at - 1])
 
     def test_observe_skips_build_after_timeout(self) -> None:
         import subprocess

@@ -29,7 +29,17 @@ states:
     timeout_sec: 180
     build:
       bin: cargo
-      args: ["build", "--offline", "-p", "kutha-runtime", "--bin", "kutha-tenant"]
+      args:
+        [
+          "build",
+          "--offline",
+          "-p",
+          "kutha-runtime",
+          "--bin",
+          "kutha-tenant",
+          "--bin",
+          "kutha-migrate",
+        ]
     required:
       - ff5_as_of_t1_differs_from_as_of_t2_on_statute_log
       - ff6_unknown_relation_does_not_append

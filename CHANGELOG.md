@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-14 — Trajectory: M080 / GSD v0.74 closed
+
+### Process
+
+- `observe_cargo` build: one `cargo build` with `--bin kutha-tenant --bin kutha-migrate` (fsm + observe defaults).
+- Check `tenant-bin` requires both bins; oracle `test_observe_default_build_includes_migrate`.
+- Matrix `SEM-m080-migrate-build` killed; id map v0.74 / Phase 151.
+
+### Trajectory
+
+- `L_delivery=M080-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed.
+
 ## 2026-10-14 — Trajectory: lease M080-S01 (Observe build both operator bins)
 
 ### Trajectory

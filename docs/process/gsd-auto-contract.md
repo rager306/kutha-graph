@@ -81,6 +81,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.71 | 148 | M077 | S01 | Multi-check CLI select (--check comma-separated ids) | shipped |
 | v0.72 | 149 | M078 | S01 | Compat migrate operator CLI (kutha-migrate → migrate_compat) | shipped |
 | v0.73 | 150 | M079 | S01 | Repeatable --check flags (argparse append → join) | shipped |
+| v0.74 | 151 | M080 | S01 | Observe build both operator bins (tenant + migrate) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
