@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-14 — Trajectory: lease M083-S01 (Harness CutPort migrate-bin)
+
+### Trajectory
+
+- Active Milestone **M083**, Active Slice **S01** (`L_delivery=M082-closed`): `kutha-harness.md` CutPort names observe-built migrate-bin. Honeycomb stays Proposed.
+
 ## 2026-10-14 — Trajectory: M082 / GSD v0.76 closed
 
 ### Process
