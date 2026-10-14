@@ -2016,6 +2016,18 @@ rows:
     gate: default
     owner: M077-S01
     source: Phase 148 / Multi-check CLI select
+  - id: SEM-m078-migrate-cli
+    plane: product
+    invariant: kutha-migrate bin runs migrate_compat on a store directory so operators need not call library APIs by hand
+    layer: decision
+    oracle:
+      - kutha_migrate_runs_compat_on_store_dir
+      - kutha_migrate_missing_dir_is_contract_error
+    kill_mutation: delete kutha-migrate so migrate_compat stays library-only
+    status: killed
+    gate: default
+    owner: M078-S01
+    source: Phase 149 / Compat migrate operator CLI
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

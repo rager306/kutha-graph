@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-14 — Trajectory: M078 / GSD v0.72 closed
+
+### Trajectory
+
+- Active Milestone/Slice cleared; `L_delivery=M078-closed`. Honeycomb stays Proposed.
+
+## 2026-10-14 — Product: Compat migrate operator CLI (Phase 149)
+
+### Product
+
+- Binary `kutha-migrate`: runs existing `store::migrate_compat` on `<store-dir>` or `KUTHA_MIGRATE_DIR`; prints `migrate:` report; exit 2 on missing dir. Tests: `m078_migrate_cli`.
+
+### Process
+
+- Matrix `SEM-m078-migrate-cli` killed; `op-compat-policy` + `pin-compat-policy` cover `kutha-migrate`; id map v0.72 / Phase 149.
+
 ## 2026-10-14 — Trajectory: lease M078-S01 (Compat migrate operator CLI)
 
 ### Trajectory

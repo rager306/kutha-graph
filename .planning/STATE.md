@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.71
-milestone_name: Multi-check CLI select
+milestone: v0.72
+milestone_name: Compat migrate operator CLI
 status: complete
-stopped_at: "148-multi-check"
-last_updated: "2026-10-14T12:50:00.000Z"
+stopped_at: "149-migrate-cli"
+last_updated: "2026-10-14T14:20:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.71 Multi-check CLI select (M077) — complete  
-**Phase:** 148 complete  
-**Status:** S01 shipped; M077 / v0.71 closed
+**Milestone:** v0.72 Compat migrate operator CLI (M078) — complete  
+**Phase:** 149 complete  
+**Status:** S01 shipped; M078 / v0.72 closed

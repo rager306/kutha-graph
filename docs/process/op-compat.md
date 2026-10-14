@@ -44,6 +44,10 @@ JSON but not a modern `Event` — no silent drop of legacy meta-ops).
 remap. Stamps `op-wire.v1` and both pin markers when needed; idempotent when
 all already exist. See `docs/process/pin-compat.md`.
 
+**Shipped (M078):** operator binary `kutha-migrate` (`crates/kutha-runtime/src/bin/kutha-migrate.rs`)
+calls `store::migrate_compat` on `<store-dir>` or `KUTHA_MIGRATE_DIR`. Prints a
+`migrate:` report line; exit 2 on missing dir / bad args. No new remap logic.
+
 ## Related G4 residuals
 
 Pin scheme rotation (#24) is recorded in `docs/process/pin-compat.md` (M051);

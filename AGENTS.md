@@ -47,6 +47,7 @@ Product:
 
 ```text
 cargo test --workspace
+cargo run -p kutha-runtime --bin kutha-migrate -- <store-dir>   # Op-wire then pins (M078)
 ```
 
 Harness (Python **3.13** via **uv** only — not system `python3`):

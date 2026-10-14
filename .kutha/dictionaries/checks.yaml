@@ -1640,6 +1640,7 @@ checks:
           - "migrate_op_wire"
           - "op-wire.v1"
           - "migrate_compat"
+          - "kutha-migrate"
         require: all
         category: oracle
         message: "op-compat policy doc missing: {missing}"
@@ -1749,6 +1750,22 @@ checks:
         require: all
         category: oracle
         message: "migrate_op_wire missing: {missing}"
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m078_migrate_cli.rs
+        tests:
+          - kutha_migrate_runs_compat_on_store_dir
+          - kutha_migrate_missing_dir_is_contract_error
+        category: oracle
+        message: "kutha-migrate CLI oracles missing {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/bin/kutha-migrate.rs
+        needles:
+          - "migrate_compat"
+          - "KUTHA_MIGRATE_DIR"
+          - "migrate:"
+        require: all
+        category: oracle
+        message: "kutha-migrate bin missing: {missing}"
       - kind: file_contains
         path: crates/kutha-runtime/src/wal.rs
         needles:
@@ -1806,6 +1823,7 @@ checks:
           - "pin-cite.v1"
           - "migrate_pins"
           - "migrate_compat"
+          - "kutha-migrate"
         require: all
         category: oracle
         message: "pin-compat policy doc missing: {missing}"

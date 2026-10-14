@@ -370,13 +370,13 @@ invariants:
     check: skip-cargo-log-marker
 
   - id: I-op-compat-policy
-    claim: "Removed dictionary meta-ops fail deserialize on open (jsonl, WAL, and sealed segment frames); remaps and migrate_op_wire (jsonl + WAL-only + segmented demote, including orphan seg-*.log cleanup) are explicit; migrate_compat runs Op-wire then pins; serde aliases forbidden"
+    claim: "Removed dictionary meta-ops fail deserialize on open (jsonl, WAL, and sealed segment frames); remaps and migrate_op_wire (jsonl + WAL-only + segmented demote, including orphan seg-*.log cleanup) are explicit; migrate_compat runs Op-wire then pins; kutha-migrate is the operator CLI; serde aliases forbidden"
     source: ".planning/phases/110-op-compat-policy/110-CONTEXT.md"
     disposition: check
     check: op-compat-policy
 
   - id: I-pin-compat-policy
-    claim: "rule_definition_hash pin scheme v1 is a documented rotation with hardcoded stability vectors; legacy UTF-8 ident pins are not silently remapped; migrate_pins runs wire then cite; migrate_compat runs Op-wire then pins"
+    claim: "rule_definition_hash pin scheme v1 is a documented rotation with hardcoded stability vectors; legacy UTF-8 ident pins are not silently remapped; migrate_pins runs wire then cite; migrate_compat runs Op-wire then pins; kutha-migrate is the operator CLI"
     source: ".planning/phases/111-pin-compat-policy/111-CONTEXT.md"
     disposition: check
     check: pin-compat-policy

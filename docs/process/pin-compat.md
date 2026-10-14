@@ -52,6 +52,9 @@ when both already exist.
 `migrate_pins` so meta-op envelopes are rewritten before pin remap (reuse; no
 new remap rules). Prefer this when a directory may still hold removed meta-ops.
 
+**Shipped (M078):** `kutha-migrate` is the operator CLI for that sequence
+(`kutha-migrate <store-dir>` or `KUTHA_MIGRATE_DIR`).
+
 Serde still accepts legacy pin strings on open; admit stays fail-closed for
 UnknownRuleVersion until pins match scheme v1 or these migrates run. Helpers
 live in `kutha_common::pin_migrate` — not a silent change to
