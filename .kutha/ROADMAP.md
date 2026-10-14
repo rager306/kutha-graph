@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M080: Observe build both operator bins — OPEN (GSD v0.74)
+
+Process debt after M078: `kutha-migrate` exists but `observe_cargo` build only compiles `kutha-tenant`, so post-ci operators still need a separate build. Thin slice: one `cargo build` with both `--bin` flags; extend `tenant-bin` oracle. Honeycomb stays Proposed.
+
+- [ ] **S01: build kutha-tenant + kutha-migrate** `risk:low` `depends:[]`
+  > After this: fsm + observe default build both bins; matrix `SEM-m080-migrate-build` killed. Phase 151.
+
 ## M079: Repeatable --check flags — CLOSED (GSD v0.73)
 
 **Closed:** S01 delivered 2026-10-14. Process tag `v0.73`. Honeycomb stays Proposed.
