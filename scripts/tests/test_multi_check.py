@@ -60,6 +60,37 @@ class MultiCheckSelectTests(unittest.TestCase):
         self.assertEqual(2, code)
         self.assertIn("empty check id", err.getvalue())
 
+    def test_precommit_repeated_check_flags_runs_both(self) -> None:
+        """M079: --check a --check b must not drop all but the last flag."""
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            code = main(
+                [
+                    "--root",
+                    str(ROOT),
+                    "--check",
+                    "docs-entry",
+                    "--check",
+                    "version-freeze",
+                    "precommit",
+                ]
+            )
+        self.assertEqual(0, code)
+        out = buf.getvalue()
+        self.assertIn("docs-entry", out)
+        self.assertIn("version-freeze", out)
+
+    def test_join_check_flags_merges_append_and_comma(self) -> None:
+        from kutha_gov.__main__ import _join_check_flags
+
+        self.assertIsNone(_join_check_flags(None))
+        self.assertEqual(
+            "docs-entry,version-freeze,agents-lean",
+            _join_check_flags(
+                ["docs-entry,version-freeze", "agents-lean"]
+            ),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

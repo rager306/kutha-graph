@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.72
-milestone_name: Compat migrate operator CLI
+milestone: v0.73
+milestone_name: Repeatable --check flags
 status: complete
-stopped_at: "149-migrate-cli"
-last_updated: "2026-10-14T14:20:00.000Z"
+stopped_at: "150-check-append"
+last_updated: "2026-10-14T14:50:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.72 Compat migrate operator CLI (M078) — complete  
-**Phase:** 149 complete  
-**Status:** S01 shipped; M078 / v0.72 closed
+**Milestone:** v0.73 Repeatable --check flags (M079) — complete  
+**Phase:** 150 complete  
+**Status:** S01 shipped; M079 / v0.73 closed

@@ -24,6 +24,7 @@ class AgentSurfaceDiscoverabilityTests(unittest.TestCase):
             "kutha-gov json",
             "--check",
             "ID[,ID",
+            "repeatable",
             "run_high=",
         ):
             with self.subTest(needle=needle):

@@ -201,12 +201,14 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M079: Repeatable --check flags — OPEN (GSD v0.73)
+## M079: Repeatable --check flags — CLOSED (GSD v0.73)
 
-Process debt after M077: comma-lists work, but repeating `--check a --check b` still keeps only the last flag (argparse default). Thin slice: `action=append` then join into existing `_parse_check_ids` (reuse). Honeycomb stays Proposed.
+**Closed:** S01 delivered 2026-10-14. Process tag `v0.73`. Honeycomb stays Proposed.
 
-- [ ] **S01: --check action=append** `risk:low` `depends:[]`
-  > After this: repeated `--check` flags union; comma form unchanged; matrix `SEM-m079-check-append` killed. Phase 150.
+Process debt after M077: comma-lists work, but repeating `--check a --check b` still keeps only the last flag (argparse default). Thin slice: `action=append` then join into existing `_parse_check_ids` (reuse). `L_delivery=M079-closed`.
+
+- [x] **S01: --check action=append** `risk:low` `depends:[]`
+  > After this: repeated `--check` flags union; comma form unchanged; matrix `SEM-m079-check-append` killed. Phase 150. Landed.
 
 ## M078: Compat migrate operator CLI — CLOSED (GSD v0.72)
 

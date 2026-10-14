@@ -2028,6 +2028,17 @@ rows:
     gate: default
     owner: M078-S01
     source: Phase 149 / Compat migrate operator CLI
+  - id: SEM-m079-check-append
+    plane: harness
+    invariant: kutha-gov --check is argparse append so repeated flags join the multi-select
+    layer: decision
+    oracle:
+      - agent-surface
+    kill_mutation: restore single-value --check so repeated flags keep only the last id
+    status: killed
+    gate: default
+    owner: M079-S01
+    source: Phase 150 / Repeatable --check flags
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

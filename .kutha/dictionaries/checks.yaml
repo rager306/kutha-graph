@@ -2154,6 +2154,7 @@ checks:
           - "kutha-gov json"
           - "--check"
           - "ID[,ID"
+          - "repeatable"
           - "run_high="
         require: all
         category: oracle
@@ -2162,6 +2163,8 @@ checks:
         path: scripts/kutha_gov/__main__.py
         needles:
           - "def _parse_check_ids"
+          - "def _join_check_flags"
+          - "action=\"append\""
           - "comma-separated"
         require: all
         category: oracle
@@ -2179,6 +2182,7 @@ checks:
         needles:
           - "def test_precommit_comma_list_runs_both"
           - "def test_parse_check_ids_rejects_empty_token"
+          - "def test_precommit_repeated_check_flags_runs_both"
         require: all
         category: oracle
         message: "multi-check pytest oracle missing: {missing}"

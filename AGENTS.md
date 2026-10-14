@@ -64,7 +64,7 @@ uv run kutha-gov fold | list | explain …
 uv run pytest
 ```
 
-Flags (ci / precommit / selftest / json where noted): `--jobs N` (parallel checks; `1` = serial oracle), `--skip-cargo` (ci only; not closeout evidence), `--check ID[,ID…]` (comma-separated dictionary checks for json/precommit/selftest), `--budget V` (Cui truncate). Env: `KUTHA_GOV_JOBS`, `KUTHA_GOV_BUDGET`. Prefer `run_high=` / exit status over `ci | tail` (pipe hides exit).
+Flags (ci / precommit / selftest / json where noted): `--jobs N` (parallel checks; `1` = serial oracle), `--skip-cargo` (ci only; not closeout evidence), `--check ID[,ID…]` (repeatable; each value may be comma-separated), `--budget V` (Cui truncate). Env: `KUTHA_GOV_JOBS`, `KUTHA_GOV_BUDGET`. Prefer `run_high=` / exit status over `ci | tail` (pipe hides exit).
 
 Pin: `.python-version`. New governor check or CI phase: YAML row — `.kutha/META.md` and `docs/process/governor-intake.md` (not a new Python class). Hook: `uvx pre-commit install --overwrite` (precommit, not full `ci`).
 

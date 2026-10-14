@@ -26,6 +26,13 @@ def _detect_root(start: Path) -> Path:
     return here
 
 
+def _join_check_flags(specs: list[str] | None) -> str | None:
+    """Join repeated ``--check`` argparse append values (M079) for M077 parse."""
+    if not specs:
+        return None
+    return ",".join(specs)
+
+
 def _parse_check_ids(spec: str) -> tuple[list[str], int]:
     """Split comma-separated check ids; empty tokens fail closed (M077)."""
     parts = [p.strip() for p in spec.split(",")]
@@ -346,11 +353,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--check",
+        action="append",
         default=None,
         metavar="ID[,ID…]",
         help=(
-            "Run one or more dictionary check ids, comma-separated "
-            "(json/precommit/selftest)"
+            "Run dictionary check ids (repeatable; each value may be "
+            "comma-separated) for json/precommit/selftest"
         ),
     )
     parser.add_argument(
@@ -401,7 +409,8 @@ def main(argv: list[str] | None = None) -> int:
         print("--jobs is only valid with ci, precommit, selftest, or json", file=sys.stderr)
         return 2
     ctx = Context(root=root, fail_on_warn=fail_on_warn, skip_cargo=args.skip_cargo, jobs=jobs)
-    if args.check and args.command not in {"json", "precommit", "selftest"}:
+    check_spec = _join_check_flags(args.check)
+    if check_spec and args.command not in {"json", "precommit", "selftest"}:
         print("--check is only valid with json, precommit, or selftest", file=sys.stderr)
         return 2
     if args.command == "list":
@@ -412,10 +421,10 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         return cmd_explain(root, args.name)
     if args.command == "json":
-        return cmd_json(ctx, check_id=args.check)
+        return cmd_json(ctx, check_id=check_spec)
     if args.command == "precommit":
         ctx.git_against = "staged"
-        return cmd_precommit(ctx, check_id=args.check)
+        return cmd_precommit(ctx, check_id=check_spec)
     if args.command == "py":
         return cmd_py(root)
     if args.command == "fsm":
@@ -423,7 +432,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "map":
         return cmd_map(root, args.name, as_json=args.format == "json")
     if args.command == "selftest":
-        return cmd_selftest(root, check_id=args.check, jobs=jobs)
+        return cmd_selftest(root, check_id=check_spec, jobs=jobs)
     if args.command == "fold":
         picture = fold_log(root / LOG_REL)
         print(

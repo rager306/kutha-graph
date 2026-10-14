@@ -115,6 +115,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M078 S01 (compat migrate operator CLI):** Phase 149 — `SEM-m078-migrate-cli` `killed` (owner `M078-S01`). Oracles: `kutha_migrate_runs_compat_on_store_dir`, `kutha_migrate_missing_dir_is_contract_error`.
 
+**M079 S01 (repeatable --check flags):** Phase 150 — `SEM-m079-check-append` `killed` (owner `M079-S01`). Oracle: `agent-surface` (pytest `test_precommit_repeated_check_flags_runs_both`).
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.
