@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M077: Multi-check CLI select — OPEN (GSD v0.71)
+
+Process debt after M076 retro: `kutha-gov --check` takes a single id; repeating `--check` keeps only the last (argparse), so agents drop intended oracles. Thin slice: comma-separated ids through `_select_checks` / selftest (dictionary lookup; no hardcoded check names). Honeycomb stays Proposed.
+
+- [ ] **S01: comma-separated --check ids** `risk:low` `depends:[]`
+  > After this: `--check a,b` runs both; unknown/empty fail-closed; AGENTS + agent-surface updated; matrix `SEM-m077-multi-check` killed. Phase 148.
+
 ## M076: Compat migrate sequence facade — CLOSED (GSD v0.70)
 
 **Closed:** S01 delivered 2026-10-14. Process tag `v0.70`. Honeycomb stays Proposed.
