@@ -30,6 +30,14 @@ class AgentSurfaceDiscoverabilityTests(unittest.TestCase):
             with self.subTest(needle=needle):
                 self.assertIn(needle, text)
 
+    def test_agents_md_prefers_built_migrate_bin(self) -> None:
+        text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("debug/kutha-migrate", text)
+        self.assertNotIn(
+            "cargo run -p kutha-runtime --bin kutha-migrate",
+            text,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-14 — Trajectory: M081 / GSD v0.75 closed
+
+### Process
+
+- AGENTS documents `$CARGO_TARGET_DIR/debug/kutha-migrate` (no `cargo run` second compile).
+- META names the observe-built migrate path; agent-surface + `test_agents_md_prefers_built_migrate_bin`.
+- Matrix `SEM-m081-migrate-bin-path` killed; id map v0.75 / Phase 152.
+
+### Trajectory
+
+- `L_delivery=M081-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed.
+
 ## 2026-10-14 — Trajectory: lease M081-S01 (Built migrate bin discoverability)
 
 ### Trajectory

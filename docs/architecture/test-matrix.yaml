@@ -2050,6 +2050,17 @@ rows:
     gate: default
     owner: M080-S01
     source: Phase 151 / Observe build both operator bins
+  - id: SEM-m081-migrate-bin-path
+    plane: harness
+    invariant: AGENTS documents the observe-built kutha-migrate path, not cargo run
+    layer: decision
+    oracle:
+      - agent-surface
+    kill_mutation: restore cargo run -p kutha-runtime --bin kutha-migrate in AGENTS.md
+    status: killed
+    gate: default
+    owner: M081-S01
+    source: Phase 152 / Built migrate bin discoverability
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

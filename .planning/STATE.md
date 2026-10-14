@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.74
-milestone_name: Observe build both operator bins
+milestone: v0.75
+milestone_name: Built migrate bin discoverability
 status: complete
-stopped_at: "151-observe-dual-bin"
-last_updated: "2026-10-14T16:30:00.000Z"
+stopped_at: "152-migrate-bin-path"
+last_updated: "2026-10-14T17:20:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.74 Observe build both operator bins (M080) — complete  
-**Phase:** 151 complete  
-**Status:** S01 shipped; M080 / v0.74 closed
+**Milestone:** v0.75 Built migrate bin discoverability (M081) — complete  
+**Phase:** 152 complete  
+**Status:** S01 shipped; M081 / v0.75 closed
