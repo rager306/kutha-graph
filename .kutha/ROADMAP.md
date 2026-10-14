@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M078: Compat migrate operator CLI — OPEN (GSD v0.72)
+
+Process debt after M076/M077: `migrate_compat` is library-only; operators have no bin entry (unlike `kutha-tenant`). Thin slice: `kutha-migrate` calls existing `store::migrate_compat` on a directory path / `KUTHA_MIGRATE_DIR`. Honeycomb stays Proposed.
+
+- [ ] **S01: kutha-migrate bin → migrate_compat** `risk:low` `depends:[]`
+  > After this: one binary runs Op-wire then pins; prints report; matrix `SEM-m078-migrate-cli` killed. Phase 149.
+
 ## M077: Multi-check CLI select — CLOSED (GSD v0.71)
 
 **Closed:** S01 delivered 2026-10-14. Process tag `v0.71`. Honeycomb stays Proposed.
