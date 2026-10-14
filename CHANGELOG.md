@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-14 — Trajectory: lease M075-S01 (Pin migrate sequence facade)
+
+### Trajectory
+
+- Active Milestone **M075**, Active Slice **S01** (`L_delivery=M074-closed`): `store::migrate_pins` runs pin-wire then pin-cite so the directory pin migrate sequence is one entry. Honeycomb stays Proposed.
+
 ## 2026-10-14 — Trajectory: M074 / GSD v0.68 closed
 
 ### Trajectory
