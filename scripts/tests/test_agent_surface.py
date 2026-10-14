@@ -47,6 +47,11 @@ class AgentSurfaceDiscoverabilityTests(unittest.TestCase):
             with self.subTest(rel=rel):
                 self.assertIn("debug/kutha-migrate", text)
 
+    def test_harness_cutport_names_built_migrate(self) -> None:
+        text = (ROOT / "docs/process/kutha-harness.md").read_text(encoding="utf-8")
+        self.assertIn("| migrate-bin |", text)
+        self.assertIn("debug/kutha-migrate", text)
+
 
 if __name__ == "__main__":
     unittest.main()

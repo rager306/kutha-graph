@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.76 shipped. Honeycomb stays Proposed.
+v0.01–v0.77 shipped. Honeycomb stays Proposed.
 
 ## Id map
 
@@ -10,12 +10,12 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.75** — shipped (through Built migrate bin discoverability)
-- ✅ **v0.76 Process notes built migrate path** — Phase 153 done (product M082)
+- ✅ **v0.01–v0.76** — shipped (through Process notes built migrate path)
+- ✅ **v0.77 Harness CutPort migrate-bin** — Phase 154 done (product M083)
 
-## Phases (v0.76)
+## Phases (v0.77)
 
-- [x] **Phase 153: Process notes built migrate path** — `153-VERIFICATION.md` passed
+- [x] **Phase 154: Harness CutPort migrate-bin** — `154-VERIFICATION.md` passed
 
 ## Progress
 

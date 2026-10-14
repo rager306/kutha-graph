@@ -2074,6 +2074,18 @@ rows:
     gate: default
     owner: M082-S01
     source: Phase 153 / Process notes built migrate path
+  - id: SEM-m083-harness-migrate-cutport
+    plane: harness
+    invariant: kutha-harness Space CutPort table names migrate-bin and debug/kutha-migrate
+    layer: decision
+    oracle:
+      - dogfood
+      - agent-surface
+    kill_mutation: drop migrate-bin CutPort row from kutha-harness.md
+    status: killed
+    gate: default
+    owner: M083-S01
+    source: Phase 154 / Harness CutPort migrate-bin
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

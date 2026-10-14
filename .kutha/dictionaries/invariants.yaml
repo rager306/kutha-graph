@@ -37,7 +37,7 @@ invariants:
     check: honeycomb-map
 
   - id: I-dogfood
-    claim: "Harness doc names H0–H5 and is not an ADR"
+    claim: "Harness doc names H0–H5, is not an ADR, and CutPort lists observe-built migrate-bin (debug/kutha-migrate)"
     source: "docs/process/kutha-harness.md"
     disposition: check
     check: dogfood
@@ -412,7 +412,7 @@ invariants:
     check: git-auto-base
 
   - id: I-agent-surface
-    claim: "gsd-auto-contract tool pair labels CBM as kutha-graph; AGENTS.md lists --jobs, --skip-cargo, kutha-gov json, repeatable comma-capable --check, run_high= guidance, and the observe-built debug/kutha-migrate path (not cargo run); op-compat and pin-compat process notes cite the same built path"
+    claim: "gsd-auto-contract tool pair labels CBM as kutha-graph; AGENTS.md lists --jobs, --skip-cargo, kutha-gov json, repeatable comma-capable --check, run_high= guidance, and the observe-built debug/kutha-migrate path (not cargo run); op-compat, pin-compat, and kutha-harness CutPort cite the same built path"
     source: ".planning/phases/145-agent-surface/145-CONTEXT.md"
     disposition: check
     check: agent-surface
