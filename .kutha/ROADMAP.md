@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M081: Built migrate bin discoverability — OPEN (GSD v0.75)
+
+Process debt after M080: observe builds `kutha-migrate`, but AGENTS still documents `cargo run` (second compile). Thin slice: agent-surface prefers `$CARGO_TARGET_DIR/debug/kutha-migrate`. Honeycomb stays Proposed.
+
+- [ ] **S01: AGENTS/META prefer built migrate** `risk:low` `depends:[]`
+  > After this: no `cargo run … kutha-migrate` in AGENTS; matrix `SEM-m081-migrate-bin-path` killed. Phase 152.
+
 ## M080: Observe build both operator bins — CLOSED (GSD v0.74)
 
 Process debt after M078: `kutha-migrate` exists but `observe_cargo` build only compiles `kutha-tenant`, so post-ci operators still need a separate build. Thin slice: one `cargo build` with both `--bin` flags; extend `tenant-bin` oracle. `L_delivery=M080-closed`.
