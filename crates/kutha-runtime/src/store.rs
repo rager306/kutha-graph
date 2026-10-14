@@ -453,6 +453,24 @@ pub fn migrate_pins(dir: &Path) -> std::io::Result<PinsMigrateReport> {
     Ok(PinsMigrateReport { wire, cite })
 }
 
+/// Combined report from [`migrate_compat`] (Op-wire then pins).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct CompatMigrateReport {
+    pub op_wire: OpWireMigrateReport,
+    pub pins: PinsMigrateReport,
+}
+
+/// Explicit directory rewrite: Op-wire then pin migrate (M076).
+///
+/// Reuses [`migrate_op_wire`] and [`migrate_pins`] so operators cannot run pin
+/// remap while meta-op envelopes remain. Idempotent when `op-wire.v1` and both
+/// pin markers already exist. Does not invent new remap rules.
+pub fn migrate_compat(dir: &Path) -> std::io::Result<CompatMigrateReport> {
+    let op_wire = migrate_op_wire(dir)?;
+    let pins = migrate_pins(dir)?;
+    Ok(CompatMigrateReport { op_wire, pins })
+}
+
 fn read_jsonl_values(path: &Path) -> std::io::Result<Vec<serde_json::Value>> {
     let bytes = fs::read(path)?;
     let mut values = Vec::new();

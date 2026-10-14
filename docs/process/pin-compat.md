@@ -48,6 +48,10 @@ unchanged (no hardcoded name list). Idempotent when the marker exists.
 Behavior step before cite remap. Both markers stamped when needed; idempotent
 when both already exist.
 
+**Shipped (M076):** `store::migrate_compat` runs `migrate_op_wire` then
+`migrate_pins` so meta-op envelopes are rewritten before pin remap (reuse; no
+new remap rules). Prefer this when a directory may still hold removed meta-ops.
+
 Serde still accepts legacy pin strings on open; admit stays fail-closed for
 UnknownRuleVersion until pins match scheme v1 or these migrates run. Helpers
 live in `kutha_common::pin_migrate` — not a silent change to

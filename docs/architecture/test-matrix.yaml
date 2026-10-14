@@ -1994,6 +1994,17 @@ rows:
     gate: default
     owner: M075-S01
     source: Phase 146 / Pin migrate sequence facade
+  - id: SEM-m076-migrate-compat
+    plane: product
+    invariant: migrate_compat runs Op-wire then migrate_pins so meta-op rewrite precedes pin remap in one call
+    layer: decision
+    oracle:
+      - migrate_compat_rewrites_op_wire_then_pins_in_one_call
+    kill_mutation: delete migrate_compat so operators can pin-migrate while meta-op envelopes remain
+    status: killed
+    gate: default
+    owner: M076-S01
+    source: Phase 147 / Compat migrate sequence facade
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

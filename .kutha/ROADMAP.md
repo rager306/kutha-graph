@@ -201,6 +201,15 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M076: Compat migrate sequence facade — CLOSED (GSD v0.70)
+
+**Closed:** S01 delivered 2026-10-14. Process tag `v0.70`. Honeycomb stays Proposed.
+
+Process debt after M075: pin migrate requires modern Event JSON, but Op-wire and pin migrate stay separate entrypoints; operators can run `migrate_pins` while meta-op envelopes remain. Thin slice: `store::migrate_compat` = `migrate_op_wire` then `migrate_pins` (reuse). `L_delivery=M076-closed`.
+
+- [x] **S01: migrate_compat op-wire then pins** `risk:low` `depends:[]`
+  > After this: one entry remaps meta-ops then pins; stamps op-wire + pin markers; matrix `SEM-m076-migrate-compat` killed. Phase 147. Landed.
+
 ## M075: Pin migrate sequence facade — CLOSED (GSD v0.69)
 
 **Closed:** S01 delivered 2026-10-14. Process tag `v0.69`. Honeycomb stays Proposed.

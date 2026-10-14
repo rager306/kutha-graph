@@ -4,6 +4,28 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-14 — Trajectory: M076 / GSD v0.70 closed
+
+### Trajectory
+
+- Active Milestone/Slice cleared; `L_delivery=M076-closed`. Honeycomb stays Proposed.
+
+## 2026-10-14 — Product: Compat migrate sequence facade (Phase 147)
+
+### Product
+
+- `store::migrate_compat` + `CompatMigrateReport`: runs existing `migrate_op_wire` then `migrate_pins` (reuse; no new remap). Stamps op-wire + pin markers when needed; idempotent when all exist. Test: `m076_migrate_compat`. Bench sample (`KUTHA_BENCH_N=1000`): `ingest_plain.n` ≈17.0ms, `as_of.n` ≈41µs (noisy host; migrate not on ingest hot path; vs M075 ≈15.3ms / ≈32µs).
+
+### Process
+
+- Matrix `SEM-m076-migrate-compat` killed; `op-compat-policy` + `pin-compat-policy` + compat docs cover `migrate_compat`; id map v0.70 / Phase 147.
+
+## 2026-10-14 — Trajectory: lease M076-S01 (Compat migrate sequence facade)
+
+### Trajectory
+
+- Active Milestone **M076**, Active Slice **S01** (`L_delivery=M075-closed`): `store::migrate_compat` runs Op-wire then pin migrate so meta-op rewrite precedes pin remap. Honeycomb stays Proposed.
+
 ## 2026-10-14 — Trajectory: M075 / GSD v0.69 closed
 
 ### Trajectory

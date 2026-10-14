@@ -39,6 +39,11 @@ Open stays fail-open until the operator runs this step (`recover_events` /
 sealed `scan_segment` return `InvalidData` on CRC-good frames that are valid
 JSON but not a modern `Event` — no silent drop of legacy meta-ops).
 
+**Shipped (M076):** `store::migrate_compat` runs `migrate_op_wire` then
+`migrate_pins` (reuse; no new remap rules) so meta-op rewrite precedes pin
+remap. Stamps `op-wire.v1` and both pin markers when needed; idempotent when
+all already exist. See `docs/process/pin-compat.md`.
+
 ## Related G4 residuals
 
 Pin scheme rotation (#24) is recorded in `docs/process/pin-compat.md` (M051);
@@ -46,5 +51,5 @@ explicit Behavior pin-wire migrate is M071 (`migrate_pin_wire` + `pin-wire.v1`).
 Clock-safe facade shipped as M025 (trybuild `ui_clock_facade`) — **not** CE
 whole-repo finding #26 (that finding was delivery-key same-relation; closed
 M056-S03). Op-wire directory layouts shipped M067–M069; demote orphan
-`seg-*.log` cleanup is M070. See `docs/process/ce-review-regression-map.md`.
-Honeycomb cells stay **Proposed**.
+`seg-*.log` cleanup is M070; compat sequence facade is M076. See
+`docs/process/ce-review-regression-map.md`. Honeycomb cells stay **Proposed**.

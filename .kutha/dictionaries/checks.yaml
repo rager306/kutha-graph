@@ -1639,6 +1639,7 @@ checks:
           - "record_action_to_assert"
           - "migrate_op_wire"
           - "op-wire.v1"
+          - "migrate_compat"
         require: all
         category: oracle
         message: "op-compat policy doc missing: {missing}"
@@ -1744,6 +1745,7 @@ checks:
           - "recover_json_values"
           - "manifest.json"
           - "remove_all_segment_logs"
+          - "pub fn migrate_compat"
         require: all
         category: oracle
         message: "migrate_op_wire missing: {missing}"
@@ -1786,8 +1788,9 @@ checks:
     description: >-
       G4 CE #24: pin scheme v1 documented rotation — hardcoded stability
       vectors for ident Named AST pin vs legacy UTF-8 and non-ident; explicit
-      migrate_pin_wire (M071), migrate_pin_cite (M072), and migrate_pins
-      sequence facade (M075) without silent serde remap.
+      migrate_pin_wire (M071), migrate_pin_cite (M072), migrate_pins
+      sequence facade (M075), and migrate_compat Op-wire-then-pins facade
+      (M076) without silent serde remap.
     steps:
       - kind: file_contains
         path: docs/process/pin-compat.md
@@ -1802,6 +1805,7 @@ checks:
           - "migrate_pin_cite"
           - "pin-cite.v1"
           - "migrate_pins"
+          - "migrate_compat"
         require: all
         category: oracle
         message: "pin-compat policy doc missing: {missing}"
@@ -1833,6 +1837,12 @@ checks:
           - migrate_pins_rewrites_behavior_then_cite_in_one_call
         category: oracle
         message: "migrate_pins sequence oracle missing {missing}"
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m076_migrate_compat.rs
+        tests:
+          - migrate_compat_rewrites_op_wire_then_pins_in_one_call
+        category: oracle
+        message: "migrate_compat sequence oracle missing {missing}"
       - kind: file_contains
         path: crates/kutha-common/src/event.rs
         needles:
@@ -1862,6 +1872,7 @@ checks:
           - "PIN_CITE_MARKER_REL"
           - "kutha-pin-cite/1"
           - "pub fn migrate_pins"
+          - "pub fn migrate_compat"
         require: all
         category: oracle
         message: "migrate_pin_wire/cite/pins missing: {missing}"
