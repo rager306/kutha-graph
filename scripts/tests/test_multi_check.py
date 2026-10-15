@@ -103,6 +103,28 @@ class MultiCheckSelectTests(unittest.TestCase):
         self.assertIn("docs-entry", names)
         self.assertIn("version-freeze", names)
 
+    def test_selftest_repeated_check_flags_runs_both(self) -> None:
+        """M086: selftest shares --check append with precommit/json via _join_check_flags."""
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            code = main(
+                [
+                    "--root",
+                    str(ROOT),
+                    "--check",
+                    "docs-entry",
+                    "--check",
+                    "version-freeze",
+                    "selftest",
+                ]
+            )
+        self.assertEqual(0, code)
+        out = buf.getvalue()
+        self.assertIn("docs-entry", out)
+        self.assertIn("version-freeze", out)
+        self.assertRegex(out, r"(?m)^OK docs-entry ")
+        self.assertRegex(out, r"(?m)^OK version-freeze ")
+
     def test_join_check_flags_merges_append_and_comma(self) -> None:
         from kutha_gov.__main__ import _join_check_flags
 

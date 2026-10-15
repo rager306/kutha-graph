@@ -87,6 +87,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.77 | 154 | M083 | S01 | Harness CutPort migrate-bin (kutha-harness Space table) | shipped |
 | v0.78 | 155 | M084 | S01 | .env.example built migrate path (debug/kutha-migrate) | shipped |
 | v0.79 | 156 | M085 | S01 | json --check append oracle (parity with precommit) | shipped |
+| v0.80 | 157 | M086 | S01 | selftest --check append oracle (parity with precommit/json) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

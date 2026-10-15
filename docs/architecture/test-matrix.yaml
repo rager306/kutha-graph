@@ -2109,6 +2109,17 @@ rows:
     gate: default
     owner: M085-S01
     source: Phase 156 / json --check append oracle
+  - id: SEM-m086-selftest-check-append
+    plane: harness
+    invariant: kutha-gov selftest --check a --check b selects both dictionary rows via argparse append join
+    layer: decision
+    oracle:
+      - agent-surface
+    kill_mutation: restore single-value --check so selftest keeps only the last id
+    status: killed
+    gate: default
+    owner: M086-S01
+    source: Phase 157 / selftest --check append oracle
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-15 — Trajectory: M086 / GSD v0.80 closed
+
+### Process
+
+- Oracle `test_selftest_repeated_check_flags_runs_both`: `kutha-gov selftest --check a --check b` selects both.
+- Agent-surface multi-check needles; matrix `SEM-m086-selftest-check-append` killed.
+- Id map v0.80 / Phase 157. No CLI change (reuse `_join_check_flags`).
+
+### Trajectory
+
+- `L_delivery=M086-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed.
+
 ## 2026-10-15 — Trajectory: lease M086-S01 (selftest --check append oracle)
 
 ### Trajectory

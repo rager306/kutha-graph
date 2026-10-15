@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.79 shipped. Honeycomb stays Proposed.
+v0.01–v0.80 shipped. Honeycomb stays Proposed.
 
 ## Id map
 
@@ -10,12 +10,12 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.78** — shipped (through .env.example built migrate path)
-- ✅ **v0.79 json --check append oracle** — Phase 156 done (product M085)
+- ✅ **v0.01–v0.79** — shipped (through json --check append oracle)
+- ✅ **v0.80 selftest --check append oracle** — Phase 157 done (product M086)
 
-## Phases (v0.79)
+## Phases (v0.80)
 
-- [x] **Phase 156: json --check append oracle** — `156-VERIFICATION.md` passed
+- [x] **Phase 157: selftest --check append oracle** — `157-VERIFICATION.md` passed
 
 ## Progress
 
