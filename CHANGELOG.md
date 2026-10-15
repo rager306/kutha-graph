@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-15 — Trajectory: lease M087-S01 (harness --check surfaces)
+
+### Trajectory
+
+- Active Milestone **M087**, Active Slice **S01** (`L_delivery=M086-closed`): `kutha-harness.md` must document `--check` for json/precommit/selftest (repeatable + comma). Honeycomb stays Proposed.
+
 ## 2026-10-15 — Trajectory: M086 / GSD v0.80 closed
 
 ### Process
