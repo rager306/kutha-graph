@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-15 — Trajectory: lease M089-S01 (--check reject hint)
+
+### Trajectory
+
+- Active Milestone **M089**, Active Slice **S01** (`L_delivery=M088-closed`): invalid `--check` stderr must redirect to json|precommit|selftest. Honeycomb stays Proposed.
+
 ## 2026-10-15 — Trajectory: M088 / GSD v0.82 closed
 
 ### Process

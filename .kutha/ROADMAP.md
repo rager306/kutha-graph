@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M089: --check reject redirect hint — ACTIVE (GSD v0.83)
+
+Process debt after M088: CLI rejects `--check` outside json|precommit|selftest (exit 2), but stderr only names the rule — agents still guess the next command. Thin slice: one-line redirect hint; extend reject oracle. Honeycomb stays Proposed.
+
+- [ ] **S01: stderr hint on invalid --check** `risk:low` `depends:[]`
+  > After this: invalid `--check` prints `hint: kutha-gov {json|precommit|selftest} --check ID[,ID…]`; matrix `SEM-m089-check-reject-hint` killed. Phase 160.
+
 ## M088: AGENTS --check not for ci — CLOSED (GSD v0.82)
 
 Process debt after M087: CLI rejects `ci --check`, and harness names three surfaces, but AGENTS Flags line groups `ci` with `--check` ("where noted") so agents still try selective checks on full FSM. Thin slice: AGENTS + agent-surface + CLI reject oracle. `L_delivery=M088-closed`.
