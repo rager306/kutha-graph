@@ -2213,6 +2213,7 @@ checks:
           - "def _join_check_flags"
           - "action=\"append\""
           - "comma-separated"
+          - "hint: kutha-gov {json|precommit|selftest} --check ID[,ID…]"
         require: all
         category: oracle
         message: "multi-check --check parser missing: {missing}"

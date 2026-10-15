@@ -90,6 +90,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.80 | 157 | M086 | S01 | selftest --check append oracle (parity with precommit/json) | shipped |
 | v0.81 | 158 | M087 | S01 | Harness --check surface discoverability (json|precommit|selftest) | shipped |
 | v0.82 | 159 | M088 | S01 | AGENTS --check not for ci (json|precommit|selftest only) | shipped |
+| v0.83 | 160 | M089 | S01 | --check reject redirect hint (json|precommit|selftest) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

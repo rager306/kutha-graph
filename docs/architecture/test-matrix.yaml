@@ -2143,6 +2143,17 @@ rows:
     gate: default
     owner: M088-S01
     source: Phase 159 / AGENTS --check not for ci
+  - id: SEM-m089-check-reject-hint
+    plane: harness
+    invariant: invalid --check stderr prints redirect hint to kutha-gov {json|precommit|selftest} --check ID[,ID…]
+    layer: decision
+    oracle:
+      - agent-surface
+    kill_mutation: remove the hint line so reject stderr only names the rule
+    status: killed
+    gate: default
+    owner: M089-S01
+    source: Phase 160 / --check reject redirect hint
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

@@ -412,6 +412,10 @@ def main(argv: list[str] | None = None) -> int:
     check_spec = _join_check_flags(args.check)
     if check_spec and args.command not in {"json", "precommit", "selftest"}:
         print("--check is only valid with json, precommit, or selftest", file=sys.stderr)
+        print(
+            "hint: kutha-gov {json|precommit|selftest} --check ID[,ID…]",
+            file=sys.stderr,
+        )
         return 2
     if args.command == "list":
         return cmd_list(root)

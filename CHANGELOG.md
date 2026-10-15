@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-15 — Trajectory: M089 / GSD v0.83 closed
+
+### Process
+
+- Invalid `--check` stderr adds `hint: kutha-gov {json|precommit|selftest} --check ID[,ID…]`.
+- Oracle `test_ci_rejects_check_flag` asserts the hint; agent-surface pins `__main__.py`; matrix `SEM-m089-check-reject-hint` killed.
+- Id map v0.83 / Phase 160.
+
+### Trajectory
+
+- `L_delivery=M089-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed.
+
 ## 2026-10-15 — Trajectory: lease M089-S01 (--check reject hint)
 
 ### Trajectory

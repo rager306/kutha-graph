@@ -19,7 +19,7 @@ Each YAML row is one invariant. `oracle` is a list of real `#[test]` function na
 
 ## Counts (this file)
 
-Counted from `test-matrix.yaml` rows on 2026-10-15 (M088 S01). Recount after you edit the YAML; do not invent a coverage percentage.
+Counted from `test-matrix.yaml` rows on 2026-10-15 (M089 S01). Recount after you edit the YAML; do not invent a coverage percentage.
 
 | Status | Rows |
 |--------|------|
@@ -134,6 +134,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 **M087 S01 (harness --check surface discoverability):** Phase 158 — `SEM-m087-harness-check-surfaces` `killed` (owner `M087-S01`). Oracles: `dogfood`, `agent-surface` (pytest `test_harness_documents_check_surfaces`).
 
 **M088 S01 (AGENTS --check not for ci):** Phase 159 — `SEM-m088-agents-check-not-ci` `killed` (owner `M088-S01`). Oracle: `agent-surface` (pytest `test_agents_md_check_not_for_ci`, `test_ci_rejects_check_flag`).
+
+**M089 S01 (--check reject redirect hint):** Phase 160 — `SEM-m089-check-reject-hint` `killed` (owner `M089-S01`). Oracle: `agent-surface` (pytest `test_ci_rejects_check_flag` hint line).
 
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
