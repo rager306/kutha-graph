@@ -412,7 +412,7 @@ invariants:
     check: git-auto-base
 
   - id: I-agent-surface
-    claim: "gsd-auto-contract tool pair labels CBM as kutha-graph; AGENTS.md lists --jobs, --skip-cargo, kutha-gov json, repeatable comma-capable --check, run_high= guidance, and the observe-built debug/kutha-migrate path (not cargo run); op-compat, pin-compat, kutha-harness CutPort, and .env.example cite the same built path"
+    claim: "gsd-auto-contract tool pair labels CBM as kutha-graph; AGENTS.md lists --jobs, --skip-cargo, kutha-gov json, repeatable comma-capable --check, run_high= guidance, and the observe-built debug/kutha-migrate path (not cargo run); op-compat, pin-compat, kutha-harness CutPort, and .env.example cite the same built path; json --check append selects both rows like precommit"
     source: ".planning/phases/145-agent-surface/145-CONTEXT.md"
     disposition: check
     check: agent-surface
