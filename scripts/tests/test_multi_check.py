@@ -125,6 +125,25 @@ class MultiCheckSelectTests(unittest.TestCase):
         self.assertRegex(out, r"(?m)^OK docs-entry ")
         self.assertRegex(out, r"(?m)^OK version-freeze ")
 
+    def test_ci_rejects_check_flag(self) -> None:
+        """M088: selective --check stays off the full FSM quantum."""
+        err = io.StringIO()
+        with redirect_stderr(err):
+            code = main(
+                [
+                    "--root",
+                    str(ROOT),
+                    "--check",
+                    "docs-entry",
+                    "ci",
+                ]
+            )
+        self.assertEqual(2, code)
+        self.assertIn(
+            "--check is only valid with json, precommit, or selftest",
+            err.getvalue(),
+        )
+
     def test_join_check_flags_merges_append_and_comma(self) -> None:
         from kutha_gov.__main__ import _join_check_flags
 

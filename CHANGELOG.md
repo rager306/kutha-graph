@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-15 — Trajectory: M088 / GSD v0.82 closed
+
+### Process
+
+- AGENTS Flags state `--check` is json|precommit|selftest only — not `ci`.
+- Oracles `test_agents_md_check_not_for_ci` + `test_ci_rejects_check_flag`; agent-surface pins; matrix `SEM-m088-agents-check-not-ci` killed.
+- Id map v0.82 / Phase 159. No CLI change (`ci --check` still exit 2).
+
+### Trajectory
+
+- `L_delivery=M088-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed.
+
 ## 2026-10-15 — Trajectory: lease M088-S01 (AGENTS --check not for ci)
 
 ### Trajectory

@@ -2132,6 +2132,17 @@ rows:
     gate: default
     owner: M087-S01
     source: Phase 158 / harness --check surface discoverability
+  - id: SEM-m088-agents-check-not-ci
+    plane: harness
+    invariant: AGENTS.md states --check is json|precommit|selftest only (not ci); CLI ci --check exits 2
+    layer: decision
+    oracle:
+      - agent-surface
+    kill_mutation: restore AGENTS Flags that group ci with --check without excluding ci
+    status: killed
+    gate: default
+    owner: M088-S01
+    source: Phase 159 / AGENTS --check not for ci
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

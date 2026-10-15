@@ -2201,6 +2201,8 @@ checks:
           - "ID[,ID"
           - "repeatable"
           - "run_high="
+          - "json|precommit|selftest only"
+          - "not `ci`"
         require: all
         category: oracle
         message: "AGENTS.md harness surface missing live flags: {missing}"
@@ -2223,6 +2225,7 @@ checks:
           - "def test_process_notes_prefer_built_migrate_bin"
           - "def test_harness_cutport_names_built_migrate"
           - "def test_harness_documents_check_surfaces"
+          - "def test_agents_md_check_not_for_ci"
           - "def test_env_example_documents_built_migrate"
         require: all
         category: oracle
@@ -2248,6 +2251,7 @@ checks:
           - "def test_precommit_repeated_check_flags_runs_both"
           - "def test_json_repeated_check_flags_runs_both"
           - "def test_selftest_repeated_check_flags_runs_both"
+          - "def test_ci_rejects_check_flag"
         require: all
         category: oracle
         message: "multi-check pytest oracle missing: {missing}"

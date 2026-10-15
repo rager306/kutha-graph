@@ -62,6 +62,12 @@ class AgentSurfaceDiscoverabilityTests(unittest.TestCase):
             text,
         )
 
+    def test_agents_md_check_not_for_ci(self) -> None:
+        """M088: AGENTS Flags must not imply --check works with ci."""
+        text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("json|precommit|selftest only", text)
+        self.assertIn("not `ci`", text)
+
     def test_env_example_documents_built_migrate(self) -> None:
         text = (ROOT / ".env.example").read_text(encoding="utf-8")
         self.assertIn("debug/kutha-migrate", text)

@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M088: AGENTS --check not for ci — ACTIVE (GSD v0.82)
+## M088: AGENTS --check not for ci — CLOSED (GSD v0.82)
 
-Process debt after M087: CLI rejects `ci --check`, and harness names three surfaces, but AGENTS Flags line groups `ci` with `--check` ("where noted") so agents still try selective checks on full FSM. Thin slice: AGENTS + agent-surface + CLI reject oracle. Honeycomb stays Proposed.
+Process debt after M087: CLI rejects `ci --check`, and harness names three surfaces, but AGENTS Flags line groups `ci` with `--check` ("where noted") so agents still try selective checks on full FSM. Thin slice: AGENTS + agent-surface + CLI reject oracle. `L_delivery=M088-closed`.
 
-- [ ] **S01: AGENTS says --check excludes ci** `risk:low` `depends:[]`
-  > After this: AGENTS Flags state `--check` only for json|precommit|selftest; `ci --check` still exit 2; matrix `SEM-m088-agents-check-not-ci` killed. Phase 159.
+- [x] **S01: AGENTS says --check excludes ci** `risk:low` `depends:[]`
+  > After this: AGENTS Flags state `--check` only for json|precommit|selftest; `ci --check` still exit 2; matrix `SEM-m088-agents-check-not-ci` killed. Phase 159. Landed.
 
 ## M087: harness --check surface discoverability — CLOSED (GSD v0.81)
 
