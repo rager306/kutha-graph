@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M085: json --check append oracle — OPEN (GSD v0.79)
+
+Process debt after M079: repeated `--check` works for precommit, but `kutha-gov json` has no oracle that append selects both rows (same `_join_check_flags` path). Thin slice: pytest + agent-surface. Honeycomb stays Proposed.
+
+- [ ] **S01: json repeated --check runs both** `risk:low` `depends:[]`
+  > After this: `test_json_repeated_check_flags_runs_both`; matrix `SEM-m085-json-check-append` killed. Phase 156.
+
 ## M084: .env.example built migrate path — CLOSED (GSD v0.78)
 
 Process debt after M083: META/AGENTS/harness cite built migrate, but `.env.example` only documents `KUTHA_TENANT_BIN`. Thin slice: comment the observe-built path + optional `KUTHA_MIGRATE_DIR`; toolchain pins it. `L_delivery=M084-closed`.
