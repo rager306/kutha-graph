@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M090: --skip-cargo reject redirect hint — ACTIVE (GSD v0.84)
+
+Process debt after M089: CLI rejects `--skip-cargo` outside `ci` (exit 2), but stderr only names the rule — agents still guess the next command. Thin slice: one-line redirect hint; reject oracle. Honeycomb stays Proposed.
+
+- [ ] **S01: stderr hint on invalid --skip-cargo** `risk:low` `depends:[]`
+  > After this: invalid `--skip-cargo` prints `hint: kutha-gov ci --skip-cargo`; matrix `SEM-m090-skip-cargo-reject-hint` killed. Phase 161.
+
 ## M089: --check reject redirect hint — CLOSED (GSD v0.83)
 
 Process debt after M088: CLI rejects `--check` outside json|precommit|selftest (exit 2), but stderr only names the rule — agents still guess the next command. Thin slice: one-line redirect hint; extend reject oracle. `L_delivery=M089-closed`.

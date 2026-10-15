@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-15 — Trajectory: lease M090-S01 (--skip-cargo reject hint)
+
+### Trajectory
+
+- Active Milestone **M090**, Active Slice **S01** (`L_delivery=M089-closed`): invalid `--skip-cargo` stderr must redirect to `kutha-gov ci --skip-cargo`. Honeycomb stays Proposed.
+
 ## 2026-10-15 — Trajectory: M089 / GSD v0.83 closed
 
 ### Process
