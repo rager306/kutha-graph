@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M086: selftest --check append oracle — OPEN (GSD v0.80)
+
+Process debt after M085: json/precommit have repeated `--check` oracles; `selftest` shares `_join_check_flags` but has no multi-select append pin. Thin slice: pytest + agent-surface. Honeycomb stays Proposed.
+
+- [ ] **S01: selftest repeated --check runs both** `risk:low` `depends:[]`
+  > After this: `test_selftest_repeated_check_flags_runs_both`; matrix `SEM-m086-selftest-check-append` killed. Phase 157.
+
 ## M085: json --check append oracle — CLOSED (GSD v0.79)
 
 Process debt after M079: repeated `--check` works for precommit, but `kutha-gov json` has no oracle that append selects both rows (same `_join_check_flags` path). Thin slice: pytest + agent-surface. `L_delivery=M085-closed`.
