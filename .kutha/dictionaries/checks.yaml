@@ -204,6 +204,20 @@ checks:
         require: all
         category: oracle
         message: "harness CutPort migrate-bin missing: {missing}"
+      - kind: file_contains
+        path: docs/process/kutha-harness.md
+        needles:
+          - "`json`, `precommit`, or `selftest`"
+          - "uv run kutha-gov selftest --check"
+        require: all
+        category: oracle
+        message: "harness --check surfaces missing: {missing}"
+      - kind: file_absent
+        path: docs/process/kutha-harness.md
+        needles:
+          - "`--check ID` is valid only with `json` or `precommit`"
+        category: oracle
+        message: "harness still limits --check to json|precommit only: {needle}"
       - kind: file_absent
         path: crates/kutha-runtime/src/lib.rs
         needles: ["kutha_gov"]
@@ -2208,6 +2222,7 @@ checks:
           - "def test_agents_md_prefers_built_migrate_bin"
           - "def test_process_notes_prefer_built_migrate_bin"
           - "def test_harness_cutport_names_built_migrate"
+          - "def test_harness_documents_check_surfaces"
           - "def test_env_example_documents_built_migrate"
         require: all
         category: oracle

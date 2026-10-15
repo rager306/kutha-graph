@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M087: harness --check surface discoverability — ACTIVE (GSD v0.81)
+## M087: harness --check surface discoverability — CLOSED (GSD v0.81)
 
-Process debt after M086: AGENTS and CLI accept `--check` on json/precommit/selftest (repeatable + comma), but `kutha-harness.md` still says only json/precommit. Thin slice: harness prose + dogfood/agent-surface pins. `L_delivery=M086-closed` until close.
+Process debt after M086: AGENTS and CLI accept `--check` on json/precommit/selftest (repeatable + comma), but `kutha-harness.md` still says only json/precommit. Thin slice: harness prose + dogfood/agent-surface pins. `L_delivery=M087-closed`.
 
-- [ ] **S01: harness documents three --check surfaces** `risk:low` `depends:[]`
-  > After this: `kutha-harness.md` names json/precommit/selftest `--check` (repeatable + comma); matrix `SEM-m087-harness-check-surfaces` killed. Phase 158.
+- [x] **S01: harness documents three --check surfaces** `risk:low` `depends:[]`
+  > After this: `kutha-harness.md` names json/precommit/selftest `--check` (repeatable + comma); matrix `SEM-m087-harness-check-surfaces` killed. Phase 158. Landed.
 
 ## M086: selftest --check append oracle — CLOSED (GSD v0.80)
 

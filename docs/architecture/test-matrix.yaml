@@ -2120,6 +2120,18 @@ rows:
     gate: default
     owner: M086-S01
     source: Phase 157 / selftest --check append oracle
+  - id: SEM-m087-harness-check-surfaces
+    plane: harness
+    invariant: kutha-harness.md documents --check for json, precommit, and selftest (repeatable + comma), matching CLI
+    layer: decision
+    oracle:
+      - dogfood
+      - agent-surface
+    kill_mutation: restore harness prose that limits --check to json or precommit only
+    status: killed
+    gate: default
+    owner: M087-S01
+    source: Phase 158 / harness --check surface discoverability
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

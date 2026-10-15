@@ -52,6 +52,16 @@ class AgentSurfaceDiscoverabilityTests(unittest.TestCase):
         self.assertIn("| migrate-bin |", text)
         self.assertIn("debug/kutha-migrate", text)
 
+    def test_harness_documents_check_surfaces(self) -> None:
+        """M087: living harness CLI note must match json|precommit|selftest --check."""
+        text = (ROOT / "docs/process/kutha-harness.md").read_text(encoding="utf-8")
+        self.assertIn("`json`, `precommit`, or `selftest`", text)
+        self.assertIn("uv run kutha-gov selftest --check", text)
+        self.assertNotIn(
+            "`--check ID` is valid only with `json` or `precommit`",
+            text,
+        )
+
     def test_env_example_documents_built_migrate(self) -> None:
         text = (ROOT / ".env.example").read_text(encoding="utf-8")
         self.assertIn("debug/kutha-migrate", text)
