@@ -190,6 +190,9 @@ pub struct OpWireMigrateReport {
     pub remapped_lines: usize,
     pub events_written: usize,
     pub already_migrated: bool,
+    /// Torn / truncated source tails dropped while reading jsonl, WAL, or active segment
+    /// (CE #13; parity intent with [`MigrateReport::dropped_uncommitted`]).
+    pub dropped_tail: usize,
 }
 
 /// Explicit Op-wire rewrite for a store directory (M067–M069).
@@ -215,13 +218,14 @@ pub fn migrate_op_wire(dir: &Path) -> std::io::Result<OpWireMigrateReport> {
             remapped_lines: 0,
             events_written: 0,
             already_migrated: true,
+            dropped_tail: 0,
         });
     }
     let jsonl_path = dir.join(EVENTS_JSONL);
     let wal_path = dir.join(EVENTS_WAL);
     let manifest_path = dir.join(crate::segment::MANIFEST_REL);
     let segmented = manifest_path.exists();
-    let values = if segmented {
+    let (values, dropped_tail) = if segmented {
         crate::segment::recover_json_values(dir)?
     } else if jsonl_path.exists() {
         read_jsonl_values(&jsonl_path)?
@@ -257,6 +261,7 @@ pub fn migrate_op_wire(dir: &Path) -> std::io::Result<OpWireMigrateReport> {
         remapped_lines,
         events_written: out.len(),
         already_migrated: false,
+        dropped_tail,
     })
 }
 
@@ -273,6 +278,8 @@ pub struct PinWireMigrateReport {
     pub remapped_lines: usize,
     pub events_written: usize,
     pub already_migrated: bool,
+    /// Torn / truncated source tails dropped while reading (CE #13).
+    pub dropped_tail: usize,
 }
 
 /// Explicit pin-scheme rewrite for a store directory (M071).
@@ -292,13 +299,14 @@ pub fn migrate_pin_wire(dir: &Path) -> std::io::Result<PinWireMigrateReport> {
             remapped_lines: 0,
             events_written: 0,
             already_migrated: true,
+            dropped_tail: 0,
         });
     }
     let jsonl_path = dir.join(EVENTS_JSONL);
     let wal_path = dir.join(EVENTS_WAL);
     let manifest_path = dir.join(crate::segment::MANIFEST_REL);
     let segmented = manifest_path.exists();
-    let values = if segmented {
+    let (values, dropped_tail) = if segmented {
         crate::segment::recover_json_values(dir)?
     } else if jsonl_path.exists() {
         read_jsonl_values(&jsonl_path)?
@@ -332,6 +340,7 @@ pub fn migrate_pin_wire(dir: &Path) -> std::io::Result<PinWireMigrateReport> {
         remapped_lines,
         events_written: out.len(),
         already_migrated: false,
+        dropped_tail,
     })
 }
 
@@ -364,6 +373,8 @@ pub struct PinCiteMigrateReport {
     pub remapped_lines: usize,
     pub events_written: usize,
     pub already_migrated: bool,
+    /// Torn / truncated source tails dropped while reading (CE #13).
+    pub dropped_tail: usize,
 }
 
 /// Explicit JustificationCite pin-scheme rewrite for a store directory (M072).
@@ -382,13 +393,14 @@ pub fn migrate_pin_cite(dir: &Path) -> std::io::Result<PinCiteMigrateReport> {
             remapped_lines: 0,
             events_written: 0,
             already_migrated: true,
+            dropped_tail: 0,
         });
     }
     let jsonl_path = dir.join(EVENTS_JSONL);
     let wal_path = dir.join(EVENTS_WAL);
     let manifest_path = dir.join(crate::segment::MANIFEST_REL);
     let segmented = manifest_path.exists();
-    let values = if segmented {
+    let (values, dropped_tail) = if segmented {
         crate::segment::recover_json_values(dir)?
     } else if jsonl_path.exists() {
         read_jsonl_values(&jsonl_path)?
@@ -430,6 +442,7 @@ pub fn migrate_pin_cite(dir: &Path) -> std::io::Result<PinCiteMigrateReport> {
         remapped_lines,
         events_written: out.len(),
         already_migrated: false,
+        dropped_tail,
     })
 }
 
@@ -479,7 +492,7 @@ pub fn migrate_compat(dir: &Path) -> std::io::Result<CompatMigrateReport> {
     Ok(CompatMigrateReport { op_wire, pins })
 }
 
-fn read_jsonl_values(path: &Path) -> std::io::Result<Vec<serde_json::Value>> {
+fn read_jsonl_values(path: &Path) -> std::io::Result<(Vec<serde_json::Value>, usize)> {
     let bytes = fs::read(path)?;
     let mut values = Vec::new();
     let mut start = 0usize;
@@ -497,7 +510,10 @@ fn read_jsonl_values(path: &Path) -> std::io::Result<Vec<serde_json::Value>> {
         values.push(serde_json::from_str(text).map_err(json_err)?);
     }
     // Torn tail after last newline is dropped (same policy as read_jsonl_events).
-    Ok(values)
+    let dropped_tail = usize::from(
+        start < bytes.len() && bytes[start..].iter().any(|c| !c.is_ascii_whitespace()),
+    );
+    Ok((values, dropped_tail))
 }
 
 /// Remove every `seg-*.log` under `dir` (M070). Used after Op-wire demotes a

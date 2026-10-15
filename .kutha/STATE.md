@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M092
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M091-closed
+L_delivery=M092-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M091 closed; M092-S01 leased (CE #13 migrate dropped_tail) | Capability proven / Cypher started |
+| L_delivery | M092 closed (v0.86) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Deliver M092-S01: Op-wire/pin migrate reports surface `dropped_tail` for torn source tails (parity with `migrate` `dropped_uncommitted`). Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+Controller chooses next lease. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Next CE apply-queue: #9 (kutha-migrate CLI), #3/#2 (retract/bench), #6–#8 (dictionary loader), #4 (Horn overlap, design call).
 
 ## Thaw map
 

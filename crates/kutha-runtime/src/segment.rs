@@ -690,22 +690,26 @@ fn read_active(path: &Path, expected_prev: [u8; 32]) -> std::io::Result<Vec<Even
 /// modern [`Event`] are kept so callers can remap legacy meta-ops. Seal
 /// trailers are skipped. Truncated/CRC-bad tails on the active segment stop
 /// the scan; sealed segments stay fail-closed on CRC/trailer/JSON errors.
-pub(crate) fn recover_json_values(dir: &Path) -> std::io::Result<Vec<serde_json::Value>> {
+pub(crate) fn recover_json_values(
+    dir: &Path,
+) -> std::io::Result<(Vec<serde_json::Value>, usize)> {
     let manifest = read_manifest(dir)?;
     let mut out = Vec::new();
     for entry in &manifest.sealed {
         let bytes = fs::read(dir.join(&entry.name))?;
-        out.extend(scan_segment_json_values(&bytes, true)?);
+        let (vals, _) = scan_segment_json_values(&bytes, true)?;
+        out.extend(vals);
     }
     let bytes = fs::read(dir.join(&manifest.active))?;
-    out.extend(scan_segment_json_values(&bytes, false)?);
-    Ok(out)
+    let (vals, dropped_tail) = scan_segment_json_values(&bytes, false)?;
+    out.extend(vals);
+    Ok((out, dropped_tail))
 }
 
 fn scan_segment_json_values(
     bytes: &[u8],
     sealed: bool,
-) -> std::io::Result<Vec<serde_json::Value>> {
+) -> std::io::Result<(Vec<serde_json::Value>, usize)> {
     let _prev = parse_header(bytes)?;
     let mut off = HEADER_LEN as usize;
     let mut out = Vec::new();
@@ -747,6 +751,7 @@ fn scan_segment_json_values(
             if sealed && end != bytes.len() {
                 return Err(invalid("extra bytes after sealed trailer"));
             }
+            off = end;
             break;
         }
         match serde_json::from_slice::<serde_json::Value>(payload) {
@@ -762,7 +767,9 @@ fn scan_segment_json_values(
             }
         }
     }
-    Ok(out)
+    // CE #13: unread active bytes after stop count as one dropped tail.
+    let dropped_tail = usize::from(!sealed && off < bytes.len());
+    Ok((out, dropped_tail))
 }
 
 /// Load events from `manifest.json` + named segments. Never reads jsonl/WAL.

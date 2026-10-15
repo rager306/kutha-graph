@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.85 shipped. Honeycomb stays Proposed.
+v0.01–v0.86 shipped. Honeycomb stays Proposed.
 
 ## Id map
 
@@ -10,12 +10,12 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.84** — shipped (through --skip-cargo reject redirect hint)
-- ✅ **v0.85 pin-cite justifications sidecar** — Phase 162 done (product M091)
+- ✅ **v0.01–v0.85** — shipped (through pin-cite justifications sidecar)
+- ✅ **v0.86 migrate dropped_tail** — Phase 163 done (product M092)
 
-## Phases (v0.85)
+## Phases (v0.86)
 
-- [x] **Phase 162: pin-cite justifications sidecar** — `162-VERIFICATION.md` passed
+- [x] **Phase 163: migrate dropped_tail** — `163-VERIFICATION.md` passed
 
 ## Progress
 

@@ -174,10 +174,13 @@ pub fn recover_events(path: &Path) -> std::io::Result<Vec<Event>> {
 ///
 /// Unlike [`recover_events`], a payload that is valid JSON but not a modern
 /// [`Event`] is kept so callers can remap legacy meta-ops. Truncated/CRC-bad
-/// tails still stop the scan.
-pub(crate) fn recover_json_values(path: &Path) -> std::io::Result<Vec<serde_json::Value>> {
+/// tails still stop the scan. Returns `(values, dropped_tail)` where
+/// `dropped_tail` is 1 when unread bytes remain after the stop (CE #13).
+pub(crate) fn recover_json_values(
+    path: &Path,
+) -> std::io::Result<(Vec<serde_json::Value>, usize)> {
     if !path.exists() {
-        return Ok(Vec::new());
+        return Ok((Vec::new(), 0));
     }
     let mut f = open_wal_after_header(path)?;
     let mut out = Vec::new();
@@ -190,7 +193,10 @@ pub(crate) fn recover_json_values(path: &Path) -> std::io::Result<Vec<serde_json
             Err(_) => break,
         }
     }
-    Ok(out)
+    let meta_len = f.metadata()?.len();
+    let pos = f.stream_position()?;
+    let dropped_tail = usize::from(pos < meta_len);
+    Ok((out, dropped_tail))
 }
 
 fn read_one_frame_payload(f: &mut File) -> std::io::Result<Option<Vec<u8>>> {

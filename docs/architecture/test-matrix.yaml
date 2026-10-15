@@ -2176,6 +2176,19 @@ rows:
     gate: default
     owner: M091-S01
     source: Phase 162 / CE 2026-10-15 #1
+  - id: SEM-m092-migrate-dropped-tail
+    plane: product
+    invariant: OpWire/PinWire/PinCite migrate reports expose dropped_tail for torn source tails
+    layer: decision
+    oracle:
+      - migrate_op_wire_reports_dropped_jsonl_tail
+      - migrate_pin_wire_reports_dropped_jsonl_tail
+      - migrate_pin_cite_reports_dropped_jsonl_tail
+    kill_mutation: remove dropped_tail from OpWireMigrateReport and stop counting torn jsonl remainders
+    status: killed
+    gate: default
+    owner: M092-S01
+    source: Phase 163 / CE 2026-10-15 #13
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

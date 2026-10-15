@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.85
-milestone_name: pin-cite justifications sidecar
+milestone: v0.86
+milestone_name: migrate dropped_tail
 status: complete
-stopped_at: "162-pin-cite-justifications"
-last_updated: "2026-10-16T00:30:00.000Z"
+stopped_at: "163-migrate-dropped-tail"
+last_updated: "2026-10-16T01:15:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.85 pin-cite justifications sidecar (M091) — complete  
-**Phase:** 162 complete  
-**Status:** S01 shipped; M091 / v0.85 closed
+**Milestone:** v0.86 migrate dropped_tail (M092) — complete  
+**Phase:** 163 complete  
+**Status:** S01 shipped; M092 / v0.86 closed

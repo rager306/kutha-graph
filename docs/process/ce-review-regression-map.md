@@ -44,6 +44,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | Finding / claim | Matrix id | Oracle(s) | Owner |
 |-----------------|-----------|-----------|-------|
 | #1 pin-cite stale justifications sidecar | `SEM-m091-pin-cite-justifications` | `migrate_pin_cite_reopens_after_nonempty_justifications_sidecar` | M091-S01 |
+| #13 migrate torn tails uncounted | `SEM-m092-migrate-dropped-tail` | `migrate_*_reports_dropped_jsonl_tail` | M092-S01 |
 
 ## Rule
 

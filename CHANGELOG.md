@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-16 — Trajectory: M092 / GSD v0.86 closed
+
+### Product
+
+- OpWire/PinWire/PinCite migrate reports expose `dropped_tail` for torn jsonl / truncated WAL / active-segment remainders (CE 2026-10-15 #13).
+- `kutha-migrate` stdout prints `*_dropped_tail=`; oracles `migrate_*_reports_dropped_jsonl_tail`; matrix `SEM-m092-migrate-dropped-tail` killed.
+- Quiet bench (`taskset -c 0`, `KUTHA_BENCH_N=10000`): `ingest_plain.n` ≈107.2M ns, `as_of.n` ≈300.3k ns (migrate not on ingest hot path; vs M091 ≈109.5M / ≈277.9k).
+
+### Trajectory
+
+- `L_delivery=M092-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v0.86 / Phase 163.
+
 ## 2026-10-16 — Trajectory: lease M092-S01 (CE #13 migrate dropped_tail)
 
 ### Trajectory

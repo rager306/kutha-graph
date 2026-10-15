@@ -29,13 +29,16 @@ fn resolve_dir(args: &[String]) -> Result<PathBuf, i32> {
 
 fn format_report(dir: &Path, report: &CompatMigrateReport) -> String {
     format!(
-        "migrate: op_wire_remapped={} op_wire_already={} pin_wire_remapped={} pin_wire_already={} pin_cite_remapped={} pin_cite_already={} dir={}  (compat sequence, not honeycomb Acceptance)",
+        "migrate: op_wire_remapped={} op_wire_already={} op_wire_dropped_tail={} pin_wire_remapped={} pin_wire_already={} pin_wire_dropped_tail={} pin_cite_remapped={} pin_cite_already={} pin_cite_dropped_tail={} dir={}  (compat sequence, not honeycomb Acceptance)",
         report.op_wire.remapped_lines,
         u8::from(report.op_wire.already_migrated),
+        report.op_wire.dropped_tail,
         report.pins.wire.remapped_lines,
         u8::from(report.pins.wire.already_migrated),
+        report.pins.wire.dropped_tail,
         report.pins.cite.remapped_lines,
         u8::from(report.pins.cite.already_migrated),
+        report.pins.cite.dropped_tail,
         dir.display()
     )
 }

@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M092: migrate reports dropped_tail — ACTIVE (GSD v0.86)
+## M092: migrate reports dropped_tail — CLOSED (GSD v0.86)
 
-CE whole-repo (2026-10-15 HEAD) finding #13: `migrate_op_wire` / `migrate_pin_wire` / `migrate_pin_cite` drop torn jsonl/WAL/segment tails with no count, unlike `migrate().dropped_uncommitted`. Thin slice: surface `dropped_tail` on the three reports (+ oracle). Honeycomb stays Proposed.
+CE whole-repo (2026-10-15 HEAD) finding #13: `migrate_op_wire` / `migrate_pin_wire` / `migrate_pin_cite` drop torn jsonl/WAL/segment tails with no count, unlike `migrate().dropped_uncommitted`. Thin slice: surface `dropped_tail` on the three reports (+ oracle). `L_delivery=M092-closed`.
 
-- [ ] **S01: dropped_tail on Op/Pin migrate reports** `risk:low` `depends:[]`
-  > After this: torn source tails increment `dropped_tail` on OpWire/PinWire/PinCite reports; matrix `SEM-m092-migrate-dropped-tail` killed. Phase 163.
+- [x] **S01: dropped_tail on Op/Pin migrate reports** `risk:low` `depends:[]`
+  > After this: torn source tails increment `dropped_tail` on OpWire/PinWire/PinCite reports; matrix `SEM-m092-migrate-dropped-tail` killed. Phase 163. Landed.
 
 ## M091: migrate_pin_cite drops stale justifications sidecar — CLOSED (GSD v0.85)
 
