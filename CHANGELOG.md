@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-16 — Trajectory: M091 / GSD v0.85 closed
+
+### Product
+
+- `migrate_pin_cite` removes stale `justifications.jsonl` alongside `snapshot.json` so reopen succeeds after JustificationCite pin remap (CE 2026-10-15 #1).
+- Oracle `migrate_pin_cite_reopens_after_nonempty_justifications_sidecar`; matrix `SEM-m091-pin-cite-justifications` killed.
+- Bench (`KUTHA_BENCH_N=10000`): `ingest_plain.n` ≈109.5M ns, `as_of.n` ≈277.9k ns (migrate not on ingest hot path; vs recent quiet M056-S04 ≈110.7M / ≈261.4k).
+
+### Trajectory
+
+- `L_delivery=M091-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v0.85 / Phase 162.
+
 ## 2026-10-16 — Trajectory: lease M091-S01 (CE #1 pin-cite justifications)
 
 ### Trajectory

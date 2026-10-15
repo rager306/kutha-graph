@@ -2165,6 +2165,17 @@ rows:
     gate: default
     owner: M090-S01
     source: Phase 161 / --skip-cargo reject redirect hint
+  - id: SEM-m091-pin-cite-justifications
+    plane: product
+    invariant: migrate_pin_cite removes stale justifications.jsonl so reopen succeeds after cite pin remap
+    layer: decision
+    oracle:
+      - migrate_pin_cite_reopens_after_nonempty_justifications_sidecar
+    kill_mutation: restore migrate_pin_cite that removes only snapshot.json and leaves justifications.jsonl
+    status: killed
+    gate: default
+    owner: M091-S01
+    source: Phase 162 / CE 2026-10-15 #1
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

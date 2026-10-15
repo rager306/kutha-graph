@@ -39,6 +39,12 @@ Pin scheme (full-branch #24 / M051) stays `SEM-m051-pin-compat-policy` — disti
 |-------|----------|-----------|-------|
 Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056-norm-view-derived-correct` (M056-S04); #26 → `SEM-m056-delivery-key-same-relation` (M056-S03); #29/#30 → `SEM-m056-persist-*` (M056-S02); lease-bundle → `SEM-m056-lease-bundle` (M056-S01). Follow-ons: STATE→ROADMAP → `SEM-m057-lease-roadmap` (M057-S01); disk_free → `SEM-m058-disk-free` (M058-S01); budget-template → `SEM-m059-budget-template` (M059-S01); budget-covers → `SEM-m060-budget-covers` (M060-S01).
 
+## 2026-10-15 HEAD review (`5dd5338`) — closed this wave
+
+| Finding / claim | Matrix id | Oracle(s) | Owner |
+|-----------------|-----------|-----------|-------|
+| #1 pin-cite stale justifications sidecar | `SEM-m091-pin-cite-justifications` | `migrate_pin_cite_reopens_after_nonempty_justifications_sidecar` | M091-S01 |
+
 ## Rule
 
 New CE findings that land a fix must add a `killed` matrix row with a real

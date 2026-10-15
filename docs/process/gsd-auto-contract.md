@@ -92,6 +92,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.82 | 159 | M088 | S01 | AGENTS --check not for ci (json|precommit|selftest only) | shipped |
 | v0.83 | 160 | M089 | S01 | --check reject redirect hint (json|precommit|selftest) | shipped |
 | v0.84 | 161 | M090 | S01 | --skip-cargo reject redirect hint (ci only) | shipped |
+| v0.85 | 162 | M091 | S01 | migrate_pin_cite drops stale justifications sidecar (CE #1) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

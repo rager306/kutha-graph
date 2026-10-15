@@ -414,6 +414,14 @@ pub fn migrate_pin_cite(dir: &Path) -> std::io::Result<PinCiteMigrateReport> {
     if snap.exists() {
         fs::remove_file(&snap)?;
     }
+    // CE #1 (2026-10-15): justifications.jsonl is a regenerable lease of log cite
+    // rows. Remapped JustificationCite pins make a pre-migrate sidecar a
+    // well-formed non-prefix; finish_open then fails InvalidData. Drop it so
+    // the next persist rewrites from the log (same class as snapshot.json).
+    let justifications = dir.join(JUSTIFICATIONS_REL);
+    if justifications.exists() {
+        fs::remove_file(&justifications)?;
+    }
     replace_via_tmp(&marker, &dir.join("pin-cite.v1.tmp"), true, |f| {
         f.write_all(PIN_CITE_MARKER_BODY)?;
         Ok(())
