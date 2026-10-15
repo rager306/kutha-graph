@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M091: migrate_pin_cite drops stale justifications sidecar — ACTIVE (GSD v0.85)
+
+CE whole-repo (2026-10-15 HEAD) finding #1: `migrate_pin_cite` remaps JustificationCite pins in the log but removes only `snapshot.json`, leaving a non-empty `justifications.jsonl` lease that fails `sidecar_or_stale_prefix` on reopen. Thin slice: drop the regenerable sidecar (+ RED oracle with non-empty sidecar). Honeycomb stays Proposed.
+
+- [ ] **S01: drop justifications.jsonl in migrate_pin_cite** `risk:medium` `depends:[]`
+  > After this: migrate+open succeeds when pre-migrate persist wrote cite rows; matrix `SEM-m091-pin-cite-justifications` killed. Phase 162.
+
 ## M090: --skip-cargo reject redirect hint — CLOSED (GSD v0.84)
 
 Process debt after M089: CLI rejects `--skip-cargo` outside `ci` (exit 2), but stderr only names the rule — agents still guess the next command. Thin slice: one-line redirect hint; reject oracle. `L_delivery=M090-closed`.
