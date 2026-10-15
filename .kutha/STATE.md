@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M088
+**Active Slice:** S01
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M087 closed (v0.81) | Capability proven / Cypher started |
+| L_delivery | M087 closed; M088-S01 leased (AGENTS --check ≠ ci) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Controller chooses next lease. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+Deliver M088-S01: AGENTS flags must say `--check` is only for json|precommit|selftest (not `ci`). Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

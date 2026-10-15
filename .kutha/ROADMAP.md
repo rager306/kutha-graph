@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M088: AGENTS --check not for ci — ACTIVE (GSD v0.82)
+
+Process debt after M087: CLI rejects `ci --check`, and harness names three surfaces, but AGENTS Flags line groups `ci` with `--check` ("where noted") so agents still try selective checks on full FSM. Thin slice: AGENTS + agent-surface + CLI reject oracle. Honeycomb stays Proposed.
+
+- [ ] **S01: AGENTS says --check excludes ci** `risk:low` `depends:[]`
+  > After this: AGENTS Flags state `--check` only for json|precommit|selftest; `ci --check` still exit 2; matrix `SEM-m088-agents-check-not-ci` killed. Phase 159.
+
 ## M087: harness --check surface discoverability — CLOSED (GSD v0.81)
 
 Process debt after M086: AGENTS and CLI accept `--check` on json/precommit/selftest (repeatable + comma), but `kutha-harness.md` still says only json/precommit. Thin slice: harness prose + dogfood/agent-surface pins. `L_delivery=M087-closed`.
