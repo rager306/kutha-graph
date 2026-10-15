@@ -2154,6 +2154,17 @@ rows:
     gate: default
     owner: M089-S01
     source: Phase 160 / --check reject redirect hint
+  - id: SEM-m090-skip-cargo-reject-hint
+    plane: harness
+    invariant: invalid --skip-cargo stderr prints redirect hint to kutha-gov ci --skip-cargo
+    layer: decision
+    oracle:
+      - agent-surface
+    kill_mutation: remove the hint line so reject stderr only names the rule
+    status: killed
+    gate: default
+    owner: M090-S01
+    source: Phase 161 / --skip-cargo reject redirect hint
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.83 shipped. Honeycomb stays Proposed.
+v0.01–v0.84 shipped. Honeycomb stays Proposed.
 
 ## Id map
 
@@ -10,12 +10,12 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.82** — shipped (through AGENTS --check not for ci)
-- ✅ **v0.83 --check reject redirect hint** — Phase 160 done (product M089)
+- ✅ **v0.01–v0.83** — shipped (through --check reject redirect hint)
+- ✅ **v0.84 --skip-cargo reject redirect hint** — Phase 161 done (product M090)
 
-## Phases (v0.83)
+## Phases (v0.84)
 
-- [x] **Phase 160: --check reject redirect hint** — `160-VERIFICATION.md` passed
+- [x] **Phase 161: --skip-cargo reject redirect hint** — `161-VERIFICATION.md` passed
 
 ## Progress
 

@@ -149,6 +149,23 @@ class MultiCheckSelectTests(unittest.TestCase):
             out,
         )
 
+    def test_non_ci_rejects_skip_cargo_flag(self) -> None:
+        """M090: --skip-cargo stays on ci; stderr redirects to ci --skip-cargo."""
+        err = io.StringIO()
+        with redirect_stderr(err):
+            code = main(
+                [
+                    "--root",
+                    str(ROOT),
+                    "--skip-cargo",
+                    "precommit",
+                ]
+            )
+        self.assertEqual(2, code)
+        out = err.getvalue()
+        self.assertIn("--skip-cargo is only valid with ci", out)
+        self.assertIn("hint: kutha-gov ci --skip-cargo", out)
+
     def test_join_check_flags_merges_append_and_comma(self) -> None:
         from kutha_gov.__main__ import _join_check_flags
 

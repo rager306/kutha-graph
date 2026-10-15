@@ -2214,6 +2214,7 @@ checks:
           - "action=\"append\""
           - "comma-separated"
           - "hint: kutha-gov {json|precommit|selftest} --check ID[,ID…]"
+          - "hint: kutha-gov ci --skip-cargo"
         require: all
         category: oracle
         message: "multi-check --check parser missing: {missing}"

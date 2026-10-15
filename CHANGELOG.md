@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-15 — Trajectory: M090 / GSD v0.84 closed
+
+### Process
+
+- Invalid `--skip-cargo` stderr adds `hint: kutha-gov ci --skip-cargo`.
+- Oracle `test_non_ci_rejects_skip_cargo_flag` asserts the hint; agent-surface pins `__main__.py`; matrix `SEM-m090-skip-cargo-reject-hint` killed.
+- Id map v0.84 / Phase 161.
+
+### Trajectory
+
+- `L_delivery=M090-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed.
+
 ## 2026-10-15 — Trajectory: lease M090-S01 (--skip-cargo reject hint)
 
 ### Trajectory

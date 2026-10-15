@@ -396,6 +396,7 @@ def main(argv: list[str] | None = None) -> int:
     fail_on_warn = args.fail_on_warn or env_flag(ENV_FAIL_ON_WARN)
     if args.skip_cargo and args.command != "ci":
         print("--skip-cargo is only valid with ci", file=sys.stderr)
+        print("hint: kutha-gov ci --skip-cargo", file=sys.stderr)
         return 2
     jobs = 1
     jobs_commands = {"ci", "precommit", "selftest", "json"}

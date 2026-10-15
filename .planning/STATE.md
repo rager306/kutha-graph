@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.83
-milestone_name: --check reject redirect hint
+milestone: v0.84
+milestone_name: --skip-cargo reject redirect hint
 status: complete
-stopped_at: "160-check-reject-hint"
-last_updated: "2026-10-15T15:25:00.000Z"
+stopped_at: "161-skip-cargo-reject-hint"
+last_updated: "2026-10-15T19:20:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.83 --check reject redirect hint (M089) — complete  
-**Phase:** 160 complete  
-**Status:** S01 shipped; M089 / v0.83 closed
+**Milestone:** v0.84 --skip-cargo reject redirect hint (M090) — complete  
+**Phase:** 161 complete  
+**Status:** S01 shipped; M090 / v0.84 closed
