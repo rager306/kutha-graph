@@ -1002,3 +1002,9 @@ fn remove_obsolete_segments(dir: &Path, live: &HashSet<String>) -> std::io::Resu
     }
     Ok(())
 }
+
+/// Delete every `seg-*.log` in `dir`. Used when migrate verify drops the
+/// manifest, so no segment name remains referenced.
+pub(crate) fn discard_segment_files(dir: &Path) -> std::io::Result<()> {
+    remove_obsolete_segments(dir, &HashSet::new())
+}

@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-17 — Trajectory: M102 / GSD v0.96 closed
+
+### Product
+
+- Failed migrate verify deletes every `seg-*.log` after removing `manifest.json`, then `sync_dir`s. Legacy `events.jsonl` and `events.wal` stay the store.
+- Oracle `migrate_verify_fault_leaves_no_segment_files`; matrix `SEM-m102-migrate-verify-segments` killed.
+
+### Trajectory
+
+- `L_delivery=M102-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v0.96 / Phase 173.
+
 ## 2026-10-17 — Trajectory: lease M102-S01 (migrate verify drops segments)
 
 ### Trajectory

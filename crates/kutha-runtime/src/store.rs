@@ -619,10 +619,11 @@ fn migrate_until(
         let man = dir.join(crate::segment::MANIFEST_REL);
         if man.exists() {
             fs::remove_file(&man)?;
-            // CE whole-repo #30: durable unflip — dir entry must not resurrect
-            // the failed segmented manifest after power loss.
-            sync_dir(dir)?;
         }
+        // The manifest was the only reference to this generation. Leaving
+        // seg-*.log beside the legacy jsonl/WAL leaks the failed attempt.
+        crate::segment::discard_segment_files(dir)?;
+        sync_dir(dir)?;
         return Err(e);
     }
     after_migrate_step(stop_after, MigrateStep::Verified)?;

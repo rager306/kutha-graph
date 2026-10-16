@@ -2270,6 +2270,17 @@ rows:
     gate: default
     owner: M101-S01
     source: Phase 172 / CE 2026-10-15 rule-pin VT truncation
+  - id: SEM-m102-migrate-verify-segments
+    plane: product
+    invariant: failed migrate verify removes the seg files it wrote along with the manifest
+    layer: kill
+    oracle:
+      - migrate_verify_fault_leaves_no_segment_files
+    kill_mutation: restore the verify-fail path so it deletes only manifest.json
+    status: killed
+    gate: default
+    owner: M102-S01
+    source: Phase 173 / CE 2026-10-15 orphan segments after migrate verify
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

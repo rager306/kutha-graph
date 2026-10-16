@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M102: migrate verify drops segments — ACTIVE (GSD v0.96)
+## M102: migrate verify drops segments — CLOSED (GSD v0.96)
 
 CE 2026-10-15 residual: failed migrate verify deletes `manifest.json` and leaves the generation-unique `seg-*.log` files beside the legacy store. Honeycomb stays Proposed.
 
-- [ ] **S01: discard segment files on verify failure** `risk:med` `depends:[]`
-  > After this: `migrate_with_verify_fault` leaves no `seg-*.log`; legacy jsonl/WAL still open. Matrix `SEM-m102-migrate-verify-segments` killed. Phase 173.
+- [x] **S01: discard segment files on verify failure** `risk:med` `depends:[]`
+  > After this: `migrate_with_verify_fault` leaves no `seg-*.log`; legacy jsonl/WAL still open. Matrix `SEM-m102-migrate-verify-segments` killed. Phase 173. Landed.
 
 ## M101: Horn pin overlap — CLOSED (GSD v0.95)
 
