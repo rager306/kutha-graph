@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-16 — Trajectory: M097 / GSD v0.91 closed
+
+### Product
+
+- Multi-premise Horn `search_at` uses `facts_overlapping_relation` (VT overlap with trigger/head window) instead of point-gated `live_facts_for_relation` (CE 2026-10-15 #4). Design: overlap-aware over retry-at-candidate-starts.
+- Oracles `late_starting_premise_fires_when_trigger_starts_earlier`, `horn_overlap_discovery_is_order_independent`; matrix `SEM-m097-horn-overlap-aware` killed.
+
+### Trajectory
+
+- `L_delivery=M097-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v0.91 / Phase 168.
+
 ## 2026-10-16 — Trajectory: lease M097-S01 (CE #4 Horn overlap-aware)
 
 ### Trajectory

@@ -151,6 +151,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M096 S01 (bench rss_before at sample):** Phase 167 — `SEM-m096-bench-rss-before-sample` `killed` (owner `M096-S01`). Oracle: `bench_rss_before_is_taken_immediately_before_sample`.
 
+**M097 S01 (Horn overlap-aware discovery):** Phase 168 — `SEM-m097-horn-overlap-aware` `killed` (owner `M097-S01`). Oracles: `late_starting_premise_fires_when_trigger_starts_earlier`, `horn_overlap_discovery_is_order_independent`. Design: overlap-aware (not retry-at-candidate-starts).
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M097
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M096-closed
+L_delivery=M097-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M096 closed; M097-S01 leased (CE #4 Horn overlap-aware) | Capability proven / Cypher started |
+| L_delivery | M097 closed (v0.91) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Deliver M097-S01: overlap-aware multi-premise Horn discovery (candidates whose VT overlaps the trigger window; not point-gated at trigger valid_from). Design: overlap-aware over retry-at-candidate-starts. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+Controller chooses next lease. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. CE 2026-10-15 apply-queue confirmed findings closed; #5 report-only (human matrix-oracle naming).
 
 ## Thaw map
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.90 shipped. Honeycomb stays Proposed.
+v0.01–v0.91 shipped. Honeycomb stays Proposed.
 
 ## Id map
 
@@ -10,12 +10,12 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.89** — shipped (through retract second-phase index)
-- ✅ **v0.90 bench rss_before at sample** — Phase 167 done (harness M096)
+- ✅ **v0.01–v0.90** — shipped (through bench rss_before at sample)
+- ✅ **v0.91 Horn overlap-aware discovery** — Phase 168 done (harness M097)
 
-## Phases (v0.90)
+## Phases (v0.91)
 
-- [x] **Phase 167: bench rss_before at sample** — `167-VERIFICATION.md` passed
+- [x] **Phase 168: Horn overlap-aware discovery** — `168-VERIFICATION.md` passed
 
 ## Progress
 

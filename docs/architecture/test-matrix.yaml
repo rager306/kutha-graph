@@ -2235,6 +2235,18 @@ rows:
     gate: default
     owner: M096-S01
     source: Phase 167 / CE 2026-10-15 #2
+  - id: SEM-m097-horn-overlap-aware
+    plane: product
+    invariant: multi-premise Horn discovery finds VT-overlapping premises, order-independently
+    layer: kill
+    oracle:
+      - late_starting_premise_fires_when_trigger_starts_earlier
+      - horn_overlap_discovery_is_order_independent
+    kill_mutation: restore search_at to live_facts_for_relation point-gated at win_from
+    status: killed
+    gate: default
+    owner: M097-S01
+    source: Phase 168 / CE 2026-10-15 #4
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

@@ -14,7 +14,9 @@ impl GraphFold {
     }
 
     /// Live product facts of `rel` at `(tt, vt)`. Warm path is O(facts of that
-    /// relation), not O(all live product facts).
+    /// relation), not O(all live product facts). Point-cut sibling of
+    /// [`Self::facts_overlapping_relation`] (Horn discovery uses the latter).
+    #[allow(dead_code)] // retained point-cut API; Horn path is overlap-aware (M097)
     pub(crate) fn live_facts_for_relation(
         &self,
         rel: TermId,
@@ -37,6 +39,37 @@ impl GraphFold {
             .filter_map(|&idx| {
                 let fact = &self.facts[idx];
                 (fact.is_live_at(tt, vt) && !self.is_dictionary_rel(fact.relation)).then_some(fact)
+            })
+            .collect()
+    }
+
+    /// TT-live product facts of `rel` whose VT overlaps `[win_from, win_to)`.
+    /// Used by multi-premise Horn discovery so a later-starting premise is not
+    /// missed when the trigger's `valid_from` is earlier (M097 / CE #4).
+    pub(crate) fn facts_overlapping_relation(
+        &self,
+        rel: TermId,
+        tt: impl Into<TransactionTime>,
+        win_from: u64,
+        win_to: Option<u64>,
+    ) -> Vec<&Fact> {
+        let tt = tt.into().as_u64();
+        let overlaps = |f: &Fact| {
+            f.is_known_at(tt)
+                && !self.is_dictionary_rel(f.relation)
+                && f.relation == rel
+                && vt_intersect(f.valid_from, f.valid_to, win_from, win_to).is_some()
+        };
+        if !self.hot_maps_warm {
+            return self.facts.iter().filter(|f| overlaps(f)).collect();
+        }
+        let Some(idxs) = self.facts_by_relation.get(&rel) else {
+            return Vec::new();
+        };
+        idxs.iter()
+            .filter_map(|&idx| {
+                let fact = &self.facts[idx];
+                overlaps(fact).then_some(fact)
             })
             .collect()
     }

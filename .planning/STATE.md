@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.90
-milestone_name: bench rss_before at sample
+milestone: v0.91
+milestone_name: Horn overlap-aware discovery
 status: complete
-stopped_at: "167-bench-rss-before-sample"
-last_updated: "2026-10-16T05:40:00.000Z"
+stopped_at: "168-horn-overlap-aware"
+last_updated: "2026-10-16T10:20:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.90 bench rss_before at sample (M096) — complete  
-**Phase:** 167 complete  
-**Status:** S01 shipped; M096 / v0.90 closed
+**Milestone:** v0.91 Horn overlap-aware discovery (M097) — complete  
+**Phase:** 168 complete  
+**Status:** S01 shipped; M097 / v0.91 closed

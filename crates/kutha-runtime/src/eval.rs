@@ -257,7 +257,7 @@ impl Runtime {
             .is_some_and(|f| f.invalidated_at.is_none())
     }
 
-    /// Horn body still matches at `head.valid_from` with `except` treated as dead.
+    /// Horn body still matches over `head` VT with `except` treated as dead.
     /// Named bodies are skipped (treated as still matching).
     fn horn_body_matches_except(&self, e: &Event, except: &HashSet<EventId>) -> bool {
         let Op::Behavior {
@@ -266,6 +266,7 @@ impl Runtime {
             relation,
             object,
             valid_from,
+            valid_to,
             ..
         } = &e.op
         else {
@@ -299,6 +300,7 @@ impl Runtime {
             premises.len(),
             bind,
             *valid_from,
+            *valid_to,
             u64::MAX,
             except,
         )
@@ -358,9 +360,16 @@ impl Runtime {
                 if !unify_term(&prem.object, object, &self.dict, &mut bind) {
                     continue;
                 }
-                let Some(hit) =
-                    search_prems(self, &premises, i, bind, valid_from, u64::MAX, &no_dead)
-                else {
+                let Some(hit) = search_prems(
+                    self,
+                    &premises,
+                    i,
+                    bind,
+                    valid_from,
+                    valid_to,
+                    u64::MAX,
+                    &no_dead,
+                ) else {
                     continue;
                 };
                 if self.dict.id(&head.relation).is_none() {
@@ -497,7 +506,7 @@ impl Runtime {
             .collect()
     }
 
-    /// Horn-pinned Behavior is reproducible from premises live at `ingested_at`.
+    /// Horn-pinned Behavior is reproducible from premises overlapping head VT.
     /// Named bodies skip. Missing blob or unmatched Horn fails closed (RULE-04).
     pub(crate) fn horn_behavior_reproducible(&self, e: &Event) -> bool {
         let Op::Behavior {
@@ -506,6 +515,7 @@ impl Runtime {
             relation,
             object,
             valid_from,
+            valid_to,
             ..
         } = &e.op
         else {
@@ -539,6 +549,7 @@ impl Runtime {
             premises.len(),
             bind,
             *valid_from,
+            *valid_to,
             e.ingested_at,
             &HashSet::new(),
         )
@@ -602,20 +613,35 @@ fn search_prems(
     premises: &[RuleAtom],
     skip: usize,
     bind: Bind,
-    vt: u64,
+    win_from: u64,
+    win_to: Option<u64>,
     tt: u64,
     except: &HashSet<EventId>,
 ) -> Option<PremMatch> {
-    search_at(rt, premises, 0, skip, bind, vt, tt, Vec::new(), except)
+    search_at(
+        rt,
+        premises,
+        0,
+        skip,
+        bind,
+        win_from,
+        win_to,
+        tt,
+        Vec::new(),
+        except,
+    )
 }
 
+/// Overlap-aware premise walk: candidates are TT-live facts whose VT overlaps the
+/// trigger/head window (M097), not merely live at `win_from` as a point cut.
 fn search_at(
     rt: &Runtime,
     premises: &[RuleAtom],
     idx: usize,
     skip: usize,
     bind: Bind,
-    vt: u64,
+    win_from: u64,
+    win_to: Option<u64>,
     tt: u64,
     windows: Vec<(u64, Option<u64>)>,
     except: &HashSet<EventId>,
@@ -624,11 +650,16 @@ fn search_at(
         return Some(PremMatch { bind, windows });
     }
     if idx == skip {
-        return search_at(rt, premises, idx + 1, skip, bind, vt, tt, windows, except);
+        return search_at(
+            rt, premises, idx + 1, skip, bind, win_from, win_to, tt, windows, except,
+        );
     }
     let prem = &premises[idx];
     let rel = rt.dict.id(&prem.relation)?;
-    for f in rt.fold.live_facts_for_relation(rel, tt, vt) {
+    for f in rt
+        .fold
+        .facts_overlapping_relation(rel, tt, win_from, win_to)
+    {
         rt.fold.horn_examine.bump();
         if except.contains(&f.event_id) {
             continue;
@@ -651,7 +682,8 @@ fn search_at(
             idx + 1,
             skip,
             next,
-            vt,
+            win_from,
+            win_to,
             tt,
             next_windows,
             except,
