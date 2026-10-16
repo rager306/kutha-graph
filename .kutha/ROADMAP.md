@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M093: kutha-migrate CLI contract — ACTIVE (GSD v0.87)
+## M093: kutha-migrate CLI contract — CLOSED (GSD v0.87)
 
-CE whole-repo (2026-10-15 HEAD) finding #9: `--help` exits 2 on stderr; extra positionals silently ignored; missing dir stays exit 2 (CLI must not create). Thin slice: help→stdout exit 0; argc>2 reject; document existing-dir. Honeycomb stays Proposed.
+CE whole-repo (2026-10-15 HEAD) finding #9: `--help` exits 2 on stderr; extra positionals silently ignored; missing dir stays exit 2 (CLI must not create). Thin slice: help→stdout exit 0; argc>2 reject; document existing-dir. `L_delivery=M093-closed`.
 
-- [ ] **S01: --help exit 0 + reject extra args** `risk:low` `depends:[]`
-  > After this: `--help`/`-h` exit 0 on stdout; argc>2 usage+exit 2; matrix `SEM-m093-migrate-cli-contract` killed. Phase 164.
+- [x] **S01: --help exit 0 + reject extra args** `risk:low` `depends:[]`
+  > After this: `--help`/`-h` exit 0 on stdout; argc>2 usage+exit 2; matrix `SEM-m093-migrate-cli-contract` killed. Phase 164. Landed.
 
 ## M092: migrate reports dropped_tail — CLOSED (GSD v0.86)
 

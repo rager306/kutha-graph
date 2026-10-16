@@ -143,6 +143,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M092 S01 (migrate dropped_tail):** Phase 163 — `SEM-m092-migrate-dropped-tail` `killed` (owner `M092-S01`). Oracles: `migrate_op_wire_reports_dropped_jsonl_tail`, `migrate_pin_wire_reports_dropped_jsonl_tail`, `migrate_pin_cite_reports_dropped_jsonl_tail`.
 
+**M093 S01 (kutha-migrate CLI contract):** Phase 164 — `SEM-m093-migrate-cli-contract` `killed` (owner `M093-S01`). Oracles: `kutha_migrate_help_exits_zero_on_stdout`, `kutha_migrate_rejects_extra_positionals`.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

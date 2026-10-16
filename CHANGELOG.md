@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-16 — Trajectory: M093 / GSD v0.87 closed
+
+### Product
+
+- `kutha-migrate --help`/`-h` prints usage on stdout and exits 0; argc>2 rejected with usage+exit 2 (CE 2026-10-15 #9).
+- Usage documents that store-dir must already exist; missing-dir stays exit 2 (CLI does not create).
+- Oracles `kutha_migrate_help_exits_zero_on_stdout`, `kutha_migrate_rejects_extra_positionals`; matrix `SEM-m093-migrate-cli-contract` killed.
+- Quiet bench (`taskset -c 0`, `KUTHA_BENCH_N=10000`): `ingest_plain.n` ≈101.8M ns, `as_of.n` ≈241.2k ns (CLI-only; vs M092 ≈107.2M / ≈300.3k).
+
+### Trajectory
+
+- `L_delivery=M093-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v0.87 / Phase 164.
+
 ## 2026-10-16 — Trajectory: lease M093-S01 (CE #9 kutha-migrate CLI)
 
 ### Trajectory

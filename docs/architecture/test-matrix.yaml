@@ -2189,6 +2189,18 @@ rows:
     gate: default
     owner: M092-S01
     source: Phase 163 / CE 2026-10-15 #13
+  - id: SEM-m093-migrate-cli-contract
+    plane: product
+    invariant: kutha-migrate --help exits 0 on stdout; extra positionals rejected with exit 2
+    layer: decision
+    oracle:
+      - kutha_migrate_help_exits_zero_on_stdout
+      - kutha_migrate_rejects_extra_positionals
+    kill_mutation: restore --help Err(2) on stderr and ignore args beyond index 1
+    status: killed
+    gate: default
+    owner: M093-S01
+    source: Phase 164 / CE 2026-10-15 #9
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

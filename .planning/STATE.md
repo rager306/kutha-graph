@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.86
-milestone_name: migrate dropped_tail
+milestone: v0.87
+milestone_name: kutha-migrate CLI contract
 status: complete
-stopped_at: "163-migrate-dropped-tail"
-last_updated: "2026-10-16T01:15:00.000Z"
+stopped_at: "164-migrate-cli-contract"
+last_updated: "2026-10-16T04:00:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.86 migrate dropped_tail (M092) — complete  
-**Phase:** 163 complete  
-**Status:** S01 shipped; M092 / v0.86 closed
+**Milestone:** v0.87 kutha-migrate CLI contract (M093) — complete  
+**Phase:** 164 complete  
+**Status:** S01 shipped; M093 / v0.87 closed

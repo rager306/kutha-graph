@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M093
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M092-closed
+L_delivery=M093-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M092 closed; M093-S01 leased (CE #9 kutha-migrate CLI) | Capability proven / Cypher started |
+| L_delivery | M093 closed (v0.87) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Deliver M093-S01: `kutha-migrate --help` exits 0 on stdout; extra positionals rejected (exit 2); help states store-dir must exist. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays.
+Controller chooses next lease. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Next CE apply-queue: #6–#8 (dictionary loader), #3/#2 (retract/bench), #4 (Horn overlap, design call).
 
 ## Thaw map
 

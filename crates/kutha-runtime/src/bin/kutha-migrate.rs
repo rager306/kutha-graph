@@ -1,27 +1,38 @@
 //! Operator CLI for directory Op-wire then pin migrate (`store::migrate_compat`).
 //!
 //! Usage: `kutha-migrate <store-dir>` or `KUTHA_MIGRATE_DIR=<store-dir> kutha-migrate`.
-//! Reuses the M076 sequence facade; does not invent remap steps.
+//! `<store-dir>` must already exist (CLI does not create it). Reuses the M076
+//! sequence facade; does not invent remap steps.
 
 use kutha_runtime::store::{self, CompatMigrateReport};
 use std::env;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-fn resolve_dir(args: &[String]) -> Result<PathBuf, i32> {
+const USAGE: &str = "usage: kutha-migrate <store-dir>\n       KUTHA_MIGRATE_DIR=<store-dir> kutha-migrate\nstore-dir must already exist (CLI does not create it)";
+
+enum Resolve {
+    Help,
+    Dir(PathBuf),
+}
+
+fn resolve_dir(args: &[String]) -> Result<Resolve, i32> {
+    // CE #9: reject extra positionals before interpreting the first arg as a path.
+    if args.len() > 2 {
+        eprintln!("{USAGE}");
+        return Err(2);
+    }
     if let Some(arg) = args.get(1) {
         if arg == "-h" || arg == "--help" {
-            eprintln!(
-                "usage: kutha-migrate <store-dir>\n       KUTHA_MIGRATE_DIR=<store-dir> kutha-migrate"
-            );
-            return Err(2);
+            return Ok(Resolve::Help);
         }
-        return Ok(PathBuf::from(arg));
+        return Ok(Resolve::Dir(PathBuf::from(arg)));
     }
     match env::var("KUTHA_MIGRATE_DIR") {
-        Ok(v) if !v.trim().is_empty() => Ok(PathBuf::from(v.trim())),
+        Ok(v) if !v.trim().is_empty() => Ok(Resolve::Dir(PathBuf::from(v.trim()))),
         _ => {
             eprintln!("kutha-migrate: missing store dir (arg or KUTHA_MIGRATE_DIR)");
+            eprintln!("{USAGE}");
             Err(2)
         }
     }
@@ -46,7 +57,11 @@ fn format_report(dir: &Path, report: &CompatMigrateReport) -> String {
 fn main() -> ExitCode {
     let args: Vec<String> = env::args().collect();
     let dir = match resolve_dir(&args) {
-        Ok(p) => p,
+        Ok(Resolve::Help) => {
+            println!("{USAGE}");
+            return ExitCode::SUCCESS;
+        }
+        Ok(Resolve::Dir(p)) => p,
         Err(code) => return ExitCode::from(code as u8),
     };
     if !dir.is_dir() {
