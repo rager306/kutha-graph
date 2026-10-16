@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-16 — Trajectory: lease M096-S01 (CE #2 bench rss_before)
+
+### Trajectory
+
+- Active Milestone **M096**, Active Slice **S01** (`L_delivery=M095-closed`): move baseline `rss_before` to immediately before the dedicated sample so `bytes_per_fact` is sample-live only. Honeycomb stays Proposed.
+
 ## 2026-10-16 — Trajectory: M095 / GSD v0.89 closed
 
 ### Product

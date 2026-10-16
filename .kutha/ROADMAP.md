@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M096: bench rss_before at sample — ACTIVE (GSD v0.90)
+
+CE whole-repo (2026-10-15 HEAD) finding #2: `rss_before` is taken before all 6 factor runtimes while `rss_after` / denominator use only the dedicated sample (n), inflating `bytes_per_fact` ~15x. Thin slice: move `rss_before` to immediately before sample alloc + oracle. Honeycomb stays Proposed.
+
+- [ ] **S01: rss_before after factor loops** `risk:low` `depends:[]`
+  > After this: `bytes_per_fact` delta brackets only the dedicated sample; matrix `SEM-m096-bench-rss-before-sample` killed. Phase 167.
+
 ## M095: retract second-phase indexed scan — CLOSED (GSD v0.89)
 
 CE whole-repo (2026-10-15 HEAD) finding #3: after the indexed direct-children phase, every retract/correct still clones and walks the full `live_behaviors` vector with `horn_body_matches_except` per entry (O(N*D)). Thin slice: index the second phase by premise/body so only candidate behaviors are re-checked + examine-count oracle. `L_delivery=M095-closed`.
