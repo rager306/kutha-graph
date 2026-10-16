@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M093: kutha-migrate CLI contract — ACTIVE (GSD v0.87)
+
+CE whole-repo (2026-10-15 HEAD) finding #9: `--help` exits 2 on stderr; extra positionals silently ignored; missing dir stays exit 2 (CLI must not create). Thin slice: help→stdout exit 0; argc>2 reject; document existing-dir. Honeycomb stays Proposed.
+
+- [ ] **S01: --help exit 0 + reject extra args** `risk:low` `depends:[]`
+  > After this: `--help`/`-h` exit 0 on stdout; argc>2 usage+exit 2; matrix `SEM-m093-migrate-cli-contract` killed. Phase 164.
+
 ## M092: migrate reports dropped_tail — CLOSED (GSD v0.86)
 
 CE whole-repo (2026-10-15 HEAD) finding #13: `migrate_op_wire` / `migrate_pin_wire` / `migrate_pin_cite` drop torn jsonl/WAL/segment tails with no count, unlike `migrate().dropped_uncommitted`. Thin slice: surface `dropped_tail` on the three reports (+ oracle). `L_delivery=M092-closed`.

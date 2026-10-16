@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-16 — Trajectory: lease M093-S01 (CE #9 kutha-migrate CLI)
+
+### Trajectory
+
+- Active Milestone **M093**, Active Slice **S01** (`L_delivery=M092-closed`): `kutha-migrate --help` must exit 0; extra args rejected. Honeycomb stays Proposed.
+
 ## 2026-10-16 — Trajectory: M092 / GSD v0.86 closed
 
 ### Product
