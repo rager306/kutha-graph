@@ -1983,7 +1983,7 @@ checks:
       - kind: file_contains
         path: scripts/kutha_gov/dictionary.py
         needles:
-          - "nameless.append"
+          - "load_errors.append(f\"dictionary check row {index} missing id\")"
           - "Keep valid checks"
         require: all
         category: oracle
@@ -2000,7 +2000,7 @@ checks:
       mutations:
         - op: replace_regex
           path: scripts/kutha_gov/dictionary.py
-          pattern: "nameless.append\\(f\"dictionary check row \\{index\\} missing id\"\\)"
+          pattern: "load_errors.append\\(f\"dictionary check row \\{index\\} missing id\"\\)"
           with: "return {LoadErrorCheck.name: LoadErrorCheck(\"dictionary check row missing id\")}"
 
   - id: fsm-quantum-honest-name
@@ -2172,6 +2172,31 @@ checks:
           - horn_correct_interval_derived_not_live_after_patch
         category: i-f-oracle
         message: "I-F16 horn_correct oracles missing {missing}"
+
+  - id: dict-load-fail-closed
+    description: >-
+      checks.yaml loader fail-closes on scalar rows, duplicate ids, and
+      empty/scalar steps (CE 2026-10-15 #6–#8 / M094).
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/dictionary.py
+        needles:
+          - "is not a mapping"
+          - "duplicate check id"
+          - "non-empty steps list"
+          - "no mapping steps"
+        require: all
+        category: oracle
+        message: "dictionary loader fail-closed needles missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_selftest.py
+        needles:
+          - "def test_scalar_check_row_is_load_error"
+          - "def test_duplicate_check_id_is_load_error"
+          - "def test_stepless_check_is_load_error"
+        require: all
+        category: oracle
+        message: "dictionary load-error oracles missing: {missing}"
 
   - id: agent-surface
     description: >-

@@ -85,18 +85,33 @@ def get_checks(root: Path | None = None) -> dict[str, Check]:
     if not isinstance(rows, list):
         return {LoadErrorCheck.name: LoadErrorCheck("dictionary.checks must be a list")}
     found: dict[str, Check] = {}
-    nameless: list[str] = []
+    # Keep valid checks; fail closed via LoadError alongside them (CE #20 / #6–#8).
+    load_errors: list[str] = []
     for index, row in enumerate(rows):
         if not isinstance(row, dict):
+            load_errors.append(f"dictionary check row {index} is not a mapping")
             continue
         check = DictCheck(row)
         if not check.name:
-            # Keep valid checks; fail closed via LoadError alongside them (CE #20).
-            nameless.append(f"dictionary check row {index} missing id")
+            load_errors.append(f"dictionary check row {index} missing id")
+            continue
+        if check.name in found:
+            load_errors.append(f"duplicate check id {check.name!r} (kept first)")
+            continue
+        raw_steps = row.get("steps", [])
+        if not isinstance(raw_steps, list) or not raw_steps:
+            load_errors.append(
+                f"dictionary check {check.name!r} needs a non-empty steps list"
+            )
+            continue
+        if not check.steps:
+            load_errors.append(
+                f"dictionary check {check.name!r} has no mapping steps"
+            )
             continue
         found[check.name] = check
-    if nameless:
-        found[LoadErrorCheck.name] = LoadErrorCheck("; ".join(nameless))
+    if load_errors:
+        found[LoadErrorCheck.name] = LoadErrorCheck("; ".join(load_errors))
     if not found:
         return {LoadErrorCheck.name: LoadErrorCheck("dictionary.checks is empty")}
     return found

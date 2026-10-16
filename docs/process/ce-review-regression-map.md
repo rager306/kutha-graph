@@ -46,6 +46,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | #1 pin-cite stale justifications sidecar | `SEM-m091-pin-cite-justifications` | `migrate_pin_cite_reopens_after_nonempty_justifications_sidecar` | M091-S01 |
 | #13 migrate torn tails uncounted | `SEM-m092-migrate-dropped-tail` | `migrate_*_reports_dropped_jsonl_tail` | M092-S01 |
 | #9 kutha-migrate CLI contract | `SEM-m093-migrate-cli-contract` | `kutha_migrate_help_exits_zero_on_stdout`, `kutha_migrate_rejects_extra_positionals` | M093-S01 |
+| #6–#8 dictionary silent-pass | `SEM-m094-dict-load-fail-closed` | `dict-load-fail-closed` + selftest load-error oracles | M094-S01 |
 
 ## Rule
 

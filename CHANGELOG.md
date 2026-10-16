@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-16 — Trajectory: M094 / GSD v0.88 closed
+
+### Process
+
+- `get_checks` fail-closes on non-mapping rows, duplicate ids (keep-first), and empty/scalar steps via LoadError alongside survivors (CE 2026-10-15 #6–#8).
+- Oracles `test_scalar_check_row_is_load_error`, `test_duplicate_check_id_is_load_error`, `test_stepless_check_is_load_error`; check `dict-load-fail-closed`; matrix `SEM-m094-dict-load-fail-closed` killed.
+- FSM / `.env.example` budget 84→85.
+
+### Trajectory
+
+- `L_delivery=M094-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v0.88 / Phase 165.
+
 ## 2026-10-16 — Trajectory: lease M094-S01 (CE #6–#8 dictionary loader)
 
 ### Trajectory

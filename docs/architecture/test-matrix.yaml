@@ -2201,6 +2201,17 @@ rows:
     gate: default
     owner: M093-S01
     source: Phase 164 / CE 2026-10-15 #9
+  - id: SEM-m094-dict-load-fail-closed
+    plane: harness
+    invariant: checks.yaml loader fail-closes on scalar rows, duplicate ids, and empty/scalar steps
+    layer: governor
+    oracle:
+      - dict-load-fail-closed
+    kill_mutation: restore silent continue on non-mapping rows, last-wins duplicate ids, and vacuous empty steps
+    status: killed
+    gate: default
+    owner: M094-S01
+    source: Phase 165 / CE 2026-10-15 #6 #7 #8
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

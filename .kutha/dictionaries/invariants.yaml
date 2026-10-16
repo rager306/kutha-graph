@@ -339,6 +339,12 @@ invariants:
     disposition: check
     check: nameless-dict-retain
 
+  - id: I-dict-load-fail-closed
+    claim: "checks.yaml loader fail-closes on non-mapping rows, duplicate ids (keep-first), and empty/scalar steps via LoadError alongside survivors"
+    source: ".planning/phases/165-dict-load-fail-closed/165-CONTEXT.md"
+    disposition: check
+    check: dict-load-fail-closed
+
   - id: I-glob-absent-comment-policy
     claim: "glob_absent skips # and // comment lines for needles whether or not unless_line_contains is set"
     source: ".planning/phases/105-glob-absent-comment-policy/105-CONTEXT.md"

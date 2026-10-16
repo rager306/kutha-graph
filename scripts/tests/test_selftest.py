@@ -503,6 +503,129 @@ class SelftestTests(unittest.TestCase):
             msg=result.findings,
         )
 
+    def test_scalar_check_row_is_load_error(self) -> None:
+        """M094 / CE #7: non-mapping checks.yaml rows must not be silent-skipped."""
+        root = _write_mini(
+            [
+                {
+                    "id": "ok-check",
+                    "description": "valid",
+                    "steps": [{"kind": "file_exists", "path": "README.md"}],
+                },
+            ],
+            {"README.md": "x\n"},
+        )
+        path = root / ".kutha" / "dictionaries" / "checks.yaml"
+        path.write_text(
+            "schema: kutha-harness-checks/v1\n"
+            "checks:\n"
+            "  - id: ok-check\n"
+            "    description: valid\n"
+            "    steps:\n"
+            "      - kind: file_exists\n"
+            "        path: README.md\n"
+            "  - just-a-string\n",
+            encoding="utf-8",
+        )
+        from kutha_gov.dictionary import LoadErrorCheck
+        from kutha_gov.protocol import Context
+
+        checks = get_checks(root)
+        self.assertEqual({"ok-check", LoadErrorCheck.name}, set(checks))
+        result = checks[LoadErrorCheck.name].run(Context(root=root))
+        self.assertGreaterEqual(result.high_count, 1)
+        self.assertTrue(
+            any("not a mapping" in f.message for f in result.findings),
+            msg=result.findings,
+        )
+
+    def test_duplicate_check_id_is_load_error(self) -> None:
+        """M094 / CE #8: duplicate check ids keep-first and LoadError."""
+        root = _write_mini(
+            [
+                {
+                    "id": "docs-entry",
+                    "description": "first",
+                    "steps": [{"kind": "file_exists", "path": "README.md"}],
+                },
+                {
+                    "id": "docs-entry",
+                    "description": "weaker second",
+                    "steps": [{"kind": "file_exists", "path": "MISSING.md"}],
+                },
+            ],
+            {"README.md": "x\n"},
+        )
+        from kutha_gov.dictionary import LoadErrorCheck
+        from kutha_gov.protocol import Context
+
+        checks = get_checks(root)
+        self.assertEqual({"docs-entry", LoadErrorCheck.name}, set(checks))
+        first = checks["docs-entry"]
+        self.assertEqual("first", first.description)
+        result = checks[LoadErrorCheck.name].run(Context(root=root))
+        self.assertGreaterEqual(result.high_count, 1)
+        self.assertTrue(
+            any("duplicate" in f.message and "docs-entry" in f.message for f in result.findings),
+            msg=result.findings,
+        )
+
+    def test_stepless_check_is_load_error(self) -> None:
+        """M094 / CE #6: missing/scalar/empty steps must not vacuous-OK."""
+        from kutha_gov.dictionary import LoadErrorCheck
+        from kutha_gov.protocol import Context
+
+        cases = [
+            (
+                "missing-steps",
+                {
+                    "id": "vacuous",
+                    "description": "no steps key",
+                },
+                "non-empty steps",
+            ),
+            (
+                "scalar-steps",
+                {
+                    "id": "vacuous",
+                    "description": "scalar steps",
+                    "steps": "not-a-list",
+                },
+                "non-empty steps",
+            ),
+            (
+                "scalar-step-items",
+                {
+                    "id": "vacuous",
+                    "description": "scalar items",
+                    "steps": ["just-a-string"],
+                },
+                "mapping steps",
+            ),
+        ]
+        for label, row, needle in cases:
+            with self.subTest(label=label):
+                root = _write_mini(
+                    [
+                        {
+                            "id": "ok-check",
+                            "description": "valid",
+                            "steps": [{"kind": "file_exists", "path": "README.md"}],
+                        },
+                        row,
+                    ],
+                    {"README.md": "x\n"},
+                )
+                checks = get_checks(root)
+                self.assertEqual({"ok-check", LoadErrorCheck.name}, set(checks))
+                self.assertNotIn("vacuous", checks)
+                result = checks[LoadErrorCheck.name].run(Context(root=root))
+                self.assertGreaterEqual(result.high_count, 1)
+                self.assertTrue(
+                    any(needle in f.message for f in result.findings),
+                    msg=result.findings,
+                )
+
     def test_missing_cite_path_is_high(self) -> None:
         from kutha_gov.protocol import Context
 
