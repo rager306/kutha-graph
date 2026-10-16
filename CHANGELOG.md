@@ -4,7 +4,14 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-16 — Trajectory: lease M100-S01 (Correct unindexes Behavior)
+
+### Trajectory
+
+- Active Milestone **M100**, Active Slice **S01** (`L_delivery=M099-closed`): Correct and CorrectInterval must drop a Behavior from the retract indexes. Honeycomb stays Proposed.
+
 ## 2026-10-16 — Trajectory: M099 / GSD v0.93 closed
+
 
 ### Process
 
