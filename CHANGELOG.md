@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-16 — Trajectory: lease M097-S01 (CE #4 Horn overlap-aware)
+
+### Trajectory
+
+- Active Milestone **M097**, Active Slice **S01** (`L_delivery=M096-closed`): multi-premise Horn discovery must be overlap-aware (not point-gated at trigger valid_from). Design: overlap-aware over retry-at-candidate-starts. Honeycomb stays Proposed.
+
 ## 2026-10-16 — Trajectory: M096 / GSD v0.90 closed
 
 ### Product

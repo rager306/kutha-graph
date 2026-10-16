@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M097: Horn overlap-aware premise discovery — ACTIVE (GSD v0.91)
+
+CE whole-repo (2026-10-15 HEAD) finding #4: multi-premise Horn discovery is point-gated on trigger `valid_from`, so a later-starting overlapping premise is missed order-dependently. Design call: **overlap-aware** (VT-overlap candidates + existing conjunct_vt) over retry-at-candidate-starts. Thin slice + order-independence oracle. Honeycomb stays Proposed.
+
+- [ ] **S01: overlap-aware search_at** `risk:med` `depends:[]`
+  > After this: AB[2015,2020)+BC[2010,∞) either insert order yields AC[2015,2020); matrix `SEM-m097-horn-overlap-aware` killed. Phase 168.
+
 ## M096: bench rss_before at sample — CLOSED (GSD v0.90)
 
 CE whole-repo (2026-10-15 HEAD) finding #2: `rss_before` is taken before all 6 factor runtimes while `rss_after` / denominator use only the dedicated sample (n), inflating `bytes_per_fact` ~15x. Thin slice: move `rss_before` to immediately before sample alloc + oracle. `L_delivery=M096-closed`.
