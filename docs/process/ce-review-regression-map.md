@@ -47,6 +47,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | #13 migrate torn tails uncounted | `SEM-m092-migrate-dropped-tail` | `migrate_*_reports_dropped_jsonl_tail` | M092-S01 |
 | #9 kutha-migrate CLI contract | `SEM-m093-migrate-cli-contract` | `kutha_migrate_help_exits_zero_on_stdout`, `kutha_migrate_rejects_extra_positionals` | M093-S01 |
 | #6–#8 dictionary silent-pass | `SEM-m094-dict-load-fail-closed` | `dict-load-fail-closed` + selftest load-error oracles | M094-S01 |
+| #3 retract second-phase full live scan | `SEM-m095-retract-second-phase-index` | `retract_second_phase_examines_constant_in_unrelated_live_d`, `retract_non_trigger_still_drops_after_premise_rel_index` | M095-S01 |
 
 ## Rule
 

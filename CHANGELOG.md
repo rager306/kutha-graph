@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-16 — Trajectory: M095 / GSD v0.89 closed
+
+### Product
+
+- `retract_derived` second phase walks `behaviors_by_premise_rel` for the retracted fact's relation instead of every live Behavior (CE 2026-10-15 #3).
+- Oracles `retract_second_phase_examines_constant_in_unrelated_live_d`, `retract_non_trigger_still_drops_after_premise_rel_index`; matrix `SEM-m095-retract-second-phase-index` killed.
+
+### Trajectory
+
+- `L_delivery=M095-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v0.89 / Phase 166.
+
 ## 2026-10-16 — Trajectory: lease M095-S01 (CE #3 retract second-phase scan)
 
 ### Trajectory

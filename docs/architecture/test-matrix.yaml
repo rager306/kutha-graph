@@ -2212,6 +2212,18 @@ rows:
     gate: default
     owner: M094-S01
     source: Phase 165 / CE 2026-10-15 #6 #7 #8
+  - id: SEM-m095-retract-second-phase-index
+    plane: product
+    invariant: retract_derived second phase examines premise-relation candidates, not all live_behaviors
+    layer: kill
+    oracle:
+      - retract_second_phase_examines_constant_in_unrelated_live_d
+      - retract_non_trigger_still_drops_after_premise_rel_index
+    kill_mutation: restore second-phase for id in self.live_behaviors.clone() walk
+    status: killed
+    gate: default
+    owner: M095-S01
+    source: Phase 166 / CE 2026-10-15 #3
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

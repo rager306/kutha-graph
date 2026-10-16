@@ -23,6 +23,7 @@ impl Runtime {
         self.by_delivery_key.clear();
         self.derived_by_cause.clear();
         self.live_behaviors.clear();
+        self.behaviors_by_premise_rel.clear();
         let n = self.log.len();
         self.by_event_id.reserve(n);
         self.by_delivery_key.reserve(n);
@@ -45,10 +46,40 @@ impl Runtime {
                     .push(e.id);
             }
         }
+        let mut live_pins: Vec<(EventId, String)> = Vec::new();
         for e in self.log.as_slice() {
-            if matches!(e.op, Op::Behavior { .. }) && self.behavior_fact_live(e.id) {
-                self.live_behaviors.push(e.id);
+            if let Op::Behavior { rule_version, .. } = &e.op {
+                if self.behavior_fact_live(e.id) {
+                    self.live_behaviors.push(e.id);
+                    live_pins.push((e.id, rule_version.clone()));
+                }
             }
+        }
+        for (id, pin) in live_pins {
+            self.index_behavior_premise_rels(id, &pin);
+        }
+    }
+
+    fn index_behavior_premise_rels(&mut self, behavior_id: EventId, rule_version: &str) {
+        let Some(bytes) = self.fold.blobs.get(rule_version) else {
+            return;
+        };
+        let Some(RuleAst::Horn { premises, .. }) = RuleAst::from_canonical(bytes) else {
+            return;
+        };
+        let mut seen: Vec<kutha_common::TermId> = Vec::new();
+        for p in &premises {
+            let Some(rel) = self.dict.id(&p.relation) else {
+                continue;
+            };
+            if seen.iter().any(|r| *r == rel) {
+                continue;
+            }
+            seen.push(rel);
+            self.behaviors_by_premise_rel
+                .entry(rel)
+                .or_default()
+                .push(behavior_id);
         }
     }
 
@@ -58,6 +89,11 @@ impl Runtime {
             kids.retain(|x| *x != id);
         }
         self.derived_by_cause.retain(|_, kids| !kids.is_empty());
+        for kids in self.behaviors_by_premise_rel.values_mut() {
+            kids.retain(|x| *x != id);
+        }
+        self.behaviors_by_premise_rel
+            .retain(|_, kids| !kids.is_empty());
     }
 
     pub(crate) fn append_indexed(&mut self, event: Event) {
@@ -75,12 +111,17 @@ impl Runtime {
             }
         }
         match &event.op {
-            Op::Behavior { caused_by, .. } => {
+            Op::Behavior {
+                caused_by,
+                rule_version,
+                ..
+            } => {
                 self.derived_by_cause
                     .entry(*caused_by)
                     .or_default()
                     .push(event.id);
                 self.live_behaviors.push(event.id);
+                self.index_behavior_premise_rels(event.id, rule_version);
             }
             Op::Retract { event_id } => {
                 let rid = *event_id;

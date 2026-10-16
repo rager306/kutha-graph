@@ -107,6 +107,7 @@ impl Runtime {
             retract_examine: IngestExamine::default(),
             derived_by_cause: IngestMap::default(),
             live_behaviors: Vec::new(),
+            behaviors_by_premise_rel: IngestMap::default(),
         };
         rt.hydrate_from_log();
         rt
@@ -152,6 +153,7 @@ impl Runtime {
             retract_examine: IngestExamine::default(),
             derived_by_cause: IngestMap::default(),
             live_behaviors: Vec::new(),
+            behaviors_by_premise_rel: IngestMap::default(),
         };
         rt.hydrate_from_log();
         Ok(rt)
@@ -182,6 +184,7 @@ impl Runtime {
             retract_examine: IngestExamine::default(),
             derived_by_cause: IngestMap::default(),
             live_behaviors: Vec::new(),
+            behaviors_by_premise_rel: IngestMap::default(),
         };
         rt.hydrate_from_log();
         rt

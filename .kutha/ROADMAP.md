@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M095: retract second-phase indexed scan — ACTIVE (GSD v0.89)
+## M095: retract second-phase indexed scan — CLOSED (GSD v0.89)
 
-CE whole-repo (2026-10-15 HEAD) finding #3: after the indexed direct-children phase, every retract/correct still clones and walks the full `live_behaviors` vector with `horn_body_matches_except` per entry (O(N*D)). Thin slice: index the second phase by premise/body so only candidate behaviors are re-checked + examine-count oracle. Honeycomb stays Proposed.
+CE whole-repo (2026-10-15 HEAD) finding #3: after the indexed direct-children phase, every retract/correct still clones and walks the full `live_behaviors` vector with `horn_body_matches_except` per entry (O(N*D)). Thin slice: index the second phase by premise/body so only candidate behaviors are re-checked + examine-count oracle. `L_delivery=M095-closed`.
 
-- [ ] **S01: index second-phase retract scan** `risk:med` `depends:[]`
-  > After this: second-phase retract/correct examines only behaviors that could mention the dead premise; matrix `SEM-m095-retract-second-phase-index` killed. Phase 166.
+- [x] **S01: index second-phase retract scan** `risk:med` `depends:[]`
+  > After this: second-phase retract/correct examines only behaviors that could mention the dead premise; matrix `SEM-m095-retract-second-phase-index` killed. Phase 166. Landed.
 
 ## M094: dictionary loader fail-closed — CLOSED (GSD v0.88)
 

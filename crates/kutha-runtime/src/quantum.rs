@@ -307,6 +307,10 @@ pub struct Runtime {
     pub(crate) derived_by_cause: IngestMap<EventId, Vec<EventId>>,
     /// Currently live Horn Behavior event ids (droppable; rebuilt from the log).
     pub(crate) live_behaviors: Vec<EventId>,
+    /// Live Behavior ids keyed by Horn body premise relation (droppable; rebuilt
+    /// from the log). Second-phase retract/correct walks this index instead of
+    /// every live Behavior (M095 / CE #3).
+    pub(crate) behaviors_by_premise_rel: IngestMap<TermId, Vec<EventId>>,
 }
 
 impl Default for Runtime {
@@ -335,6 +339,7 @@ impl Runtime {
             retract_examine: IngestExamine::default(),
             derived_by_cause: IngestMap::default(),
             live_behaviors: Vec::new(),
+            behaviors_by_premise_rel: IngestMap::default(),
         };
         for name in KUTHA_RESERVED_RELS {
             rt.intern_silent(name);

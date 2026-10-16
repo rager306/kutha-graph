@@ -201,9 +201,21 @@ impl Runtime {
         // longer matches after treating P as dead (non-trigger witness).
         // Skip P itself: the trigger Retract already names that id; a second
         // DET-02-stable copy would leave drop-tamper stamps unchanged.
+        // Candidates are Behaviors whose Horn body mentions P's relation
+        // (behaviors_by_premise_rel), not the full live_behaviors vector (M095).
         let except = HashSet::from([premise]);
-        let live: Vec<EventId> = self.live_behaviors.clone();
-        for id in live {
+        let candidates: Vec<EventId> = match self.log_event(premise).and_then(|e| match &e.op {
+            Op::Assert { relation, .. } | Op::Behavior { relation, .. } => Some(*relation),
+            _ => None,
+        }) {
+            Some(rel) => self
+                .behaviors_by_premise_rel
+                .get(&rel)
+                .cloned()
+                .unwrap_or_default(),
+            None => Vec::new(),
+        };
+        for id in candidates {
             self.retract_examine.bump();
             let Some((event_id, is_behavior)) = self
                 .log_event(id)

@@ -96,6 +96,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.86 | 163 | M092 | S01 | migrate reports dropped_tail for torn sources (CE #13) | shipped |
 | v0.87 | 164 | M093 | S01 | kutha-migrate CLI --help exit 0 + reject extra args (CE #9) | shipped |
 | v0.88 | 165 | M094 | S01 | dictionary loader fail-closed scalar/dup/stepless (CE #6–#8) | shipped |
+| v0.89 | 166 | M095 | S01 | retract second-phase premise-relation index (CE #3) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
