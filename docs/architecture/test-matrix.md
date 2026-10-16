@@ -155,6 +155,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M100 S01 (Correct unindexes Behavior):** Phase 171 — `SEM-m100-correct-unindex-behavior` `killed` (owner `M100-S01`). Oracles: `correct_of_behavior_drops_retract_index`, `correct_interval_of_behavior_drops_retract_index`.
 
+**M101 S01 (Horn pin overlap):** Phase 172 — `SEM-m101-horn-pin-overlap` `killed` (owner `M101-S01`). Oracle: `late_starting_rule_pin_fires_on_overlap`.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

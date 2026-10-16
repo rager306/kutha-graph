@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-17 — Trajectory: M101 / GSD v0.95 closed
+
+### Product
+
+- `live_horns` keeps a transaction-time-live rule pin when its valid-time overlaps the trigger window, then the existing conjunction clips the head.
+- Oracle `late_starting_rule_pin_fires_on_overlap`; matrix `SEM-m101-horn-pin-overlap` killed.
+
+### Trajectory
+
+- `L_delivery=M101-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v0.95 / Phase 172.
+
 ## 2026-10-17 — Trajectory: lease M101-S01 (Horn pin overlap)
 
 ### Trajectory

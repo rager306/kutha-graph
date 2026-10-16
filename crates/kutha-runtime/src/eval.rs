@@ -26,6 +26,11 @@ pub(crate) fn inverse_knows_rule() -> RuleAst {
 
 type Bind = [Option<TermId>; MAX_VAR];
 
+fn pin_window_overlaps(f: &crate::fold::Fact, win_from: u64, win_to: Option<u64>) -> bool {
+    f.is_known_at(u64::MAX)
+        && vt_intersect(f.valid_from, f.valid_to, win_from, win_to).is_some()
+}
+
 impl Runtime {
     pub(crate) fn rule_follow_ons(&self, event: &Event) -> Result<Vec<Event>, RuntimeError> {
         match &event.op {
@@ -342,7 +347,7 @@ impl Runtime {
     ) -> Result<Vec<Event>, RuntimeError> {
         let mut out = Vec::new();
         let no_dead = HashSet::new();
-        for horn in self.live_horns(valid_from, relation) {
+        for horn in self.live_horns(valid_from, valid_to, relation) {
             let RuleAst::Horn { head, premises } = horn.ast else {
                 continue;
             };
@@ -397,7 +402,15 @@ impl Runtime {
         Ok(out)
     }
 
-    fn live_horns(&self, vt: u64, relation: TermId) -> Vec<LiveHorn> {
+    /// Horn pins whose valid-time overlaps `[win_from, win_to)` and that are
+    /// still known at the transaction tip. A pin that starts after the trigger
+    /// is kept; `horn_fires_except` conjuncts the pin window with the premises.
+    fn live_horns(
+        &self,
+        win_from: u64,
+        win_to: Option<u64>,
+        relation: TermId,
+    ) -> Vec<LiveHorn> {
         if self.fold.rel_rule.is_none() {
             return vec![];
         }
@@ -409,7 +422,7 @@ impl Runtime {
             for slot in slots {
                 self.fold.horn_examine.bump();
                 let f = &self.fold.facts()[slot.fact_idx];
-                if !f.is_live_at(u64::MAX, vt) {
+                if !pin_window_overlaps(f, win_from, win_to) {
                     continue;
                 }
                 out.push(LiveHorn {
@@ -424,17 +437,17 @@ impl Runtime {
         if self.fold.horn_lease_ready {
             return vec![];
         }
-        self.live_horns_scan(vt)
+        self.live_horns_scan(win_from, win_to)
     }
 
-    fn live_horns_scan(&self, vt: u64) -> Vec<LiveHorn> {
+    fn live_horns_scan(&self, win_from: u64, win_to: Option<u64>) -> Vec<LiveHorn> {
         let Some(rel) = self.fold.rel_rule else {
             return vec![];
         };
         let mut out = Vec::new();
         for f in self.fold.facts() {
             self.fold.horn_examine.bump();
-            if f.relation != rel || !f.is_live_at(u64::MAX, vt) {
+            if f.relation != rel || !pin_window_overlaps(f, win_from, win_to) {
                 continue;
             }
             let Some(pin) = f.delivery_key.as_deref() else {

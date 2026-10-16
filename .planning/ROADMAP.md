@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.94 shipped. Honeycomb stays Proposed.
+v0.01–v0.95 shipped. Honeycomb stays Proposed.
 
 ## Id map
 
@@ -10,12 +10,12 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.93** — shipped (through CE 2026-10-15 regression enrolment)
-- ✅ **v0.94 Correct unindexes Behavior** — Phase 171 done (product M100)
+- ✅ **v0.01–v0.94** — shipped (through Correct unindexing Behavior)
+- ✅ **v0.95 Horn pin overlap** — Phase 172 done (product M101)
 
-## Phases (v0.94)
+## Phases (v0.95)
 
-- [x] **Phase 171: Correct unindexes Behavior** — `171-VERIFICATION.md` passed
+- [x] **Phase 172: Horn pin overlap** — `172-VERIFICATION.md` passed
 
 ## Progress
 

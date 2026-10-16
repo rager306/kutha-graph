@@ -2259,6 +2259,17 @@ rows:
     gate: default
     owner: M100-S01
     source: Phase 171 / CE 2026-10-15 Correct-of-Behavior index leak
+  - id: SEM-m101-horn-pin-overlap
+    plane: product
+    invariant: a rule pin whose valid-time overlaps the trigger window still fires
+    layer: kill
+    oracle:
+      - late_starting_rule_pin_fires_on_overlap
+    kill_mutation: restore live_horns to is_live_at(u64::MAX, trigger valid_from)
+    status: killed
+    gate: default
+    owner: M101-S01
+    source: Phase 172 / CE 2026-10-15 rule-pin VT truncation
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

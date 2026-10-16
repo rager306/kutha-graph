@@ -36,6 +36,7 @@ COVERAGE: dict[str, tuple[str, ...]] = {
         "correct_of_behavior_drops_retract_index",
         "correct_interval_of_behavior_drops_retract_index",
     ),
+    "rule-pin": ("late_starting_rule_pin_fires_on_overlap",),
 }
 
 
