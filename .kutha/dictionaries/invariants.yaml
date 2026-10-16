@@ -345,6 +345,12 @@ invariants:
     disposition: check
     check: dict-load-fail-closed
 
+  - id: I-kinds-family-split
+    claim: "kinds.py keeps run_step/RUNNERS and imports policy families from sibling modules; SEM-m054-id-kinds-split names that check"
+    source: ".planning/phases/169-kinds-family-split/169-CONTEXT.md"
+    disposition: check
+    check: kinds-family-split
+
   - id: I-glob-absent-comment-policy
     claim: "glob_absent skips # and // comment lines for needles whether or not unless_line_contains is set"
     source: ".planning/phases/105-glob-absent-comment-policy/105-CONTEXT.md"

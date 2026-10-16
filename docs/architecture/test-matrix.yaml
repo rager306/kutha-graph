@@ -1766,8 +1766,8 @@ rows:
     invariant: kinds.py keeps run_step/RUNNERS; policy families live in sibling modules
     layer: governor
     oracle:
-      - test-matrix
-    kill_mutation: restore planning/cargo/matrix families inline in kinds.py (pytest test_m054_id_structure)
+      - kinds-family-split
+    kill_mutation: restore planning/cargo/matrix families inline in kinds.py (drop kind_* imports)
     status: killed
     gate: default
     owner: M054-S05

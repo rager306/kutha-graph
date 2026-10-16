@@ -4,7 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-16 — Trajectory: M098 / GSD v0.92 closed
+
+### Process
+
+- Check `kinds-family-split` observes `kinds.py` sibling imports plus `test_m054_id_structure.py` (CE 2026-10-15 #5).
+- `SEM-m054-id-kinds-split` oracle is `kinds-family-split` (was the `test-matrix` meta-check). FSM / `.env.example` budget 85→86.
+
+### Trajectory
+
+- `L_delivery=M098-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v0.92 / Phase 169.
+
 ## 2026-10-16 — Trajectory: lease M098-S01 (CE #5 kinds-split oracle)
+
 
 ### Trajectory
 

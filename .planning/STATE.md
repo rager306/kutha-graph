@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.91
-milestone_name: Horn overlap-aware discovery
+milestone: v0.92
+milestone_name: kinds-split matrix oracle
 status: complete
-stopped_at: "168-horn-overlap-aware"
-last_updated: "2026-10-16T10:20:00.000Z"
+stopped_at: "169-kinds-family-split"
+last_updated: "2026-10-16T12:00:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.91 Horn overlap-aware discovery (M097) — complete  
-**Phase:** 168 complete  
-**Status:** S01 shipped; M097 / v0.91 closed
+**Milestone:** v0.92 kinds-split matrix oracle (M098) — complete  
+**Phase:** 169 complete  
+**Status:** S01 shipped; M098 / v0.92 closed

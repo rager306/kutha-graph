@@ -169,7 +169,7 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M054 S04 (Scaling + bench):** Phase 120 — `SEM-m054-scale-bench-rss` / `bench-asof` / `retract-index` / `horn-rel` / `append-suffix` / `pin-index` `killed` (owner `M054-S04`).
 
-**M054 S05 (ID + structure):** Phase 121 — `SEM-m054-id-uuid-v8` / `id-shrink-sha` / `id-sem-split` / `id-kinds-split` `killed` (owner `M054-S05`).
+**M054 S05 (ID + structure):** Phase 121 — `SEM-m054-id-uuid-v8` / `id-shrink-sha` / `id-sem-split` / `id-kinds-split` `killed` (owner `M054-S05`). `id-kinds-split` oracle is `kinds-family-split` (M098 / CE #5).
 
 **M055 S01 (append tip rollback):** Phase 122 — `SEM-gap-persist-poison` (#6) `killed` (owner `M055-S01`). Oracles: `segmented_wal_sync_failpoint_retry_keeps_exact_event_id_sequence`, `segmented_wal_write_failpoint_retry_keeps_exact_event_id_sequence`.
 

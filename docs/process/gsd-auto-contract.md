@@ -99,6 +99,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.89 | 166 | M095 | S01 | retract second-phase premise-relation index (CE #3) | shipped |
 | v0.90 | 167 | M096 | S01 | bench rss_before immediately before sample (CE #2) | shipped |
 | v0.91 | 168 | M097 | S01 | Horn overlap-aware premise discovery (CE #4) | shipped |
+| v0.92 | 169 | M098 | S01 | kinds-split matrix oracle names kinds-family-split (CE #5) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

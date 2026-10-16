@@ -50,6 +50,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | #3 retract second-phase full live scan | `SEM-m095-retract-second-phase-index` | `retract_second_phase_examines_constant_in_unrelated_live_d`, `retract_non_trigger_still_drops_after_premise_rel_index` | M095-S01 |
 | #2 bench rss_before before factor loops | `SEM-m096-bench-rss-before-sample` | `bench_rss_before_is_taken_immediately_before_sample` | M096-S01 |
 | #4 Horn point-gated multi-premise miss | `SEM-m097-horn-overlap-aware` | `late_starting_premise_fires_when_trigger_starts_earlier`, `horn_overlap_discovery_is_order_independent` | M097-S01 |
+| #5 kinds-split oracle was test-matrix | `SEM-m054-id-kinds-split` | `kinds-family-split` | M098-S01 |
 
 ## Rule
 

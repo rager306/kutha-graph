@@ -2198,6 +2198,37 @@ checks:
         category: oracle
         message: "dictionary load-error oracles missing: {missing}"
 
+  - id: kinds-family-split
+    description: >-
+      kinds.py keeps run_step/RUNNERS; policy families stay in sibling modules
+      (CE 2026-10-15 #5 / M098). Matrix SEM-m054-id-kinds-split names this check.
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/kinds.py
+        needles:
+          - "from kutha_gov.kind_planning import"
+          - "from kutha_gov.kind_cargo import"
+          - "from kutha_gov.kind_matrix import"
+          - "def run_step("
+          - "RUNNERS: dict[str, Runner]"
+        require: all
+        category: oracle
+        message: "kinds.py family split needles missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_m054_id_structure.py
+        needles:
+          - "def test_run_step_and_runners_stay_in_kinds_py"
+          - "def test_policy_families_live_in_sibling_modules"
+        require: all
+        category: oracle
+        message: "kinds family-split pytest missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/kinds.py
+          pattern: "RUNNERS: dict\\[str, Runner\\]"
+          with: "RUNNERS_INLINE: dict[str, Runner]"
+
   - id: agent-surface
     description: >-
       Agent-facing docs name the canonical CBM project and live kutha-gov flags
