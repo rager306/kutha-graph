@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M098: kinds-split matrix oracle — ACTIVE (GSD v0.92)
+
+CE whole-repo (2026-10-15 HEAD) finding #5 (report-only): `SEM-m054-id-kinds-split` names oracle `test-matrix`, which does not observe kinds.py family placement. Decision: enroll a dictionary `file_contains` check (parallel-check-error-parity pattern) and point the matrix row at it. Honeycomb stays Proposed.
+
+- [ ] **S01: kinds-family-split check** `risk:low` `depends:[]`
+  > After this: matrix oracle is `kinds-family-split`; re-inlining families fails that check. Phase 169.
+
 ## M097: Horn overlap-aware premise discovery — CLOSED (GSD v0.91)
 
 CE whole-repo (2026-10-15 HEAD) finding #4: multi-premise Horn discovery is point-gated on trigger `valid_from`, so a later-starting overlapping premise is missed order-dependently. Design call: **overlap-aware** (VT-overlap candidates + existing conjunct_vt) over retry-at-candidate-starts. Thin slice + order-independence oracle. `L_delivery=M097-closed`.
