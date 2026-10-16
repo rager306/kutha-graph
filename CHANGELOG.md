@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-16 — Trajectory: M100 / GSD v0.94 closed
+
+### Product
+
+- Correct and CorrectInterval of a Behavior call `unindex_behavior`, same as Retract, so a dead head leaves `live_behaviors`, `derived_by_cause`, and `behaviors_by_premise_rel`.
+- Oracles `correct_of_behavior_drops_retract_index`, `correct_interval_of_behavior_drops_retract_index`; matrix `SEM-m100-correct-unindex-behavior` killed.
+
+### Trajectory
+
+- `L_delivery=M100-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v0.94 / Phase 171.
+
 ## 2026-10-16 — Trajectory: lease M100-S01 (Correct unindexes Behavior)
 
 ### Trajectory

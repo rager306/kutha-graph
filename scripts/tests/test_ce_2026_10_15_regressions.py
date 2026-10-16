@@ -32,6 +32,10 @@ COVERAGE: dict[str, tuple[str, ...]] = {
         "horn_overlap_discovery_is_order_independent",
     ),
     "#5": ("kinds-family-split",),
+    "Correct/CorrectInterval": (
+        "correct_of_behavior_drops_retract_index",
+        "correct_interval_of_behavior_drops_retract_index",
+    ),
 }
 
 

@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M100: Correct unindexes Behavior — ACTIVE (GSD v0.94)
+## M100: Correct unindexes Behavior — CLOSED (GSD v0.94)
 
 CE 2026-10-15 residual: `append_indexed` drops a Behavior on Retract only. Correct and CorrectInterval invalidate the Behavior fact but leave it in `live_behaviors`, `derived_by_cause`, and `behaviors_by_premise_rel`, so later retract scans still examine the dead head. Honeycomb stays Proposed.
 
-- [ ] **S01: unindex Behavior on Correct** `risk:med` `depends:[]`
-  > After this: Correct/CorrectInterval of a Behavior removes it from the three leases; matrix `SEM-m100-correct-unindex-behavior` killed. Phase 171.
+- [x] **S01: unindex Behavior on Correct** `risk:med` `depends:[]`
+  > After this: Correct/CorrectInterval of a Behavior removes it from the three leases; matrix `SEM-m100-correct-unindex-behavior` killed. Phase 171. Landed.
 
 ## M099: CE 2026-10-15 regression enrolment — CLOSED (GSD v0.93)
 

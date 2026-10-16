@@ -2247,6 +2247,18 @@ rows:
     gate: default
     owner: M097-S01
     source: Phase 168 / CE 2026-10-15 #4
+  - id: SEM-m100-correct-unindex-behavior
+    plane: product
+    invariant: Correct and CorrectInterval of a Behavior drop it from the retract indexes
+    layer: kill
+    oracle:
+      - correct_of_behavior_drops_retract_index
+      - correct_interval_of_behavior_drops_retract_index
+    kill_mutation: restore append_indexed so only Op::Retract calls unindex_behavior
+    status: killed
+    gate: default
+    owner: M100-S01
+    source: Phase 171 / CE 2026-10-15 Correct-of-Behavior index leak
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

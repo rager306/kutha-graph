@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.93
-milestone_name: CE 2026-10-15 regression enrolment
+milestone: v0.94
+milestone_name: Correct unindexes Behavior
 status: complete
-stopped_at: "170-ce-2026-10-15-regressions"
-last_updated: "2026-10-16T16:30:00.000Z"
+stopped_at: "171-correct-unindex-behavior"
+last_updated: "2026-10-16T17:00:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.93 CE 2026-10-15 regression enrolment (M099) — complete  
-**Phase:** 170 complete  
-**Status:** S01 shipped; M099 / v0.93 closed
+**Milestone:** v0.94 Correct unindexes Behavior (M100) — complete
+**Phase:** 171 complete
+**Status:** S01 shipped; M100 / v0.94 closed

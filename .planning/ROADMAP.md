@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.93 shipped. Honeycomb stays Proposed.
+v0.01–v0.94 shipped. Honeycomb stays Proposed.
 
 ## Id map
 
@@ -10,12 +10,12 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.92** — shipped (through kinds-split matrix oracle)
-- ✅ **v0.93 CE 2026-10-15 regression enrolment** — Phase 170 done (harness M099)
+- ✅ **v0.01–v0.93** — shipped (through CE 2026-10-15 regression enrolment)
+- ✅ **v0.94 Correct unindexes Behavior** — Phase 171 done (product M100)
 
-## Phases (v0.93)
+## Phases (v0.94)
 
-- [x] **Phase 170: CE 2026-10-15 regression enrolment** — `170-VERIFICATION.md` passed
+- [x] **Phase 171: Correct unindexes Behavior** — `171-VERIFICATION.md` passed
 
 ## Progress
 

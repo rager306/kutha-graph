@@ -123,7 +123,9 @@ impl Runtime {
                 self.live_behaviors.push(event.id);
                 self.index_behavior_premise_rels(event.id, rule_version);
             }
-            Op::Retract { event_id } => {
+            Op::Retract { event_id }
+            | Op::Correct { event_id, .. }
+            | Op::CorrectInterval { event_id, .. } => {
                 let rid = *event_id;
                 self.unindex_behavior(rid);
             }
