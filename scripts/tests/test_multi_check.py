@@ -50,6 +50,10 @@ class MultiCheckSelectTests(unittest.TestCase):
         out = buf.getvalue()
         self.assertIn("docs-entry", out)
         self.assertIn("version-freeze", out)
+        self.assertEqual(
+            ["docs-entry", "version-freeze"],
+            [ln.split()[1] for ln in out.splitlines() if ln.startswith("OK")],
+        )
 
     def test_precommit_empty_token_is_contract_error(self) -> None:
         err = io.StringIO()
@@ -57,6 +61,14 @@ class MultiCheckSelectTests(unittest.TestCase):
             code = main(
                 ["--root", str(ROOT), "--check", "docs-entry,", "precommit"]
             )
+        self.assertEqual(2, code)
+        self.assertIn("empty check id", err.getvalue())
+
+    def test_precommit_empty_check_flag_is_contract_error(self) -> None:
+        """CE 2026-10-15 testing gap: --check '' must not run the full suite."""
+        err = io.StringIO()
+        with redirect_stderr(err):
+            code = main(["--root", str(ROOT), "--check", "", "precommit"])
         self.assertEqual(2, code)
         self.assertIn("empty check id", err.getvalue())
 
@@ -77,8 +89,10 @@ class MultiCheckSelectTests(unittest.TestCase):
             )
         self.assertEqual(0, code)
         out = buf.getvalue()
-        self.assertIn("docs-entry", out)
-        self.assertIn("version-freeze", out)
+        self.assertEqual(
+            ["docs-entry", "version-freeze"],
+            [ln.split()[1] for ln in out.splitlines() if ln.startswith("OK")],
+        )
 
     def test_json_repeated_check_flags_runs_both(self) -> None:
         """M085: json shares --check append with precommit via _join_check_flags."""
@@ -100,8 +114,7 @@ class MultiCheckSelectTests(unittest.TestCase):
         self.assertEqual(0, code)
         payload = json_mod.loads(buf.getvalue())
         names = {row["check"] for row in payload["checks"]}
-        self.assertIn("docs-entry", names)
-        self.assertIn("version-freeze", names)
+        self.assertEqual({"docs-entry", "version-freeze"}, names)
 
     def test_selftest_repeated_check_flags_runs_both(self) -> None:
         """M086: selftest shares --check append with precommit/json via _join_check_flags."""
@@ -124,6 +137,10 @@ class MultiCheckSelectTests(unittest.TestCase):
         self.assertIn("version-freeze", out)
         self.assertRegex(out, r"(?m)^OK docs-entry ")
         self.assertRegex(out, r"(?m)^OK version-freeze ")
+        self.assertEqual(
+            ["docs-entry", "version-freeze"],
+            [ln.split()[1] for ln in out.splitlines() if ln.startswith("OK")],
+        )
 
     def test_ci_rejects_check_flag(self) -> None:
         """M088/M089: selective --check stays off ci; stderr redirects to check surfaces."""

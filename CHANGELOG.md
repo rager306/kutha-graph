@@ -4,7 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-16 — Trajectory: M099 / GSD v0.93 closed
+
+### Process
+
+- `test_ce_2026_10_15_regressions` fails if a 2026-10-15 mapped finding loses its oracle in the regression map or in code.
+- `--check ""` fail-closes (exit 2) instead of running the full suite.
+- `yaml_map_list` reports HIGH on non-mapping rows; multi-check oracles require an exact check set; `migrate_compat` source order is op-wire then pins.
+
+### Trajectory
+
+- `L_delivery=M099-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v0.93 / Phase 170.
+
 ## 2026-10-16 — Trajectory: lease M099-S01 (CE 2026-10-15 regression enrolment)
+
 
 ### Trajectory
 

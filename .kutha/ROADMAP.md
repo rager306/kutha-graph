@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M099: CE 2026-10-15 regression enrolment — ACTIVE (GSD v0.93)
+## M099: CE 2026-10-15 regression enrolment — CLOSED (GSD v0.93)
 
-Whole-review lock: every 2026-10-15 finding stays tied to a living oracle, plus the testing gaps the report still listed (empty `--check`, yaml_map_list scalar rows, multi-check exclusivity, migrate_compat call order). Honeycomb stays Proposed.
+Whole-review lock: every 2026-10-15 finding stays tied to a living oracle, plus the testing gaps the report still listed (empty `--check`, yaml_map_list scalar rows, multi-check exclusivity, migrate_compat call order). `L_delivery=M099-closed`.
 
-- [ ] **S01: regression map + gap oracles** `risk:low` `depends:[]`
-  > After this: dropping a mapped oracle or restoring those four gap shapes fails a named test. Phase 170.
+- [x] **S01: regression map + gap oracles** `risk:low` `depends:[]`
+  > After this: dropping a mapped oracle or restoring those four gap shapes fails a named test. Phase 170. Landed.
 
 ## M098: kinds-split matrix oracle — CLOSED (GSD v0.92)
 

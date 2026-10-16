@@ -44,13 +44,23 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | Finding / claim | Matrix id | Oracle(s) | Owner |
 |-----------------|-----------|-----------|-------|
 | #1 pin-cite stale justifications sidecar | `SEM-m091-pin-cite-justifications` | `migrate_pin_cite_reopens_after_nonempty_justifications_sidecar` | M091-S01 |
-| #13 migrate torn tails uncounted | `SEM-m092-migrate-dropped-tail` | `migrate_*_reports_dropped_jsonl_tail` | M092-S01 |
+| #13 migrate torn tails uncounted | `SEM-m092-migrate-dropped-tail` | `migrate_op_wire_reports_dropped_jsonl_tail`, `migrate_pin_wire_reports_dropped_jsonl_tail`, `migrate_pin_cite_reports_dropped_jsonl_tail` | M092-S01 |
 | #9 kutha-migrate CLI contract | `SEM-m093-migrate-cli-contract` | `kutha_migrate_help_exits_zero_on_stdout`, `kutha_migrate_rejects_extra_positionals` | M093-S01 |
 | #6–#8 dictionary silent-pass | `SEM-m094-dict-load-fail-closed` | `dict-load-fail-closed` + selftest load-error oracles | M094-S01 |
 | #3 retract second-phase full live scan | `SEM-m095-retract-second-phase-index` | `retract_second_phase_examines_constant_in_unrelated_live_d`, `retract_non_trigger_still_drops_after_premise_rel_index` | M095-S01 |
 | #2 bench rss_before before factor loops | `SEM-m096-bench-rss-before-sample` | `bench_rss_before_is_taken_immediately_before_sample` | M096-S01 |
 | #4 Horn point-gated multi-premise miss | `SEM-m097-horn-overlap-aware` | `late_starting_premise_fires_when_trigger_starts_earlier`, `horn_overlap_discovery_is_order_independent` | M097-S01 |
 | #5 kinds-split oracle was test-matrix | `SEM-m054-id-kinds-split` | `kinds-family-split` | M098-S01 |
+
+Testing gaps from the same report, closed in M099 (not new product findings):
+
+| Gap | Oracle |
+|-----|--------|
+| `--check ""` runs the full suite | `test_precommit_empty_check_flag_is_contract_error` |
+| `yaml_map_list` drops scalar rows | `test_yaml_map_list_rejects_scalar_rows` |
+| multi-check asserts inclusion only | exact check-set in `test_multi_check.py` |
+| `migrate_compat` order unpinned | `test_migrate_compat_calls_op_wire_before_pins` |
+| mapped finding loses its oracle | `test_mapped_findings_name_living_oracles` |
 
 ## Rule
 

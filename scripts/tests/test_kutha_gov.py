@@ -356,6 +356,34 @@ class HarnessTests(unittest.TestCase):
         self.assertTrue(highs)
         self.assertEqual("yaml-map-vocab", highs[0].category)
 
+    def test_yaml_map_list_rejects_scalar_rows(self) -> None:
+        """CE 2026-10-15 residual: scalar rows must not be dropped before oracles run."""
+        rel = "tmp/m099-yaml-scalar.yaml"
+        path = ROOT / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            "rows:\n  - id: kept\n  - just-a-string\n",
+            encoding="utf-8",
+        )
+        try:
+            result = CheckResult(check="probe")
+            run_step(
+                "probe",
+                {
+                    "kind": "yaml_map_list",
+                    "path": rel,
+                    "select": "rows",
+                    "require_fields": ["id"],
+                },
+                self.ctx,
+                result,
+            )
+            highs = [f for f in result.findings if f.severity is Severity.HIGH]
+            self.assertTrue(highs)
+            self.assertIn("non-mapping", highs[0].message)
+        finally:
+            path.unlink(missing_ok=True)
+
     def test_yaml_map_list_requires_check_ids_in_other_file(self) -> None:
         result = CheckResult(check="probe")
         run_step(

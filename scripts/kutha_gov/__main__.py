@@ -52,7 +52,7 @@ def _parse_check_ids(spec: str) -> tuple[list[str], int]:
 def _select_checks(root: Path, check_id: str | None) -> tuple[dict, int]:
     """All checks, or a comma-separated subset looked up in the dictionary (M077)."""
     checks = get_checks(root)
-    if not check_id:
+    if check_id is None:
         return checks, 0
     ids, err = _parse_check_ids(check_id)
     if err:

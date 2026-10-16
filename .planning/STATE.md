@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.92
-milestone_name: kinds-split matrix oracle
+milestone: v0.93
+milestone_name: CE 2026-10-15 regression enrolment
 status: complete
-stopped_at: "169-kinds-family-split"
-last_updated: "2026-10-16T12:00:00.000Z"
+stopped_at: "170-ce-2026-10-15-regressions"
+last_updated: "2026-10-16T16:30:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.92 kinds-split matrix oracle (M098) — complete  
-**Phase:** 169 complete  
-**Status:** S01 shipped; M098 / v0.92 closed
+**Milestone:** v0.93 CE 2026-10-15 regression enrolment (M099) — complete  
+**Phase:** 170 complete  
+**Status:** S01 shipped; M099 / v0.93 closed

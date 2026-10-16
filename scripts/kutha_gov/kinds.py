@@ -788,6 +788,19 @@ def _kind_yaml_map_list(check: str, step: Step, ctx: Context, result: CheckResul
             )
         )
         return
+    non_maps = [index for index, row in enumerate(rows) if not isinstance(row, dict)]
+    if non_maps:
+        result.findings.append(
+            Finding(
+                check,
+                Severity.HIGH,
+                "yaml-select",
+                f"{path} select {select!r} contains non-mapping rows at index "
+                f"{', '.join(str(i) for i in non_maps)}",
+                path,
+            )
+        )
+        return
     maps = [row for row in rows if isinstance(row, dict)]
     when = _as_str_map(step.get("when"))
     if when:
