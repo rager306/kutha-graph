@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-17 — Trajectory: lease M102-S01 (migrate verify drops segments)
+
+### Trajectory
+
+- Active Milestone **M102**, Active Slice **S01** (`L_delivery=M101-closed`): a failed migrate verify must not leave `seg-*.log` beside the legacy store. Honeycomb stays Proposed.
+
 ## 2026-10-17 — Trajectory: M101 / GSD v0.95 closed
 
 ### Product
