@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-16 — Trajectory: lease M094-S01 (CE #6–#8 dictionary loader)
+
+### Trajectory
+
+- Active Milestone **M094**, Active Slice **S01** (`L_delivery=M093-closed`): checks.yaml loader must fail-closed on scalar rows, duplicate ids, and stepless checks. Honeycomb stays Proposed.
+
 ## 2026-10-16 — Trajectory: M093 / GSD v0.87 closed
 
 ### Product

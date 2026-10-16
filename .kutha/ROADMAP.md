@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M094: dictionary loader fail-closed — ACTIVE (GSD v0.88)
+
+CE whole-repo (2026-10-15 HEAD) findings #6–#8: checks.yaml loader silently skips scalar rows, overwrites duplicate ids, and runs stepless/scalar-steps checks as vacuous OK. Thin slice: LoadError alongside survivors (CE #20 pattern) + oracles. Honeycomb stays Proposed.
+
+- [ ] **S01: scalar/dup/stepless load errors** `risk:low` `depends:[]`
+  > After this: non-mapping rows, duplicate ids, and empty/non-list/scalar-only steps yield LoadErrorCheck HIGH; matrix `SEM-m094-dict-load-fail-closed` killed. Phase 165.
+
 ## M093: kutha-migrate CLI contract — CLOSED (GSD v0.87)
 
 CE whole-repo (2026-10-15 HEAD) finding #9: `--help` exits 2 on stderr; extra positionals silently ignored; missing dir stays exit 2 (CLI must not create). Thin slice: help→stdout exit 0; argc>2 reject; document existing-dir. `L_delivery=M093-closed`.
