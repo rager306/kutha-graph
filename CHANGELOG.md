@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-16 — Trajectory: M096 / GSD v0.90 closed
+
+### Product
+
+- Baseline `bytes_per_fact` captures `rss_before` immediately before the dedicated sample (after factor loops), so the delta matches sample live only (CE 2026-10-15 #2).
+- Oracle `bench_rss_before_is_taken_immediately_before_sample`; matrix `SEM-m096-bench-rss-before-sample` killed.
+
+### Trajectory
+
+- `L_delivery=M096-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v0.90 / Phase 167.
+
 ## 2026-10-16 — Trajectory: lease M096-S01 (CE #2 bench rss_before)
 
 ### Trajectory

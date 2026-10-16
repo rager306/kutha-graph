@@ -140,8 +140,6 @@ fn main() {
         "1",
     );
 
-    let rss_before = vm_rss_bytes();
-
     for &factor in &[1u64, 2, 4] {
         let planned = n.saturating_mul(factor);
         let suffix = size_suffix(factor);
@@ -324,12 +322,16 @@ fn main() {
     }
 
     // Dedicated sample must stay alive across the after-RSS read (#15).
+    // Capture rss_before here (not before the factor loops) so bytes_per_fact
+    // brackets only this sample's live facts (#2 / M096).
+    let rss_before = vm_rss_bytes();
     let mut sample = Runtime::with_index_mode(32, index_mode);
     let _ = fill_plain(&mut sample, n, false);
     let live = sample.fold().live_count(u64::MAX, 2010) as u64;
     let rss_after = vm_rss_bytes();
     match (rss_before, rss_after) {
         (Some(before), Some(after)) if after >= before => {
+            // Denominator is sample live_count only (same n as fill_plain above).
             let delta = after - before;
             let bpf = if live > 0 { delta / live.max(1) } else { 0 };
             put(&mut metrics, "bytes_per_fact", bpf, "B");

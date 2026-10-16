@@ -65,6 +65,32 @@ fn bench_rss_samples_after_dedicated_runtime_is_built() {
     );
 }
 
+/// #2 (2026-10-15) — rss_before must bracket only the dedicated sample, not the factor loops.
+#[test]
+fn bench_rss_before_is_taken_immediately_before_sample() {
+    let sample_pos = BASELINE
+        .find("let mut sample")
+        .expect("dedicated N-sized sample runtime");
+    let before_sample = &BASELINE[..sample_pos];
+    let rss_before_pos = before_sample
+        .rfind("let rss_before = vm_rss_bytes()")
+        .expect("rss_before must be captured before the dedicated sample");
+    let between = &before_sample[rss_before_pos..];
+    assert!(
+        !between.contains("for &factor"),
+        "rss_before must not precede the factor loops (#2): delta would include ~15n high-water"
+    );
+    assert!(
+        !between.contains("fill_plain") && !between.contains("fill_keyed"),
+        "rss_before must sit after all factor-loop runtimes (#2)"
+    );
+    let early = &BASELINE[..rss_before_pos];
+    assert!(
+        early.contains("for &factor"),
+        "factor loops must still run before rss_before (#2)"
+    );
+}
+
 /// #25 — timed as_of triples must be bound and checked against an expected set.
 #[test]
 fn bench_validates_timed_as_of_triples() {

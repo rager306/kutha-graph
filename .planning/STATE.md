@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.89
-milestone_name: retract second-phase index
+milestone: v0.90
+milestone_name: bench rss_before at sample
 status: complete
-stopped_at: "166-retract-second-phase-index"
-last_updated: "2026-10-16T05:10:00.000Z"
+stopped_at: "167-bench-rss-before-sample"
+last_updated: "2026-10-16T05:40:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v0.89 retract second-phase index (M095) — complete  
-**Phase:** 166 complete  
-**Status:** S01 shipped; M095 / v0.89 closed
+**Milestone:** v0.90 bench rss_before at sample (M096) — complete  
+**Phase:** 167 complete  
+**Status:** S01 shipped; M096 / v0.90 closed

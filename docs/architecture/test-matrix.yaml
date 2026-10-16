@@ -383,7 +383,7 @@ rows:
     source: audit-code-tests §2 HIGH
   - id: DUR-bytes-per-fact
     plane: product
-    invariant: characterization — bytes_per_fact is whole-bench VmRSS delta / live fact count (baseline.rs ~143-314); ingest-live unchanged; persist peak lowered by streaming; residual rise not shown as an engine lower bound
+    invariant: characterization — bytes_per_fact is dedicated-sample VmRSS delta / sample live count (rss_before immediately before sample; M096); ingest-live unchanged; persist peak lowered by streaming; residual rise not shown as an engine lower bound
     layer: characterization
     oracle:
       - write_segment_file_streams_frames
@@ -2224,6 +2224,17 @@ rows:
     gate: default
     owner: M095-S01
     source: Phase 166 / CE 2026-10-15 #3
+  - id: SEM-m096-bench-rss-before-sample
+    plane: product
+    invariant: bytes_per_fact rss_before is captured after factor loops, immediately before the dedicated sample
+    layer: bench
+    oracle:
+      - bench_rss_before_is_taken_immediately_before_sample
+    kill_mutation: restore let rss_before = vm_rss_bytes() before the for &factor loops
+    status: killed
+    gate: default
+    owner: M096-S01
+    source: Phase 167 / CE 2026-10-15 #2
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step
