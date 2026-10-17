@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-17 — Trajectory: M103 / GSD v0.97 closed
+
+### Product
+
+- `TermDictionary::from_strings` keeps the earliest index for a repeated name. Later slots in the string table stay in place.
+- Oracle `from_strings_keeps_first_id_for_duplicate_name`; matrix `SEM-m103-define-keep-first` killed.
+
+### Trajectory
+
+- `L_delivery=M103-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v0.97 / Phase 174.
+
 ## 2026-10-17 — Trajectory: lease M103-S01 (duplicate Define keeps first id)
 
 ### Trajectory

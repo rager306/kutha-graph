@@ -2281,6 +2281,17 @@ rows:
     gate: default
     owner: M102-S01
     source: Phase 173 / CE 2026-10-15 orphan segments after migrate verify
+  - id: SEM-m103-define-keep-first
+    plane: product
+    invariant: TermDictionary::from_strings maps a repeated name to the earliest index
+    layer: kill
+    oracle:
+      - from_strings_keeps_first_id_for_duplicate_name
+    kill_mutation: restore from_strings to HashMap insert so the last duplicate wins
+    status: killed
+    gate: default
+    owner: M103-S01
+    source: Phase 174 / CE 2026-10-15 duplicate Define TermId skew
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

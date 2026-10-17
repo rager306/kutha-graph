@@ -54,6 +54,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | Correct/CorrectInterval of Behavior leaves retract indexes | `SEM-m100-correct-unindex-behavior` | `correct_of_behavior_drops_retract_index`, `correct_interval_of_behavior_drops_retract_index` | M100-S01 |
 | rule-pin VT truncation (pin starts after the trigger) | `SEM-m101-horn-pin-overlap` | `late_starting_rule_pin_fires_on_overlap` | M101-S01 |
 | seg-files left after migrate verify failure | `SEM-m102-migrate-verify-segments` | `migrate_verify_fault_leaves_no_segment_files` | M102-S01 |
+| keep-first duplicate Define TermId | `SEM-m103-define-keep-first` | `from_strings_keeps_first_id_for_duplicate_name` | M103-S01 |
 
 Testing gaps from the same report, closed in M099 (not new product findings):
 

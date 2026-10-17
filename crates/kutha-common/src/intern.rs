@@ -39,10 +39,12 @@ impl TermDictionary {
         &self.to_str
     }
 
+    /// Rebuild the map from a snapshot string table. A repeated name keeps the
+    /// earliest index so later duplicate Defines do not steal the TermId.
     pub fn from_strings(to_str: Vec<String>) -> Self {
         let mut to_id = HashMap::new();
         for (i, s) in to_str.iter().enumerate() {
-            to_id.insert(s.clone(), i as TermId);
+            to_id.entry(s.clone()).or_insert(i as TermId);
         }
         Self { to_id, to_str }
     }
@@ -61,5 +63,18 @@ mod tests {
         assert_eq!(a, a2);
         assert_ne!(a, r);
         assert_eq!(d.lookup(a), Some("Alice"));
+    }
+
+    #[test]
+    fn from_strings_keeps_first_id_for_duplicate_name() {
+        let d = TermDictionary::from_strings(vec![
+            "Alice".to_string(),
+            "Bob".to_string(),
+            "Alice".to_string(),
+        ]);
+        assert_eq!(d.id("Alice"), Some(0));
+        assert_eq!(d.id("Bob"), Some(1));
+        assert_eq!(d.lookup(0), Some("Alice"));
+        assert_eq!(d.lookup(2), Some("Alice"));
     }
 }
