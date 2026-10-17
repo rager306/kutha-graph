@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-17 — Trajectory: lease M103-S01 (duplicate Define keeps first id)
+
+### Trajectory
+
+- Active Milestone **M103**, Active Slice **S01** (`L_delivery=M102-closed`): a repeated dictionary name must keep the first TermId. Honeycomb stays Proposed.
+
 ## 2026-10-17 — Trajectory: M102 / GSD v0.96 closed
 
 ### Product

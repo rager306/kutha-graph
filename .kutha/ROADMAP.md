@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M103: duplicate Define keeps first id — ACTIVE (GSD v0.97)
+
+CE 2026-10-15 residual: `TermDictionary::from_strings` last-wins on a repeated name, so a later duplicate Define steals the id. Honeycomb stays Proposed.
+
+- [ ] **S01: keep-first intern map** `risk:low` `depends:[]`
+  > After this: a repeated name resolves to the earliest index; matrix `SEM-m103-define-keep-first` killed. Phase 174.
+
 ## M102: migrate verify drops segments — CLOSED (GSD v0.96)
 
 CE 2026-10-15 residual: failed migrate verify deletes `manifest.json` and leaves the generation-unique `seg-*.log` files beside the legacy store. Honeycomb stays Proposed.
