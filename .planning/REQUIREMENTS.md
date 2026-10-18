@@ -1,5 +1,21 @@
 # Requirements: Kutha
 
+**Milestone:** v0.99 residual correctness (working tree, not harness-closed).
+
+## v0.99
+
+- [x] **AUD-01**: `live_policy_pin_at` walks `policy_by_ingest` newest-first and stops at the first live row
+- [x] **AUD-02**: `unindex_behavior` drops one premise-rel bucket per indexed relation (`premise_rels_of_behavior`)
+- [x] **AUD-03**: Op-wire rewrite omits a modern `Define` whose name is already interned
+- [x] **AUD-04**: Horn fire collects every premise combination, not the first DFS hit
+- [x] **AUD-05**: Behavior replay requires the premise conjunction to cover the head VT
+- [x] **AUD-06**: derivation eligibility of a Behavior also requires `horn_behavior_reproducible`
+- [x] **AUD-07**: `finish_open` installs the fold returned by `replay_check`
+- [x] **AUD-09**: Correct / CorrectInterval re-fire walks every live residual
+- [ ] **AUD-08**: Lazy fold index still scans until `ensure_hot_maps` (kept; thin-write contract)
+
+## Prior
+
 **Milestones:** v0.48 / M054 and v0.49 / M055 shipped 2026-10-11. Source: `ce-review-regression-map.md` + whole-repo findings. Lease: `.kutha/STATE.md`.
 
 ## v0.49 Requirements (M055)

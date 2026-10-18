@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M105: audit residuals — CLOSED (GSD v0.99)
+
+2026-10-18 audit: policy-pin scan, premise-rel unindex, duplicate Define, Horn combination windows, replay VT coverage. Honeycomb stays Proposed. Not a hard FSM.
+
+- [x] **S01: residual honesty** `risk:med` `depends:[]`
+  > After this: newest policy pin is one row visit; unindex of a non-behavior does not scan premise buckets; matrix `SEM-m105-policy-pin-newest` and `SEM-m105-unindex-premise-pointer` killed. Phases 176–179. Landed.
+
 ## M104: unindex cause reverse pointer — CLOSED (GSD v0.98)
 
 CE 2026-10-15 residual: `unindex_behavior` scans every `derived_by_cause` bucket. Store the cause per Behavior id and remove from that one bucket. Honeycomb stays Proposed.

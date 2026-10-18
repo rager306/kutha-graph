@@ -12,10 +12,6 @@ impl<'a> AdjacencyIter<'a> {
         Self { row, i: 0 }
     }
 
-    pub fn at_end(&self) -> bool {
-        self.i >= self.row.len()
-    }
-
     pub fn key(&self) -> Option<TermId> {
         self.row.get(self.i).copied()
     }

@@ -56,6 +56,8 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | seg-files left after migrate verify failure | `SEM-m102-migrate-verify-segments` | `migrate_verify_fault_leaves_no_segment_files` | M102-S01 |
 | keep-first duplicate Define TermId | `SEM-m103-define-keep-first` | `from_strings_keeps_first_id_for_duplicate_name` | M103-S01 |
 | unindex_behavior scans every cause bucket | `SEM-m104-unindex-cause-pointer` | `unindex_cause_examines_constant_in_live_d` | M104-S01 |
+| policy pin election scans every pin | `SEM-m105-policy-pin-newest` | `newest_policy_pin_examines_one_live_row` | M105-S01 |
+| unindex scans every premise-rel bucket | `SEM-m105-unindex-premise-pointer` | `unindex_premise_examines_only_that_behaviors_rels` | M105-S01 |
 
 Testing gaps from the same report, closed in M099 (not new product findings):
 

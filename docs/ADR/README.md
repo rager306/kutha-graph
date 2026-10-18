@@ -97,6 +97,21 @@ All coordinate-band working titles listed in this README are **opened** as Propo
 
 This index lists **32** ADR files; all are **Proposed**.
 
+## Engine evidence (2026-10-18 audit)
+
+Status stays **Proposed**. This is spike evidence, not acceptance. Source: CBM `kutha-graph` reindex and GitNexus `analyze --index-only` the same day. Residuals closed in the working tree after that audit (still not Accepted):
+
+| Cell | Evidence in the engine | Still not this cell |
+|------|------------------------|---------------------|
+| 010–014 | log, quantum, bi-temporal `as_of`, Horn cascade, receipts | Accepted runtime |
+| 013 | overlap-aware premises; all premise combinations emit a head window; replay requires the conjunction to cover the Behavior VT | Cypher MATCH |
+| 040–041 | CSR lease; leapfrog intersect | GraphBLAS planner |
+| 050 | reserved `kutha:*` facts | six dictionary kinds (frozen) |
+| 060 | `replay_check` fold is the fold `open` keeps; Behavior replay checks VT coverage | full provenance polynomial |
+| 070 / 042 / 080 / 090 / 093 | frozen by `.kutha/STATE.md` thaw map | do not thaw from this note |
+
+Hot-path notes (Proposed): policy pin election walks `policy_by_ingest` newest-first; Behavior unindex uses `premise_rels_of_behavior` the way M104 used `cause_of_behavior`. Duplicate modern `Define` lines are dropped on Op-wire rewrite when the name is already interned. `FoldIndexMode::Lazy` still scans until `ensure_hot_maps` — that thin-write mode is intentional.
+
 | Band | Axis | Notes |
 |------|------|--------|
 | **010–019** | Time | Opened 010–014 |

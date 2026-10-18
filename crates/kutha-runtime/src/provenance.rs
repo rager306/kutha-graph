@@ -185,6 +185,11 @@ impl Runtime {
         if !self.fold.claim_supported_at(premise, tt, vt) {
             return false;
         }
+        if let Some(ev) = self.event_by_id(derived) {
+            if matches!(ev.op, Op::Behavior { .. }) && !self.horn_behavior_reproducible(ev) {
+                return false;
+            }
+        }
         match walk_original {
             Some(id) => self.derivation_eligible_at_walk(id, tt, vt, visited),
             None => true,

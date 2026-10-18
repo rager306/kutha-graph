@@ -305,6 +305,8 @@ pub struct Runtime {
     pub(crate) retract_examine: IngestExamine,
     /// Cause buckets visited in `unindex_behavior` (tests; not SoT).
     pub(crate) unindex_cause_examine: IngestExamine,
+    /// Premise-rel buckets visited in `unindex_behavior` (tests; not SoT).
+    pub(crate) unindex_premise_examine: IngestExamine,
     /// Live Behavior ids keyed by `caused_by` (droppable; rebuilt from the log).
     pub(crate) derived_by_cause: IngestMap<EventId, Vec<EventId>>,
     /// Behavior id → `caused_by` for O(1) unindex of `derived_by_cause` (M104).
@@ -315,6 +317,9 @@ pub struct Runtime {
     /// from the log). Second-phase retract/correct walks this index instead of
     /// every live Behavior (M095 / CE #3).
     pub(crate) behaviors_by_premise_rel: IngestMap<TermId, Vec<EventId>>,
+    /// Behavior id → premise relations indexed for it (M106). Missing key means
+    /// rebuild gap: unindex falls back to every premise-rel bucket.
+    pub(crate) premise_rels_of_behavior: IngestMap<EventId, Vec<TermId>>,
 }
 
 impl Default for Runtime {
@@ -346,6 +351,8 @@ impl Runtime {
             cause_of_behavior: IngestMap::default(),
             live_behaviors: Vec::new(),
             behaviors_by_premise_rel: IngestMap::default(),
+            premise_rels_of_behavior: IngestMap::default(),
+            unindex_premise_examine: IngestExamine::default(),
         };
         for name in KUTHA_RESERVED_RELS {
             rt.intern_silent(name);
@@ -453,6 +460,16 @@ impl Runtime {
     /// Cause buckets visited in `unindex_behavior` since reset.
     pub fn unindex_cause_examine_count(&self) -> u64 {
         self.unindex_cause_examine.get()
+    }
+
+    /// Reset premise-rel bucket visits in `unindex_behavior` (tests; not fingerprint input).
+    pub fn reset_unindex_premise_examine_count(&self) {
+        self.unindex_premise_examine.reset();
+    }
+
+    /// Premise-rel buckets visited in `unindex_behavior` since reset.
+    pub fn unindex_premise_examine_count(&self) -> u64 {
+        self.unindex_premise_examine.get()
     }
 
     /// Pre-size ingest index leases for an expected bulk load (bench / importer).

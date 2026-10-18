@@ -31,10 +31,6 @@ impl TermDictionary {
         self.to_str.len()
     }
 
-    pub fn is_empty(&self) -> bool {
-        self.to_str.is_empty()
-    }
-
     pub fn strings(&self) -> &[String] {
         &self.to_str
     }

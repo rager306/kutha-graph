@@ -77,7 +77,7 @@ impl Runtime {
                     })
                     .collect();
                 let mut fires = Vec::new();
-                if let Some(idx) = self.fold.fact_index_by_event_id(*event_id) {
+                for idx in self.fold.live_fact_indices_by_event_id(*event_id) {
                     let fact = &self.fold.facts()[idx];
                     let (s, r) = (fact.subject, fact.relation);
                     fires.extend(self.horn_fires_except(
@@ -110,7 +110,7 @@ impl Runtime {
                     })
                     .collect();
                 let mut fires = Vec::new();
-                if let Some(idx) = self.fold.fact_index_by_event_id(*event_id) {
+                for idx in self.fold.live_fact_indices_by_event_id(*event_id) {
                     let fact = &self.fold.facts()[idx];
                     let (s, r, old_o) = (fact.subject, fact.relation, fact.object());
                     if let Some((inter_from, inter_to)) =
@@ -299,7 +299,7 @@ impl Runtime {
         if !unify_term(&head.object, *object, &self.dict, &mut bind) {
             return true;
         }
-        search_prems(
+        search_all(
             self,
             &premises,
             premises.len(),
@@ -309,7 +309,8 @@ impl Runtime {
             u64::MAX,
             except,
         )
-        .is_some()
+        .iter()
+        .any(|hit| windows_cover(&hit.windows, *valid_from, *valid_to))
     }
 
     fn horn_fires(
@@ -365,7 +366,7 @@ impl Runtime {
                 if !unify_term(&prem.object, object, &self.dict, &mut bind) {
                     continue;
                 }
-                let Some(hit) = search_prems(
+                let hits = search_all(
                     self,
                     &premises,
                     i,
@@ -374,29 +375,32 @@ impl Runtime {
                     valid_to,
                     u64::MAX,
                     &no_dead,
-                ) else {
+                );
+                if hits.is_empty() {
                     continue;
-                };
+                }
                 if self.dict.id(&head.relation).is_none() {
                     return Err(RuntimeError::UnknownRelation {
                         name: head.relation.clone(),
                     });
                 }
-                let mut parts = vec![(valid_from, valid_to), (horn.pin_from, horn.pin_to)];
-                parts.extend(hit.windows);
-                let Some((vf, vt)) = conjunct_vt(parts) else {
-                    continue;
-                };
-                out.extend(self.head_event(
-                    &head,
-                    &horn.pin,
-                    &hit.bind,
-                    caused_by,
-                    ingested_at,
-                    vf,
-                    vt,
-                    except,
-                ));
+                for hit in hits {
+                    let mut parts = vec![(valid_from, valid_to), (horn.pin_from, horn.pin_to)];
+                    parts.extend(hit.windows);
+                    let Some((vf, vt)) = conjunct_vt(parts) else {
+                        continue;
+                    };
+                    out.extend(self.head_event(
+                        &head,
+                        &horn.pin,
+                        &hit.bind,
+                        caused_by,
+                        ingested_at,
+                        vf,
+                        vt,
+                        except,
+                    ));
+                }
             }
         }
         Ok(out)
@@ -556,7 +560,7 @@ impl Runtime {
         if !unify_term(&head.object, *object, &self.dict, &mut bind) {
             return false;
         }
-        search_prems(
+        search_all(
             self,
             &premises,
             premises.len(),
@@ -566,7 +570,8 @@ impl Runtime {
             e.ingested_at,
             &HashSet::new(),
         )
-        .is_some()
+        .iter()
+        .any(|hit| windows_cover(&hit.windows, *valid_from, *valid_to))
     }
 }
 
@@ -595,6 +600,17 @@ fn conjunct_vt(
     acc
 }
 
+/// `windows` conjunction covers `[from, to)`. Empty windows cover any head window.
+fn windows_cover(windows: &[(u64, Option<u64>)], from: u64, to: Option<u64>) -> bool {
+    if windows.is_empty() {
+        return true;
+    }
+    let Some((cf, ct)) = conjunct_vt(windows.iter().copied()) else {
+        return false;
+    };
+    vt_intersect(cf, ct, from, to) == Some((from, to))
+}
+
 fn unify_term(term: &RuleTerm, id: TermId, dict: &TermDictionary, bind: &mut Bind) -> bool {
     match term {
         RuleTerm::Var(v) => {
@@ -621,7 +637,7 @@ fn instantiate(term: &RuleTerm, bind: &Bind, dict: &TermDictionary) -> Option<Te
     }
 }
 
-fn search_prems(
+fn search_all(
     rt: &Runtime,
     premises: &[RuleAtom],
     skip: usize,
@@ -630,8 +646,9 @@ fn search_prems(
     win_to: Option<u64>,
     tt: u64,
     except: &HashSet<EventId>,
-) -> Option<PremMatch> {
-    search_at(
+) -> Vec<PremMatch> {
+    let mut out = Vec::new();
+    search_at_all(
         rt,
         premises,
         0,
@@ -642,12 +659,12 @@ fn search_prems(
         tt,
         Vec::new(),
         except,
-    )
+        &mut out,
+    );
+    out
 }
 
-/// Overlap-aware premise walk: candidates are TT-live facts whose VT overlaps the
-/// trigger/head window (M097), not merely live at `win_from` as a point cut.
-fn search_at(
+fn search_at_all(
     rt: &Runtime,
     premises: &[RuleAtom],
     idx: usize,
@@ -658,17 +675,24 @@ fn search_at(
     tt: u64,
     windows: Vec<(u64, Option<u64>)>,
     except: &HashSet<EventId>,
-) -> Option<PremMatch> {
+    out: &mut Vec<PremMatch>,
+) {
     if idx >= premises.len() {
-        return Some(PremMatch { bind, windows });
+        out.push(PremMatch { bind, windows });
+        return;
     }
     if idx == skip {
-        return search_at(
-            rt, premises, idx + 1, skip, bind, win_from, win_to, tt, windows, except,
+        search_at_all(
+            rt, premises, idx + 1, skip, bind, win_from, win_to, tt, windows, except, out,
         );
+        return;
     }
-    let prem = &premises[idx];
-    let rel = rt.dict.id(&prem.relation)?;
+    let Some(prem) = premises.get(idx) else {
+        return;
+    };
+    let Some(rel) = rt.dict.id(&prem.relation) else {
+        return;
+    };
     for f in rt
         .fold
         .facts_overlapping_relation(rel, tt, win_from, win_to)
@@ -689,7 +713,7 @@ fn search_at(
         }
         let mut next_windows = windows.clone();
         next_windows.push((f.valid_from, f.valid_to));
-        if let Some(ok) = search_at(
+        search_at_all(
             rt,
             premises,
             idx + 1,
@@ -700,9 +724,7 @@ fn search_at(
             tt,
             next_windows,
             except,
-        ) {
-            return Some(ok);
-        }
+            out,
+        );
     }
-    None
 }

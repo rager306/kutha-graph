@@ -425,12 +425,15 @@ pub fn rewrite_event_json_line(
     value: &serde_json::Value,
     dict: &mut crate::TermDictionary,
 ) -> Result<Vec<Event>, OpMigrateError> {
-    if let Ok(event) = serde_json::from_value::<Event>(value.clone()) {
-        if let Op::Define { name } = &event.op {
-            dict.intern(name);
+        if let Ok(event) = serde_json::from_value::<Event>(value.clone()) {
+            if let Op::Define { name } = &event.op {
+                if dict.id(name).is_some() {
+                    return Ok(vec![]);
+                }
+                dict.intern(name);
+            }
+            return Ok(vec![event]);
         }
-        return Ok(vec![event]);
-    }
     let before = dict.len();
     let remapped = remap_legacy_events(value, |s| dict.intern(s))?;
     let ingested_at = remapped.first().map(|e| e.ingested_at).unwrap_or(0);
@@ -450,6 +453,7 @@ pub fn rewrite_event_json_line(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::event::Event;
     use crate::TermDictionary;
 
     #[test]
@@ -787,5 +791,15 @@ mod tests {
             serde_json::from_str::<Op>(raw).is_err(),
             "serde aliases must stay forbidden"
         );
+    }
+
+    #[test]
+    fn rewrite_skips_duplicate_modern_define() {
+        let mut dict = TermDictionary::default();
+        let first = serde_json::to_value(Event::stable_define("Alice", 0)).unwrap();
+        let second = serde_json::to_value(Event::stable_define("Alice", 1)).unwrap();
+        assert_eq!(rewrite_event_json_line(&first, &mut dict).unwrap().len(), 1);
+        assert!(rewrite_event_json_line(&second, &mut dict).unwrap().is_empty());
+        assert_eq!(dict.id("Alice"), Some(0));
     }
 }

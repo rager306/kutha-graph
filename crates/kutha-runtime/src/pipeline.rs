@@ -25,6 +25,7 @@ impl Runtime {
         self.cause_of_behavior.clear();
         self.live_behaviors.clear();
         self.behaviors_by_premise_rel.clear();
+        self.premise_rels_of_behavior.clear();
         let n = self.log.len();
         self.by_event_id.reserve(n);
         self.by_delivery_key.reserve(n);
@@ -82,11 +83,21 @@ impl Runtime {
                 .entry(rel)
                 .or_default()
                 .push(behavior_id);
+            self.premise_rels_of_behavior
+                .entry(behavior_id)
+                .or_default()
+                .push(rel);
         }
     }
 
     fn unindex_behavior(&mut self, id: EventId) {
+        let tracked = self.cause_of_behavior.contains_key(&id)
+            || self.premise_rels_of_behavior.contains_key(&id)
+            || self.live_behaviors.iter().any(|x| *x == id);
         self.live_behaviors.retain(|x| *x != id);
+        if !tracked {
+            return;
+        }
         if let Some(cause) = self.cause_of_behavior.remove(&id) {
             self.unindex_cause_examine.bump();
             if let Some(kids) = self.derived_by_cause.get_mut(&cause) {
@@ -96,18 +107,30 @@ impl Runtime {
                 }
             }
         } else {
-            // Rebuild/index gap: fall back to a full scan so the lease stays honest.
             for kids in self.derived_by_cause.values_mut() {
                 self.unindex_cause_examine.bump();
                 kids.retain(|x| *x != id);
             }
             self.derived_by_cause.retain(|_, kids| !kids.is_empty());
         }
-        for kids in self.behaviors_by_premise_rel.values_mut() {
-            kids.retain(|x| *x != id);
+        if let Some(rels) = self.premise_rels_of_behavior.remove(&id) {
+            for rel in rels {
+                self.unindex_premise_examine.bump();
+                if let Some(kids) = self.behaviors_by_premise_rel.get_mut(&rel) {
+                    kids.retain(|x| *x != id);
+                    if kids.is_empty() {
+                        self.behaviors_by_premise_rel.remove(&rel);
+                    }
+                }
+            }
+        } else {
+            for kids in self.behaviors_by_premise_rel.values_mut() {
+                self.unindex_premise_examine.bump();
+                kids.retain(|x| *x != id);
+            }
+            self.behaviors_by_premise_rel
+                .retain(|_, kids| !kids.is_empty());
         }
-        self.behaviors_by_premise_rel
-            .retain(|_, kids| !kids.is_empty());
     }
 
     pub(crate) fn append_indexed(&mut self, event: Event) {

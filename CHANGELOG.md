@@ -4,6 +4,24 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-19 — Trajectory: M105 / GSD v0.99 closed
+
+### Product
+
+- Policy pin election walks `policy_by_ingest` newest-first and stops on the first live row.
+- `unindex_behavior` uses `premise_rels_of_behavior` and ignores event ids that are not behaviors.
+- Op-wire rewrite drops a second modern `Define` when the name is already interned.
+- Horn fire keeps every premise combination. Replay requires that conjunction to cover the Behavior VT. `open` keeps the fold `replay_check` built and restores the snapshot `FoldIndexMode`. Correct walks every live residual.
+- Oracles `newest_policy_pin_examines_one_live_row`, `unindex_premise_examines_only_that_behaviors_rels`; matrix `SEM-m105-policy-pin-newest`, `SEM-m105-unindex-premise-pointer` killed.
+
+### Process
+
+- Id map row v0.99 / M105. Regression map names the two new killed oracles. README status row is Delivery and Architecture again.
+
+### Trajectory
+
+- `L_delivery=M105-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v0.99 / Phase 176. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-18 — Trajectory: M104 / GSD v0.98 closed
 
 ### Product

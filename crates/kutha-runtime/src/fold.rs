@@ -282,6 +282,9 @@ pub struct GraphFold {
     /// `kutha:policy` fact indices by delivery_key (pin). Droppable; Lazy-maintained.
     #[serde(skip)]
     pub(crate) policies_by_pin: IngestMap<String, FactIdxList>,
+    /// Policy fact indexes, oldest first. Election walks newest-first and stops
+    /// at the first row live at the cut (M105).
+    pub(crate) policy_by_ingest: Vec<usize>,
     /// True after a rebuild or bind so a miss is "no rule uses this premise",
     /// not "lease never built" (fallback scan).
     #[serde(skip)]
@@ -365,6 +368,7 @@ impl GraphFold {
             facts_by_relation: IngestMap::default(),
             rules_by_pin: IngestMap::default(),
             policies_by_pin: IngestMap::default(),
+            policy_by_ingest: Vec::new(),
             horn_lease_ready: false,
             dictionary_rels: HashSet::new(),
             rel_allows: None,
@@ -647,10 +651,12 @@ impl GraphFold {
             .entry(pin.clone())
             .or_default()
             .push(idx);
+        self.policy_by_ingest.push(idx);
     }
 
     fn rebuild_policy_pin_lease(&mut self) {
         self.policies_by_pin.clear();
+        self.policy_by_ingest.clear();
         if self.rel_policy.is_none() {
             return;
         }

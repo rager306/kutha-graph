@@ -47,13 +47,6 @@ pub fn persist_dir_fsync_count() -> usize {
     PERSIST_DIR_FSYNC_COUNT.with(|c| c.get())
 }
 
-/// Reset the directory fsync counter. Tests that assert a delta should prefer
-/// [`persist_dir_fsync_count`] before/after a single `persist` instead.
-#[doc(hidden)]
-pub fn reset_persist_dir_fsync_count() {
-    PERSIST_DIR_FSYNC_COUNT.with(|c| c.set(0));
-}
-
 /// Test-visible count of tmp-file `sync_all` calls from [`replace_via_tmp`].
 #[doc(hidden)]
 pub fn replace_via_tmp_file_sync_count() -> usize {
@@ -1104,7 +1097,10 @@ fn finish_open(
 ) -> std::io::Result<Runtime> {
     // M052-S04 / CE P1 #11: snapshot, Define, terms, and empty reconstruction
     // all take this choke point; replay must run before sidecar hydrate.
-    rt.replay_check().map_err(runtime_err)?;
+    let pinned = rt.fold.index_mode();
+    let mut rebuilt = rt.replay_check().map_err(runtime_err)?;
+    rebuilt.index_mode = pinned;
+    rt.fold = rebuilt;
     rt.hydrate_from_log();
     if let Some(rows) = outcomes {
         sidecar_or_stale_prefix(

@@ -106,10 +106,12 @@ impl Runtime {
             ingest_examine: IngestExamine::default(),
             retract_examine: IngestExamine::default(),
             unindex_cause_examine: IngestExamine::default(),
+            unindex_premise_examine: IngestExamine::default(),
             derived_by_cause: IngestMap::default(),
             cause_of_behavior: IngestMap::default(),
             live_behaviors: Vec::new(),
             behaviors_by_premise_rel: IngestMap::default(),
+            premise_rels_of_behavior: IngestMap::default(),
         };
         rt.hydrate_from_log();
         rt
@@ -154,10 +156,12 @@ impl Runtime {
             ingest_examine: IngestExamine::default(),
             retract_examine: IngestExamine::default(),
             unindex_cause_examine: IngestExamine::default(),
+            unindex_premise_examine: IngestExamine::default(),
             derived_by_cause: IngestMap::default(),
             cause_of_behavior: IngestMap::default(),
             live_behaviors: Vec::new(),
             behaviors_by_premise_rel: IngestMap::default(),
+            premise_rels_of_behavior: IngestMap::default(),
         };
         rt.hydrate_from_log();
         Ok(rt)
@@ -187,10 +191,12 @@ impl Runtime {
             ingest_examine: IngestExamine::default(),
             retract_examine: IngestExamine::default(),
             unindex_cause_examine: IngestExamine::default(),
+            unindex_premise_examine: IngestExamine::default(),
             derived_by_cause: IngestMap::default(),
             cause_of_behavior: IngestMap::default(),
             live_behaviors: Vec::new(),
             behaviors_by_premise_rel: IngestMap::default(),
+            premise_rels_of_behavior: IngestMap::default(),
         };
         rt.hydrate_from_log();
         rt

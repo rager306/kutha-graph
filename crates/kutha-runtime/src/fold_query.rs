@@ -582,17 +582,14 @@ impl GraphFold {
         let tt = tt.into().as_u64();
         let vt = vt.into().as_u64();
         self.rel_policy?;
-        let mut best: Option<&Fact> = None;
-        for idxs in self.policies_by_pin.values() {
-            for &idx in idxs {
-                self.hot_examine.bump();
-                let f = &self.facts[idx];
-                if f.is_live_at(tt, vt) && best.is_none_or(|b| f.ingested_at >= b.ingested_at) {
-                    best = Some(f);
-                }
+        for &idx in self.policy_by_ingest.iter().rev() {
+            self.hot_examine.bump();
+            let f = &self.facts[idx];
+            if f.is_live_at(tt, vt) {
+                return f.delivery_key.clone();
             }
         }
-        best.and_then(|f| f.delivery_key.clone())
+        None
     }
 
     /// Latest ingested live admission status for `justification_id` at `(tt, vt)`.

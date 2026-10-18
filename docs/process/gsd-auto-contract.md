@@ -106,6 +106,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.96 | 173 | M102 | S01 | failed migrate verify drops seg files | shipped |
 | v0.97 | 174 | M103 | S01 | duplicate Define name keeps the first TermId | shipped |
 | v0.98 | 175 | M104 | S01 | unindex_behavior cause reverse pointer | shipped |
+| v0.99 | 176 | M105 | S01 | audit residuals policy pin, premise unindex, horn windows | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

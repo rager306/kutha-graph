@@ -2303,6 +2303,28 @@ rows:
     gate: default
     owner: M104-S01
     source: Phase 175 / CE 2026-10-15 unindex cause scan
+  - id: SEM-m105-policy-pin-newest
+    plane: product
+    invariant: live_policy_pin_at returns the newest live policy after one row visit
+    layer: kill
+    oracle:
+      - newest_policy_pin_examines_one_live_row
+    kill_mutation: restore live_policy_pin_at to scan every policies_by_pin bucket
+    status: killed
+    gate: default
+    owner: M105-S01
+    source: Phase 176 / 2026-10-18 audit AUD-01
+  - id: SEM-m105-unindex-premise-pointer
+    plane: product
+    invariant: unindex of one Behavior does not walk every premise-rel bucket
+    layer: kill
+    oracle:
+      - unindex_premise_examines_only_that_behaviors_rels
+    kill_mutation: restore unindex_behavior to retain every behaviors_by_premise_rel bucket
+    status: killed
+    gate: default
+    owner: M105-S01
+    source: Phase 177 / 2026-10-18 audit AUD-02
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step
