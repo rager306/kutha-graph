@@ -39,6 +39,7 @@ COVERAGE: dict[str, tuple[str, ...]] = {
     "rule-pin": ("late_starting_rule_pin_fires_on_overlap",),
     "seg-files": ("migrate_verify_fault_leaves_no_segment_files",),
     "keep-first": ("from_strings_keeps_first_id_for_duplicate_name",),
+    "unindex_behavior": ("unindex_cause_examines_constant_in_live_d",),
 }
 
 

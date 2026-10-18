@@ -2292,6 +2292,17 @@ rows:
     gate: default
     owner: M103-S01
     source: Phase 174 / CE 2026-10-15 duplicate Define TermId skew
+  - id: SEM-m104-unindex-cause-pointer
+    plane: product
+    invariant: unindex_behavior removes a Behavior from its cause bucket via reverse pointer
+    layer: kill
+    oracle:
+      - unindex_cause_examines_constant_in_live_d
+    kill_mutation: restore unindex_behavior to scan every derived_by_cause bucket
+    status: killed
+    gate: default
+    owner: M104-S01
+    source: Phase 175 / CE 2026-10-15 unindex cause scan
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

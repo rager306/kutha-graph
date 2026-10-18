@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-18 — Trajectory: M104 / GSD v0.98 closed
+
+### Product
+
+- `cause_of_behavior` maps each Behavior to its `caused_by` so `unindex_behavior` touches one cause bucket instead of scanning every bucket.
+- Oracle `unindex_cause_examines_constant_in_live_d`; matrix `SEM-m104-unindex-cause-pointer` killed.
+
+### Trajectory
+
+- `L_delivery=M104-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v0.98 / Phase 175.
+
 ## 2026-10-18 — Trajectory: lease M104-S01 (unindex cause reverse pointer)
 
 ### Trajectory

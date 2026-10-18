@@ -22,6 +22,7 @@ impl Runtime {
         self.by_event_id.clear();
         self.by_delivery_key.clear();
         self.derived_by_cause.clear();
+        self.cause_of_behavior.clear();
         self.live_behaviors.clear();
         self.behaviors_by_premise_rel.clear();
         let n = self.log.len();
@@ -44,6 +45,7 @@ impl Runtime {
                     .entry(*caused_by)
                     .or_default()
                     .push(e.id);
+                self.cause_of_behavior.insert(e.id, *caused_by);
             }
         }
         let mut live_pins: Vec<(EventId, String)> = Vec::new();
@@ -85,10 +87,22 @@ impl Runtime {
 
     fn unindex_behavior(&mut self, id: EventId) {
         self.live_behaviors.retain(|x| *x != id);
-        for kids in self.derived_by_cause.values_mut() {
-            kids.retain(|x| *x != id);
+        if let Some(cause) = self.cause_of_behavior.remove(&id) {
+            self.unindex_cause_examine.bump();
+            if let Some(kids) = self.derived_by_cause.get_mut(&cause) {
+                kids.retain(|x| *x != id);
+                if kids.is_empty() {
+                    self.derived_by_cause.remove(&cause);
+                }
+            }
+        } else {
+            // Rebuild/index gap: fall back to a full scan so the lease stays honest.
+            for kids in self.derived_by_cause.values_mut() {
+                self.unindex_cause_examine.bump();
+                kids.retain(|x| *x != id);
+            }
+            self.derived_by_cause.retain(|_, kids| !kids.is_empty());
         }
-        self.derived_by_cause.retain(|_, kids| !kids.is_empty());
         for kids in self.behaviors_by_premise_rel.values_mut() {
             kids.retain(|x| *x != id);
         }
@@ -120,6 +134,7 @@ impl Runtime {
                     .entry(*caused_by)
                     .or_default()
                     .push(event.id);
+                self.cause_of_behavior.insert(event.id, *caused_by);
                 self.live_behaviors.push(event.id);
                 self.index_behavior_premise_rels(event.id, rule_version);
             }

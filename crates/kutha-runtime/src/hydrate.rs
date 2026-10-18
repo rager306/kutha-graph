@@ -105,7 +105,9 @@ impl Runtime {
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
             retract_examine: IngestExamine::default(),
+            unindex_cause_examine: IngestExamine::default(),
             derived_by_cause: IngestMap::default(),
+            cause_of_behavior: IngestMap::default(),
             live_behaviors: Vec::new(),
             behaviors_by_premise_rel: IngestMap::default(),
         };
@@ -151,7 +153,9 @@ impl Runtime {
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
             retract_examine: IngestExamine::default(),
+            unindex_cause_examine: IngestExamine::default(),
             derived_by_cause: IngestMap::default(),
+            cause_of_behavior: IngestMap::default(),
             live_behaviors: Vec::new(),
             behaviors_by_premise_rel: IngestMap::default(),
         };
@@ -182,7 +186,9 @@ impl Runtime {
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
             retract_examine: IngestExamine::default(),
+            unindex_cause_examine: IngestExamine::default(),
             derived_by_cause: IngestMap::default(),
+            cause_of_behavior: IngestMap::default(),
             live_behaviors: Vec::new(),
             behaviors_by_premise_rel: IngestMap::default(),
         };

@@ -2,7 +2,7 @@
 
 ## Overview
 
-v0.01–v0.97 shipped. Honeycomb stays Proposed.
+v0.01–v0.98 shipped. Honeycomb stays Proposed.
 
 ## Id map
 
@@ -10,12 +10,12 @@ See `docs/process/gsd-auto-contract.md` § Id map.
 
 ## Milestones
 
-- ✅ **v0.01–v0.96** — shipped (through migrate verify dropping segments)
-- ✅ **v0.97 duplicate Define keeps first id** — Phase 174 done (product M103)
+- ✅ **v0.01–v0.97** — shipped (through keep-first duplicate TermIds)
+- ✅ **v0.98 unindex cause reverse pointer** — Phase 175 done (product M104)
 
-## Phases (v0.97)
+## Phases (v0.98)
 
-- [x] **Phase 174: duplicate Define keeps first id** — `174-VERIFICATION.md` passed
+- [x] **Phase 175: unindex cause reverse pointer** — `175-VERIFICATION.md` passed
 
 ## Progress
 

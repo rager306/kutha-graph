@@ -303,8 +303,12 @@ pub struct Runtime {
     pub(crate) ingest_examine: IngestExamine,
     /// Log rows visited in `retract_derived` (tests; not SoT).
     pub(crate) retract_examine: IngestExamine,
+    /// Cause buckets visited in `unindex_behavior` (tests; not SoT).
+    pub(crate) unindex_cause_examine: IngestExamine,
     /// Live Behavior ids keyed by `caused_by` (droppable; rebuilt from the log).
     pub(crate) derived_by_cause: IngestMap<EventId, Vec<EventId>>,
+    /// Behavior id → `caused_by` for O(1) unindex of `derived_by_cause` (M104).
+    pub(crate) cause_of_behavior: IngestMap<EventId, EventId>,
     /// Currently live Horn Behavior event ids (droppable; rebuilt from the log).
     pub(crate) live_behaviors: Vec<EventId>,
     /// Live Behavior ids keyed by Horn body premise relation (droppable; rebuilt
@@ -337,7 +341,9 @@ impl Runtime {
             by_delivery_key: IngestMap::default(),
             ingest_examine: IngestExamine::default(),
             retract_examine: IngestExamine::default(),
+            unindex_cause_examine: IngestExamine::default(),
             derived_by_cause: IngestMap::default(),
+            cause_of_behavior: IngestMap::default(),
             live_behaviors: Vec::new(),
             behaviors_by_premise_rel: IngestMap::default(),
         };
@@ -437,6 +443,16 @@ impl Runtime {
     /// Log rows visited in `retract_derived` since reset.
     pub fn retract_examine_count(&self) -> u64 {
         self.retract_examine.get()
+    }
+
+    /// Reset cause-bucket visits in `unindex_behavior` (tests; not fingerprint input).
+    pub fn reset_unindex_cause_examine_count(&self) {
+        self.unindex_cause_examine.reset();
+    }
+
+    /// Cause buckets visited in `unindex_behavior` since reset.
+    pub fn unindex_cause_examine_count(&self) -> u64 {
+        self.unindex_cause_examine.get()
     }
 
     /// Pre-size ingest index leases for an expected bulk load (bench / importer).

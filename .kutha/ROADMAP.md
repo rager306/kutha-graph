@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M104: unindex cause reverse pointer — ACTIVE (GSD v0.98)
+## M104: unindex cause reverse pointer — CLOSED (GSD v0.98)
 
 CE 2026-10-15 residual: `unindex_behavior` scans every `derived_by_cause` bucket. Store the cause per Behavior id and remove from that one bucket. Honeycomb stays Proposed.
 
-- [ ] **S01: reverse cause pointer** `risk:med` `depends:[]`
-  > After this: Correct of one Behavior examines a constant number of cause buckets as live D grows; matrix `SEM-m104-unindex-cause-pointer` killed. Phase 175.
+- [x] **S01: reverse cause pointer** `risk:med` `depends:[]`
+  > After this: Correct of one Behavior examines a constant number of cause buckets as live D grows; matrix `SEM-m104-unindex-cause-pointer` killed. Phase 175. Landed.
 
 ## M103: duplicate Define keeps first id — CLOSED (GSD v0.97)
 
