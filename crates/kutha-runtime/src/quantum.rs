@@ -307,6 +307,7 @@ pub struct Runtime {
     pub(crate) unindex_cause_examine: IngestExamine,
     /// Premise-rel buckets visited in `unindex_behavior` (tests; not SoT).
     pub(crate) unindex_premise_examine: IngestExamine,
+    pub(crate) unindex_live_examine: IngestExamine,
     /// Live Behavior ids keyed by `caused_by` (droppable; rebuilt from the log).
     pub(crate) derived_by_cause: IngestMap<EventId, Vec<EventId>>,
     /// Behavior id → `caused_by` for O(1) unindex of `derived_by_cause` (M104).
@@ -353,6 +354,7 @@ impl Runtime {
             behaviors_by_premise_rel: IngestMap::default(),
             premise_rels_of_behavior: IngestMap::default(),
             unindex_premise_examine: IngestExamine::default(),
+            unindex_live_examine: IngestExamine::default(),
         };
         for name in KUTHA_RESERVED_RELS {
             rt.intern_silent(name);
@@ -470,6 +472,16 @@ impl Runtime {
     /// Premise-rel buckets visited in `unindex_behavior` since reset.
     pub fn unindex_premise_examine_count(&self) -> u64 {
         self.unindex_premise_examine.get()
+    }
+
+    /// Reset visits of the live-behavior vector in `unindex_behavior` (tests).
+    pub fn reset_unindex_live_examine_count(&self) {
+        self.unindex_live_examine.reset();
+    }
+
+    /// Entries of `live_behaviors` walked by `unindex_behavior` since reset.
+    pub fn unindex_live_examine_count(&self) -> u64 {
+        self.unindex_live_examine.get()
     }
 
     /// Pre-size ingest index leases for an expected bulk load (bench / importer).

@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-19 — Trajectory: M107 / GSD v1.01 closed
+
+### Product
+
+- `unindex_behavior` returns before walking `live_behaviors` when the event id is not a behavior (`cause_of_behavior` / `premise_rels_of_behavior`).
+- Oracle `unindex_non_behavior_skips_live_behavior_vec`; matrix `SEM-m107-unindex-live-skip` killed. RED was examine counts `[32, 128]`.
+
+### Process
+
+- Id map row v1.01 / M107. Regression map names the live-vector oracle.
+
+### Trajectory
+
+- `L_delivery=M107-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.01 / Phase 181. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-19 — Trajectory: ADR-040 PGM research variant
 
 ### Trajectory

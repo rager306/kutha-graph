@@ -1,6 +1,10 @@
 # Requirements: Kutha
 
-**Milestone:** v1.00 open fold-index lease (M106 closed).
+**Milestone:** v1.01 unindex live-vector skip (M107 closed).
+
+## v1.01
+
+- [x] **AUD-11**: `unindex_behavior` does not walk `live_behaviors` for an event that is not a behavior
 
 ## v1.00
 

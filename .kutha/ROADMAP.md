@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M107: unindex skips live-behavior vector — CLOSED (GSD v1.01)
+
+`unindex_behavior` walked every live Behavior id on Retract/Correct of an ordinary Assert. A non-behavior is absent from `cause_of_behavior` and `premise_rels_of_behavior`, so the walk is skipped. Honeycomb stays Proposed.
+
+- [x] **S01: skip live vector** `risk:low` `depends:[]`
+  > After this: correct of a non-behavior examines 0 live-behavior entries at D=32 and D=128; matrix `SEM-m107-unindex-live-skip` killed. Phase 181. Landed.
+
 ## M106: open restores fold-index lease — CLOSED (GSD v1.00)
 
 `finish_open` replayed under the process env and copied only `FoldIndexMode`. A Lazy snapshot opened while env was eager kept warm maps; an Eager snapshot opened while env was lazy scanned. Honeycomb stays Proposed.

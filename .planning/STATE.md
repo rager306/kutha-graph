@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.00
-milestone_name: open restores fold-index lease
+milestone: v1.01
+milestone_name: unindex skips live-behavior vector
 status: completed
-stopped_at: "180-open-index-lease"
-last_updated: "2026-10-18T17:50:00.000Z"
+stopped_at: "181-unindex-live-skip"
+last_updated: "2026-10-18T18:45:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.00 open restores fold-index lease — closed as M106
-**Phase:** 180 verified after workspace tests and `kutha-gov ci`
-**Status:** Lazy snapshot open still full-scans; Eager snapshot open keeps the warm range. AUD-08 Lazy ingest scan stays the thin-write contract. ADR status Proposed.
+**Milestone:** v1.01 unindex skips the live-behavior vector — closed as M107
+**Phase:** 181
+**Status:** Correct of a non-behavior examines 0 live-behavior entries. AUD-08 Lazy ingest scan stays the thin-write contract. ADR status Proposed. PGM stays a research note in ADR-040.

@@ -92,12 +92,14 @@ impl Runtime {
 
     fn unindex_behavior(&mut self, id: EventId) {
         let tracked = self.cause_of_behavior.contains_key(&id)
-            || self.premise_rels_of_behavior.contains_key(&id)
-            || self.live_behaviors.iter().any(|x| *x == id);
-        self.live_behaviors.retain(|x| *x != id);
+            || self.premise_rels_of_behavior.contains_key(&id);
         if !tracked {
             return;
         }
+        for _ in 0..self.live_behaviors.len() {
+            self.unindex_live_examine.bump();
+        }
+        self.live_behaviors.retain(|x| *x != id);
         if let Some(cause) = self.cause_of_behavior.remove(&id) {
             self.unindex_cause_examine.bump();
             if let Some(kids) = self.derived_by_cause.get_mut(&cause) {

@@ -2337,6 +2337,17 @@ rows:
     gate: default
     owner: M106-S01
     source: Phase 180
+  - id: SEM-m107-unindex-live-skip
+    plane: product
+    invariant: unindex of a non-behavior does not walk live_behaviors
+    layer: kill
+    oracle:
+      - unindex_non_behavior_skips_live_behavior_vec
+    kill_mutation: retain live_behaviors before the non-behavior early return
+    status: killed
+    gate: default
+    owner: M107-S01
+    source: Phase 181
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step
