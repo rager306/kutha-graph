@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-18 — Trajectory: lease M104-S01 (unindex cause reverse pointer)
+
+### Trajectory
+
+- Active Milestone **M104**, Active Slice **S01** (`L_delivery=M103-closed`): unindex a Behavior from its cause bucket in O(1), not by scanning every cause. Honeycomb stays Proposed.
+
 ## 2026-10-17 — Trajectory: M103 / GSD v0.97 closed
 
 ### Product
