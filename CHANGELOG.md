@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-19 — Trajectory: ADR-040 PGM research variant
+
+### Trajectory
+
+- ADR-040 records a piecewise-linear position model as a Proposed read lease on a sealed sorted `u64` column. Eager `BTreeMap` stays the incremental structure. Honeycomb stays Proposed. The PVLDB 2020 space examples are 83× (static) and 1140× (dynamic), not a 14,000× Kutha constant. No product code.
+
 ## 2026-10-19 — Trajectory: M106 / GSD v1.00 closed
 
 ### Product
