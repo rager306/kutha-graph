@@ -1099,7 +1099,9 @@ fn finish_open(
     // all take this choke point; replay must run before sidecar hydrate.
     let pinned = rt.fold.index_mode();
     let mut rebuilt = rt.replay_check().map_err(runtime_err)?;
-    rebuilt.index_mode = pinned;
+    // Replay builds leases for the process env. The snapshot mode must also
+    // warm or clear those leases; assigning the flag alone leaves the wrong scan.
+    rebuilt.set_index_mode(pinned);
     rt.fold = rebuilt;
     rt.hydrate_from_log();
     if let Some(rows) = outcomes {

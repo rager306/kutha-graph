@@ -2325,6 +2325,18 @@ rows:
     gate: default
     owner: M105-S01
     source: Phase 177 / 2026-10-18 audit AUD-02
+  - id: SEM-m106-open-index-lease
+    plane: product
+    invariant: open restores snapshot fold-index lease warmth, not only the mode flag
+    layer: kill
+    oracle:
+      - open_keeps_lazy_scan_when_env_is_eager
+      - open_keeps_eager_range_when_env_is_lazy
+    kill_mutation: assign GraphFold.index_mode without set_index_mode after replay
+    status: killed
+    gate: default
+    owner: M106-S01
+    source: Phase 180
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

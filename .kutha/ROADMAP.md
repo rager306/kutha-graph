@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M106: open restores fold-index lease — CLOSED (GSD v1.00)
+
+`finish_open` replayed under the process env and copied only `FoldIndexMode`. A Lazy snapshot opened while env was eager kept warm maps; an Eager snapshot opened while env was lazy scanned. Honeycomb stays Proposed.
+
+- [x] **S01: snapshot lease warmth** `risk:med` `depends:[]`
+  > After this: open calls `set_index_mode` so a Lazy snapshot still full-scans and an Eager snapshot keeps the warm range; matrix `SEM-m106-open-index-lease` killed. Phase 180. Landed.
+
 ## M105: audit residuals — CLOSED (GSD v0.99)
 
 2026-10-18 audit: policy-pin scan, premise-rel unindex, duplicate Define, Horn combination windows, replay VT coverage. Honeycomb stays Proposed. Not a hard FSM.

@@ -58,6 +58,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | unindex_behavior scans every cause bucket | `SEM-m104-unindex-cause-pointer` | `unindex_cause_examines_constant_in_live_d` | M104-S01 |
 | policy pin election scans every pin | `SEM-m105-policy-pin-newest` | `newest_policy_pin_examines_one_live_row` | M105-S01 |
 | unindex scans every premise-rel bucket | `SEM-m105-unindex-premise-pointer` | `unindex_premise_examines_only_that_behaviors_rels` | M105-S01 |
+| open copies FoldIndexMode and keeps the env lease | `SEM-m106-open-index-lease` | `open_keeps_lazy_scan_when_env_is_eager`, `open_keeps_eager_range_when_env_is_lazy` | M106-S01 |
 
 Testing gaps from the same report, closed in M099 (not new product findings):
 

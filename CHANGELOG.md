@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-19 — Trajectory: M106 / GSD v1.00 closed
+
+### Product
+
+- `open` restores the snapshot fold-index lease through `set_index_mode`. A Lazy snapshot still full-scans when the env is eager. An Eager snapshot keeps the warm valid-time range when the env is lazy.
+- Oracles `open_keeps_lazy_scan_when_env_is_eager`, `open_keeps_eager_range_when_env_is_lazy`; matrix `SEM-m106-open-index-lease` killed.
+
+### Process
+
+- Id map row v1.00 / M106. Regression map names the open-lease oracle.
+
+### Trajectory
+
+- `L_delivery=M106-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.00 / Phase 180. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-19 — Trajectory: M105 / GSD v0.99 closed
 
 ### Product

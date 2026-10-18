@@ -2,16 +2,21 @@
 
 ## Overview
 
-v0.01–v0.98 shipped. v0.99 is the audit residual milestone. Honeycomb stays Proposed.
+v0.01–v0.99 shipped. v1.00 restores snapshot fold-index lease warmth on open. Honeycomb stays Proposed.
 
 ## Id map
 
-See `docs/process/gsd-auto-contract.md` § Id map. v0.99 closed as M105 (`L_delivery=M105-closed`).
+See `docs/process/gsd-auto-contract.md` § Id map. v1.00 closed as M106 (`L_delivery=M106-closed`).
 
 ## Milestones
 
 - ✅ **v0.01–v0.98** — shipped (through unindex cause reverse pointer)
 - ✅ **v0.99 residual correctness and hot-path honesty** — phases 176–179 closed (M105)
+- ✅ **v1.00 open restores fold-index lease** — phase 180 closed (M106)
+
+## Phases (v1.00)
+
+- [x] **Phase 180:** open calls `set_index_mode` so snapshot lease warmth survives the env
 
 ## Phases (v0.99)
 

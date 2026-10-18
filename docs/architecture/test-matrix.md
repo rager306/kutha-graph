@@ -165,6 +165,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M105 S01 (audit residuals):** Phases 176–179 — `SEM-m105-policy-pin-newest`, `SEM-m105-unindex-premise-pointer` `killed` (owner `M105-S01`). Oracles: `newest_policy_pin_examines_one_live_row`, `unindex_premise_examines_only_that_behaviors_rels`. `FoldIndexMode::Lazy` full scan stays the thin-write contract.
 
+**M106 S01 (open index lease):** Phase 180 — `SEM-m106-open-index-lease` `killed` (owner `M106-S01`). Oracles: `open_keeps_lazy_scan_when_env_is_eager`, `open_keeps_eager_range_when_env_is_lazy`.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

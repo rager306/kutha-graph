@@ -1,8 +1,14 @@
 # Requirements: Kutha
 
-**Milestone:** v0.99 residual correctness (working tree, not harness-closed).
+**Milestone:** v1.00 open fold-index lease (M106 closed).
+
+## v1.00
+
+- [x] **AUD-10**: `finish_open` restores snapshot lease warmth via `set_index_mode`, not only the mode flag
 
 ## v0.99
+
+v0.99 residual correctness closed as M105.
 
 - [x] **AUD-01**: `live_policy_pin_at` walks `policy_by_ingest` newest-first and stops at the first live row
 - [x] **AUD-02**: `unindex_behavior` drops one premise-rel bucket per indexed relation (`premise_rels_of_behavior`)

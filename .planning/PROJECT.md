@@ -10,7 +10,7 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v0.99 residual correctness and hot-path honesty — closed (M105)
+## Current Milestone: v1.00 open restores fold-index lease — closed (M106)
 
 **Goal:** Close the 2026-10-18 audit residuals (policy election, premise-rel unindex, Define emit-once, full Horn combinations, replay VT coverage) without thawing Cypher, HNSW, or a legal pack.
 
