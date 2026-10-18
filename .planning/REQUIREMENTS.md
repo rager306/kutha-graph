@@ -1,6 +1,10 @@
 # Requirements: Kutha
 
-**Milestone:** v1.01 unindex live-vector skip (M107 closed).
+**Milestone:** v1.02 live behaviors are a set (M108 closed).
+
+## v1.02
+
+- [x] **AUD-12**: unindex of one Behavior removes it from the live set in one visit
 
 ## v1.01
 

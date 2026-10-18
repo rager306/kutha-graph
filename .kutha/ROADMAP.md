@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M108: live behaviors are a set — CLOSED (GSD v1.02)
+
+Unindex of one Behavior walked every live id (`retain` over the vector). The set is a `FxHashSet`: removal bumps the examine counter once. Honeycomb stays Proposed.
+
+- [x] **S01: O(1) live removal** `risk:low` `depends:[]`
+  > After this: correct of one Behavior examines a constant live-set count at D=32 and D=128; matrix `SEM-m108-unindex-live-set` killed. Phase 182. Landed.
+
 ## M107: unindex skips live-behavior vector — CLOSED (GSD v1.01)
 
 `unindex_behavior` walked every live Behavior id on Retract/Correct of an ordinary Assert. A non-behavior is absent from `cause_of_behavior` and `premise_rels_of_behavior`, so the walk is skipped. Honeycomb stays Proposed.

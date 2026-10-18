@@ -2348,6 +2348,17 @@ rows:
     gate: default
     owner: M107-S01
     source: Phase 181
+  - id: SEM-m108-unindex-live-set
+    plane: product
+    invariant: unindex of one Behavior does not walk every live id
+    layer: kill
+    oracle:
+      - unindex_one_behavior_live_visits_stay_constant
+    kill_mutation: retain every live_behaviors entry when removing one id
+    status: killed
+    gate: default
+    owner: M108-S01
+    source: Phase 182
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

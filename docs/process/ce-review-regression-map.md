@@ -60,6 +60,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | unindex scans every premise-rel bucket | `SEM-m105-unindex-premise-pointer` | `unindex_premise_examines_only_that_behaviors_rels` | M105-S01 |
 | open copies FoldIndexMode and keeps the env lease | `SEM-m106-open-index-lease` | `open_keeps_lazy_scan_when_env_is_eager`, `open_keeps_eager_range_when_env_is_lazy` | M106-S01 |
 | unindex walks every live Behavior on a non-behavior | `SEM-m107-unindex-live-skip` | `unindex_non_behavior_skips_live_behavior_vec` | M107-S01 |
+| unindex of one Behavior walks every live id | `SEM-m108-unindex-live-set` | `unindex_one_behavior_live_visits_stay_constant` | M108-S01 |
 
 Testing gaps from the same report, closed in M099 (not new product findings):
 

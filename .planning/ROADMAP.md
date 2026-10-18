@@ -2,11 +2,11 @@
 
 ## Overview
 
-v0.01–v1.00 shipped. v1.01 skips the live-behavior vector when unindex is not a behavior. Honeycomb stays Proposed.
+v0.01–v1.01 shipped. v1.02 stores live behaviors in a set so one removal is one visit. Honeycomb stays Proposed.
 
 ## Id map
 
-See `docs/process/gsd-auto-contract.md` § Id map. v1.01 closed as M107 (`L_delivery=M107-closed`).
+See `docs/process/gsd-auto-contract.md` § Id map. v1.02 closed as M108 (`L_delivery=M108-closed`).
 
 ## Milestones
 
@@ -14,6 +14,11 @@ See `docs/process/gsd-auto-contract.md` § Id map. v1.01 closed as M107 (`L_deli
 - ✅ **v0.99 residual correctness and hot-path honesty** — phases 176–179 closed (M105)
 - ✅ **v1.00 open restores fold-index lease** — phase 180 closed (M106)
 - ✅ **v1.01 unindex skips the live-behavior vector** — phase 181 closed (M107)
+- ✅ **v1.02 live behaviors are a set** — phase 182 closed (M108)
+
+## Phases (v1.02)
+
+- [x] **Phase 182:** one Behavior removal does not walk every live id
 
 ## Phases (v1.01)
 

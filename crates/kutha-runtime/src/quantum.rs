@@ -8,7 +8,7 @@ use kutha_common::{
     rule_definition_hash, Event, EventId, Op, TermDictionary, TermId, TransactionTime, ValidTime,
     WallTime, KUTHA_RESERVED_RELS,
 };
-use rustc_hash::FxHashMap;
+use rustc_hash::{FxHashMap, FxHashSet};
 use std::fmt;
 use std::path::Path;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -313,7 +313,7 @@ pub struct Runtime {
     /// Behavior id → `caused_by` for O(1) unindex of `derived_by_cause` (M104).
     pub(crate) cause_of_behavior: IngestMap<EventId, EventId>,
     /// Currently live Horn Behavior event ids (droppable; rebuilt from the log).
-    pub(crate) live_behaviors: Vec<EventId>,
+    pub(crate) live_behaviors: FxHashSet<EventId>,
     /// Live Behavior ids keyed by Horn body premise relation (droppable; rebuilt
     /// from the log). Second-phase retract/correct walks this index instead of
     /// every live Behavior (M095 / CE #3).
@@ -350,7 +350,7 @@ impl Runtime {
             unindex_cause_examine: IngestExamine::default(),
             derived_by_cause: IngestMap::default(),
             cause_of_behavior: IngestMap::default(),
-            live_behaviors: Vec::new(),
+            live_behaviors: FxHashSet::default(),
             behaviors_by_premise_rel: IngestMap::default(),
             premise_rels_of_behavior: IngestMap::default(),
             unindex_premise_examine: IngestExamine::default(),
@@ -479,7 +479,7 @@ impl Runtime {
         self.unindex_live_examine.reset();
     }
 
-    /// Entries of `live_behaviors` walked by `unindex_behavior` since reset.
+    /// Entries removed from `live_behaviors` by `unindex_behavior` since reset.
     pub fn unindex_live_examine_count(&self) -> u64 {
         self.unindex_live_examine.get()
     }

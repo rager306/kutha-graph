@@ -6,7 +6,7 @@ use crate::quantum::{
 };
 use crate::snapshot::Snapshot;
 use kutha_common::{Event, Op, TermDictionary};
-use rustc_hash::FxHashMap;
+use rustc_hash::{FxHashMap, FxHashSet};
 
 type IngestMap<K, V> = FxHashMap<K, V>;
 
@@ -110,7 +110,7 @@ impl Runtime {
             unindex_live_examine: IngestExamine::default(),
             derived_by_cause: IngestMap::default(),
             cause_of_behavior: IngestMap::default(),
-            live_behaviors: Vec::new(),
+            live_behaviors: FxHashSet::default(),
             behaviors_by_premise_rel: IngestMap::default(),
             premise_rels_of_behavior: IngestMap::default(),
         };
@@ -161,7 +161,7 @@ impl Runtime {
             unindex_live_examine: IngestExamine::default(),
             derived_by_cause: IngestMap::default(),
             cause_of_behavior: IngestMap::default(),
-            live_behaviors: Vec::new(),
+            live_behaviors: FxHashSet::default(),
             behaviors_by_premise_rel: IngestMap::default(),
             premise_rels_of_behavior: IngestMap::default(),
         };
@@ -197,7 +197,7 @@ impl Runtime {
             unindex_live_examine: IngestExamine::default(),
             derived_by_cause: IngestMap::default(),
             cause_of_behavior: IngestMap::default(),
-            live_behaviors: Vec::new(),
+            live_behaviors: FxHashSet::default(),
             behaviors_by_premise_rel: IngestMap::default(),
             premise_rels_of_behavior: IngestMap::default(),
         };

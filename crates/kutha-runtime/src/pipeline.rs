@@ -53,7 +53,7 @@ impl Runtime {
         for e in self.log.as_slice() {
             if let Op::Behavior { rule_version, .. } = &e.op {
                 if self.behavior_fact_live(e.id) {
-                    self.live_behaviors.push(e.id);
+                    self.live_behaviors.insert(e.id);
                     live_pins.push((e.id, rule_version.clone()));
                 }
             }
@@ -96,10 +96,9 @@ impl Runtime {
         if !tracked {
             return;
         }
-        for _ in 0..self.live_behaviors.len() {
+        if self.live_behaviors.remove(&id) {
             self.unindex_live_examine.bump();
         }
-        self.live_behaviors.retain(|x| *x != id);
         if let Some(cause) = self.cause_of_behavior.remove(&id) {
             self.unindex_cause_examine.bump();
             if let Some(kids) = self.derived_by_cause.get_mut(&cause) {
@@ -160,7 +159,7 @@ impl Runtime {
                     .or_default()
                     .push(event.id);
                 self.cause_of_behavior.insert(event.id, *caused_by);
-                self.live_behaviors.push(event.id);
+                self.live_behaviors.insert(event.id);
                 self.index_behavior_premise_rels(event.id, rule_version);
             }
             Op::Retract { event_id }

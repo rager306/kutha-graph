@@ -169,6 +169,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M107 S01 (unindex live skip):** Phase 181 — `SEM-m107-unindex-live-skip` `killed` (owner `M107-S01`). Oracle: `unindex_non_behavior_skips_live_behavior_vec`.
 
+**M108 S01 (live set):** Phase 182 — `SEM-m108-unindex-live-set` `killed` (owner `M108-S01`). Oracle: `unindex_one_behavior_live_visits_stay_constant`.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

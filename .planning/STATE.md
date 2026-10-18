@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.01
-milestone_name: unindex skips live-behavior vector
+milestone: v1.02
+milestone_name: live behaviors are a set
 status: completed
-stopped_at: "181-unindex-live-skip"
-last_updated: "2026-10-18T18:45:00.000Z"
+stopped_at: "182-unindex-live-set"
+last_updated: "2026-10-18T19:10:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.01 unindex skips the live-behavior vector — closed as M107
-**Phase:** 181
-**Status:** Correct of a non-behavior examines 0 live-behavior entries. AUD-08 Lazy ingest scan stays the thin-write contract. ADR status Proposed. PGM stays a research note in ADR-040.
+**Milestone:** v1.02 live behaviors are a set — closed as M108
+**Phase:** 182
+**Status:** One Behavior unindex examines a constant live-set count. AUD-08 Lazy ingest scan stays the thin-write contract. ADR status Proposed. PGM stays a research note in ADR-040.

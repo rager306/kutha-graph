@@ -109,6 +109,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v0.99 | 176 | M105 | S01 | audit residuals policy pin, premise unindex, horn windows | shipped |
 | v1.00 | 180 | M106 | S01 | open restores snapshot fold-index lease warmth | shipped |
 | v1.01 | 181 | M107 | S01 | unindex of a non-behavior skips live_behaviors | shipped |
+| v1.02 | 182 | M108 | S01 | live behaviors are a set; one removal is one visit | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
