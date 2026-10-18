@@ -1,0 +1,17 @@
+---
+description: This repo uses gsd-core only — refuse GSD Path skills and .project state
+alwaysApply: true
+---
+
+# No GSD Path in this repository
+
+Kutha planning overlay is **gsd-core** (`.planning/`, `/gsd-*` commands under `.cursor/skills/gsd-*`). Harness lease SoT stays `.kutha/STATE.md`.
+
+Do **not**:
+
+- Invoke `gsd-path`, `path`, or any `gsd-path-*` skill (`~/.agents/skills/gsd-path*`, `~/.agents/skills/path`)
+- Create or update `.project/` or `.gsd-path/`
+- Bind branches named `gsd-path/M00N`
+- Treat GSD Path inspect/define/plan/ship as the delivery workflow
+
+If the user asks for `/gsd-path` or Path setup: refuse briefly, point to gsd-core (`.planning/STATE.md`, `/gsd-progress`, GSD-auto via `docs/process/gsd-auto-contract.md`) and harness STATE. Do not initialize Path state.

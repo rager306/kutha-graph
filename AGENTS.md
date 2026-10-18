@@ -20,7 +20,7 @@ Do not mix languages inside a single artifact. Russian commit/changelog/PR verbs
 | **Product** (`crates/kutha-*`) | Temporal graph truth: event log = SoT | Roadmap ceremony |
 | **Harness** (`scripts/kutha_gov`, `.kutha/`) | Trajectory honesty, freeze, lifecycle non-collapse | Architecture decisions, legal/product readiness |
 
-Governor green ≠ ADR Accepted ≠ capability. Honeycomb **Proposed** ≠ delivery backlog. Literature cards ≠ shipping list. Session planning lives in `.planning/` (GSD overlay, not harness SoT) and must not grow a second living roadmap. `.planning/STATE.md` is GSD progress; `.kutha/STATE.md` is harness lease; `docs/ADR/` is architecture — do not collapse them.
+Governor green ≠ ADR Accepted ≠ capability. Honeycomb **Proposed** ≠ delivery backlog. Literature cards ≠ shipping list. Session planning lives in `.planning/` (**gsd-core** overlay, not harness SoT) and must not grow a second living roadmap. Do **not** use GSD Path (`@opengsd/gsd-path`, `.project/`, `/gsd-path`) in this repo. `.planning/STATE.md` is GSD progress; `.kutha/STATE.md` is harness lease; `docs/ADR/` is architecture — do not collapse them.
 
 ## Product snapshot
 

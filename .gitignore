@@ -28,6 +28,9 @@ uv.toml.bak
 # Do not ignore tracked Cursor skills (kutha-changelog, codebase-memory) or `.cursor/rules/`.
 # Curated CE handoffs under `.compound-engineering/artifacts/handoffs/` stay trackable.
 crates/**/tmp/
+# GSD Path (@opengsd/gsd-path) is not used here — planning is gsd-core (`.planning/`).
+.project/
+.gsd-path/
 .gsd/
 .claude/skills/
 .cursor/skills/gsd-*/
