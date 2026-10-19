@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-19 — Trajectory: M114 / GSD v1.08 closed
+
+### Process
+
+- `observe_cargo` takes an exclusive `fcntl` flock on `$CARGO_TARGET_DIR/.kutha-gov-cargo.lock` (default `./target/…`) for the whole test+build observation. Wait seconds from `KUTHA_GOV_CARGO_LOCK_WAIT_SEC` (default 600). Busy lock → HIGH `observe-error` exit 75.
+- Check `cargo-observe-lock` + invariant; matrix `SEM-m114-cargo-observe-lock` killed; fsm / `.env.example` budget 89.
+
+### Trajectory
+
+- `L_delivery=M114-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.08 / Phase 188. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-19 — Trajectory: lease M114-S01 (cargo observe flock)
 
 ### Trajectory

@@ -1633,6 +1633,42 @@ checks:
           pattern: "skip_emit=skip_emit,"
           with: "skip_emit=False,"
 
+  - id: cargo-observe-lock
+    description: >-
+      observe_cargo holds an exclusive flock on CARGO_TARGET_DIR/.kutha-gov-cargo.lock
+      so concurrent cargo/bench cannot race to exit 101 (M114 / SEM-m114-cargo-observe-lock).
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/observe.py
+        needles:
+          - "_exclusive_cargo_lock"
+          - ".kutha-gov-cargo.lock"
+          - "KUTHA_GOV_CARGO_LOCK_WAIT_SEC"
+        require: all
+        category: oracle
+        message: "cargo observe flock needles missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_m114_cargo_observe_lock.py
+        needles:
+          - "def test_observe_times_out_when_cargo_lock_held"
+          - "def test_concurrent_observe_does_not_overlap_stub"
+        require: all
+        category: oracle
+        message: "M114 cargo lock pytest missing: {missing}"
+      - kind: file_contains
+        path: .env.example
+        needles:
+          - "KUTHA_GOV_CARGO_LOCK_WAIT_SEC"
+        require: all
+        category: oracle
+        message: ".env.example missing cargo lock wait: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/observe.py
+          pattern: "\\.kutha-gov-cargo\\.lock"
+          with: ".__KUTHA_GOV_CARGO_LOCK_NAME__"
+
   - id: skip-cargo-log-marker
     description: >-
       skip_cargo / prior-high emit_tenant leaves allowlisted tenant=skipped so fold

@@ -1,6 +1,10 @@
 # Requirements: Kutha
 
-**Milestone:** v1.07 selftest mutation static (M113 closed).
+**Milestone:** v1.08 cargo observe flock (M114 closed).
+
+## v1.08
+
+- [x] **AUD-19**: `observe_cargo` exclusive flock on `$CARGO_TARGET_DIR/.kutha-gov-cargo.lock` (wait via `KUTHA_GOV_CARGO_LOCK_WAIT_SEC`)
 
 ## v1.07
 

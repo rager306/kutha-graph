@@ -2426,6 +2426,17 @@ rows:
     gate: default
     owner: M113-S01
     source: Phase 187
+  - id: SEM-m114-cargo-observe-lock
+    plane: harness
+    invariant: observe_cargo exclusive flock serializes concurrent Cargo on the same target dir
+    layer: governor
+    oracle:
+      - cargo-observe-lock
+    kill_mutation: restore run_cargo_observation without _exclusive_cargo_lock
+    status: killed
+    gate: default
+    owner: M114-S01
+    source: Phase 188
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

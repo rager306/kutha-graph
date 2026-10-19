@@ -2,15 +2,65 @@
 
 from __future__ import annotations
 
+import fcntl
 import os
 import re
 import subprocess
-from collections.abc import Mapping, Sequence
+import time
+from collections.abc import Iterator, Mapping, Sequence
+from contextlib import contextmanager
 from pathlib import Path
 
 from kutha_gov.protocol import Finding, Severity
 
 type Step = Mapping[str, object]
+
+_LOCK_NAME = ".kutha-gov-cargo.lock"
+
+
+def _cargo_target_dir(cwd: Path) -> Path:
+    raw = os.environ.get("CARGO_TARGET_DIR", "").strip()
+    if raw:
+        return Path(raw)
+    return cwd / "target"
+
+
+def _lock_wait_sec() -> float:
+    raw = os.environ.get("KUTHA_GOV_CARGO_LOCK_WAIT_SEC", "").strip()
+    if raw:
+        try:
+            return max(0.0, float(raw))
+        except ValueError:
+            pass
+    return 600.0
+
+
+@contextmanager
+def _exclusive_cargo_lock(cwd: Path) -> Iterator[None]:
+    """M114: serialize observe Cargo against concurrent cargo/bench on the same target."""
+    target = _cargo_target_dir(cwd)
+    target.mkdir(parents=True, exist_ok=True)
+    lock_path = target / _LOCK_NAME
+    fd = os.open(lock_path, os.O_CREAT | os.O_RDWR, 0o644)
+    deadline = time.monotonic() + _lock_wait_sec()
+    try:
+        while True:
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() >= deadline:
+                    raise TimeoutError(
+                        f"cargo observe lock busy ({lock_path}); "
+                        "waited KUTHA_GOV_CARGO_LOCK_WAIT_SEC"
+                    ) from None
+                time.sleep(0.05)
+        yield
+    finally:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_UN)
+        finally:
+            os.close(fd)
 
 
 def interpret_cargo_output(text: str, required: Sequence[str]) -> tuple[list[str], list[Finding]]:
@@ -133,37 +183,54 @@ def _run_cargo(
 def run_cargo_observation(root: object, spec: Step) -> tuple[int, list[str], list[Finding]]:
     cwd = root if isinstance(root, Path) else Path(str(root))
     timeout = _timeout_sec(spec)
-    code, text, findings = _run_cargo(
-        cwd,
-        spec,
-        default_args=["test", "--workspace", "--offline"],
-        timeout=timeout,
-        label="cargo test",
-    )
-    seen_ok, observe_findings = interpret_cargo_output(text, _str_list(spec, "required"))
-    findings.extend(observe_findings)
-    build = _mapping(spec, "build")
-    # Timeout / missing cargo: do not spend a second wall-clock budget on build.
-    # Non-zero test status still builds so emit_tenant can ingest fail.
-    if build is not None and code not in {124, 127}:
-        build_timeout = _timeout_sec(build) if "timeout_sec" in build else timeout
-        build_code, _build_text, build_findings = _run_cargo(
-            cwd,
-            build,
-            default_args=[
-                "build",
-                "--offline",
-                "-p",
-                "kutha-runtime",
-                "--bin",
-                "kutha-tenant",
-                "--bin",
-                "kutha-migrate",
+    try:
+        with _exclusive_cargo_lock(cwd):
+            code, text, findings = _run_cargo(
+                cwd,
+                spec,
+                default_args=["test", "--workspace", "--offline"],
+                timeout=timeout,
+                label="cargo test",
+            )
+            seen_ok, observe_findings = interpret_cargo_output(
+                text, _str_list(spec, "required")
+            )
+            findings.extend(observe_findings)
+            build = _mapping(spec, "build")
+            # Timeout / missing cargo: do not spend a second wall-clock budget on build.
+            # Non-zero test status still builds so emit_tenant can ingest fail.
+            if build is not None and code not in {124, 127}:
+                build_timeout = _timeout_sec(build) if "timeout_sec" in build else timeout
+                build_code, _build_text, build_findings = _run_cargo(
+                    cwd,
+                    build,
+                    default_args=[
+                        "build",
+                        "--offline",
+                        "-p",
+                        "kutha-runtime",
+                        "--bin",
+                        "kutha-tenant",
+                        "--bin",
+                        "kutha-migrate",
+                    ],
+                    timeout=build_timeout,
+                    label="cargo build kutha-tenant+kutha-migrate",
+                )
+                findings.extend(build_findings)
+                if code == 0:
+                    code = build_code
+            return code, seen_ok, findings
+    except TimeoutError as exc:
+        return (
+            75,
+            [],
+            [
+                Finding(
+                    "observe_cargo",
+                    Severity.HIGH,
+                    "observe-error",
+                    f"{exc} (evidence, not SoT)",
+                )
             ],
-            timeout=build_timeout,
-            label="cargo build kutha-tenant+kutha-migrate",
         )
-        findings.extend(build_findings)
-        if code == 0:
-            code = build_code
-    return code, seen_ok, findings
