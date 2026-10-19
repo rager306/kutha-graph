@@ -2,11 +2,11 @@
 
 ## Overview
 
-v0.01–v1.02 shipped. v1.03 indexes known_at by ingested_at so later decoys are skipped when warm. Honeycomb stays Proposed.
+v0.01–v1.03 shipped. v1.04 rebuilds retract leases from live Behavior heads only. Honeycomb stays Proposed.
 
 ## Id map
 
-See `docs/process/gsd-auto-contract.md` § Id map. v1.03 closed as M109 (`L_delivery=M109-closed`).
+See `docs/process/gsd-auto-contract.md` § Id map. v1.04 closed as M110 (`L_delivery=M110-closed`).
 
 ## Milestones
 
@@ -16,6 +16,11 @@ See `docs/process/gsd-auto-contract.md` § Id map. v1.03 closed as M109 (`L_deli
 - ✅ **v1.01 unindex skips the live-behavior vector** — phase 181 closed (M107)
 - ✅ **v1.02 live behaviors are a set** — phase 182 closed (M108)
 - ✅ **v1.03 known_at ingest index** — phase 183 closed (M109)
+- ✅ **v1.04 rebuild indexes only live Behaviors** — phase 184 closed (M110)
+
+## Phases (v1.04)
+
+- [x] **Phase 184:** rebuild keeps dead Behavior heads out of derived_by_cause
 
 ## Phases (v1.03)
 

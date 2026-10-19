@@ -2370,6 +2370,17 @@ rows:
     gate: default
     owner: M109-S01
     source: Phase 183
+  - id: SEM-m110-rebuild-live-derived
+    plane: product
+    invariant: rebuild_log_indexes does not put dead Behavior ids into derived_by_cause
+    layer: kill
+    oracle:
+      - open_after_correct_keeps_dead_behavior_out_of_retract_index
+    kill_mutation: restore rebuild that indexes every Op::Behavior into derived_by_cause
+    status: killed
+    gate: default
+    owner: M110-S01
+    source: Phase 184
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

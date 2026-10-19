@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M110: rebuild indexes only live Behaviors — CLOSED (GSD v1.04)
+
+`rebuild_log_indexes` put every Behavior id into `derived_by_cause` / `cause_of_behavior`, including Correct/Retract dead heads. After persist+open, retract of the premise examined the dead child again. Live-only rebuild keeps the lease honest. Honeycomb stays Proposed.
+
+- [x] **S01: live-only derived index on rebuild** `risk:med` `depends:[]`
+  > After this: open after Correct of Behavior then Retract premise examines 0; matrix `SEM-m110-rebuild-live-derived` killed. Phase 184. Landed.
+
 ## M109: known_at ingest index — CLOSED (GSD v1.03)
 
 Warm `known_at` / `as_known_on` walked every fact after the TT cut. Hot map `tt_by_ingest` skips facts ingested after the cut. Lazy cold path unchanged (AUD-08). Honeycomb stays Proposed.

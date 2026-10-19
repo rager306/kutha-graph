@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-19 — Trajectory: M110 / GSD v1.04 closed
+
+### Product
+
+- `rebuild_log_indexes` indexes `derived_by_cause` / `cause_of_behavior` / `live_behaviors` only for Behavior facts that are still live. Dead heads stay on the log but do not re-enter retract leases after open.
+- Oracle `open_after_correct_keeps_dead_behavior_out_of_retract_index`; matrix `SEM-m110-rebuild-live-derived` killed. RED was retract examine `1` after persist+open.
+
+### Process
+
+- Id map row v1.04 / M110. Regression map names the rebuild-live oracle.
+
+### Trajectory
+
+- `L_delivery=M110-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.04 / Phase 184. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-19 — Trajectory: M109 / GSD v1.03 closed
 
 ### Product

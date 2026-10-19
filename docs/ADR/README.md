@@ -110,7 +110,7 @@ Status stays **Proposed**. This is spike evidence, not acceptance. Source: CBM `
 | 060 | `replay_check` fold is the fold `open` keeps; Behavior replay checks VT coverage | full provenance polynomial |
 | 070 / 042 / 080 / 090 / 093 | frozen by `.kutha/STATE.md` thaw map | do not thaw from this note |
 
-Hot-path notes (Proposed): policy pin election walks `policy_by_ingest` newest-first; Behavior unindex uses `premise_rels_of_behavior` the way M104 used `cause_of_behavior`. Duplicate modern `Define` lines are dropped on Op-wire rewrite when the name is already interned. Warm `known_at` / `as_known_on` walk `tt_by_ingest` (skip later decoys). `FoldIndexMode::Lazy` still scans until `ensure_hot_maps` — that thin-write mode is intentional.
+Hot-path notes (Proposed): policy pin election walks `policy_by_ingest` newest-first; Behavior unindex uses `premise_rels_of_behavior` the way M104 used `cause_of_behavior`. Duplicate modern `Define` lines are dropped on Op-wire rewrite when the name is already interned. Warm `known_at` / `as_known_on` walk `tt_by_ingest` (skip later decoys). `rebuild_log_indexes` keeps only live Behavior heads in retract leases. `FoldIndexMode::Lazy` still scans until `ensure_hot_maps` — that thin-write mode is intentional.
 
 Research note (2026-10-19, still Proposed): ADR-040 records a piecewise-linear position model (PGM) as a possible droppable read lease on a sealed sorted `u64` column. It is not an engine spike, not Accepted, and not a thaw of ADR-042. The “14,000×” and “4 cache lines / 2.9× versus binary search” figures are not the PVLDB 2020 results.
 

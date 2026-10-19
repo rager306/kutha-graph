@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.03
-milestone_name: known_at ingest index
+milestone: v1.04
+milestone_name: rebuild indexes only live Behaviors
 status: completed
-stopped_at: "183-known-at-ingest"
-last_updated: "2026-10-19T02:00:00.000Z"
+stopped_at: "184-rebuild-live-derived"
+last_updated: "2026-10-19T02:30:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.03 known_at ingest index — closed as M109
-**Phase:** 183
-**Status:** Warm known_at examines a constant early cohort vs late decoys. AUD-08 Lazy ingest scan stays the thin-write contract. ADR status Proposed. PGM stays a research note in ADR-040.
+**Milestone:** v1.04 rebuild indexes only live Behaviors — closed as M110
+**Phase:** 184
+**Status:** After Correct of a Behavior, persist+open then Retract of the premise examines 0. AUD-08 Lazy ingest scan stays the thin-write contract. ADR status Proposed.

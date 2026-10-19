@@ -1,6 +1,10 @@
 # Requirements: Kutha
 
-**Milestone:** v1.03 known_at ingest index (M109 closed).
+**Milestone:** v1.04 rebuild indexes only live Behaviors (M110 closed).
+
+## v1.04
+
+- [x] **AUD-14**: `rebuild_log_indexes` puts only live Behavior ids into `derived_by_cause`
 
 ## v1.03
 

@@ -41,18 +41,23 @@ impl Runtime {
                     self.by_delivery_key.insert((*relation, k.clone()), e.id);
                 }
             }
-            if let Op::Behavior { caused_by, .. } = &e.op {
-                self.derived_by_cause
-                    .entry(*caused_by)
-                    .or_default()
-                    .push(e.id);
-                self.cause_of_behavior.insert(e.id, *caused_by);
-            }
         }
+        // Only live Behavior heads belong in retract/unindex leases. Dead rows
+        // stay on the log (SoT) but must not reappear after open/rebuild (M110).
         let mut live_pins: Vec<(EventId, String)> = Vec::new();
         for e in self.log.as_slice() {
-            if let Op::Behavior { rule_version, .. } = &e.op {
+            if let Op::Behavior {
+                caused_by,
+                rule_version,
+                ..
+            } = &e.op
+            {
                 if self.behavior_fact_live(e.id) {
+                    self.derived_by_cause
+                        .entry(*caused_by)
+                        .or_default()
+                        .push(e.id);
+                    self.cause_of_behavior.insert(e.id, *caused_by);
                     self.live_behaviors.insert(e.id);
                     live_pins.push((e.id, rule_version.clone()));
                 }
