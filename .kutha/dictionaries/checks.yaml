@@ -2198,6 +2198,49 @@ checks:
         category: oracle
         message: "dictionary load-error oracles missing: {missing}"
 
+  - id: hot-path-lease-honesty
+    description: >-
+      README hot-path and code keep M109 tt_by_ingest + M110 live-only rebuild
+      needles (dogfood; matrix SEM-m111-hot-path-dogfood).
+    steps:
+      - kind: file_contains
+        path: docs/ADR/README.md
+        needles:
+          - "tt_by_ingest"
+          - "rebuild_log_indexes"
+          - "live Behavior"
+        require: all
+        category: oracle
+        message: "ADR README hot-path lease needles missing: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/fold.rs
+        needles:
+          - "tt_by_ingest"
+        require: all
+        category: oracle
+        message: "fold.rs missing tt_by_ingest lease: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/pipeline.rs
+        needles:
+          - "Only live Behavior heads"
+        require: all
+        category: oracle
+        message: "pipeline rebuild live-only comment missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_m111_hot_path_dogfood.py
+        needles:
+          - "def test_check_enrolled"
+          - "hot-path-lease-honesty"
+        require: all
+        category: oracle
+        message: "hot-path dogfood pytest missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: docs/ADR/README.md
+          pattern: "tt_by_ingest"
+          with: "KNOWN_AT_INGEST_LEASE"
+
   - id: kinds-family-split
     description: >-
       kinds.py keeps run_step/RUNNERS; policy families stay in sibling modules

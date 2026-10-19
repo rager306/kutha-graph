@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-19 — Trajectory: M111 / GSD v1.05 closed
+
+### Product
+
+- `unindex_behavior` no longer full-scans `derived_by_cause` / `behaviors_by_premise_rel` when a reverse pointer is missing; missing means not in that lease.
+
+### Process
+
+- Governor check `hot-path-lease-honesty` pins ADR README + `tt_by_ingest` + live-only rebuild comment; FSM / `.env.example` budget 87. Oracle pytest `test_m111_hot_path_dogfood`.
+- Matrix `SEM-m111-hot-path-dogfood` / `SEM-m111-unindex-no-fallback` killed. Id map v1.05 / M111.
+
+### Trajectory
+
+- `L_delivery=M111-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.05 / Phase 185. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-19 — Trajectory: M110 / GSD v1.04 closed
 
 ### Product

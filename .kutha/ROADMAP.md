@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M111: hot-path lease dogfood + unindex no fallback — CLOSED (GSD v1.05)
+
+Process: enroll governor `hot-path-lease-honesty` so README/code needles for `tt_by_ingest` and live-only rebuild cannot drift (budget 87). Product: drop `unindex_behavior` full-bucket else branches; reverse pointers are authoritative. Honeycomb stays Proposed.
+
+- [x] **S01: dogfood check + no unindex fallback** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m111-hot-path-dogfood` / `SEM-m111-unindex-no-fallback` killed. Phase 185. Landed.
+
 ## M110: rebuild indexes only live Behaviors — CLOSED (GSD v1.04)
 
 `rebuild_log_indexes` put every Behavior id into `derived_by_cause` / `cause_of_behavior`, including Correct/Retract dead heads. After persist+open, retract of the premise examined the dead child again. Live-only rebuild keeps the lease honest. Honeycomb stays Proposed.

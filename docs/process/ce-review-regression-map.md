@@ -63,6 +63,8 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | unindex of one Behavior walks every live id | `SEM-m108-unindex-live-set` | `unindex_one_behavior_live_visits_stay_constant` | M108-S01 |
 | warm known_at walks every fact including later decoys | `SEM-m109-known-at-ingest` | `known_at_examines_stay_constant_vs_late_decoys` | M109-S01 |
 | rebuild reindexes dead Behavior into derived_by_cause | `SEM-m110-rebuild-live-derived` | `open_after_correct_keeps_dead_behavior_out_of_retract_index` | M110-S01 |
+| hot-path README/code needles drift | `SEM-m111-hot-path-dogfood` | `hot-path-lease-honesty` | M111-S01 |
+| unindex full-scans when reverse pointer missing | `SEM-m111-unindex-no-fallback` | `unindex_cause_examines_constant_in_live_d` | M111-S01 |
 
 Testing gaps from the same report, closed in M099 (not new product findings):
 

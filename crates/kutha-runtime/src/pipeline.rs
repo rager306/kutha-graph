@@ -104,6 +104,8 @@ impl Runtime {
         if self.live_behaviors.remove(&id) {
             self.unindex_live_examine.bump();
         }
+        // Reverse pointers are authoritative (M104/M105). Missing keys mean the
+        // id was never in that lease — do not fall back to a full-bucket scan.
         if let Some(cause) = self.cause_of_behavior.remove(&id) {
             self.unindex_cause_examine.bump();
             if let Some(kids) = self.derived_by_cause.get_mut(&cause) {
@@ -112,12 +114,6 @@ impl Runtime {
                     self.derived_by_cause.remove(&cause);
                 }
             }
-        } else {
-            for kids in self.derived_by_cause.values_mut() {
-                self.unindex_cause_examine.bump();
-                kids.retain(|x| *x != id);
-            }
-            self.derived_by_cause.retain(|_, kids| !kids.is_empty());
         }
         if let Some(rels) = self.premise_rels_of_behavior.remove(&id) {
             for rel in rels {
@@ -129,13 +125,6 @@ impl Runtime {
                     }
                 }
             }
-        } else {
-            for kids in self.behaviors_by_premise_rel.values_mut() {
-                self.unindex_premise_examine.bump();
-                kids.retain(|x| *x != id);
-            }
-            self.behaviors_by_premise_rel
-                .retain(|_, kids| !kids.is_empty());
         }
     }
 

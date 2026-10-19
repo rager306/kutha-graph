@@ -112,6 +112,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.02 | 182 | M108 | S01 | live behaviors are a set; one removal is one visit | shipped |
 | v1.03 | 183 | M109 | S01 | warm known_at skips later decoys via tt_by_ingest | shipped |
 | v1.04 | 184 | M110 | S01 | rebuild indexes only live Behavior heads | shipped |
+| v1.05 | 185 | M111 | S01 | hot-path lease dogfood + unindex no full-bucket fallback | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

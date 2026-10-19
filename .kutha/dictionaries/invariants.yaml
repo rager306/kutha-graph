@@ -345,6 +345,12 @@ invariants:
     disposition: check
     check: dict-load-fail-closed
 
+  - id: I-hot-path-lease-honesty
+    claim: "ADR README hot-path and fold/pipeline code keep tt_by_ingest and live-only rebuild needles; SEM-m111-hot-path-dogfood names that check"
+    source: ".planning/phases/185-hot-path-dogfood/185-VERIFICATION.md"
+    disposition: check
+    check: hot-path-lease-honesty
+
   - id: I-kinds-family-split
     claim: "kinds.py keeps run_step/RUNNERS and imports policy families from sibling modules; SEM-m054-id-kinds-split names that check"
     source: ".planning/phases/169-kinds-family-split/169-CONTEXT.md"

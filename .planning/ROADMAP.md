@@ -2,11 +2,11 @@
 
 ## Overview
 
-v0.01–v1.03 shipped. v1.04 rebuilds retract leases from live Behavior heads only. Honeycomb stays Proposed.
+v0.01–v1.04 shipped. v1.05 enrolls hot-path lease dogfood and drops unindex full-bucket fallbacks. Honeycomb stays Proposed.
 
 ## Id map
 
-See `docs/process/gsd-auto-contract.md` § Id map. v1.04 closed as M110 (`L_delivery=M110-closed`).
+See `docs/process/gsd-auto-contract.md` § Id map. v1.05 closed as M111 (`L_delivery=M111-closed`).
 
 ## Milestones
 
@@ -17,6 +17,11 @@ See `docs/process/gsd-auto-contract.md` § Id map. v1.04 closed as M110 (`L_deli
 - ✅ **v1.02 live behaviors are a set** — phase 182 closed (M108)
 - ✅ **v1.03 known_at ingest index** — phase 183 closed (M109)
 - ✅ **v1.04 rebuild indexes only live Behaviors** — phase 184 closed (M110)
+- ✅ **v1.05 hot-path lease dogfood** — phase 185 closed (M111)
+
+## Phases (v1.05)
+
+- [x] **Phase 185:** governor pins hot-path needles; unindex has no full-bucket fallback
 
 ## Phases (v1.04)
 

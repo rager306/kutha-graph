@@ -1,6 +1,11 @@
 # Requirements: Kutha
 
-**Milestone:** v1.04 rebuild indexes only live Behaviors (M110 closed).
+**Milestone:** v1.05 hot-path lease dogfood (M111 closed).
+
+## v1.05
+
+- [x] **AUD-15**: governor `hot-path-lease-honesty` pins `tt_by_ingest` + live-only rebuild needles
+- [x] **AUD-16**: `unindex_behavior` does not full-scan when reverse pointers are missing
 
 ## v1.04
 

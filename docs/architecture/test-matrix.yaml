@@ -2381,6 +2381,29 @@ rows:
     gate: default
     owner: M110-S01
     source: Phase 184
+  - id: SEM-m111-hot-path-dogfood
+    plane: harness
+    invariant: governor pins tt_by_ingest and live-only rebuild hot-path needles
+    layer: governor
+    oracle:
+      - hot-path-lease-honesty
+    kill_mutation: remove tt_by_ingest from docs/ADR/README.md hot-path notes
+    status: killed
+    gate: default
+    owner: M111-S01
+    source: Phase 185
+  - id: SEM-m111-unindex-no-fallback
+    plane: product
+    invariant: unindex_behavior does not full-scan cause/premise maps when reverse pointer missing
+    layer: kill
+    oracle:
+      - unindex_cause_examines_constant_in_live_d
+      - unindex_premise_examines_only_that_behaviors_rels
+    kill_mutation: restore else branches that walk every derived_by_cause / behaviors_by_premise_rel bucket
+    status: killed
+    gate: default
+    owner: M111-S01
+    source: Phase 185
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

@@ -175,6 +175,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M110 S01 (rebuild live derived):** Phase 184 — `SEM-m110-rebuild-live-derived` `killed` (owner `M110-S01`). Oracle: `open_after_correct_keeps_dead_behavior_out_of_retract_index`.
 
+**M111 S01 (hot-path dogfood):** Phase 185 — `SEM-m111-hot-path-dogfood` / `SEM-m111-unindex-no-fallback` `killed` (owner `M111-S01`). Oracles: `hot-path-lease-honesty`, `unindex_cause_examines_constant_in_live_d`, `unindex_premise_examines_only_that_behaviors_rels`.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.
