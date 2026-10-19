@@ -14,6 +14,41 @@ DICT_REL = ".kutha/dictionaries/checks.yaml"
 SCHEMA = "kutha-harness-checks/v1"
 
 
+def replace_regex_substring_error(pattern: object, replacement: object) -> str:
+    """M112/M113: `with` must not contain `pattern` as a substring (vacuous proof)."""
+    if not isinstance(pattern, str) or not pattern:
+        return ""
+    repl = replacement if isinstance(replacement, str) else ""
+    if pattern in repl:
+        return (
+            "replace_regex `with` still contains pattern as a substring "
+            f"(pattern={pattern!r}); use a replacement that removes the needle"
+        )
+    return ""
+
+
+def selftest_declared_mutation_errors(check_id: str, selftest: object) -> list[str]:
+    """Static errors on declared selftest.mutations (load-time dogfood)."""
+    if not isinstance(selftest, dict) or "mutations" not in selftest:
+        return []
+    raw = selftest.get("mutations")
+    if not isinstance(raw, list):
+        return [f"dictionary check {check_id!r} selftest.mutations must be a list"]
+    errors: list[str] = []
+    for index, item in enumerate(raw):
+        if not isinstance(item, dict):
+            errors.append(
+                f"dictionary check {check_id!r} selftest.mutations[{index}] must be a mapping"
+            )
+            continue
+        if item.get("op") != "replace_regex":
+            continue
+        msg = replace_regex_substring_error(item.get("pattern"), item.get("with", ""))
+        if msg:
+            errors.append(f"dictionary check {check_id!r} selftest: {msg}")
+    return errors
+
+
 class DictCheck(Check):
     """One dictionary row. Steps are kinds from META.md, not Python subclasses."""
 
@@ -109,6 +144,7 @@ def get_checks(root: Path | None = None) -> dict[str, Check]:
                 f"dictionary check {check.name!r} has no mapping steps"
             )
             continue
+        load_errors.extend(selftest_declared_mutation_errors(check.name, row.get("selftest")))
         found[check.name] = check
     if load_errors:
         found[LoadErrorCheck.name] = LoadErrorCheck("; ".join(load_errors))

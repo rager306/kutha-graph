@@ -2,11 +2,11 @@
 
 ## Overview
 
-v0.01–v1.05 shipped. v1.06 rejects selftest replace_regex that keeps the pattern as a substring. Honeycomb stays Proposed.
+v0.01–v1.06 shipped. v1.07 fail-closes dictionary load on substring-preserving declared selftest replace_regex. Honeycomb stays Proposed.
 
 ## Id map
 
-See `docs/process/gsd-auto-contract.md` § Id map. v1.06 closed as M112 (`L_delivery=M112-closed`).
+See `docs/process/gsd-auto-contract.md` § Id map. v1.07 closed as M113 (`L_delivery=M113-closed`).
 
 ## Milestones
 
@@ -19,6 +19,11 @@ See `docs/process/gsd-auto-contract.md` § Id map. v1.06 closed as M112 (`L_deli
 - ✅ **v1.04 rebuild indexes only live Behaviors** — phase 184 closed (M110)
 - ✅ **v1.05 hot-path lease dogfood** — phase 185 closed (M111)
 - ✅ **v1.06 selftest substring trap** — phase 186 closed (M112)
+- ✅ **v1.07 selftest mutation static** — phase 187 closed (M113)
+
+## Phases (v1.07)
+
+- [x] **Phase 187:** get_checks LoadError on substring-preserving declared selftest replace_regex
 
 ## Phases (v1.06)
 

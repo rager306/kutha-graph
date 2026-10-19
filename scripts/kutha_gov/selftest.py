@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from kutha_gov.dictionary import DictCheck, get_checks
+from kutha_gov.dictionary import DictCheck, get_checks, replace_regex_substring_error
 from kutha_gov.protocol import Check, CheckResult, Context, Finding, Severity
 
 type Step = Mapping[str, object]
@@ -383,14 +383,11 @@ def _unit_error(work: Path, unit: list[Mutation]) -> str:
         # M112: `with` that still contains the pattern leaves file_contains green
         # (VACUOUS). Fail closed before apply so authors see UNPROVEN, not silence.
         if op == "replace_regex":
-            pattern = _str(mutation, "pattern")
-            replacement = mutation.get("with", "")
-            repl = replacement if isinstance(replacement, str) else ""
-            if pattern and pattern in repl:
-                return (
-                    "replace_regex `with` still contains pattern as a substring "
-                    f"(pattern={pattern!r}); use a replacement that removes the needle"
-                )
+            err = replace_regex_substring_error(
+                _str(mutation, "pattern"), mutation.get("with", "")
+            )
+            if err:
+                return err
     return ""
 
 
@@ -408,19 +405,9 @@ def _parse_mutations(raw: object) -> tuple[list[list[Mutation]], str]:
         if not isinstance(path, str) or not path.strip():
             return [], "mutation path is required"
         if op == "replace_regex":
-            pattern = item.get("pattern")
-            replacement = item.get("with", "")
-            if (
-                isinstance(pattern, str)
-                and pattern
-                and isinstance(replacement, str)
-                and pattern in replacement
-            ):
-                return (
-                    [],
-                    "replace_regex `with` still contains pattern as a substring "
-                    f"(pattern={pattern!r}); use a replacement that removes the needle",
-                )
+            err = replace_regex_substring_error(item.get("pattern"), item.get("with", ""))
+            if err:
+                return [], err
         units.append([item])
     return units, ""
 

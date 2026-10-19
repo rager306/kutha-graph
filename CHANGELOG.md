@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-19 — Trajectory: M113 / GSD v1.07 closed
+
+### Process
+
+- `get_checks` fail-closes (`LoadErrorCheck` alongside survivors) when a declared `selftest` `replace_regex` keeps `pattern` as a substring of `with`. Shared helper `replace_regex_substring_error` used by selftest (M112) and dictionary load (M113).
+- Oracle `test_replace_regex_with_still_contains_pattern_is_load_error`; `dict-load-fail-closed` needles extended; matrix `SEM-m113-selftest-mutation-static` killed. META + governor-intake note load-time twin.
+
+### Trajectory
+
+- `L_delivery=M113-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.07 / Phase 187. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-19 — Trajectory: lease M113-S01 (selftest mutation static)
 
 ### Trajectory

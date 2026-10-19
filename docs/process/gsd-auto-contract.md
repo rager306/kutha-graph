@@ -114,6 +114,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.04 | 184 | M110 | S01 | rebuild indexes only live Behavior heads | shipped |
 | v1.05 | 185 | M111 | S01 | hot-path lease dogfood + unindex no full-bucket fallback | shipped |
 | v1.06 | 186 | M112 | S01 | selftest rejects replace_regex that keeps pattern as substring | shipped |
+| v1.07 | 187 | M113 | S01 | get_checks fail-closes on substring-preserving declared selftest replace_regex | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

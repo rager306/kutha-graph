@@ -1,6 +1,10 @@
 # Requirements: Kutha
 
-**Milestone:** v1.06 selftest substring trap (M112 closed).
+**Milestone:** v1.07 selftest mutation static (M113 closed).
+
+## v1.07
+
+- [x] **AUD-18**: `get_checks` LoadError when declared selftest `replace_regex` keeps `pattern` as a substring of `with`
 
 ## v1.06
 

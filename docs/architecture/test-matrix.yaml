@@ -2415,6 +2415,17 @@ rows:
     gate: default
     owner: M112-S01
     source: Phase 186
+  - id: SEM-m113-selftest-mutation-static
+    plane: harness
+    invariant: get_checks LoadError when declared selftest replace_regex keeps pattern as substring of with
+    layer: governor
+    oracle:
+      - dict-load-fail-closed
+    kill_mutation: restore get_checks that ignores substring-preserving declared selftest mutations
+    status: killed
+    gate: default
+    owner: M113-S01
+    source: Phase 187
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

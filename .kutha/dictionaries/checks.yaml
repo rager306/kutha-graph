@@ -2175,8 +2175,9 @@ checks:
 
   - id: dict-load-fail-closed
     description: >-
-      checks.yaml loader fail-closes on scalar rows, duplicate ids, and
-      empty/scalar steps (CE 2026-10-15 #6–#8 / M094).
+      checks.yaml loader fail-closes on scalar rows, duplicate ids,
+      empty/scalar steps (CE 2026-10-15 #6–#8 / M094), and declared selftest
+      replace_regex whose `with` still contains `pattern` (M113).
     steps:
       - kind: file_contains
         path: scripts/kutha_gov/dictionary.py
@@ -2185,6 +2186,8 @@ checks:
           - "duplicate check id"
           - "non-empty steps list"
           - "no mapping steps"
+          - "selftest_declared_mutation_errors"
+          - "replace_regex_substring_error"
         require: all
         category: oracle
         message: "dictionary loader fail-closed needles missing: {missing}"
@@ -2197,17 +2200,24 @@ checks:
         require: all
         category: oracle
         message: "dictionary load-error oracles missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_m113_selftest_mutation_static.py
+        needles:
+          - "def test_replace_regex_with_still_contains_pattern_is_load_error"
+        require: all
+        category: oracle
+        message: "M113 load-time substring pytest missing: {missing}"
 
   - id: selftest-substring-honesty
     description: >-
       selftest rejects replace_regex whose `with` still contains `pattern`
       (M112 / SEM-m112-selftest-substring); derived yaml_map_list swaps use
-      non-substring replacements.
+      non-substring replacements. Load-time twin is dict-load-fail-closed (M113).
     steps:
       - kind: file_contains
         path: scripts/kutha_gov/selftest.py
         needles:
-          - "replace_regex `with` still contains pattern as a substring"
+          - "replace_regex_substring_error"
         require: all
         category: oracle
         message: "selftest substring guard missing: {missing}"

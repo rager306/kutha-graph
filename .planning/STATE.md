@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.06
-milestone_name: selftest substring trap
+milestone: v1.07
+milestone_name: selftest mutation static substring
 status: completed
-stopped_at: "186-selftest-substring"
-last_updated: "2026-10-19T05:30:00.000Z"
+stopped_at: "187-selftest-mutation-static"
+last_updated: "2026-10-19T06:00:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.06 selftest substring trap — closed as M112
-**Phase:** 186
-**Status:** replace_regex whose `with` still contains `pattern` is UNPROVEN. AUD-08 Lazy ingest scan stays the thin-write contract. ADR status Proposed.
+**Milestone:** v1.07 selftest mutation static substring — closed as M113
+**Phase:** 187
+**Status:** Declared substring-preserving replace_regex selftest mutations fail at get_checks load. Honeycomb stays Proposed.

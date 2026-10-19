@@ -340,8 +340,8 @@ invariants:
     check: nameless-dict-retain
 
   - id: I-dict-load-fail-closed
-    claim: "checks.yaml loader fail-closes on non-mapping rows, duplicate ids (keep-first), and empty/scalar steps via LoadError alongside survivors"
-    source: ".planning/phases/165-dict-load-fail-closed/165-CONTEXT.md"
+    claim: "checks.yaml loader fail-closes on non-mapping rows, duplicate ids (keep-first), empty/scalar steps, and declared selftest replace_regex whose with still contains pattern (LoadError alongside survivors; SEM-m113-selftest-mutation-static)"
+    source: ".planning/phases/187-selftest-mutation-static/187-VERIFICATION.md"
     disposition: check
     check: dict-load-fail-closed
 

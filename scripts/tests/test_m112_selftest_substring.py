@@ -59,8 +59,10 @@ class SelftestSubstringTrapTests(unittest.TestCase):
         root = _write_mini([dict(check.spec)], {"README.md": "hello needle world\n"})
         rows, code = run_selftest(root)
         self.assertEqual(1, code)
-        self.assertEqual(UNPROVEN, rows[0].status)
-        self.assertIn("substring", rows[0].reason.lower())
+        # M113: load also emits LoadErrorCheck; assert the named check row.
+        trap = next(row for row in rows if row.check_id == "substring-trap")
+        self.assertEqual(UNPROVEN, trap.status)
+        self.assertIn("substring", trap.reason.lower())
 
     def test_yaml_map_list_require_fields_swap_is_not_substring(self) -> None:
         from kutha_gov.kinds import yaml_map_list_mutation_target
