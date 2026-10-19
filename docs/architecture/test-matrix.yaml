@@ -2437,6 +2437,17 @@ rows:
     gate: default
     owner: M114-S01
     source: Phase 188
+  - id: SEM-m115-empty-check-on-ci
+    plane: harness
+    invariant: ci --check with an empty value exits 2 instead of the full quantum
+    layer: governor
+    oracle:
+      - agent-surface
+    kill_mutation: treat a falsy joined --check as absent so ci --check "" runs the suite
+    status: killed
+    gate: default
+    owner: M115-S01
+    source: Phase 189
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

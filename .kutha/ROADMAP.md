@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M115: empty --check on ci — ACTIVE (GSD v1.09)
+## M115: empty --check on ci — CLOSED (GSD v1.09)
 
 `ci --check ""` is falsy after join, so the reject guard skips and the full quantum runs. Thin slice: a present `--check` on `ci` exits 2 even when the value is empty. Honeycomb stays Proposed.
 
-- [ ] **S01: reject empty --check on ci** `risk:low` `depends:[]`
-  > After this: matrix `SEM-m115-empty-check-on-ci` killed. Phase 189.
+- [x] **S01: reject empty --check on ci** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m115-empty-check-on-ci` killed. Phase 189. Landed.
 
 ## M114: cargo observe flock — CLOSED (GSD v1.08)
 

@@ -68,6 +68,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | replace_regex keeps pattern as substring → VACUOUS | `SEM-m112-selftest-substring` | `selftest-substring-honesty` / `test_replace_regex_with_still_contains_pattern_is_unproven` | M112-S01 |
 | declared selftest replace_regex keeps pattern → silent load | `SEM-m113-selftest-mutation-static` | `dict-load-fail-closed` / `test_replace_regex_with_still_contains_pattern_is_load_error` | M113-S01 |
 | concurrent cargo/bench races observe_cargo → exit 101 | `SEM-m114-cargo-observe-lock` | `cargo-observe-lock` / `test_observe_times_out_when_cargo_lock_held` | M114-S01 |
+| `ci --check ""` runs the full suite | `SEM-m115-empty-check-on-ci` | `agent-surface` / `test_ci_rejects_empty_check_flag` | M115-S01 |
 
 Testing gaps from the same report, closed in M099 (not new product findings):
 

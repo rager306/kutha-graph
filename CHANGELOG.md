@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-19 — Trajectory: M115 / GSD v1.09 closed
+
+### Process
+
+- `kutha-gov ci --check ""` exits 2. A present `--check` is no longer treated as absent when the joined value is empty, so the full quantum does not start. Named `--check` on `ci` stays rejected the same way.
+- Oracle `test_ci_rejects_empty_check_flag` on `agent-surface`; matrix `SEM-m115-empty-check-on-ci` killed.
+
+### Trajectory
+
+- `L_delivery=M115-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.09 / Phase 189. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-19 — Trajectory: lease M115-S01 (empty --check on ci)
 
 ### Trajectory

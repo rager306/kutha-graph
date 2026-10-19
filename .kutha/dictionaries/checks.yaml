@@ -2433,6 +2433,7 @@ checks:
           - "def test_json_repeated_check_flags_runs_both"
           - "def test_selftest_repeated_check_flags_runs_both"
           - "def test_ci_rejects_check_flag"
+          - "def test_ci_rejects_empty_check_flag"
         require: all
         category: oracle
         message: "multi-check pytest oracle missing: {missing}"

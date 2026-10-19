@@ -116,6 +116,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.06 | 186 | M112 | S01 | selftest rejects replace_regex that keeps pattern as substring | shipped |
 | v1.07 | 187 | M113 | S01 | get_checks fail-closes on substring-preserving declared selftest replace_regex | shipped |
 | v1.08 | 188 | M114 | S01 | observe_cargo exclusive flock on Cargo target dir | shipped |
+| v1.09 | 189 | M115 | S01 | ci rejects a present empty --check instead of the full quantum | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

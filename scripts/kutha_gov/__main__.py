@@ -411,7 +411,9 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     ctx = Context(root=root, fail_on_warn=fail_on_warn, skip_cargo=args.skip_cargo, jobs=jobs)
     check_spec = _join_check_flags(args.check)
-    if check_spec and args.command not in {"json", "precommit", "selftest"}:
+    # M115: a present --check (even "") is not "no flag". Falsy join must not
+    # fall through to the full ci quantum.
+    if args.check is not None and args.command not in {"json", "precommit", "selftest"}:
         print("--check is only valid with json, precommit, or selftest", file=sys.stderr)
         print(
             "hint: kutha-gov {json|precommit|selftest} --check ID[,ID…]",

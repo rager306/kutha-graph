@@ -142,6 +142,17 @@ class MultiCheckSelectTests(unittest.TestCase):
             [ln.split()[1] for ln in out.splitlines() if ln.startswith("OK")],
         )
 
+    def test_ci_rejects_empty_check_flag(self) -> None:
+        """M115: --check '' on ci must not be treated as 'no flag' (full suite)."""
+        err = io.StringIO()
+        with redirect_stderr(err):
+            code = main(["--root", str(ROOT), "--check", "", "ci"])
+        self.assertEqual(2, code)
+        self.assertIn(
+            "--check is only valid with json, precommit, or selftest",
+            err.getvalue(),
+        )
+
     def test_ci_rejects_check_flag(self) -> None:
         """M088/M089: selective --check stays off ci; stderr redirects to check surfaces."""
         err = io.StringIO()

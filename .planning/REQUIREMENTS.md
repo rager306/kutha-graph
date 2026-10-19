@@ -1,6 +1,10 @@
 # Requirements: Kutha
 
-**Milestone:** v1.08 cargo observe flock (M114 closed).
+**Milestone:** v1.09 empty --check on ci (M115 closed).
+
+## v1.09
+
+- [x] **AUD-20**: `ci --check ""` exits 2 instead of the full quantum
 
 ## v1.08
 

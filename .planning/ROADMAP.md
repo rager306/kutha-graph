@@ -2,11 +2,11 @@
 
 ## Overview
 
-v0.01–v1.07 shipped. v1.08 flocks observe_cargo on the Cargo target dir. Honeycomb stays Proposed.
+v0.01–v1.08 shipped. v1.09 rejects an empty `--check` on `ci`. Honeycomb stays Proposed.
 
 ## Id map
 
-See `docs/process/gsd-auto-contract.md` § Id map. v1.08 closed as M114 (`L_delivery=M114-closed`).
+See `docs/process/gsd-auto-contract.md` § Id map. v1.09 closed as M115 (`L_delivery=M115-closed`).
 
 ## Milestones
 
@@ -21,6 +21,11 @@ See `docs/process/gsd-auto-contract.md` § Id map. v1.08 closed as M114 (`L_deli
 - ✅ **v1.06 selftest substring trap** — phase 186 closed (M112)
 - ✅ **v1.07 selftest mutation static** — phase 187 closed (M113)
 - ✅ **v1.08 cargo observe flock** — phase 188 closed (M114)
+- ✅ **v1.09 empty --check on ci** — phase 189 closed (M115)
+
+## Phases (v1.09)
+
+- [x] **Phase 189:** ci exits 2 when --check is present but empty
 
 ## Phases (v1.08)
 
