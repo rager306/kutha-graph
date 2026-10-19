@@ -380,6 +380,17 @@ def _unit_error(work: Path, unit: list[Mutation]) -> str:
             return f"unknown mutation op {op!r}"
         if _resolve_in(work, _str(mutation, "path")) is None:
             return "mutation path escapes the copy"
+        # M112: `with` that still contains the pattern leaves file_contains green
+        # (VACUOUS). Fail closed before apply so authors see UNPROVEN, not silence.
+        if op == "replace_regex":
+            pattern = _str(mutation, "pattern")
+            replacement = mutation.get("with", "")
+            repl = replacement if isinstance(replacement, str) else ""
+            if pattern and pattern in repl:
+                return (
+                    "replace_regex `with` still contains pattern as a substring "
+                    f"(pattern={pattern!r}); use a replacement that removes the needle"
+                )
     return ""
 
 
@@ -396,6 +407,20 @@ def _parse_mutations(raw: object) -> tuple[list[list[Mutation]], str]:
         path = item.get("path")
         if not isinstance(path, str) or not path.strip():
             return [], "mutation path is required"
+        if op == "replace_regex":
+            pattern = item.get("pattern")
+            replacement = item.get("with", "")
+            if (
+                isinstance(pattern, str)
+                and pattern
+                and isinstance(replacement, str)
+                and pattern in replacement
+            ):
+                return (
+                    [],
+                    "replace_regex `with` still contains pattern as a substring "
+                    f"(pattern={pattern!r}); use a replacement that removes the needle",
+                )
         units.append([item])
     return units, ""
 

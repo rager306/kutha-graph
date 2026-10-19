@@ -351,6 +351,12 @@ invariants:
     disposition: check
     check: hot-path-lease-honesty
 
+  - id: I-selftest-substring-honesty
+    claim: "selftest rejects replace_regex whose with still contains pattern; yaml_map_list derived swaps use non-substring keys; SEM-m112-selftest-substring"
+    source: ".planning/phases/186-selftest-substring/186-VERIFICATION.md"
+    disposition: check
+    check: selftest-substring-honesty
+
   - id: I-kinds-family-split
     claim: "kinds.py keeps run_step/RUNNERS and imports policy families from sibling modules; SEM-m054-id-kinds-split names that check"
     source: ".planning/phases/169-kinds-family-split/169-CONTEXT.md"

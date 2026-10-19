@@ -4,6 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-19 — Trajectory: M112 / GSD v1.06 closed
+
+### Process
+
+- `kutha-gov selftest` rejects `replace_regex` when `with` still contains `pattern` as a substring (UNPROVEN before apply). Stops the VACUOUS class seen when `tt_by_ingest_REMOVED` still matched `tt_by_ingest`.
+- Derived `yaml_map_list` require_fields / nonempty_list swaps use `__selftest_rm_<field>__:` so the needle is not a substring of the replacement (ledger selftests stay non-vacuous under the new rule).
+- Check `selftest-substring-honesty` + invariant; matrix `SEM-m112-selftest-substring` killed; fsm / `.env.example` budget 88. META + governor-intake document the rule.
+
+### Trajectory
+
+- `L_delivery=M112-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.06 / Phase 186. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-19 — Trajectory: M111 / GSD v1.05 closed
 
 ### Product

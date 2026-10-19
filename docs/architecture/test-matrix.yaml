@@ -2404,6 +2404,17 @@ rows:
     gate: default
     owner: M111-S01
     source: Phase 185
+  - id: SEM-m112-selftest-substring
+    plane: harness
+    invariant: replace_regex with that still contains pattern is UNPROVEN not VACUOUS
+    layer: governor
+    oracle:
+      - selftest-substring-honesty
+    kill_mutation: allow replace_regex when with contains pattern (classify VACUOUS only)
+    status: killed
+    gate: default
+    owner: M112-S01
+    source: Phase 186
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step

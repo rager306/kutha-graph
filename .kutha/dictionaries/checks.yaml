@@ -2198,6 +2198,40 @@ checks:
         category: oracle
         message: "dictionary load-error oracles missing: {missing}"
 
+  - id: selftest-substring-honesty
+    description: >-
+      selftest rejects replace_regex whose `with` still contains `pattern`
+      (M112 / SEM-m112-selftest-substring); derived yaml_map_list swaps use
+      non-substring replacements.
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/selftest.py
+        needles:
+          - "replace_regex `with` still contains pattern as a substring"
+        require: all
+        category: oracle
+        message: "selftest substring guard missing: {missing}"
+      - kind: file_contains
+        path: scripts/kutha_gov/kinds.py
+        needles:
+          - "__selftest_rm_"
+        require: all
+        category: oracle
+        message: "yaml_map_list non-substring mutation marker missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_m112_selftest_substring.py
+        needles:
+          - "def test_replace_regex_with_still_contains_pattern_is_unproven"
+        require: all
+        category: oracle
+        message: "M112 substring pytest missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/tests/test_m112_selftest_substring.py
+          pattern: "def test_replace_regex_with_still_contains_pattern_is_unproven"
+          with: "def test_substring_oracle_renamed_away"
+
   - id: hot-path-lease-honesty
     description: >-
       README hot-path and code keep M109 tt_by_ingest + M110 live-only rebuild

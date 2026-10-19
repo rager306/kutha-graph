@@ -65,6 +65,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | rebuild reindexes dead Behavior into derived_by_cause | `SEM-m110-rebuild-live-derived` | `open_after_correct_keeps_dead_behavior_out_of_retract_index` | M110-S01 |
 | hot-path README/code needles drift | `SEM-m111-hot-path-dogfood` | `hot-path-lease-honesty` | M111-S01 |
 | unindex full-scans when reverse pointer missing | `SEM-m111-unindex-no-fallback` | `unindex_cause_examines_constant_in_live_d` | M111-S01 |
+| replace_regex keeps pattern as substring → VACUOUS | `SEM-m112-selftest-substring` | `selftest-substring-honesty` / `test_replace_regex_with_still_contains_pattern_is_unproven` | M112-S01 |
 
 Testing gaps from the same report, closed in M099 (not new product findings):
 

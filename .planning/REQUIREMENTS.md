@@ -1,6 +1,10 @@
 # Requirements: Kutha
 
-**Milestone:** v1.05 hot-path lease dogfood (M111 closed).
+**Milestone:** v1.06 selftest substring trap (M112 closed).
+
+## v1.06
+
+- [x] **AUD-17**: selftest `replace_regex` rejects `with` that still contains `pattern` as a substring
 
 ## v1.05
 

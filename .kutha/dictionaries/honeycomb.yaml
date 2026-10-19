@@ -1,3 +1,4 @@
+# 2026-10-19 restage (M112 selftest substring; META/intake only): map/delivery/capability unchanged.
 # 2026-10-19 restage (hot-path-lease-honesty dogfood / M111): map/delivery/capability unchanged.
 # 2026-10-19 restage (README hot-path rebuild live Behaviors / M110): map/delivery/capability unchanged.
 # 2026-10-19 restage (ADR-040 known_at tt_by_ingest / M109): map/delivery/capability unchanged.

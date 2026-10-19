@@ -1844,12 +1844,14 @@ def yaml_map_list_mutation_target(step: Step, root: Path) -> tuple[str, str, str
                 if hit is not None:
                     return hit
     for field_name in _str_list(step, "require_fields"):
-        hit = _swap(f"{field_name}:", f"selftest_removed_{field_name}:")
+        # M112: replacement must not contain the needle as a substring
+        # (`selftest_removed_id:` still matches `id:` → vacuous).
+        hit = _swap(f"{field_name}:", f"__selftest_rm_{field_name}__:")
         if hit is not None:
             return hit
     nonempty_list = _str(step, "nonempty_list")
     if nonempty_list:
-        hit = _swap(f"{nonempty_list}:", f"selftest_removed_{nonempty_list}:")
+        hit = _swap(f"{nonempty_list}:", f"__selftest_rm_{nonempty_list}__:")
         if hit is not None:
             return hit
     if field and step.get("must_exist") is True:

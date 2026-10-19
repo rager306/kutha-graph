@@ -33,7 +33,7 @@ A control-loop “must” is not a governor requirement until it has a row in `.
 3. Bridge: append a **bridges** row (`id`, `claim`, `cites`, `check`). No `disposition`.
 4. Map: append a **cells** row (`id`, `axis`, `must`, `path`, `map`, `delivery`, `capability`, `depends_on`, `locks`, `evidence`). `map` stays orthogonal to `delivery` and `capability`. Dump: `uv run kutha-gov map`.
 5. Append `.kutha/dictionaries/checks.yaml` using an **allowed kind** only for control-loop or bridge checks. The check id lives in exactly one ledger (`invariants-ledger` / `bridges-ledger`).
-6. Optional `selftest:` on that row: `mutations:` (ops applied to a tempfile copy) **or** `skip: "<reason>"`. Kinds that cannot be derived from steps need an explicit declaration. Unproven (neither derivable nor declared) fails `kutha-gov selftest` and `ci`'s `run_selftest`.
+6. Optional `selftest:` on that row: `mutations:` (ops applied to a tempfile copy) **or** `skip: "<reason>"`. Kinds that cannot be derived from steps need an explicit declaration. Unproven (neither derivable nor declared) fails `kutha-gov selftest` and `ci`'s `run_selftest`. For `replace_regex`, `with` must not contain `pattern` as a substring (otherwise the needle still matches and the proof is vacuous; M112).
 7. Run `uv run kutha-gov precommit --check honeycomb-ledger` (map) or `--check invariants-ledger`. Full `ci` still owns cargo quantum.
 8. Do not add `scripts/kutha_gov/checks/*.py`.
 

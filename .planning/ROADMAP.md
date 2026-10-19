@@ -2,11 +2,11 @@
 
 ## Overview
 
-v0.01–v1.04 shipped. v1.05 enrolls hot-path lease dogfood and drops unindex full-bucket fallbacks. Honeycomb stays Proposed.
+v0.01–v1.05 shipped. v1.06 rejects selftest replace_regex that keeps the pattern as a substring. Honeycomb stays Proposed.
 
 ## Id map
 
-See `docs/process/gsd-auto-contract.md` § Id map. v1.05 closed as M111 (`L_delivery=M111-closed`).
+See `docs/process/gsd-auto-contract.md` § Id map. v1.06 closed as M112 (`L_delivery=M112-closed`).
 
 ## Milestones
 
@@ -18,6 +18,11 @@ See `docs/process/gsd-auto-contract.md` § Id map. v1.05 closed as M111 (`L_deli
 - ✅ **v1.03 known_at ingest index** — phase 183 closed (M109)
 - ✅ **v1.04 rebuild indexes only live Behaviors** — phase 184 closed (M110)
 - ✅ **v1.05 hot-path lease dogfood** — phase 185 closed (M111)
+- ✅ **v1.06 selftest substring trap** — phase 186 closed (M112)
+
+## Phases (v1.06)
+
+- [x] **Phase 186:** replace_regex with that still contains pattern is UNPROVEN
 
 ## Phases (v1.05)
 

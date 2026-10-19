@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M112: selftest substring trap — CLOSED (GSD v1.06)
+
+`replace_regex` with `needle_REMOVED` still matched `needle` and classified VACUOUS. Selftest now fails closed as UNPROVEN before apply; intake/META document the rule. Honeycomb stays Proposed.
+
+- [x] **S01: reject substring-preserving replace_regex** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m112-selftest-substring` killed. Phase 186. Landed.
+
 ## M111: hot-path lease dogfood + unindex no fallback — CLOSED (GSD v1.05)
 
 Process: enroll governor `hot-path-lease-honesty` so README/code needles for `tt_by_ingest` and live-only rebuild cannot drift (budget 87). Product: drop `unindex_behavior` full-bucket else branches; reverse pointers are authoritative. Honeycomb stays Proposed.

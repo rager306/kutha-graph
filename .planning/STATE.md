@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.05
-milestone_name: hot-path lease dogfood
+milestone: v1.06
+milestone_name: selftest substring trap
 status: completed
-stopped_at: "185-hot-path-dogfood"
-last_updated: "2026-10-19T02:50:00.000Z"
+stopped_at: "186-selftest-substring"
+last_updated: "2026-10-19T05:30:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.05 hot-path lease dogfood — closed as M111
-**Phase:** 185
-**Status:** Governor pins hot-path lease needles; unindex has no full-bucket fallback. AUD-08 Lazy ingest scan stays the thin-write contract. ADR status Proposed. Budget 87.
+**Milestone:** v1.06 selftest substring trap — closed as M112
+**Phase:** 186
+**Status:** replace_regex whose `with` still contains `pattern` is UNPROVEN. AUD-08 Lazy ingest scan stays the thin-write contract. ADR status Proposed.
