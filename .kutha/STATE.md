@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M116
+**Active Slice:** S01
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M115 closed (v1.09) | Capability proven / Cypher started |
+| L_delivery | M116-S01 leased (`L_delivery=M115-closed`) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Controller chooses next lease. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3). `ci --check ""` exits 2 (`SEM-m115-empty-check-on-ci`). `FoldIndexMode::Lazy` still scans until hot maps rebuild.
+M116-S01: `as_known_on_persist_open_preserves_answers` must not share `tmp/p32-02-store` across parallel Cargo. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3). `ci --check ""` exits 2 (`SEM-m115-empty-check-on-ci`). `FoldIndexMode::Lazy` still scans until hot maps rebuild.
 
 ## Thaw map
 

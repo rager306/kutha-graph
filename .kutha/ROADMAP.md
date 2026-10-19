@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M116: unique known-on persist dir — LEASED (GSD v1.10)
+
+`as_known_on_persist_open_preserves_answers` persists to a fixed `tmp/p32-02-store`. A second Cargo process deletes that directory mid-write (`StoreIo` ENOENT). Thin slice: a per-call directory (pid, nanos, sequence), same pattern as `m019_dur_a`. Honeycomb stays Proposed.
+
+- [ ] **S01: unique persist dir for as_known_on open** `risk:low` `depends:[]`
+  > After this: two calls do not share a path; the fixed `tmp/p32-02-store` name is gone; matrix `SEM-m116-known-on-store-dir` killed. Phase 190.
+
 ## M115: empty --check on ci — CLOSED (GSD v1.09)
 
 `ci --check ""` is falsy after join, so the reject guard skips and the full quantum runs. Thin slice: a present `--check` on `ci` exits 2 even when the value is empty. Honeycomb stays Proposed.
