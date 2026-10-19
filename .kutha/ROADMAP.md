@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M114: cargo observe flock — ACTIVE (GSD v1.08)
+
+Parallel `cargo bench` and `kutha-gov ci` raced on the same `target/` and produced false `observe_cargo` exit 101 (M113 session). Thin slice: exclusive flock around observe cargo test+build; wait from `.env`. Honeycomb stays Proposed.
+
+- [ ] **S01: flock observe_cargo on target dir** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m114-cargo-observe-lock` killed. Phase 188.
+
 ## M113: selftest mutation static substring — CLOSED (GSD v1.07)
 
 M112 rejects substring-preserving `replace_regex` only when selftest runs. Authors can land a vacuous mutation and stay green until `ci`'s selftest phase. Thin slice: `get_checks` fail-closes at load (LoadError alongside survivors). Honeycomb stays Proposed.

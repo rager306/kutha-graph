@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M114
+**Active Slice:** S01
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M113 closed (v1.07) | Capability proven / Cypher started |
+| L_delivery | M113 closed (v1.07); M114 S01 leased | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Controller chooses next lease. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3). Declared `selftest` `replace_regex` that keeps `pattern` as a substring fail at `get_checks` load (`SEM-m113-selftest-mutation-static`). `FoldIndexMode::Lazy` still scans until hot maps rebuild.
+Execute M114 S01 (Phase 188): `observe_cargo` holds an exclusive flock on the Cargo target dir so concurrent `cargo bench` / second `ci` cannot race to exit 101. Lock wait via `.env` (`KUTHA_GOV_CARGO_LOCK_WAIT_SEC`). Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 

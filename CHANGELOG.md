@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-19 — Trajectory: lease M114-S01 (cargo observe flock)
+
+### Trajectory
+
+- Active Milestone **M114**, Active Slice **S01** (`L_delivery=M113-closed`): exclusive flock around `observe_cargo` so concurrent Cargo does not false-fail exit 101. Honeycomb stays Proposed.
+
 ## 2026-10-19 — Trajectory: M113 / GSD v1.07 closed
 
 ### Process
