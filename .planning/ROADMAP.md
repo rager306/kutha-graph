@@ -2,11 +2,11 @@
 
 ## Overview
 
-v0.01–v1.01 shipped. v1.02 stores live behaviors in a set so one removal is one visit. Honeycomb stays Proposed.
+v0.01–v1.02 shipped. v1.03 indexes known_at by ingested_at so later decoys are skipped when warm. Honeycomb stays Proposed.
 
 ## Id map
 
-See `docs/process/gsd-auto-contract.md` § Id map. v1.02 closed as M108 (`L_delivery=M108-closed`).
+See `docs/process/gsd-auto-contract.md` § Id map. v1.03 closed as M109 (`L_delivery=M109-closed`).
 
 ## Milestones
 
@@ -15,6 +15,11 @@ See `docs/process/gsd-auto-contract.md` § Id map. v1.02 closed as M108 (`L_deli
 - ✅ **v1.00 open restores fold-index lease** — phase 180 closed (M106)
 - ✅ **v1.01 unindex skips the live-behavior vector** — phase 181 closed (M107)
 - ✅ **v1.02 live behaviors are a set** — phase 182 closed (M108)
+- ✅ **v1.03 known_at ingest index** — phase 183 closed (M109)
+
+## Phases (v1.03)
+
+- [x] **Phase 183:** warm known_at skips facts ingested after the cut
 
 ## Phases (v1.02)
 

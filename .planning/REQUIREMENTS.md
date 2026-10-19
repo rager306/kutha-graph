@@ -1,6 +1,10 @@
 # Requirements: Kutha
 
-**Milestone:** v1.02 live behaviors are a set (M108 closed).
+**Milestone:** v1.03 known_at ingest index (M109 closed).
+
+## v1.03
+
+- [x] **AUD-13**: warm `known_at` examines only facts with `ingested_at <=` cut (`tt_by_ingest`)
 
 ## v1.02
 

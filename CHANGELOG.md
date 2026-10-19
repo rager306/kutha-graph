@@ -4,6 +4,21 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-19 — Trajectory: M109 / GSD v1.03 closed
+
+### Product
+
+- Warm `known_at` walks `tt_by_ingest` (`ingested_at` → fact indexes) so later decoys are not examined. Lazy cold path still full-scans until rebuild (AUD-08).
+- Oracle `known_at_examines_stay_constant_vs_late_decoys`; matrix `SEM-m109-known-at-ingest` killed. RED was examine counts `[74, 266]`.
+
+### Process
+
+- Id map row v1.03 / M109. Regression map names the known_at ingest oracle.
+
+### Trajectory
+
+- `L_delivery=M109-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. ADR-040 research note and README hot-path note record `tt_by_ingest`. Id map v1.03 / Phase 183. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-19 — Trajectory: M108 / GSD v1.02 closed
 
 ### Product

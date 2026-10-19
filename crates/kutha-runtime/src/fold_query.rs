@@ -150,15 +150,31 @@ impl GraphFold {
     /// Product triples ingested (and not invalidated) at `tt`, ignoring valid-time.
     ///
     /// Closed VT intervals remain visible. Dictionary (`kutha:`) relations are excluded.
+    /// When hot maps are warm, only facts with `ingested_at <= tt` are examined
+    /// (`tt_by_ingest`); Lazy cold path still scans every fact until rebuild.
     pub fn known_at(&self, tt: impl Into<TransactionTime>) -> Vec<(TermId, TermId, TermId)> {
         let tt = tt.into().as_u64();
-        self.facts
-            .iter()
-            .filter(|f| {
+        let keep = |f: &Fact| LiveFactFilter::Product.keep(self, f);
+        if !self.hot_maps_warm {
+            return self
+                .facts
+                .iter()
+                .filter(|f| {
+                    self.hot_examine.bump();
+                    f.is_known_at(tt) && keep(f)
+                })
+                .map(|f| (f.subject, f.relation, f.object()))
+                .collect();
+        }
+        self.tt_by_ingest
+            .range(..=tt)
+            .flat_map(|(_, idxs)| idxs.iter().copied())
+            .filter_map(|idx| {
                 self.hot_examine.bump();
-                f.is_known_at(tt) && LiveFactFilter::Product.keep(self, f)
+                let fact = &self.facts[idx];
+                (fact.is_known_at(tt) && keep(fact))
+                    .then_some((fact.subject, fact.relation, fact.object()))
             })
-            .map(|f| (f.subject, f.relation, f.object()))
             .collect()
     }
 

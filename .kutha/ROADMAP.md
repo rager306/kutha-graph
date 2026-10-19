@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M109: known_at ingest index — CLOSED (GSD v1.03)
+
+Warm `known_at` / `as_known_on` walked every fact after the TT cut. Hot map `tt_by_ingest` skips facts ingested after the cut. Lazy cold path unchanged (AUD-08). Honeycomb stays Proposed.
+
+- [x] **S01: tt_by_ingest for known_at** `risk:low` `depends:[]`
+  > After this: examine counts stay constant vs late decoys at D=32 and D=128; matrix `SEM-m109-known-at-ingest` killed. Phase 183. Landed.
+
 ## M108: live behaviors are a set — CLOSED (GSD v1.02)
 
 Unindex of one Behavior walked every live id (`retain` over the vector). The set is a `FxHashSet`: removal bumps the examine counter once. Honeycomb stays Proposed.

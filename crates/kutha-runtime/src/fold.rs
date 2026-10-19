@@ -251,6 +251,9 @@ pub struct GraphFold {
     /// Fact indices grouped by `valid_from` so a cut can skip future-start decoys.
     #[serde(skip)]
     pub(crate) vt_by_from: BTreeMap<u64, Vec<usize>>,
+    /// Fact indices grouped by `ingested_at` so `known_at` can skip later decoys.
+    #[serde(skip)]
+    pub(crate) tt_by_ingest: BTreeMap<u64, Vec<usize>>,
     /// Fact indices grouped by portable `claim_id`.
     #[serde(skip)]
     pub(crate) claim_facts: IngestMap<EventId, FactIdxList>,
@@ -263,8 +266,8 @@ pub struct GraphFold {
     /// `kutha:allows` fact indices by delivery_key (product relation name). ADR-040
     /// droppable lease, rebuilt from `facts`. Not fingerprint / JSON. Maintained on
     /// every fact push even under [`FoldIndexMode::Lazy`] so admit stays O(allows);
-    /// product maps (`vt_by_from`, `claim_facts`, `fact_by_event`, `live_triples`)
-    /// still follow Eager/Lazy.
+    /// product maps (`vt_by_from`, `tt_by_ingest`, `claim_facts`, `fact_by_event`,
+    /// `live_triples`) still follow Eager/Lazy.
     #[serde(skip)]
     pub(crate) allows_by_name: IngestMap<String, FactIdxList>,
     /// Horn rule slots keyed by premise relation name. Droppable lease, rebuilt
@@ -360,6 +363,7 @@ impl GraphFold {
             index_mode,
             hot_maps_warm: true,
             vt_by_from: BTreeMap::new(),
+            tt_by_ingest: BTreeMap::new(),
             claim_facts: IngestMap::default(),
             fact_by_event: IngestMap::default(),
             live_triples: IngestMap::default(),
@@ -511,6 +515,10 @@ impl GraphFold {
         let fact = &self.facts[idx];
         self.vt_by_from
             .entry(fact.valid_from)
+            .or_insert_with(|| Vec::with_capacity(4))
+            .push(idx);
+        self.tt_by_ingest
+            .entry(fact.ingested_at)
             .or_insert_with(|| Vec::with_capacity(4))
             .push(idx);
         // Plain relatedTo: one fact per minting event / claim id — SmallVec inline.
@@ -667,6 +675,7 @@ impl GraphFold {
 
     fn clear_hot_maps(&mut self) {
         self.vt_by_from.clear();
+        self.tt_by_ingest.clear();
         self.claim_facts.clear();
         self.fact_by_event.clear();
         self.live_triples.clear();

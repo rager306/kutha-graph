@@ -87,7 +87,7 @@ A PGM-shaped index is a **candidate read lease**, not a new SoT and not an Accep
 - Fully dynamic inserts and deletes: up to about **71%** better query and update time than a B+-tree, about **1140×** less space.
 - Across the suite: up to **three orders of magnitude** less space than the traditional and learned indexes they compared.
 
-**What this repository may study.** Only a droppable lease over a **sealed, sorted `u64` column** (segment offset, wall, or another monotonic key) plus an exact fallback scan. `f64` slopes are not fold-fingerprint inputs. Multimaps (`valid_from` → many fact indexes) stay posting lists. `as_of` still checks liveness after the key cut. `as_known_on` still scans facts after the anchor predecessor. Rebuild-on-seal matches D040-1. In-place insert on the Eager path does not: the static builder cannot apply a one-fact delta.
+**What this repository may study.** Only a droppable lease over a **sealed, sorted `u64` column** (segment offset, wall, or another monotonic key) plus an exact fallback scan. `f64` slopes are not fold-fingerprint inputs. Multimaps (`valid_from` / `ingested_at` → many fact indexes) stay posting lists. `as_of` still checks liveness after the key cut. `as_known_on` resolves the anchor predecessor, then `known_at` walks `tt_by_ingest` for `ingested_at <=` that TT when hot maps are warm (M109); Lazy cold still scans until rebuild. Rebuild-on-seal matches D040-1. In-place insert on the Eager path does not: the static builder cannot apply a one-fact delta.
 
 **Decision matrix, checked against sources.** The four rows below are a workload heuristic. They are not Kutha acceptance criteria. Numbers that the 2020 paper does not state are marked unverified.
 

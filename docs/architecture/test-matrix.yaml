@@ -2359,6 +2359,17 @@ rows:
     gate: default
     owner: M108-S01
     source: Phase 182
+  - id: SEM-m109-known-at-ingest
+    plane: product
+    invariant: warm known_at does not examine facts ingested after the cut
+    layer: kill
+    oracle:
+      - known_at_examines_stay_constant_vs_late_decoys
+    kill_mutation: restore known_at full facts.iter scan while hot_maps_warm
+    status: killed
+    gate: default
+    owner: M109-S01
+    source: Phase 183
   - id: BENCH-controller
     plane: product
     invariant: bench gate vs baseline is a recorded controller step
