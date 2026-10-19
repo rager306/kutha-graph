@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M113: selftest mutation static substring — ACTIVE (GSD v1.07)
+
+M112 rejects substring-preserving `replace_regex` only when selftest runs. Authors can land a vacuous mutation and stay green until `ci`'s selftest phase. Thin slice: `get_checks` fail-closes at load (LoadError alongside survivors). Honeycomb stays Proposed.
+
+- [ ] **S01: dictionary load rejects substring-preserving replace_regex** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m113-selftest-mutation-static` killed. Phase 187.
+
 ## M112: selftest substring trap — CLOSED (GSD v1.06)
 
 `replace_regex` with `needle_REMOVED` still matched `needle` and classified VACUOUS. Selftest now fails closed as UNPROVEN before apply; intake/META document the rule. Honeycomb stays Proposed.

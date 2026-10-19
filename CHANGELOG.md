@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-19 — Trajectory: lease M113-S01 (selftest mutation static)
+
+### Trajectory
+
+- Active Milestone **M113**, Active Slice **S01** (`L_delivery=M112-closed`): dictionary load fail-closes on substring-preserving `selftest` `replace_regex` (static dogfood of M112). Honeycomb stays Proposed.
+
 ## 2026-10-19 — Trajectory: M112 / GSD v1.06 closed
 
 ### Process
