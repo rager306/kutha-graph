@@ -2,11 +2,11 @@
 
 ## Overview
 
-v0.01–v1.08 shipped. v1.09 rejects an empty `--check` on `ci`. Honeycomb stays Proposed.
+v0.01–v1.09 shipped. v1.10 gives as_known_on persist/open a per-call directory. Honeycomb stays Proposed.
 
 ## Id map
 
-See `docs/process/gsd-auto-contract.md` § Id map. v1.09 closed as M115 (`L_delivery=M115-closed`).
+See `docs/process/gsd-auto-contract.md` § Id map. v1.10 closed as M116 (`L_delivery=M116-closed`).
 
 ## Milestones
 
@@ -22,6 +22,11 @@ See `docs/process/gsd-auto-contract.md` § Id map. v1.09 closed as M115 (`L_deli
 - ✅ **v1.07 selftest mutation static** — phase 187 closed (M113)
 - ✅ **v1.08 cargo observe flock** — phase 188 closed (M114)
 - ✅ **v1.09 empty --check on ci** — phase 189 closed (M115)
+- ✅ **v1.10 unique known-on persist dir** — phase 190 closed (M116)
+
+## Phases (v1.10)
+
+- [x] **Phase 190:** as_known_on persist/open uses a per-call store directory
 
 ## Phases (v1.09)
 

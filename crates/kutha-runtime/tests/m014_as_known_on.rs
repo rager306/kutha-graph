@@ -7,6 +7,27 @@ mod common;
 use kutha_common::Op;
 use kutha_runtime::Runtime;
 
+fn known_on_store_dir() -> std::path::PathBuf {
+    // Unique even when two Cargo processes run this binary together.
+    // A fixed `tmp/p32-02-store` is removed by the other process mid-persist.
+    static N: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let seq = N.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let nanos = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("clock")
+        .as_nanos();
+    let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .join("tmp")
+        .join(format!(
+            "p32-02-store-{}-{nanos}-{seq}",
+            std::process::id()
+        ));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).expect("persist dir");
+    dir
+}
+
 const D: u64 = 2015;
 const W1: u64 = 2014;
 const W2: u64 = 2020;
@@ -79,15 +100,26 @@ fn as_known_on_uses_greatest_anchor_at_or_before() {
 }
 
 #[test]
+fn persist_open_store_dirs_differ_across_calls() {
+    let a = known_on_store_dir();
+    let b = known_on_store_dir();
+    assert_ne!(a, b, "parallel cargo must not share one persist directory");
+    assert!(
+        !a.ends_with("p32-02-store"),
+        "fixed tmp/p32-02-store races across processes"
+    );
+    let _ = std::fs::remove_dir_all(a);
+    let _ = std::fs::remove_dir_all(b);
+}
+
+#[test]
 fn as_known_on_persist_open_preserves_answers() {
     let mut rt = Runtime::default();
     assert!(rt.as_known_on(WallTime::from(D)).is_none());
     let statute = common::seed_statute_between_anchors(&mut rt);
-    let dir = std::path::Path::new("tmp/p32-02-store");
-    let _ = std::fs::remove_dir_all(dir);
-    std::fs::create_dir_all(dir).unwrap();
-    rt.persist(dir).unwrap();
-    let opened = Runtime::open(dir).unwrap();
+    let dir = known_on_store_dir();
+    rt.persist(&dir).unwrap();
+    let opened = Runtime::open(&dir).unwrap();
     assert!(opened.as_known_on(WallTime::from(2013)).is_none());
     let known_d = opened.as_known_on(WallTime::from(D)).expect("A1 rebuilt on open");
     assert!(!known_d.contains(&statute));

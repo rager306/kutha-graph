@@ -1,6 +1,10 @@
 # Requirements: Kutha
 
-**Milestone:** v1.09 empty --check on ci (M115 closed).
+**Milestone:** v1.10 unique known-on persist dir (M116 closed).
+
+## v1.10
+
+- [x] **AUD-21**: `as_known_on` persist/open directories differ per call (not `tmp/p32-02-store`)
 
 ## v1.09
 

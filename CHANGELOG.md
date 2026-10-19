@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-20 — Trajectory: M116 / GSD v1.10 closed
+
+### Product
+
+- `as_known_on` persist/open no longer uses the fixed path `tmp/p32-02-store`. Each call gets `tmp/p32-02-store-<pid>-<nanos>-<seq>` (same isolation as `m019_dur_a`). Oracle `persist_open_store_dirs_differ_across_calls`; matrix `SEM-m116-known-on-store-dir` killed. `observe_cargo.required` includes that name.
+- Bench (`KUTHA_BENCH_N=10000`, test file only): `ingest_plain.n` 107588756 ns, `as_of.n` 285763 ns. Same-tree `taskset -c 0` sample: 117591647 ns / 357736 ns. Last recorded quiet sample ≈101.8M / ≈241.2k. No library edit; the spread is host noise.
+
+### Trajectory
+
+- `L_delivery=M116-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.10 / Phase 190. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-20 — Trajectory: lease M116-S01 (unique known-on persist dir)
 
 ### Trajectory

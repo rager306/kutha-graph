@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.09
-milestone_name: empty check on ci
+milestone: v1.10
+milestone_name: unique known-on persist dir
 status: completed
-stopped_at: "189-empty-check-on-ci"
-last_updated: "2026-10-19T07:30:00.000Z"
+stopped_at: "190-known-on-store-dir"
+last_updated: "2026-10-20T00:30:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.09 empty --check on ci — closed as M115
-**Phase:** 189
-**Status:** A present empty --check on ci exits 2. Honeycomb stays Proposed.
+**Milestone:** v1.10 unique known-on persist dir — closed as M116
+**Phase:** 190
+**Status:** as_known_on persist/open uses a per-call directory. Honeycomb stays Proposed.

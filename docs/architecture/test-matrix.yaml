@@ -2437,6 +2437,17 @@ rows:
     gate: default
     owner: M114-S01
     source: Phase 188
+  - id: SEM-m116-known-on-store-dir
+    plane: product
+    invariant: as_known_on persist/open directories differ across calls and are not the fixed tmp/p32-02-store
+    layer: kill
+    oracle:
+      - persist_open_store_dirs_differ_across_calls
+    kill_mutation: persist and open the shared path tmp/p32-02-store
+    status: killed
+    gate: default
+    owner: M116-S01
+    source: Phase 190
   - id: SEM-m115-empty-check-on-ci
     plane: harness
     invariant: ci --check with an empty value exits 2 instead of the full quantum
