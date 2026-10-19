@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M115
+**Active Slice:** S01
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
@@ -19,12 +19,12 @@ L_capability=ff5-green
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M114 closed (v1.08) | Capability proven / Cypher started |
+| L_delivery | M114 closed (v1.08); M115 S01 leased | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Controller chooses next lease. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3). `observe_cargo` flocks `CARGO_TARGET_DIR/.kutha-gov-cargo.lock` (`SEM-m114-cargo-observe-lock`). `FoldIndexMode::Lazy` still scans until hot maps rebuild.
+Execute M115 S01 (Phase 189): `kutha-gov ci --check ""` must exit 2, not run the full suite (empty flag is present). Honeycomb stays Proposed. Not Cypher/HNSW. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 

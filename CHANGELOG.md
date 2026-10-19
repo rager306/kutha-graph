@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-19 — Trajectory: lease M115-S01 (empty --check on ci)
+
+### Trajectory
+
+- Active Milestone **M115**, Active Slice **S01** (`L_delivery=M114-closed`): `ci --check ""` must exit 2 instead of the full suite. Honeycomb stays Proposed.
+
 ## 2026-10-19 — Trajectory: M114 / GSD v1.08 closed
 
 ### Process
