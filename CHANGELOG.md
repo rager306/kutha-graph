@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-20 — Trajectory: lease M124-S01 (glob_regex_absent selftest derive)
+
+### Trajectory
+
+- Active Milestone **M124**, Active Slice **S01** (`L_delivery=M123-closed`): selftest derives `glob_regex_absent` so the kind is not UNPROVEN without explicit YAML. Honeycomb stays Proposed.
+
 ## 2026-10-20 — Trajectory: M123 / GSD v1.17 closed
 
 ### Process
