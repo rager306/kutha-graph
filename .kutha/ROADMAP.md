@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M122: fixed-tmp persist-dir dogfood — LEASED (GSD v1.16)
+
+`Path::new("tmp/…")` in crates still races under parallel Cargo (example + m026). Thin slice: governor `glob_absent` needle + per-call dirs for the remaining hits. Honeycomb stays Proposed.
+
+- [ ] **S01: fixed-tmp-persist-dir check + unique remaining dirs** `risk:low` `depends:[]`
+  > After this: no `Path::new("tmp/` under crates; matrix `SEM-m122-fixed-tmp-persist-dir` killed. Phase 196.
+
 ## M121: unique facade-statute persist dir — CLOSED (GSD v1.15)
 
 `statute_as_of_via_facade` persisted to a fixed `tmp/p27-facade-statute`. Same race as M116–M120 under parallel Cargo. Thin slice: a per-call directory (pid, nanos, sequence). Honeycomb stays Proposed.
