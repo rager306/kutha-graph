@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: lease M126-S01 (kinds.py line ceiling)
+
+### Trajectory
+
+- Active Milestone **M126**, Active Slice **S01** (`L_delivery=M125-closed`): pin `kinds.py` with `file_max_lines` against unbounded kernel re-growth. Honeycomb stays Proposed.
+
 ## 2026-10-21 — Trajectory: M125 / GSD v1.19 closed
 
 ### Process
