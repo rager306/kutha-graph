@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-20 — Trajectory: lease M120-S01 (unique fork known-on persist dir)
+
+### Trajectory
+
+- Active Milestone **M120**, Active Slice **S01** (`L_delivery=M119-closed`): `fork_at_before_later_anchor_differs_and_persist_open` must not share a fixed `tmp/p36-02-fork` across parallel Cargo. Honeycomb stays Proposed.
+
 ## 2026-10-20 — Trajectory: M119 / GSD v1.13 closed
 
 ### Product
