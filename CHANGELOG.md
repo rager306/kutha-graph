@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-20 — Trajectory: M123 / GSD v1.17 closed
+
+### Process
+
+- Governor kind `glob_regex_absent`: no glob match may contain any of `patterns` (invalid regex → HIGH).
+- Check `fixed-tmp-persist-dir` also forbids `.join("tmp").join("` under crates. Sem `p62-sem` folded into the unique leaf. Budget stays 90. Matrix `SEM-m123-fixed-tmp-join` killed.
+
+### Trajectory
+
+- `L_delivery=M123-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.17 / Phase 197. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-20 — Trajectory: lease M123-S01 (fixed-tmp join-after-tmp dogfood)
 
 ### Trajectory

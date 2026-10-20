@@ -28,8 +28,7 @@ pub fn persist_dir(label: &str) -> PathBuf {
     let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
         .join("tmp")
-        .join("p62-sem")
-        .join(format!("{label}-{n}-{}", std::process::id()));
+        .join(format!("p62-sem-{label}-{n}-{}", std::process::id()));
     let _ = fs::remove_dir_all(&dir);
     fs::create_dir_all(&dir).unwrap();
     dir

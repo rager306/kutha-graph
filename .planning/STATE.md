@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.16
-milestone_name: fixed-tmp persist-dir dogfood
+milestone: v1.17
+milestone_name: fixed-tmp join-after-tmp dogfood
 status: completed
-stopped_at: "196-fixed-tmp-persist-dir"
-last_updated: "2026-10-20T13:00:00.000Z"
+stopped_at: "197-fixed-tmp-join"
+last_updated: "2026-10-20T14:00:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.16 fixed-tmp persist-dir dogfood — closed as M122
-**Phase:** 196
-**Status:** crates forbid Path::new("tmp/…"); remaining fixed dirs unique. Honeycomb stays Proposed.
+**Milestone:** v1.17 fixed-tmp join-after-tmp dogfood — closed as M123
+**Phase:** 197
+**Status:** crates forbid `.join("tmp").join("…")`; `glob_regex_absent` kind landed. Honeycomb stays Proposed.

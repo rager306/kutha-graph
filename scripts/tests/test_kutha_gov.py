@@ -1029,6 +1029,57 @@ class GlobAbsentUnlessTests(unittest.TestCase):
         self.assertEqual([], _rust_highs(result))
 
 
+class GlobRegexAbsentTests(unittest.TestCase):
+    def test_join_tmp_literal_high(self) -> None:
+        root = _rust_tree(
+            {
+                "crates/k/src/lib.rs": (
+                    'PathBuf::from("x")\n        .join("tmp")\n        .join("fixed")\n'
+                ),
+            }
+        )
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_regex_absent",
+                "glob": "crates/**/*.rs",
+                "patterns": [r'\.join\("tmp"\)\s*\.join\("'],
+            },
+        )
+        self.assertEqual(["glob-regex-absent"], _rust_highs(result))
+
+    def test_join_tmp_format_passes(self) -> None:
+        root = _rust_tree(
+            {
+                "crates/k/src/lib.rs": (
+                    'PathBuf::from("x")\n        .join("tmp")\n'
+                    '        .join(format!("leaf-{n}"))\n'
+                ),
+            }
+        )
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_regex_absent",
+                "glob": "crates/**/*.rs",
+                "patterns": [r'\.join\("tmp"\)\s*\.join\("'],
+            },
+        )
+        self.assertEqual([], _rust_highs(result))
+
+    def test_invalid_regex_high(self) -> None:
+        root = _rust_tree({"crates/k/src/lib.rs": "fn ok() {}\n"})
+        result = _rust_run(
+            root,
+            {
+                "kind": "glob_regex_absent",
+                "glob": "crates/**/*.rs",
+                "patterns": [r"[unclosed"],
+            },
+        )
+        self.assertEqual(["bad-regex"], _rust_highs(result))
+
+
 class RustTestAssertsTests(unittest.TestCase):
     def test_rust_test_asserts_high_when_fn_missing(self) -> None:
         root = _rust_tree({"crates/k/tests/t.rs": "fn other() { assert!(true); }\n"})

@@ -731,6 +731,7 @@ checks:
           - "unknown-fsm-kind"
           - "require_file"
           - "glob_none"
+          - "glob_regex_absent"
           - "observe_cargo"
           - "emit_tenant"
           - "yaml_needles_in_glob"
@@ -1671,8 +1672,9 @@ checks:
 
   - id: fixed-tmp-persist-dir
     description: >-
-      Crates must not use Path::new("tmp/…") for persist/open (parallel Cargo
-      deletes a shared dir mid-write). Use per-call dirs (pid/nanos/seq). M122.
+      Crates must not use Path::new("tmp/…") or .join("tmp").join("literal") for
+      persist/open (parallel Cargo deletes a shared dir mid-write). Use per-call
+      dirs (pid/nanos/seq). M122/M123.
     steps:
       - kind: glob_absent
         glob: "crates/**/*.rs"
@@ -1680,12 +1682,22 @@ checks:
           - 'Path::new("tmp/'
         category: fixed-tmp
         message: "fixed Path::new(\"tmp/…\") persist dir (use per-call unique path)"
+      - kind: glob_regex_absent
+        glob: "crates/**/*.rs"
+        patterns:
+          - '\.join\("tmp"\)\s*\.join\("'
+        category: fixed-tmp
+        message: "fixed .join(\"tmp\").join(\"…\") persist dir (fold literal into unique leaf)"
     selftest:
       mutations:
         - op: replace_regex
           path: crates/kutha-runtime/examples/statute_as_of.rs
           pattern: "facade_example_store_dir\\(\\)"
           with: 'std::path::Path::new("tmp/p27-ex-statute")'
+        - op: replace_regex
+          path: crates/kutha-runtime/tests/common/sem/persistence.rs
+          pattern: 'format!\("p62-sem-\{label\}-\{n\}-\{\}", std::process::id\(\)\)'
+          with: '"p62-sem").join(format!("{label}-{n}-{}", std::process::id())'
 
   - id: skip-cargo-log-marker
     description: >-

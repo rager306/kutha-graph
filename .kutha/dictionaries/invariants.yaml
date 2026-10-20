@@ -400,8 +400,8 @@ invariants:
     check: cargo-observe-lock
 
   - id: I-fixed-tmp-persist-dir
-    claim: "crates must not Path::new(\"tmp/…\") for persist/open; SEM-m122-fixed-tmp-persist-dir"
-    source: ".planning/phases/196-fixed-tmp-persist-dir/196-VERIFICATION.md"
+    claim: "crates must not Path::new(\"tmp/…\") or .join(\"tmp\").join(\"…\") for persist/open; SEM-m122 / SEM-m123"
+    source: ".planning/phases/197-fixed-tmp-join/197-VERIFICATION.md"
     disposition: check
     check: fixed-tmp-persist-dir
 

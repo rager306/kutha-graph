@@ -30,6 +30,7 @@ ALLOWED_KINDS: frozenset[str] = frozenset(
         "concat_absent",
         "concat_contains_any",
         "glob_absent",
+        "glob_regex_absent",
         "glob_none",
         "markdown_heading_tag",
         "pointer_in_other_file",
@@ -363,6 +364,55 @@ def _kind_glob_absent(check: str, step: Step, ctx: Context, result: CheckResult)
                 )
                 result.findings.append(
                     Finding(check, _severity(step), _category(step, "glob-absent"), message, rel)
+                )
+
+
+def _kind_glob_regex_absent(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
+    """No glob match may contain any of `patterns` (compiled regex). Invalid regex → HIGH."""
+    if _unless_file_contains_skip(step, ctx):
+        result.note = "unless_file_contains matched; glob_regex_absent skipped"
+        return
+    pattern = _str(step, "glob")
+    patterns = _str_list(step, "patterns")
+    min_phase = _int(step, "min_phase", 0)
+    flags = _re_flags(step)
+    compiled: list[tuple[str, re.Pattern[str]]] = []
+    for raw in patterns:
+        try:
+            compiled.append((raw, re.compile(raw, flags)))
+        except re.error as exc:
+            result.findings.append(
+                Finding(
+                    check,
+                    Severity.HIGH,
+                    "bad-regex",
+                    f"invalid regex {raw!r}: {exc}",
+                )
+            )
+            return
+    for path in sorted(ctx.root.glob(pattern)):
+        if not path.is_file():
+            continue
+        rel = path.relative_to(ctx.root).as_posix()
+        gate = _min_phase_gate(check, rel, min_phase, result)
+        if gate != "keep":
+            continue
+        text = path.read_text(encoding="utf-8")
+        result.scanned += 1
+        for raw, rx in compiled:
+            if rx.search(text):
+                message = _fmt(
+                    _str(step, "message", "found regex {pattern}"),
+                    pattern=raw,
+                )
+                result.findings.append(
+                    Finding(
+                        check,
+                        _severity(step),
+                        _category(step, "glob-regex-absent"),
+                        message,
+                        rel,
+                    )
                 )
 
 
@@ -2285,6 +2335,7 @@ RUNNERS: dict[str, Runner] = {
     "concat_absent": _kind_concat_absent,
     "concat_contains_any": _kind_concat_contains_any,
     "glob_absent": _kind_glob_absent,
+    "glob_regex_absent": _kind_glob_regex_absent,
     "glob_none": _kind_glob_none,
     "markdown_heading_tag": _kind_markdown_heading_tag,
     "pointer_in_other_file": _kind_pointer_in_other_file,

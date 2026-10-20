@@ -2448,6 +2448,17 @@ rows:
     gate: default
     owner: M122-S01
     source: Phase 196
+  - id: SEM-m123-fixed-tmp-join
+    plane: harness
+    invariant: crates must not use .join("tmp").join("literal") for persist/open
+    layer: governor
+    oracle:
+      - fixed-tmp-persist-dir
+    kill_mutation: restore .join("tmp").join("p62-sem") in sem persistence
+    status: killed
+    gate: default
+    owner: M123-S01
+    source: Phase 197
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute
