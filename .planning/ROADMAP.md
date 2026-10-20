@@ -2,11 +2,11 @@
 
 ## Overview
 
-v0.01–v1.09 shipped. v1.10 gives as_known_on persist/open a per-call directory. Honeycomb stays Proposed.
+v0.01–v1.10 shipped. v1.11 gives quantum known-on persist/open a per-call directory. Honeycomb stays Proposed.
 
 ## Id map
 
-See `docs/process/gsd-auto-contract.md` § Id map. v1.10 closed as M116 (`L_delivery=M116-closed`).
+See `docs/process/gsd-auto-contract.md` § Id map. v1.11 closed as M117 (`L_delivery=M117-closed`).
 
 ## Milestones
 
@@ -23,6 +23,11 @@ See `docs/process/gsd-auto-contract.md` § Id map. v1.10 closed as M116 (`L_deli
 - ✅ **v1.08 cargo observe flock** — phase 188 closed (M114)
 - ✅ **v1.09 empty --check on ci** — phase 189 closed (M115)
 - ✅ **v1.10 unique known-on persist dir** — phase 190 closed (M116)
+- ✅ **v1.11 unique quantum known-on persist dir** — phase 191 closed (M117)
+
+## Phases (v1.11)
+
+- [x] **Phase 191:** quantum known-on persist/open uses a per-call store directory
 
 ## Phases (v1.10)
 

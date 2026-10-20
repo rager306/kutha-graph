@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-20 — Trajectory: M117 / GSD v1.11 closed
+
+### Product
+
+- Unit `as_known_on_survives_persist_open_and_matches_fold` no longer uses the fixed path `tmp/p32-01-store`. Each call gets `tmp/p32-01-store-<pid>-<nanos>-<seq>`. Oracle `quantum_known_on_store_dirs_differ_across_calls`; matrix `SEM-m117-quantum-known-on-store-dir` killed. `observe_cargo.required` includes that name.
+- Bench (`KUTHA_BENCH_N=10000`, test isolation only): `ingest_plain.n` 113396450 ns, `as_of.n` 267298 ns. Vs M116 recorded 107588756 / 285763. No library edit; host noise.
+
+### Trajectory
+
+- `L_delivery=M117-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.11 / Phase 191. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-20 — Trajectory: lease M117-S01 (unique quantum known-on persist dir)
 
 ### Trajectory

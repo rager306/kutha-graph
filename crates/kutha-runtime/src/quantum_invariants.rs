@@ -318,16 +318,48 @@ fn as_known_on_after_anchor_is_some_earlier_wall_is_none() {
     assert!(rt.as_known_on(kutha_common::WallTime::from(2015)).is_some());
 }
 
+fn quantum_known_on_store_dir() -> std::path::PathBuf {
+    // Unique even when two Cargo processes run this binary together.
+    // A fixed `tmp/p32-01-store` is removed by the other process mid-persist.
+    static N: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let seq = N.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let nanos = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("clock")
+        .as_nanos();
+    let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .join("tmp")
+        .join(format!(
+            "p32-01-store-{}-{nanos}-{seq}",
+            std::process::id()
+        ));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).expect("persist dir");
+    dir
+}
+
+#[test]
+fn quantum_known_on_store_dirs_differ_across_calls() {
+    let a = quantum_known_on_store_dir();
+    let b = quantum_known_on_store_dir();
+    assert_ne!(a, b, "parallel cargo must not share one persist directory");
+    assert!(
+        !a.ends_with("p32-01-store"),
+        "fixed tmp/p32-01-store races across processes"
+    );
+    let _ = std::fs::remove_dir_all(a);
+    let _ = std::fs::remove_dir_all(b);
+}
+
 #[test]
 fn as_known_on_survives_persist_open_and_matches_fold() {
     let mut rt = Runtime::default();
     rt.emit_tt_anchor(2015).unwrap();
     assert_eq!(rt.as_known_on(WallTime::from(2015)), rt.fold().as_known_on(WallTime::from(2015)));
-    let dir = std::path::Path::new("tmp/p32-01-store");
-    let _ = std::fs::remove_dir_all(dir);
-    std::fs::create_dir_all(dir).unwrap();
-    rt.persist(dir).unwrap();
-    let opened = Runtime::open(dir).unwrap();
+    let dir = quantum_known_on_store_dir();
+    rt.persist(&dir).unwrap();
+    let opened = Runtime::open(&dir).unwrap();
     assert!(opened.as_known_on(WallTime::from(2015)).is_some());
     assert_eq!(opened.as_known_on(WallTime::from(2015)), opened.fold().as_known_on(WallTime::from(2015)));
     let _ = std::fs::remove_dir_all(dir);

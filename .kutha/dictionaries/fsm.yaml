@@ -106,6 +106,7 @@ states:
       - lazy_as_of_matches_eager_after_same_ingest
       - true_on_d_differs_from_known_on_d
       - persist_open_store_dirs_differ_across_calls
+      - quantum_known_on_store_dirs_differ_across_calls
       - sidecar_truncated_mid_line_opens_from_log
       - append_keeps_prefix_bytes_of_jsonl_and_wal
       - payload_without_outcome_is_not_visible

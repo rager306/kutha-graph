@@ -118,6 +118,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.08 | 188 | M114 | S01 | observe_cargo exclusive flock on Cargo target dir | shipped |
 | v1.09 | 189 | M115 | S01 | ci rejects a present empty --check instead of the full quantum | shipped |
 | v1.10 | 190 | M116 | S01 | as_known_on persist/open uses a per-call store dir | shipped |
+| v1.11 | 191 | M117 | S01 | quantum known-on persist/open uses a per-call store dir | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
