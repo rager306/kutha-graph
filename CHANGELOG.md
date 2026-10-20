@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-20 — Trajectory: lease M118-S01 (unique closed-VT known-on persist dir)
+
+### Trajectory
+
+- Active Milestone **M118**, Active Slice **S01** (`L_delivery=M117-closed`): `closed_vt_known_on_persist_open` must not share a fixed `tmp/p34-01-store` across parallel Cargo. Honeycomb stays Proposed.
+
 ## 2026-10-20 — Trajectory: M117 / GSD v1.11 closed
 
 ### Product
