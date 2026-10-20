@@ -39,6 +39,7 @@ DERIVABLE_KINDS = frozenset(
         "concat_absent",
         "glob_absent",
         "glob_regex_absent",
+        "yaml_needles_in_glob",
         "file_equals",
         "concat_contains_any",
         "rust_test_asserts",
@@ -449,6 +450,10 @@ def _derive_mutations(steps: list[Step], work: Path) -> list[list[Mutation]]:
             unit = _derive_glob_regex_absent(step, work)
             if unit:
                 derived.append(_unless_disable_unit(step) + unit)
+        elif kind == "yaml_needles_in_glob":
+            unit = _derive_yaml_needles_in_glob(step, work)
+            if unit:
+                derived.append(unit)
         elif kind == "file_equals":
             path = _str(step, "path")
             if path:
@@ -533,6 +538,16 @@ def _derive_glob_regex_absent(step: Step, work: Path) -> list[Mutation]:
         return []
     path, text = target
     return [{"op": "append_text", "path": path, "text": text}]
+
+
+def _derive_yaml_needles_in_glob(step: Step, work: Path) -> list[Mutation]:
+    from kutha_gov.kinds import yaml_needles_in_glob_mutation_target
+
+    target = yaml_needles_in_glob_mutation_target(step, work)
+    if target is None:
+        return []
+    path, needle = target
+    return [{"op": "remove_text", "path": path, "texts": [needle]}]
 
 
 def _derive_disk_free(step: Step, work: Path) -> list[Mutation]:

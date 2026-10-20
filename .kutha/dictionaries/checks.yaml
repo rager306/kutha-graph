@@ -2385,6 +2385,41 @@ checks:
           pattern: "def _derive_glob_regex_absent"
           with: "def _derive_glob_rx_gone"
 
+  - id: yaml-needles-derive
+    description: >-
+      selftest derives yaml_needles_in_glob; ALLOWED kinds are DERIVABLE except
+      git_path_implies (docs-coupling skip). M125 / Phase 199 / CE 2026-10-15.
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/selftest.py
+        needles:
+          - '"yaml_needles_in_glob"'
+          - "def _derive_yaml_needles_in_glob"
+        require: all
+        category: oracle
+        message: "yaml_needles selftest derive missing: {missing}"
+      - kind: file_contains
+        path: scripts/kutha_gov/kinds.py
+        needles:
+          - "def yaml_needles_in_glob_mutation_target"
+        require: all
+        category: oracle
+        message: "yaml_needles mutation target missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_selftest.py
+        needles:
+          - "def test_synthetic_yaml_needles_in_glob_derives"
+          - "def test_allowed_kinds_are_derivable_or_skip_listed"
+        require: all
+        category: oracle
+        message: "yaml_needles / DERIVABLE completeness pytest missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/selftest.py
+          pattern: "def _derive_yaml_needles_in_glob"
+          with: "def _derive_yaml_needles_gone"
+
   - id: kinds-family-split
     description: >-
       kinds.py keeps run_step/RUNNERS; policy families stay in sibling modules

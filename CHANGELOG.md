@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: M125 / GSD v1.19 closed
+
+### Process
+
+- Selftest derives `yaml_needles_in_glob` (`yaml_needles_in_glob_mutation_target`). Check `yaml-needles-derive`. ALLOWED − DERIVABLE = {`git_path_implies`} only. Budget 91→92. Matrix `SEM-m125-yaml-needles-derive` killed.
+
+### Trajectory
+
+- `L_delivery=M125-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.19 / Phase 199. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-21 — Trajectory: lease M125-S01 (yaml_needles derive + DERIVABLE completeness)
 
 ### Trajectory

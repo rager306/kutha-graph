@@ -708,6 +708,36 @@ def _kind_yaml_needles_in_glob(check: str, step: Step, ctx: Context, result: Che
         )
 
 
+def yaml_needles_in_glob_mutation_target(step: Step, root: Path) -> tuple[str, str] | None:
+    """Return (rel_path, needle) to remove so yaml_needles_in_glob goes HIGH, or None."""
+    path = _str(step, "path")
+    select = _str(step, "select")
+    pattern = _str(step, "glob")
+    prefix = _str(step, "prefix")
+    if not path or not select or not pattern:
+        return None
+    text = (root / path).read_text(encoding="utf-8") if (root / path).is_file() else None
+    if text is None:
+        return None
+    try:
+        loaded = yaml.safe_load(text)
+    except yaml.YAMLError:
+        return None
+    names = _yaml_select(loaded, select)
+    if not isinstance(names, list):
+        return None
+    for item in names:
+        if not isinstance(item, str) or not item:
+            continue
+        needle = f"{prefix}{item}"
+        for hit in sorted(root.glob(pattern)):
+            if not hit.is_file():
+                continue
+            if needle in hit.read_text(encoding="utf-8"):
+                return hit.relative_to(root).as_posix(), needle
+    return None
+
+
 def _kind_git_path_implies(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
     from kutha_gov.gitdiff import changed_relpaths, path_matches
 

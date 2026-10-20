@@ -78,6 +78,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | `Path::new("tmp/…")` under crates | `SEM-m122-fixed-tmp-persist-dir` | `fixed-tmp-persist-dir` | M122-S01 |
 | `.join("tmp").join("literal")` under crates | `SEM-m123-fixed-tmp-join` | `fixed-tmp-persist-dir` | M123-S01 |
 | `glob_regex_absent` UNPROVEN without YAML mutations | `SEM-m124-glob-regex-derive` | `glob-regex-absent-derive` | M124-S01 |
+| `yaml_needles_in_glob` not DERIVABLE (zero live users) | `SEM-m125-yaml-needles-derive` | `yaml-needles-derive` | M125-S01 |
 
 Testing gaps from the same report, closed in M099 (not new product findings):
 

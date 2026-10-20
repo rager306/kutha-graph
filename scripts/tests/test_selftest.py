@@ -278,6 +278,41 @@ class SelftestTests(unittest.TestCase):
         self.assertEqual("OK", rows[0].status)
         self.assertEqual(CLASS_DERIVED, rows[0].classification)
 
+    def test_synthetic_yaml_needles_in_glob_derives(self) -> None:
+        # M125: yaml_needles_in_glob must be DERIVABLE without explicit selftest YAML.
+        root = _write_mini(
+            [
+                {
+                    "id": "needles",
+                    "description": "yaml names must appear in glob",
+                    "steps": [
+                        {
+                            "kind": "yaml_needles_in_glob",
+                            "path": "names.yaml",
+                            "select": "items",
+                            "glob": "src/**/*.rs",
+                            "prefix": "fn ",
+                        }
+                    ],
+                }
+            ],
+            {
+                "names.yaml": "items:\n  - foo\n  - bar\n",
+                "src/lib.rs": "fn foo() {}\nfn bar() {}\n",
+            },
+        )
+        rows, code = run_selftest(root)
+        self.assertEqual(0, code, msg=rows)
+        self.assertEqual("OK", rows[0].status)
+        self.assertEqual(CLASS_DERIVED, rows[0].classification)
+
+    def test_allowed_kinds_are_derivable_or_skip_listed(self) -> None:
+        # M125: only git_path_implies may stay non-DERIVABLE (docs-coupling skip).
+        from kutha_gov.kinds import ALLOWED_KINDS
+        from kutha_gov.selftest import DERIVABLE_KINDS
+
+        self.assertEqual(ALLOWED_KINDS - DERIVABLE_KINDS, frozenset({"git_path_implies"}))
+
     def test_synthetic_glob_paths_in_file_derives(self) -> None:
         root = _write_mini(
             [
