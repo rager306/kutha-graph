@@ -1315,6 +1315,17 @@ checks:
           - "L_capability="
           - "M011 is active"
 
+  - id: kinds-lean
+    description: >-
+      kinds.py line count is wc -l and must stay at or under 2500 (post-split
+      band was ~2292; CE 2026-10-15 testing gap / M126). Prevents unbounded
+      kernel re-growth; new kind policy stays in sibling modules.
+    steps:
+      - kind: file_max_lines
+        path: scripts/kutha_gov/kinds.py
+        max: 2500
+        message: "kinds.py has {n} lines (wc -l), max {max} — split policy into sibling modules"
+
   - id: artifact-budget
     description: >-
       Live-phase planning artifacts (v0.06 onward, including v0.07/v0.08)

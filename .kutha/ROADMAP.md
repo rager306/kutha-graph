@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M126: kinds.py line ceiling — LEASED (GSD v1.20)
+## M126: kinds.py line ceiling — CLOSED (GSD v1.20)
 
 After the kinds-family split, `kinds.py` was ~2292 lines and has regrown (~2431). Thin slice: `file_max_lines` pin (like `agents-lean`) so further kernel growth fails closed. Honeycomb stays Proposed.
 
-- [ ] **S01: kinds-lean file_max_lines** `risk:low` `depends:[]`
-  > After this: matrix `SEM-m126-kinds-lean` killed. Phase 200.
+- [x] **S01: kinds-lean file_max_lines** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m126-kinds-lean` killed. Phase 200. Landed.
 
 ## M125: yaml_needles selftest derive + DERIVABLE completeness — CLOSED (GSD v1.19)
 

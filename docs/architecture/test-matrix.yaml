@@ -2481,6 +2481,17 @@ rows:
     gate: default
     owner: M125-S01
     source: Phase 199
+  - id: SEM-m126-kinds-lean
+    plane: harness
+    invariant: kinds.py stays at or under 2500 lines (wc -l)
+    layer: governor
+    oracle:
+      - kinds-lean
+    kill_mutation: append lines to kinds.py past max 2500
+    status: killed
+    gate: default
+    owner: M126-S01
+    source: Phase 200
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M126
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M125-closed
+L_delivery=M126-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M126-S01 leased (`L_delivery=M125-closed`) | Capability proven / Cypher started |
+| L_delivery | M126 closed (v1.20) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M126-S01: pin `scripts/kutha_gov/kinds.py` line ceiling (`file_max_lines`) so the kernel does not re-grow past the post-split band. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3). `FoldIndexMode::Lazy` still scans until hot maps rebuild.
+Controller chooses next lease. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3). `kinds.py` ≤2500 lines (`SEM-m126`). `FoldIndexMode::Lazy` still scans until hot maps rebuild.
 
 ## Thaw map
 
