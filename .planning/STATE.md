@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.14
-milestone_name: unique fork known-on persist dir
+milestone: v1.15
+milestone_name: unique facade-statute persist dir
 status: completed
-stopped_at: "194-fork-known-on-store-dir"
-last_updated: "2026-10-20T05:50:00.000Z"
+stopped_at: "195-facade-statute-store-dir"
+last_updated: "2026-10-20T11:10:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.14 unique fork known-on persist dir — closed as M120
-**Phase:** 194
-**Status:** fork known-on persist/open uses a per-call directory. Honeycomb stays Proposed.
+**Milestone:** v1.15 unique facade-statute persist dir — closed as M121
+**Phase:** 195
+**Status:** facade-statute persist/open uses a per-call directory. Honeycomb stays Proposed.

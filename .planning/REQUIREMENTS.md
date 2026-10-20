@@ -1,6 +1,10 @@
 # Requirements: Kutha
 
-**Milestone:** v1.14 unique fork known-on persist dir (M120 closed).
+**Milestone:** v1.15 unique facade-statute persist dir (M121 closed).
+
+## v1.15
+
+- [x] **AUD-26**: facade-statute persist/open directories differ per call (not `tmp/p27-facade-statute`)
 
 ## v1.14
 

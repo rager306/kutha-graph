@@ -2,11 +2,11 @@
 
 ## Overview
 
-v0.01–v1.13 shipped. v1.14 gives fork known-on persist/open a per-call directory. Honeycomb stays Proposed.
+v0.01–v1.14 shipped. v1.15 gives facade-statute persist/open a per-call directory. Honeycomb stays Proposed.
 
 ## Id map
 
-See `docs/process/gsd-auto-contract.md` § Id map. v1.14 closed as M120 (`L_delivery=M120-closed`).
+See `docs/process/gsd-auto-contract.md` § Id map. v1.15 closed as M121 (`L_delivery=M121-closed`).
 
 ## Milestones
 
@@ -27,6 +27,11 @@ See `docs/process/gsd-auto-contract.md` § Id map. v1.14 closed as M120 (`L_deli
 - ✅ **v1.12 unique closed-VT known-on persist dir** — phase 192 closed (M118)
 - ✅ **v1.13 unique anchor-admit persist dir** — phase 193 closed (M119)
 - ✅ **v1.14 unique fork known-on persist dir** — phase 194 closed (M120)
+- ✅ **v1.15 unique facade-statute persist dir** — phase 195 closed (M121)
+
+## Phases (v1.15)
+
+- [x] **Phase 195:** facade-statute persist/open uses a per-call store directory
 
 ## Phases (v1.14)
 

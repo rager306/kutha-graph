@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M121
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M120-closed
+L_delivery=M121-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M121-S01 leased (`L_delivery=M120-closed`) | Capability proven / Cypher started |
+| L_delivery | M121 closed (v1.15) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M121-S01: `statute_as_of_via_facade` must not share `tmp/p27-facade-statute` across parallel Cargo. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3). Prior known-on dirs unique (`SEM-m116`…`SEM-m120`). `FoldIndexMode::Lazy` still scans until hot maps rebuild.
+Controller chooses next lease. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3). Facade-statute persist/open uses a per-call directory (`SEM-m121-facade-statute-store-dir`). Example still uses fixed `tmp/p27-ex-statute`. Fixed test `tmp/pNN-*` dirs from M116–M121 are closed. `FoldIndexMode::Lazy` still scans until hot maps rebuild.
 
 ## Thaw map
 

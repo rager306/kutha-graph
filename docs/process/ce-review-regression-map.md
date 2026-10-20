@@ -74,6 +74,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | shared `tmp/p34-01-store` races parallel Cargo | `SEM-m118-closed-vt-known-on-store-dir` | `closed_vt_known_on_store_dirs_differ_across_calls` | M118-S01 |
 | shared `tmp/p34-02-store` races parallel Cargo | `SEM-m119-anchor-admit-store-dir` | `anchor_admit_store_dirs_differ_across_calls` | M119-S01 |
 | shared `tmp/p36-02-fork` races parallel Cargo | `SEM-m120-fork-known-on-store-dir` | `fork_known_on_store_dirs_differ_across_calls` | M120-S01 |
+| shared `tmp/p27-facade-statute` races parallel Cargo | `SEM-m121-facade-statute-store-dir` | `facade_statute_store_dirs_differ_across_calls` | M121-S01 |
 
 Testing gaps from the same report, closed in M099 (not new product findings):
 

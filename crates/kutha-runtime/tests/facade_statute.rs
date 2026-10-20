@@ -4,7 +4,27 @@
 use kutha_common::{ValidTime};
 
 use kutha_runtime::{Runtime, RuntimeError};
-use std::path::Path;
+
+fn facade_statute_store_dir() -> std::path::PathBuf {
+    // Unique even when two Cargo processes run this binary together.
+    // A fixed `tmp/p27-facade-statute` is removed by the other process mid-persist.
+    static N: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let seq = N.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let nanos = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("clock")
+        .as_nanos();
+    let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .join("tmp")
+        .join(format!(
+            "p27-facade-statute-{}-{nanos}-{seq}",
+            std::process::id()
+        ));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).expect("persist dir");
+    dir
+}
 
 /// YearCe valid-time instants (`VALID_TIME_SCALE` = `TimeScale::YearCe`); not Unix epoch.
 const T_OLD: u64 = 2015;
@@ -83,9 +103,9 @@ fn statute_as_of_via_facade() -> Result<(), RuntimeError> {
     let pre_persist_2015 = sorted_as_of(&rt, T_OLD);
     let pre_persist_2021 = sorted_as_of(&rt, T_NEW);
 
-    let dir = Path::new("tmp/p27-facade-statute");
-    rt.persist(dir)?;
-    let opened = Runtime::open(dir)?;
+    let dir = facade_statute_store_dir();
+    rt.persist(&dir)?;
+    let opened = Runtime::open(&dir)?;
     assert_eq!(sorted_as_of(&opened, T_OLD), pre_persist_2015);
     assert_eq!(sorted_as_of(&opened, T_NEW), pre_persist_2021);
 
@@ -94,5 +114,19 @@ fn statute_as_of_via_facade() -> Result<(), RuntimeError> {
     assert_eq!(sorted_as_of(&fork, T_NEW), vec![]);
 
     opened.replay_check()?;
+    let _ = std::fs::remove_dir_all(dir);
     Ok(())
+}
+
+#[test]
+fn facade_statute_store_dirs_differ_across_calls() {
+    let a = facade_statute_store_dir();
+    let b = facade_statute_store_dir();
+    assert_ne!(a, b, "parallel cargo must not share one persist directory");
+    assert!(
+        !a.ends_with("p27-facade-statute"),
+        "fixed tmp/p27-facade-statute races across processes"
+    );
+    let _ = std::fs::remove_dir_all(a);
+    let _ = std::fs::remove_dir_all(b);
 }

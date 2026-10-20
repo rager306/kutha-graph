@@ -4,6 +4,28 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-20 — Trajectory: M121 / GSD v1.15 closed
+
+### Product
+
+- `statute_as_of_via_facade` no longer uses the fixed path `tmp/p27-facade-statute`. Each call gets `tmp/p27-facade-statute-<pid>-<nanos>-<seq>`. Oracle `facade_statute_store_dirs_differ_across_calls`; matrix `SEM-m121-facade-statute-store-dir` killed. `observe_cargo.required` includes that name.
+- Bench (`KUTHA_BENCH_N=10000`, test isolation only): `ingest_plain.n` 123783243 ns, `as_of.n` 263320 ns. Vs M120 recorded 108170549 / 246429. No library edit; host noise.
+
+### Trajectory
+
+- `L_delivery=M121-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.15 / Phase 195. ADR-000 D3 still rejects a hard FSM as the only control model.
+
+## 2026-10-20 — Trajectory: M121 / GSD v1.15 closed
+
+### Product
+
+- `statute_as_of_via_facade` no longer uses the fixed path `tmp/p27-facade-statute`. Each call gets `tmp/p27-facade-statute-<pid>-<nanos>-<seq>`. Oracle `facade_statute_store_dirs_differ_across_calls`; matrix `SEM-m121-facade-statute-store-dir` killed. `observe_cargo.required` includes that name.
+- Bench (`KUTHA_BENCH_N=10000`, test isolation only): `ingest_plain.n` 123783243 ns, `as_of.n` 263320 ns. Vs M120 recorded 108170549 / 246429. No library edit; host noise.
+
+### Trajectory
+
+- `L_delivery=M121-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.15 / Phase 195. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-20 — Trajectory: lease M121-S01 (unique facade-statute persist dir)
 
 ### Trajectory
