@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-20 — Trajectory: lease M121-S01 (unique facade-statute persist dir)
+
+### Trajectory
+
+- Active Milestone **M121**, Active Slice **S01** (`L_delivery=M120-closed`): `statute_as_of_via_facade` must not share a fixed `tmp/p27-facade-statute` across parallel Cargo. Honeycomb stays Proposed.
+
 ## 2026-10-20 — Trajectory: M120 / GSD v1.14 closed
 
 ### Product

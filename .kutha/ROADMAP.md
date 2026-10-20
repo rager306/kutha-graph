@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M121: unique facade-statute persist dir — LEASED (GSD v1.15)
+
+`statute_as_of_via_facade` persists to a fixed `tmp/p27-facade-statute`. Same race as M116–M120 under parallel Cargo. Thin slice: a per-call directory (pid, nanos, sequence). Honeycomb stays Proposed.
+
+- [ ] **S01: unique persist dir for facade statute open** `risk:low` `depends:[]`
+  > After this: two calls do not share a path; the fixed `tmp/p27-facade-statute` name is gone; matrix `SEM-m121-facade-statute-store-dir` killed. Phase 195.
+
 ## M120: unique fork known-on persist dir — CLOSED (GSD v1.14)
 
 `fork_at_before_later_anchor_differs_and_persist_open` persisted to a fixed `tmp/p36-02-fork`. Same race as M116–M119 under parallel Cargo. Thin slice: a per-call directory (pid, nanos, sequence). Honeycomb stays Proposed.
