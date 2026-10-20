@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M123: fixed-tmp join-after-tmp dogfood — LEASED (GSD v1.17)
+
+`Path::new("tmp/…")` is forbidden, but `.join("tmp").join("literal")` still slips (sem `p62-sem`). Thin slice: kind `glob_regex_absent` + unique leaf without a fixed middle segment. Honeycomb stays Proposed.
+
+- [ ] **S01: glob_regex_absent for join(tmp).join(str)** `risk:low` `depends:[]`
+  > After this: no `.join("tmp").join("` under crates; matrix `SEM-m123-fixed-tmp-join` killed. Phase 197.
+
 ## M122: fixed-tmp persist-dir dogfood — CLOSED (GSD v1.16)
 
 `Path::new("tmp/…")` in crates raced under parallel Cargo (example + m026). Thin slice: governor `glob_absent` needle + per-call dirs for the remaining hits. Honeycomb stays Proposed.

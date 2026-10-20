@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-20 — Trajectory: lease M123-S01 (fixed-tmp join-after-tmp dogfood)
+
+### Trajectory
+
+- Active Milestone **M123**, Active Slice **S01** (`L_delivery=M122-closed`): forbid `.join("tmp").join("…")` under crates; fold `p62-sem` into the unique leaf. Honeycomb stays Proposed.
+
 ## 2026-10-20 — Trajectory: M122 / GSD v1.16 closed
 
 ### Process
