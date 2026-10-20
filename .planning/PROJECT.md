@@ -10,7 +10,7 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.13 unique anchor-admit persist dir — closed (M119)
+## Current Milestone: v1.14 unique fork known-on persist dir — closed (M120)
 
 **Goal:** Close the 2026-10-18 audit residuals (policy election, premise-rel unindex, Define emit-once, full Horn combinations, replay VT coverage) without thawing Cypher, HNSW, or a legal pack.
 

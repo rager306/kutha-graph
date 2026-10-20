@@ -6,6 +6,27 @@ mod common;
 use kutha_common::Op;
 use kutha_runtime::{FoldIndexMode, GraphFold, Runtime};
 
+fn fork_known_on_store_dir() -> std::path::PathBuf {
+    // Unique even when two Cargo processes run this binary together.
+    // A fixed `tmp/p36-02-fork` is removed by the other process mid-persist.
+    static N: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let seq = N.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let nanos = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("clock")
+        .as_nanos();
+    let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .join("tmp")
+        .join(format!(
+            "p36-02-fork-{}-{nanos}-{seq}",
+            std::process::id()
+        ));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).expect("persist dir");
+    dir
+}
+
 const D: u64 = 2015;
 const W1: u64 = 2014;
 const W2: u64 = 2020;
@@ -49,13 +70,24 @@ fn fork_at_before_later_anchor_differs_and_persist_open() {
         fork_w2, live_w2,
         "fork before later TtAnchor must not share live as_known_on(W2)"
     );
-    let dir = std::path::Path::new("tmp/p36-02-fork");
-    let _ = std::fs::remove_dir_all(dir);
-    std::fs::create_dir_all(dir).unwrap();
-    fork.persist(dir).unwrap();
-    let opened = Runtime::open(dir).unwrap();
+    let dir = fork_known_on_store_dir();
+    fork.persist(&dir).unwrap();
+    let opened = Runtime::open(&dir).unwrap();
     assert_eq!(opened.as_known_on(WallTime::from(W2)), fork_w2);
     let _ = std::fs::remove_dir_all(dir);
+}
+
+#[test]
+fn fork_known_on_store_dirs_differ_across_calls() {
+    let a = fork_known_on_store_dir();
+    let b = fork_known_on_store_dir();
+    assert_ne!(a, b, "parallel cargo must not share one persist directory");
+    assert!(
+        !a.ends_with("p36-02-fork"),
+        "fixed tmp/p36-02-fork races across processes"
+    );
+    let _ = std::fs::remove_dir_all(a);
+    let _ = std::fs::remove_dir_all(b);
 }
 
 #[test]

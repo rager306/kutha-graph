@@ -121,6 +121,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.11 | 191 | M117 | S01 | quantum known-on persist/open uses a per-call store dir | shipped |
 | v1.12 | 192 | M118 | S01 | closed-VT known-on persist/open uses a per-call store dir | shipped |
 | v1.13 | 193 | M119 | S01 | anchor-admit persist/open uses a per-call store dir | shipped |
+| v1.14 | 194 | M120 | S01 | fork known-on persist/open uses a per-call store dir | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

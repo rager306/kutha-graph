@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-20 — Trajectory: M120 / GSD v1.14 closed
+
+### Product
+
+- `fork_at_before_later_anchor_differs_and_persist_open` no longer uses the fixed path `tmp/p36-02-fork`. Each call gets `tmp/p36-02-fork-<pid>-<nanos>-<seq>`. Oracle `fork_known_on_store_dirs_differ_across_calls`; matrix `SEM-m120-fork-known-on-store-dir` killed. `observe_cargo.required` includes that name.
+- Bench (`KUTHA_BENCH_N=10000`, test isolation only): `ingest_plain.n` 108170549 ns, `as_of.n` 246429 ns. Vs M119 recorded 109703364 / 318443. No library edit; host noise.
+
+### Trajectory
+
+- `L_delivery=M120-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.14 / Phase 194. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-20 — Trajectory: lease M120-S01 (unique fork known-on persist dir)
 
 ### Trajectory

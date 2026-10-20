@@ -1,6 +1,10 @@
 # Requirements: Kutha
 
-**Milestone:** v1.13 unique anchor-admit persist dir (M119 closed).
+**Milestone:** v1.14 unique fork known-on persist dir (M120 closed).
+
+## v1.14
+
+- [x] **AUD-25**: fork known-on persist/open directories differ per call (not `tmp/p36-02-fork`)
 
 ## v1.13
 

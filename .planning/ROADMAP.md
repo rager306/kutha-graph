@@ -2,11 +2,11 @@
 
 ## Overview
 
-v0.01–v1.12 shipped. v1.13 gives anchor-admit persist/open a per-call directory. Honeycomb stays Proposed.
+v0.01–v1.13 shipped. v1.14 gives fork known-on persist/open a per-call directory. Honeycomb stays Proposed.
 
 ## Id map
 
-See `docs/process/gsd-auto-contract.md` § Id map. v1.13 closed as M119 (`L_delivery=M119-closed`).
+See `docs/process/gsd-auto-contract.md` § Id map. v1.14 closed as M120 (`L_delivery=M120-closed`).
 
 ## Milestones
 
@@ -26,6 +26,11 @@ See `docs/process/gsd-auto-contract.md` § Id map. v1.13 closed as M119 (`L_deli
 - ✅ **v1.11 unique quantum known-on persist dir** — phase 191 closed (M117)
 - ✅ **v1.12 unique closed-VT known-on persist dir** — phase 192 closed (M118)
 - ✅ **v1.13 unique anchor-admit persist dir** — phase 193 closed (M119)
+- ✅ **v1.14 unique fork known-on persist dir** — phase 194 closed (M120)
+
+## Phases (v1.14)
+
+- [x] **Phase 194:** fork known-on persist/open uses a per-call store directory
 
 ## Phases (v1.13)
 

@@ -109,6 +109,7 @@ states:
       - quantum_known_on_store_dirs_differ_across_calls
       - closed_vt_known_on_store_dirs_differ_across_calls
       - anchor_admit_store_dirs_differ_across_calls
+      - fork_known_on_store_dirs_differ_across_calls
       - sidecar_truncated_mid_line_opens_from_log
       - append_keeps_prefix_bytes_of_jsonl_and_wal
       - payload_without_outcome_is_not_visible
