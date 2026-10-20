@@ -6,7 +6,26 @@ mod common;
 use common::sem::generator::{MixStyle, ingest_mix, ingest_mix_n};
 use kutha_common::{Op, ValidTime};
 use kutha_runtime::{Runtime, RuntimeError};
-use std::path::Path;
+
+fn m026_store_dir(label: &str) -> std::path::PathBuf {
+    // Unique even when two Cargo processes run this binary together.
+    static N: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let seq = N.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let nanos = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("clock")
+        .as_nanos();
+    let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .join("tmp")
+        .join(format!(
+            "m026-{label}-{}-{nanos}-{seq}",
+            std::process::id()
+        ));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).expect("persist dir");
+    dir
+}
 
 /// Coverage mix reaches the gaps named in the M026 S01 after-this (G-C02 family).
 #[test]
@@ -68,10 +87,9 @@ fn user_assert_event_id_stable_across_persist_open() {
         })
         .unwrap();
     let id = out.receipt.event_ids[0];
-    let dir = Path::new("tmp/m026-gc04-assert-id");
-    let _ = std::fs::remove_dir_all(dir);
-    rt.persist(dir).unwrap();
-    let opened = Runtime::open(dir).unwrap();
+    let dir = m026_store_dir("gc04-assert-id");
+    rt.persist(&dir).unwrap();
+    let opened = Runtime::open(&dir).unwrap();
     let opened_id = opened
         .log()
         .iter()
@@ -186,10 +204,9 @@ fn facade_derive_uses_latest_live_premise() {
 fn empty_runtime_persist_open_keeps_empty_as_of() {
     let rt = Runtime::default();
     assert!(rt.as_of(ValidTime::from(2015)).is_empty());
-    let dir = Path::new("tmp/m026-gc11-empty");
-    let _ = std::fs::remove_dir_all(dir);
-    rt.persist(dir).unwrap();
-    let opened = Runtime::open(dir).unwrap();
+    let dir = m026_store_dir("gc11-empty");
+    rt.persist(&dir).unwrap();
+    let opened = Runtime::open(&dir).unwrap();
     assert!(
         opened.as_of(ValidTime::from(2015)).is_empty(),
         "empty runtime must reopen with empty as_of"

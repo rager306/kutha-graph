@@ -1,6 +1,10 @@
 # Requirements: Kutha
 
-**Milestone:** v1.15 unique facade-statute persist dir (M121 closed).
+**Milestone:** v1.16 fixed-tmp persist-dir dogfood (M122 closed).
+
+## v1.16
+
+- [x] **AUD-27**: crates forbid `Path::new("tmp/…")`; example + m026 use per-call dirs
 
 ## v1.15
 

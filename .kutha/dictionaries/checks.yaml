@@ -1669,6 +1669,24 @@ checks:
           pattern: "\\.kutha-gov-cargo\\.lock"
           with: ".__KUTHA_GOV_CARGO_LOCK_NAME__"
 
+  - id: fixed-tmp-persist-dir
+    description: >-
+      Crates must not use Path::new("tmp/…") for persist/open (parallel Cargo
+      deletes a shared dir mid-write). Use per-call dirs (pid/nanos/seq). M122.
+    steps:
+      - kind: glob_absent
+        glob: "crates/**/*.rs"
+        needles:
+          - 'Path::new("tmp/'
+        category: fixed-tmp
+        message: "fixed Path::new(\"tmp/…\") persist dir (use per-call unique path)"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: crates/kutha-runtime/examples/statute_as_of.rs
+          pattern: "facade_example_store_dir\\(\\)"
+          with: 'std::path::Path::new("tmp/p27-ex-statute")'
+
   - id: skip-cargo-log-marker
     description: >-
       skip_cargo / prior-high emit_tenant leaves allowlisted tenant=skipped so fold

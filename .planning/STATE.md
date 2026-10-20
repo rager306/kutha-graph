@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.15
-milestone_name: unique facade-statute persist dir
+milestone: v1.16
+milestone_name: fixed-tmp persist-dir dogfood
 status: completed
-stopped_at: "195-facade-statute-store-dir"
-last_updated: "2026-10-20T11:10:00.000Z"
+stopped_at: "196-fixed-tmp-persist-dir"
+last_updated: "2026-10-20T13:00:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.15 unique facade-statute persist dir — closed as M121
-**Phase:** 195
-**Status:** facade-statute persist/open uses a per-call directory. Honeycomb stays Proposed.
+**Milestone:** v1.16 fixed-tmp persist-dir dogfood — closed as M122
+**Phase:** 196
+**Status:** crates forbid Path::new("tmp/…"); remaining fixed dirs unique. Honeycomb stays Proposed.

@@ -2437,6 +2437,17 @@ rows:
     gate: default
     owner: M114-S01
     source: Phase 188
+  - id: SEM-m122-fixed-tmp-persist-dir
+    plane: harness
+    invariant: crates must not use Path::new("tmp/…") for persist/open
+    layer: governor
+    oracle:
+      - fixed-tmp-persist-dir
+    kill_mutation: restore Path::new("tmp/p27-ex-statute") in the statute example
+    status: killed
+    gate: default
+    owner: M122-S01
+    source: Phase 196
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

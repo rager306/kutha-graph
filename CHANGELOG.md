@@ -4,16 +4,26 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
-## 2026-10-20 — Trajectory: M121 / GSD v1.15 closed
+## 2026-10-20 — Trajectory: M122 / GSD v1.16 closed
+
+### Process
+
+- Governor check `fixed-tmp-persist-dir`: `glob_absent` over `crates/**/*.rs` forbids `Path::new("tmp/`. Budget 90. Invariant `I-fixed-tmp-persist-dir`. Matrix `SEM-m122-fixed-tmp-persist-dir` killed.
 
 ### Product
 
-- `statute_as_of_via_facade` no longer uses the fixed path `tmp/p27-facade-statute`. Each call gets `tmp/p27-facade-statute-<pid>-<nanos>-<seq>`. Oracle `facade_statute_store_dirs_differ_across_calls`; matrix `SEM-m121-facade-statute-store-dir` killed. `observe_cargo.required` includes that name.
-- Bench (`KUTHA_BENCH_N=10000`, test isolation only): `ingest_plain.n` 123783243 ns, `as_of.n` 263320 ns. Vs M120 recorded 108170549 / 246429. No library edit; host noise.
+- Example `statute_as_of` and `m026_generators` persist/open use per-call directories (pid/nanos/seq). No remaining `Path::new("tmp/…")` under crates.
+- Bench (`KUTHA_BENCH_N=10000`): `ingest_plain.n` 123995257 ns, `as_of.n` 319631 ns. Vs M121 recorded 123783243 / 263320. No library hot-path edit; host noise.
 
 ### Trajectory
 
-- `L_delivery=M121-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.15 / Phase 195. ADR-000 D3 still rejects a hard FSM as the only control model.
+- `L_delivery=M122-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.16 / Phase 196. ADR-000 D3 still rejects a hard FSM as the only control model.
+
+## 2026-10-20 — Trajectory: lease M122-S01 (fixed-tmp persist-dir dogfood)
+
+### Trajectory
+
+- Active Milestone **M122**, Active Slice **S01** (`L_delivery=M121-closed`): forbid `Path::new("tmp/…")` under crates; unique dirs for example + m026. Honeycomb stays Proposed.
 
 ## 2026-10-20 — Trajectory: M121 / GSD v1.15 closed
 

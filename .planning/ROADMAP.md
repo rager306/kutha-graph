@@ -2,11 +2,11 @@
 
 ## Overview
 
-v0.01–v1.14 shipped. v1.15 gives facade-statute persist/open a per-call directory. Honeycomb stays Proposed.
+v0.01–v1.15 shipped. v1.16 forbids Path::new("tmp/…") under crates. Honeycomb stays Proposed.
 
 ## Id map
 
-See `docs/process/gsd-auto-contract.md` § Id map. v1.15 closed as M121 (`L_delivery=M121-closed`).
+See `docs/process/gsd-auto-contract.md` § Id map. v1.16 closed as M122 (`L_delivery=M122-closed`).
 
 ## Milestones
 
@@ -28,6 +28,11 @@ See `docs/process/gsd-auto-contract.md` § Id map. v1.15 closed as M121 (`L_deli
 - ✅ **v1.13 unique anchor-admit persist dir** — phase 193 closed (M119)
 - ✅ **v1.14 unique fork known-on persist dir** — phase 194 closed (M120)
 - ✅ **v1.15 unique facade-statute persist dir** — phase 195 closed (M121)
+- ✅ **v1.16 fixed-tmp persist-dir dogfood** — phase 196 closed (M122)
+
+## Phases (v1.16)
+
+- [x] **Phase 196:** forbid Path::new("tmp/…") under crates; unique remaining dirs
 
 ## Phases (v1.15)
 

@@ -3,7 +3,26 @@
 
 use kutha_common::{ValidTime, WallTime};
 use kutha_runtime::{NormView, Runtime, RuntimeError};
-use std::path::Path;
+
+fn facade_example_store_dir() -> std::path::PathBuf {
+    // Unique even when two Cargo processes run this example together.
+    static N: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let seq = N.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let nanos = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("clock")
+        .as_nanos();
+    let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .join("tmp")
+        .join(format!(
+            "p27-ex-statute-{}-{nanos}-{seq}",
+            std::process::id()
+        ));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).expect("persist dir");
+    dir
+}
 
 fn fmt_norm(rt: &Runtime, view: &NormView) -> String {
     let dict = rt.dictionary();
@@ -78,10 +97,11 @@ fn main() -> Result<(), RuntimeError> {
     rt.correct("art-12-speed", "inForceAs", "50-kmh", 2010)?;
     rt.retract("art-12-speed", 2010)?;
 
-    let dir = Path::new("tmp/p27-ex-statute");
-    rt.persist(dir)?;
-    let opened = Runtime::open(dir)?;
+    let dir = facade_example_store_dir();
+    rt.persist(&dir)?;
+    let opened = Runtime::open(&dir)?;
     let _fork = opened.fork_at(0);
     opened.replay_check()?;
+    let _ = std::fs::remove_dir_all(dir);
     Ok(())
 }
