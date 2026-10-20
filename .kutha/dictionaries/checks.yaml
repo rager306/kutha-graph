@@ -2351,6 +2351,40 @@ checks:
           pattern: "tt_by_ingest"
           with: "KNOWN_AT_INGEST_LEASE"
 
+  - id: glob-regex-absent-derive
+    description: >-
+      selftest derives glob_regex_absent (DERIVABLE + mutation target) so a check
+      with only that kind is not UNPROVEN (M124 / Phase 198).
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/selftest.py
+        needles:
+          - '"glob_regex_absent"'
+          - "def _derive_glob_regex_absent"
+        require: all
+        category: oracle
+        message: "glob_regex_absent selftest derive missing: {missing}"
+      - kind: file_contains
+        path: scripts/kutha_gov/kinds.py
+        needles:
+          - "def glob_regex_absent_mutation_target"
+        require: all
+        category: oracle
+        message: "glob_regex_absent mutation target missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_selftest.py
+        needles:
+          - "def test_synthetic_glob_regex_absent_derives"
+        require: all
+        category: oracle
+        message: "glob_regex_absent derive pytest missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/selftest.py
+          pattern: "def _derive_glob_regex_absent"
+          with: "def _derive_glob_rx_gone"
+
   - id: kinds-family-split
     description: >-
       kinds.py keeps run_step/RUNNERS; policy families stay in sibling modules

@@ -201,6 +201,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M123 S01 (fixed-tmp join-after-tmp dogfood):** Phase 197 — `SEM-m123-fixed-tmp-join` `killed` (owner `M123-S01`). Oracle check: `fixed-tmp-persist-dir` (`glob_regex_absent`).
 
+**M124 S01 (glob_regex_absent selftest derive):** Phase 198 — `SEM-m124-glob-regex-derive` `killed` (owner `M124-S01`). Oracle check: `glob-regex-absent-derive`.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

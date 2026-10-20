@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-20 — Trajectory: M124 / GSD v1.18 closed
+
+### Process
+
+- Selftest derives `glob_regex_absent` (`DERIVABLE` + `glob_regex_absent_mutation_target`). Check `glob-regex-absent-derive`. Budget 90→91. Matrix `SEM-m124-glob-regex-derive` killed.
+
+### Trajectory
+
+- `L_delivery=M124-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.18 / Phase 198. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-20 — Trajectory: lease M124-S01 (glob_regex_absent selftest derive)
 
 ### Trajectory

@@ -405,6 +405,12 @@ invariants:
     disposition: check
     check: fixed-tmp-persist-dir
 
+  - id: I-glob-regex-absent-derive
+    claim: "selftest derives glob_regex_absent; SEM-m124-glob-regex-derive"
+    source: ".planning/phases/198-glob-regex-derive/198-VERIFICATION.md"
+    disposition: check
+    check: glob-regex-absent-derive
+
   - id: I-op-compat-policy
     claim: "Removed dictionary meta-ops fail deserialize on open (jsonl, WAL, and sealed segment frames); remaps and migrate_op_wire (jsonl + WAL-only + segmented demote, including orphan seg-*.log cleanup) are explicit; migrate_compat runs Op-wire then pins; kutha-migrate is the operator CLI at debug/kutha-migrate after observe; serde aliases forbidden"
     source: ".planning/phases/110-op-compat-policy/110-CONTEXT.md"

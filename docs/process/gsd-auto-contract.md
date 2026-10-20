@@ -125,6 +125,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.15 | 195 | M121 | S01 | facade-statute persist/open uses a per-call store dir | shipped |
 | v1.16 | 196 | M122 | S01 | forbid Path::new("tmp/…") under crates (fixed-tmp dogfood) | shipped |
 | v1.17 | 197 | M123 | S01 | forbid .join("tmp").join("…") under crates (glob_regex_absent) | shipped |
+| v1.18 | 198 | M124 | S01 | selftest derives glob_regex_absent (DERIVABLE) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M124: glob_regex_absent selftest derive — LEASED (GSD v1.18)
+## M124: glob_regex_absent selftest derive — CLOSED (GSD v1.18)
 
 M123 landed `glob_regex_absent` but selftest only proved it via explicit YAML mutations. Thin slice: DERIVABLE derive + mutation target so a check with only that kind is not UNPROVEN. Honeycomb stays Proposed.
 
-- [ ] **S01: derive glob_regex_absent in selftest** `risk:low` `depends:[]`
-  > After this: synthetic selftest OK without explicit mutations; matrix `SEM-m124-glob-regex-derive` killed. Phase 198.
+- [x] **S01: derive glob_regex_absent in selftest** `risk:low` `depends:[]`
+  > After this: synthetic selftest OK without explicit mutations; matrix `SEM-m124-glob-regex-derive` killed. Phase 198. Landed.
 
 ## M123: fixed-tmp join-after-tmp dogfood — CLOSED (GSD v1.17)
 

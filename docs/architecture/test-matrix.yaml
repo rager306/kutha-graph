@@ -2459,6 +2459,17 @@ rows:
     gate: default
     owner: M123-S01
     source: Phase 197
+  - id: SEM-m124-glob-regex-derive
+    plane: harness
+    invariant: selftest derives glob_regex_absent without explicit YAML mutations
+    layer: governor
+    oracle:
+      - glob-regex-absent-derive
+    kill_mutation: remove _derive_glob_regex_absent from selftest.py
+    status: killed
+    gate: default
+    owner: M124-S01
+    source: Phase 198
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

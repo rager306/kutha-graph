@@ -416,6 +416,49 @@ def _kind_glob_regex_absent(check: str, step: Step, ctx: Context, result: CheckR
                 )
 
 
+def glob_regex_absent_mutation_target(step: Step, root: Path) -> tuple[str, str] | None:
+    """Return (rel_path, append_text) that trips glob_regex_absent, or None."""
+    pattern = _str(step, "glob")
+    patterns = _str_list(step, "patterns")
+    if not pattern or not patterns:
+        return None
+    hit: Path | None = None
+    for path in sorted(root.glob(pattern)):
+        if path.is_file():
+            hit = path
+            break
+    if hit is None:
+        return None
+    flags = _re_flags(step)
+    compiled: list[re.Pattern[str]] = []
+    for raw in patterns:
+        try:
+            compiled.append(re.compile(raw, flags))
+        except re.error:
+            return None
+    # Prefer a fixed-tmp shaped payload; fall back to a lightly unescaped guess.
+    candidates = [
+        '.join("tmp").join("__kutha_selftest__")',
+        "FORBIDDEN_SELFTEST_TOKEN",
+    ]
+    for raw in patterns:
+        guess = (
+            raw.replace(r"\.", ".")
+            .replace(r"\(", "(")
+            .replace(r"\)", ")")
+            .replace(r"\s*", "")
+            .replace(r"\"", '"')
+            .replace(r"\'", "'")
+        )
+        if guess and guess not in candidates:
+            candidates.append(guess)
+    for payload in candidates:
+        text = "\n" + payload + "\n"
+        if any(rx.search(text) for rx in compiled):
+            return hit.relative_to(root).as_posix(), text
+    return None
+
+
 def _kind_glob_none(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
     pattern = _str(step, "glob")
     hits = [path for path in sorted(ctx.root.glob(pattern)) if path.is_file() or path.is_dir()]

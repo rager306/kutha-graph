@@ -250,6 +250,34 @@ class SelftestTests(unittest.TestCase):
         self.assertEqual(0, code, msg=rows)
         self.assertEqual("OK", rows[0].status)
 
+    def test_synthetic_glob_regex_absent_derives(self) -> None:
+        # M124: glob_regex_absent must be DERIVABLE without explicit selftest YAML.
+        root = _write_mini(
+            [
+                {
+                    "id": "no-join-tmp",
+                    "description": "no fixed join after tmp",
+                    "steps": [
+                        {
+                            "kind": "glob_regex_absent",
+                            "glob": "crates/**/*.rs",
+                            "patterns": [r'\.join\("tmp"\)\s*\.join\("'],
+                        }
+                    ],
+                }
+            ],
+            {
+                "crates/k/src/lib.rs": (
+                    'PathBuf::from("x")\n        .join("tmp")\n'
+                    '        .join(format!("leaf-{n}"))\n'
+                ),
+            },
+        )
+        rows, code = run_selftest(root)
+        self.assertEqual(0, code, msg=rows)
+        self.assertEqual("OK", rows[0].status)
+        self.assertEqual(CLASS_DERIVED, rows[0].classification)
+
     def test_synthetic_glob_paths_in_file_derives(self) -> None:
         root = _write_mini(
             [
