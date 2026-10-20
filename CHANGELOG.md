@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: lease M125-S01 (yaml_needles derive + DERIVABLE completeness)
+
+### Trajectory
+
+- Active Milestone **M125**, Active Slice **S01** (`L_delivery=M124-closed`): derive `yaml_needles_in_glob`; ALLOWED kinds DERIVABLE except `git_path_implies`. Honeycomb stays Proposed.
+
 ## 2026-10-20 — Trajectory: M124 / GSD v1.18 closed
 
 ### Process

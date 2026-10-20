@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M125: yaml_needles selftest derive + DERIVABLE completeness — LEASED (GSD v1.19)
+
+`yaml_needles_in_glob` has zero live dictionary users and was not DERIVABLE (CE 2026-10-15 residual). Thin slice: derive + assert ALLOWED ⊆ DERIVABLE ∪ {git_path_implies}. Honeycomb stays Proposed.
+
+- [ ] **S01: derive yaml_needles + DERIVABLE completeness** `risk:low` `depends:[]`
+  > After this: synthetic selftest OK; matrix `SEM-m125-yaml-needles-derive` killed. Phase 199.
+
 ## M124: glob_regex_absent selftest derive — CLOSED (GSD v1.18)
 
 M123 landed `glob_regex_absent` but selftest only proved it via explicit YAML mutations. Thin slice: DERIVABLE derive + mutation target so a check with only that kind is not UNPROVEN. Honeycomb stays Proposed.
