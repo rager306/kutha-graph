@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-20 — Trajectory: M118 / GSD v1.12 closed
+
+### Product
+
+- `closed_vt_known_on_persist_open` no longer uses the fixed path `tmp/p34-01-store`. Each call gets `tmp/p34-01-store-<pid>-<nanos>-<seq>`. Oracle `closed_vt_known_on_store_dirs_differ_across_calls`; matrix `SEM-m118-closed-vt-known-on-store-dir` killed. `observe_cargo.required` includes that name.
+- Bench (`KUTHA_BENCH_N=10000`, test isolation only): `ingest_plain.n` 123282211 ns, `as_of.n` 283929 ns. Vs M117 recorded 113396450 / 267298. No library edit; host noise.
+
+### Trajectory
+
+- `L_delivery=M118-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.12 / Phase 192. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-20 — Trajectory: lease M118-S01 (unique closed-VT known-on persist dir)
 
 ### Trajectory

@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M118
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M117-closed
+L_delivery=M118-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M118-S01 leased (`L_delivery=M117-closed`) | Capability proven / Cypher started |
+| L_delivery | M118 closed (v1.12) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M118-S01: `closed_vt_known_on_persist_open` must not share `tmp/p34-01-store` across parallel Cargo. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3). Prior known-on dirs unique (`SEM-m116` / `SEM-m117`). `FoldIndexMode::Lazy` still scans until hot maps rebuild.
+Controller chooses next lease. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3). Closed-VT known-on persist/open uses a per-call directory (`SEM-m118-closed-vt-known-on-store-dir`). Remaining fixed `tmp/pNN-*`: p34-02, p36-02, p27-facade. `FoldIndexMode::Lazy` still scans until hot maps rebuild.
 
 ## Thaw map
 

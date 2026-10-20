@@ -4,6 +4,27 @@
 use kutha_common::{Op, ValidTime, WallTime};
 use kutha_runtime::Runtime;
 
+fn closed_vt_known_on_store_dir() -> std::path::PathBuf {
+    // Unique even when two Cargo processes run this binary together.
+    // A fixed `tmp/p34-01-store` is removed by the other process mid-persist.
+    static N: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let seq = N.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let nanos = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("clock")
+        .as_nanos();
+    let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .join("tmp")
+        .join(format!(
+            "p34-01-store-{}-{nanos}-{seq}",
+            std::process::id()
+        ));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).expect("persist dir");
+    dir
+}
+
 const T_OLD: u64 = 2015;
 const VF_FIRST: u64 = 2010;
 const VF_SECOND: u64 = 2020;
@@ -68,14 +89,25 @@ fn seed_closed_interval(
 }
 
 #[test]
+fn closed_vt_known_on_store_dirs_differ_across_calls() {
+    let a = closed_vt_known_on_store_dir();
+    let b = closed_vt_known_on_store_dir();
+    assert_ne!(a, b, "parallel cargo must not share one persist directory");
+    assert!(
+        !a.ends_with("p34-01-store"),
+        "fixed tmp/p34-01-store races across processes"
+    );
+    let _ = std::fs::remove_dir_all(a);
+    let _ = std::fs::remove_dir_all(b);
+}
+
+#[test]
 fn closed_vt_known_on_persist_open() {
     let mut rt = Runtime::default();
     let statute = seed_closed_interval(&mut rt);
-    let dir = std::path::Path::new("tmp/p34-01-store");
-    let _ = std::fs::remove_dir_all(dir);
-    std::fs::create_dir_all(dir).unwrap();
-    rt.persist(dir).unwrap();
-    let opened = Runtime::open(dir).unwrap();
+    let dir = closed_vt_known_on_store_dir();
+    rt.persist(&dir).unwrap();
+    let opened = Runtime::open(&dir).unwrap();
     let known = opened.as_known_on(WallTime::from(T_OLD)).expect("anchor rebuilt on open");
     assert!(
         known.contains(&statute),

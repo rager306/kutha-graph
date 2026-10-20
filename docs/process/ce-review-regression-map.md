@@ -71,6 +71,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | `ci --check ""` runs the full suite | `SEM-m115-empty-check-on-ci` | `agent-surface` / `test_ci_rejects_empty_check_flag` | M115-S01 |
 | shared `tmp/p32-02-store` races parallel Cargo | `SEM-m116-known-on-store-dir` | `persist_open_store_dirs_differ_across_calls` | M116-S01 |
 | shared `tmp/p32-01-store` races parallel Cargo | `SEM-m117-quantum-known-on-store-dir` | `quantum_known_on_store_dirs_differ_across_calls` | M117-S01 |
+| shared `tmp/p34-01-store` races parallel Cargo | `SEM-m118-closed-vt-known-on-store-dir` | `closed_vt_known_on_store_dirs_differ_across_calls` | M118-S01 |
 
 Testing gaps from the same report, closed in M099 (not new product findings):
 

@@ -1,6 +1,10 @@
 # Requirements: Kutha
 
-**Milestone:** v1.11 unique quantum known-on persist dir (M117 closed).
+**Milestone:** v1.12 unique closed-VT known-on persist dir (M118 closed).
+
+## v1.12
+
+- [x] **AUD-23**: closed-VT known-on persist/open directories differ per call (not `tmp/p34-01-store`)
 
 ## v1.11
 
