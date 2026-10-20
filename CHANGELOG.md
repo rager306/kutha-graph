@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-20 — Trajectory: M119 / GSD v1.13 closed
+
+### Product
+
+- `monotone_unique_anchors_persist_open` no longer uses the fixed path `tmp/p34-02-store`. Each call gets `tmp/p34-02-store-<pid>-<nanos>-<seq>`. Oracle `anchor_admit_store_dirs_differ_across_calls`; matrix `SEM-m119-anchor-admit-store-dir` killed. `observe_cargo.required` includes that name.
+- Bench (`KUTHA_BENCH_N=10000`, test isolation only): `ingest_plain.n` 109703364 ns, `as_of.n` 318443 ns. Vs M118 recorded 123282211 / 283929. No library edit; host noise.
+
+### Trajectory
+
+- `L_delivery=M119-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.13 / Phase 193. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-20 — Trajectory: lease M119-S01 (unique anchor-admit persist dir)
 
 ### Trajectory

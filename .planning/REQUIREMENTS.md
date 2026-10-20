@@ -1,6 +1,10 @@
 # Requirements: Kutha
 
-**Milestone:** v1.12 unique closed-VT known-on persist dir (M118 closed).
+**Milestone:** v1.13 unique anchor-admit persist dir (M119 closed).
+
+## v1.13
+
+- [x] **AUD-24**: anchor-admit persist/open directories differ per call (not `tmp/p34-02-store`)
 
 ## v1.12
 
