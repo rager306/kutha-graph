@@ -302,6 +302,17 @@ class HarnessTests(unittest.TestCase):
         self.assertTrue(highs)
         self.assertEqual("yaml-needles", highs[0].category)
 
+    def test_yaml_needles_live_precommit_is_green(self) -> None:
+        """M129: live dictionary uses yaml_needles_in_glob (not derive-only)."""
+        from contextlib import redirect_stdout
+        from io import StringIO
+
+        buf = StringIO()
+        with redirect_stdout(buf):
+            code = main(["--root", str(ROOT), "--check", "yaml-needles-live", "precommit"])
+        self.assertEqual(0, code, msg=buf.getvalue())
+        self.assertIn("yaml-needles-live", buf.getvalue())
+
     def test_git_path_implies_requires_changelog_for_crate_diff(self) -> None:
         ctx = Context(root=ROOT, changed_paths=frozenset({"crates/kutha-runtime/src/lib.rs"}))
         result = CheckResult(check="probe")

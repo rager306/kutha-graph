@@ -2441,6 +2441,27 @@ checks:
           pattern: "def _derive_yaml_needles_in_glob"
           with: "def _derive_yaml_needles_gone"
 
+  - id: yaml-needles-live
+    description: >-
+      Live dogfood for yaml_needles_in_glob (M129 / Phase 203): FSM
+      observe_cargo and observe_rocks required names appear as fn <name> under
+      crates. Complements observe-required-fn (asserting #[test]).
+    steps:
+      - kind: yaml_needles_in_glob
+        path: .kutha/dictionaries/fsm.yaml
+        select: states.observe_cargo.required
+        glob: "crates/**/*.rs"
+        prefix: "fn "
+        category: observe-fn
+        message: "FSM observe_cargo required missing as fn <name> in crates: {missing}"
+      - kind: yaml_needles_in_glob
+        path: .kutha/dictionaries/fsm.yaml
+        select: states.observe_rocks.required
+        glob: "crates/**/*.rs"
+        prefix: "fn "
+        category: observe-fn
+        message: "FSM observe_rocks required missing as fn <name> in crates: {missing}"
+
   - id: kinds-family-split
     description: >-
       kinds.py keeps run_step/RUNNERS; policy families stay in sibling modules

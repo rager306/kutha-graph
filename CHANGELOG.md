@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: M129 / GSD v1.23 closed
+
+Process tag **v1.23** / Phase **203**. Not a SemVer release.
+
+- Check `yaml-needles-live`: FSM `observe_cargo` / `observe_rocks` required names as `fn <name>` under crates via live `yaml_needles_in_glob`. RED (glob → `AGENTS.md`) HIGH; GREEN on crates glob; selftest derived-by-own-mutation. Budget 95. Matrix `SEM-m129-yaml-needles-live` killed.
+- `L_delivery=M129-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.23 / Phase 203. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-21 — Trajectory: lease M129-S01 (yaml_needles live dogfood)
 
 Process tag **v1.23** / Phase **203**. Not a SemVer release.

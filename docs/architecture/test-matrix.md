@@ -211,6 +211,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M128 S01 (Horn multi-combination):** Phase 202 — `SEM-m128-horn-multi-combination` `killed` (owner `M128-S01`). Oracle: `two_disjoint_ab_windows_mint_two_ac_heads`. Kill: first-only `PremMatch` in `search_at_all`.
 
+**M129 S01 (yaml_needles live dogfood):** Phase 203 — `SEM-m129-yaml-needles-live` `killed` (owner `M129-S01`). Oracle check: `yaml-needles-live`. Kill: glob → `AGENTS.md`.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

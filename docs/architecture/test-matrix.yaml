@@ -2514,6 +2514,17 @@ rows:
     gate: default
     owner: M128-S01
     source: Phase 202 / CE 2026-10-15 residual (multi-residual premise combinations)
+  - id: SEM-m129-yaml-needles-live
+    plane: harness
+    invariant: yaml_needles_in_glob has a live dictionary user (FSM observe required as fn <name> under crates)
+    layer: governor
+    oracle:
+      - yaml-needles-live
+    kill_mutation: point yaml-needles-live glob at AGENTS.md (or remove the check)
+    status: killed
+    gate: default
+    owner: M129-S01
+    source: Phase 203 / M125 residual (DERIVABLE without live use)
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute
