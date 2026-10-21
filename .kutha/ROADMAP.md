@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M138: kinds-family-split behavioral (de-text-couple) — ACTIVE (GSD v1.32)
+
+CE 2026-10-15 residual: kinds-split text needles rot independently of behavior. Thin slice: import/dispatch pytest oracle; drop `RUNNERS: dict[str, Runner]` needle; selftest mutates RUNNERS key. Honeycomb stays Proposed. Budget stays 97.
+
+- [ ] **S01: kinds-family-split dispatch oracle** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m138-kinds-family-behavioral` killed. Phase 212.
+
 ## M137: parallel-check-error-parity behavioral (de-text-couple) — CLOSED (GSD v1.31)
 
 CE 2026-10-15 residual: text-coupled governor oracles (parallel-check-error-parity file_contains needles) rot independently of behavior. Thin slice: direct `_eval_check_worker` oracle + drop docstring/assert needles; keep `return eval_check(check, ctx)`. Honeycomb stays Proposed. Budget stays 97.
