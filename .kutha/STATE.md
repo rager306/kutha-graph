@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M147
+**Active Slice:** S01
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M146-closed
+L_delivery=M147-S01
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M146 closed (v1.40) | Capability proven / Cypher started |
+| L_delivery | M147 S01 leased (v1.41) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Lease one thin residual with fresh RED. Prefer product/process residuals over lean pins without defect. Candidates: stub-ci leftovers only with reword proof; Lazy cold path only if product RED (AUD-08 Lazy intentional). Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+**Active Milestone:** M147 · **Active Slice:** S01 — `_apply_cargo_pack` must fail only on HIGH; emit LOW `observe-retried` when incomplete recovers. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 
