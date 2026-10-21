@@ -41,7 +41,10 @@ the marker exists.
 `rule_version` when the pin equals a legacy UTF-8 ident digest for a rule name
 **evidenced in the same log** (`Behavior.name` or rule-ident `Define`) via
 `remap_events_pins`; stamps `pin-cite.v1`. Cites with no evidenced ident stay
-unchanged (no hardcoded name list). Idempotent when the marker exists.
+unchanged (no hardcoded name list). Idempotent when the marker exists. After
+`pin-cite.v1` is stamped, evidence added later never remaps orphans on rerun;
+operators must delete pin-cite.v1 and re-run `migrate_pin_cite` (or
+`migrate_pins` / `migrate_compat`) to rematerialize.
 
 **Shipped (M075):** `store::migrate_pins` runs `migrate_pin_wire` then
 `migrate_pin_cite` (reuse; no new remap rules) so operators cannot skip the

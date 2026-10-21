@@ -2569,6 +2569,17 @@ rows:
     gate: default
     owner: M133-S01
     source: Phase 207 / CE 2026-10-15 residual (markers green under swap)
+  - id: SEM-m134-pin-cite-delete-rerun
+    plane: product
+    invariant: after pin-cite.v1 is stamped, later evidence rematerializes orphans only when the operator deletes the marker; pin-compat.md states delete pin-cite.v1
+    layer: kill
+    oracle:
+      - migrate_pin_cite_requires_delete_marker_to_rematerialize_after_new_evidence
+    kill_mutation: remove migrate_pin_cite early return when pin-cite.v1 exists; or drop "delete pin-cite.v1" from pin-compat.md
+    status: killed
+    gate: default
+    owner: M134-S01
+    source: Phase 208 / CE 2026-10-15 residual (orphan policy idempotency)
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

@@ -376,7 +376,9 @@ pub struct PinCiteMigrateReport {
 /// evidenced by [`Op::Behavior`] names and rule-ident [`Op::Define`]s in the same
 /// log, then remaps [`Op::JustificationCite`] (and any remaining legacy Behavior)
 /// pins via [`remap_events_pins`]. Stamps [`PIN_CITE_MARKER_REL`]. Idempotent when
-/// the marker exists. Cites whose pin has no evidenced ident stay unchanged.
+/// the marker exists (later evidence does not rematerialize orphans until the
+/// operator deletes `pin-cite.v1` — see `docs/process/pin-compat.md`). Cites
+/// whose pin has no evidenced ident stay unchanged.
 pub fn migrate_pin_cite(dir: &Path) -> std::io::Result<PinCiteMigrateReport> {
     fs::create_dir_all(dir)?;
     let _lock = acquire_store_write_lock(dir)?;

@@ -56,6 +56,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | empty yaml_map_list select vacuous pass | `SEM-m131-yaml-map-list-nonempty` | `yaml-map-list-nonempty` | M131-S01 |
 | reconcile set_len + sync_data (length may not persist) | `SEM-m132-reconcile-sync-all` | `reconcile_truncation_uses_sync_all_after_set_len` | M132-S01 |
 | migrate_compat swapped pins-then-op-wire still green | `SEM-m133-migrate-compat-order` | `migrate_compat_calls_op_wire_before_pins` | M133-S01 |
+| pin-cite orphan rematerialize needs delete marker | `SEM-m134-pin-cite-delete-rerun` | `migrate_pin_cite_requires_delete_marker_to_rematerialize_after_new_evidence` | M134-S01 |
 | #5 kinds-split oracle was test-matrix | `SEM-m054-id-kinds-split` | `kinds-family-split` | M098-S01 |
 | Correct/CorrectInterval of Behavior leaves retract indexes | `SEM-m100-correct-unindex-behavior` | `correct_of_behavior_drops_retract_index`, `correct_interval_of_behavior_drops_retract_index` | M100-S01 |
 | rule-pin VT truncation (pin starts after the trigger) | `SEM-m101-horn-pin-overlap` | `late_starting_rule_pin_fires_on_overlap` | M101-S01 |

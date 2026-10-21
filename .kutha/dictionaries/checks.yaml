@@ -1952,6 +1952,7 @@ checks:
           - "pin-wire.v1"
           - "migrate_pin_cite"
           - "pin-cite.v1"
+          - "delete pin-cite.v1"
           - "migrate_pins"
           - "migrate_compat"
           - "kutha-migrate"
@@ -1981,6 +1982,12 @@ checks:
           - migrate_pin_cite_leaves_orphan_legacy_cite_unchanged
         category: oracle
         message: "pin-cite migrate oracles missing {missing}"
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m134_pin_cite_delete_rerun.rs
+        tests:
+          - migrate_pin_cite_requires_delete_marker_to_rematerialize_after_new_evidence
+        category: oracle
+        message: "pin-cite delete/rerun oracle missing {missing}"
       - kind: rust_test_asserts
         path: crates/kutha-runtime/tests/m075_migrate_pins.rs
         tests:
