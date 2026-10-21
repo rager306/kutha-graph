@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: M144 / GSD v1.38 closed
+
+Process tag **v1.38** / Phase **218**. Not a SemVer release.
+
+- `git-auto-base`: dropped `run_high=` / `tip_high=` file_contains needles; pins merge-base wiring + pytest names (`test_cmd_ci_prints_run_high_and_tip_high` owns the label contract). Matrix `SEM-m144-git-auto-base-behavioral` killed. Budget still 97.
+- `L_delivery=M144-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.38 / Phase 218. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-21 — Trajectory: lease M144-S01 (git-auto-base label behavioral)
 
 Process tag **v1.38** / Phase **218**. Not a SemVer release.
