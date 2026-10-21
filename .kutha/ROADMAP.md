@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M130: selftest parallel submit serial backstop — ACTIVE (GSD v1.24)
+
+CE 2026-10-15 residual: `_run_selftest_parallel` dict-comprehension submit has no serial backstop on submit failure (unlike `run_checks_parallel`). Thin slice: submit one-by-one + leftover serial. Honeycomb stays Proposed.
+
+- [ ] **S01: selftest submit serial backstop** `risk:low` `depends:[]`
+  > After this: FailAfterFirst submit still returns a row per check; matrix `SEM-m130-selftest-submit-backstop` killed. Phase 204.
+
 ## M129: yaml_needles live dogfood — CLOSED (GSD v1.23)
 
 `yaml_needles_in_glob` is DERIVABLE (M125) but unused in live checks. Thin slice: dictionary check that FSM `observe_cargo` / `observe_rocks` required names appear as `fn <name>` under crates. Complements `observe-required-fn` (asserting `#[test]`). Honeycomb stays Proposed. `L_delivery=M129-closed`.
