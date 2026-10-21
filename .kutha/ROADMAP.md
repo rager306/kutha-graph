@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M139: multi-premise retract premise-fact index — ACTIVE (GSD v1.33)
+
+M136 made single-premise retract near-linear; multi-premise Horns still walk the whole same-rel `behaviors_by_premise_rel` bucket in phase 2 → O(N²) `retract_examine` for N independent chains. Thin slice: droppable premise-EventId index + scaling oracle. Honeycomb stays Proposed. Budget stays 97. No Op schema change (lease only).
+
+- [ ] **S01: premise-fact retract index** `risk:med` `depends:[]`
+  > After this: matrix `SEM-m139-retract-multiprem-fact-index` killed. Phase 213.
+
 ## M138: kinds-family-split behavioral (de-text-couple) — CLOSED (GSD v1.32)
 
 CE 2026-10-15 residual: kinds-split text needles rot independently of behavior. Thin slice: import/dispatch pytest oracle; drop `RUNNERS: dict[str, Runner]` needle; selftest mutates RUNNERS key. Honeycomb stays Proposed. Budget stays 97.
