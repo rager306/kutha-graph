@@ -1596,6 +1596,7 @@ checks:
     description: >-
       Suppressed observe_cargo leaves a LOW observe-skipped finding naming state
       and cause; observation uses allowlisted cargo (CE review P2 #39).
+      M142: fsm wiring + pytest name — not assert-snippet needles. Matrix SEM-m142.
     steps:
       - kind: file_contains
         path: scripts/kutha_gov/fsm.py
@@ -1609,9 +1610,7 @@ checks:
       - kind: file_contains
         path: scripts/tests/test_fsm.py
         needles:
-          - "test_second_observe_cargo_notes_skip_after_prior_high"
-          - 'category == "observe-skipped"'
-          - "prior-high"
+          - "def test_second_observe_cargo_notes_skip_after_prior_high"
         require: all
         category: oracle
         message: "observe-skipped oracle missing: {missing}"

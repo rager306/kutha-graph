@@ -64,6 +64,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | multi-premise retract same-rel relation-bucket O(N²) | `SEM-m139-retract-multiprem-fact-index` | `retract_n_multiprem_examines_grow_near_linear_not_quadratic` | M139-S01 |
 | text-coupled agent-surface `__main__` hint needles | `SEM-m140-agent-surface-hint-behavioral` | `agent-surface` / `test_check_parser_helpers_are_live_callables` | M140-S01 |
 | text-coupled parallel-context-flags docstring needles | `SEM-m141-parallel-context-behavioral` | `parallel-context-flags` / `test_eval_check_worker_propagates_skip_emit_and_changed_paths` | M141-S01 |
+| text-coupled observe-skipped assert-snippet needles | `SEM-m142-observe-skipped-behavioral` | `observe-skipped-breadcrumb` / `test_second_observe_cargo_notes_skip_after_prior_high` | M142-S01 |
 | #5 kinds-split oracle was test-matrix | `SEM-m054-id-kinds-split` | `kinds-family-split` | M098-S01 |
 | Correct/CorrectInterval of Behavior leaves retract indexes | `SEM-m100-correct-unindex-behavior` | `correct_of_behavior_drops_retract_index`, `correct_interval_of_behavior_drops_retract_index` | M100-S01 |
 | rule-pin VT truncation (pin starts after the trigger) | `SEM-m101-horn-pin-overlap` | `late_starting_rule_pin_fires_on_overlap` | M101-S01 |

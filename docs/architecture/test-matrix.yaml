@@ -2658,6 +2658,17 @@ rows:
     gate: default
     owner: M141-S01
     source: Phase 215 / CE residual (text-coupled parallel-context-flags)
+  - id: SEM-m142-observe-skipped-behavioral
+    plane: harness
+    invariant: observe-skipped-breadcrumb pins fsm wiring and pytest name; not assert-snippet needles
+    layer: kill
+    oracle:
+      - observe-skipped-breadcrumb
+    kill_mutation: restore category/prior-high assert-snippet needles; or drop test_second_observe_cargo_notes_skip_after_prior_high
+    status: killed
+    gate: default
+    owner: M142-S01
+    source: Phase 216 / CE residual (text-coupled observe-skipped)
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

@@ -155,7 +155,7 @@ class FsmTests(unittest.TestCase):
         )
 
     def test_second_observe_cargo_notes_skip_after_prior_high(self) -> None:
-        # CE #39: suppressed second observe_cargo must leave LOW observe-skipped.
+        """M142 / CE #39: pin skip breadcrumb behavior, not assert-snippet needles."""
         from unittest.mock import patch
 
         from kutha_gov.fsm import Machine
@@ -214,6 +214,7 @@ class FsmTests(unittest.TestCase):
             ),
             msg=outcome.findings,
         )
+        # Observation lease must record cargo skipped (not a source-string needle).
         self.assertIn(("cargo", "skipped"), outcome.observations)
 
     def test_skip_cargo_does_not_call_cargo_or_tenant(self) -> None:

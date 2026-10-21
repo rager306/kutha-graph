@@ -143,6 +143,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.33 | 213 | M139 | S01 | multi-premise retract premise-fact index | shipped |
 | v1.34 | 214 | M140 | S01 | agent-surface hint behavioral (de-text-couple) | shipped |
 | v1.35 | 215 | M141 | S01 | parallel-context-flags behavioral (de-text-couple) | shipped |
+| v1.36 | 216 | M142 | S01 | observe-skipped-breadcrumb behavioral (de-text-couple) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
