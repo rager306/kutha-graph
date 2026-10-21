@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: lease M135-S01 (migrate_pins unlock window)
+
+Process tag **v1.29** / Phase **209**. Not a SemVer release.
+
+- Active Milestone **M135**, Active Slice **S01** (`L_delivery=M134-closed`): unlock window between pin-wire and pin-cite. Honeycomb stays Proposed.
+
 ## 2026-10-21 — Trajectory: M134 / GSD v1.28 closed
 
 Process tag **v1.28** / Phase **208**. Not a SemVer release.

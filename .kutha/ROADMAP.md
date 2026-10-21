@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M135: migrate_pins unlock window between steps — ACTIVE (GSD v1.29)
+
+CE 2026-10-15 residual: `migrate_pins` / `migrate_compat` drop and reacquire `kutha.lock` between chained steps; concurrent operator may interleave but converges via markers — untested. Thin slice: no parent lock source oracle + deterministic gap WouldBlock + converge; pin-compat docs. Honeycomb stays Proposed. Budget stays 97.
+
+- [ ] **S01: migrate_pins unlock-window oracles** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m135-migrate-pins-unlock-window` killed. Phase 209.
+
 ## M134: pin-cite.v1 delete/rerun honesty — CLOSED (GSD v1.28)
 
 CE 2026-10-15 residual: after `pin-cite.v1` is stamped, evidence added later never remaps orphans on rerun; operator must delete the marker — confirm in operator docs, not only code comments. Thin slice: pin-compat.md sentence + needle + rematerialize oracle. Honeycomb stays Proposed. Budget stays 97 (extend `pin-compat-policy`).
