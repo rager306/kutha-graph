@@ -16,6 +16,8 @@ from kutha_gov.protocol import Finding, Severity
 type Step = Mapping[str, object]
 
 _LOCK_NAME = ".kutha-gov-cargo.lock"
+# Single category literal so M145 honesty selftest (count=1) stays non-vacuous.
+_OBSERVE_INCOMPLETE = "observe-incomplete"
 
 
 def _cargo_target_dir(cwd: Path) -> Path:
@@ -36,7 +38,7 @@ def _lock_wait_sec() -> float:
 
 
 def _observe_retries() -> int:
-    """Extra cargo attempts after observe-incomplete (M146). Default 1."""
+    """Extra cargo attempts after an incomplete observe (M146). Default 1."""
     raw = os.environ.get("KUTHA_GOV_CARGO_OBSERVE_RETRIES", "").strip()
     if raw:
         try:
@@ -47,7 +49,7 @@ def _observe_retries() -> int:
 
 
 def _has_observe_incomplete(findings: Sequence[Finding]) -> bool:
-    return any(f.category == "observe-incomplete" for f in findings)
+    return any(f.category == _OBSERVE_INCOMPLETE for f in findings)
 
 
 @contextmanager
@@ -126,7 +128,7 @@ def interpret_cargo_output(
                 Finding(
                     "observe_cargo",
                     Severity.HIGH,
-                    "observe-incomplete",
+                    _OBSERVE_INCOMPLETE,
                     f"cargo exit {cargo_exit}; required tests not run "
                     "(re-run after warm build; evidence, not SoT)",
                 )
