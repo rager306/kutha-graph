@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: lease M134-S01 (pin-cite delete/rerun)
+
+Process tag **v1.28** / Phase **208**. Not a SemVer release.
+
+- Active Milestone **M134**, Active Slice **S01** (`L_delivery=M133-closed`): pin-cite.v1 delete/rerun honesty. Honeycomb stays Proposed.
+
 ## 2026-10-21 — Trajectory: M133 / GSD v1.27 closed
 
 Process tag **v1.27** / Phase **207**. Not a SemVer release.
