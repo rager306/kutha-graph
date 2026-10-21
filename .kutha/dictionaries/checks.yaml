@@ -2462,6 +2462,34 @@ checks:
         category: observe-fn
         message: "FSM observe_rocks required missing as fn <name> in crates: {missing}"
 
+  - id: selftest-submit-backstop
+    description: >-
+      Parallel selftest submit failures fall back to serial for leftovers
+      (M130 / Phase 204 / CE residual; parity with run_checks_parallel).
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/selftest.py
+        needles:
+          - "def _harvest_selftest_futures"
+          - "submit_exc"
+          - "leftover = {name: selected[name]"
+        require: all
+        category: oracle
+        message: "selftest submit serial backstop missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_selftest.py
+        needles:
+          - "def test_parallel_submit_failure_runs_leftover_serial"
+        require: all
+        category: oracle
+        message: "selftest submit-backstop pytest missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/selftest.py
+          pattern: "def _harvest_selftest_futures"
+          with: "def _harvest_selftest_gone"
+
   - id: kinds-family-split
     description: >-
       kinds.py keeps run_step/RUNNERS; policy families stay in sibling modules

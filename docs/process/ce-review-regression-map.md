@@ -52,6 +52,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | #4 Horn point-gated multi-premise miss | `SEM-m097-horn-overlap-aware` | `late_starting_premise_fires_when_trigger_starts_earlier`, `horn_overlap_discovery_is_order_independent` | M097-S01 |
 | Multi-residual premise combinations (no oracle) | `SEM-m128-horn-multi-combination` | `two_disjoint_ab_windows_mint_two_ac_heads` | M128-S01 |
 | `yaml_needles_in_glob` DERIVABLE but unused live | `SEM-m129-yaml-needles-live` | `yaml-needles-live` | M129-S01 |
+| selftest parallel submit no serial backstop | `SEM-m130-selftest-submit-backstop` | `selftest-submit-backstop` | M130-S01 |
 | #5 kinds-split oracle was test-matrix | `SEM-m054-id-kinds-split` | `kinds-family-split` | M098-S01 |
 | Correct/CorrectInterval of Behavior leaves retract indexes | `SEM-m100-correct-unindex-behavior` | `correct_of_behavior_drops_retract_index`, `correct_interval_of_behavior_drops_retract_index` | M100-S01 |
 | rule-pin VT truncation (pin starts after the trigger) | `SEM-m101-horn-pin-overlap` | `late_starting_rule_pin_fires_on_overlap` | M101-S01 |

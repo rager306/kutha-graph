@@ -26,6 +26,7 @@ from kutha_gov.selftest import (  # noqa: E402
     CLASS_FILE_EXISTS_ONLY,
     CLASS_UNPROVEN,
     SKIP,
+    SUCCESS,
     UNPROVEN,
     VACUOUS,
     classify_check,
@@ -793,6 +794,66 @@ class SelftestTests(unittest.TestCase):
         rows, code = run_selftest(root)
         self.assertEqual(1, code)
         self.assertEqual(UNPROVEN, rows[0].status)
+
+    def test_parallel_submit_failure_runs_leftover_serial(self) -> None:
+        """M130 / CE residual: submit fail must not abort unfinished selftest ids."""
+        from concurrent.futures import Future
+
+        root = _write_mini(
+            [
+                {
+                    "id": "aaa-first",
+                    "description": "accepted submit",
+                    "steps": [
+                        {
+                            "kind": "file_contains",
+                            "path": "README.md",
+                            "needles": ["hello"],
+                        }
+                    ],
+                },
+                {
+                    "id": "zzz-second",
+                    "description": "leftover after submit fail",
+                    "steps": [
+                        {
+                            "kind": "file_contains",
+                            "path": "README.md",
+                            "needles": ["hello"],
+                        }
+                    ],
+                },
+            ],
+            {"README.md": "hello\n"},
+        )
+
+        class FailAfterFirstPool:
+            def __init__(self, *args: object, **kwargs: object) -> None:
+                self.n = 0
+
+            def __enter__(self) -> FailAfterFirstPool:
+                return self
+
+            def __exit__(self, *args: object) -> bool:
+                return False
+
+            def submit(self, fn: object, payload: object) -> Future:
+                self.n += 1
+                if self.n > 1:
+                    raise RuntimeError("submit-after-first-success")
+                fut: Future = Future()
+                fut.set_result(fn(payload))  # type: ignore[misc, operator]
+                return fut
+
+        with patch("kutha_gov.selftest.ProcessPoolExecutor", FailAfterFirstPool):
+            rows, code = run_selftest(root, jobs=2)
+
+        self.assertEqual(0, code, msg=rows)
+        self.assertEqual(
+            ["aaa-first", "zzz-second"],
+            [r.check_id for r in rows],
+        )
+        self.assertTrue(all(r.status in SUCCESS for r in rows), msg=rows)
 
 
 if __name__ == "__main__":

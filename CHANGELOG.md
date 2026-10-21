@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: M130 / GSD v1.24 closed
+
+Process tag **v1.24** / Phase **204**. Not a SemVer release.
+
+- `_run_selftest_parallel`: submit one-by-one; harvest + leftover serial on submit/as_completed failure (parity with `run_checks_parallel`). RED: FailAfterFirst raised; GREEN: both check ids return OK. Check `selftest-submit-backstop`; budget 96; `selftest.py` 981 ≤1000.
+- `L_delivery=M130-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.24 / Phase 204. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-21 — Trajectory: lease M130-S01 (selftest submit serial backstop)
 
 Process tag **v1.24** / Phase **204**. Not a SemVer release.

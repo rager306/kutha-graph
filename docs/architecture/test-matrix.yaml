@@ -2525,6 +2525,17 @@ rows:
     gate: default
     owner: M129-S01
     source: Phase 203 / M125 residual (DERIVABLE without live use)
+  - id: SEM-m130-selftest-submit-backstop
+    plane: harness
+    invariant: parallel selftest submit failure harvests accepted futures and runs leftovers serial
+    layer: governor
+    oracle:
+      - selftest-submit-backstop
+    kill_mutation: restore dict-comprehension pool.submit so FailAfterFirst raises before leftover serial
+    status: killed
+    gate: default
+    owner: M130-S01
+    source: Phase 204 / CE 2026-10-15 residual (selftest parallel submit)
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

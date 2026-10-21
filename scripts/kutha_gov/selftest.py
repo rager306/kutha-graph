@@ -7,7 +7,7 @@ import re
 import shutil
 import tempfile
 from collections.abc import Mapping
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import Future, ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -200,27 +200,38 @@ def _run_selftest_parallel(root: Path, selected: dict[str, Check], jobs: int) ->
         workers = max(1, min(jobs, len(names)))
         ctx = multiprocessing.get_context("spawn")
         with ProcessPoolExecutor(max_workers=workers, mp_context=ctx) as pool:
-            futs = {
-                pool.submit(_eval_selftest_worker, (name, str(root), str(template))): name
-                for name in names
-            }
-            try:
-                for fut in as_completed(futs):
-                    name = futs[fut]
-                    try:
-                        by_name[name] = fut.result()
-                    except Exception as exc:
-                        by_name[name] = SelftestRow(
-                            WORKER_ERROR,
-                            name,
-                            0,
-                            f"{type(exc).__name__}: {exc}",
-                        )
-            except Exception:
-                leftover = {name: selected[name] for name in names if by_name[name] is None}
-                if leftover:
-                    for row in _run_selftest_serial(root, leftover):
-                        by_name[row.check_id] = row
+            futs: dict[Future[SelftestRow], str] = {}
+            submit_exc: BaseException | None = None
+            for name in names:
+                try:
+                    fut = pool.submit(
+                        _eval_selftest_worker, (name, str(root), str(template))
+                    )
+                except Exception as exc:
+                    submit_exc = exc
+                    break
+                futs[fut] = name
+            if submit_exc is not None:
+                _harvest_selftest_futures(futs, by_name)
+            else:
+                try:
+                    for fut in as_completed(futs):
+                        name = futs[fut]
+                        try:
+                            by_name[name] = fut.result()
+                        except Exception as exc:
+                            by_name[name] = SelftestRow(
+                                WORKER_ERROR,
+                                name,
+                                0,
+                                f"{type(exc).__name__}: {exc}",
+                            )
+                except Exception:
+                    _harvest_selftest_futures(futs, by_name)
+            leftover = {name: selected[name] for name in names if by_name[name] is None}
+            if leftover:
+                for row in _run_selftest_serial(root, leftover):
+                    by_name[row.check_id] = row
     finally:
         shutil.rmtree(template_dir, ignore_errors=True)
     rows: list[SelftestRow] = []
@@ -230,6 +241,25 @@ def _run_selftest_parallel(root: Path, selected: dict[str, Check], jobs: int) ->
             got = SelftestRow(WORKER_ERROR, name, 0, "missing worker result")
         rows.append(got)
     return rows
+
+
+def _harvest_selftest_futures(
+    futs: dict[Future[SelftestRow], str], by_name: dict[str, SelftestRow | None]
+) -> None:
+    """Await or cancel accepted futures; leave cancelled names for serial."""
+    for fut, name in futs.items():
+        if by_name[name] is not None:
+            continue
+        if fut.done() or not fut.cancel():
+            try:
+                by_name[name] = fut.result()
+            except Exception as exc:
+                by_name[name] = SelftestRow(
+                    WORKER_ERROR,
+                    name,
+                    0,
+                    f"{type(exc).__name__}: {exc}",
+                )
 
 
 def _row_for_probe(probe: Check, work: Path) -> SelftestRow:
