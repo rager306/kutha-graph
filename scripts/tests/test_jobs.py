@@ -183,7 +183,7 @@ class JobsParityTests(unittest.TestCase):
         self.assertIn("low", out_1.lower())
 
     def test_eval_check_worker_propagates_skip_emit_and_changed_paths(self) -> None:
-        # CE #48: parallel worker Context must not drop skip_emit / changed_paths.
+        """M141 / CE #48: pin live worker Context flags, not docstring needles."""
         from kutha_gov.parallel import _eval_check_worker
         from kutha_gov.protocol import Check, CheckResult, Context, Finding, Severity
 
@@ -217,7 +217,7 @@ class JobsParityTests(unittest.TestCase):
         )
         messages = [f.message for f in result.findings]
         self.assertTrue(
-            any("skip_emit=True" in m and "a.md,b.md" in m for m in messages),
+            any(m.startswith("skip_emit=True;") and "a.md" in m and "b.md" in m for m in messages),
             msg=messages,
         )
 

@@ -382,7 +382,7 @@ invariants:
     check: observe-skipped-breadcrumb
 
   - id: I-parallel-context-flags
-    claim: "Parallel worker Context carries skip_emit and changed_paths from the caller"
+    claim: "Parallel worker Context carries skip_emit and changed_paths from the caller; parallel-context-flags pins wiring + test_eval_check_worker_propagates_skip_emit_and_changed_paths (SEM-m141 — not docstring needles)"
     source: ".planning/phases/108-parallel-context-flags/108-CONTEXT.md"
     disposition: check
     check: parallel-context-flags

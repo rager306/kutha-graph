@@ -1625,12 +1625,12 @@ checks:
   - id: parallel-context-flags
     description: >-
       Parallel worker Context carries skip_emit and changed_paths from the caller
-      (CE review P2 #48).
+      (CE review P2 #48). M141: wiring + worker pytest — not docstring/assert-snippet
+      needles. Matrix SEM-m141.
     steps:
       - kind: file_contains
         path: scripts/kutha_gov/parallel.py
         needles:
-          - "skip_emit / changed_paths must match the caller Context"
           - "skip_emit=skip_emit"
           - "changed_paths=changed_paths"
           - "ctx.skip_emit"
@@ -1641,9 +1641,7 @@ checks:
       - kind: file_contains
         path: scripts/tests/test_jobs.py
         needles:
-          - "test_eval_check_worker_propagates_skip_emit_and_changed_paths"
-          - "skip_emit=True"
-          - "a.md,b.md"
+          - "def test_eval_check_worker_propagates_skip_emit_and_changed_paths"
         require: all
         category: oracle
         message: "parallel Context flag oracle missing: {missing}"

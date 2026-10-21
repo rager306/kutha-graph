@@ -65,7 +65,7 @@ def _eval_check_worker(
     """Delegate to eval_check so check.run failures stay check-error (CE #23).
 
     worker-error stays for transport failures around fut.result(), not check.run.
-    skip_emit / changed_paths must match the caller Context (CE #48).
+    Caller skip_emit and changed_paths are plumbed into the worker Context (CE #48 / M141).
     """
     check, root, fail_on_warn, git_against, skip_cargo, skip_emit, changed_paths = payload
     ctx = Context(

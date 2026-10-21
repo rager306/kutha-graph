@@ -2647,6 +2647,17 @@ rows:
     gate: default
     owner: M140-S01
     source: Phase 214 / CE residual (text-coupled agent-surface hints)
+  - id: SEM-m141-parallel-context-behavioral
+    plane: harness
+    invariant: parallel-context-flags pins Context wiring and worker pytest; not docstring or assert-snippet needles
+    layer: kill
+    oracle:
+      - parallel-context-flags
+    kill_mutation: restore docstring/assert-snippet needles; or drop test_eval_check_worker_propagates_skip_emit_and_changed_paths
+    status: killed
+    gate: default
+    owner: M141-S01
+    source: Phase 215 / CE residual (text-coupled parallel-context-flags)
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute
