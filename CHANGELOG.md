@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: M136 / GSD v1.30 closed
+
+Process tag **v1.30** / Phase **210**. Not a SemVer release.
+
+- `retract_derived` second phase skips single-premise Horns (phase 1 `caused_by` already covers them), so N same-rel retracts stay near-linear in `retract_examine`. Oracle `retract_n_derived_examines_grow_near_linear_not_quadratic`. Matrix `SEM-m136-retract-n-scaling` killed.
+- `L_delivery=M136-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.30 / Phase 210. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-21 — Trajectory: lease M136-S01 (retract N-scaling)
 
 Process tag **v1.30** / Phase **210**. Not a SemVer release.

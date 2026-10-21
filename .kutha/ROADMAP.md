@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M136: retract N-derived N-retracts scaling — ACTIVE (GSD v1.30)
+## M136: retract N-derived N-retracts scaling — CLOSED (GSD v1.30)
 
-CE 2026-10-15 testing gap: no oracle for N derived + N retracts asserting sublinear `retract_examine` growth (full live scan would be quadratic). Thin slice: scaling oracle over inverse_knows heads. Honeycomb stays Proposed. Budget stays 97.
+CE 2026-10-15 testing gap: no oracle for N derived + N retracts asserting sublinear `retract_examine` growth (same-rel sibling second-phase scan was quadratic for single-premise Horns). Thin slice: skip single-premise in phase 2 + scaling oracle. Honeycomb stays Proposed. Budget stays 97.
 
-- [ ] **S01: retract scaling oracle** `risk:low` `depends:[]`
-  > After this: matrix `SEM-m136-retract-n-scaling` killed. Phase 210.
+- [x] **S01: retract scaling oracle** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m136-retract-n-scaling` killed. Phase 210. Landed.
 
 ## M135: migrate_pins unlock window between steps — CLOSED (GSD v1.29)
 

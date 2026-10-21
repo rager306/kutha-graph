@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M136
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M135-closed
+L_delivery=M136-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M135 closed (v1.29); M136-S01 leased | Capability proven / Cypher started |
+| L_delivery | M136 closed (v1.30) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-Close M136-S01: retract N-derived×N-retracts scaling oracle. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+Controller chooses next lease. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3). `kinds.py` ≤2500 and `selftest.py` ≤1000 (`SEM-m126` / `SEM-m127`). Budget 97. Prefer residual with fresh product/process RED. `FoldIndexMode::Lazy` still scans until hot maps rebuild.
 
 ## Thaw map
 

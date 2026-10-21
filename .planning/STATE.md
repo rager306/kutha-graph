@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.29
-milestone_name: migrate_pins unlock window
+milestone: v1.30
+milestone_name: retract N-derived N-retracts scaling
 status: completed
-stopped_at: "209-migrate-pins-unlock-window"
-last_updated: "2026-10-21T18:45:00.000Z"
+stopped_at: "210-retract-n-scaling"
+last_updated: "2026-10-21T20:20:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.29 migrate_pins unlock window — closed as M135
-**Phase:** 209
-**Status:** SEM-m135-migrate-pins-unlock-window killed. Honeycomb stays Proposed.
+**Milestone:** v1.30 retract N-scaling — closed as M136
+**Phase:** 210
+**Status:** SEM-m136-retract-n-scaling killed. Honeycomb stays Proposed.
