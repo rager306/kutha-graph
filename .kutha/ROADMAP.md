@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M143: skip-cargo-log-marker behavioral (de-text-couple) — ACTIVE (GSD v1.37)
+
+CE residual after M137–M142: skip-cargo-log-marker still pins CE #38 comment and assert-snippet needles that rot independently of tenant=skipped fold tip behavior. Thin slice: keep fsm wiring + pytest name; drop comment/assert snippets. Honeycomb stays Proposed. Budget stays 97.
+
+- [ ] **S01: skip-cargo-log-marker de-text-couple** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m143-skip-cargo-marker-behavioral` killed. Phase 217.
+
 ## M142: observe-skipped-breadcrumb behavioral (de-text-couple) — CLOSED (GSD v1.36)
 
 CE residual after M137–M141: observe-skipped-breadcrumb still pins assert-snippet needles (`category == "observe-skipped"`, `prior-high`) that rot independently of FSM behavior. Thin slice: keep fsm wiring + pytest name; drop assert snippets. Honeycomb stays Proposed. Budget stays 97.
