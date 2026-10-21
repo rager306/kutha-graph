@@ -49,7 +49,9 @@ operators must delete pin-cite.v1 and re-run `migrate_pin_cite` (or
 **Shipped (M075):** `store::migrate_pins` runs `migrate_pin_wire` then
 `migrate_pin_cite` (reuse; no new remap rules) so operators cannot skip the
 Behavior step before cite remap. Both markers stamped when needed; idempotent
-when both already exist.
+when both already exist. Chained facades release `kutha.lock` between steps
+(no parent lock — nested `try_lock` would WouldBlock); a concurrent operator
+may interleave in that unlock window but converges via idempotency markers.
 
 **Shipped (M076):** `store::migrate_compat` runs `migrate_op_wire` then
 `migrate_pins` so meta-op envelopes are rewritten before pin remap (reuse; no

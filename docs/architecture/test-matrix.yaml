@@ -2580,6 +2580,18 @@ rows:
     gate: default
     owner: M134-S01
     source: Phase 208 / CE 2026-10-15 residual (orphan policy idempotency)
+  - id: SEM-m135-migrate-pins-unlock-window
+    plane: product
+    invariant: migrate_pins and migrate_compat do not take a parent kutha.lock; unlock between wire and cite is real (peer cite WouldBlocks while lock held) and facade converges via markers
+    layer: kill
+    oracle:
+      - migrate_pins_and_compat_do_not_take_parent_lock
+      - migrate_pins_gap_blocks_peer_cite_then_converges
+    kill_mutation: wrap migrate_pins body in acquire_store_write_lock; or drop unlock window from pin-compat.md
+    status: killed
+    gate: default
+    owner: M135-S01
+    source: Phase 209 / CE 2026-10-15 residual (unlock window untested)
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

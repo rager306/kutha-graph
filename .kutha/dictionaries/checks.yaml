@@ -1954,6 +1954,7 @@ checks:
           - "pin-cite.v1"
           - "delete pin-cite.v1"
           - "migrate_pins"
+          - "unlock window"
           - "migrate_compat"
           - "kutha-migrate"
           - "debug/kutha-migrate"
@@ -1988,6 +1989,13 @@ checks:
           - migrate_pin_cite_requires_delete_marker_to_rematerialize_after_new_evidence
         category: oracle
         message: "pin-cite delete/rerun oracle missing {missing}"
+      - kind: rust_test_asserts
+        path: crates/kutha-runtime/tests/m135_migrate_pins_unlock_window.rs
+        tests:
+          - migrate_pins_and_compat_do_not_take_parent_lock
+          - migrate_pins_gap_blocks_peer_cite_then_converges
+        category: oracle
+        message: "migrate_pins unlock-window oracles missing {missing}"
       - kind: rust_test_asserts
         path: crates/kutha-runtime/tests/m075_migrate_pins.rs
         tests:
