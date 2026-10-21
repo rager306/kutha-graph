@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: lease M141-S01 (parallel-context behavioral)
+
+Process tag **v1.35** / Phase **215**. Not a SemVer release.
+
+- Active Milestone **M141**, Active Slice **S01** (`L_delivery=M140-closed`): de-text-couple parallel-context-flags. Honeycomb stays Proposed.
+
 ## 2026-10-21 — Trajectory: M140 / GSD v1.34 closed
 
 Process tag **v1.34** / Phase **214**. Not a SemVer release.

@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M141: parallel-context-flags behavioral (de-text-couple) — ACTIVE (GSD v1.35)
+
+CE residual after M137/M140: parallel-context-flags still pins docstring/comment and assert-snippet needles that rot independently of `_eval_check_worker` behavior. Thin slice: keep Context wiring needles + pytest name; drop comment/`skip_emit=True`/`a.md,b.md` text pins. Honeycomb stays Proposed. Budget stays 97.
+
+- [ ] **S01: parallel-context-flags de-text-couple** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m141-parallel-context-behavioral` killed. Phase 215.
+
 ## M140: agent-surface hint behavioral (de-text-couple) — CLOSED (GSD v1.34)
 
 CE residual after M137/M138: agent-surface still pins exact `__main__.py` hint strings that duplicate CLI reject pytest. Thin slice: drop hint needles; keep parser wiring; soften stderr oracles to surface redirect not exact `hint:` template. Honeycomb stays Proposed. Budget stays 97.
