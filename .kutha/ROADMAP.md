@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M137: parallel-check-error-parity behavioral (de-text-couple) — ACTIVE (GSD v1.31)
+
+CE 2026-10-15 residual: text-coupled governor oracles (parallel-check-error-parity file_contains needles) rot independently of behavior. Thin slice: direct `_eval_check_worker` oracle + drop docstring/assert needles; keep `return eval_check(check, ctx)`. Honeycomb stays Proposed. Budget stays 97.
+
+- [ ] **S01: behavioral worker check-error oracle** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m137-parallel-error-behavioral` killed. Phase 211.
+
 ## M136: retract N-derived N-retracts scaling — CLOSED (GSD v1.30)
 
 CE 2026-10-15 testing gap: no oracle for N derived + N retracts asserting sublinear `retract_examine` growth (same-rel sibling second-phase scan was quadratic for single-premise Horns). Thin slice: skip single-premise in phase 2 + scaling oracle. Honeycomb stays Proposed. Budget stays 97.
