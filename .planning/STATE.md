@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.30
-milestone_name: retract N-derived N-retracts scaling
+milestone: v1.31
+milestone_name: parallel-check-error-parity behavioral
 status: completed
-stopped_at: "210-retract-n-scaling"
-last_updated: "2026-10-21T20:20:00.000Z"
+stopped_at: "211-parallel-error-behavioral"
+last_updated: "2026-10-21T20:25:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.30 retract N-scaling — closed as M136
-**Phase:** 210
-**Status:** SEM-m136-retract-n-scaling killed. Honeycomb stays Proposed.
+**Milestone:** v1.31 parallel-check-error behavioral — closed as M137
+**Phase:** 211
+**Status:** SEM-m137-parallel-error-behavioral killed. Honeycomb stays Proposed.

@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: M137 / GSD v1.31 closed
+
+Process tag **v1.31** / Phase **211**. Not a SemVer release.
+
+- `parallel-check-error-parity`: behavioral `_eval_check_worker` oracle (`test_eval_check_worker_maps_run_exception_to_check_error`); dropped docstring/assert text needles; kept `return eval_check(check, ctx)`. Matrix `SEM-m137-parallel-error-behavioral` killed. Budget still 97.
+- `L_delivery=M137-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.31 / Phase 211. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-21 — Trajectory: lease M137-S01 (parallel error behavioral)
 
 Process tag **v1.31** / Phase **211**. Not a SemVer release.
