@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.27
-milestone_name: migrate_compat op-wire-before-pins order
+milestone: v1.28
+milestone_name: pin-cite delete/rerun honesty
 status: completed
-stopped_at: "207-migrate-compat-order"
-last_updated: "2026-10-21T15:45:00.000Z"
+stopped_at: "208-pin-cite-delete-rerun"
+last_updated: "2026-10-21T17:40:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.27 migrate_compat call order — closed as M133
-**Phase:** 207
-**Status:** SEM-m133-migrate-compat-order killed. Honeycomb stays Proposed.
+**Milestone:** v1.28 pin-cite delete/rerun honesty — closed as M134
+**Phase:** 208
+**Status:** SEM-m134-pin-cite-delete-rerun killed. Honeycomb stays Proposed.

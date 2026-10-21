@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: M134 / GSD v1.28 closed
+
+Process tag **v1.28** / Phase **208**. Not a SemVer release.
+
+- pin-cite orphan rematerialize: operator docs state `delete pin-cite.v1`; oracle `migrate_pin_cite_requires_delete_marker_to_rematerialize_after_new_evidence`; `pin-compat-policy` needles + rust_test_asserts. Matrix `SEM-m134-pin-cite-delete-rerun` killed. Budget still 97.
+- `L_delivery=M134-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.28 / Phase 208. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-21 — Trajectory: lease M134-S01 (pin-cite delete/rerun)
 
 Process tag **v1.28** / Phase **208**. Not a SemVer release.

@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M134: pin-cite.v1 delete/rerun honesty — ACTIVE (GSD v1.28)
+## M134: pin-cite.v1 delete/rerun honesty — CLOSED (GSD v1.28)
 
 CE 2026-10-15 residual: after `pin-cite.v1` is stamped, evidence added later never remaps orphans on rerun; operator must delete the marker — confirm in operator docs, not only code comments. Thin slice: pin-compat.md sentence + needle + rematerialize oracle. Honeycomb stays Proposed. Budget stays 97 (extend `pin-compat-policy`).
 
-- [ ] **S01: pin-cite delete marker honesty** `risk:low` `depends:[]`
-  > After this: matrix `SEM-m134-pin-cite-delete-rerun` killed. Phase 208.
+- [x] **S01: pin-cite delete marker honesty** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m134-pin-cite-delete-rerun` killed. Phase 208. Landed.
 
 ## M133: migrate_compat op-wire-before-pins order — CLOSED (GSD v1.27)
 
