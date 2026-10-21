@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M145: observe-incomplete honesty (cargo infra fail) — OPEN (GSD v1.39)
+
+Dogfood residual (M143/M144 closeout): cargo exit 101 with no test lines mints N× `observe-missing` HIGH beside one `observe-fail`, drowning the infra signal. Thin slice: when `cargo_exit != 0` and no required name has ok/FAILED, one `observe-incomplete` instead of N missing. Honeycomb stays Proposed. Budget 97→98.
+
+- [ ] **S01: observe-incomplete collapse** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m145-observe-incomplete` killed. Phase 219.
+
 ## M144: git-auto-base summary labels behavioral (de-text-couple) — CLOSED (GSD v1.38)
 
 CE residual after M137–M143: `git-auto-base` still pins exact `run_high=` / `tip_high=` f-string needles in `__main__.py` that duplicate `test_cmd_ci_prints_run_high_and_tip_high`. Substring `run_high=` also matches `this_run_high=` rewords. Thin slice: keep merge-base wiring + both pytest names; drop label file_contains. Honeycomb stays Proposed. Budget stays 97.
