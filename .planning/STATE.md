@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.28
-milestone_name: pin-cite delete/rerun honesty
+milestone: v1.29
+milestone_name: migrate_pins unlock window
 status: completed
-stopped_at: "208-pin-cite-delete-rerun"
-last_updated: "2026-10-21T17:40:00.000Z"
+stopped_at: "209-migrate-pins-unlock-window"
+last_updated: "2026-10-21T18:45:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.28 pin-cite delete/rerun honesty — closed as M134
-**Phase:** 208
-**Status:** SEM-m134-pin-cite-delete-rerun killed. Honeycomb stays Proposed.
+**Milestone:** v1.29 migrate_pins unlock window — closed as M135
+**Phase:** 209
+**Status:** SEM-m135-migrate-pins-unlock-window killed. Honeycomb stays Proposed.

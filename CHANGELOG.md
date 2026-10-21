@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: M135 / GSD v1.29 closed
+
+Process tag **v1.29** / Phase **209**. Not a SemVer release.
+
+- `migrate_pins` unlock window: no parent lock (source oracle); peer cite WouldBlocks in the gap then facade converges via markers. Docs needle `unlock window`. Matrix `SEM-m135-migrate-pins-unlock-window` killed. Budget still 97.
+- `L_delivery=M135-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.29 / Phase 209. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-21 — Trajectory: lease M135-S01 (migrate_pins unlock window)
 
 Process tag **v1.29** / Phase **209**. Not a SemVer release.

@@ -136,6 +136,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.26 | 206 | M132 | S01 | reconcile_uncommitted_tip sync_all after set_len | shipped |
 | v1.27 | 207 | M133 | S01 | migrate_compat calls op-wire before pins | shipped |
 | v1.28 | 208 | M134 | S01 | pin-cite.v1 delete/rerun honesty (docs + rematerialize oracle) | shipped |
+| v1.29 | 209 | M135 | S01 | migrate_pins unlock window between wire and cite | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
