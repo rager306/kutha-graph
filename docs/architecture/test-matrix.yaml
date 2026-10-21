@@ -2614,6 +2614,17 @@ rows:
     gate: default
     owner: M137-S01
     source: Phase 211 / CE 2026-10-15 residual (text-coupled oracles)
+  - id: SEM-m138-kinds-family-behavioral
+    plane: harness
+    invariant: kinds-family-split pins sibling imports plus RUNNERS dispatch to sibling callables; not RUNNERS type-annotation text needles
+    layer: kill
+    oracle:
+      - kinds-family-split
+    kill_mutation: rename RUNNERS test_matrix key; or drop test_runners_dispatch_uses_sibling_family_callables needle
+    status: killed
+    gate: default
+    owner: M138-S01
+    source: Phase 212 / CE 2026-10-15 residual (text-coupled oracles)
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

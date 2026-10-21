@@ -229,6 +229,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M137 S01 (parallel error behavioral):** Phase 211 — `SEM-m137-parallel-error-behavioral` `killed` (owner `M137-S01`). Oracle check: `parallel-check-error-parity` (pytest `test_eval_check_worker_maps_run_exception_to_check_error`). Kill: `return check.run(ctx)` in worker.
 
+**M138 S01 (kinds-family behavioral):** Phase 212 — `SEM-m138-kinds-family-behavioral` `killed` (owner `M138-S01`). Oracle check: `kinds-family-split` (pytest `test_runners_dispatch_uses_sibling_family_callables`). Kill: rename RUNNERS `test_matrix` key.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

@@ -358,7 +358,7 @@ invariants:
     check: selftest-substring-honesty
 
   - id: I-kinds-family-split
-    claim: "kinds.py keeps run_step/RUNNERS and imports policy families from sibling modules; SEM-m054-id-kinds-split names that check"
+    claim: "kinds.py keeps run_step/RUNNERS and imports policy families from sibling modules; RUNNERS values are sibling callables (SEM-m138); SEM-m054-id-kinds-split names kinds-family-split"
     source: ".planning/phases/169-kinds-family-split/169-CONTEXT.md"
     disposition: check
     check: kinds-family-split
