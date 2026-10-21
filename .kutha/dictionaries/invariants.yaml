@@ -484,7 +484,7 @@ invariants:
     check: test-matrix
 
   - id: I-git-auto-base
-    claim: "clean-tree git_against=auto uses upstream merge-base…HEAD (not HEAD~1 alone); ci summary prints run_high and tip_high"
+    claim: "clean-tree git_against=auto uses upstream merge-base…HEAD (not HEAD~1 alone); ci summary prints run_high and tip_high (M144 — label contract via pytest, not file_contains needles)"
     source: ".planning/phases/144-git-auto-base/144-CONTEXT.md"
     disposition: check
     check: git-auto-base

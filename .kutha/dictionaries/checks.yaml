@@ -2656,6 +2656,8 @@ checks:
     description: >-
       Clean-tree git_against=auto uses upstream merge-base…HEAD (not HEAD~1 alone);
       ci summary prints run_high and tip_high (M073 / Phase 144).
+      M144: merge-base wiring + pytest names — not run_high=/tip_high= file_contains
+      needles (label contract is test_cmd_ci_prints_run_high_and_tip_high). Matrix SEM-m144.
     steps:
       - kind: file_contains
         path: scripts/kutha_gov/gitdiff.py
@@ -2666,14 +2668,6 @@ checks:
         require: all
         category: oracle
         message: "clean-tree auto merge-base window missing: {missing}"
-      - kind: file_contains
-        path: scripts/kutha_gov/__main__.py
-        needles:
-          - "run_high="
-          - "tip_high="
-        require: all
-        category: oracle
-        message: "ci summary run_high/tip_high labels missing: {missing}"
       - kind: file_contains
         path: scripts/tests/test_gitdiff_auto.py
         needles:

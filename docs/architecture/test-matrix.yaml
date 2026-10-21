@@ -2680,6 +2680,17 @@ rows:
     gate: default
     owner: M143-S01
     source: Phase 217 / CE residual (text-coupled skip-cargo-log-marker)
+  - id: SEM-m144-git-auto-base-behavioral
+    plane: harness
+    invariant: git-auto-base pins merge-base wiring and pytest names; not run_high=/tip_high= file_contains needles
+    layer: kill
+    oracle:
+      - git-auto-base
+    kill_mutation: restore run_high=/tip_high= file_contains on __main__.py; or drop test_cmd_ci_prints_run_high_and_tip_high
+    status: killed
+    gate: default
+    owner: M144-S01
+    source: Phase 218 / CE residual (text-coupled git-auto-base labels)
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute
