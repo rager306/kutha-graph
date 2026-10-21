@@ -3,7 +3,7 @@ ce-handoff/v1: true
 title: "M128 closed — GSD-auto standing loop; next lease open"
 date: 2026-10-21
 branch: chore/m013-roadmap-reset
-head: 5f8f282
+head: c2415a1
 resume_focus: "After the user asks to continue: lease one thin residual with fresh RED (bundle STATE+ROADMAP+CHANGELOG+README), then TDD execute; do not thaw Cypher/HNSW/legal; do not fix trajectory LOW or AUD-08 Lazy. Prefer product/process RED; yaml_needles_in_glob still has no live dictionary user."
 ---
 
@@ -12,7 +12,7 @@ resume_focus: "After the user asks to continue: lease one thin residual with fre
 ## Closed
 
 - **M128 / GSD v1.22 / Phase 202:** oracle `two_disjoint_ab_windows_mint_two_ac_heads`; matrix `SEM-m128-horn-multi-combination` killed. No product code change (`search_at_all` already enumerates). RED under first-only PremMatch kill.
-- Lease `244ba4f`; close `5f8f282`.
+- Lease `244ba4f`; close `c2415a1`.
 
 ## Next
 
