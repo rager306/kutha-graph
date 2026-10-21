@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: M138 / GSD v1.32 closed
+
+Process tag **v1.32** / Phase **212**. Not a SemVer release.
+
+- `kinds-family-split`: behavioral RUNNERS dispatch oracle (`test_runners_dispatch_uses_sibling_family_callables`); dropped `RUNNERS: dict[str, Runner]` needle; selftest mutates `"test_matrix"` key. Matrix `SEM-m138-kinds-family-behavioral` killed. Budget still 97.
+- `L_delivery=M138-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.32 / Phase 212. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-21 — Trajectory: lease M138-S01 (kinds-family behavioral)
 
 Process tag **v1.32** / Phase **212**. Not a SemVer release.
