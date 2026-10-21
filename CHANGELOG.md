@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: lease M131-S01 (yaml_map_list empty-select fail-closed)
+
+Process tag **v1.25** / Phase **205**. Not a SemVer release.
+
+- Active Milestone **M131**, Active Slice **S01** (`L_delivery=M130-closed`): empty `yaml_map_list` select must HIGH. Honeycomb stays Proposed.
+
 ## 2026-10-21 — Trajectory: M130 / GSD v1.24 closed
 
 Process tag **v1.24** / Phase **204**. Not a SemVer release.
