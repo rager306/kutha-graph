@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M146: cargo observe retry on incomplete — OPEN (GSD v1.40)
+## M146: cargo observe retry on incomplete — CLOSED (GSD v1.40)
 
 Dogfood follow-on to M145: `observe-incomplete` still fails the quantum; a single automatic retry (warm/race) recovers without manual re-run. Thin slice: `KUTHA_GOV_CARGO_OBSERVE_RETRIES` (default 1) under the same flock; discard first-attempt findings when retry succeeds. Honeycomb stays Proposed. Budget 98→99.
 
-- [ ] **S01: retry on observe-incomplete** `risk:low` `depends:[]`
-  > After this: matrix `SEM-m146-observe-retry` killed. Phase 220.
+- [x] **S01: retry on observe-incomplete** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m146-observe-retry` killed. Phase 220. Landed.
 
 ## M145: observe-incomplete honesty (cargo infra fail) — CLOSED (GSD v1.39)
 
