@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M145: observe-incomplete honesty (cargo infra fail) — OPEN (GSD v1.39)
+## M145: observe-incomplete honesty (cargo infra fail) — CLOSED (GSD v1.39)
 
 Dogfood residual (M143/M144 closeout): cargo exit 101 with no test lines mints N× `observe-missing` HIGH beside one `observe-fail`, drowning the infra signal. Thin slice: when `cargo_exit != 0` and no required name has ok/FAILED, one `observe-incomplete` instead of N missing. Honeycomb stays Proposed. Budget 97→98.
 
-- [ ] **S01: observe-incomplete collapse** `risk:low` `depends:[]`
-  > After this: matrix `SEM-m145-observe-incomplete` killed. Phase 219.
+- [x] **S01: observe-incomplete collapse** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m145-observe-incomplete` killed. Phase 219. Landed.
 
 ## M144: git-auto-base summary labels behavioral (de-text-couple) — CLOSED (GSD v1.38)
 
