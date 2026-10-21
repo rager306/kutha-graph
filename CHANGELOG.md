@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: lease M140-S01 (agent-surface hint behavioral)
+
+Process tag **v1.34** / Phase **214**. Not a SemVer release.
+
+- Active Milestone **M140**, Active Slice **S01** (`L_delivery=M139-closed`): de-text-couple agent-surface hint needles. Honeycomb stays Proposed.
+
 ## 2026-10-21 — Trajectory: M139 / GSD v1.33 closed
 
 Process tag **v1.33** / Phase **213**. Not a SemVer release.

@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M140: agent-surface hint behavioral (de-text-couple) — ACTIVE (GSD v1.34)
+
+CE residual after M137/M138: agent-surface still pins exact `__main__.py` hint strings that duplicate CLI reject pytest. Thin slice: drop hint needles; keep parser wiring; soften stderr oracles to surface redirect not exact `hint:` template. Honeycomb stays Proposed. Budget stays 97.
+
+- [ ] **S01: agent-surface hint de-text-couple** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m140-agent-surface-hint-behavioral` killed. Phase 214.
+
 ## M139: multi-premise retract premise-fact index — CLOSED (GSD v1.33)
 
 M136 made single-premise retract near-linear; multi-premise Horns still walk the whole same-rel `behaviors_by_premise_rel` bucket in phase 2 → O(N²) `retract_examine` for N independent chains. Thin slice: droppable premise-EventId index + scaling oracle. Honeycomb stays Proposed. Budget stays 97. No Op schema change (lease only).
