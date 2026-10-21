@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: lease M132-S01 (reconcile tip truncate sync_all)
+
+Process tag **v1.26** / Phase **206**. Not a SemVer release.
+
+- Active Milestone **M132**, Active Slice **S01** (`L_delivery=M131-closed`): `sync_all` after reconcile `set_len`. Honeycomb stays Proposed.
+
 ## 2026-10-21 — Trajectory: M131 / GSD v1.25 closed
 
 Process tag **v1.25** / Phase **205**. Not a SemVer release.
