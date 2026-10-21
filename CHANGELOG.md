@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-22 — Trajectory: M147 / GSD v1.41 closed
+
+Process tag **v1.41** / Phase **221**. Not a SemVer release.
+
+- `_apply_cargo_pack`: observation status fails only on HIGH (LOW breadcrumbs stay `cargo=ok`). Successful incomplete→ok retry emits LOW `observe-retried`. Check `observe-retried-breadcrumb`; budget 99→100. Matrix `SEM-m147-observe-retried` killed.
+- `L_delivery=M147-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.41 / Phase 221. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-22 — Trajectory: lease M147-S01 (observe-retried breadcrumb)
 
 Process tag **v1.41** / Phase **221**. Not a SemVer release.
