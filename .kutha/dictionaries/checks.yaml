@@ -1715,6 +1715,42 @@ checks:
           pattern: '"observe-incomplete"'
           with: '"observe-missing-batch"'
 
+  - id: observe-retry-incomplete
+    description: >-
+      Cargo observe retries on observe-incomplete under the same flock
+      (KUTHA_GOV_CARGO_OBSERVE_RETRIES, default 1). M146 / Phase 220 dogfood.
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/observe.py
+        needles:
+          - "def _observe_retries"
+          - "KUTHA_GOV_CARGO_OBSERVE_RETRIES"
+          - "_has_observe_incomplete"
+        require: all
+        category: oracle
+        message: "observe-retry wiring missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_fsm.py
+        needles:
+          - "def test_observe_retries_once_on_incomplete_then_succeeds"
+          - "def test_observe_retries_zero_keeps_incomplete"
+        require: all
+        category: oracle
+        message: "observe-retry pytest missing: {missing}"
+      - kind: file_contains
+        path: .env.example
+        needles:
+          - "KUTHA_GOV_CARGO_OBSERVE_RETRIES"
+        require: all
+        category: oracle
+        message: ".env.example missing observe retries: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/observe.py
+          pattern: "def _observe_retries"
+          with: "def _cargo_retry_budget"
+
   - id: fixed-tmp-persist-dir
     description: >-
       Crates must not use Path::new("tmp/…") or .join("tmp").join("literal") for

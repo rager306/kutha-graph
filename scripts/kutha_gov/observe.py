@@ -35,6 +35,21 @@ def _lock_wait_sec() -> float:
     return 600.0
 
 
+def _observe_retries() -> int:
+    """Extra cargo attempts after observe-incomplete (M146). Default 1."""
+    raw = os.environ.get("KUTHA_GOV_CARGO_OBSERVE_RETRIES", "").strip()
+    if raw:
+        try:
+            return max(0, int(raw))
+        except ValueError:
+            pass
+    return 1
+
+
+def _has_observe_incomplete(findings: Sequence[Finding]) -> bool:
+    return any(f.category == "observe-incomplete" for f in findings)
+
+
 @contextmanager
 def _exclusive_cargo_lock(cwd: Path) -> Iterator[None]:
     """M114: serialize observe Cargo against concurrent cargo/bench on the same target."""
@@ -219,21 +234,32 @@ def _run_cargo(
 def run_cargo_observation(root: object, spec: Step) -> tuple[int, list[str], list[Finding]]:
     cwd = root if isinstance(root, Path) else Path(str(root))
     timeout = _timeout_sec(spec)
+    required = _str_list(spec, "required")
     try:
         with _exclusive_cargo_lock(cwd):
-            code, text, findings = _run_cargo(
-                cwd,
-                spec,
-                default_args=["test", "--workspace", "--offline"],
-                timeout=timeout,
-                label="cargo test",
-            )
-            seen_ok, observe_findings = interpret_cargo_output(
-                text,
-                _str_list(spec, "required"),
-                cargo_exit=code,
-            )
-            findings.extend(observe_findings)
+            attempts = 1 + _observe_retries()
+            code = 0
+            seen_ok: list[str] = []
+            findings: list[Finding] = []
+            for attempt in range(attempts):
+                code, text, run_findings = _run_cargo(
+                    cwd,
+                    spec,
+                    default_args=["test", "--workspace", "--offline"],
+                    timeout=timeout,
+                    label="cargo test",
+                )
+                seen_ok, observe_findings = interpret_cargo_output(
+                    text,
+                    required,
+                    cargo_exit=code,
+                )
+                # Replace prior attempt findings so a successful retry is clean.
+                findings = list(run_findings) + list(observe_findings)
+                if not _has_observe_incomplete(observe_findings):
+                    break
+                if attempt + 1 >= attempts:
+                    break
             build = _mapping(spec, "build")
             # Timeout / missing cargo: do not spend a second wall-clock budget on build.
             # Non-zero test status still builds so emit_tenant can ingest fail.

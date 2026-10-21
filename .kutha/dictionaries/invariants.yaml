@@ -405,6 +405,12 @@ invariants:
     disposition: check
     check: observe-incomplete-honesty
 
+  - id: I-observe-retry-incomplete
+    claim: "cargo observe retries on observe-incomplete via KUTHA_GOV_CARGO_OBSERVE_RETRIES (default 1); SEM-m146"
+    source: ".planning/phases/220-observe-retry/220-VERIFICATION.md"
+    disposition: check
+    check: observe-retry-incomplete
+
   - id: I-fixed-tmp-persist-dir
     claim: "crates must not Path::new(\"tmp/…\") or .join(\"tmp\").join(\"…\") for persist/open; SEM-m122 / SEM-m123"
     source: ".planning/phases/197-fixed-tmp-join/197-VERIFICATION.md"

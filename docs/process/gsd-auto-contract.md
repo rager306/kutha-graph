@@ -147,6 +147,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.37 | 217 | M143 | S01 | skip-cargo-log-marker behavioral (de-text-couple) | shipped |
 | v1.38 | 218 | M144 | S01 | git-auto-base label behavioral (de-text-couple) | shipped |
 | v1.39 | 219 | M145 | S01 | observe-incomplete honesty (cargo infra fail) | shipped |
+| v1.40 | 220 | M146 | S01 | cargo observe retry on incomplete | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

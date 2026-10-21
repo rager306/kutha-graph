@@ -606,6 +606,82 @@ class TenantTests(unittest.TestCase):
                 os.environ["KUTHA_TENANT_BIN"] = previous
 
 
+class ObserveRetryTests(unittest.TestCase):
+    def test_observe_retries_once_on_incomplete_then_succeeds(self) -> None:
+        """M146: default retry recovers from first-attempt infra incomplete."""
+        from unittest.mock import MagicMock, patch
+
+        from kutha_gov.observe import run_cargo_observation
+
+        calls: list[list[str]] = []
+
+        def fake_run(cmd: list[str], **_kwargs: object) -> MagicMock:
+            calls.append(list(cmd))
+            completed = MagicMock()
+            if len(calls) == 1:
+                completed.returncode = 101
+                completed.stdout = "error: could not compile\n"
+                completed.stderr = ""
+            else:
+                completed.returncode = 0
+                completed.stdout = "test foo ... ok\n"
+                completed.stderr = ""
+            return completed
+
+        previous = os.environ.get("KUTHA_GOV_CARGO_OBSERVE_RETRIES")
+        try:
+            os.environ.pop("KUTHA_GOV_CARGO_OBSERVE_RETRIES", None)
+            spec = {
+                "bin": "cargo",
+                "args": ["test", "--workspace", "--offline"],
+                "required": ["foo"],
+            }
+            with patch("kutha_gov.observe.subprocess.run", side_effect=fake_run):
+                code, seen, findings = run_cargo_observation(ROOT, spec)
+            self.assertEqual(0, code)
+            self.assertEqual(["foo"], seen)
+            self.assertEqual([], findings)
+            self.assertEqual(2, len(calls))
+        finally:
+            if previous is None:
+                os.environ.pop("KUTHA_GOV_CARGO_OBSERVE_RETRIES", None)
+            else:
+                os.environ["KUTHA_GOV_CARGO_OBSERVE_RETRIES"] = previous
+
+    def test_observe_retries_zero_keeps_incomplete(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        from kutha_gov.observe import run_cargo_observation
+
+        def fake_run(cmd: list[str], **_kwargs: object) -> MagicMock:
+            completed = MagicMock()
+            completed.returncode = 101
+            completed.stdout = "error: could not compile\n"
+            completed.stderr = ""
+            return completed
+
+        previous = os.environ.get("KUTHA_GOV_CARGO_OBSERVE_RETRIES")
+        try:
+            os.environ["KUTHA_GOV_CARGO_OBSERVE_RETRIES"] = "0"
+            spec = {
+                "bin": "cargo",
+                "args": ["test", "--workspace", "--offline"],
+                "required": ["foo"],
+            }
+            with patch("kutha_gov.observe.subprocess.run", side_effect=fake_run):
+                code, seen, findings = run_cargo_observation(ROOT, spec)
+            self.assertEqual(101, code)
+            self.assertEqual([], seen)
+            cats = [f.category for f in findings]
+            self.assertIn("observe-incomplete", cats)
+            self.assertEqual(1, cats.count("observe-incomplete"))
+        finally:
+            if previous is None:
+                os.environ.pop("KUTHA_GOV_CARGO_OBSERVE_RETRIES", None)
+            else:
+                os.environ["KUTHA_GOV_CARGO_OBSERVE_RETRIES"] = previous
+
+
 class ObserveBuildTests(unittest.TestCase):
     def test_observe_runs_build_after_test(self) -> None:
         from unittest.mock import MagicMock, patch
