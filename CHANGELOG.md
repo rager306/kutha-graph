@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: lease M133-S01 (migrate_compat call order)
+
+Process tag **v1.27** / Phase **207**. Not a SemVer release.
+
+- Active Milestone **M133**, Active Slice **S01** (`L_delivery=M132-closed`): op-wire before pins order oracle. Honeycomb stays Proposed.
+
 ## 2026-10-21 — Trajectory: M132 / GSD v1.26 closed
 
 Process tag **v1.26** / Phase **206**. Not a SemVer release.

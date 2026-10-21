@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M133: migrate_compat op-wire-before-pins order — ACTIVE (GSD v1.27)
+
+CE 2026-10-15 residual: SEM-m076 remapped-count + markers stay green if `migrate_compat` swapped pin-then-op-wire. Thin slice: source-order oracle that `migrate_op_wire` precedes `migrate_pins`. Honeycomb stays Proposed.
+
+- [ ] **S01: migrate_compat call-order oracle** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m133-migrate-compat-order` killed. Phase 207.
+
 ## M132: reconcile tip truncate sync_all — CLOSED (GSD v1.26)
 
 CE 2026-10-15 residual: `reconcile_uncommitted_tip` truncates with `set_len` + `sync_data`; on platforms where fdatasync does not persist size, a power loss can resurrect the suffix. Thin slice: `sync_all` after each truncate `set_len`. Honeycomb stays Proposed. `L_delivery=M132-closed`.
