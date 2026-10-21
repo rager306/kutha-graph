@@ -73,6 +73,20 @@ class AgentSurfaceDiscoverabilityTests(unittest.TestCase):
         self.assertIn("debug/kutha-migrate", text)
         self.assertIn("KUTHA_MIGRATE_DIR", text)
 
+    def test_check_parser_helpers_are_live_callables(self) -> None:
+        """M140 — pin live --check helpers, not hint-string needles in __main__."""
+        from kutha_gov.__main__ import _join_check_flags, _parse_check_ids
+
+        self.assertTrue(callable(_parse_check_ids))
+        self.assertTrue(callable(_join_check_flags))
+        ids, err = _parse_check_ids("docs-entry,version-freeze")
+        self.assertEqual(0, err)
+        self.assertEqual(["docs-entry", "version-freeze"], ids)
+        self.assertEqual(
+            "docs-entry,version-freeze",
+            _join_check_flags(["docs-entry", "version-freeze"]),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

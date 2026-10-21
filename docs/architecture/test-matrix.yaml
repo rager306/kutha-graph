@@ -2636,6 +2636,17 @@ rows:
     gate: default
     owner: M139-S01
     source: Phase 213 / M136 residual (multi-premise relation-bucket O(N²))
+  - id: SEM-m140-agent-surface-hint-behavioral
+    plane: harness
+    invariant: agent-surface pins __main__ parser wiring and live helper/pytest oracles; not exact hint-string needles
+    layer: kill
+    oracle:
+      - agent-surface
+    kill_mutation: restore hint-string needles on __main__.py; or drop test_check_parser_helpers_are_live_callables
+    status: killed
+    gate: default
+    owner: M140-S01
+    source: Phase 214 / CE residual (text-coupled agent-surface hints)
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

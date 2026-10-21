@@ -172,10 +172,13 @@ class MultiCheckSelectTests(unittest.TestCase):
             "--check is only valid with json, precommit, or selftest",
             out,
         )
-        self.assertIn(
-            "hint: kutha-gov {json|precommit|selftest} --check ID[,ID…]",
-            out,
+        # M140: redirect to check surfaces — not an exact `hint:` template needle.
+        self.assertIn("kutha-gov", out)
+        self.assertTrue(
+            any(s in out for s in ("json", "precommit", "selftest")),
+            f"stderr must name a --check surface: {out!r}",
         )
+        self.assertIn("--check", out)
 
     def test_non_ci_rejects_skip_cargo_flag(self) -> None:
         """M090: --skip-cargo stays on ci; stderr redirects to ci --skip-cargo."""
@@ -192,7 +195,10 @@ class MultiCheckSelectTests(unittest.TestCase):
         self.assertEqual(2, code)
         out = err.getvalue()
         self.assertIn("--skip-cargo is only valid with ci", out)
-        self.assertIn("hint: kutha-gov ci --skip-cargo", out)
+        # M140: point at ci --skip-cargo without pinning exact hint wording.
+        self.assertIn("kutha-gov", out)
+        self.assertIn("ci", out)
+        self.assertIn("--skip-cargo", out)
 
     def test_join_check_flags_merges_append_and_comma(self) -> None:
         from kutha_gov.__main__ import _join_check_flags

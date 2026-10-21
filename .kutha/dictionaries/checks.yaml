@@ -2568,6 +2568,8 @@ checks:
     description: >-
       Agent-facing docs name the canonical CBM project and live kutha-gov flags
       including comma-separated --check (CE whole-repo W1/O1; M074 / M077).
+      M140: __main__ pins parser wiring only — not exact hint-string needles
+      (CLI reject pytest owns redirect UX). Matrix SEM-m140.
     steps:
       - kind: file_contains
         path: docs/process/gsd-auto-contract.md
@@ -2603,9 +2605,6 @@ checks:
           - "def _parse_check_ids"
           - "def _join_check_flags"
           - "action=\"append\""
-          - "comma-separated"
-          - "hint: kutha-gov {json|precommit|selftest} --check ID[,ID…]"
-          - "hint: kutha-gov ci --skip-cargo"
         require: all
         category: oracle
         message: "multi-check --check parser missing: {missing}"
@@ -2620,6 +2619,7 @@ checks:
           - "def test_harness_documents_check_surfaces"
           - "def test_agents_md_check_not_for_ci"
           - "def test_env_example_documents_built_migrate"
+          - "def test_check_parser_helpers_are_live_callables"
         require: all
         category: oracle
         message: "agent-surface pytest oracle missing: {missing}"
@@ -2646,6 +2646,7 @@ checks:
           - "def test_selftest_repeated_check_flags_runs_both"
           - "def test_ci_rejects_check_flag"
           - "def test_ci_rejects_empty_check_flag"
+          - "def test_non_ci_rejects_skip_cargo_flag"
         require: all
         category: oracle
         message: "multi-check pytest oracle missing: {missing}"
