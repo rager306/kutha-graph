@@ -2503,6 +2503,17 @@ rows:
     gate: default
     owner: M127-S01
     source: Phase 201
+  - id: SEM-m128-horn-multi-combination
+    plane: product
+    invariant: two disjoint live windows of the same premise relation overlapping one trigger mint two Horn heads
+    layer: kill
+    oracle:
+      - two_disjoint_ab_windows_mint_two_ac_heads
+    kill_mutation: keep only the first PremMatch leaf in search_at_all (single-combination DFS)
+    status: killed
+    gate: default
+    owner: M128-S01
+    source: Phase 202 / CE 2026-10-15 residual (multi-residual premise combinations)
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

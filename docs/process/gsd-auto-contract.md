@@ -129,6 +129,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.19 | 199 | M125 | S01 | selftest derives yaml_needles_in_glob; DERIVABLE completeness | shipped |
 | v1.20 | 200 | M126 | S01 | kinds.py file_max_lines ceiling (kinds-lean) | shipped |
 | v1.21 | 201 | M127 | S01 | selftest.py file_max_lines ceiling (selftest-lean) | shipped |
+| v1.22 | 202 | M128 | S01 | Horn multi-combination oracle (disjoint premise VT windows) | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 
