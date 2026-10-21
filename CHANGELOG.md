@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: lease M142-S01 (observe-skipped behavioral)
+
+Process tag **v1.36** / Phase **216**. Not a SemVer release.
+
+- Active Milestone **M142**, Active Slice **S01** (`L_delivery=M141-closed`): de-text-couple observe-skipped-breadcrumb. Honeycomb stays Proposed.
+
 ## 2026-10-21 — Trajectory: M141 / GSD v1.35 closed
 
 Process tag **v1.35** / Phase **215**. Not a SemVer release.
