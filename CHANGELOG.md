@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: M139 / GSD v1.33 closed
+
+Process tag **v1.33** / Phase **213**. Not a SemVer release.
+
+- `retract_derived` phase 2 uses droppable `behaviors_by_premise_fact` (supporting premise EventIds) instead of the same-rel relation bucket; multi-premise N chains stay near-linear in `retract_examine`. Oracle `retract_n_multiprem_examines_grow_near_linear_not_quadratic`. Matrix `SEM-m139-retract-multiprem-fact-index` killed. Budget still 97. No Op schema change.
+- `L_delivery=M139-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.33 / Phase 213. ADR-000 D3 still rejects a hard FSM as the only control model.
+
+## 2026-10-21 — Trajectory: lease M139-S01 (multiprem retract fact-index)
+
+Process tag **v1.33** / Phase **213**. Not a SemVer release.
+
+- Active Milestone **M139**, Active Slice **S01** (`L_delivery=M138-closed`): multi-premise retract premise-fact index. Honeycomb stays Proposed.
+
 ## 2026-10-21 — Trajectory: M138 / GSD v1.32 closed
 
 Process tag **v1.32** / Phase **212**. Not a SemVer release.

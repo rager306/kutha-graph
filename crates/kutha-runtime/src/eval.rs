@@ -206,24 +206,17 @@ impl Runtime {
         // longer matches after treating P as dead (non-trigger witness).
         // Skip P itself: the trigger Retract already names that id; a second
         // DET-02-stable copy would leave drop-tamper stamps unchanged.
-        // Candidates are Behaviors whose Horn body mentions P's relation
-        // (behaviors_by_premise_rel), not the full live_behaviors vector (M095).
+        // Candidates are Behaviors that listed P as a supporting premise fact
+        // (behaviors_by_premise_fact), not the same-rel relation bucket (M139).
         // Single-premise Horns depend only on caused_by — phase 1 already
-        // covered them; scanning siblings is O(N²) under N same-rel retracts
-        // (M136). Multi-premise keeps the relation bucket for non-trigger
-        // witnesses.
+        // covered them; arity skip avoids re-examining them when also indexed
+        // under caused_by (M136).
         let except = HashSet::from([premise]);
-        let candidates: Vec<EventId> = match self.log_event(premise).and_then(|e| match &e.op {
-            Op::Assert { relation, .. } | Op::Behavior { relation, .. } => Some(*relation),
-            _ => None,
-        }) {
-            Some(rel) => self
-                .behaviors_by_premise_rel
-                .get(&rel)
-                .cloned()
-                .unwrap_or_default(),
-            None => Vec::new(),
-        };
+        let candidates: Vec<EventId> = self
+            .behaviors_by_premise_fact
+            .get(&premise)
+            .cloned()
+            .unwrap_or_default();
         for id in candidates {
             let Some(e) = self.log_event(id) else {
                 continue;
@@ -259,7 +252,85 @@ impl Runtime {
         out
     }
 
-    fn log_event(&self, id: EventId) -> Option<&Event> {
+    /// Supporting premise EventIds for a live Horn Behavior (droppable lease).
+    /// Always includes `caused_by`; multi-premise adds non-trigger witnesses via
+    /// re-search under the head VT (M139).
+    pub(crate) fn supporting_premise_ids_for_behavior(&self, e: &Event) -> Vec<EventId> {
+        let Op::Behavior {
+            caused_by,
+            rule_version,
+            subject,
+            relation,
+            object,
+            valid_from,
+            valid_to,
+            ..
+        } = &e.op
+        else {
+            return Vec::new();
+        };
+        let mut out = vec![*caused_by];
+        let Some(bytes) = self.fold.blobs.get(rule_version) else {
+            return out;
+        };
+        let Some(RuleAst::Horn { head, premises }) = RuleAst::from_canonical(bytes) else {
+            return out;
+        };
+        if premises.len() <= 1 {
+            return out;
+        }
+        let Some(trigger) = self.fold.facts().iter().find(|f| f.event_id == *caused_by) else {
+            return out;
+        };
+        for (i, prem) in premises.iter().enumerate() {
+            let Some(prem_rel) = self.dict.id(&prem.relation) else {
+                continue;
+            };
+            if prem_rel != trigger.relation {
+                continue;
+            }
+            let mut bind = [None; MAX_VAR];
+            if !unify_term(&prem.subject, trigger.subject, &self.dict, &mut bind) {
+                continue;
+            }
+            if !unify_term(&prem.object, trigger.object(), &self.dict, &mut bind) {
+                continue;
+            }
+            let hits = search_all(
+                self,
+                &premises,
+                i,
+                bind,
+                *valid_from,
+                *valid_to,
+                u64::MAX,
+                &HashSet::new(),
+            );
+            for hit in hits {
+                let Some(hs) = instantiate(&head.subject, &hit.bind, &self.dict) else {
+                    continue;
+                };
+                let Some(ho) = instantiate(&head.object, &hit.bind, &self.dict) else {
+                    continue;
+                };
+                let Some(hr) = self.dict.id(&head.relation) else {
+                    continue;
+                };
+                if hs != *subject || hr != *relation || ho != *object {
+                    continue;
+                }
+                for id in hit.premise_ids {
+                    if !out.contains(&id) {
+                        out.push(id);
+                    }
+                }
+                return out;
+            }
+        }
+        out
+    }
+
+    pub(crate) fn log_event(&self, id: EventId) -> Option<&Event> {
         let pos = *self.by_event_id.get(&id)?;
         self.log.as_slice().get(pos)
     }
@@ -594,6 +665,8 @@ struct LiveHorn {
 struct PremMatch {
     bind: Bind,
     windows: Vec<(u64, Option<u64>)>,
+    /// Supporting premise fact EventIds (droppable index input; M139).
+    premise_ids: Vec<EventId>,
 }
 
 fn conjunct_vt(
@@ -687,7 +760,11 @@ fn search_at_all(
     out: &mut Vec<PremMatch>,
 ) {
     if idx >= premises.len() {
-        out.push(PremMatch { bind, windows });
+        out.push(PremMatch {
+            bind,
+            windows,
+            premise_ids: Vec::new(),
+        });
         return;
     }
     if idx == skip {
@@ -722,6 +799,7 @@ fn search_at_all(
         }
         let mut next_windows = windows.clone();
         next_windows.push((f.valid_from, f.valid_to));
+        let before = out.len();
         search_at_all(
             rt,
             premises,
@@ -735,5 +813,8 @@ fn search_at_all(
             except,
             out,
         );
+        for hit in out.iter_mut().skip(before) {
+            hit.premise_ids.push(f.event_id);
+        }
     }
 }

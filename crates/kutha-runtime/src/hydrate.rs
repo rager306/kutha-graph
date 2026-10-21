@@ -113,6 +113,8 @@ impl Runtime {
             live_behaviors: FxHashSet::default(),
             behaviors_by_premise_rel: IngestMap::default(),
             premise_rels_of_behavior: IngestMap::default(),
+            behaviors_by_premise_fact: IngestMap::default(),
+            premise_facts_of_behavior: IngestMap::default(),
         };
         rt.hydrate_from_log();
         rt
@@ -164,6 +166,8 @@ impl Runtime {
             live_behaviors: FxHashSet::default(),
             behaviors_by_premise_rel: IngestMap::default(),
             premise_rels_of_behavior: IngestMap::default(),
+            behaviors_by_premise_fact: IngestMap::default(),
+            premise_facts_of_behavior: IngestMap::default(),
         };
         rt.hydrate_from_log();
         Ok(rt)
@@ -200,6 +204,8 @@ impl Runtime {
             live_behaviors: FxHashSet::default(),
             behaviors_by_premise_rel: IngestMap::default(),
             premise_rels_of_behavior: IngestMap::default(),
+            behaviors_by_premise_fact: IngestMap::default(),
+            premise_facts_of_behavior: IngestMap::default(),
         };
         rt.hydrate_from_log();
         rt

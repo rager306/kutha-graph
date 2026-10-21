@@ -26,6 +26,8 @@ impl Runtime {
         self.live_behaviors.clear();
         self.behaviors_by_premise_rel.clear();
         self.premise_rels_of_behavior.clear();
+        self.behaviors_by_premise_fact.clear();
+        self.premise_facts_of_behavior.clear();
         let n = self.log.len();
         self.by_event_id.reserve(n);
         self.by_delivery_key.reserve(n);
@@ -65,6 +67,9 @@ impl Runtime {
         }
         for (id, pin) in live_pins {
             self.index_behavior_premise_rels(id, &pin);
+            if let Some(e) = self.log_event(id).cloned() {
+                self.index_behavior_premise_facts(&e);
+            }
         }
     }
 
@@ -95,9 +100,28 @@ impl Runtime {
         }
     }
 
+    fn index_behavior_premise_facts(&mut self, e: &Event) {
+        let ids = self.supporting_premise_ids_for_behavior(e);
+        if ids.is_empty() {
+            return;
+        }
+        let behavior_id = e.id;
+        self.premise_facts_of_behavior
+            .entry(behavior_id)
+            .or_default()
+            .extend(ids.iter().copied());
+        for pid in ids {
+            self.behaviors_by_premise_fact
+                .entry(pid)
+                .or_default()
+                .push(behavior_id);
+        }
+    }
+
     fn unindex_behavior(&mut self, id: EventId) {
         let tracked = self.cause_of_behavior.contains_key(&id)
-            || self.premise_rels_of_behavior.contains_key(&id);
+            || self.premise_rels_of_behavior.contains_key(&id)
+            || self.premise_facts_of_behavior.contains_key(&id);
         if !tracked {
             return;
         }
@@ -122,6 +146,16 @@ impl Runtime {
                     kids.retain(|x| *x != id);
                     if kids.is_empty() {
                         self.behaviors_by_premise_rel.remove(&rel);
+                    }
+                }
+            }
+        }
+        if let Some(facts) = self.premise_facts_of_behavior.remove(&id) {
+            for pid in facts {
+                if let Some(kids) = self.behaviors_by_premise_fact.get_mut(&pid) {
+                    kids.retain(|x| *x != id);
+                    if kids.is_empty() {
+                        self.behaviors_by_premise_fact.remove(&pid);
                     }
                 }
             }
@@ -155,6 +189,7 @@ impl Runtime {
                 self.cause_of_behavior.insert(event.id, *caused_by);
                 self.live_behaviors.insert(event.id);
                 self.index_behavior_premise_rels(event.id, rule_version);
+                self.index_behavior_premise_facts(&event);
             }
             Op::Retract { event_id }
             | Op::Correct { event_id, .. }

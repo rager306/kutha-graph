@@ -140,6 +140,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.30 | 210 | M136 | S01 | retract N-derived N-retracts near-linear examine | shipped |
 | v1.31 | 211 | M137 | S01 | parallel-check-error-parity behavioral (de-text-couple) | shipped |
 | v1.32 | 212 | M138 | S01 | kinds-family-split behavioral (de-text-couple) | shipped |
+| v1.33 | 213 | M139 | S01 | multi-premise retract premise-fact index | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

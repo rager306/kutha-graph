@@ -2625,6 +2625,17 @@ rows:
     gate: default
     owner: M138-S01
     source: Phase 212 / CE 2026-10-15 residual (text-coupled oracles)
+  - id: SEM-m139-retract-multiprem-fact-index
+    plane: product
+    invariant: N multi-premise same-rel chains + N non-trigger retracts keep retract_examine near-linear via premise-fact index
+    layer: kill
+    oracle:
+      - retract_n_multiprem_examines_grow_near_linear_not_quadratic
+    kill_mutation: restore phase-2 candidates from behaviors_by_premise_rel relation bucket
+    status: killed
+    gate: default
+    owner: M139-S01
+    source: Phase 213 / M136 residual (multi-premise relation-bucket O(N²))
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

@@ -315,12 +315,18 @@ pub struct Runtime {
     /// Currently live Horn Behavior event ids (droppable; rebuilt from the log).
     pub(crate) live_behaviors: FxHashSet<EventId>,
     /// Live Behavior ids keyed by Horn body premise relation (droppable; rebuilt
-    /// from the log). Second-phase retract/correct walks this index instead of
-    /// every live Behavior (M095 / CE #3).
+    /// from the log). Kept for unindex/M095 oracles; second-phase retract uses
+    /// [`Self::behaviors_by_premise_fact`] (M139).
     pub(crate) behaviors_by_premise_rel: IngestMap<TermId, Vec<EventId>>,
     /// Behavior id → premise relations indexed for it (M106). Missing key means
     /// rebuild gap: unindex falls back to every premise-rel bucket.
     pub(crate) premise_rels_of_behavior: IngestMap<EventId, Vec<TermId>>,
+    /// Live Behavior ids keyed by supporting premise fact EventId (droppable;
+    /// rebuilt from the log). Multi-premise retract phase 2 walks this instead
+    /// of the same-rel relation bucket (M139).
+    pub(crate) behaviors_by_premise_fact: IngestMap<EventId, Vec<EventId>>,
+    /// Behavior id → supporting premise fact ids (M139).
+    pub(crate) premise_facts_of_behavior: IngestMap<EventId, Vec<EventId>>,
 }
 
 impl Default for Runtime {
@@ -353,6 +359,8 @@ impl Runtime {
             live_behaviors: FxHashSet::default(),
             behaviors_by_premise_rel: IngestMap::default(),
             premise_rels_of_behavior: IngestMap::default(),
+            behaviors_by_premise_fact: IngestMap::default(),
+            premise_facts_of_behavior: IngestMap::default(),
             unindex_premise_examine: IngestExamine::default(),
             unindex_live_examine: IngestExamine::default(),
         };
