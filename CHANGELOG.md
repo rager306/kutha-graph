@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: M143 / GSD v1.37 closed
+
+Process tag **v1.37** / Phase **217**. Not a SemVer release.
+
+- `skip-cargo-log-marker`: dropped CE #38 comment/assert-snippet needles; pins fsm wiring + `test_skip_cargo_does_not_call_cargo_or_tenant`. Matrix `SEM-m143-skip-cargo-marker-behavioral` killed. Budget still 97.
+- `L_delivery=M143-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.37 / Phase 217. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-21 — Trajectory: lease M143-S01 (skip-cargo-marker behavioral)
 
 Process tag **v1.37** / Phase **217**. Not a SemVer release.
