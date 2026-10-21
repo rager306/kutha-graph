@@ -2492,6 +2492,17 @@ rows:
     gate: default
     owner: M126-S01
     source: Phase 200
+  - id: SEM-m127-selftest-lean
+    plane: harness
+    invariant: selftest.py stays at or under 1000 lines (wc -l)
+    layer: governor
+    oracle:
+      - selftest-lean
+    kill_mutation: append lines to selftest.py past max 1000
+    status: killed
+    gate: default
+    owner: M127-S01
+    source: Phase 201
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

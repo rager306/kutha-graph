@@ -1326,6 +1326,16 @@ checks:
         max: 2500
         message: "kinds.py has {n} lines (wc -l), max {max} — split policy into sibling modules"
 
+  - id: selftest-lean
+    description: >-
+      selftest.py line count is wc -l and must stay at or under 1000 (M127).
+      Twin of kinds-lean for the selftest prove plane.
+    steps:
+      - kind: file_max_lines
+        path: scripts/kutha_gov/selftest.py
+        max: 1000
+        message: "selftest.py has {n} lines (wc -l), max {max} — split derive helpers out"
+
   - id: artifact-budget
     description: >-
       Live-phase planning artifacts (v0.06 onward, including v0.07/v0.08)

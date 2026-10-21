@@ -80,6 +80,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | `glob_regex_absent` UNPROVEN without YAML mutations | `SEM-m124-glob-regex-derive` | `glob-regex-absent-derive` | M124-S01 |
 | `yaml_needles_in_glob` not DERIVABLE (zero live users) | `SEM-m125-yaml-needles-derive` | `yaml-needles-derive` | M125-S01 |
 | `kinds.py` re-growth after family split (no line pin) | `SEM-m126-kinds-lean` | `kinds-lean` | M126-S01 |
+| `selftest.py` unbounded growth (no line pin) | `SEM-m127-selftest-lean` | `selftest-lean` | M127-S01 |
 
 Testing gaps from the same report, closed in M099 (not new product findings):
 

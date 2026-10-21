@@ -423,6 +423,12 @@ invariants:
     disposition: check
     check: kinds-lean
 
+  - id: I-selftest-lean
+    claim: "selftest.py ≤1000 lines (wc -l); SEM-m127-selftest-lean"
+    source: ".planning/phases/201-selftest-lean/201-VERIFICATION.md"
+    disposition: check
+    check: selftest-lean
+
   - id: I-op-compat-policy
     claim: "Removed dictionary meta-ops fail deserialize on open (jsonl, WAL, and sealed segment frames); remaps and migrate_op_wire (jsonl + WAL-only + segmented demote, including orphan seg-*.log cleanup) are explicit; migrate_compat runs Op-wire then pins; kutha-migrate is the operator CLI at debug/kutha-migrate after observe; serde aliases forbidden"
     source: ".planning/phases/110-op-compat-policy/110-CONTEXT.md"

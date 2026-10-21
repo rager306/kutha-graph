@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.20
-milestone_name: kinds.py line ceiling
+milestone: v1.21
+milestone_name: selftest.py line ceiling
 status: completed
-stopped_at: "200-kinds-lean"
-last_updated: "2026-10-20T18:30:00.000Z"
+stopped_at: "201-selftest-lean"
+last_updated: "2026-10-21T01:30:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.20 kinds.py line ceiling — closed as M126
-**Phase:** 200
-**Status:** kinds-lean max 2500; budget 93. Honeycomb stays Proposed.
+**Milestone:** v1.21 selftest.py line ceiling — closed as M127
+**Phase:** 201
+**Status:** selftest-lean max 1000; budget 94. Honeycomb stays Proposed.
