@@ -218,6 +218,7 @@ class FsmTests(unittest.TestCase):
         self.assertIn(("cargo", "skipped"), outcome.observations)
 
     def test_skip_cargo_does_not_call_cargo_or_tenant(self) -> None:
+        """M143 / CE #38: pin tenant=skipped fold tip, not assert-snippet needles."""
         from unittest.mock import patch
 
         from kutha_gov.protocol import Check, CheckResult

@@ -239,6 +239,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M142 S01 (observe-skipped behavioral):** Phase 216 — `SEM-m142-observe-skipped-behavioral` `killed` (owner `M142-S01`). Oracle check: `observe-skipped-breadcrumb` (pytest `test_second_observe_cargo_notes_skip_after_prior_high`). Kill: restore assert-snippet needles.
 
+**M143 S01 (skip-cargo-marker behavioral):** Phase 217 — `SEM-m143-skip-cargo-marker-behavioral` `killed` (owner `M143-S01`). Oracle check: `skip-cargo-log-marker` (pytest `test_skip_cargo_does_not_call_cargo_or_tenant`). Kill: restore CE #38 comment/assert-snippet needles.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

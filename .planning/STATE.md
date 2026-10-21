@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.36
-milestone_name: observe-skipped-breadcrumb behavioral
+milestone: v1.37
+milestone_name: skip-cargo-log-marker behavioral
 status: completed
-stopped_at: "216-observe-skipped-behavioral"
-last_updated: "2026-10-21T22:20:00.000Z"
+stopped_at: "217-skip-cargo-marker-behavioral"
+last_updated: "2026-10-21T22:30:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.36 observe-skipped behavioral — closed as M142
-**Phase:** 216
-**Status:** SEM-m142-observe-skipped-behavioral killed. Honeycomb stays Proposed.
+**Milestone:** v1.37 skip-cargo-marker behavioral — closed as M143
+**Phase:** 217
+**Status:** SEM-m143-skip-cargo-marker-behavioral killed. Honeycomb stays Proposed.

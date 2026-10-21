@@ -1720,11 +1720,11 @@ checks:
     description: >-
       skip_cargo / prior-high emit_tenant leaves allowlisted tenant=skipped so fold
       tip is not a stale full-evidence tenant (CE review P2 #38).
+      M143: fsm wiring + pytest name — not comment/assert-snippet needles. Matrix SEM-m143.
     steps:
       - kind: file_contains
         path: scripts/kutha_gov/fsm.py
         needles:
-          - "CE #38: skip-cargo / prior-high must not leave a stale last_tenant tip"
           - 'outcome.observations.append(("tenant", "skipped"))'
           - 'append_observe(ctx.root, "tenant", "skipped")'
         require: all
@@ -1733,9 +1733,7 @@ checks:
       - kind: file_contains
         path: scripts/tests/test_fsm.py
         needles:
-          - 'self.assertEqual("skipped", picture.last_cargo)'
-          - 'self.assertEqual("skipped", picture.last_tenant)'
-          - '("tenant", "skipped")'
+          - "def test_skip_cargo_does_not_call_cargo_or_tenant"
         require: all
         category: oracle
         message: "skip-cargo fold marker oracle missing: {missing}"

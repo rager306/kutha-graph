@@ -2669,6 +2669,17 @@ rows:
     gate: default
     owner: M142-S01
     source: Phase 216 / CE residual (text-coupled observe-skipped)
+  - id: SEM-m143-skip-cargo-marker-behavioral
+    plane: harness
+    invariant: skip-cargo-log-marker pins fsm wiring and pytest name; not comment or assert-snippet needles
+    layer: kill
+    oracle:
+      - skip-cargo-log-marker
+    kill_mutation: restore CE #38 comment/assert-snippet needles; or drop test_skip_cargo_does_not_call_cargo_or_tenant
+    status: killed
+    gate: default
+    owner: M143-S01
+    source: Phase 217 / CE residual (text-coupled skip-cargo-log-marker)
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

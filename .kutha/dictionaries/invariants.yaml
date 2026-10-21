@@ -388,7 +388,7 @@ invariants:
     check: parallel-context-flags
 
   - id: I-skip-cargo-log-marker
-    claim: "skip_cargo / prior-high emit_tenant records tenant=skipped so fold tip is not a stale full-evidence tenant"
+    claim: "skip_cargo / prior-high emit_tenant records tenant=skipped so fold tip is not a stale full-evidence tenant; skip-cargo-log-marker pins fsm wiring + test_skip_cargo_does_not_call_cargo_or_tenant (SEM-m143 — not comment/assert-snippet needles)"
     source: ".planning/phases/109-skip-cargo-log-marker/109-CONTEXT.md"
     disposition: check
     check: skip-cargo-log-marker

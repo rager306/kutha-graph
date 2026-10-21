@@ -439,7 +439,8 @@ def _execute(
         if ctx.skip_emit:
             return "done"
         if _skip_heavy_observe(ctx, outcome):
-            # CE #38: skip-cargo / prior-high must not leave a stale last_tenant tip.
+            # CE #38 / M143: skip-cargo or prior-high must record tenant=skipped
+            # so the fold tip is not a stale full-evidence tenant.
             cause = "skip_cargo" if ctx.skip_cargo else "prior-high"
             outcome.findings.append(
                 Finding(
