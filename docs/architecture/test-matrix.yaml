@@ -2547,6 +2547,17 @@ rows:
     gate: default
     owner: M131-S01
     source: Phase 205 / CE 2026-10-15 residual (empty yaml_map_list)
+  - id: SEM-m132-reconcile-sync-all
+    plane: product
+    invariant: reconcile_uncommitted_tip uses sync_all after each set_len so truncated length is durable
+    layer: kill
+    oracle:
+      - reconcile_truncation_uses_sync_all_after_set_len
+    kill_mutation: restore f.sync_data() immediately after set_len in reconcile_uncommitted_tip
+    status: killed
+    gate: default
+    owner: M132-S01
+    source: Phase 206 / CE 2026-10-15 residual (set_len + sync_data)
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

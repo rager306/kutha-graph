@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M132: reconcile tip truncate sync_all — ACTIVE (GSD v1.26)
+## M132: reconcile tip truncate sync_all — CLOSED (GSD v1.26)
 
-CE 2026-10-15 residual: `reconcile_uncommitted_tip` truncates with `set_len` + `sync_data`; on platforms where fdatasync does not persist size, a power loss can resurrect the suffix. Thin slice: `sync_all` after each truncate `set_len`. Honeycomb stays Proposed.
+CE 2026-10-15 residual: `reconcile_uncommitted_tip` truncates with `set_len` + `sync_data`; on platforms where fdatasync does not persist size, a power loss can resurrect the suffix. Thin slice: `sync_all` after each truncate `set_len`. Honeycomb stays Proposed. `L_delivery=M132-closed`.
 
-- [ ] **S01: sync_all after reconcile set_len** `risk:low` `depends:[]`
-  > After this: matrix `SEM-m132-reconcile-sync-all` killed. Phase 206.
+- [x] **S01: sync_all after reconcile set_len** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m132-reconcile-sync-all` killed. Phase 206. Landed.
 
 ## M131: yaml_map_list empty-select fail-closed — CLOSED (GSD v1.25)
 

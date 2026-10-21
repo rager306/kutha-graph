@@ -311,7 +311,7 @@ impl Persister {
             if len > self.wal_len {
                 let f = OpenOptions::new().write(true).open(&path)?;
                 f.set_len(self.wal_len)?;
-                f.sync_data()?;
+                f.sync_all()?;
                 wal::note_log_file_sync();
             }
             self.uncommitted_suffix = false;
@@ -330,13 +330,13 @@ impl Persister {
         if jsonl_len > self.jsonl_len {
             let f = OpenOptions::new().write(true).open(&jsonl_path)?;
             f.set_len(self.jsonl_len)?;
-            f.sync_data()?;
+            f.sync_all()?;
             wal::note_log_file_sync();
         }
         if wal_len > self.wal_len {
             let f = OpenOptions::new().write(true).open(&wal_path)?;
             f.set_len(self.wal_len)?;
-            f.sync_data()?;
+            f.sync_all()?;
             wal::note_log_file_sync();
         }
         self.uncommitted_suffix = false;

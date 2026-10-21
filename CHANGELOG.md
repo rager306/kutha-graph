@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: M132 / GSD v1.26 closed
+
+Process tag **v1.26** / Phase **206**. Not a SemVer release.
+
+- `reconcile_uncommitted_tip`: each `set_len` followed by `sync_all` (not `sync_data`). Oracle `reconcile_truncation_uses_sync_all_after_set_len`. Matrix `SEM-m132-reconcile-sync-all` killed. Incremental append still uses `sync_data`.
+- `L_delivery=M132-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.26 / Phase 206. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-21 — Trajectory: lease M132-S01 (reconcile tip truncate sync_all)
 
 Process tag **v1.26** / Phase **206**. Not a SemVer release.
