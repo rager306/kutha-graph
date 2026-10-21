@@ -208,6 +208,10 @@ impl Runtime {
         // DET-02-stable copy would leave drop-tamper stamps unchanged.
         // Candidates are Behaviors whose Horn body mentions P's relation
         // (behaviors_by_premise_rel), not the full live_behaviors vector (M095).
+        // Single-premise Horns depend only on caused_by — phase 1 already
+        // covered them; scanning siblings is O(N²) under N same-rel retracts
+        // (M136). Multi-premise keeps the relation bucket for non-trigger
+        // witnesses.
         let except = HashSet::from([premise]);
         let candidates: Vec<EventId> = match self.log_event(premise).and_then(|e| match &e.op {
             Op::Assert { relation, .. } | Op::Behavior { relation, .. } => Some(*relation),
@@ -221,23 +225,28 @@ impl Runtime {
             None => Vec::new(),
         };
         for id in candidates {
-            self.retract_examine.bump();
-            let Some((event_id, is_behavior)) = self
-                .log_event(id)
-                .map(|e| (e.id, matches!(e.op, Op::Behavior { .. })))
-            else {
+            let Some(e) = self.log_event(id) else {
                 continue;
             };
-            if !is_behavior
-                || event_id == premise
+            let Op::Behavior { rule_version, .. } = &e.op else {
+                continue;
+            };
+            let event_id = e.id;
+            if event_id == premise
                 || retracting.contains(&event_id)
                 || !self.behavior_fact_live(event_id)
             {
                 continue;
             }
-            let Some(e) = self.log_event(id) else {
+            let Some(bytes) = self.fold.blobs.get(rule_version) else {
                 continue;
             };
+            if let Some(RuleAst::Horn { premises, .. }) = RuleAst::from_canonical(bytes) {
+                if premises.len() <= 1 {
+                    continue;
+                }
+            }
+            self.retract_examine.bump();
             if self.horn_body_matches_except(e, &except) {
                 continue;
             }

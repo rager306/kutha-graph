@@ -2592,6 +2592,17 @@ rows:
     gate: default
     owner: M135-S01
     source: Phase 209 / CE 2026-10-15 residual (unlock window untested)
+  - id: SEM-m136-retract-n-scaling
+    plane: product
+    invariant: N same-rel derived + N retracts keep retract_examine near-linear (single-premise Horns skip second-phase sibling scan)
+    layer: kill
+    oracle:
+      - retract_n_derived_examines_grow_near_linear_not_quadratic
+    kill_mutation: remove single-premise arity skip in retract_derived second phase
+    status: killed
+    gate: default
+    owner: M136-S01
+    source: Phase 210 / CE 2026-10-15 testing gap (N×N retract examine)
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute
