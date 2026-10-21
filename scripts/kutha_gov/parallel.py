@@ -62,7 +62,7 @@ def worker_error_result(check: str, exc: BaseException) -> CheckResult:
 def _eval_check_worker(
     payload: tuple[Check, str, bool, str, bool, bool, frozenset[str] | None],
 ) -> CheckResult:
-    """Same exception → check-error mapping as eval_check (CE #23).
+    """Delegate to eval_check so check.run failures stay check-error (CE #23).
 
     worker-error stays for transport failures around fut.result(), not check.run.
     skip_emit / changed_paths must match the caller Context (CE #48).

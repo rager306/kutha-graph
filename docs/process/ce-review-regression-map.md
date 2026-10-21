@@ -59,6 +59,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | pin-cite orphan rematerialize needs delete marker | `SEM-m134-pin-cite-delete-rerun` | `migrate_pin_cite_requires_delete_marker_to_rematerialize_after_new_evidence` | M134-S01 |
 | migrate_pins unlock window between steps untested | `SEM-m135-migrate-pins-unlock-window` | `migrate_pins_and_compat_do_not_take_parent_lock`, `migrate_pins_gap_blocks_peer_cite_then_converges` | M135-S01 |
 | N derived + N retracts examine quadratic | `SEM-m136-retract-n-scaling` | `retract_n_derived_examines_grow_near_linear_not_quadratic` | M136-S01 |
+| text-coupled parallel-check-error-parity needles | `SEM-m137-parallel-error-behavioral` | `parallel-check-error-parity` / `test_eval_check_worker_maps_run_exception_to_check_error` | M137-S01 |
 | #5 kinds-split oracle was test-matrix | `SEM-m054-id-kinds-split` | `kinds-family-split` | M098-S01 |
 | Correct/CorrectInterval of Behavior leaves retract indexes | `SEM-m100-correct-unindex-behavior` | `correct_of_behavior_drops_retract_index`, `correct_interval_of_behavior_drops_retract_index` | M100-S01 |
 | rule-pin VT truncation (pin starts after the trigger) | `SEM-m101-horn-pin-overlap` | `late_starting_rule_pin_fires_on_overlap` | M101-S01 |

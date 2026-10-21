@@ -2603,6 +2603,17 @@ rows:
     gate: default
     owner: M136-S01
     source: Phase 210 / CE 2026-10-15 testing gap (N×N retract examine)
+  - id: SEM-m137-parallel-error-behavioral
+    plane: harness
+    invariant: parallel-check-error-parity pins return eval_check and behavioral worker/pytest oracles; not docstring or assert-snippet needles
+    layer: kill
+    oracle:
+      - parallel-check-error-parity
+    kill_mutation: return check.run(ctx) from _eval_check_worker; or drop test_eval_check_worker_maps_run_exception_to_check_error needle
+    status: killed
+    gate: default
+    owner: M137-S01
+    source: Phase 211 / CE 2026-10-15 residual (text-coupled oracles)
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

@@ -370,7 +370,7 @@ invariants:
     check: glob-absent-comment-policy
 
   - id: I-parallel-check-error-parity
-    claim: "Dictionary check.run exceptions map to check-error under both jobs=1 and jobs>1; worker-error is transport-only"
+    claim: "Dictionary check.run exceptions map to check-error under both jobs=1 and jobs>1; worker-error is transport-only; parallel-check-error-parity pins return eval_check plus behavioral worker/pytest oracles (not docstring text)"
     source: ".planning/phases/106-parallel-check-error-parity/106-CONTEXT.md"
     disposition: check
     check: parallel-check-error-parity

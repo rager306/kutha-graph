@@ -221,6 +221,26 @@ class JobsParityTests(unittest.TestCase):
             msg=messages,
         )
 
+    def test_eval_check_worker_maps_run_exception_to_check_error(self) -> None:
+        # M137 / CE text-coupled residual: pin worker behavior, not docstring needles.
+        from kutha_gov.parallel import _eval_check_worker
+        from kutha_gov.protocol import Check, CheckResult, Context
+
+        class Boom(Check):
+            name = "boom-direct"
+            description = "raises inside check.run"
+
+            def run(self, ctx: Context) -> CheckResult:
+                raise RuntimeError("force boom")
+
+        result = _eval_check_worker(
+            (Boom(), str(ROOT), False, "auto", False, True, None)
+        )
+        cats = [f.category for f in result.findings]
+        self.assertIn("check-error", cats)
+        self.assertNotIn("worker-error", cats)
+        self.assertEqual("boom-direct", result.check)
+
     def test_mini_tree_check_raise_is_check_error_jobs_1_and_2(self) -> None:
         # CE #23: check.run exceptions are check-error under both serial and parallel.
         root = _write_mini(

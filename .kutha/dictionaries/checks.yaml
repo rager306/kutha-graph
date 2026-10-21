@@ -1567,22 +1567,21 @@ checks:
   - id: parallel-check-error-parity
     description: >-
       check.run exceptions are check-error under jobs=1 and jobs>1; worker-error
-      is reserved for transport failures (CE review P2 #23).
+      is reserved for transport failures (CE review P2 #23). M137: behavioral
+      worker oracle — not docstring/assert text needles.
     steps:
       - kind: file_contains
         path: scripts/kutha_gov/parallel.py
         needles:
           - "return eval_check(check, ctx)"
-          - "Same exception → check-error mapping as eval_check"
         require: all
         category: oracle
         message: "parallel worker missing shared eval_check exception path: {missing}"
       - kind: file_contains
         path: scripts/tests/test_jobs.py
         needles:
+          - "test_eval_check_worker_maps_run_exception_to_check_error"
           - "test_mini_tree_check_raise_is_check_error_jobs_1_and_2"
-          - 'self.assertIn("check-error"'
-          - 'self.assertNotIn("worker-error"'
         require: all
         category: oracle
         message: "parallel check-error parity oracle missing: {missing}"
