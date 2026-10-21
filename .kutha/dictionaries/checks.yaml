@@ -2490,6 +2490,33 @@ checks:
           pattern: "def _harvest_selftest_futures"
           with: "def _harvest_selftest_gone"
 
+  - id: yaml-map-list-nonempty
+    description: >-
+      yaml_map_list fail-closes on an empty select list so require/unique cannot
+      vacuous-pass (M131 / Phase 205 / CE residual).
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/kinds.py
+        needles:
+          - "if not isinstance(rows, list) or not rows:"
+          - "is not a non-empty list"
+        require: all
+        category: oracle
+        message: "yaml_map_list empty-select guard missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_kutha_gov.py
+        needles:
+          - "def test_yaml_map_list_rejects_empty_select_list"
+        require: all
+        category: oracle
+        message: "yaml_map_list empty-select pytest missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/kinds.py
+          pattern: "if not isinstance\\(rows, list\\) or not rows:"
+          with: "if not isinstance(rows, list):"
+
   - id: kinds-family-split
     description: >-
       kinds.py keeps run_step/RUNNERS; policy families stay in sibling modules

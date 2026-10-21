@@ -132,6 +132,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.22 | 202 | M128 | S01 | Horn multi-combination oracle (disjoint premise VT windows) | shipped |
 | v1.23 | 203 | M129 | S01 | live yaml_needles_in_glob dogfood (FSM observe required) | shipped |
 | v1.24 | 204 | M130 | S01 | selftest parallel submit-failure serial backstop | shipped |
+| v1.25 | 205 | M131 | S01 | yaml_map_list empty select fail-closed | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

@@ -1,10 +1,10 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.24
-milestone_name: selftest submit serial backstop
+milestone: v1.25
+milestone_name: yaml_map_list empty-select fail-closed
 status: completed
-stopped_at: "204-selftest-submit-backstop"
-last_updated: "2026-10-21T14:45:00.000Z"
+stopped_at: "205-yaml-map-list-nonempty"
+last_updated: "2026-10-21T14:55:00.000Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.24 selftest submit serial backstop — closed as M130
-**Phase:** 204
-**Status:** selftest-submit-backstop; budget 96; SEM-m130 killed. Honeycomb stays Proposed.
+**Milestone:** v1.25 yaml_map_list empty-select fail-closed — closed as M131
+**Phase:** 205
+**Status:** yaml-map-list-nonempty; budget 97; SEM-m131 killed. Honeycomb stays Proposed.

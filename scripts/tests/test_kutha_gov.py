@@ -395,6 +395,32 @@ class HarnessTests(unittest.TestCase):
         finally:
             path.unlink(missing_ok=True)
 
+    def test_yaml_map_list_rejects_empty_select_list(self) -> None:
+        """M131 / CE residual: empty select must not vacuous-pass require/unique."""
+        rel = "tmp/m131-yaml-empty.yaml"
+        path = ROOT / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("items: []\n", encoding="utf-8")
+        try:
+            result = CheckResult(check="probe")
+            run_step(
+                "probe",
+                {
+                    "kind": "yaml_map_list",
+                    "path": rel,
+                    "select": "items",
+                    "require_fields": ["id"],
+                },
+                self.ctx,
+                result,
+            )
+            highs = [f for f in result.findings if f.severity is Severity.HIGH]
+            self.assertTrue(highs, msg="empty select must HIGH")
+            self.assertEqual("yaml-select", highs[0].category)
+            self.assertIn("not a non-empty list", highs[0].message)
+        finally:
+            path.unlink(missing_ok=True)
+
     def test_yaml_map_list_requires_check_ids_in_other_file(self) -> None:
         result = CheckResult(check="probe")
         run_step(

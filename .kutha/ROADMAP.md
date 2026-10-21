@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M131: yaml_map_list empty-select fail-closed — ACTIVE (GSD v1.25)
+## M131: yaml_map_list empty-select fail-closed — CLOSED (GSD v1.25)
 
-CE 2026-10-15 residual: empty `yaml_map_list` select list vacuously passes require/unique/cross-ref. Thin slice: HIGH when select is an empty list (parity with `yaml_needles_in_glob` / test-matrix). Honeycomb stays Proposed.
+CE 2026-10-15 residual: empty `yaml_map_list` select list vacuously passes require/unique/cross-ref. Thin slice: HIGH when select is an empty list (parity with `yaml_needles_in_glob` / test-matrix). Honeycomb stays Proposed. `L_delivery=M131-closed`.
 
-- [ ] **S01: nonempty yaml_map_list select** `risk:low` `depends:[]`
-  > After this: empty `items: []` is HIGH; matrix `SEM-m131-yaml-map-list-nonempty` killed. Phase 205.
+- [x] **S01: nonempty yaml_map_list select** `risk:low` `depends:[]`
+  > After this: empty `items: []` is HIGH; matrix `SEM-m131-yaml-map-list-nonempty` killed. Phase 205. Landed.
 
 ## M130: selftest parallel submit serial backstop — CLOSED (GSD v1.24)
 

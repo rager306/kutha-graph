@@ -2536,6 +2536,17 @@ rows:
     gate: default
     owner: M130-S01
     source: Phase 204 / CE 2026-10-15 residual (selftest parallel submit)
+  - id: SEM-m131-yaml-map-list-nonempty
+    plane: harness
+    invariant: yaml_map_list empty select list is HIGH (no vacuous require/unique pass)
+    layer: governor
+    oracle:
+      - yaml-map-list-nonempty
+    kill_mutation: restore `if not isinstance(rows, list):` without `or not rows`
+    status: killed
+    gate: default
+    owner: M131-S01
+    source: Phase 205 / CE 2026-10-15 residual (empty yaml_map_list)
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

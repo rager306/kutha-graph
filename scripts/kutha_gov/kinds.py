@@ -900,13 +900,13 @@ def _kind_yaml_map_list(check: str, step: Step, ctx: Context, result: CheckResul
     if not ok:
         return
     rows = _yaml_select(loaded, select)
-    if not isinstance(rows, list):
+    if not isinstance(rows, list) or not rows:
         result.findings.append(
             Finding(
                 check,
                 Severity.HIGH,
                 "yaml-select",
-                f"{path} select {select!r} is not a list",
+                f"{path} select {select!r} is not a non-empty list",
                 path,
             )
         )

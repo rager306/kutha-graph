@@ -429,6 +429,12 @@ invariants:
     disposition: check
     check: selftest-submit-backstop
 
+  - id: I-yaml-map-list-nonempty
+    claim: "yaml_map_list empty select list is HIGH; SEM-m131-yaml-map-list-nonempty"
+    source: ".planning/phases/205-yaml-map-list-nonempty/205-VERIFICATION.md"
+    disposition: check
+    check: yaml-map-list-nonempty
+
   - id: I-kinds-lean
     claim: "kinds.py ≤2500 lines (wc -l); SEM-m126-kinds-lean"
     source: ".planning/phases/200-kinds-lean/200-VERIFICATION.md"

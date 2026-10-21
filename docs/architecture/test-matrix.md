@@ -215,6 +215,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M130 S01 (selftest submit serial backstop):** Phase 204 — `SEM-m130-selftest-submit-backstop` `killed` (owner `M130-S01`). Oracle check: `selftest-submit-backstop`. Kill: dict-comprehension submit.
 
+**M131 S01 (yaml_map_list empty-select):** Phase 205 — `SEM-m131-yaml-map-list-nonempty` `killed` (owner `M131-S01`). Oracle check: `yaml-map-list-nonempty`. Kill: drop `or not rows`.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.
