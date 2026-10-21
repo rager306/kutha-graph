@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: M141 / GSD v1.35 closed
+
+Process tag **v1.35** / Phase **215**. Not a SemVer release.
+
+- `parallel-context-flags`: dropped docstring/assert-snippet needles; pins Context wiring + `test_eval_check_worker_propagates_skip_emit_and_changed_paths`. Matrix `SEM-m141-parallel-context-behavioral` killed. Budget still 97.
+- `L_delivery=M141-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.35 / Phase 215. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-21 — Trajectory: lease M141-S01 (parallel-context behavioral)
 
 Process tag **v1.35** / Phase **215**. Not a SemVer release.
