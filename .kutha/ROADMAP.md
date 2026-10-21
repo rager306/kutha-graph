@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M129: yaml_needles live dogfood — ACTIVE (GSD v1.23)
+
+`yaml_needles_in_glob` is DERIVABLE (M125) but unused in live checks. Thin slice: dictionary check that FSM `observe_cargo` / `observe_rocks` required names appear as `fn <name>` under crates. Complements `observe-required-fn` (asserting `#[test]`). Honeycomb stays Proposed.
+
+- [ ] **S01: yaml-needles-live check** `risk:low` `depends:[]`
+  > After this: live kind user; budget 95; matrix `SEM-m129-yaml-needles-live` killed. Phase 203.
+
 ## M128: Horn multi-combination oracle — CLOSED (GSD v1.22)
 
 CE 2026-10-15 residual risk: no oracle that two disjoint live windows of the same premise relation overlapping one trigger mint two heads (`search_at_all` already enumerates). Thin slice: kill-grade cargo oracle + matrix. Honeycomb stays Proposed. `L_delivery=M128-closed`.

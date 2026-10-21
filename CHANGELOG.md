@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: lease M129-S01 (yaml_needles live dogfood)
+
+Process tag **v1.23** / Phase **203**. Not a SemVer release.
+
+- Active Milestone **M129**, Active Slice **S01** (`L_delivery=M128-closed`): live `yaml_needles_in_glob` on FSM observe required lists. Honeycomb stays Proposed.
+
 ## 2026-10-21 — Trajectory: M128 / GSD v1.22 closed
 
 Process tag **v1.22** / Phase **202**. Not a SemVer release.
