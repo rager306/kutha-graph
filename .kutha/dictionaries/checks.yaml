@@ -1687,6 +1687,34 @@ checks:
           pattern: "\\.kutha-gov-cargo\\.lock"
           with: ".__KUTHA_GOV_CARGO_LOCK_NAME__"
 
+  - id: observe-incomplete-honesty
+    description: >-
+      Cargo non-zero exit with no required ok/FAILED lines emits one
+      observe-incomplete (not N× observe-missing). M145 / Phase 219 dogfood.
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/observe.py
+        needles:
+          - "observe-incomplete"
+          - "cargo_exit"
+        require: all
+        category: oracle
+        message: "observe-incomplete wiring missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_fsm.py
+        needles:
+          - "def test_cargo_incomplete_collapses_missing_when_exit_nonzero"
+          - "def test_cargo_nonzero_keeps_per_name_when_any_verdict_seen"
+        require: all
+        category: oracle
+        message: "observe-incomplete pytest missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/observe.py
+          pattern: '"observe-incomplete"'
+          with: '"observe-missing-batch"'
+
   - id: fixed-tmp-persist-dir
     description: >-
       Crates must not use Path::new("tmp/…") or .join("tmp").join("literal") for

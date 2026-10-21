@@ -67,6 +67,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | text-coupled observe-skipped assert-snippet needles | `SEM-m142-observe-skipped-behavioral` | `observe-skipped-breadcrumb` / `test_second_observe_cargo_notes_skip_after_prior_high` | M142-S01 |
 | text-coupled skip-cargo-log-marker comment needles | `SEM-m143-skip-cargo-marker-behavioral` | `skip-cargo-log-marker` / `test_skip_cargo_does_not_call_cargo_or_tenant` | M143-S01 |
 | text-coupled git-auto-base run_high=/tip_high= needles | `SEM-m144-git-auto-base-behavioral` | `git-auto-base` / `test_cmd_ci_prints_run_high_and_tip_high` | M144-S01 |
+| cargo exit 101 mints N× observe-missing | `SEM-m145-observe-incomplete` | `observe-incomplete-honesty` / `test_cargo_incomplete_collapses_missing_when_exit_nonzero` | M145-S01 |
 | #5 kinds-split oracle was test-matrix | `SEM-m054-id-kinds-split` | `kinds-family-split` | M098-S01 |
 | Correct/CorrectInterval of Behavior leaves retract indexes | `SEM-m100-correct-unindex-behavior` | `correct_of_behavior_drops_retract_index`, `correct_interval_of_behavior_drops_retract_index` | M100-S01 |
 | rule-pin VT truncation (pin starts after the trigger) | `SEM-m101-horn-pin-overlap` | `late_starting_rule_pin_fires_on_overlap` | M101-S01 |

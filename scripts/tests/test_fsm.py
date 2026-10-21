@@ -491,6 +491,37 @@ class ObserveTests(unittest.TestCase):
         self.assertEqual(1, len(findings))
         self.assertEqual("observe-fail", findings[0].category)
 
+    def test_cargo_incomplete_collapses_missing_when_exit_nonzero(self) -> None:
+        """M145: infra exit with no test verdicts → one observe-incomplete, not N missing."""
+        from kutha_gov.observe import interpret_cargo_output
+
+        required = [
+            "horn_correct_derived_not_live_after_premise_correct",
+            "horn_correct_interval_derived_not_live_after_patch",
+            "legacy_allow_relation_op_fails_to_deserialize",
+            "modern_kutha_allows_assert_roundtrips",
+        ]
+        seen, findings = interpret_cargo_output(
+            "error: could not compile `kutha-runtime`\n",
+            required,
+            cargo_exit=101,
+        )
+        self.assertEqual([], seen)
+        self.assertEqual(1, len(findings))
+        self.assertEqual("observe-incomplete", findings[0].category)
+        self.assertNotIn("observe-missing", [f.category for f in findings])
+
+    def test_cargo_nonzero_keeps_per_name_when_any_verdict_seen(self) -> None:
+        from kutha_gov.observe import interpret_cargo_output
+
+        required = ["a_ok_test", "a_missing_test"]
+        text = "test a_ok_test ... ok\n"
+        seen, findings = interpret_cargo_output(text, required, cargo_exit=101)
+        self.assertEqual(["a_ok_test"], seen)
+        cats = [f.category for f in findings]
+        self.assertIn("observe-missing", cats)
+        self.assertNotIn("observe-incomplete", cats)
+
 
 class TenantTests(unittest.TestCase):
     def test_missing_tenant_line_is_high(self) -> None:

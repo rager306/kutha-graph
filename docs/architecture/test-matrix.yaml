@@ -2691,6 +2691,17 @@ rows:
     gate: default
     owner: M144-S01
     source: Phase 218 / CE residual (text-coupled git-auto-base labels)
+  - id: SEM-m145-observe-incomplete
+    plane: harness
+    invariant: cargo non-zero exit with no required ok/FAILED lines emits one observe-incomplete not N× observe-missing
+    layer: kill
+    oracle:
+      - observe-incomplete-honesty
+    kill_mutation: drop cargo_exit collapse so exit 101 with empty test lines mints N× observe-missing
+    status: killed
+    gate: default
+    owner: M145-S01
+    source: Phase 219 / dogfood cargo infra fail honesty
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

@@ -399,6 +399,12 @@ invariants:
     disposition: check
     check: cargo-observe-lock
 
+  - id: I-observe-incomplete-honesty
+    claim: "cargo non-zero exit with no required ok/FAILED lines emits one observe-incomplete (not N× observe-missing); SEM-m145"
+    source: ".planning/phases/219-observe-incomplete/219-VERIFICATION.md"
+    disposition: check
+    check: observe-incomplete-honesty
+
   - id: I-fixed-tmp-persist-dir
     claim: "crates must not Path::new(\"tmp/…\") or .join(\"tmp\").join(\"…\") for persist/open; SEM-m122 / SEM-m123"
     source: ".planning/phases/197-fixed-tmp-join/197-VERIFICATION.md"

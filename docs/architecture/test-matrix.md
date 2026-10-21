@@ -243,6 +243,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M144 S01 (git-auto-base label behavioral):** Phase 218 — `SEM-m144-git-auto-base-behavioral` `killed` (owner `M144-S01`). Oracle check: `git-auto-base` (pytest `test_cmd_ci_prints_run_high_and_tip_high` + merge-base). Kill: restore `run_high=`/`tip_high=` file_contains needles.
 
+**M145 S01 (observe-incomplete honesty):** Phase 219 — `SEM-m145-observe-incomplete` `killed` (owner `M145-S01`). Oracle check: `observe-incomplete-honesty`. Kill: drop `cargo_exit` collapse so exit 101 mints N× `observe-missing`.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

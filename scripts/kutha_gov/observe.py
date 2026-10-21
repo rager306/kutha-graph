@@ -63,16 +63,31 @@ def _exclusive_cargo_lock(cwd: Path) -> Iterator[None]:
             os.close(fd)
 
 
-def interpret_cargo_output(text: str, required: Sequence[str]) -> tuple[list[str], list[Finding]]:
+def interpret_cargo_output(
+    text: str,
+    required: Sequence[str],
+    *,
+    cargo_exit: int | None = None,
+) -> tuple[list[str], list[Finding]]:
+    """Map cargo stdout to seen-ok names and HIGH findings.
+
+    M145: when ``cargo_exit`` is non-zero and no required name has an ok/FAILED
+    line, emit one incomplete finding instead of N× ``observe-missing`` so
+    infra fails (exit 101 / cold target) stay readable.
+    """
     seen_ok: list[str] = []
     findings: list[Finding] = []
+    any_verdict = False
+    missing: list[str] = []
     for name in required:
         escaped = re.escape(name)
         ok_pat = re.compile(rf"^test (?:[\w:]+::)?{escaped} \.\.\. ok\b", re.MULTILINE)
         fail_pat = re.compile(rf"^test (?:[\w:]+::)?{escaped} \.\.\. FAILED\b", re.MULTILINE)
         if ok_pat.search(text):
             seen_ok.append(name)
+            any_verdict = True
         elif fail_pat.search(text):
+            any_verdict = True
             findings.append(
                 Finding(
                     "observe_cargo",
@@ -82,14 +97,35 @@ def interpret_cargo_output(text: str, required: Sequence[str]) -> tuple[list[str
                 )
             )
         else:
-            findings.append(
+            missing.append(name)
+    if (
+        cargo_exit is not None
+        and cargo_exit != 0
+        and required
+        and not any_verdict
+        and missing
+    ):
+        return (
+            [],
+            [
                 Finding(
                     "observe_cargo",
                     Severity.HIGH,
-                    "observe-missing",
-                    f"did not observe required test {name} in cargo output",
+                    "observe-incomplete",
+                    f"cargo exit {cargo_exit}; required tests not run "
+                    "(re-run after warm build; evidence, not SoT)",
                 )
+            ],
+        )
+    for name in missing:
+        findings.append(
+            Finding(
+                "observe_cargo",
+                Severity.HIGH,
+                "observe-missing",
+                f"did not observe required test {name} in cargo output",
             )
+        )
     return seen_ok, findings
 
 
@@ -193,7 +229,9 @@ def run_cargo_observation(root: object, spec: Step) -> tuple[int, list[str], lis
                 label="cargo test",
             )
             seen_ok, observe_findings = interpret_cargo_output(
-                text, _str_list(spec, "required")
+                text,
+                _str_list(spec, "required"),
+                cargo_exit=code,
             )
             findings.extend(observe_findings)
             build = _mapping(spec, "build")
