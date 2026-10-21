@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M128: Horn multi-combination oracle — ACTIVE (GSD v1.22)
+
+CE 2026-10-15 residual risk: no oracle that two disjoint live windows of the same premise relation overlapping one trigger mint two heads (`search_at_all` already enumerates). Thin slice: kill-grade cargo oracle + matrix. Honeycomb stays Proposed.
+
+- [ ] **S01: multi-combination Horn oracle** `risk:low` `depends:[]`
+  > After this: two disjoint AB residuals + open BC yield two AC heads; matrix `SEM-m128-horn-multi-combination` killed. Phase 202.
+
 ## M127: selftest.py line ceiling — CLOSED (GSD v1.21)
 
 `kinds-lean` pins the kinds kernel; `selftest.py` (~951 lines) is the next largest governor module without a ceiling. Thin slice: `file_max_lines` pin at 1000. Honeycomb stays Proposed.

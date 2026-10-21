@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: lease M128-S01 (Horn multi-combination oracle)
+
+Process tag **v1.22** / Phase **202**. Not a SemVer release.
+
+- Active Milestone **M128**, Active Slice **S01** (`L_delivery=M127-closed`): CE residual — oracle that disjoint premise VT windows under one trigger mint one head each. Honeycomb stays Proposed.
+
 ## 2026-10-21 — Trajectory: M127 / GSD v1.21 closed
 
 ### Process
