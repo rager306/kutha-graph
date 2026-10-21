@@ -606,6 +606,62 @@ class TenantTests(unittest.TestCase):
                 os.environ["KUTHA_TENANT_BIN"] = previous
 
 
+class ObserveRetriedTests(unittest.TestCase):
+    def test_apply_cargo_pack_low_finding_keeps_cargo_ok(self) -> None:
+        """M147: LOW findings must not mark cargo observation fail."""
+        from kutha_gov.fsm import QuantumOutcome, _apply_cargo_pack
+        from kutha_gov.protocol import Finding, Severity
+
+        outcome = QuantumOutcome(terminal="ok", trace=["ok"])
+        low = Finding("observe_cargo", Severity.LOW, "observe-retried", "recovered")
+        _apply_cargo_pack(outcome, (0, ["foo"], [low]))
+        self.assertIn(("cargo", "ok"), outcome.observations)
+        self.assertNotIn(("cargo", "fail"), outcome.observations)
+
+    def test_observe_emits_retried_low_after_incomplete_recovery(self) -> None:
+        from unittest.mock import MagicMock, patch
+
+        from kutha_gov.observe import run_cargo_observation
+        from kutha_gov.protocol import Severity
+
+        calls: list[list[str]] = []
+
+        def fake_run(cmd: list[str], **_kwargs: object) -> MagicMock:
+            calls.append(list(cmd))
+            completed = MagicMock()
+            if len(calls) == 1:
+                completed.returncode = 101
+                completed.stdout = "error: could not compile\n"
+                completed.stderr = ""
+            else:
+                completed.returncode = 0
+                completed.stdout = "test foo ... ok\n"
+                completed.stderr = ""
+            return completed
+
+        previous = os.environ.get("KUTHA_GOV_CARGO_OBSERVE_RETRIES")
+        try:
+            os.environ.pop("KUTHA_GOV_CARGO_OBSERVE_RETRIES", None)
+            spec = {
+                "bin": "cargo",
+                "args": ["test", "--workspace", "--offline"],
+                "required": ["foo"],
+            }
+            with patch("kutha_gov.observe.subprocess.run", side_effect=fake_run):
+                code, seen, findings = run_cargo_observation(ROOT, spec)
+            self.assertEqual(0, code)
+            self.assertEqual(["foo"], seen)
+            lows = [f for f in findings if f.severity is Severity.LOW]
+            self.assertEqual(1, len(lows))
+            self.assertEqual("observe-retried", lows[0].category)
+            self.assertFalse(any(f.severity is Severity.HIGH for f in findings))
+        finally:
+            if previous is None:
+                os.environ.pop("KUTHA_GOV_CARGO_OBSERVE_RETRIES", None)
+            else:
+                os.environ["KUTHA_GOV_CARGO_OBSERVE_RETRIES"] = previous
+
+
 class ObserveRetryTests(unittest.TestCase):
     def test_observe_retries_once_on_incomplete_then_succeeds(self) -> None:
         """M146: default retry recovers from first-attempt infra incomplete."""
@@ -640,7 +696,8 @@ class ObserveRetryTests(unittest.TestCase):
                 code, seen, findings = run_cargo_observation(ROOT, spec)
             self.assertEqual(0, code)
             self.assertEqual(["foo"], seen)
-            self.assertEqual([], findings)
+            # M147: successful retry may leave a LOW observe-retried breadcrumb.
+            self.assertFalse(any(f.severity is Severity.HIGH for f in findings))
             self.assertEqual(2, len(calls))
         finally:
             if previous is None:

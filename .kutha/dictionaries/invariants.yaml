@@ -411,6 +411,12 @@ invariants:
     disposition: check
     check: observe-retry-incomplete
 
+  - id: I-observe-retried-breadcrumb
+    claim: "successful incomplete→ok retry emits LOW observe-retried; cargo pack fails only on HIGH; SEM-m147"
+    source: ".planning/phases/221-observe-retried/221-VERIFICATION.md"
+    disposition: check
+    check: observe-retried-breadcrumb
+
   - id: I-fixed-tmp-persist-dir
     claim: "crates must not Path::new(\"tmp/…\") or .join(\"tmp\").join(\"…\") for persist/open; SEM-m122 / SEM-m123"
     source: ".planning/phases/197-fixed-tmp-join/197-VERIFICATION.md"

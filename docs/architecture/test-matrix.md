@@ -247,6 +247,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M146 S01 (cargo observe retry):** Phase 220 — `SEM-m146-observe-retry` `killed` (owner `M146-S01`). Oracle check: `observe-retry-incomplete`. Kill: force `_observe_retries` → 0.
 
+**M147 S01 (observe-retried breadcrumb):** Phase 221 — `SEM-m147-observe-retried` `killed` (owner `M147-S01`). Oracle check: `observe-retried-breadcrumb`. Kill: restore pack fail-on-any-finding or drop LOW emit.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

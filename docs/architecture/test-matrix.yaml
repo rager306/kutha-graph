@@ -2713,6 +2713,17 @@ rows:
     gate: default
     owner: M146-S01
     source: Phase 220 / dogfood cargo observe retry
+  - id: SEM-m147-observe-retried
+    plane: harness
+    invariant: successful incomplete→ok retry emits LOW observe-retried; cargo pack fails only on HIGH
+    layer: kill
+    oracle:
+      - observe-retried-breadcrumb
+    kill_mutation: restore cargo pack status=fail on any finding; or drop observe-retried LOW emit
+    status: killed
+    gate: default
+    owner: M147-S01
+    source: Phase 221 / dogfood observe-retried breadcrumb
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

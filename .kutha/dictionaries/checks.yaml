@@ -1751,6 +1751,42 @@ checks:
           pattern: "def _observe_retries"
           with: "def _cargo_retry_budget"
 
+  - id: observe-retried-breadcrumb
+    description: >-
+      Successful incomplete→ok retry emits LOW observe-retried; cargo pack
+      status fails only on HIGH (M147 / Phase 221 dogfood).
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/observe.py
+        needles:
+          - '"observe-retried"'
+          - "recovered_after_incomplete"
+        require: all
+        category: oracle
+        message: "observe-retried wiring missing: {missing}"
+      - kind: file_contains
+        path: scripts/kutha_gov/fsm.py
+        needles:
+          - "def _apply_cargo_pack"
+          - "Severity.HIGH for f in findings"
+        require: all
+        category: oracle
+        message: "cargo pack HIGH-only status missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_fsm.py
+        needles:
+          - "def test_apply_cargo_pack_low_finding_keeps_cargo_ok"
+          - "def test_observe_emits_retried_low_after_incomplete_recovery"
+        require: all
+        category: oracle
+        message: "observe-retried pytest missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/observe.py
+          pattern: '"observe-retried"'
+          with: '"observe-retry-mark"'
+
   - id: fixed-tmp-persist-dir
     description: >-
       Crates must not use Path::new("tmp/…") or .join("tmp").join("literal") for

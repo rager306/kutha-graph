@@ -18,6 +18,8 @@ type Step = Mapping[str, object]
 _LOCK_NAME = ".kutha-gov-cargo.lock"
 # Single category literal so M145 honesty selftest (count=1) stays non-vacuous.
 _OBSERVE_INCOMPLETE = "observe-incomplete"
+# Single category literal so M147 retried selftest (count=1) stays non-vacuous.
+_OBSERVE_RETRIED = "observe-retried"
 
 
 def _cargo_target_dir(cwd: Path) -> Path:
@@ -243,6 +245,7 @@ def run_cargo_observation(root: object, spec: Step) -> tuple[int, list[str], lis
             code = 0
             seen_ok: list[str] = []
             findings: list[Finding] = []
+            recovered_after_incomplete = False
             for attempt in range(attempts):
                 code, text, run_findings = _run_cargo(
                     cwd,
@@ -256,12 +259,24 @@ def run_cargo_observation(root: object, spec: Step) -> tuple[int, list[str], lis
                     required,
                     cargo_exit=code,
                 )
+                incomplete = _has_observe_incomplete(observe_findings)
                 # Replace prior attempt findings so a successful retry is clean.
                 findings = list(run_findings) + list(observe_findings)
-                if not _has_observe_incomplete(observe_findings):
+                if not incomplete:
+                    if attempt > 0:
+                        recovered_after_incomplete = True
                     break
                 if attempt + 1 >= attempts:
                     break
+            if recovered_after_incomplete and code == 0:
+                findings.append(
+                    Finding(
+                        "observe_cargo",
+                        Severity.LOW,
+                        _OBSERVE_RETRIED,
+                        "cargo recovered after incomplete retry (evidence, not SoT)",
+                    )
+                )
             build = _mapping(spec, "build")
             # Timeout / missing cargo: do not spend a second wall-clock budget on build.
             # Non-zero test status still builds so emit_tenant can ingest fail.

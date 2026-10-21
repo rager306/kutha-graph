@@ -217,7 +217,9 @@ def _apply_cargo_pack(
 ) -> None:
     code, seen_ok, findings = packed
     outcome.findings.extend(findings)
-    status = "ok" if code == 0 and not findings else "fail"
+    # M147: LOW breadcrumbs (observe-retried / future dogfood) must not mark fail.
+    high = any(f.severity is Severity.HIGH for f in findings)
+    status = "ok" if code == 0 and not high else "fail"
     outcome.observations.append(("cargo", status))
     for name in seen_ok:
         outcome.evidence.append((name, "ok"))
