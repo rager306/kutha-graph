@@ -134,6 +134,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.24 | 204 | M130 | S01 | selftest parallel submit-failure serial backstop | shipped |
 | v1.25 | 205 | M131 | S01 | yaml_map_list empty select fail-closed | shipped |
 | v1.26 | 206 | M132 | S01 | reconcile_uncommitted_tip sync_all after set_len | shipped |
+| v1.27 | 207 | M133 | S01 | migrate_compat calls op-wire before pins | shipped |
 
 F1-F16 = docs/architecture/semantic-gap-review.md; A-F01-A-F14 = 2026-10-02 audit.
 

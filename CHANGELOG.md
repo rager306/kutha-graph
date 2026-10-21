@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: M133 / GSD v1.27 closed
+
+Process tag **v1.27** / Phase **207**. Not a SemVer release.
+
+- `migrate_compat` order oracle: `migrate_op_wire` precedes `migrate_pins`. Oracle `migrate_compat_calls_op_wire_before_pins`. Matrix `SEM-m133-migrate-compat-order` killed. Kill: swap call order (SEM-m076 markers alone stay green under that mutation).
+- `L_delivery=M133-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.27 / Phase 207. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-21 — Trajectory: lease M133-S01 (migrate_compat call order)
 
 Process tag **v1.27** / Phase **207**. Not a SemVer release.
