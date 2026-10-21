@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: lease M136-S01 (retract N-scaling)
+
+Process tag **v1.30** / Phase **210**. Not a SemVer release.
+
+- Active Milestone **M136**, Active Slice **S01** (`L_delivery=M135-closed`): N derived + N retracts examine scaling. Honeycomb stays Proposed.
+
 ## 2026-10-21 — Trajectory: M135 / GSD v1.29 closed
 
 Process tag **v1.29** / Phase **209**. Not a SemVer release.
