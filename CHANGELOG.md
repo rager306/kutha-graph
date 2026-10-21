@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-21 — Trajectory: M142 / GSD v1.36 closed
+
+Process tag **v1.36** / Phase **216**. Not a SemVer release.
+
+- `observe-skipped-breadcrumb`: dropped assert-snippet needles; pins fsm wiring + `test_second_observe_cargo_notes_skip_after_prior_high`. Matrix `SEM-m142-observe-skipped-behavioral` killed. Budget still 97.
+- `L_delivery=M142-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.36 / Phase 216. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-21 — Trajectory: lease M142-S01 (observe-skipped behavioral)
 
 Process tag **v1.36** / Phase **216**. Not a SemVer release.

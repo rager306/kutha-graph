@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M142: observe-skipped-breadcrumb behavioral (de-text-couple) — ACTIVE (GSD v1.36)
+## M142: observe-skipped-breadcrumb behavioral (de-text-couple) — CLOSED (GSD v1.36)
 
 CE residual after M137–M141: observe-skipped-breadcrumb still pins assert-snippet needles (`category == "observe-skipped"`, `prior-high`) that rot independently of FSM behavior. Thin slice: keep fsm wiring + pytest name; drop assert snippets. Honeycomb stays Proposed. Budget stays 97.
 
-- [ ] **S01: observe-skipped de-text-couple** `risk:low` `depends:[]`
-  > After this: matrix `SEM-m142-observe-skipped-behavioral` killed. Phase 216.
+- [x] **S01: observe-skipped de-text-couple** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m142-observe-skipped-behavioral` killed. Phase 216. Landed.
 
 ## M141: parallel-context-flags behavioral (de-text-couple) — CLOSED (GSD v1.35)
 
