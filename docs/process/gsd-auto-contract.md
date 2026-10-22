@@ -218,6 +218,14 @@ Executor-written tests and governor observations are evidence, not verification.
 
 Per phase: at most two PLAN files of 150 lines or fewer, one SUMMARY of 60 lines or fewer, one VERIFICATION of 60 lines or fewer, one CONTEXT of 80 lines or fewer. No per-plan evidence JSON. Exceeding the budget stops the phase for a decision. Phase 28 turns this into a governor check. Reference for scale: v0.05 produced 1,107 planning lines for its last phase alone.
 
+## Harness moratorium (2026-10-22)
+
+The owner accepted a moratorium after M148-M151 spent four milestones on cargo observe output while the product stayed a spike. Rule: a new **harness** milestone (a change under `scripts/kutha_gov/`, `.kutha/dictionaries/`, or a new governor check) needs a RED that actually fired, meaning a CI run, a review finding, or a product slice that could not close without it. A speculative dogfood pass is not enough. Otherwise the next lease is a product slice, or hygiene that edits no harness code.
+
+- A harness change that a product slice needs (a check pinning an invariant the same slice introduces) is allowed inside that slice; it does not need its own milestone.
+- The lease commit names the fired RED (log line, finding id, or failing command) in its ROADMAP entry. A lease without one is a stop condition below.
+- This rule does not thaw anything and does not change the lifecycles. Direction and order live in `.compound-engineering/artifacts/research/2026-10-22-long-horizon-direction-roadmap.md` (a proposal, not a roadmap SoT).
+
 ## Stop conditions
 
-Stop and ask the controller when: an item outside the leased slice's thaw gate would be thawed (2026-10-03); an oracle assertion must change; a phase exceeds its budget; a RED oracle passes on current code (the finding is wrong); the product needs a decision that ADR-000 D1–D10 does not allow.
+Stop and ask the controller when: a harness-milestone lease names no fired RED (moratorium above); an item outside the leased slice's thaw gate would be thawed (2026-10-03); an oracle assertion must change; a phase exceeds its budget; a RED oracle passes on current code (the finding is wrong); the product needs a decision that ADR-000 D1–D10 does not allow.

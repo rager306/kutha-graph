@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-22 — Process: harness moratorium
+
+### Changed
+
+- `docs/process/gsd-auto-contract.md`: new § Harness moratorium. A new harness milestone needs a RED that fired in CI or review; a lease without one is a stop condition. Docs only; no check added, budget stays 104.
+- Direction proposal (order B, C, A; proposal only, nothing thawed): `.compound-engineering/artifacts/research/2026-10-22-long-horizon-direction-roadmap.md`. CE handoffs and audit artifacts that were untracked are now tracked.
+
 ## 2026-10-22 — Trajectory: lease M152-S01 (Arc 0 hygiene)
 
 Process tag **v1.46** / Phase **226**. Not a SemVer release.
