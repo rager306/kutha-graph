@@ -12,6 +12,7 @@ from kutha_gov.config import ENV_FAIL_ON_WARN, env_flag, load_dotenv, resolve_bu
 from kutha_gov.dictionary import DICT_REL, DictCheck
 from kutha_gov.fsm import FSM_REL, load_machine, run_quantum
 from kutha_gov.honeycomb import MAP_REL, format_map, load_map, neighborhood, resolve_cell_id
+from kutha_gov.observe import _OBSERVE_RETRIED
 from kutha_gov.parallel import run_checks_parallel
 from kutha_gov.protocol import CheckResult, Context, Severity
 from kutha_gov.selftest import format_row, run_selftest
@@ -193,8 +194,10 @@ def cmd_ci(ctx: Context, *, budget: int) -> int:
         rung = "H4"
     if any(rel == "h5_selftest" for rel, _obj in outcome.evidence):
         rung = "H5"
+    observe_retried = sum(1 for f in outcome.findings if f.category == _OBSERVE_RETRIED)
     print(
-        f"\nharness: run_high={outcome.high} run_low={outcome.low}, "
+        f"\nharness: run_high={outcome.high} run_low={outcome.low} "
+        f"observe_retried={observe_retried}, "
         f"{len(outcome.results)} checks  ({rung} dogfood)"
     )
     if outcome.skipped:

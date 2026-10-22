@@ -2724,6 +2724,17 @@ rows:
     gate: default
     owner: M147-S01
     source: Phase 221 / dogfood observe-retried breadcrumb
+  - id: SEM-m148-observe-retried-summary
+    plane: harness
+    invariant: ci harness summary always prints observe_retried=N next to run_high/run_low
+    layer: kill
+    oracle:
+      - observe-retried-summary
+    kill_mutation: drop observe_retried= from cmd_ci harness line; or drop test_cmd_ci_prints_observe_retried_count
+    status: killed
+    gate: default
+    owner: M148-S01
+    source: Phase 222 / dogfood observe_retried summary label
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

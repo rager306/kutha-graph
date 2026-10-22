@@ -8,7 +8,11 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 Process tag **v1.42** / Phase **222**. Not a SemVer release.
 
-- Active Milestone **M148**, Active Slice **S01** (`L_delivery=M147-closed`): ci summary prints observe_retried=N. Honeycomb stays Proposed.
+- Active Milestone **M148**, Active Slice **S01** (`L_delivery=M148-S01`): ci summary prints observe_retried=N. Honeycomb stays Proposed.
+
+### Fixed (process)
+
+- `cmd_ci` always prints `observe_retried=N` (count of LOW `_OBSERVE_RETRIED` findings) next to `run_high` / `run_low`. Check `observe-retried-summary`; budget 100→101. Matrix `SEM-m148-observe-retried-summary` killed. Label contract via pytest (not `observe_retried=` file_contains needles).
 
 ## 2026-10-22 — Trajectory: M147 / GSD v1.41 closed
 

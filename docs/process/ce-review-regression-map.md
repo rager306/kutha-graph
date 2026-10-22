@@ -70,6 +70,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | cargo exit 101 mints N× observe-missing | `SEM-m145-observe-incomplete` | `observe-incomplete-honesty` / `test_cargo_incomplete_collapses_missing_when_exit_nonzero` | M145-S01 |
 | cargo incomplete fails quantum without retry | `SEM-m146-observe-retry` | `observe-retry-incomplete` / `test_observe_retries_once_on_incomplete_then_succeeds` | M146-S01 |
 | cargo pack fails on LOW; silent retry recovery | `SEM-m147-observe-retried` | `observe-retried-breadcrumb` / `test_observe_emits_retried_low_after_incomplete_recovery` | M147-S01 |
+| observe-retried invisible in ci summary | `SEM-m148-observe-retried-summary` | `observe-retried-summary` / `test_cmd_ci_prints_observe_retried_count` | M148-S01 |
 | #5 kinds-split oracle was test-matrix | `SEM-m054-id-kinds-split` | `kinds-family-split` | M098-S01 |
 | Correct/CorrectInterval of Behavior leaves retract indexes | `SEM-m100-correct-unindex-behavior` | `correct_of_behavior_drops_retract_index`, `correct_interval_of_behavior_drops_retract_index` | M100-S01 |
 | rule-pin VT truncation (pin starts after the trigger) | `SEM-m101-horn-pin-overlap` | `late_starting_rule_pin_fires_on_overlap` | M101-S01 |

@@ -1787,6 +1787,33 @@ checks:
           pattern: '"observe-retried"'
           with: '"observe-retry-mark"'
 
+  - id: observe-retried-summary
+    description: >-
+      ci harness summary always prints observe_retried=N (M148 / Phase 222).
+      Label contract via pytest — not observe_retried= file_contains needles.
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/__main__.py
+        needles:
+          - "from kutha_gov.observe import _OBSERVE_RETRIED"
+        require: all
+        category: oracle
+        message: "observe_retried summary wiring missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_ci_summary_labels.py
+        needles:
+          - "def test_cmd_ci_prints_observe_retried_count"
+          - "def test_cmd_ci_prints_run_high_and_tip_high"
+        require: all
+        category: oracle
+        message: "observe_retried summary pytest missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/__main__.py
+          pattern: "from kutha_gov.observe import _OBSERVE_RETRIED"
+          with: "from kutha_gov.observe import _OBSERVE_INCOMPLETE as _UNUSED_RETRIED"
+
   - id: fixed-tmp-persist-dir
     description: >-
       Crates must not use Path::new("tmp/…") or .join("tmp").join("literal") for

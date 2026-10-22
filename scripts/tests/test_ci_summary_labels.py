@@ -12,7 +12,6 @@ from kutha_gov.fsm import QuantumOutcome
 from kutha_gov.protocol import CheckResult, Context, Finding, Severity
 from kutha_gov.time_log import HarnessFold
 
-
 ROOT = Path(__file__).resolve().parents[2]
 
 
@@ -41,7 +40,41 @@ class CiSummaryLabelTests(unittest.TestCase):
         self.assertIn("run_high=0", text)
         self.assertIn("tip_high=5", text)
         self.assertIn("tip_last=fail", text)
+        self.assertIn("observe_retried=0", text)
         self.assertNotRegex(text, r"(?m)^harness: \d+ HIGH")
+
+    def test_cmd_ci_prints_observe_retried_count(self) -> None:
+        """M148: harness line surfaces observe-retried LOW count for dogfood."""
+        outcome = QuantumOutcome(terminal="ok", trace=["ok"])
+        outcome.high = 0
+        outcome.low = 1
+        outcome.results = [CheckResult(check="x")]
+        outcome.findings = [
+            Finding(
+                "observe_cargo",
+                Severity.LOW,
+                "observe-retried",
+                "cargo recovered after incomplete retry",
+            )
+        ]
+        picture = HarnessFold()
+        picture.run_count = 1
+        picture.last_run = "ok"
+        picture.last_high = 0
+        picture.last_cargo = "ok"
+        picture.last_tenant = "ok"
+        ctx = Context(root=ROOT, skip_cargo=True)
+        buf = StringIO()
+        with (
+            mock.patch("kutha_gov.__main__.run_quantum", return_value=outcome),
+            mock.patch("kutha_gov.__main__.fold_log", return_value=picture),
+            mock.patch("sys.stdout", buf),
+        ):
+            code = cmd_ci(ctx, budget=1)
+        text = buf.getvalue()
+        self.assertEqual(0, code)
+        self.assertIn("observe_retried=1", text)
+        self.assertIn("run_high=0", text)
 
 
 if __name__ == "__main__":

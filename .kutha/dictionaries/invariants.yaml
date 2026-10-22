@@ -417,6 +417,12 @@ invariants:
     disposition: check
     check: observe-retried-breadcrumb
 
+  - id: I-observe-retried-summary
+    claim: "ci harness summary prints observe_retried=N; label contract via pytest; SEM-m148"
+    source: ".planning/phases/222-observe-retried-summary/222-VERIFICATION.md"
+    disposition: check
+    check: observe-retried-summary
+
   - id: I-fixed-tmp-persist-dir
     claim: "crates must not Path::new(\"tmp/…\") or .join(\"tmp\").join(\"…\") for persist/open; SEM-m122 / SEM-m123"
     source: ".planning/phases/197-fixed-tmp-join/197-VERIFICATION.md"
