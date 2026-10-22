@@ -1,0 +1,580 @@
+{
+ "run_id": "20261015-195140-3185bb1c",
+ "branch": "chore/m013-roadmap-reset",
+ "head_sha": "5dd5338202c18e239bb3ed5b26a20ad2cc215684",
+ "findings": [
+  {
+   "#": 1,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "evidence": [
+    "    let snap = dir.join(SNAPSHOT_JSON);"
+   ],
+   "file": "crates/kutha-runtime/src/store.rs",
+   "first_evidence": "    let snap = dir.join(SNAPSHOT_JSON);",
+   "id": "P1-pincite-stale-justifications-sidecar",
+   "independent_reviewers": [
+    "PersistReliability"
+   ],
+   "line": 413,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "PersistReliability"
+   ],
+   "severity": "P1",
+   "suggested_fix": "In migrate_pin_cite, remove justifications.jsonl alongside snapshot.json (it is a regenerable lease; next persist rewrites it), or rewrite it from the remapped events. Audit migrate_op_wire/migrate_pin_wire the same way (their remaps do not touch cite pins, so they are safe today, but assert it with an oracle).",
+   "title": "migrate_pin_cite leaves stale justifications sidecar; reopen fails",
+   "why_it_matters": "migrate_pin_cite remaps JustificationCite rule_version pins in the log but deletes only snapshot.json, leaving justifications.jsonl (a lease of log cite rows, Justification.rule_version is a pin string) with legacy pins. On next open, finish_open runs sidecar_or_stale_prefix (store.rs:1091-1097,1103-1113) which fails InvalidData because the stale sidecar is no longer a prefix of log-derived rows. Any pre-RULE-01 store that persisted while containing cites — the exact migration population — is bricked until the operator hand-deletes justifications.jsonl. Existing oracles (m072, m076) persist before appending cites, so the sidecar is empty and the prefix check is vacuous; the brick path has no oracle."
+  },
+  {
+   "#": 2,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "evidence": [
+    "let rss_before = vm_rss_bytes();"
+   ],
+   "file": "crates/kutha-runtime/benches/baseline.rs",
+   "first_evidence": "let rss_before = vm_rss_bytes();",
+   "id": "P1",
+   "independent_reviewers": [
+    "PerfContractStructure"
+   ],
+   "line": 143,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "PerfContractStructure"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Capture rss_before immediately before the dedicated sample alloc (after the factor loops), ideally with allocator trim, or measure the sample in a child process / via allocator stats; document denominator as sample live only.",
+   "title": "Bench RSS delta covers unrelated runtimes",
+   "why_it_matters": "rss_before is captured before all 6 benchmark runtimes (plain+keyed at 1x/2x/4x), while rss_after is divided by the dedicated sample live count only (n). Delta therefore covers ~15n facts of allocator high-water that is never returned, inflating bytes_per_fact ~15x and making mode comparisons meaningless; #15 fixed only the after side (sample kept alive to line 339) but left the before side misplaced."
+  },
+  {
+   "#": 3,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "evidence": [
+    "let live: Vec<EventId> = self.live_behaviors.clone();"
+   ],
+   "file": "crates/kutha-runtime/src/eval.rs",
+   "first_evidence": "let live: Vec<EventId> = self.live_behaviors.clone();",
+   "id": "P2",
+   "independent_reviewers": [
+    "PerfContractStructure"
+   ],
+   "line": 205,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "PerfContractStructure"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Index the second phase by (subject, relation) or premise event via horns_by_premise/facts_by_relation so only behaviors whose body could mention the dead premise are re-checked; or record reverse premise edges at fire time.",
+   "title": "Retract path scans all live behaviors per trigger",
+   "why_it_matters": "After the indexed direct-children phase, every retract/correct still clones and walks the full live_behaviors vector with horn_body_matches_except per entry. N retracts over D live derived is O(N*D); retract_examine bumps per live behavior so instrumented tests will show linear examine counts per retract, the same cliff shape as the original full-log scan at smaller constant."
+  },
+  {
+   "#": 4,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "evidence": [
+    "search_prems(self, &premises, i, bind, valid_from, u64::MAX, &no_dead)"
+   ],
+   "file": "crates/kutha-runtime/src/eval.rs",
+   "first_evidence": "search_prems(self, &premises, i, bind, valid_from, u64::MAX, &no_dead)",
+   "id": "H1",
+   "independent_reviewers": [
+    "CorrectnessHorn"
+   ],
+   "line": 350,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "CorrectnessHorn"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Make premise discovery overlap-aware instead of point-gated: collect candidate premise facts whose VT overlaps the trigger window (valid_from < trigger_to and valid_to > trigger_from, with None as +inf) and conjunct each candidate window, rather than only facts live at trigger valid_from. At minimum, retry search at each distinct candidate valid_from within the trigger window or iterate all overlapping combinations.",
+   "title": "Horn discovery misses late-starting premise overlap",
+   "why_it_matters": "Multi-premise Horn discovery is point-gated on the trigger valid_from, so an overlapping premise that starts later is never found and the conjoined head is silently missed, order-dependently. Concrete: register two-premise relatedTo rule; Assert AB [2015,2020) first; Assert BC trigger [2010,None) second. At the BC trigger, search_at filters other premises via live_facts_for_relation(rel, MAX, vt=2010) (eval.rs:619), and AB [2015,2020) is not live at vt=2010, so search returns None and no AC head is emitted even though the conjunction [2015,2020) is non-empty. Reverse insertion order (BC first, AB trigger at 2015 with BC live at 2015) does derive [2015,2020). Same logical state yields different derived sets depending on insertion order; as_of misses the derived triple in one order."
+  },
+  {
+   "#": 5,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "evidence": [
+    "      - test-matrix"
+   ],
+   "file": "docs/architecture/test-matrix.yaml",
+   "first_evidence": "      - test-matrix",
+   "independent_reviewers": [
+    "TestingOracles"
+   ],
+   "line": 1769,
+   "owner": "human",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "TestingOracles"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Change oracle to name the pytest oracle (or enroll a dictionary file_contains check on test_m054_id_structure.py needles the way parallel-check-error-parity enrolls its pytest), so the meta-check actually requires the oracle to exist.",
+   "test": "SEM-m054-id-kinds-split oracle field",
+   "title": "SEM-m054-id-kinds-split oracle field is self-certifying",
+   "why_it_matters": "The oracle field names the test-matrix governor meta-check, which validates matrix-level consistency (schema, named oracles exist, owners parse) — none of which observes kinds.py family placement. Re-inlining the planning/cargo/matrix families into kinds.py keeps every test-matrix assertion green; the only real tripwire (scripts/tests/test_m054_id_structure.py) is named solely inside kill_mutation text, so the row's killed status is self-certifying rather than oracle-backed."
+  },
+  {
+   "#": 6,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "evidence": [
+    "self.steps = [step for step in raw_steps if isinstance(step, dict)]"
+   ],
+   "file": "scripts/kutha_gov/dictionary.py",
+   "first_evidence": "self.steps = [step for step in raw_steps if isinstance(step, dict)]",
+   "id": "GOV-NEW-03",
+   "independent_reviewers": [
+    "GovernorAdversarial"
+   ],
+   "line": 29,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "GovernorAdversarial"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Validate at load: row steps must be a non-empty list (else LoadError entry alongside survivors, per #20 pattern). Add oracle: stepless/scalar-steps row → HIGH load on get_checks.",
+   "title": "Scalar or missing steps yield vacuous OK check",
+   "trigger": "A check row with `steps: [just-a-string]`, `steps: not-a-list`, or a missing `steps:` key (scalar-row typo of the #23 class, or forgotten key), then `kutha-gov precommit --check <id>` or `json --check <id>`.",
+   "why_it_matters": "Named-check OK with zero executed steps is the textbook silent pass; the --check subset surfaces report it without any hint that the check is vacuous. Consequence: DictCheck holds zero steps; run() iterates nothing and returns a finding-free result that prints `OK <id>` / `\"passed\": true` while zero oracles ran. Mitigating backstop (not a fix): full `selftest` classifies the stepless check UNPROVEN (selftest.py:323-324) and fails red — unless the row also carries a selftest.skip reason, in which case it SKIP-passes having run nothing."
+  },
+  {
+   "#": 7,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "evidence": [
+    "if not isinstance(row, dict):"
+   ],
+   "file": "scripts/kutha_gov/dictionary.py",
+   "first_evidence": "if not isinstance(row, dict):",
+   "id": "GOV-NEW-01",
+   "independent_reviewers": [
+    "GovernorAdversarial"
+   ],
+   "line": 90,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "GovernorAdversarial"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Mirror the nameless handling: collect non-mapping rows into a LoadError alongside survivors (fail closed, keep valid checks per #20 precedent), plus a test_selftest.py-style oracle (valid rows survive + HIGH present).",
+   "title": "Scalar rows in checks.yaml silently skipped",
+   "trigger": "Append `- just-a-string` (or `42`) under `checks:` in .kutha/dictionaries/checks.yaml, then run `kutha-gov precommit`, `ci`, `json`, `selftest`, or `list`.",
+   "why_it_matters": "Governor constitution claims fail-closed dictionary handling (META.md unknown-kind HIGH, CE #20 nameless-row LoadError). Scalar rows evade every surface: the config mistake is invisible exactly where the governor is supposed to catch config mistakes. Consequence: Loader `continue`s silently: no LoadErrorCheck, no HIGH from any check (no dictionary self-structure oracle exists — checks.yaml has require_fields/unique for invariants/bridges/honeycomb rows but none for select checks), `list` hides the row, full `ci` stays green while the malformed row never ran. Same silent-filter class as prior #23, which was fixed for the test matrix but never reached the governor dictionary. Loader code unchanged since before dd38c95 (diff empty), but dictionary.py is explicitly in this review's scope."
+  },
+  {
+   "#": 8,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "evidence": [
+    "found[check.name] = check"
+   ],
+   "file": "scripts/kutha_gov/dictionary.py",
+   "first_evidence": "found[check.name] = check",
+   "id": "GOV-NEW-02",
+   "independent_reviewers": [
+    "GovernorAdversarial"
+   ],
+   "line": 97,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "GovernorAdversarial"
+   ],
+   "severity": "P2",
+   "suggested_fix": "Track seen ids in get_checks; on duplicate, keep-first plus LoadErrorCheck naming the dup id (fail closed, survivors keep running). Add an oracle (duplicate-id row → HIGH load) and consider a dictionary self-check `unique: id` on select checks.",
+   "title": "Duplicate check ids silently overwrite",
+   "trigger": "Duplicate an existing check id in checks.yaml (e.g. second `id: docs-entry` row with weaker steps, via bad merge or edit), then run any surface including full `kutha-gov ci`.",
+   "why_it_matters": "A duplicated id permanently retires the original check's oracles with zero signal on any surface; diff review is the only backstop for a fail-closed governor. Consequence: Last row silently overwrites the first in the loader dict: the stronger check's oracles never run, everything prints OK/green, and no oracle fires — no `unique: id` / require_fields check exists on select checks (the invariants-ledger step at checks.yaml:986-994 only cross-refs ids into ledgers, never uniqueness), and selftest proves only the surviving row."
+  },
+  {
+   "#": 9,
+   "autofix_class": "gated_auto",
+   "confidence": 100,
+   "evidence": [
+    "        if arg == \"-h\" || arg == \"--help\" {"
+   ],
+   "file": "crates/kutha-runtime/src/bin/kutha-migrate.rs",
+   "first_evidence": "        if arg == \"-h\" || arg == \"--help\" {",
+   "id": "P3-cli-help-and-args",
+   "independent_reviewers": [
+    "PersistReliability"
+   ],
+   "line": 13,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "PersistReliability"
+   ],
+   "severity": "P3",
+   "suggested_fix": "Return exit 0 after --help (stdout), reject argc>2 with usage+exit 2, and document that the target dir must exist (or create it to match library semantics).",
+   "title": "kutha-migrate --help exits 2 and extra args ignored",
+   "why_it_matters": "--help prints usage to stderr and exits 2 instead of 0, breaking standard CLI contracts and scripts; extra positional args (kutha-migrate dir extra) are silently ignored instead of rejected; a nonexistent path is rejected with exit 2 while the library migrate_compat would create_dir_all it. Observable: help looks like failure; typos in argv go unnoticed."
+  },
+  {
+   "#": 13,
+   "autofix_class": "manual",
+   "confidence": 75,
+   "evidence": [
+    "    // Torn tail after last newline is dropped (same policy as read_jsonl_events)."
+   ],
+   "file": "crates/kutha-runtime/src/store.rs",
+   "first_evidence": "    // Torn tail after last newline is dropped (same policy as read_jsonl_events).",
+   "id": "P3-migrate-drops-uncounted",
+   "independent_reviewers": [
+    "PersistReliability"
+   ],
+   "line": 491,
+   "owner": "downstream-resolver",
+   "pre_existing": false,
+   "requires_verification": true,
+   "reviewers": [
+    "PersistReliability"
+   ],
+   "severity": "P3",
+   "suggested_fix": "Count dropped tail records/lines per source in the op-wire/pin rewrites and surface them in OpWireMigrateReport/PinWireMigrateReport (or fail-closed on torn tails).",
+   "title": "Op-wire and pin rewrites drop torn tails without count",
+   "why_it_matters": "migrate_op_wire/migrate_pin_wire/migrate_pin_cite silently drop torn jsonl tails (read_jsonl_values) and truncated/CRC-bad WAL/segment tails (recover_json_values) with no dropped count in their reports, unlike migrate() which reports dropped_uncommitted. An operator cannot tell a rewrite lost tail records; matrix honesty gap."
+  }
+ ],
+ "pre_existing_findings": [],
+ "residual_risks": [
+  "Single-combination DFS: search_at returns the first matching premise combination only, so even with overlap-aware discovery a trigger overlapping two disjoint residuals of the same premise relation derives only one head window; full coverage needs all-combination enumeration.",
+  "Rule-pin gating is also point-based (live_horns filters pin live at trigger valid_from), so a pin whose window starts after the trigger start is skipped even though the three-way conjunction is non-empty; typically masked because pins are open-ended.",
+  "migrate() verify-failure rollback removes manifest.json + sync_dir (store.rs:594-603) but leaves the just-written generation-unique seg files as orphans; cleanup happens only on the next persist_log/migrate via remove_obsolete_segments, so an abandoned failed migrate leaks disk and leaves confusing seg files next to a legacy store.",
+  "migrate_compat/migrate_pins drop and reacquire kutha.lock between chained steps (each step locks independently); a concurrent second operator CLI interleaves but converges via idempotency markers — reviewed, no defect, but the window is untested.",
+  "reconcile_uncommitted_tip truncates with set_len + sync_data (persist_append.rs:312-340); on platforms where fdatasync does not persist size changes, a power loss could resurrect the suffix — next open heals via tail checks, so fail-closed, but prefer sync_all after truncation.",
+  "Pin-cite orphan policy (marker stamped, unmappable cites left) means evidence added after migration never applies on rerun; documented idempotency, operator must delete pin-cite.v1 — confirm this is stated in operator docs, not just code comments.",
+  "kinds.py:791 — generic yaml_map_list silently drops non-dict rows (`maps = [row for row in rows if isinstance(row, dict)]`), so scalar rows in invariants/bridges/honeycomb.yaml are invisible even to their require_fields/unique oracles. Same #23 class, pre-existing, out of the M057-M090 diff; loader-level fail-closed (GOV-NEW-01 pattern) would cover all dictionaries at once.",
+  "Generic yaml_map_list has no min-rows concept: an empty select list passes all require/unique/cross-ref steps vacuously (only checks.yaml-itself has an empty guard via LoadError, and test-matrix has the non-empty-rows guard at kind_matrix.py:138). Pre-existing; no live instance observed.",
+  "selftest parallel path (_run_selftest_parallel, selftest.py:189-230) has no submit-failure serial backstop unlike run_checks_parallel: a pool submit failure propagates as an exception. Loud/fail-closed (no silent pass), but un-oracled and inconsistent with the #34 at-most-once hardening.",
+  "VERIFIED-CLEAN (explicit split check, no action): RUNNERS vs ALLOWED_KINDS aligned 26/26 with identical names after the kind_cargo/kind_matrix/kind_planning splits (3 kinds added in-range for M058/M060/M061: disk_free, budget_covers_checks, env_int_at_least). DERIVABLE_KINDS covers 24/26; git_path_implies is covered by the docs-coupling explicit skip (checks.yaml:838-839) and yaml_needles_in_glob has zero dictionary users so its runner path is live-unexercised — first future use ships without a live oracle until selftest proves it.",
+  "kinds.py still 2292 lines with RUNNERS dispatch inline (#21 partial): file_max_lines/glob_max_lines governance pressure remains; further family splits (cite/refs/rust-asserts) still pending.",
+  "Lazy cold path: live_facts_for_relation falls back to full live_facts_at scan when hot_maps not warm (fold_query.rs:26-31); Horn firing before ensure_fold_indexes stays O(all facts) per premise.",
+  "Retract cascade retains O(live_derived) per-trigger cost even after indexing (P2/P3); large derived graphs need a benchmark guard before close.",
+  "RSS allocator high-water retention means even a correctly placed before/after pair overstates steady-state bytes_per_fact on glibc/jemalloc without trim.",
+  "Text-coupled governor oracles (parallel-check-error-parity file_contains needles, kinds-split text needles, agent-surface doc needles) can rot independently of behavior: a correct refactor that rewords parallel.py or the docs flips them red, while a behavioral regression preserving the needles stays green.",
+  "Multi-check CLI oracles double as live-tree health checks; a red live tree masks M077/M079/M085/M086 selection regressions and vice versa.",
+  "Op-migrate facade rows (SEM-m075/m076/m078) are covered by exact remap-count tests today, but no test asserts migrate_compat ordering (op-wire before pins) beyond marker presence — a swapped sequence with both markers stamped would pass.",
+  "Demoted from primary (P3 crates/kutha-common/src/event.rs:283 — Synthesized migration Define ids randomize per retry. Use Event::stable_define for synthesized Defines so Define ids are content-stable across retry runs.)",
+  "Demoted from primary (P3 crates/kutha-runtime/src/fold_query.rs:553 — Policy pin election scans all buckets per admission. Maintain a max-ingested live-policy pointer (or per-pin liveness + ordered set) updated on push/invalidate instead of scanning all buckets per admission.)",
+  "Demoted from primary (P3 scripts/kutha_gov/__main__.py:33 — Empty --check flag runs full suite instead of failing closed. Change the _select_checks guard to `if check_id is None:` so \"\" flows into _parse_check_ids and hits the empty-token exit-2 path; add oracle `--check \"\"` → exit 2 for precommit/json/selftest.)",
+  "Anchor-50 reliability note (P2 crates/kutha-common/src/intern.rs:45 — Mixed-source duplicate Define can skew TermIds. Enforce emit-once per name in rewrite_op_wire_values (track emitted names; drop redundant modern Defines so output Define order equals dict.intern order) and make TermDictionary::from_strings keep-fir)",
+  "Anchor-50 reliability note (P2 crates/kutha-runtime/src/pipeline.rs:57 — unindex_behavior scans every cause bucket. Store reverse pointer (cause per behavior id) and remove from the single bucket in O(1) instead of scanning all values; retain empty-bucket cleanup.)",
+  "Anchor-50 reliability note (P3 crates/kutha-runtime/src/pipeline.rs:85 — Correct of Behavior facts leaks index entries. Unindex (or lazily filter) the target when Correct/CorrectInterval invalidates a Behavior fact, mirroring the Retract arm.)"
+ ],
+ "testing_gaps": [
+  "No oracle for late-starting non-trigger premise overlap (AB starts after BC trigger start) asserting order-independent derivation.",
+  "No oracle for rule-pin VT truncation (narrow pin window intersecting wide premise windows).",
+  "No oracle for multi-residual premise combinations (one premise with two disjoint live windows overlapping one trigger).",
+  "No oracle persists a store containing legacy-pin JustificationCite rows (non-empty justifications.jsonl) and then runs migrate_pin_cite/migrate_compat + open — the P1 brick path; m072/m076 always persist before appending cites, leaving the sidecar empty.",
+  "No oracle for legacy-before-modern mixed source with shared interned terms asserting single-Define output and post-open TermId stability (P2).",
+  "No CLI tests for --help exit code (expect 0), extra-arg rejection, or empty-arg handling (m078 covers only success/idempotency/missing-dir).",
+  "No assertion on dropped-tail counts in op-wire/pin migrate reports (reports lack the field entirely, unlike MigrateReport.dropped_uncommitted).",
+  "M079/M085/M086 append oracles assert inclusion only (assertIn both ids + exit 0) never exclusivity: a regression that drops the filter and runs the full suite still passes them whenever the live tree is green (e.g. _join_check_flags returning None). Missing assertions: json payload check-count == 2, or assertNotIn a third check id for precommit/selftest.",
+  "No oracle for the `--check \"\"` empty-string shape (GOV-NEW-04): M077 covers the trailing-comma shape (`docs-entry,` → exit 2) but not the single-empty-flag shape that fails open to the full suite.",
+  "No loader fail-closed oracles for scalar rows, duplicate ids, or scalar/missing steps in checks.yaml (GOV-NEW-01/02/03): the CE #20 nameless-row oracle exists (test_selftest.py:497-501), but its sibling shapes are uncovered and no dictionary self-structure check (require_fields/unique on select checks) exists, unlike the matrix schema/row oracles from #22/#23.",
+  "CBM index on kutha-graph is fresh at HEAD (2026-10-15, full mode, all 12 cited paths metadata_match, no_recorded_issue); structural claims above were additionally grounded in direct source reads, which remain the arbiter for dispatch-table edges.",
+  "No bench/test asserting bytes_per_fact denominator isolation (delta attributable to sample only) or RSS high-water handling.",
+  "No retract scaling oracle: N derived + N retracts asserting sublinear retract_examine growth; current second-phase scan would fail it.",
+  "No Correct-of-Behavior index-hygiene test (live_behaviors/derived_by_cause lengths after Correct targeting a Behavior).",
+  "No many-policy admission scaling test (live_policy_pin_at bump counts vs policy count).",
+  "No reopen test pinning kinds.py line-count ceiling after the partial split (2897 -> 2292) to prevent regrowth.",
+  "No ingest-bound oracle (oversize harness log / oversize membership object) — acceptable while the harness log stays a local operator artifact; add only with a remotely-influenced input.",
+  "No negative test asserting KUTHA_RELATIONS_PATH pointing outside the repo fails closed to deny-all rather than falling back to the default dictionary — load_allowed_names error arm (allow.rs:56-59) covers it by construction but has no dedicated case.",
+  "try_persist_with_layout Rollover accept branch uncovered: m053 oracle exercises only the empty-runtime reject path (sealed=0 -> false), so an always-false mutant stays green; no test builds a sealed>=2 store and asserts true. crates/kutha-runtime/tests/m053_ce_review_regressions.rs:109-124",
+  "m055 exact-sequence oracle is graph-ids only (Define EventIds excluded by construction): a retry path that duplicates Define frames while keeping graph ids unique is invisible to both failpoint tests. crates/kutha-runtime/tests/m055_append_tip_rollback.rs:51-59",
+  "Manifest-removal sync durability unproven behaviorally: no oracle models a crash between remove_file(manifest) and return in the migrate verify-fail unflip path, so the sync_dir ordering pin has no crash-shaped execution behind it. crates/kutha-runtime/tests/m056_persist_heal.rs:159-211",
+  "Scaling oracles trust self-reported bump counters with no enforcement that every scan path bumps: a future (or unnoticed current) O(N) loop that omits bump() is bounded-green by construction. Nothing today fails if a new full-scan path forgets its counter (cf. eval.rs:414-415 fallback loop vs 388-389 indexed loop). crates/kutha-runtime/src/eval.rs:414-415",
+  "Anchor-50 oracle weakness (P3 crates/kutha-runtime/tests/m052_cascade_atomic.rs:26 — Cascade atomicity snapshot is count-only. Compare fold fingerprint plus exact log EventId sequence before/after instead of the count triple.)",
+  "Anchor-50 oracle weakness (P3 crates/kutha-runtime/tests/m056_delivery_key_same_relation.rs:45 — Keyed retry oracle uses weak lower bound. Tighten to assert_eq!(first_b.events_in_quantum, 1) to match the first_a pin.)",
+  "Anchor-50 oracle weakness (P3 scripts/tests/test_jobs.py:357 — Jobs ordering oracle depends on wall-clock delay. Replace the wall-clock delay with a deterministic scheduler hook (barrier/event) or mark the timing margin explicitly with a retry-tolerant comparison.)",
+  "Demoted from primary (P3 crates/kutha-runtime/src/store.rs:1239 — Test-only pub surface ships in every build. Gate the seam surface behind cfg(any(test, feature = \"test-seams\")) so default builds carry no oracle instrumentation; keep stop_after plumbing where it is already free (None fast path).)",
+  "Demoted from primary (P3 crates/kutha-runtime/tests/m053_ce_review_regressions.rs:74 — fork_at outcome rebuild asserted by count only. Compare sorted rebuilt event ids against the log's QuantumOutcome event ids instead of comparing lengths.)",
+  "Demoted from primary (P3 crates/kutha-runtime/tests/m054_scaling_bench.rs:58 — RSS bench-alive oracle pins source text, not behavior. Keep as tripwire but add a behavioral anchor (e.g. run the bench helper in-process and assert the sample runtime is alive at sample time), or document the row as text-pinned.)",
+  "Demoted from primary (P3 crates/kutha-runtime/tests/m054_scaling_bench.rs:72 — as_of bench validation oracle is text-only. Pair with the existing as_of_matches_emitted_relatedto_triples behavioral test explicitly in the matrix oracle list (it already exists in the same file) so the row is not text-only.)",
+  "Demoted from primary (P3 crates/kutha-runtime/tests/m056_persist_heal.rs:161 — Manifest-remove sync ordering asserted by text search. Add an observable seam (e.g. a sync counter like persist_log_sync_count asserted > 0 on the verify-fail path) and keep the text pin only as a secondary tripwire.)",
+  "Demoted from primary (P3 scripts/tests/test_kutha_gov.py:2186 — Disk-free oracle coupled to live free space. Mock shutil.disk_usage in this test or derive the threshold from measured free space minus a margin.)",
+  "Demoted from primary (P3 scripts/tests/test_multi_check.py:49 — Multi-check oracles run against live tree. Run the --check selection assertions against a minimal scratch tree (as test_test_matrix.py does) and keep at most one live-tree smoke test.)"
+ ],
+ "learnings": [
+  {
+   "type": "known_pattern",
+   "title": "honored m010-s03 (live-intern-Define)",
+   "citation": "StandardsSecurityAgent residual note (verified 2026-10-15 round)",
+   "note": "NOTE honored m010-s03 (live-intern-Define): Runtime::intern appends Op::Define to the live log as a fold no-op (crates/kutha-runtime/src/quantum.rs:383-391) with graph_len/log_offset excluding Define (quantum.rs:449-451) and from_snapshot stripping Define (hydrate.rs:74-76) — matches pattern, no contradiction."
+  },
+  {
+   "type": "known_pattern",
+   "title": "honored m010-s02 (durable Define prefix)",
+   "citation": "StandardsSecurityAgent residual note (verified 2026-10-15 round)",
+   "note": "NOTE honored m010-s02 (durable Define prefix): encoded_log synthesizes the dictionary Define prefix then graph events excluding live Defines (store.rs:1127-1138); terms.jsonl remains a derived picture — the s02 'do not auto-append from intern' line is superseded by s03, not violated."
+  },
+  {
+   "type": "known_pattern",
+   "title": "honored m011-s01 (portable claim_id, independent supports)",
+   "citation": "StandardsSecurityAgent residual note (verified 2026-10-15 round)",
+   "note": "NOTE honored m011-s01 (portable claim_id, independent supports): admit_claim fail-closes unknown claims via fold.claim_known (admission.rs:178-182); Fact.claim_id lineage retained through Correct (fold.rs:783-791 comment + has_live_keyed_support relation-scoped follow at fold_query.rs:419-422)."
+  },
+  {
+   "type": "known_pattern",
+   "title": "honored m011-s02 (unknown-claim fail-closed + replay caused_by)",
+   "citation": "StandardsSecurityAgent residual note (verified 2026-10-15 round)",
+   "note": "NOTE honored m011-s02 (unknown-claim fail-closed + replay caused_by): replay_check walks the log in order and rejects Behavior whose caused_by is not in the preceding id set (provenance.rs:30-36), after fingerprint match (provenance.rs:22-24)."
+  },
+  {
+   "type": "known_pattern",
+   "title": "honored membership-snapshot-editions",
+   "citation": "StandardsSecurityAgent residual note (verified 2026-10-15 round)",
+   "note": "NOTE honored membership-snapshot-editions: each membership edition is one snapshot assert with deterministic sorted-CSV object via encode_membership_object (scripts/kutha_gov/time_log.py:29-31) chained by emit_chained so each edition closes the prior (tenant.rs:102,108-141); tip YAML stays the admit lease — per-member open-chain failure mode avoided."
+  },
+  {
+   "type": "known_pattern",
+   "title": "pre-existing hardening gaps deliberately not raised as findings (unchanged in 1d85af8..HEAD, local-t",
+   "citation": "StandardsSecurityAgent residual note (verified 2026-10-15 round)",
+   "note": "NOTE pre-existing hardening gaps deliberately not raised as findings (unchanged in 1d85af8..HEAD, local-trust threat model): tenant ingest reads the whole harness log via read_to_string with no byte/row/object-length cap and interns every distinct object (tenant.rs:67,124-138); KUTHA_RELATIONS_PATH is used verbatim with no containment check (allow.rs:45-50, fail-closed to empty set on error); allow::apply_dotenv promotes arbitrary keys from a discovered .env into the process environment (allow.rs:9-41, race documented inline at allow.rs:29-30). Revisit only if the harness log or env becomes re"
+  }
+ ],
+ "triage_groups": [
+  {
+   "title": "Operator migrate path bricks and under-reports",
+   "findings": [
+    1,
+    9,
+    13
+   ],
+   "context": "store::migrate_pin_cite / kutha-migrate operator surface (M067/M076/M078).",
+   "preferred_resolution": "Fix #1 first (pre-RULE-01 stores with cites cannot reopen); then #13 (surface dropped-tail counts) and #9 (CLI contract).",
+   "why": "One operator run hits all three: a bricked reopen (#1) with no dropped-tail accounting (#13) behind a CLI that masks misuse (#9)."
+  },
+  {
+   "title": "Runtime scaling and measurement cliffs",
+   "findings": [
+    2,
+    3
+   ],
+   "context": "Bench RSS accounting and retract-time live-behavior scan.",
+   "preferred_resolution": "Fix #3 first (O(N*D) retract scan affects production); then #2 (bench denominator) so later scaling claims are trustworthy.",
+   "why": "Both decide whether scaling numbers can be trusted: #3 is the cost, #2 is the ruler."
+  },
+  {
+   "title": "Governor dictionary silent-pass triple",
+   "findings": [
+    6,
+    7,
+    8
+   ],
+   "context": "scripts/kutha_gov/dictionary.py loader (checks.yaml select checks).",
+   "preferred_resolution": "Fix in file order #8 (steps filter), #7 (scalar rows), #6 (duplicate ids) — one fail-closed loader change covers all three shapes; add the three load oracles together.",
+   "why": "Same silent-pass class as prior #23 in three guises; a single LoadError-pattern fix plus oracles closes the family."
+  }
+ ],
+ "ungrouped": [
+  4,
+  5
+ ],
+ "actionable": [
+  1,
+  2,
+  3,
+  4,
+  6,
+  7,
+  8,
+  9,
+  13
+ ],
+ "report_only": [
+  5
+ ],
+ "fold_in": {
+  "peer_outcome": "in-process-fallback",
+  "peer_artifact": null,
+  "folded": false
+ },
+ "coverage": [
+  "Scope: standalone branch diff chore/m013-roadmap-reset vs merge-base 1d85af8 (main); 990 tracked files, 76218 changed lines, 15228 exec non-test lines; reviewed head 5dd5338; working tree is the reviewed head except the corrected historical review artifact and one untracked CE handoff (both excluded).",
+  "Cross-model peer: adversarial lens: in-process fallback (cross-model peer not run: host serving family unattestable in this harness; prior codex route failed pre-egress with requested model not advertised by installed ACP agent; no other eligible attested-different target)",
+  "Mechanics: raw compact returns used non-canonical shapes (id/location/file:range, no title/evidence/flags) so the first helper pass reported 26 malformed; findings were normalized to the valid schema preserving every reviewer-supplied severity and confidence (no raises), rerun helper reports 20 findings, 0 malformed, 0 pre-existing, 6 suppressed at anchor 50, first_evidence_backfilled 0 (all quotes reviewer-supplied and verified verbatim against HEAD).",
+  "Semantic reconciliation: no merges; nearby-line findings describe distinct failure modes and fix paths (H1 trigger discovery vs retract scan; GOV scalar-row vs scalar-steps vs duplicate-id; bench RSS vs RSS text-pin). No settlement conflicts: no plan or KTDs discovered (plan.source none) and no settled_conflict flags. No direct-dependency reclassification: pre-existing partition empty, all cited files are in-diff.",
+  "Soft-bucket demotion (mode-aware count 16): 10 mechanical primaries demoted (7 to testing_gaps: #10,#14,#15,#16,#17,#19,#20; 3 to residual_risks: #11 nondet ids, #12 policy scan, #18 empty---check boundary) plus 6 anchor-50 suppressed routed (3 testing_gaps, 3 residual_risks). Retained single-reviewer P2/P3 primaries all quote an explicit violated contract or prove a current defect: #5 matrix killed-status contract (report-only, owner human), #9 CLI contract, #13 migrate dropped_uncommitted precedent; #2/#3/#4/#6/#7/#8 prove current bench, scaling, semantic, and silent-pass defects.",
+  "Anchor-50 findings routed to soft buckets per rule (none P0): intern dup-Define, pipeline unindex scan, Correct-of-Behavior leak to residual_risks; cascade count-only snapshot, keyed-retry lower bound, jobs wall-clock delay to testing_gaps.",
+  "Prior finding #1 (Op decode, intended documented break per docs/process/op-compat.md) not present in returns and never re-raised; 2026-10-11 historical report (head dd38c95) superseded by this review at 5dd5338.",
+  "Parent verification carried (orchestrator source-verified, not reviewer claims): P1 migrate_pin_cite removes only snapshot.json while finish_open rejects non-prefix sidecars; H1 point-gated search_prems/live_facts_for_relation; governor dictionary scalar-row continue, duplicate-id overwrite, steps filter.",
+  "StandardsSecurityAgent: 0 findings; prior_status all closed; its 6 residual NOTEs treated as Known Pattern confirmations (learnings), not risks.",
+  "Validator skip count 0: no finding has cross-model corroboration (peer is in-process fallback sharing the session model family basis); every P0/P1 and every actionable finding is selected.",
+  "Indexes: CBM kutha-graph full reindex at HEAD (14382 nodes, 34604 edges, 2026-10-15); GitNexus kutha-graph reindexed at 5dd5338 (4949 nodes); source reads remain the arbiter."
+ ],
+ "prior_status_union": {
+  "CorrectnessHorn": {
+   "#2": {
+    "status": "partial",
+    "evidence": "crates/kutha-runtime/src/eval.rs:359 — let mut parts = vec![(valid_from, valid_to), (horn.pin_from, horn.pin_to)]; oracle crates/kutha-runtime/tests/m054_horn_soundness.rs:256 horn_head_vt_is_conjunction_of_premises covers basic conjunction but not late-starting premise overlap (see finding H1)"
+   },
+   "#3": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/eval.rs:224 — if self.horn_body_matches_except(e, &except) {; oracle crates/kutha-runtime/tests/m054_horn_soundness.rs:127 retract_non_trigger_premise_drops_derived plus :201 correct_cascade_does_not_duplicate_derived_retract both present"
+   },
+   "#4": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/provenance.rs:167 — Op::Correct { event_id, .. } | Op::CorrectInterval { event_id, .. } => {; oracle crates/kutha-runtime/tests/m054_horn_soundness.rs:51 correct_premise_refire_is_derivation_eligible asserts derivation_eligible_at true and NormView Ok; hardened by crates/kutha-runtime/src/quantum.rs:702 head-match (m056 oracles)"
+   },
+   "#5": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/fold_query.rs:318 — pub(crate) fn uncovered_vt_windows(; oracle crates/kutha-runtime/tests/m054_horn_soundness.rs:304 overlap_dedup_emits_uncovered_vt_residual asserts residual [2005,2010) minted and full cover suppressed)"
+   },
+   "#8": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/pipeline.rs:309 — fn rollback_user_cascade(&mut self, prefix: usize, next_tt: u64) {; oracle crates/kutha-runtime/tests/m052_cascade_atomic.rs:33 later_hop_unknown_head_leaves_log_fold_outcomes_unchanged asserts log/fold/outcomes snapshot equality on later-hop UnknownRelation"
+   }
+  },
+  "PersistReliability": {
+   "#6": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/persist_append.rs:298 — `fn reconcile_uncommitted_tip(&mut self) -> std::io::Result<()>` truncates same-object suffix and `recover_failed_append_write` (347) poisons only on `rollover_committed`; oracle `segmented_wal_sync_failpoint_retry_keeps_exact_event_id_sequence` in tests/m055_append_tip_rollback.rs:84"
+   },
+   "#7": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/store.rs:999 — `let lock = acquire_store_write_lock(dir)?;` precedes `open_report` and heal in `open_for_append_until`; `attach_segmented` heals only `if write_lock.is_some()` (persist_append.rs:586); oracle `losing_attach_while_writer_holds_lock_does_not_heal` in tests/m052_lock_before_heal.rs:142"
+   },
+   "#9": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/segment.rs:826 — `pub(crate) fn active_scan_needs_heal` (`scan.consumed != bytes.len()`) wired into heal gate store.rs:1006; oracle `open_for_append_heals_torn_empty_active_then_append_survives_reopen` in tests/m054_persist_durability.rs:127"
+   },
+   "#10": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/segment.rs:142 — `persist_segment_name` generation-unique; manifest rename is sole visibility switch with `remove_obsolete_segments` only after `write_manifest` + `sync_dir` (981-982); oracles `persist_log_uses_generation_unique_segment_names` (m054:159) and `persist_crash_before_manifest_swap_keeps_old_generation_openable` (m054:190)"
+   },
+   "#11": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/store.rs:1082 — `rt.replay_check().map_err(runtime_err)?;` at `finish_open` choke point covering snapshot/Define/terms/empty `open_hydrated` branches (1025-1073); oracles `snapshot_backed_open_rejects_empty_pin_inverse` / `define_backed_...` / `terms_backed_...` in tests/m052_open_replay.rs:139,152,170"
+   },
+   "#29": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/segment.rs:883 — `if orphan_len < HEADER_LEN` recreates short orphan header instead of forwarding to truncation error; oracle `open_for_append_recreates_short_orphan_next_header` in tests/m056_persist_heal.rs:91"
+   },
+   "#30": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/store.rs:594-603 — verify-failure removes manifest then `sync_dir(dir)?` before `Err`; `legacy_attach_needs_rewrite` (persist_append.rs:782) wired into heal gate (store.rs:1005); oracles `migrate_verify_fail_syncs_dir_after_manifest_remove` (m056:159) and `heal_crash_matrix_reopens_to_committed_prefix` (m002_commit01)"
+   }
+  },
+  "GovernorAdversarial": {
+   "#14": {
+    "status": "closed",
+    "evidence": ".kutha/dictionaries/checks.yaml:1329 — when_glob_exists: .planning/phases/*-*/*-CONTEXT.md (PLAN glob at :1326, independent marker; oracle ArtifactBudgetHonestyTests at scripts/tests/test_kutha_gov.py:1911)"
+   },
+   "#22": {
+    "status": "closed",
+    "evidence": "scripts/kutha_gov/kind_matrix.py:126 — if schema != _MATRIX_SCHEMA: (HIGH matrix-schema + return; oracles test_wrong_schema_is_high / test_missing_schema_is_high)"
+   },
+   "#23": {
+    "status": "closed",
+    "evidence": "scripts/kutha_gov/kind_matrix.py:146 — if non_maps: (HIGH yaml-select + return, no silent filter; oracle test_mixed_scalar_and_mapping_rows_are_high)"
+   },
+   "#34": {
+    "status": "closed",
+    "evidence": "scripts/kutha_gov/parallel.py:143 — if submit_exc is not None: (accepted futures harvested via _harvest_accepted, serial rerun only for None names; oracle JobsAtMostOnceTests at scripts/tests/test_jobs.py:366)"
+   }
+  },
+  "PerfContractStructure": {
+   "#12": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/tests/common/sem/mod.rs:5 — pub mod generator;"
+   },
+   "#15": {
+    "status": "partial",
+    "evidence": "crates/kutha-runtime/benches/baseline.rs:326 — // Dedicated sample must stay alive across the after-RSS read (#15)."
+   },
+   "#16": {
+    "status": "partial",
+    "evidence": "crates/kutha-runtime/src/eval.rs:164 — let children: Vec<EventId> = self"
+   },
+   "#17": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/eval.rs:619 — for f in rt.fold.live_facts_for_relation(rel, tt, vt) {"
+   },
+   "#19": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/persist_append.rs:737 — for event in graph_suffix_after_durable(p, runtime)? {"
+   },
+   "#20": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/tests/common/sem/shrink.rs:247 — let digest = sha256_hex(&bytes);"
+   },
+   "#21": {
+    "status": "partial",
+    "evidence": "scripts/kutha_gov/kinds.py:2241 — from kutha_gov.kind_cargo import _kind_cargo_dep_constraint  # noqa: E402"
+   },
+   "#24": {
+    "status": "closed",
+    "evidence": "crates/kutha-common/src/event.rs:517 — id_bytes[6] = (id_bytes[6] & 0x0f) | 0x80;"
+   },
+   "#25": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/benches/baseline.rs:199 — if got_as_of != expected_as_of {"
+   },
+   "#27": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/fold_query.rs:511 — if let Some(idxs) = self.rules_by_pin.get(pin) {"
+   }
+  },
+  "StandardsSecurityAgent": {
+   "#26": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/admission.rs:260 — `.is_some_and(|claim| self.fold.has_live_keyed_support(claim, *relation, key));`"
+   },
+   "#28": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/src/quantum.rs:704 — `&& f.object() == ho`"
+   },
+   "#35": {
+    "status": "closed",
+    "evidence": ".planning/milestones/v0.13-phases/58-governor-smp/58-VERIFICATION.md:8 — `  - {cmd: \"uv run kutha-gov py\", exit: 0}`"
+   },
+   "#36": {
+    "status": "closed",
+    "evidence": "crates/kutha-runtime/fixtures/statute/punkt_15_1.txt:1 — `пункт 15.1 действует до 01.01.2028`"
+   },
+   "W1": {
+    "status": "closed",
+    "evidence": "docs/process/gsd-auto-contract.md:124 — `Canonical CBM project name is `kutha-graph` (historical alias `root-kutha-graph` on the same root — prefer `kutha-graph`; see `.cursor/skills/codebase-memory/SKILL.md`).`"
+   },
+   "O1": {
+    "status": "closed",
+    "evidence": "AGENTS.md:67 — `Flags (ci / precommit / selftest / json where noted): `--jobs N` (parallel checks; `1` = serial oracle), `--skip-cargo` (ci only; not closeout evidence), `--check ID[,ID…]` (json|precommit|selftest only — not `ci`; repeatable; each value may be comma-separated), `--budget V` (Cui truncate). Env: `KUTHA_GOV_JOBS`, `KUTHA_GOV_BUDGET`. Prefer `run_high=` / exit status over `ci | tail` (pipe hides exit).`"
+   }
+  }
+ },
+ "stats": {
+  "primary": 10,
+  "pre_existing": 0,
+  "residual_risks": 23,
+  "testing_gaps": 32,
+  "learnings": 6,
+  "actionable": 9,
+  "demoted_to_soft_buckets": 16,
+  "malformed_initial": 26,
+  "malformed_final": 0,
+  "suppressed_by_confidence_50": 6
+ }
+}

@@ -1,0 +1,80 @@
+{
+ "run_id": "20261015-195140-3185bb1c",
+ "run_dir": "/tmp/compound-engineering-0/ce-code-review/20261015-195140-3185bb1c",
+ "docs_root": ".compound-engineering/artifacts",
+ "skill_dir": "/root/.omp/plugins/cache/plugins/compound-engineering-plugin___compound-engineering___3.30.5/skills/ce-code-review",
+ "mode": {
+  "agent": false,
+  "apply_local": false,
+  "depth": "full",
+  "grouping": "auto"
+ },
+ "scope": {
+  "mode": "standalone",
+  "branch": "chore/m013-roadmap-reset",
+  "base": "1d85af8a97703052b4e5d7be0409d7c96c63a0e6",
+  "diff_a": "1d85af8a97703052b4e5d7be0409d7c96c63a0e6",
+  "diff_b": "5dd5338202c18e239bb3ed5b26a20ad2cc215684",
+  "head_sha": "5dd5338202c18e239bb3ed5b26a20ad2cc215684",
+  "tree_is_reviewed_head": true,
+  "files": "files.txt",
+  "pr": null,
+  "scope_facts": {
+   "changed_files": 990,
+   "changed_lines": 76218,
+   "exec_nontest_lines": 15228,
+   "size_band": "large",
+   "hard_block_full": true
+  }
+ },
+ "intent": {
+  "summary": "Close milestones M023-M090 (STATE: L_delivery=M090-closed) and fix prior CE-review findings (2026-10-07/10-09/10-11) on persist/open recovery, Horn semantics, and governor silent-pass oracles, with killed matrix oracles per docs/process/ce-review-regression-map.md. Must not regress durability/semantic oracles, matrix honesty, or lease/honeycomb discipline; honeycomb stays Proposed.",
+  "confidence": "inferred"
+ },
+ "plan": {
+  "source": "none",
+  "requirements": [],
+  "implementation_units": [],
+  "settled_kts": []
+ },
+ "invocation": {
+  "arguments": "/ce-code-review whole repo, all gitnexus/codebase-memory-mcp tools (Russian: full repo review, logic/semantic problems)",
+  "constraints": [
+   "Report-only; no apply, no push, no PR.",
+   "Prior finding #1 (Op decode) is intended documented break per docs/process/op-compat.md \u2014 never re-raise.",
+   "Reviewed tree is current HEAD 5dd5338; historical 2026-10-11 report (head dd38c95) is superseded, not the deliverable."
+  ]
+ },
+ "peer": {
+  "outcome": "in-process-fallback",
+  "artifact": null,
+  "coverage": "adversarial lens: in-process fallback (cross-model peer not run: host serving family unattestable in this harness; prior codex route failed pre-egress with requested model not advertised by installed ACP agent; no other eligible attested-different target)",
+  "selected": true,
+  "route": null,
+  "target": null
+ },
+ "collection": {
+  "returns": "raw-returns.json",
+  "unstructured_returns": [],
+  "failed_reviewers": [],
+  "bound_exceeded": [],
+  "fast_pass": {
+   "urgent_candidates": [],
+   "note": "fast pass found no urgent P0/P1 candidates; only guarded test expect/panic in new migrate tests"
+  }
+ },
+ "coverage_notes": [
+  "Scope: standalone branch diff chore/m013-roadmap-reset vs merge-base 1d85af8 (main); 990 tracked files, 76218 changed lines, 15228 exec non-test lines; reviewed head 5dd5338; working tree is the reviewed head except the corrected historical review artifact (.compound-engineering/artifacts/reviews/2026-10-11-ce-whole-repo/report.md, excluded from findings) and one untracked CE handoff (excluded).",
+  "Untracked files excluded unless staged (1 path: .compound-engineering/artifacts/handoffs/m089-closed-gsd-auto-check-debt.md).",
+  "No plan discovered (branch keywords ambiguous: many m013/roadmap plans); requirements completeness skipped, noted.",
+  "Indexes refreshed by parent at reviewed HEAD: CBM project kutha-graph reindexed mode=full (14382 nodes, 34604 edges, 2026-10-15); GitNexus kutha-graph reindexed via gitnexus analyze --index-only at 5dd5338 (4949 nodes). Reviewers instructed: CBM list_projects first, check_index_coverage on cited paths, rg arbiter for Rust Self:: edges (both graphs miss them).",
+  "Parent verification runs (not reviewer claims): cargo test 11 CE regression suites (m050,m052 x3,m053,m054 x2,m055,m056 x3) = 33 passed; uv run pytest test_test_matrix+test_multi_check+test_agent_surface = 35 passed. Full workspace/governor ci not run (report-only).",
+  "Standards: AGENTS.md root governs all changed files; no CODING_STANDARDS.md exists.",
+  "Cross-model peer: in-process adversarial fallback as recorded in peer.coverage."
+ ],
+ "parent_verification": {
+  "p1_migrate_pin_cite": "Personally verified by orchestrator: store.rs:413-416 migrate_pin_cite removes only snapshot.json; finish_open store.rs:1091-1097 rejects non-prefix justifications sidecar; m072 seeded_store persists (m072:64) before cites are appended, so existing oracles leave sidecar empty.",
+  "horn_H1": "Personally verified: eval.rs:350 search_prems point-gated at trigger valid_from; eval.rs:619 live_facts_for_relation(rel, tt, vt) point query; conjunction at eval.rs:359-363.",
+  "gov_dictionary": "Personally verified: dictionary.py:90-91 scalar row continue; :97 duplicate id overwrite; :28-29 steps filtered to dicts (empty steps run clean)."
+ }
+}
