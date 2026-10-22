@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-22 — Trajectory: lease M151-S01 (observe phase_ms wall)
+
+Process tag **v1.45** / Phase **225**. Not a SemVer release.
+
+- Active Milestone **M151**, Active Slice **S01** (`L_delivery=M150-closed`): phase_ms observe_cargo uses cargo wall time under overlap. Honeycomb stays Proposed.
+
 ## 2026-10-22 — Trajectory: M150 / GSD v1.44 closed
 
 Process tag **v1.44** / Phase **224**. Not a SemVer release.
