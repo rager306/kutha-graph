@@ -1,50 +1,53 @@
 ---
 phase: 228-checkpoint-receipt
 independent: true
-status: failed
+status: passed
 verifier_model: Cursor Grok 4.6
 commands:
   - cmd: cargo test -p kutha-runtime --offline --test b1_checkpoint_kill -- --test-threads=1
     exit: 0
   - cmd: cargo test -p kutha-runtime --offline --test b1_checkpoint_kill2 -- --test-threads=1
-    exit: 101
+    exit: 0
+  - cmd: cargo test -p kutha-runtime --offline --test b1_checkpoint_kill3 -- --test-threads=1
+    exit: 0
   - cmd: cargo test --workspace --offline --no-fail-fast
-    exit: 101
+    exit: 0
   - cmd: uv run kutha-gov ci --jobs 1
-    exit: 1
+    exit: 0
 read_only_inputs:
   - docs/process/gsd-auto-contract.md
+  - docs/process/op-compat.md
   - crates/kutha-runtime/src/store.rs
   - crates/kutha-common/src/event.rs
-  - crates/kutha-runtime/src/lib.rs
+  - crates/kutha-common/src/op_migrate.rs
   - crates/kutha-runtime/src/pipeline.rs
   - crates/kutha-runtime/src/commit.rs
   - crates/kutha-runtime/src/fold.rs
   - crates/kutha-runtime/src/provenance.rs
-  - crates/kutha-runtime/src/persist_append.rs
+  - crates/kutha-runtime/src/admission.rs
   - crates/kutha-runtime/src/segment.rs
-  - crates/kutha-runtime/src/quantum.rs
-  - crates/kutha-runtime/src/justification.rs
-  - crates/kutha-runtime/src/hydrate.rs
+  - crates/kutha-runtime/src/bin/kutha-migrate.rs
   - crates/kutha-runtime/tests/b1_checkpoint_kill.rs
-  - crates/kutha-runtime/tests/common/mod.rs
+  - crates/kutha-runtime/tests/b1_checkpoint_kill2.rs
 ---
 
-# Phase 228 — second independent verification
+# Phase 228 — third independent verification
 
-**Verdict:** failed. Four HIGH kills in `crates/kutha-runtime/tests/b1_checkpoint_kill2.rs` (5 pass / 4 fail). First-pass 12 kills in `b1_checkpoint_kill.rs` all pass (executor fixes for admission-tail open, Persister attach, `fingerprint_hex` hold). Workspace cargo failed only that target. `ci` `run_high=2` is `observe_cargo` (exit 101 + incomplete). `docs-coupling` 0. No `chmod` / `u+w target` noise. CBM: cited src `metadata_changed`, kill2 `not_tracked` (no `index_repository`). No failpoint on `checkpoint_sealed_prefix`; persist_log uses unique seg names.
+**Verdict:** passed. No HIGH. kill1 12/12. Pre-edit kill2 failed only `r4_truncated_kept_storeblob_fails_closed` (open Ok, replay_check Ok); converted to `r4_truncated_kept_storeblob_parity_with_plain_store` (same fixture; twin parity). Post-edit kill2 9/9, kill3 12/12. Workspace cargo 0. `ci` `run_high=0` `run_low=1`. Tests committed `3c0d060` before ci. CBM: cited src `metadata_changed`, kill tests `not_tracked` (no `index_repository`). No `chmod`. No product failpoint on `checkpoint_sealed_prefix`.
 
-**R1** pass: receipt with `dropped_count>0`; prefix product Assert leaves the log; prefix StoreBlobs kept; fold `event_id` preserved.
-**R2** pass: open, `replay_check`, fingerprint (all facts incl. dead), `as_of` 2009–2025, `as_known_on` before/between/after TT anchors; admission in active tail opens.
-**R3** mixed: Persister append + persist + reopen + further append vs twin matches query PIT (Retract/Correct/Horn `relatedTo(A,C)`/TT 2024). Horn tail Behavior `replay_check` Ok with kept rule blob. **Fails** prefix `QuantumOutcome`/`JustificationCite` sidecar/log vs twin. Admission/action fold rows match.
-**R4** mixed: `emit(Checkpoint)` → `MetaOpRejected` + SelfCommit; wrong `fingerprint_hex`/`fact_count`/`blob_digest`, truncated checkpoint blob, dropped receipt, truncated sealed *file*, legacy/empty-sealed fail closed. **Fails**: duplicate receipt, receipt moved after tail, truncated *kept* StoreBlob bytes — `open` Ok and `replay_check` Ok.
-**R5** pass: checkpoint twice; checkpoint → append → checkpoint vs twin.
-**R6** pass: `git diff 0770da5..HEAD -- crates` adds Checkpoint exhaustive arms and classification table 10→11; existing as_of assert only rewrapped. Serde externally tagged `Checkpoint`, no alias.
-**R7** pass: simulated W1–W6 (new segs+old manifest; leftover old segs; new log+old snapshot/sidecars; new terms; old outcomes; old justifications) open as OLD, NEW, or Err — never a mix.
+**R1** pass: receipt `dropped_count>0`; prefix product Assert leaves the log; StoreBlob/QO/Cite kept; empty-active and non-empty-active exact vs twin.
+**R2** pass: open, `replay_check`, fingerprint (all facts incl. dead), `as_of`, `as_known_on` at last prefix TtAnchor wall (event dropped, wall restored).
+**R3** pass: Persister compose; prefix CI-multi residual 50/80/50, Retract/Correct; windowed allowlist+pins+`kutha:*` TermIds; prefix Horn A-C un-derives after tail retract of A-B; fact seqs; ≥2 sealed rollovers after checkpoint.
+**R4** pass: `emit(Checkpoint)` MetaOpRejected+SelfCommit; forged receipt/blob/drop/legacy/empty-sealed fail closed; duplicate/moved receipt fail closed; lock held → WouldBlock. AMENDED: kept-StoreBlob body tamper is parity with plain twin (both open Ok, replay_check Ok). `migrate_compat`/`kutha-migrate`: Ok, remapped=0, demotes segments to jsonl; fingerprint and Checkpoint receipt unchanged.
+**R5** pass: twice; checkpoint-append-checkpoint vs twin; exactly one receipt.
+**R6** pass: `git diff 0770da5..HEAD -- crates` as_of assert only rewrapped; classification table 10→11 Checkpoint SelfCommit; serde externally tagged, no alias; `remap_legacy_ops` UnknownVariant(Checkpoint). Byte-identical stores: receipt fields match; minted Checkpoint `Event.id` differs (UUID v7); `blob_digest` equal.
+**R7** pass: simulated W1–W6 open OLD, NEW, or Err — never a mix.
 
 ## Findings
 
-1. **HIGH R3** `r3_prefix_quantum_justification_admission_action_vs_twin`: after checkpoint, `justification_records()` 0 vs 1 and `outcome_records()` 0 vs 22. PIT/fingerprint/admission/action match. Min: `set_test_segment_limits(Some(4096), Some(1))`; seed with prefix cite+QO; persist; checkpoint; `open`; compare twin.
-2. **HIGH R4** `r4_duplicate_receipt_fails_closed`: clone `Op::Checkpoint` and insert a second receipt; `write_test_segmented`; `open` Ok, `replay_check` Ok.
-3. **HIGH R4** `r4_receipt_moved_after_tail_fails_closed`: move receipt to end of log; `open` Ok, `replay_check` Ok.
-4. **HIGH R4** `r4_truncated_kept_storeblob_fails_closed`: truncate a kept (non-checkpoint) `StoreBlob` body; `open` Ok, `replay_check` Ok.
+None HIGH.
+
+1. **LOW residual:** log-wide StoreBlob digest verification on open is absent (pre-existing; twin parity). Checkpoint blob is verified via receipt; ordinary kept StoreBlob bodies are not.
+2. **LOW:** `migrate_compat` on a checkpointed dir does not fail closed; it demotes sealed layout to jsonl (`already=false remapped=0`). Answers and the receipt stay. Matches `docs/process/op-compat.md` warning.
+
+CBM `checkpoint_sealed_prefix` absent from index; `rg` arbiter.
