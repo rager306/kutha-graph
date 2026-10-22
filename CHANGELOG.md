@@ -8,13 +8,13 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Added
 
-- `store::checkpoint_sealed_prefix` under `kutha.lock` rewrites a sealed prefix to `Op::StoreBlob` (prefix `Snapshot` fold, same shape as `snapshot.rs`) plus `Op::Checkpoint` receipt plus the unchanged tail. `snapshot.json` stays a lease, never the carrier.
+- `store::checkpoint_sealed_prefix` under `kutha.lock` rewrites a sealed prefix to prefix `StoreBlob`s copied verbatim (same ids/order), then `Op::StoreBlob` (prefix `Snapshot` fold, same shape as `snapshot.rs`) plus `Op::Checkpoint` receipt plus the unchanged tail. `snapshot.json` stays a lease, never the carrier. `dropped_count` is prefix length minus kept StoreBlobs; `fact_count` is the prefix fold fact count.
 - Oracle `user_emit_checkpoint_is_meta_op_rejected`: public `Runtime::emit(Op::Checkpoint)` returns `MetaOpRejected` and does not append.
 
 ### Changed
 
-- `GraphFold::apply` of `Checkpoint` restores facts, `next_seq`, and `tt_anchors` from the blob; `tt_anchors_from_events` / `rebuild_tt_anchors` union walls from checkpoint blobs. Fingerprint still hashes all facts including dead ones (not vacuum).
-- Bench PRE (228-01) vs POST (228-02), same host, `KUTHA_BENCH_N=10000 cargo bench -p kutha-runtime --bench baseline --offline` alone: ingest_plain.n **144924496 ns** → **128077580 ns** (−11.6%); as_of.n **394795 ns** → **273420 ns** (−30.7%, eager). Neither regresses over 10 percent.
+- `GraphFold::apply` of `Checkpoint` restores facts, `next_seq`, and `tt_anchors` from the blob; `tt_anchors_from_events` / `rebuild_tt_anchors` union walls from checkpoint blobs. Fingerprint still hashes all facts including dead ones (not vacuum). `GraphFold.blobs` stays serde-skip; rule/policy/plain bodies ride copied prefix StoreBlobs.
+- Bench PRE (228-01) vs POST (228-02 rewrite) vs StoreBlob-copy POST (2026-10-22T16:36:31Z load 4.68 4.35 3.98), same host, `KUTHA_BENCH_N=10000 cargo bench -p kutha-runtime --bench baseline --offline` alone: ingest_plain.n **144924496 ns** → **128077580 ns** → **127349319 ns** (−12.1% vs PRE); as_of.n **394795 ns** → **273420 ns** → **296063 ns** (−25.0% vs PRE, eager). Neither regresses over 10 percent.
 
 Lease and honeycomb cells stay **Proposed**.
 
