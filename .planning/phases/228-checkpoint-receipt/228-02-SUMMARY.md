@@ -2,48 +2,48 @@
 phase: 228-checkpoint-receipt
 plan: 02
 subsystem: runtime-store
-tags: [checkpoint, fingerprint, PIT, StoreBlob, kill, bench]
+tags: [checkpoint, sidecar, StoreBlob, kill2, bench]
 requires: [{phase: 228-checkpoint-receipt, provides: "Op::Checkpoint wire + compile-only stub"}]
-provides: ["checkpoint encoded persist + receipt verify + GREEN kill suite"]
+provides: ["prefix QO/JCite keep + empty-fold Checkpoint + GREEN kill except pre-existing StoreBlob digest"]
 affects: []
-actuals: {tokens: 8000, tasks: 6, commits: 8}
+actuals: {tokens: 4885, tasks: 3, commits: 12}
 plan_head_before: 47a85e47853b1f71a0905c69188ed556d10723cd
-plan_head_after: pending
-tech-stack: {added: [], patterns: [encoded_log after checkpoint; Checkpoint receipt verify]}
+plan_head_after: e2c5ce0d48f3adef063503414bb9672ab1f2d22f
+tech-stack: {added: [], patterns: [kept prefix meta ops; Checkpoint only on empty fold]}
 key-files:
   created: []
   modified: [crates/kutha-runtime/src/store.rs, crates/kutha-runtime/src/fold.rs, crates/kutha-runtime/src/provenance.rs]
 key-decisions:
-  - "Persist encoded_log after checkpoint; verify fingerprint_hex/fact_count/blob digest on apply and replay_check"
+  - "Keep prefix StoreBlob/QuantumOutcome/JustificationCite; drop old Checkpoint; empty-fold receipt placement"
 requirements-completed: [D-01, D-02, D-03, D-04, D-05, D-06]
-duration: 50min
+duration: 75min
 completed: 2026-10-22
 status: complete
 ---
-# Phase 228 Plan 02: checkpoint receipt rewrite Summary
+# Phase 228 Plan 02: checkpoint receipt Summary
 
-**Sealed-prefix checkpoint persists encoded_log and fail-closes on a lying Checkpoint receipt.**
+**Sealed-prefix checkpoint keeps sidecar ops, fail-closes misplaced receipts, and leaves pre-existing StoreBlob digest-on-open as a twin-proven residual.**
 
-## Kill HIGH (independent verifier)
+## Kill2 HIGH (second independent verifier)
 
-R2 `r2_open_after_checkpoint_with_admission_in_active_tail`: `open` → `snapshot log_offset is ahead of the committed prefix`. Root: rewrite wrote graph-only log (Defines dropped). `committed_prefix` builds its dict from Defines, so tail `kutha:admission`/`kutha:action` (Typed, no QO) classified NeedsOutcome and were truncated; snapshot `log_offset` still counted them. R3 `r3_persister_append_after_checkpoint`: `open_for_append` → `segment event count disagrees with runtime encoded log`. Same source: disk length ≠ `encoded_log` (Defines + graph). Fix (`525a737`): persist `encoded_log(&rt)` after building the rewritten Runtime.
-
-R4 `r4_tamper_fingerprint_hex_fails_closed`: append `"00"` to `fingerprint_hex`; `open` Ok, `replay_check` Ok. Root: apply hydrated the blob without checking receipt fields. Fix (`bd5df2f`): `checkpoint_snapshot_if_receipt_ok` on apply (no-op on mismatch) and `replay_check` (typed `ReplayDivergence`). Fingerprint contract unchanged.
+1. **R3 sidecars** (`r3_prefix_quantum_justification_admission_action_vs_twin`): `justification_records` 0 vs 1, `outcome_records` 0 vs 22. Root: rewrite kept only `StoreBlob`. Fix (`a683170`): copy prefix `StoreBlob` / `QuantumOutcome` / `JustificationCite` verbatim (same ids/order). `dropped_count` = prefix length minus those kinds. `Op::Checkpoint` is not copied (R5 folds the old receipt into the new Snapshot; one receipt).
+2+3. **R4 placement** (`r4_duplicate_receipt_fails_closed`, `r4_receipt_moved_after_tail_fails_closed`): second or tail-moved `Checkpoint` opened Ok. Root: apply always hydrated. Fix (`e2c5ce0`): hydrate only when `facts` empty and `next_seq == 0`; `replay_check` requires only Define/kept-meta before the receipt (`ReplayDivergence`). R5 still passes.
+4. **R4 truncated kept StoreBlob**: PRE-EXISTING. Plain twin (no checkpoint) with the same body truncate + `write_test_segmented` also `open` Ok / `replay_check` Ok. Not a checkpoint regression; kill-test left untouched. Only kill2 failure.
 
 ## Residual
 
-`horn_behavior_reproducible` still fail-opens on a missing rule blob when the pin is nonempty. No kill-test reaches a tail Horn Behavior after checkpoint (prefix Behavior is compacted into Snapshot facts).
+`horn_behavior_reproducible` still fail-opens on a missing nonempty pin blob. Truncated `StoreBlob` bytes are not checked on `open` (admit-time `blob_digest_matches` only). CBM: src `metadata_changed`, receipt test `not_tracked`.
 
 ## Bench / verify
 
-PRE vs kill-fix POST: ingest_plain.n **144924496 → 110385750 ns (−23.8%)**; as_of.n **394795 → 264182 ns (−33.1%, eager)**. `b1_checkpoint_kill` 12/12, `b1_checkpoint_receipt`, `m002_commit01`, workspace `--no-fail-fast`, `uv run kutha-gov precommit` all exit 0. Kill-tests not edited. `228-VERIFICATION.md` not edited.
+PRE vs kill2-fix POST (2026-10-22T18:03:00Z load 6.82 5.85 4.36): ingest_plain.n **144924496 → 102767611 ns (−29.1%)**; as_of.n **394795 → 215071 ns (−45.5%, eager)**. `b1_checkpoint_kill` 12/12 exit 0. `b1_checkpoint_kill2` 8/9 (only finding 4). receipt, m002 exit 0. workspace 101 = that one test. `uv run kutha-gov precommit` 0. Kill-tests and `228-VERIFICATION.md` not edited.
 
 ## Deviations
 
-**3. Snapshot blobs skip** — resolved earlier (`052cf8f` prefix StoreBlob copy). **R2/R3 encoded persist** and **R4 receipt verify** closed in this reopen. `.planning/STATE.md` untouched.
+Sidecar keep and empty-fold placement closed this reopen. Finding 4 documented, not widened. `.planning/STATE.md` untouched.
 
 ## Task Commits
 
-`0a014eb` rewrite · `41d1f33` forged-meta · `49fef86` docs/POST · `052cf8f` StoreBlob copy · `525a737` encoded persist (R2+R3) · `bd5df2f` fingerprint_hex (R4) · this: CHANGELOG/SUMMARY
+`a683170` keep QO/JCite · `e2c5ce0` empty-fold Checkpoint · this: CHANGELOG/SUMMARY
 
 ## Self-Check: PASSED

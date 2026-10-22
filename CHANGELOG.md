@@ -14,7 +14,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Changed
 
 - `GraphFold::apply` of `Checkpoint` restores facts, `next_seq`, and `tt_anchors` from the blob; `tt_anchors_from_events` / `rebuild_tt_anchors` union walls from checkpoint blobs. Fingerprint still hashes all facts including dead ones (not vacuum). `GraphFold.blobs` stays serde-skip; rule/policy/plain bodies ride copied prefix StoreBlobs.
-- Bench PRE (228-01) vs kill-fix POST (2026-10-22T17:27:54Z load 7.21 5.77 4.70), same host, `KUTHA_BENCH_N=10000 cargo bench -p kutha-runtime --bench baseline --offline` alone: ingest_plain.n **144924496 ns** → **110385750 ns** (−23.8%); as_of.n **394795 ns** → **264182 ns** (−33.1%, eager). Neither regresses over 10 percent.
+- Bench PRE (228-01) vs kill2-fix POST (2026-10-22T18:03:00Z load 6.82 5.85 4.36), same host, `KUTHA_BENCH_N=10000 cargo bench -p kutha-runtime --bench baseline --offline` alone: ingest_plain.n **144924496 ns** → **102767611 ns** (−29.1%); as_of.n **394795 ns** → **215071 ns** (−45.5%, eager). Neither regresses over 10 percent (sub-baseline is noise under that load).
 
 ### Fixed
 
