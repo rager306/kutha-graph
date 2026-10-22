@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-22 — Trajectory: lease M152-S01 (Arc 0 hygiene)
+
+Process tag **v1.46** / Phase **226**. Not a SemVer release.
+
+- Active Milestone **M152**, Active Slice **S01** (`L_delivery=M152-S01`): docs and git hygiene only (track CE artifacts, harness moratorium, branch rename and backup push). Honeycomb stays Proposed; nothing thawed.
+
 ## 2026-10-22 — Trajectory: M151 / GSD v1.45 closed
 
 Process tag **v1.45** / Phase **225**. Not a SemVer release.
