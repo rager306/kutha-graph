@@ -28,7 +28,7 @@ status: in-progress
 ---
 # Phase 228 Plan 01: checkpoint receipt Op wire Summary
 
-**PRE baseline recorded; RED and Op::Checkpoint still pending this plan.**
+**PRE baseline recorded; RED is E0425 on missing `store::checkpoint_sealed_prefix`.**
 
 ## Bench PRE (D-05)
 
@@ -38,10 +38,21 @@ Host: 12 cores; benches ran alone. Load start 3.43 3.13 2.99 (2026-10-22T15:41:4
 - `as_of.n` **394795 ns**
 - also: ingest_plain.2n 238350985; ingest_plain.4n 449478328; as_of.2n 752982; as_of.4n 1277359; fold_index_mode eager
 
-## RED
+## RED (verbatim, before production code)
 
-Pending task 2.
+`cargo test -p kutha-runtime --offline --test b1_checkpoint_receipt -- --exact checkpoint_sealed_prefix_preserves_fingerprint_and_pit` exit **101**:
+
+```
+error[E0425]: cannot find function `checkpoint_sealed_prefix` in module `store`
+  --> crates/kutha-runtime/tests/b1_checkpoint_receipt.rs:92:12
+   |
+92 |     store::checkpoint_sealed_prefix(&dir).unwrap();
+   |            ^^^^^^^^^^^^^^^^^^^^^^^^ not found in `store`
+error: could not compile `kutha-runtime` (test "b1_checkpoint_receipt") due to 1 previous error
+```
+
+Sealed-delete RED not used. Tracer verify expected 101 (not GREEN).
 
 ## Deviations from Plan
 
-None yet.
+None.
