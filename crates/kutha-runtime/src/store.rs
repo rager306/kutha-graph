@@ -1,4 +1,4 @@
-use crate::fold::GraphFold;
+use crate::fold::{checkpoint_kept_prefix_op, GraphFold};
 use crate::quantum::{
     Justification, PersistedQuantumOutcome, Runtime, RuntimeError, cascade_limit,
 };
@@ -161,10 +161,13 @@ pub fn persist(runtime: &Runtime, dir: &Path) -> std::io::Result<()> {
 /// Holds [`STORE_LOCK_REL`]. Fails closed when `manifest.json` is missing or
 /// `sealed` is empty. Does not go through `Runtime::emit`. `snapshot.json` is
 /// refreshed as a lease, not the checkpoint carrier. Prefix `Op::StoreBlob`
-/// events are copied verbatim (same ids/order) before the checkpoint blob:
-/// `GraphFold.blobs` is serde-skip. `dropped_count` is prefix length minus
-/// those kept StoreBlobs. `fact_count` is the prefix fold fact count. The
-/// rewritten dir is persisted as [`encoded_log`] (Defines then graph) so
+/// events, `Op::QuantumOutcome`, and `Op::JustificationCite` are copied
+/// verbatim (same ids/order) before the checkpoint blob: `GraphFold.blobs` is
+/// serde-skip and sidecar queries read those ops from the log. `dropped_count`
+/// is prefix length minus those kept kinds (`StoreBlob`, `QuantumOutcome`,
+/// `JustificationCite`; not `Op::Checkpoint` — a re-checkpoint folds the old
+/// receipt into the new Snapshot). `fact_count` is the prefix fold fact count.
+/// The rewritten dir is persisted as [`encoded_log`] (Defines then graph) so
 /// `committed_prefix` can classify `kutha:*` and Persister attach matches.
 pub fn checkpoint_sealed_prefix(dir: &Path) -> std::io::Result<()> {
     let _lock = acquire_store_write_lock(dir)?;
@@ -205,13 +208,15 @@ pub fn checkpoint_sealed_prefix(dir: &Path) -> std::io::Result<()> {
     let last_event_id = prefix[prefix_len - 1].id;
     let ingested_at = prefix[prefix_len - 1].ingested_at;
     // GraphFold.blobs is serde-skip; Snapshot cannot carry rule/policy/plain bodies.
-    // Copy prefix StoreBlobs verbatim (same Event ids and order) so D-01 stays on-log.
-    let kept_blobs: Vec<Event> = prefix
+    // Sidecar queries read QuantumOutcome / JustificationCite from the log.
+    // Copy those prefix ops verbatim (same Event ids and order). Do not copy
+    // Op::Checkpoint: re-checkpoint folds the old receipt into the new Snapshot.
+    let kept: Vec<Event> = prefix
         .iter()
-        .filter(|e| matches!(e.op, Op::StoreBlob { .. }))
+        .filter(|e| checkpoint_kept_prefix_op(&e.op))
         .cloned()
         .collect();
-    let dropped_count = (prefix_len - kept_blobs.len()) as u64;
+    let dropped_count = (prefix_len - kept.len()) as u64;
     let blob_snap = Snapshot {
         log_offset: fold_affecting_count(prefix),
         next_tt,
@@ -241,8 +246,8 @@ pub fn checkpoint_sealed_prefix(dir: &Path) -> std::io::Result<()> {
         },
         ingested_at,
     );
-    let mut new_log = Vec::with_capacity(kept_blobs.len() + 2 + tail.len());
-    new_log.extend(kept_blobs);
+    let mut new_log = Vec::with_capacity(kept.len() + 2 + tail.len());
+    new_log.extend(kept);
     new_log.push(blob_event);
     new_log.push(checkpoint_event);
     new_log.extend(tail);

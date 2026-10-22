@@ -8,7 +8,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Added
 
-- `store::checkpoint_sealed_prefix` under `kutha.lock` rewrites a sealed prefix to prefix `StoreBlob`s copied verbatim (same ids/order), then `Op::StoreBlob` (prefix `Snapshot` fold, same shape as `snapshot.rs`) plus `Op::Checkpoint` receipt plus the unchanged tail. `snapshot.json` stays a lease, never the carrier. `dropped_count` is prefix length minus kept StoreBlobs; `fact_count` is the prefix fold fact count.
+- `store::checkpoint_sealed_prefix` under `kutha.lock` rewrites a sealed prefix to prefix `StoreBlob`, `QuantumOutcome`, and `JustificationCite` ops copied verbatim (same ids/order), then `Op::StoreBlob` (prefix `Snapshot` fold, same shape as `snapshot.rs`) plus `Op::Checkpoint` receipt plus the unchanged tail. `snapshot.json` stays a lease, never the carrier. `dropped_count` is prefix length minus those kept kinds (not `Op::Checkpoint`; a re-checkpoint folds the old receipt into the new Snapshot); `fact_count` is the prefix fold fact count.
 - Oracle `user_emit_checkpoint_is_meta_op_rejected`: public `Runtime::emit(Op::Checkpoint)` returns `MetaOpRejected` and does not append.
 
 ### Changed
@@ -20,6 +20,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - After checkpoint, persist the encoded log (Defines then graph), not the compacted graph-only rewrite. `committed_prefix` can then classify `kutha:admission` / `kutha:action` in the tail, and `snapshot.log_offset` matches the committed fold-affecting count. Persister attach sees the same event count as `encoded_log`.
 - `Op::Checkpoint` apply and `replay_check` verify blob digest, restored `fact_count`, and `fingerprint_hex` against the prefix Snapshot; mismatch is `ReplayDivergence` (open fail-closed). Fingerprint still hashes all facts including dead ones.
+- Prefix `QuantumOutcome` and `JustificationCite` ride the rewritten log like kept `StoreBlob`s, so `outcome_records` / `justification_records` match the un-checkpointed twin. `Op::Checkpoint` is not copied (R5 re-checkpoint keeps one receipt).
 
 Lease and honeycomb cells stay **Proposed**.
 

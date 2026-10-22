@@ -354,6 +354,16 @@ impl<'de> serde::Deserialize<'de> for GraphFold {
     }
 }
 
+/// Prefix ops copied onto the rewritten log (same Event ids/order).
+/// `Op::Checkpoint` is not kept: a re-checkpoint folds the old receipt into
+/// the new Snapshot so the new log has exactly one receipt.
+pub(crate) fn checkpoint_kept_prefix_op(op: &Op) -> bool {
+    matches!(
+        op,
+        Op::StoreBlob { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. }
+    )
+}
+
 /// Prefix Snapshot if blob digest, `fact_count`, and `fingerprint_hex` match.
 pub(crate) fn checkpoint_snapshot_if_receipt_ok(
     bytes: &[u8],

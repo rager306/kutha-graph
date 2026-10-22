@@ -2781,11 +2781,11 @@ rows:
     source: Phase 227 / Verus on-ramp
   - id: SEM-m154-checkpoint-receipt
     plane: product
-    invariant: sealed prefix rewrite preserves fingerprint, PIT as_of/as_known_on, open, replay_check, and prefix StoreBlob bodies
+    invariant: sealed prefix rewrite preserves fingerprint, PIT as_of/as_known_on, open, replay_check, prefix StoreBlob bodies, and prefix QuantumOutcome/JustificationCite sidecar answers
     layer: kill
     oracle:
       - checkpoint_sealed_prefix_preserves_fingerprint_and_pit
-    kill_mutation: drop store::checkpoint_sealed_prefix rewrite, drop prefix StoreBlob copy, or GraphFold::apply Checkpoint hydrate
+    kill_mutation: drop store::checkpoint_sealed_prefix rewrite, drop prefix StoreBlob/QuantumOutcome/JustificationCite copy, or GraphFold::apply Checkpoint hydrate
     status: killed
     gate: default
     owner: M154-S01

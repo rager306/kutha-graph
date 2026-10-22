@@ -181,9 +181,14 @@ fn checkpoint_sealed_prefix_preserves_fingerprint_and_pit() {
     assert_eq!(rule_before.1, rule_bytes);
     assert_eq!(policy_before.1, policy_bytes);
     assert_eq!(plain_before.1, plain_bytes);
-    let prefix_blob_count = prefix
+    let prefix_kept_count = prefix
         .iter()
-        .filter(|e| matches!(e.op, Op::StoreBlob { .. }))
+        .filter(|e| {
+            matches!(
+                e.op,
+                Op::StoreBlob { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. }
+            )
+        })
         .count();
     let dict_strings = rt.dictionary().strings().to_vec();
     let fact_count = rt.fold().facts().len() as u64;
@@ -238,7 +243,7 @@ fn checkpoint_sealed_prefix_preserves_fingerprint_and_pit() {
             _ => None,
         })
         .expect("Op::Checkpoint on rewritten log");
-    assert_eq!(ckpt.0, (prefix_len - prefix_blob_count) as u64);
+    assert_eq!(ckpt.0, (prefix_len - prefix_kept_count) as u64);
     assert_eq!(ckpt.1, fact_count);
 }
 

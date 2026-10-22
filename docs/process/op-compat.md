@@ -15,7 +15,7 @@ persisted product logs after the M013 dictionary-as-facts rewrite.
 | Pre-dictionary | `Op::RecordAdmission` | **Fail open** | **Leased (M065-S01):** `record_admission_to_assert` → `kutha:admission` Assert (mirrors `record_justification`) |
 | Pre-dictionary | `Op::RecordAction` | **Fail open** | **Leased (M066-S01):** `record_action_to_assert` → `kutha:action` Assert (mirrors `record_action`) |
 | Current writers | `Op::Assert` on reserved `kutha:allows` / `kutha:rule` / `kutha:policy` / `kutha:admission` / `kutha:action` (+ `StoreBlob` for bodies) | Supported | n/a |
-| Current writers (2026-10-22 / M154) | `Op::Checkpoint` | **Fail open** (unknown serde variant). No aliases; no `remap_legacy_ops` entry; no new `op-wire.v1` meaning. Receipt: `dropped_count` = sealed prefix event count minus prefix `StoreBlob`s copied verbatim (same ids/order) onto the new log; `fact_count` = prefix fold fact count (including dead facts). `GraphFold.blobs` stays serde-skip. | n/a — do **not** run `migrate_op_wire` on a checkpointed store (it demotes segments) |
+| Current writers (2026-10-22 / M154) | `Op::Checkpoint` | **Fail open** (unknown serde variant). No aliases; no `remap_legacy_ops` entry; no new `op-wire.v1` meaning. Receipt: `dropped_count` = sealed prefix event count minus prefix ops copied verbatim (`StoreBlob`, `QuantumOutcome`, `JustificationCite`; same ids/order) onto the new log. `Op::Checkpoint` is not copied (a re-checkpoint folds the old receipt into the new Snapshot). `fact_count` = prefix fold fact count (including dead facts). `GraphFold.blobs` stays serde-skip. | n/a — do **not** run `migrate_op_wire` on a checkpointed store (it demotes segments) |
 
 Reasons serde aliases stay forbidden:
 
