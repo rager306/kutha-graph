@@ -163,7 +163,9 @@ pub fn persist(runtime: &Runtime, dir: &Path) -> std::io::Result<()> {
 /// refreshed as a lease, not the checkpoint carrier. Prefix `Op::StoreBlob`
 /// events are copied verbatim (same ids/order) before the checkpoint blob:
 /// `GraphFold.blobs` is serde-skip. `dropped_count` is prefix length minus
-/// those kept StoreBlobs. `fact_count` is the prefix fold fact count.
+/// those kept StoreBlobs. `fact_count` is the prefix fold fact count. The
+/// rewritten dir is persisted as [`encoded_log`] (Defines then graph) so
+/// `committed_prefix` can classify `kutha:*` and Persister attach matches.
 pub fn checkpoint_sealed_prefix(dir: &Path) -> std::io::Result<()> {
     let _lock = acquire_store_write_lock(dir)?;
     if !dir.join(crate::segment::MANIFEST_REL).exists() {
@@ -244,9 +246,9 @@ pub fn checkpoint_sealed_prefix(dir: &Path) -> std::io::Result<()> {
     new_log.push(blob_event);
     new_log.push(checkpoint_event);
     new_log.extend(tail);
-    crate::segment::persist_log(dir, &new_log)?;
     let rt = Runtime::from_dict_and_events(dict_strings, new_log, opened_snap.max_cascade)
         .map_err(runtime_err)?;
+    crate::segment::persist_log(dir, &encoded_log(&rt))?;
     write_terms(dir, rt.dictionary().strings())?;
     replace_snapshot(dir, &rt.snapshot(), true)?;
     write_outcomes(dir, &crate::hydrate::outcomes_from_events(rt.log().iter()))?;

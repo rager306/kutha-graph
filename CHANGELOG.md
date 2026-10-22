@@ -16,6 +16,10 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - `GraphFold::apply` of `Checkpoint` restores facts, `next_seq`, and `tt_anchors` from the blob; `tt_anchors_from_events` / `rebuild_tt_anchors` union walls from checkpoint blobs. Fingerprint still hashes all facts including dead ones (not vacuum). `GraphFold.blobs` stays serde-skip; rule/policy/plain bodies ride copied prefix StoreBlobs.
 - Bench PRE (228-01) vs POST (228-02 rewrite) vs StoreBlob-copy POST (2026-10-22T16:36:31Z load 4.68 4.35 3.98), same host, `KUTHA_BENCH_N=10000 cargo bench -p kutha-runtime --bench baseline --offline` alone: ingest_plain.n **144924496 ns** → **128077580 ns** → **127349319 ns** (−12.1% vs PRE); as_of.n **394795 ns** → **273420 ns** → **296063 ns** (−25.0% vs PRE, eager). Neither regresses over 10 percent.
 
+### Fixed
+
+- After checkpoint, persist the encoded log (Defines then graph), not the compacted graph-only rewrite. `committed_prefix` can then classify `kutha:admission` / `kutha:action` in the tail, and `snapshot.log_offset` matches the committed fold-affecting count. Persister attach sees the same event count as `encoded_log`.
+
 Lease and honeycomb cells stay **Proposed**.
 
 ## 2026-10-22 — Trajectory: lease M154-S01 (checkpoint receipt)
