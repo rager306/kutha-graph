@@ -4,15 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-22 — Trajectory: M151 / GSD v1.45 closed
+
+Process tag **v1.45** / Phase **225**. Not a SemVer release.
+
+- Overlap cargo pack includes `wall_ms`; `phase_ms observe_cargo=` uses it instead of Future join-wait. Check `observe-phase-ms-wall`; budget 103→104. Matrix `SEM-m151-observe-phase-ms` killed.
+- `L_delivery=M151-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.45 / Phase 225. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-22 — Trajectory: lease M151-S01 (observe phase_ms wall)
 
 Process tag **v1.45** / Phase **225**. Not a SemVer release.
 
 - Active Milestone **M151**, Active Slice **S01** (`L_delivery=M151-S01`): phase_ms observe_cargo uses cargo wall time under overlap. Honeycomb stays Proposed.
-
-### Fixed (process)
-
-- Overlap cargo pack includes `wall_ms`; `phase_ms observe_cargo=` uses it instead of Future join-wait. Check `observe-phase-ms-wall`; budget 103→104. Matrix `SEM-m151-observe-phase-ms` killed.
 
 ## 2026-10-22 — Trajectory: M150 / GSD v1.44 closed
 
