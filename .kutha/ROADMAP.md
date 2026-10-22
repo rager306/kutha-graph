@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M151: observe phase_ms wall honesty — OPEN (GSD v1.45)
+
+Dogfood follow-on to M150: under jobs>1 overlap, `phase_ms observe_cargo=` measures Future join-wait (often ~0) after cargo already finished in the pipeline — lies next to real `elapsed_ms=` on findings. Thin slice: record cargo wall time in the overlap pack and use it for `phase_ms`. Honeycomb stays Proposed. Budget stays 103.
+
+- [ ] **S01: observe phase_ms wall** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m151-observe-phase-ms` killed. Phase 225.
+
 ## M150: observe-fail elapsed + stderr tail — CLOSED (GSD v1.44)
 
 Dogfood follow-on to M148/M149: bare `cargo test exit 101` findings look like a no-op when `phase_ms observe_cargo=0` races, and hide compile/stderr. Thin slice: `observe-fail` includes `elapsed_ms=N` and a truncated output tail (`KUTHA_GOV_OBSERVE_FAIL_TAIL`, default 240). Honeycomb stays Proposed. Budget 102→103.
