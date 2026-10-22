@@ -2768,6 +2768,17 @@ rows:
     gate: default
     owner: M151-S01
     source: Phase 225 / dogfood observe phase_ms wall
+  - id: SEM-m153-verus-vt-sync
+    plane: harness
+    invariant: the Verus proof of vt_intersect carries the production body verbatim and the Verus release is pinned with a checksum
+    layer: kill
+    oracle:
+      - verus-proof-sync
+    kill_mutation: change a body line of vt_intersect in verus/vt_intersect.rs or in crates/kutha-runtime/src/fold.rs; or drop the tools/verus pin
+    status: killed
+    gate: default
+    owner: M153-S01
+    source: Phase 227 / Verus on-ramp
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

@@ -1,0 +1,7 @@
+# Pinned Verus release for verus/*.rs (evidence tool, not a Cargo dependency).
+# Install: download the asset from https://github.com/verus-lang/verus/releases/tag/release/<verus_release>,
+# check it with `sha256sum -c tools/verus/SHA256SUMS`, unpack, set KUTHA_VERUS_BIN to the `verus` binary.
+# Run with RUSTUP_TOOLCHAIN=<rustc>: Verus needs this rustc, not the workspace pin in rust-toolchain.toml.
+verus_release=0.2026.10.18.7d82994
+rustc=1.99.1
+asset=verus-0.2026.10.18.7d82994-x86-linux.zip

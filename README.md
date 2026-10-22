@@ -10,7 +10,7 @@ This is not a production graph database and not Graphiti / Samyama / Harvey.
 
 | Plane | Where | Now |
 |-------|--------|-----|
-| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | M153-S01 leased (`L_delivery=M153-S01`); harness phase **H5** |
+| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | M153 closed (`L_delivery=M153-closed`); harness phase **H5** |
 | Architecture map | [`docs/ADR/README.md`](docs/ADR/README.md) | Spine + honeycomb **Proposed**, not Accepted |
 | Capability | `crates/kutha-runtime` tests | FF5 green (`as_of(2015) ≠ as_of(2021)` on a statute-shaped fixture) |
 
@@ -57,6 +57,7 @@ This host’s Cargo uses **kache** as `rustc-wrapper` and **mold** as linker (`~
 | `docs/process/governor-intake.md` | Control loop / bridge / map → governor dictionaries |
 | `docs/process/gsd-auto-contract.md` | Id map, controller protocol, code-graph tool pair, verification and artifact gates for GSD auto runs |
 | `scripts/kutha_gov/` | Governor CLI interpreter |
+| `verus/`, `tools/verus/` | Verus proofs of pure kernels (evidence, not a gate) and the pinned release + checksum |
 | `.compound-engineering/artifacts/` | CE `docs_root` (applicability cards, research notes, handoffs archive) |
 
 ## Where to read next

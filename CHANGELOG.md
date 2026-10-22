@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-22 — Trajectory: M153 / GSD v1.47 closed
+
+Process tag **v1.47** / Phase **227**. Not a SemVer release.
+
+- Verus on-ramp: release `0.2026.10.18.7d82994` pinned in `tools/verus/` (rustc 1.99.1, checksum equals the GitHub release digest); `verus/vt_intersect.rs` verifies with the production body unchanged (`2 verified, 0 errors`); two mutations of the body fail in Verus. Check `verus-proof-sync` pins the proof body to `fold.rs`; budget 104→105. Matrix `SEM-m153-verus-vt-sync` killed.
+- Verus is evidence, not a gate: CI does not run it and no crate depends on it. The official PDD Kit is not installable yet (research preview); this slice is the Verus prerequisite only.
+- `L_delivery=M153-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.47 / Phase 227. ADR-000 D3 still rejects a hard FSM as the only control model.
+
+## 2026-10-22 — Process: Verus on-ramp
+
+### Added
+
+- `tools/verus/{VERSION,SHA256SUMS}`, `verus/vt_intersect.rs`, `KUTHA_VERUS_BIN` in `.env.example`, governor check `verus-proof-sync` (invariant `I-verus-vt-proof-sync`), and the setup note in `.cursor/rules/verus-formal-verification.mdc`.
+
 ## 2026-10-22 — Trajectory: lease M153-S01 (Verus on-ramp)
 
 Process tag **v1.47** / Phase **227**. Not a SemVer release.

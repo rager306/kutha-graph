@@ -1800,6 +1800,63 @@ checks:
           pattern: 'M151: overlapped observe_cargo'
           with: 'M151: join-wait observe_cargo'
 
+  - id: verus-proof-sync
+    description: >-
+      The Verus proof of vt_intersect carries the production body verbatim and
+      the Verus release is pinned with a checksum. Pins sync, not proof validity:
+      validity is the recorded Verus run in the phase VERIFICATION. M153 / Phase 227.
+    steps:
+      - kind: file_contains
+        path: tools/verus/VERSION
+        needles:
+          - "verus_release=0.2026.10.18.7d82994"
+          - "rustc=1.99.1"
+        require: all
+        category: oracle
+        message: "Verus pin missing: {missing}"
+      - kind: file_contains
+        path: tools/verus/SHA256SUMS
+        needles:
+          - "e9af03732d4bdd32b93a8fcf471706739c24c1473fa5086618d96c47237845dd  verus-0.2026.10.18.7d82994-x86-linux.zip"
+        require: all
+        category: oracle
+        message: "Verus release checksum missing: {missing}"
+      - kind: file_contains
+        path: crates/kutha-runtime/src/fold.rs
+        needles:
+          - "let from = a_from.max(b_from);"
+          - "let a_end = a_to.unwrap_or(u64::MAX);"
+          - "let b_end = b_to.unwrap_or(u64::MAX);"
+          - "let to_raw = a_end.min(b_end);"
+          - "if from >= to_raw {"
+          - "let to = if to_raw == u64::MAX {"
+        require: all
+        category: oracle
+        message: "production vt_intersect body drifted from the proof: {missing}"
+      - kind: file_contains
+        path: verus/vt_intersect.rs
+        needles:
+          - "let from = a_from.max(b_from);"
+          - "let a_end = a_to.unwrap_or(u64::MAX);"
+          - "let b_end = b_to.unwrap_or(u64::MAX);"
+          - "let to_raw = a_end.min(b_end);"
+          - "if from >= to_raw {"
+          - "let to = if to_raw == u64::MAX {"
+          - "ensures"
+        require: all
+        category: oracle
+        message: "Verus proof body drifted from production vt_intersect: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: verus/vt_intersect.rs
+          pattern: 'let to_raw = a_end\.min\(b_end\);'
+          with: 'let to_raw = a_end.max(b_end);'
+        - op: replace_regex
+          path: crates/kutha-runtime/src/fold.rs
+          pattern: 'let from = a_from\.max\(b_from\);'
+          with: 'let from = a_from.min(b_from);'
+
   - id: observe-retry-incomplete
     description: >-
       Cargo observe retries on observe-incomplete under the same flock

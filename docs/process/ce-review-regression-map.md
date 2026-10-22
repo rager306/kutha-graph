@@ -74,6 +74,7 @@ Closed this wave: #35/#36 → `SEM-m056-hygiene-*` (M056-S05); #28 → `SEM-m056
 | partial cargo ok + exit 101 → N× missing, no retry | `SEM-m149-partial-observe-incomplete` | `observe-partial-incomplete` / `test_cargo_partial_ok_nonzero_is_incomplete` | M149-S01 |
 | bare observe-fail hides elapsed/stderr | `SEM-m150-observe-fail-detail` | `observe-fail-detail` / `test_run_cargo_observe_fail_includes_elapsed_and_stderr_tail` | M150-S01 |
 | overlap phase_ms~0 while cargo took seconds | `SEM-m151-observe-phase-ms` | `observe-phase-ms-wall` / `test_overlap_observe_phase_ms_uses_cargo_wall_not_join_wait` | M151-S01 |
+| proof of `vt_intersect` drifts from the production body (or the Verus pin is lost) | `SEM-m153-verus-vt-sync` | `verus-proof-sync` | M153-S01 |
 | #5 kinds-split oracle was test-matrix | `SEM-m054-id-kinds-split` | `kinds-family-split` | M098-S01 |
 | Correct/CorrectInterval of Behavior leaves retract indexes | `SEM-m100-correct-unindex-behavior` | `correct_of_behavior_drops_retract_index`, `correct_interval_of_behavior_drops_retract_index` | M100-S01 |
 | rule-pin VT truncation (pin starts after the trigger) | `SEM-m101-horn-pin-overlap` | `late_starting_rule_pin_fires_on_overlap` | M101-S01 |

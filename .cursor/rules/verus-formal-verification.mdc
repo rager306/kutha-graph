@@ -15,5 +15,6 @@ Evidence (2026-10-22 spike, scratch): `vt_intersect` verifies with its productio
 - Proofs live outside `crates/` (`verus/`, pins in `tools/verus/`). No `vstd` or `verus!` in production crates. Verus is not a Cargo dependency.
 - Proof body equals the production body, or a sync check ties them. No `assume` / `admit`. `external_body` only for a named unsupported std call, with a comment.
 - A claim cites the pinned Verus version and the run output. Verus pass ≠ governor green ≠ ADR Accepted ≠ capability. Honeycomb stays Proposed.
+- Setup (M153): pin and checksum in `tools/verus/`; binary path in `KUTHA_VERUS_BIN` (`.env.example`); run `RUSTUP_TOOLCHAIN=1.99.1 "$KUTHA_VERUS_BIN" verus/<file>.rs`. First proof: `verus/vt_intersect.rs`. Governor check `verus-proof-sync` pins the proof body to production (sync only, not validity); CI never runs Verus. A new proof adds its body lines to that check or a sibling row inside its own slice.
 - Verus needs its own rustc (1.99.1 at release `0.2026.10.18`); do not change `rust-toolchain.toml` for it. Do not edit or delete `/root/verus-pilot`.
 - Before writing a proof, read the skills `verus`, `rust-verification`, and `verus-verification` (its Regorus-specific names do not apply; its contract-first rules do).

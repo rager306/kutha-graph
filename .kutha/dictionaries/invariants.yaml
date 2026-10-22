@@ -441,6 +441,12 @@ invariants:
     disposition: check
     check: observe-phase-ms-wall
 
+  - id: I-verus-vt-proof-sync
+    claim: "verus/vt_intersect.rs carries the production vt_intersect body verbatim and tools/verus pins the Verus release with a checksum; pins sync, not proof validity (the Verus run is recorded evidence, not a gate); SEM-m153"
+    source: ".planning/phases/227-verus-on-ramp/227-VERIFICATION.md"
+    disposition: check
+    check: verus-proof-sync
+
   - id: I-fixed-tmp-persist-dir
     claim: "crates must not Path::new(\"tmp/…\") or .join(\"tmp\").join(\"…\") for persist/open; SEM-m122 / SEM-m123"
     source: ".planning/phases/197-fixed-tmp-join/197-VERIFICATION.md"
