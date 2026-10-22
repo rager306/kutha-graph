@@ -3,7 +3,7 @@ ce-handoff/v1: true
 title: "M154 closed (checkpoint receipt, thin B1) — Arc B next, B2 fork diff candidate"
 date: 2026-10-22
 branch: work/main-line
-head: PENDING
+head: baf177c
 resume_focus: "After the user asks to continue: lease B2 (ADR-061 fork diff) with a fresh RED, bundle STATE+ROADMAP+CHANGELOG+README. Run via subagents under the GSD-auto controller protocol; the owner standing order is: do not ask permission to commit. Harness moratorium applies. Do not thaw Cypher/HNSW/SIX-01/legal pack."
 ---
 
