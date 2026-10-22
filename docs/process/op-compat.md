@@ -15,6 +15,7 @@ persisted product logs after the M013 dictionary-as-facts rewrite.
 | Pre-dictionary | `Op::RecordAdmission` | **Fail open** | **Leased (M065-S01):** `record_admission_to_assert` → `kutha:admission` Assert (mirrors `record_justification`) |
 | Pre-dictionary | `Op::RecordAction` | **Fail open** | **Leased (M066-S01):** `record_action_to_assert` → `kutha:action` Assert (mirrors `record_action`) |
 | Current writers | `Op::Assert` on reserved `kutha:allows` / `kutha:rule` / `kutha:policy` / `kutha:admission` / `kutha:action` (+ `StoreBlob` for bodies) | Supported | n/a |
+| Current writers (2026-10-22 / M154) | `Op::Checkpoint` | **Fail open** (unknown serde variant). No aliases; no `remap_legacy_ops` entry; no new `op-wire.v1` meaning. | n/a — do **not** run `migrate_op_wire` on a checkpointed store (it demotes segments) |
 
 Reasons serde aliases stay forbidden:
 
@@ -38,6 +39,11 @@ Materializes `events.jsonl`, drops the prior WAL / segmented layout and stale
 Open stays fail-open until the operator runs this step (`recover_events` /
 sealed `scan_segment` return `InvalidData` on CRC-good frames that are valid
 JSON but not a modern `Event` — no silent drop of legacy meta-ops).
+
+Do **not** run `migrate_op_wire` (or `migrate_compat` / `kutha-migrate`) on a
+store that already carries `Op::Checkpoint`: the rewrite demotes sealed
+segments to legacy jsonl and would drop the receipt layout. `Op::Checkpoint` is
+a modern serde variant; old readers fail open. No serde aliases.
 
 **Shipped (M076):** `store::migrate_compat` runs `migrate_op_wire` then
 `migrate_pins` (reuse; no new remap rules) so meta-op rewrite precedes pin

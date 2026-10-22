@@ -14,7 +14,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Changed
 
 - `GraphFold::apply` of `Checkpoint` restores facts, `next_seq`, and `tt_anchors` from the blob; `tt_anchors_from_events` / `rebuild_tt_anchors` union walls from checkpoint blobs. Fingerprint still hashes all facts including dead ones (not vacuum).
-- Bench PRE (228-01, same host, benches alone): ingest_plain.n **144924496 ns**; as_of.n **394795 ns** (eager). POST numbers land with the docs close.
+- Bench PRE (228-01) vs POST (228-02), same host, `KUTHA_BENCH_N=10000 cargo bench -p kutha-runtime --bench baseline --offline` alone: ingest_plain.n **144924496 ns** → **128077580 ns** (−11.6%); as_of.n **394795 ns** → **273420 ns** (−30.7%, eager). Neither regresses over 10 percent.
 
 Lease and honeycomb cells stay **Proposed**.
 

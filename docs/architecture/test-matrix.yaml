@@ -2779,6 +2779,17 @@ rows:
     gate: default
     owner: M153-S01
     source: Phase 227 / Verus on-ramp
+  - id: SEM-m154-checkpoint-receipt
+    plane: product
+    invariant: sealed prefix rewrite preserves fingerprint, PIT as_of/as_known_on, open, and replay_check
+    layer: kill
+    oracle:
+      - checkpoint_sealed_prefix_preserves_fingerprint_and_pit
+    kill_mutation: drop store::checkpoint_sealed_prefix rewrite or GraphFold::apply Checkpoint hydrate
+    status: killed
+    gate: default
+    owner: M154-S01
+    source: Phase 228 / checkpoint receipt thin B1
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

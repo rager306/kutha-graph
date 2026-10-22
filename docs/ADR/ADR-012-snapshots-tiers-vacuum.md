@@ -64,6 +64,10 @@ ROCK-02 Rocks meta is still a droppable locator lease (`m:v`=2, sealed-list alwa
 
 The semantic log is the event sequence (D1); physical encoding is sealed `KUTHASEG` + `manifest.json` for new/migrated dirs, or legacy jsonl+WAL until `store::migrate` (`store::persist_until`, `segment::persist_log`, `Persister`, `commit::committed_prefix`). Snapshots remain leases (`replay_check` + snapshot `log_offset` vs committed prefix). Writers take `kutha.lock`. `export_jsonl` is unread after migrate. Rocks meta `m:v`=2. Residuals: full `persist()` O(N); `open` O(N); no external chain anchor.
 
+### Evidence (2026-10-22, Phase 228 / M154 S01; Proposed)
+
+Sealed-prefix checkpoint receipt: `store::checkpoint_sealed_prefix` holds `kutha.lock` and rewrites sealed events to a `StoreBlob` of the prefix `Snapshot` fold (same shape as `snapshot.rs`; not `snapshot.json` as carrier) plus `Op::Checkpoint`, then the unchanged tail. `persist_log` starts seq-1 names and removes obsolete segments. `GraphFold::apply` of `Checkpoint` hydrates facts / `next_seq` / `tt_anchors` from the blob; `tt_anchors_from_events` unions walls from checkpoint blobs so `replay_check` stays exact. Fingerprint still hashes all facts including dead ones (not vacuum, D012-4). User `emit(Checkpoint)` is `MetaOpRejected`. Oracle: `checkpoint_sealed_prefix_preserves_fingerprint_and_pit`. Status stays **Proposed**. This block does not rewrite D012-1–D012-5.
+
 ## Date
 
 2026-08-18

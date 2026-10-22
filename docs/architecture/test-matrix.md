@@ -259,6 +259,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M153 S01 (Verus on-ramp):** Phase 227 — `SEM-m153-verus-vt-sync` `killed` (owner `M153-S01`). Oracle check: `verus-proof-sync`. Kill: change a body line in `verus/vt_intersect.rs` or in `fold.rs` `vt_intersect`. Pins sync only; proof validity is the recorded Verus run.
 
+**M154 S01 (checkpoint receipt):** Phase 228 — `SEM-m154-checkpoint-receipt` `killed` (owner `M154-S01`). Oracle: `checkpoint_sealed_prefix_preserves_fingerprint_and_pit`. Kill: drop `store::checkpoint_sealed_prefix` rewrite or `GraphFold::apply` Checkpoint hydrate.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

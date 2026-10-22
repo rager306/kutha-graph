@@ -1,3 +1,4 @@
+# 2026-10-22 restage (M154 S01 checkpoint receipt evidence): ADR-012; map/delivery/capability unchanged.
 # 2026-10-20 restage (M122 fixed-tmp persist-dir dogfood; harness + example/m026): map/delivery/capability unchanged.
 # 2026-10-19 restage (hot-path-lease-honesty dogfood / M111): map/delivery/capability unchanged.
 # 2026-10-19 restage (README hot-path rebuild live Behaviors / M110): map/delivery/capability unchanged.
@@ -209,6 +210,8 @@ cells:
       # Phase 89 / M029 S01 — interrupted rollover seal heal; cell still Proposed
       - open_for_append_heals_after_rollover_trailer_crash
       - open_for_append_heals_after_rollover_new_header_crash
+      # Phase 228 / M154 S01 — sealed-prefix checkpoint receipt; cell still Proposed
+      - checkpoint_sealed_prefix_preserves_fingerprint_and_pit
 
   - id: ADR-013
     axis: Time
