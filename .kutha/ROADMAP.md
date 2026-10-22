@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M148: ci summary observe_retried label — OPEN (GSD v1.42)
+## M148: ci summary observe_retried label — CLOSED (GSD v1.42)
 
-Dogfood follow-on to M147: LOW `observe-retried` is easy to miss in findings noise. Thin slice: harness summary always prints `observe_retried=N` next to `run_high=` / `run_low=`. Label contract via pytest (not file_contains needles). Honeycomb stays Proposed. Budget stays 100.
+Dogfood follow-on to M147: LOW `observe-retried` is easy to miss in findings noise. Thin slice: harness summary always prints `observe_retried=N` next to `run_high=` / `run_low=`. Label contract via pytest (not file_contains needles). Honeycomb stays Proposed. Budget 100→101.
 
-- [ ] **S01: observe_retried summary label** `risk:low` `depends:[]`
-  > After this: matrix `SEM-m148-observe-retried-summary` killed. Phase 222.
+- [x] **S01: observe_retried summary label** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m148-observe-retried-summary` killed. Phase 222. Landed.
 
 ## M147: observe-retried LOW + cargo pack HIGH-only — CLOSED (GSD v1.41)
 
