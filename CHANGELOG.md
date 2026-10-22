@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-22 — Trajectory: lease M149-S01 (partial observe incomplete)
+
+Process tag **v1.43** / Phase **223**. Not a SemVer release.
+
+- Active Milestone **M149**, Active Slice **S01** (`L_delivery=M148-closed`): non-zero cargo exit with missing required names and no FAILED → `observe-incomplete` (retry). Honeycomb stays Proposed.
+
 ## 2026-10-22 — Trajectory: M148 / GSD v1.42 closed
 
 Process tag **v1.42** / Phase **222**. Not a SemVer release.

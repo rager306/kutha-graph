@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M149: partial cargo observe → incomplete retry — OPEN (GSD v1.43)
+
+Dogfood follow-on to M148: parallel/cold cargo can exit 101 after some required tests print `ok`, so M145's "no verdict" incomplete gate misses and M146 never retries — N× `observe-missing` instead. Thin slice: non-zero exit + missing required + no FAILED among required → one `observe-incomplete` (retryable). Real FAILED stays per-name. Honeycomb stays Proposed. Budget stays 101.
+
+- [ ] **S01: partial-run incomplete honesty** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m149-partial-observe-incomplete` killed. Phase 223.
+
 ## M148: ci summary observe_retried label — CLOSED (GSD v1.42)
 
 Dogfood follow-on to M147: LOW `observe-retried` is easy to miss in findings noise. Thin slice: harness summary always prints `observe_retried=N` next to `run_high=` / `run_low=`. Label contract via pytest (not file_contains needles). Honeycomb stays Proposed. Budget 100→101.
