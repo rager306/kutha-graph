@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M150: observe-fail elapsed + stderr tail — OPEN (GSD v1.44)
+
+Dogfood follow-on to M148/M149: bare `cargo test exit 101` findings look like a no-op when `phase_ms observe_cargo=0` races, and hide compile/stderr. Thin slice: `observe-fail` includes `elapsed_ms=N` and a truncated output tail (`KUTHA_GOV_OBSERVE_FAIL_TAIL`, default 240). Honeycomb stays Proposed. Budget stays 102.
+
+- [ ] **S01: observe-fail detail** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m150-observe-fail-detail` killed. Phase 224.
+
 ## M149: partial cargo observe → incomplete retry — CLOSED (GSD v1.43)
 
 Dogfood follow-on to M148: parallel/cold cargo can exit 101 after some required tests print `ok`, so M145's "no verdict" incomplete gate misses and M146 never retries — N x `observe-missing` instead. Thin slice: non-zero exit + missing required + no FAILED among required → one `observe-incomplete` (retryable). Real FAILED stays per-name. Honeycomb stays Proposed. Budget 101→102.
