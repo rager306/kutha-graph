@@ -2746,6 +2746,17 @@ rows:
     gate: default
     owner: M149-S01
     source: Phase 223 / dogfood partial observe incomplete
+  - id: SEM-m150-observe-fail-detail
+    plane: harness
+    invariant: observe-fail findings include elapsed_ms and truncated stderr/stdout tail
+    layer: kill
+    oracle:
+      - observe-fail-detail
+    kill_mutation: restore bare exit-only observe-fail message; or drop ObserveFailDetailTests
+    status: killed
+    gate: default
+    owner: M150-S01
+    source: Phase 224 / dogfood observe-fail detail
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

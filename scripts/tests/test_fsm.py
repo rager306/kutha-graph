@@ -810,6 +810,69 @@ class ObserveRetryTests(unittest.TestCase):
                 os.environ["KUTHA_GOV_CARGO_OBSERVE_RETRIES"] = previous
 
 
+class ObserveFailDetailTests(unittest.TestCase):
+    def test_run_cargo_observe_fail_includes_elapsed_and_stderr_tail(self) -> None:
+        """M150: bare exit code is not enough — wall time + stderr tail."""
+        from unittest.mock import MagicMock, patch
+
+        from kutha_gov.observe import _run_cargo
+
+        completed = MagicMock()
+        completed.returncode = 101
+        completed.stdout = ""
+        completed.stderr = "error: could not compile `kutha-runtime`\n"
+        times = iter([1.0, 1.05])
+
+        previous = os.environ.get("KUTHA_GOV_OBSERVE_FAIL_TAIL")
+        try:
+            os.environ.pop("KUTHA_GOV_OBSERVE_FAIL_TAIL", None)
+            with (
+                patch("kutha_gov.observe.subprocess.run", return_value=completed),
+                patch("kutha_gov.observe.time.monotonic", side_effect=lambda: next(times)),
+            ):
+                code, _text, findings = _run_cargo(
+                    ROOT,
+                    {"bin": "cargo", "args": ["test"]},
+                    default_args=["test"],
+                    timeout=180,
+                    label="cargo test",
+                )
+            self.assertEqual(101, code)
+            self.assertEqual(1, len(findings))
+            self.assertEqual("observe-fail", findings[0].category)
+            msg = findings[0].message
+            self.assertIn("elapsed_ms=50", msg)
+            self.assertIn("tail=", msg)
+            self.assertIn("could not compile", msg)
+        finally:
+            if previous is None:
+                os.environ.pop("KUTHA_GOV_OBSERVE_FAIL_TAIL", None)
+            else:
+                os.environ["KUTHA_GOV_OBSERVE_FAIL_TAIL"] = previous
+
+    def test_observe_fail_tail_respects_env_limit(self) -> None:
+        from kutha_gov.observe import _format_observe_fail
+
+        previous = os.environ.get("KUTHA_GOV_OBSERVE_FAIL_TAIL")
+        try:
+            os.environ["KUTHA_GOV_OBSERVE_FAIL_TAIL"] = "12"
+            msg = _format_observe_fail(
+                "cargo test",
+                101,
+                elapsed_ms=3,
+                stdout="",
+                stderr="abcdefghijklmnopqrstuvwxyz",
+            )
+            self.assertIn("elapsed_ms=3", msg)
+            self.assertIn("tail=opqrstuvwxyz", msg)
+            self.assertNotIn("abcdefghijkl", msg)
+        finally:
+            if previous is None:
+                os.environ.pop("KUTHA_GOV_OBSERVE_FAIL_TAIL", None)
+            else:
+                os.environ["KUTHA_GOV_OBSERVE_FAIL_TAIL"] = previous
+
+
 class ObserveBuildTests(unittest.TestCase):
     def test_observe_runs_build_after_test(self) -> None:
         from unittest.mock import MagicMock, patch

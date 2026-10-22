@@ -8,7 +8,11 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 Process tag **v1.44** / Phase **224**. Not a SemVer release.
 
-- Active Milestone **M150**, Active Slice **S01** (`L_delivery=M149-closed`): observe-fail includes elapsed_ms and output tail. Honeycomb stays Proposed.
+- Active Milestone **M150**, Active Slice **S01** (`L_delivery=M150-S01`): observe-fail includes elapsed_ms and output tail. Honeycomb stays Proposed.
+
+### Fixed (process)
+
+- `_run_cargo` observe-fail messages include `elapsed_ms=N` and a truncated stderr/stdout tail (`KUTHA_GOV_OBSERVE_FAIL_TAIL`, default 240). Check `observe-fail-detail`; budget 102→103. Matrix `SEM-m150-observe-fail-detail` killed.
 
 ## 2026-10-22 — Trajectory: M149 / GSD v1.43 closed
 

@@ -429,6 +429,12 @@ invariants:
     disposition: check
     check: observe-partial-incomplete
 
+  - id: I-observe-fail-detail
+    claim: "observe-fail includes elapsed_ms and truncated output tail; SEM-m150"
+    source: ".planning/phases/224-observe-fail-detail/224-VERIFICATION.md"
+    disposition: check
+    check: observe-fail-detail
+
   - id: I-fixed-tmp-persist-dir
     claim: "crates must not Path::new(\"tmp/…\") or .join(\"tmp\").join(\"…\") for persist/open; SEM-m122 / SEM-m123"
     source: ".planning/phases/197-fixed-tmp-join/197-VERIFICATION.md"

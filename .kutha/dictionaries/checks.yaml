@@ -1744,6 +1744,35 @@ checks:
           pattern: "not any_failed"
           with: "any_failed"
 
+  - id: observe-fail-detail
+    description: >-
+      observe-fail findings include elapsed_ms= and a truncated output tail
+      (KUTHA_GOV_OBSERVE_FAIL_TAIL). M150 / Phase 224 dogfood.
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/observe.py
+        needles:
+          - "def _format_observe_fail"
+          - "KUTHA_GOV_OBSERVE_FAIL_TAIL"
+          - "elapsed_ms="
+        require: all
+        category: oracle
+        message: "observe-fail detail wiring missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_fsm.py
+        needles:
+          - "def test_run_cargo_observe_fail_includes_elapsed_and_stderr_tail"
+          - "def test_observe_fail_tail_respects_env_limit"
+        require: all
+        category: oracle
+        message: "observe-fail detail pytest missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/observe.py
+          pattern: "def _format_observe_fail"
+          with: "def _format_cargo_fail_msg"
+
   - id: observe-retry-incomplete
     description: >-
       Cargo observe retries on observe-incomplete under the same flock

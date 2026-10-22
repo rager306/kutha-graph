@@ -50,6 +50,43 @@ def _observe_retries() -> int:
     return 1
 
 
+def _observe_fail_tail_chars() -> int:
+    """Max chars of cargo output kept on observe-fail (M150). Default 240."""
+    raw = os.environ.get("KUTHA_GOV_OBSERVE_FAIL_TAIL", "").strip()
+    if raw:
+        try:
+            return max(0, int(raw))
+        except ValueError:
+            pass
+    return 240
+
+
+def _output_tail(text: str, *, limit: int) -> str:
+    collapsed = " ".join(text.split())
+    if limit <= 0 or not collapsed:
+        return ""
+    if len(collapsed) <= limit:
+        return collapsed
+    return collapsed[-limit:]
+
+
+def _format_observe_fail(
+    label: str,
+    returncode: int,
+    *,
+    elapsed_ms: int,
+    stdout: str,
+    stderr: str,
+) -> str:
+    """Build observe-fail message with wall time and truncated output (M150)."""
+    prefer = stderr if stderr.strip() else stdout
+    tail = _output_tail(prefer, limit=_observe_fail_tail_chars())
+    base = f"{label} exit {returncode} elapsed_ms={elapsed_ms}"
+    if tail:
+        return f"{base} tail={tail} (evidence, not SoT)"
+    return f"{base} (evidence, not SoT)"
+
+
 def _has_observe_incomplete(findings: Sequence[Finding]) -> bool:
     return any(f.category == _OBSERVE_INCOMPLETE for f in findings)
 
@@ -182,6 +219,7 @@ def _run_cargo(
     cmd = [bin_s, *args]
     env = os.environ.copy()
     env["CARGO_TERM_COLOR"] = "never"
+    started = time.monotonic()
     try:
         completed = subprocess.run(
             cmd,
@@ -218,6 +256,7 @@ def _run_cargo(
                 )
             ],
         )
+    elapsed_ms = int((time.monotonic() - started) * 1000)
     text = (completed.stdout or "") + "\n" + (completed.stderr or "")
     findings: list[Finding] = []
     if completed.returncode != 0:
@@ -226,7 +265,13 @@ def _run_cargo(
                 "observe_cargo",
                 Severity.HIGH,
                 "observe-fail",
-                f"{label} exit {completed.returncode} (evidence, not SoT)",
+                _format_observe_fail(
+                    label,
+                    completed.returncode,
+                    elapsed_ms=elapsed_ms,
+                    stdout=completed.stdout or "",
+                    stderr=completed.stderr or "",
+                ),
             )
         )
     return completed.returncode, text, findings
