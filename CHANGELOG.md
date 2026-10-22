@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-22 — Trajectory: lease M153-S01 (Verus on-ramp)
+
+Process tag **v1.47** / Phase **227**. Not a SemVer release.
+
+- Active Milestone **M153**, Active Slice **S01** (`L_delivery=M153-S01`): Verus pin, `verus/vt_intersect.rs` and one sync check. Evidence only, no CI dependency. Honeycomb stays Proposed; nothing thawed.
+
 ## 2026-10-22 — Process: Verus adopted as a bounded evidence tool
 
 ### Added

@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M153: Verus on-ramp — LEASED (GSD v1.47)
+
+Product-adjacent evidence slice: pin a Verus release, add `verus/vt_intersect.rs` (production body verbatim, soundness and completeness over the VT interval algebra) and one governor row `verus-proof-sync` that keeps the proof body tied to `crates/kutha-runtime/src/fold.rs`. Verus is evidence, not a gate: no CI dependency, no runner, no `vstd` in production crates. Honeycomb stays Proposed; nothing thawed. Budget 104 to 105.
+
+- [ ] **S01: vt_intersect proof and pin** `risk:low` `depends:[]`
+  > After this: `tools/verus/{VERSION,SHA256SUMS}`, `verus/vt_intersect.rs` verified with the pinned release, check `verus-proof-sync` with a RED selftest mutation. Phase 227.
+
 ## M152: Arc 0 hygiene — CLOSED (GSD v1.46)
 
 First arc of the long-horizon direction proposal (`.compound-engineering/artifacts/research/2026-10-22-long-horizon-direction-roadmap.md`, owner order B then C then A). Hygiene only: track untracked CE artifacts, record a harness moratorium (a new harness milestone needs a RED that fired in CI or review), rename the working branch to `work/main-line` and push it as a backup. No product or harness code, no check added, budget stays 104. Honeycomb stays Proposed; nothing is thawed.
