@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M153
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M153-S01
+L_delivery=M153-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M153-S01 leased (v1.47): Verus on-ramp, first proof `vt_intersect` | Capability proven / Cypher started |
+| L_delivery | M153 closed (v1.47) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M153 S01 (Verus on-ramp): pin the Verus release (`tools/verus/`), add `verus/vt_intersect.rs` (production body verbatim plus soundness and completeness contract), and one governor check `verus-proof-sync` that pins the proof body to `crates/kutha-runtime/src/fold.rs`. This is the single harness row the slice's own invariant needs (moratorium exception: a check pinning an invariant introduced by a product slice). No runner, no `observe` kind, no CI dependency on Verus; the proof run is recorded evidence, not a gate. Then B1 (ADR-012 thin vacuum with receipt) stays the first Arc B candidate. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M153 is closed: Verus pinned, `verus/vt_intersect.rs` verified, `verus-proof-sync` pins its body to `fold.rs`. Next arc is B (physics) per `.compound-engineering/artifacts/research/2026-10-22-long-horizon-direction-roadmap.md` (a proposal). First candidate lease: **B1** ADR-012 thin vacuum with a receipt op (no thaw needed; fresh RED first: a store cannot compact without losing replay exactness). More Verus proofs (`conjunct_vt`, `leftover_halves`, `windows_cover`, later `leapfrog_intersect`) ride inside the product slice that touches them, not as their own milestone. Before B3: set up the Samyama and FalkorDB baseline environment with the owner. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 

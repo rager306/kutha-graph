@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M153: Verus on-ramp — LEASED (GSD v1.47)
+## M153: Verus on-ramp — CLOSED (GSD v1.47)
 
 Product-adjacent evidence slice: pin a Verus release, add `verus/vt_intersect.rs` (production body verbatim, soundness and completeness over the VT interval algebra) and one governor row `verus-proof-sync` that keeps the proof body tied to `crates/kutha-runtime/src/fold.rs`. Verus is evidence, not a gate: no CI dependency, no runner, no `vstd` in production crates. Honeycomb stays Proposed; nothing thawed. Budget 104 to 105.
 
-- [ ] **S01: vt_intersect proof and pin** `risk:low` `depends:[]`
-  > After this: `tools/verus/{VERSION,SHA256SUMS}`, `verus/vt_intersect.rs` verified with the pinned release, check `verus-proof-sync` with a RED selftest mutation. Phase 227.
+- [x] **S01: vt_intersect proof and pin** `risk:low` `depends:[]`
+  > After this: `tools/verus/{VERSION,SHA256SUMS}`, `verus/vt_intersect.rs` verified with the pinned release, check `verus-proof-sync` with a RED selftest mutation. Phase 227. Landed.
 
 ## M152: Arc 0 hygiene — CLOSED (GSD v1.46)
 
