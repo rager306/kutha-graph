@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-22 — Process: Verus adopted as a bounded evidence tool
+
+### Added
+
+- `AGENTS.md` Working conventions item 10 and `.cursor/rules/verus-formal-verification.mdc`: Verus for pure kernels only (VT interval algebra, later `leapfrog_intersect`), inside a product slice, never a gate or an ADR acceptance. Docs and rules only; no proof file, check, or dependency added, budget stays 104.
+- Direction proposal § Verus records the 2026-10-22 spike: `vt_intersect` verifies with its production body unchanged; `leapfrog_intersect` does not (`partition_point`, `map_or` unsupported).
+
 ## 2026-10-22 — Trajectory: M152 / GSD v1.46 closed
 
 Process tag **v1.46** / Phase **226**. Not a SemVer release.

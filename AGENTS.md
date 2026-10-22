@@ -79,6 +79,7 @@ Pin: `.python-version`. New governor check or CI phase: YAML row — `.kutha/MET
 7. Three harness lifecycles stay orthogonal: **L_map** · **L_delivery** · **L_capability**. Bridges may cite; they may not copy state machines.
 8. Intern map (ADR-011) ≠ agent dictionaries (ADR-050). Do not collapse them.
 9. Humans start at `README.md`. Agents follow this file, then `.kutha/STATE.md` + `.planning/STATE.md`. Dated history: `CHANGELOG.md` via `.cursor/skills/kutha-changelog/SKILL.md`. Commits: **ce-commit** (Russian: коммит / закоммить). Do not bump `0.0.0`, tag, or publish GitHub Releases unless STATE/process explicitly allows. Git user-rule stays safety-only.
+10. **Verus** is a bounded evidence tool for pure kernels only (VT interval algebra, later `leapfrog_intersect`; never I/O, serde, hashes, or whole-fold replay). Use it only inside a product slice (no standalone harness milestone), proofs outside `crates/`, no `assume`/`admit`, no `vstd` in production crates. Verus pass ≠ governor green ≠ ADR Accepted ≠ capability. Details: `.cursor/rules/verus-formal-verification.mdc`; plan and costs: `.compound-engineering/artifacts/research/2026-10-22-long-horizon-direction-roadmap.md` § Verus.
 
 ## Code graph (Cursor)
 

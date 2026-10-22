@@ -1,0 +1,19 @@
+---
+description: Verus is a bounded evidence tool for pure kernels (VT intervals, leapfrog); not a gate, not an ADR acceptance
+globs: verus/**,tools/verus/**,crates/kutha-runtime/src/fold.rs,crates/kutha-runtime/src/eval.rs,crates/kutha-runtime/src/leapfrog.rs
+alwaysApply: false
+---
+
+# Verus (bounded formal verification)
+
+Summary: `AGENTS.md` Working conventions item 10. This file holds the detail. Plan, costs, and the 2026-10-22 spike: `.compound-engineering/artifacts/research/2026-10-22-long-horizon-direction-roadmap.md` § Verus.
+
+Evidence (2026-10-22 spike, scratch): `vt_intersect` verifies with its production body unchanged (soundness and completeness below `u64::MAX`, about 1.7 s, edition 2024). `leapfrog_intersect` does not (`partition_point` and `map_or` are unsupported), so it needs an index-based mirror and a sync check.
+
+- Scope: pure kernels only. Interval algebra (`vt_intersect`, `conjunct_vt`, `leftover_halves`, `windows_cover`, `pin_window_overlaps`), later `leapfrog_intersect`, TT anchor checks, fixed-width byte codecs. Not `store` / `wal` / `segment` I/O, serde, sha2, hash maps, or whole-fold replay.
+- Work only inside a product slice that touches those functions. No standalone harness milestone (moratorium: `docs/process/gsd-auto-contract.md`).
+- Proofs live outside `crates/` (`verus/`, pins in `tools/verus/`). No `vstd` or `verus!` in production crates. Verus is not a Cargo dependency.
+- Proof body equals the production body, or a sync check ties them. No `assume` / `admit`. `external_body` only for a named unsupported std call, with a comment.
+- A claim cites the pinned Verus version and the run output. Verus pass ≠ governor green ≠ ADR Accepted ≠ capability. Honeycomb stays Proposed.
+- Verus needs its own rustc (1.99.1 at release `0.2026.10.18`); do not change `rust-toolchain.toml` for it. Do not edit or delete `/root/verus-pilot`.
+- Before writing a proof, read the skills `verus`, `rust-verification`, and `verus-verification` (its Regorus-specific names do not apply; its contract-first rules do).

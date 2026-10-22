@@ -239,7 +239,26 @@ Use in the arcs:
 - B (benchmark and PIT fixture): eCFR section versions as the graph for the temporal workload; no Russian text needed.
 - A (wedge): the thin legal pack is built on English open fixtures; law-nexus is the private realism check, so the committed repository stays redistributable.
 
-## 13. Open questions (remaining)
+## 13. Verus (adopted 2026-10-22 as a bounded evidence tool)
+
+Marked in `AGENTS.md` Working conventions item 10 and `.cursor/rules/verus-formal-verification.mdc`. Not a gate, not an ADR acceptance, no milestone leased by this section.
+
+Evidence (spike in gitignored `tmp/verus-spike/`, Verus `0.2026.10.18.7d82994`, binary from `/root/verus-pilot`, read-only):
+
+| Function | Result |
+|----------|--------|
+| `vt_intersect` (`crates/kutha-runtime/src/fold.rs`), production body unchanged (`max`, `min`, `unwrap_or`) | Verifies. Postcondition: a point below `u64::MAX` is in the result iff it is in both inputs. About 1.7 s, edition 2024 accepted. |
+| `leapfrog_intersect` (`leapfrog.rs`), production body unchanged | Rejected: `slice::partition_point` and `Option::map_or` are unsupported. Needs an index-based mirror and a sync check. |
+
+Scope, cost and drop rule (from the assessment):
+
+- In scope: VT interval algebra (`vt_intersect`, `conjunct_vt`, `leftover_halves`, `windows_cover`, `pin_window_overlaps`), later `leapfrog_intersect` (proof will force the precondition that CSR rows are strictly sorted without duplicates), TT anchor checks, fixed-width byte codecs. About 300-500 lines of the product are provable; `store`/`wal`/`segment` I/O, serde, sha2, hash maps and whole-fold replay are not.
+- Placement in the arcs: **V1** interval kernel inside B2 (fork diff relies on interval algebra), **V2** `leapfrog_intersect` when B3 touches the CSR lease. No standalone harness milestone (moratorium).
+- Costs: one pinned Verus release (487 MB download, 1.6 GB unpacked) with checksum; a second rustc (1.99.1) for Verus only; a `verus/` directory outside `crates/`; one governor check row (104 to 105) with a selftest mutation, added in the product slice; a sync check between proof body and production body; a few seconds of CI per proof file. Estimated effort (pilot-based): setup half a day, interval kernel 1-2 days, `leapfrog` 2-3 days.
+- Drop rule: if the sync check or Verus upgrades cost more than about one hour a month, stop and keep the differential tests.
+- Alternatives kept in the ladder: model-based differential tests (cheapest), Kani for straight-line functions (not measured here).
+
+## 14. Open questions (remaining)
 
 1. Disk: may I propose a cleanup plan (build artifacts and Docker layers) and which locations are off limits?
 2. May the baseline runs stop `fd_api` and `9router` temporarily on an idle window?
