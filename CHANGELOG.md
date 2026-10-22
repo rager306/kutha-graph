@@ -19,6 +19,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Fixed
 
 - After checkpoint, persist the encoded log (Defines then graph), not the compacted graph-only rewrite. `committed_prefix` can then classify `kutha:admission` / `kutha:action` in the tail, and `snapshot.log_offset` matches the committed fold-affecting count. Persister attach sees the same event count as `encoded_log`.
+- `Op::Checkpoint` apply and `replay_check` verify blob digest, restored `fact_count`, and `fingerprint_hex` against the prefix Snapshot; mismatch is `ReplayDivergence` (open fail-closed). Fingerprint still hashes all facts including dead ones.
 
 Lease and honeycomb cells stay **Proposed**.
 

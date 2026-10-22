@@ -1,9 +1,37 @@
 //! Replay and provenance (ADR-060). Not a MATCH compiler.
-use crate::fold::GraphFold;
+use crate::fold::{checkpoint_snapshot_if_receipt_ok, GraphFold};
 use crate::quantum::{Runtime, RuntimeError};
-use kutha_common::{EventId, Op, TransactionTime, ValidTime};
+use crate::receipt::digest_to_hex;
+use kutha_common::{Event, EventId, Op, TransactionTime, ValidTime};
 use sha2::{Digest, Sha256};
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
+
+fn parse_hex32(s: &str) -> Option<[u8; 32]> {
+    if s.len() != 64 {
+        return None;
+    }
+    let mut out = [0u8; 32];
+    for i in 0..32 {
+        out[i] = u8::from_str_radix(&s[2 * i..2 * i + 2], 16).ok()?;
+    }
+    Some(out)
+}
+
+fn sha256_bytes(bytes: &[u8]) -> [u8; 32] {
+    let mut h = Sha256::new();
+    h.update(bytes);
+    h.finalize().into()
+}
+
+fn checkpoint_receipt_error(claimed: &str, actual: [u8; 32]) -> RuntimeError {
+    let expected = parse_hex32(claimed).unwrap_or_else(|| {
+        let mut h = Sha256::new();
+        h.update(b"kutha-checkpoint-receipt");
+        h.update(claimed.as_bytes());
+        h.finalize().into()
+    });
+    RuntimeError::ReplayDivergence { expected, actual }
+}
 
 fn tt_anchors_digest(anchors: &std::collections::BTreeMap<u64, u64>) -> [u8; 32] {
     let mut h = Sha256::new();
@@ -25,6 +53,7 @@ impl Runtime {
         if expected != actual {
             return Err(RuntimeError::ReplayDivergence { expected, actual });
         }
+        Self::check_checkpoint_receipts(self.log.as_slice())?;
         Self::check_tt_anchors(&self.fold.tt_anchors, self.log.as_slice())?;
         let mut seen = HashSet::new();
         for e in self.log.iter() {
@@ -67,6 +96,47 @@ impl Runtime {
                 expected: tt_anchors_digest(snapshot_held),
                 actual: tt_anchors_digest(&from_log),
             });
+        }
+        Ok(())
+    }
+
+    /// Receipt fields on `Op::Checkpoint` must match the blob Snapshot (M154).
+    fn check_checkpoint_receipts(events: &[Event]) -> Result<(), RuntimeError> {
+        let mut blobs: HashMap<&str, &[u8]> = HashMap::new();
+        for e in events {
+            match &e.op {
+                Op::StoreBlob { digest, bytes } => {
+                    blobs.insert(digest.as_str(), bytes.as_slice());
+                }
+                Op::Checkpoint {
+                    fingerprint_hex,
+                    fact_count,
+                    blob_digest,
+                    ..
+                } => {
+                    let Some(bytes) = blobs.get(blob_digest.as_str()).copied() else {
+                        return Err(checkpoint_receipt_error(blob_digest, [0u8; 32]));
+                    };
+                    match checkpoint_snapshot_if_receipt_ok(
+                        bytes,
+                        blob_digest,
+                        fingerprint_hex,
+                        *fact_count,
+                    ) {
+                        Ok(snap) => {
+                            let actual = snap.fold.fingerprint();
+                            if digest_to_hex(&actual) != *fingerprint_hex {
+                                return Err(checkpoint_receipt_error(fingerprint_hex, actual));
+                            }
+                        }
+                        Err(()) => {
+                            let actual = sha256_bytes(bytes);
+                            return Err(checkpoint_receipt_error(fingerprint_hex, actual));
+                        }
+                    }
+                }
+                _ => {}
+            }
         }
         Ok(())
     }

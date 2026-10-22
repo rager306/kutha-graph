@@ -1,7 +1,7 @@
 use crate::snapshot::Snapshot;
 use kutha_common::{
-    Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE, Op,
-    RuleAst, SupportPolarity, TermDictionary, TermId, TransactionTime, ValidTime,
+    sha256_hex, Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY,
+    KUTHA_RULE, Op, RuleAst, SupportPolarity, TermDictionary, TermId, TransactionTime, ValidTime,
 };
 use rustc_hash::FxHashMap;
 use smallvec::SmallVec;
@@ -354,6 +354,26 @@ impl<'de> serde::Deserialize<'de> for GraphFold {
     }
 }
 
+/// Prefix Snapshot if blob digest, `fact_count`, and `fingerprint_hex` match.
+pub(crate) fn checkpoint_snapshot_if_receipt_ok(
+    bytes: &[u8],
+    blob_digest: &str,
+    fingerprint_hex: &str,
+    fact_count: u64,
+) -> Result<Snapshot, ()> {
+    if sha256_hex(bytes) != blob_digest {
+        return Err(());
+    }
+    let snap: Snapshot = serde_json::from_slice(bytes).map_err(|_| ())?;
+    if snap.fold.facts.len() as u64 != fact_count {
+        return Err(());
+    }
+    if crate::receipt::digest_to_hex(&snap.fold.fingerprint()) != fingerprint_hex {
+        return Err(());
+    }
+    Ok(snap)
+}
+
 impl GraphFold {
     pub fn with_index_mode(index_mode: FoldIndexMode) -> Self {
         Self {
@@ -474,12 +494,15 @@ impl GraphFold {
     }
 
     /// Hydrate prefix fold from the on-log checkpoint blob (M154 / ADR-012).
-    /// Missing or unreadable blob is a no-op; `replay_check` fails closed.
-    fn apply_checkpoint_blob(&mut self, blob_digest: &str) {
+    /// Missing, unreadable, or receipt-mismatched blob is a no-op;
+    /// `replay_check` fails closed.
+    fn apply_checkpoint_blob(&mut self, blob_digest: &str, fingerprint_hex: &str, fact_count: u64) {
         let Some(bytes) = self.blobs.get(blob_digest).cloned() else {
             return;
         };
-        let Ok(snap) = serde_json::from_slice::<Snapshot>(&bytes) else {
+        let Ok(snap) =
+            checkpoint_snapshot_if_receipt_ok(&bytes, blob_digest, fingerprint_hex, fact_count)
+        else {
             return;
         };
         let blobs = std::mem::take(&mut self.blobs);
@@ -929,8 +952,13 @@ impl GraphFold {
             Op::TtAnchor { wall } => {
                 self.tt_anchors.insert(*wall, event.ingested_at);
             }
-            Op::Checkpoint { blob_digest, .. } => {
-                self.apply_checkpoint_blob(blob_digest);
+            Op::Checkpoint {
+                blob_digest,
+                fingerprint_hex,
+                fact_count,
+                ..
+            } => {
+                self.apply_checkpoint_blob(blob_digest, fingerprint_hex, *fact_count);
             }
             Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
         }
