@@ -5,10 +5,10 @@
 //! names. R7 is exercised by constructing each on-disk mix with public helpers.
 
 use kutha_common::{
-    rule_definition_hash, Event, EventId, Op, RuleAst, RuleAtom, RuleTerm, TransactionTime,
-    ValidTime, WallTime, KUTHA_ACTION, KUTHA_ADMISSION,
+    Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, Op, RuleAst, RuleAtom, RuleTerm,
+    TransactionTime, ValidTime, WallTime, rule_definition_hash,
 };
-use kutha_runtime::{store, GraphFold, Justification, PersistedQuantumOutcome, Runtime};
+use kutha_runtime::{GraphFold, Justification, PersistedQuantumOutcome, Runtime, store};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -426,6 +426,21 @@ fn must_fail_closed(dir: &Path, what: &str) {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
+enum OpenReplay {
+    OpenErr(std::io::ErrorKind),
+    OpenOk { replay_ok: bool },
+}
+
+fn open_replay_outcome(dir: &Path) -> OpenReplay {
+    match store::open(dir) {
+        Err(e) => OpenReplay::OpenErr(e.kind()),
+        Ok(rt) => OpenReplay::OpenOk {
+            replay_ok: rt.replay_check().is_ok(),
+        },
+    }
+}
+
 fn post_checkpoint_muts(rt: &mut Runtime, post_retract: EventId, post_correct: EventId) {
     rt.emit(Op::Retract {
         event_id: post_retract,
@@ -825,11 +840,15 @@ fn r4_duplicate_receipt_fails_closed() {
 }
 
 /// Truncate a *kept* prefix StoreBlob (rule/policy), not the checkpoint blob.
+/// AMENDED R4: plain stores do not verify StoreBlob body-vs-digest on open.
+/// Requirement is PARITY with an un-checkpointed twin under the same tamper.
 #[test]
-fn r4_truncated_kept_storeblob_fails_closed() {
+fn r4_truncated_kept_storeblob_parity_with_plain_store() {
     let _g = tiny_limits();
     let src = persist_dir("r4-kept-src");
     persist_seed(&src);
+    let twin = persist_dir("r4-kept-twin");
+    copy_store(&src, &twin);
     store::checkpoint_sealed_prefix(&src).unwrap();
     store::open(&src).expect("untampered checkpointed store must open");
     let dir = persist_dir("r4-kept");
@@ -840,21 +859,44 @@ fn r4_truncated_kept_storeblob_fails_closed() {
         _ => None,
     });
     let ck_digest = ck_digest.expect("Checkpoint");
-    let mut truncated = false;
+    let mut target_digest = None;
     for e in &mut events {
         if let Op::StoreBlob { digest, bytes } = &mut e.op {
             if *digest != ck_digest && bytes.len() > 8 {
                 bytes.truncate(bytes.len() / 2);
-                truncated = true;
+                target_digest = Some(digest.clone());
                 break;
             }
         }
     }
-    assert!(truncated, "must truncate a kept (non-checkpoint) StoreBlob");
+    let target_digest = target_digest.expect("must truncate a kept (non-checkpoint) StoreBlob");
     rewrite_on_disk_log(&dir, &events);
-    must_fail_closed(&dir, "R4 truncated kept StoreBlob");
+
+    let mut twin_events = export_events(&twin);
+    let mut truncated_twin = false;
+    for e in &mut twin_events {
+        if let Op::StoreBlob { digest, bytes } = &mut e.op {
+            if *digest == target_digest {
+                bytes.truncate(bytes.len() / 2);
+                truncated_twin = true;
+                break;
+            }
+        }
+    }
+    assert!(
+        truncated_twin,
+        "twin must contain the same kept StoreBlob digest"
+    );
+    rewrite_on_disk_log(&twin, &twin_events);
+
+    assert_eq!(
+        open_replay_outcome(&dir),
+        open_replay_outcome(&twin),
+        "AMENDED R4: checkpointed store must match un-checkpointed twin under the same kept-StoreBlob body tamper"
+    );
     let _ = fs::remove_dir_all(&src);
     let _ = fs::remove_dir_all(&dir);
+    let _ = fs::remove_dir_all(&twin);
 }
 
 /// Physically truncate a sealed segment that holds the kept StoreBlob prefix.
