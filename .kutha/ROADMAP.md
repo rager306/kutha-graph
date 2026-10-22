@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M154: checkpoint receipt (thin B1) — LEASED (GSD v1.48)
+
+First product slice of Arc B (direction proposal, owner order B, C, A). ADR-012 layout compaction with a receipt, not vacuum: a sealed log prefix is replaced by an on-log checkpoint blob plus `Op::Checkpoint { first_event_id, last_event_id, dropped_count, fact_count, fingerprint_hex, blob_digest }`; strict replay stays exact. Scope and RED from the 2026-10-22 scout: `rg vacuum crates` is empty, no compaction exists. Honeycomb stays Proposed; nothing thawed. Verus proofs, if any, ride inside this slice only for kernels it touches.
+
+- [ ] **S01: checkpoint a sealed prefix** `risk:high` `depends:[]`
+  > After this: `store::checkpoint_sealed_prefix` shrinks a sealed prefix under `kutha.lock`; `open` and `replay_check` Ok; fingerprint, `as_of` and `as_known_on` equal before and after; `Op::Checkpoint` rejected from user `emit`; Op wire break documented; bench gate recorded. Phase 228.
+
 ## M153: Verus on-ramp — CLOSED (GSD v1.47)
 
 Product-adjacent evidence slice: pin a Verus release, add `verus/vt_intersect.rs` (production body verbatim, soundness and completeness over the VT interval algebra) and one governor row `verus-proof-sync` that keeps the proof body tied to `crates/kutha-runtime/src/fold.rs`. Verus is evidence, not a gate: no CI dependency, no runner, no `vstd` in production crates. Honeycomb stays Proposed; nothing thawed. Budget 104 to 105.

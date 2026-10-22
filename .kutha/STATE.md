@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M154
+**Active Slice:** S01
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M153-closed
+L_delivery=M154-S01
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M153 closed (v1.47) | Capability proven / Cypher started |
+| L_delivery | M154-S01 leased (v1.48): checkpoint receipt (thin B1) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M153 is closed: Verus pinned, `verus/vt_intersect.rs` verified, `verus-proof-sync` pins its body to `fold.rs`. Next arc is B (physics) per `.compound-engineering/artifacts/research/2026-10-22-long-horizon-direction-roadmap.md` (a proposal). First candidate lease: **B1** ADR-012 thin vacuum with a receipt op (no thaw needed; fresh RED first: a store cannot compact without losing replay exactness). More Verus proofs (`conjunct_vt`, `leftover_halves`, `windows_cover`, later `leapfrog_intersect`) ride inside the product slice that touches them, not as their own milestone. Before B3: set up the Samyama and FalkorDB baseline environment with the owner. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M154 S01 (thin B1, ADR-012 layout compaction with a receipt): replace a sealed log prefix with one on-log checkpoint (`StoreBlob` of the prefix fold plus a receipt op `Op::Checkpoint`) so the sealed log never shrinks without a receipt and strict replay stays exact (fingerprint and PIT answers equal before and after). This is **not** vacuum in the ADR-012 D012-4 sense: no TT history is erased, losers stay (D013-2), the fingerprint contract is unchanged. Expired-TT vacuum, legal hold, defined AS-OF failure and tiers are later slices. New `Op` variant is a documented forward break for old readers (`docs/process/op-compat.md`). Bench gate applies (`ingest_plain.n`, `as_of.n`). The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 

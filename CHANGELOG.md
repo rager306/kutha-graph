@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-22 — Trajectory: lease M154-S01 (checkpoint receipt)
+
+Process tag **v1.48** / Phase **228**. Not a SemVer release.
+
+- Active Milestone **M154**, Active Slice **S01** (`L_delivery=M154-S01`): thin B1, a sealed log prefix replaced by an on-log checkpoint with a receipt op; replay exact. Not vacuum (no TT history erased). Honeycomb stays Proposed; nothing thawed.
+
 ## 2026-10-22 — Trajectory: M153 / GSD v1.47 closed
 
 Process tag **v1.47** / Phase **227**. Not a SemVer release.
