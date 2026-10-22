@@ -511,12 +511,38 @@ class ObserveTests(unittest.TestCase):
         self.assertEqual("observe-incomplete", findings[0].category)
         self.assertNotIn("observe-missing", [f.category for f in findings])
 
-    def test_cargo_nonzero_keeps_per_name_when_any_verdict_seen(self) -> None:
+    def test_cargo_partial_ok_nonzero_is_incomplete(self) -> None:
+        """M149: exit!=0 + missing + no FAILED -> incomplete (retry), not N x missing."""
         from kutha_gov.observe import interpret_cargo_output
 
         required = ["a_ok_test", "a_missing_test"]
         text = "test a_ok_test ... ok\n"
         seen, findings = interpret_cargo_output(text, required, cargo_exit=101)
+        self.assertEqual([], seen)
+        self.assertEqual(1, len(findings))
+        self.assertEqual("observe-incomplete", findings[0].category)
+        self.assertNotIn("observe-missing", [f.category for f in findings])
+
+    def test_cargo_nonzero_keeps_per_name_when_failed_seen(self) -> None:
+        """Real FAILED must not collapse into incomplete (no silent retry mask)."""
+        from kutha_gov.observe import interpret_cargo_output
+
+        required = ["a_fail_test", "a_missing_test"]
+        text = "test a_fail_test ... FAILED\n"
+        seen, findings = interpret_cargo_output(text, required, cargo_exit=101)
+        self.assertEqual([], seen)
+        cats = [f.category for f in findings]
+        self.assertIn("observe-fail", cats)
+        self.assertIn("observe-missing", cats)
+        self.assertNotIn("observe-incomplete", cats)
+
+    def test_cargo_zero_exit_keeps_missing_when_partial_ok(self) -> None:
+        """exit 0 with missing names stays per-name missing (filter/output honesty)."""
+        from kutha_gov.observe import interpret_cargo_output
+
+        required = ["a_ok_test", "a_missing_test"]
+        text = "test a_ok_test ... ok\n"
+        seen, findings = interpret_cargo_output(text, required, cargo_exit=0)
         self.assertEqual(["a_ok_test"], seen)
         cats = [f.category for f in findings]
         self.assertIn("observe-missing", cats)
@@ -663,6 +689,51 @@ class ObserveRetriedTests(unittest.TestCase):
 
 
 class ObserveRetryTests(unittest.TestCase):
+    def test_observe_retries_once_on_partial_incomplete_then_succeeds(self) -> None:
+        """M149: partial ok stream + exit 101 is incomplete and retries."""
+        from unittest.mock import MagicMock, patch
+
+        from kutha_gov.observe import run_cargo_observation
+        from kutha_gov.protocol import Severity
+
+        calls: list[list[str]] = []
+
+        def fake_run(cmd: list[str], **_kwargs: object) -> MagicMock:
+            calls.append(list(cmd))
+            completed = MagicMock()
+            if len(calls) == 1:
+                completed.returncode = 101
+                completed.stdout = "test foo ... ok\n"
+                completed.stderr = ""
+            else:
+                completed.returncode = 0
+                completed.stdout = "test foo ... ok\ntest bar ... ok\n"
+                completed.stderr = ""
+            return completed
+
+        previous = os.environ.get("KUTHA_GOV_CARGO_OBSERVE_RETRIES")
+        try:
+            os.environ.pop("KUTHA_GOV_CARGO_OBSERVE_RETRIES", None)
+            spec = {
+                "bin": "cargo",
+                "args": ["test", "--workspace", "--offline"],
+                "required": ["foo", "bar"],
+            }
+            with patch("kutha_gov.observe.subprocess.run", side_effect=fake_run):
+                code, seen, findings = run_cargo_observation(ROOT, spec)
+            self.assertEqual(0, code)
+            self.assertEqual(["foo", "bar"], seen)
+            self.assertEqual(2, len(calls))
+            lows = [f for f in findings if f.severity is Severity.LOW]
+            self.assertEqual(1, len(lows))
+            self.assertEqual("observe-retried", lows[0].category)
+            self.assertFalse(any(f.severity is Severity.HIGH for f in findings))
+        finally:
+            if previous is None:
+                os.environ.pop("KUTHA_GOV_CARGO_OBSERVE_RETRIES", None)
+            else:
+                os.environ["KUTHA_GOV_CARGO_OBSERVE_RETRIES"] = previous
+
     def test_observe_retries_once_on_incomplete_then_succeeds(self) -> None:
         """M146: default retry recovers from first-attempt infra incomplete."""
         from unittest.mock import MagicMock, patch

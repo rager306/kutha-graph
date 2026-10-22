@@ -2735,6 +2735,17 @@ rows:
     gate: default
     owner: M148-S01
     source: Phase 222 / dogfood observe_retried summary label
+  - id: SEM-m149-partial-observe-incomplete
+    plane: harness
+    invariant: non-zero cargo exit with missing required and no FAILED is observe-incomplete (retryable)
+    layer: kill
+    oracle:
+      - observe-partial-incomplete
+    kill_mutation: restore any_verdict gate so partial ok + exit 101 emits observe-missing; or drop partial retry test
+    status: killed
+    gate: default
+    owner: M149-S01
+    source: Phase 223 / dogfood partial observe incomplete
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

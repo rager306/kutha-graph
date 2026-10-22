@@ -8,7 +8,11 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 Process tag **v1.43** / Phase **223**. Not a SemVer release.
 
-- Active Milestone **M149**, Active Slice **S01** (`L_delivery=M148-closed`): non-zero cargo exit with missing required names and no FAILED → `observe-incomplete` (retry). Honeycomb stays Proposed.
+- Active Milestone **M149**, Active Slice **S01** (`L_delivery=M149-S01`): non-zero cargo exit with missing required names and no FAILED → `observe-incomplete` (retry). Honeycomb stays Proposed.
+
+### Fixed (process)
+
+- `interpret_cargo_output`: non-zero exit + missing required + no FAILED collapses to one `observe-incomplete` (partial ok stream retries via M146). Real FAILED stays per-name; exit 0 keeps per-name missing. Check `observe-partial-incomplete`; budget 101→102. Matrix `SEM-m149-partial-observe-incomplete` killed.
 
 ## 2026-10-22 — Trajectory: M148 / GSD v1.42 closed
 

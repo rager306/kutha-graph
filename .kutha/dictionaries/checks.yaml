@@ -1690,7 +1690,7 @@ checks:
   - id: observe-incomplete-honesty
     description: >-
       Cargo non-zero exit with no required ok/FAILED lines emits one
-      observe-incomplete (not N× observe-missing). M145 / Phase 219 dogfood.
+      observe-incomplete (not N x observe-missing). M145 / Phase 219 dogfood.
     steps:
       - kind: file_contains
         path: scripts/kutha_gov/observe.py
@@ -1704,7 +1704,7 @@ checks:
         path: scripts/tests/test_fsm.py
         needles:
           - "def test_cargo_incomplete_collapses_missing_when_exit_nonzero"
-          - "def test_cargo_nonzero_keeps_per_name_when_any_verdict_seen"
+          - "def test_cargo_nonzero_keeps_per_name_when_failed_seen"
         require: all
         category: oracle
         message: "observe-incomplete pytest missing: {missing}"
@@ -1714,6 +1714,35 @@ checks:
           path: scripts/kutha_gov/observe.py
           pattern: '"observe-incomplete"'
           with: '"observe-missing-batch"'
+
+  - id: observe-partial-incomplete
+    description: >-
+      Non-zero cargo exit with missing required names and no FAILED among
+      required collapses to observe-incomplete (retryable partial run).
+      M149 / Phase 223 dogfood. Label contract via pytest.
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/observe.py
+        needles:
+          - "not any_failed"
+        require: all
+        category: oracle
+        message: "partial-observe incomplete wiring missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_fsm.py
+        needles:
+          - "def test_cargo_partial_ok_nonzero_is_incomplete"
+          - "def test_observe_retries_once_on_partial_incomplete_then_succeeds"
+          - "def test_cargo_zero_exit_keeps_missing_when_partial_ok"
+        require: all
+        category: oracle
+        message: "partial-observe incomplete pytest missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/observe.py
+          pattern: "not any_failed"
+          with: "any_failed"
 
   - id: observe-retry-incomplete
     description: >-

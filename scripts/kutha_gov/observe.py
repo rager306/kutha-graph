@@ -91,12 +91,16 @@ def interpret_cargo_output(
     """Map cargo stdout to seen-ok names and HIGH findings.
 
     M145: when ``cargo_exit`` is non-zero and no required name has an ok/FAILED
-    line, emit one incomplete finding instead of N× ``observe-missing`` so
+    line, emit one incomplete finding instead of N x ``observe-missing`` so
     infra fails (exit 101 / cold target) stay readable.
+
+    M149: same incomplete collapse when exit is non-zero, some names are
+    missing, and no required name FAILED — a partial ``ok`` stream under
+    infra failure must retry (M146), not mint N x missing.
     """
     seen_ok: list[str] = []
     findings: list[Finding] = []
-    any_verdict = False
+    any_failed = False
     missing: list[str] = []
     for name in required:
         escaped = re.escape(name)
@@ -104,9 +108,8 @@ def interpret_cargo_output(
         fail_pat = re.compile(rf"^test (?:[\w:]+::)?{escaped} \.\.\. FAILED\b", re.MULTILINE)
         if ok_pat.search(text):
             seen_ok.append(name)
-            any_verdict = True
         elif fail_pat.search(text):
-            any_verdict = True
+            any_failed = True
             findings.append(
                 Finding(
                     "observe_cargo",
@@ -117,13 +120,7 @@ def interpret_cargo_output(
             )
         else:
             missing.append(name)
-    if (
-        cargo_exit is not None
-        and cargo_exit != 0
-        and required
-        and not any_verdict
-        and missing
-    ):
+    if cargo_exit is not None and cargo_exit != 0 and required and missing and not any_failed:
         return (
             [],
             [

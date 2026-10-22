@@ -203,7 +203,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 ## M149: partial cargo observe → incomplete retry — OPEN (GSD v1.43)
 
-Dogfood follow-on to M148: parallel/cold cargo can exit 101 after some required tests print `ok`, so M145's "no verdict" incomplete gate misses and M146 never retries — N× `observe-missing` instead. Thin slice: non-zero exit + missing required + no FAILED among required → one `observe-incomplete` (retryable). Real FAILED stays per-name. Honeycomb stays Proposed. Budget stays 101.
+Dogfood follow-on to M148: parallel/cold cargo can exit 101 after some required tests print `ok`, so M145's "no verdict" incomplete gate misses and M146 never retries — N x `observe-missing` instead. Thin slice: non-zero exit + missing required + no FAILED among required → one `observe-incomplete` (retryable). Real FAILED stays per-name. Honeycomb stays Proposed. Budget 101→102.
 
 - [ ] **S01: partial-run incomplete honesty** `risk:low` `depends:[]`
   > After this: matrix `SEM-m149-partial-observe-incomplete` killed. Phase 223.

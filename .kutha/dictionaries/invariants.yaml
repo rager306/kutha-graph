@@ -423,6 +423,12 @@ invariants:
     disposition: check
     check: observe-retried-summary
 
+  - id: I-observe-partial-incomplete
+    claim: "non-zero cargo exit with missing required and no FAILED collapses to observe-incomplete; SEM-m149"
+    source: ".planning/phases/223-observe-partial-incomplete/223-VERIFICATION.md"
+    disposition: check
+    check: observe-partial-incomplete
+
   - id: I-fixed-tmp-persist-dir
     claim: "crates must not Path::new(\"tmp/…\") or .join(\"tmp\").join(\"…\") for persist/open; SEM-m122 / SEM-m123"
     source: ".planning/phases/197-fixed-tmp-join/197-VERIFICATION.md"
