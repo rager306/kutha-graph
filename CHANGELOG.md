@@ -8,7 +8,11 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 Process tag **v1.45** / Phase **225**. Not a SemVer release.
 
-- Active Milestone **M151**, Active Slice **S01** (`L_delivery=M150-closed`): phase_ms observe_cargo uses cargo wall time under overlap. Honeycomb stays Proposed.
+- Active Milestone **M151**, Active Slice **S01** (`L_delivery=M151-S01`): phase_ms observe_cargo uses cargo wall time under overlap. Honeycomb stays Proposed.
+
+### Fixed (process)
+
+- Overlap cargo pack includes `wall_ms`; `phase_ms observe_cargo=` uses it instead of Future join-wait. Check `observe-phase-ms-wall`; budget 103→104. Matrix `SEM-m151-observe-phase-ms` killed.
 
 ## 2026-10-22 — Trajectory: M150 / GSD v1.44 closed
 

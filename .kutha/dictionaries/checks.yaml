@@ -1773,6 +1773,33 @@ checks:
           pattern: "def _format_observe_fail"
           with: "def _format_cargo_fail_msg"
 
+  - id: observe-phase-ms-wall
+    description: >-
+      phase_ms for observe_cargo uses cargo wall time from the overlap pack,
+      not Future join-wait. M151 / Phase 225 dogfood.
+    steps:
+      - kind: file_contains
+        path: scripts/kutha_gov/fsm.py
+        needles:
+          - 'overlap.pop("observe_wall_ms"'
+          - "M151: overlapped observe_cargo"
+        require: all
+        category: oracle
+        message: "observe phase_ms wall wiring missing: {missing}"
+      - kind: file_contains
+        path: scripts/tests/test_fsm.py
+        needles:
+          - "def test_overlap_observe_phase_ms_uses_cargo_wall_not_join_wait"
+        require: all
+        category: oracle
+        message: "observe phase_ms wall pytest missing: {missing}"
+    selftest:
+      mutations:
+        - op: replace_regex
+          path: scripts/kutha_gov/fsm.py
+          pattern: 'M151: overlapped observe_cargo'
+          with: 'M151: join-wait observe_cargo'
+
   - id: observe-retry-incomplete
     description: >-
       Cargo observe retries on observe-incomplete under the same flock

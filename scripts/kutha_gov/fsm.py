@@ -173,17 +173,20 @@ def _overlap_specs(machine: Machine) -> list[tuple[str, Step]]:
 
 def _overlap_pipeline(
     root: Path, specs: list[tuple[str, Step]]
-) -> dict[str, tuple[int, list[str], list[Finding]] | None]:
+) -> dict[str, tuple[int, list[str], list[Finding], int] | None]:
+    """Run overlapped cargo observes; pack includes wall_ms (M151)."""
     from kutha_gov.observe import run_cargo_observation
 
-    out: dict[str, tuple[int, list[str], list[Finding]] | None] = {}
+    out: dict[str, tuple[int, list[str], list[Finding], int] | None] = {}
     skip_rest = False
     for name, spec in specs:
         if skip_rest:
             out[name] = None
             continue
+        started = time.monotonic()
         code, seen_ok, findings = run_cargo_observation(root, spec)
-        out[name] = (code, seen_ok, findings)
+        wall_ms = int((time.monotonic() - started) * 1000)
+        out[name] = (code, seen_ok, findings, wall_ms)
         if any(finding.severity is Severity.HIGH for finding in findings):
             skip_rest = True
     return out
@@ -287,7 +290,13 @@ def run_quantum(ctx: Context, *, budget: int, start_event: str = "start") -> Qua
                 state=state,
                 overlap=overlap,
             )
-            outcome.phase_ms.append((kind, int((time.monotonic() - started) * 1000)))
+            # M151: overlapped observe_cargo join-wait is not cargo wall time.
+            wall = overlap.pop("observe_wall_ms", None)
+            if kind == "observe_cargo" and isinstance(wall, int):
+                ms = wall
+            else:
+                ms = int((time.monotonic() - started) * 1000)
+            outcome.phase_ms.append((kind, ms))
 
         outcome.terminal = state if state in machine.terminal else "fail"
         outcome.high += sum(r.high_count for r in outcome.results)
@@ -394,11 +403,15 @@ def _execute(
                 if packed is None:
                     _note_observe_skipped(outcome, state, "overlap-after-high")
                     return "done"
-                _apply_cargo_pack(outcome, packed)
+                code, seen_ok, findings, wall_ms = packed
+                overlap["observe_wall_ms"] = wall_ms
+                _apply_cargo_pack(outcome, (code, seen_ok, findings))
                 return "done"
         from kutha_gov.observe import run_cargo_observation
 
+        started = time.monotonic()
         code, seen_ok, findings = run_cargo_observation(ctx.root, spec)
+        overlap["observe_wall_ms"] = int((time.monotonic() - started) * 1000)
         _apply_cargo_pack(outcome, (code, seen_ok, findings))
         return "done"
     if kind == "emit_log":
@@ -483,9 +496,7 @@ def _execute(
         try:
             fold_log(ctx.root / LOG_REL)
         except ValueError as exc:
-            outcome.findings.append(
-                Finding("fold_log", Severity.HIGH, "fold", str(exc))
-            )
+            outcome.findings.append(Finding("fold_log", Severity.HIGH, "fold", str(exc)))
             outcome.observations.append(("fold_log", "fail"))
             return "fail"
         return "ok"

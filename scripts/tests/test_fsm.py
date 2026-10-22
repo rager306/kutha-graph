@@ -154,6 +154,71 @@ class FsmTests(unittest.TestCase):
             msg=outcome.findings,
         )
 
+    def test_overlap_observe_phase_ms_uses_cargo_wall_not_join_wait(self) -> None:
+        """M151: finished overlap Future must not report phase_ms~0 for long cargo."""
+        from concurrent.futures import Future
+        from unittest.mock import MagicMock, patch
+
+        from kutha_gov.fsm import Machine
+        from kutha_gov.protocol import Check, CheckResult
+        from kutha_gov.selftest import OK, SelftestRow
+
+        class QuietCheck(Check):
+            name = "quiet"
+            description = "quiet"
+
+            def run(self, ctx: Context) -> CheckResult:
+                return CheckResult(check=self.name)
+
+        machine = Machine(
+            initial="idle",
+            terminal=frozenset({"ok", "fail"}),
+            budget_default=8,
+            states={
+                "idle": {"kind": "noop"},
+                "checks": {"kind": "run_checks", "parallel": True},
+                "selftest": {"kind": "run_selftest", "parallel": True},
+                "obs": {
+                    "kind": "observe_cargo",
+                    "bin": "cargo",
+                    "args": ["test"],
+                    "overlap_with": ["run_checks", "run_selftest"],
+                    "required": ["foo"],
+                },
+                "ok": {"kind": "terminal"},
+                "fail": {"kind": "terminal"},
+            },
+            transitions=[
+                {"from": "idle", "event": "start", "to": "checks"},
+                {"from": "checks", "event": "done", "to": "selftest"},
+                {"from": "selftest", "event": "done", "to": "obs"},
+                {"from": "obs", "event": "done", "to": "ok"},
+                {"from": "obs", "event": "fail", "to": "fail"},
+            ],
+        )
+        done: Future[dict[str, tuple[int, list[str], list[object], int] | None]] = Future()
+        done.set_result({"obs": (0, ["foo"], [], 4321)})
+
+        def fake_start(_machine: object, _ctx: object, overlap: dict[str, object]) -> None:
+            overlap["fut"] = done
+            overlap["pool"] = MagicMock()
+
+        ctx = Context(root=ROOT, skip_cargo=False, skip_emit=True, jobs=2)
+        with (
+            patch("kutha_gov.fsm.load_machine", return_value=machine),
+            patch("kutha_gov.fsm.get_checks", return_value={"quiet": QuietCheck()}),
+            patch(
+                "kutha_gov.selftest.run_selftest",
+                return_value=([SelftestRow(OK, "quiet", 1)], 0),
+            ),
+            patch("kutha_gov.fsm._maybe_start_overlap", side_effect=fake_start),
+            patch("kutha_gov.fsm._shutdown_overlap"),
+        ):
+            outcome = run_quantum(ctx, budget=8, start_event="start")
+        observe_ms = [ms for kind, ms in outcome.phase_ms if kind == "observe_cargo"]
+        self.assertEqual([4321], observe_ms, msg=outcome.phase_ms)
+        self.assertEqual("ok", outcome.terminal)
+
     def test_second_observe_cargo_notes_skip_after_prior_high(self) -> None:
         """M142 / CE #39: pin skip breadcrumb behavior, not assert-snippet needles."""
         from unittest.mock import patch

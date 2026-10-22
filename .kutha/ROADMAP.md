@@ -203,7 +203,7 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 
 ## M151: observe phase_ms wall honesty — OPEN (GSD v1.45)
 
-Dogfood follow-on to M150: under jobs>1 overlap, `phase_ms observe_cargo=` measures Future join-wait (often ~0) after cargo already finished in the pipeline — lies next to real `elapsed_ms=` on findings. Thin slice: record cargo wall time in the overlap pack and use it for `phase_ms`. Honeycomb stays Proposed. Budget stays 103.
+Dogfood follow-on to M150: under jobs>1 overlap, `phase_ms observe_cargo=` measures Future join-wait (often ~0) after cargo already finished in the pipeline — lies next to real `elapsed_ms=` on findings. Thin slice: record cargo wall time in the overlap pack and use it for `phase_ms`. Honeycomb stays Proposed. Budget 103→104.
 
 - [ ] **S01: observe phase_ms wall** `risk:low` `depends:[]`
   > After this: matrix `SEM-m151-observe-phase-ms` killed. Phase 225.

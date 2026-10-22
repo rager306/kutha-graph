@@ -2757,6 +2757,17 @@ rows:
     gate: default
     owner: M150-S01
     source: Phase 224 / dogfood observe-fail detail
+  - id: SEM-m151-observe-phase-ms
+    plane: harness
+    invariant: phase_ms observe_cargo uses cargo wall time from overlap pack, not join-wait
+    layer: kill
+    oracle:
+      - observe-phase-ms-wall
+    kill_mutation: drop observe_wall_ms override; or drop test_overlap_observe_phase_ms_uses_cargo_wall_not_join_wait
+    status: killed
+    gate: default
+    owner: M151-S01
+    source: Phase 225 / dogfood observe phase_ms wall
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute
