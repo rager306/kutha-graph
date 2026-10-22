@@ -3,7 +3,7 @@ ce-handoff/v1: true
 title: "M152 closed (Arc 0 hygiene) — direction B, C, A; next lease open"
 date: 2026-10-22
 branch: work/main-line
-head: 976c3a8
+head: 0823105
 resume_focus: "After the user asks to continue: lease B1 (ADR-012 thin vacuum with receipt) with a fresh RED, bundle STATE+ROADMAP+CHANGELOG+README (verify README line count; write docs before git add). Harness moratorium applies. Do not thaw Cypher/HNSW/SIX-01/legal pack without their own lease."
 ---
 
