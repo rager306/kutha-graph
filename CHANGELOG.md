@@ -4,6 +4,14 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-22 — Trajectory: M154 / GSD v1.48 closed
+
+Process tag **v1.48** / Phase **228**. Not a SemVer release.
+
+- Thin B1: a sealed log prefix can be replaced by an on-log checkpoint and an `Op::Checkpoint` receipt with strict replay exact. Not vacuum (no TT history erased, fingerprint contract unchanged). Independent verification took three passes (6 HIGH defects found and fixed, one requirement amended to parity for ordinary `StoreBlob` tamper). `cargo test --workspace --offline --no-fail-fast` 0, `kutha-gov ci --jobs 1` `run_high=0`.
+- Residuals (each needs a fired RED before a lease): ordinary `StoreBlob` digests are not verified on open (pre-existing); `horn_behavior_reproducible` fails open on a missing rule blob; `migrate_compat` demotes a checkpointed store to jsonl. Bench numbers are in the Product entry below.
+- `L_delivery=M154-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.48 / Phase 228. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-22 — Product: checkpoint receipt (thin B1)
 
 ### Added

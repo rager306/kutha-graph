@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M154
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M154-S01
+L_delivery=M154-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M154-S01 leased (v1.48): checkpoint receipt (thin B1) | Capability proven / Cypher started |
+| L_delivery | M154 closed (v1.48) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M154 S01 (thin B1, ADR-012 layout compaction with a receipt): replace a sealed log prefix with one on-log checkpoint (`StoreBlob` of the prefix fold plus a receipt op `Op::Checkpoint`) so the sealed log never shrinks without a receipt and strict replay stays exact (fingerprint and PIT answers equal before and after). This is **not** vacuum in the ADR-012 D012-4 sense: no TT history is erased, losers stay (D013-2), the fingerprint contract is unchanged. Expired-TT vacuum, legal hold, defined AS-OF failure and tiers are later slices. New `Op` variant is a documented forward break for old readers (`docs/process/op-compat.md`). Bench gate applies (`ingest_plain.n`, `as_of.n`). The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M154 is closed: `store::checkpoint_sealed_prefix` plus `Op::Checkpoint` (ADR-012 layout compaction with a receipt, replay exact, three independent verification passes). Not vacuum: expired-TT erase, legal hold and defined AS-OF failure remain open (B1b, needs its own design and a fresh RED). Next arc B candidate: **B2** ADR-061 fork diff (no thaw; fresh RED first). Residuals from the verifier, each needs a fired RED before its own lease: ordinary `StoreBlob` digests are not verified on `open` (pre-existing); `horn_behavior_reproducible` fails open on a missing rule blob; `migrate_compat` demotes a checkpointed store to jsonl instead of failing closed. Before B3: set up the Samyama and FalkorDB baseline environment with the owner. Verus proofs ride inside the slice that touches the kernel. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 
