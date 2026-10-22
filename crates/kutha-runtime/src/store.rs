@@ -1,11 +1,12 @@
+use crate::fold::GraphFold;
 use crate::quantum::{
-    cascade_limit, Justification, PersistedQuantumOutcome, Runtime, RuntimeError,
+    Justification, PersistedQuantumOutcome, Runtime, RuntimeError, cascade_limit,
 };
 use crate::snapshot::Snapshot;
 use crate::wal;
 use kutha_common::{
-    remap_event_pins, remap_events_pins, rewrite_event_json_line, Event, EventId, Op,
-    TermDictionary,
+    Event, EventId, Op, TermDictionary, remap_event_pins, remap_events_pins,
+    rewrite_event_json_line, sha256_hex,
 };
 use serde::de::DeserializeOwned;
 use std::fs::{self, File, OpenOptions};
@@ -155,13 +156,91 @@ pub fn persist(runtime: &Runtime, dir: &Path) -> std::io::Result<()> {
     persist_until(runtime, dir, None)
 }
 
-/// Compile-only entry for sealed-prefix checkpoint (M154 / ADR-012). Does not
-/// rewrite segments; `Ok` is not a completed compaction.
-pub fn checkpoint_sealed_prefix(_dir: &Path) -> std::io::Result<()> {
-    Err(std::io::Error::new(
-        ErrorKind::Other,
-        "checkpoint_sealed_prefix: sealed prefix rewrite is not implemented",
-    ))
+/// Replace sealed log prefix with on-log `StoreBlob` + `Op::Checkpoint` (M154 / ADR-012).
+///
+/// Holds [`STORE_LOCK_REL`]. Fails closed when `manifest.json` is missing or
+/// `sealed` is empty. Does not go through `Runtime::emit`. `snapshot.json` is
+/// refreshed as a lease, not the checkpoint carrier.
+pub fn checkpoint_sealed_prefix(dir: &Path) -> std::io::Result<()> {
+    let _lock = acquire_store_write_lock(dir)?;
+    if !dir.join(crate::segment::MANIFEST_REL).exists() {
+        return Err(io_invalid(
+            "checkpoint_sealed_prefix: missing manifest.json",
+        ));
+    }
+    let man = crate::segment::read_manifest(dir)?;
+    if man.sealed.is_empty() {
+        return Err(io_invalid("checkpoint_sealed_prefix: empty sealed prefix"));
+    }
+    let loaded = load_log_events(dir)?;
+    let events = committed_prefix(loaded);
+    let prefix_len: usize = man.sealed.iter().try_fold(0usize, |acc, s| {
+        acc.checked_add(s.count as usize)
+            .ok_or_else(|| io_invalid("checkpoint_sealed_prefix: sealed count overflow"))
+    })?;
+    if prefix_len == 0 || prefix_len > events.len() {
+        return Err(io_invalid(
+            "checkpoint_sealed_prefix: sealed prefix length disagrees with log",
+        ));
+    }
+    let opened = open_hydrated(dir, events.clone())?;
+    let prefix = &events[..prefix_len];
+    let tail = events[prefix_len..].to_vec();
+    let dict_strings = opened.dictionary().strings().to_vec();
+    let prefix_fold = GraphFold::replay_with_dict(prefix, opened.dictionary());
+    let opened_snap = opened.snapshot();
+    let next_tt = prefix
+        .iter()
+        .map(|e| e.ingested_at.saturating_add(1))
+        .max()
+        .unwrap_or(0);
+    let fact_count = prefix_fold.facts.len() as u64;
+    let fingerprint_hex = crate::receipt::digest_to_hex(&prefix_fold.fingerprint());
+    let first_event_id = prefix[0].id;
+    let last_event_id = prefix[prefix_len - 1].id;
+    let ingested_at = prefix[prefix_len - 1].ingested_at;
+    let blob_snap = Snapshot {
+        log_offset: fold_affecting_count(prefix),
+        next_tt,
+        max_cascade: opened_snap.max_cascade,
+        fold: prefix_fold,
+        dict_strings: dict_strings.clone(),
+        knows: opened_snap.knows,
+        known_by: opened_snap.known_by,
+    };
+    let bytes = serde_json::to_vec(&blob_snap).map_err(json_err)?;
+    let blob_digest = sha256_hex(&bytes);
+    let blob_event = Event::new(
+        Op::StoreBlob {
+            digest: blob_digest.clone(),
+            bytes,
+        },
+        ingested_at,
+    );
+    let checkpoint_event = Event::new(
+        Op::Checkpoint {
+            first_event_id,
+            last_event_id,
+            dropped_count: prefix_len as u64,
+            fact_count,
+            fingerprint_hex,
+            blob_digest,
+        },
+        ingested_at,
+    );
+    let mut new_log = Vec::with_capacity(2 + tail.len());
+    new_log.push(blob_event);
+    new_log.push(checkpoint_event);
+    new_log.extend(tail);
+    crate::segment::persist_log(dir, &new_log)?;
+    let rt = Runtime::from_dict_and_events(dict_strings, new_log, opened_snap.max_cascade)
+        .map_err(runtime_err)?;
+    write_terms(dir, rt.dictionary().strings())?;
+    replace_snapshot(dir, &rt.snapshot(), true)?;
+    write_outcomes(dir, &crate::hydrate::outcomes_from_events(rt.log().iter()))?;
+    write_justifications(dir, &rt.justification_records())?;
+    sync_dir(dir)?;
+    Ok(())
 }
 
 /// Uncommitted suffix events skipped by [`migrate`] (COMMIT-01).
@@ -346,9 +425,7 @@ pub fn migrate_pin_wire(dir: &Path) -> std::io::Result<PinWireMigrateReport> {
     })
 }
 
-fn rewrite_pin_wire_events(
-    values: &[serde_json::Value],
-) -> std::io::Result<(Vec<Event>, usize)> {
+fn rewrite_pin_wire_events(values: &[serde_json::Value]) -> std::io::Result<(Vec<Event>, usize)> {
     let mut out = Vec::with_capacity(values.len());
     let mut remapped_lines = 0usize;
     for value in values {
@@ -450,9 +527,7 @@ pub fn migrate_pin_cite(dir: &Path) -> std::io::Result<PinCiteMigrateReport> {
     })
 }
 
-fn rewrite_pin_cite_events(
-    values: &[serde_json::Value],
-) -> std::io::Result<(Vec<Event>, usize)> {
+fn rewrite_pin_cite_events(values: &[serde_json::Value]) -> std::io::Result<(Vec<Event>, usize)> {
     let mut parsed = Vec::with_capacity(values.len());
     for value in values {
         parsed.push(serde_json::from_value::<Event>(value.clone()).map_err(json_err)?);
@@ -514,9 +589,8 @@ fn read_jsonl_values(path: &Path) -> std::io::Result<(Vec<serde_json::Value>, us
         values.push(serde_json::from_str(text).map_err(json_err)?);
     }
     // Torn tail after last newline is dropped (same policy as read_jsonl_events).
-    let dropped_tail = usize::from(
-        start < bytes.len() && bytes[start..].iter().any(|c| !c.is_ascii_whitespace()),
-    );
+    let dropped_tail =
+        usize::from(start < bytes.len() && bytes[start..].iter().any(|c| !c.is_ascii_whitespace()));
     Ok((values, dropped_tail))
 }
 
@@ -536,9 +610,7 @@ fn remove_all_segment_logs(dir: &Path) -> std::io::Result<()> {
     Ok(())
 }
 
-fn rewrite_op_wire_values(
-    values: &[serde_json::Value],
-) -> std::io::Result<(Vec<Event>, usize)> {
+fn rewrite_op_wire_values(values: &[serde_json::Value]) -> std::io::Result<(Vec<Event>, usize)> {
     let mut dict = TermDictionary::default();
     let mut out = Vec::new();
     let mut remapped_lines = 0usize;
@@ -1270,16 +1342,16 @@ fn runtime_err(e: RuntimeError) -> std::io::Error {
 }
 
 pub use crate::persist_append::{
-    abort_checkpoint_snapshot_before_rename, append_examine_count, append_with_event_failpoint,
-    append_with_failpoint, checkpoint_with_failpoint, pending_append_len, persist_log_sync_count,
-    reset_append_examine_count, reset_persist_log_sync_count, AppendStep, Persister,
-    CHECKPOINT_EVERY,
+    AppendStep, CHECKPOINT_EVERY, Persister, abort_checkpoint_snapshot_before_rename,
+    append_examine_count, append_with_event_failpoint, append_with_failpoint,
+    checkpoint_with_failpoint, pending_append_len, persist_log_sync_count,
+    reset_append_examine_count, reset_persist_log_sync_count,
 };
 
 #[doc(hidden)]
 pub use crate::segment::{
-    abort_write_segment_before_rename, reset_test_segment_limits,
+    HEADER_LEN as SEGMENT_HEADER_LEN, MANIFEST_REL, Manifest, SEGMENT_MAX_BYTES,
+    SEGMENT_MAX_EVENTS, abort_write_segment_before_rename, reset_test_segment_limits,
     rewrite_segment_with_seal_trailer, set_test_segment_limits, write_json_payload_segmented,
-    write_test_segmented, Manifest, HEADER_LEN as SEGMENT_HEADER_LEN, MANIFEST_REL,
-    SEGMENT_MAX_BYTES, SEGMENT_MAX_EVENTS,
+    write_test_segmented,
 };

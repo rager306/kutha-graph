@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-22 — Product: checkpoint receipt (thin B1)
+
+### Added
+
+- `store::checkpoint_sealed_prefix` under `kutha.lock` rewrites a sealed prefix to `Op::StoreBlob` (prefix `Snapshot` fold, same shape as `snapshot.rs`) plus `Op::Checkpoint` receipt plus the unchanged tail. `snapshot.json` stays a lease, never the carrier.
+
+### Changed
+
+- `GraphFold::apply` of `Checkpoint` restores facts, `next_seq`, and `tt_anchors` from the blob; `tt_anchors_from_events` / `rebuild_tt_anchors` union walls from checkpoint blobs. Fingerprint still hashes all facts including dead ones (not vacuum).
+- Bench PRE (228-01, same host, benches alone): ingest_plain.n **144924496 ns**; as_of.n **394795 ns** (eager). POST numbers land with the docs close.
+
+Lease and honeycomb cells stay **Proposed**.
+
 ## 2026-10-22 — Trajectory: lease M154-S01 (checkpoint receipt)
 
 Process tag **v1.48** / Phase **228**. Not a SemVer release.

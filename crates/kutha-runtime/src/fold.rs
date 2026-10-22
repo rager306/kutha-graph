@@ -1,6 +1,7 @@
+use crate::snapshot::Snapshot;
 use kutha_common::{
-    Event, EventId, Op, RuleAst, SupportPolarity, TermDictionary, TermId, TransactionTime,
-    ValidTime, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE,
+    Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE, Op,
+    RuleAst, SupportPolarity, TermDictionary, TermId, TransactionTime, ValidTime,
 };
 use rustc_hash::FxHashMap;
 use smallvec::SmallVec;
@@ -386,12 +387,33 @@ impl GraphFold {
         }
     }
 
-    /// Log `Op::TtAnchor` walls and `ingested_at` (not hashed into the fact fingerprint).
+    /// Log `Op::TtAnchor` walls plus walls restored from `Op::Checkpoint` blobs.
+    ///
+    /// Prefix `TtAnchor` events are dropped by sealed-prefix rewrite; the
+    /// checkpoint Snapshot still carries `fold.tt_anchors` so replay_check
+    /// equality holds without changing existing assertions on logs that have
+    /// no Checkpoint.
     pub(crate) fn tt_anchors_from_events(events: &[Event]) -> BTreeMap<u64, u64> {
+        let mut blobs: HashMap<&str, &[u8]> = HashMap::new();
         let mut out = BTreeMap::new();
         for e in events {
-            if let Op::TtAnchor { wall } = &e.op {
-                out.insert(*wall, e.ingested_at);
+            match &e.op {
+                Op::StoreBlob { digest, bytes } => {
+                    blobs.insert(digest.as_str(), bytes.as_slice());
+                }
+                Op::TtAnchor { wall } => {
+                    out.insert(*wall, e.ingested_at);
+                }
+                Op::Checkpoint { blob_digest, .. } => {
+                    if let Some(bytes) = blobs.get(blob_digest.as_str()) {
+                        if let Ok(snap) = serde_json::from_slice::<Snapshot>(bytes) {
+                            for (wall, ingested_at) in snap.fold.tt_anchors {
+                                out.insert(wall, ingested_at);
+                            }
+                        }
+                    }
+                }
+                _ => {}
             }
         }
         out
@@ -448,12 +470,22 @@ impl GraphFold {
     }
 
     pub(crate) fn rebuild_tt_anchors(&mut self, events: &[Event]) {
-        self.tt_anchors.clear();
-        for e in events {
-            if let Op::TtAnchor { wall } = &e.op {
-                self.tt_anchors.insert(*wall, e.ingested_at);
-            }
-        }
+        self.tt_anchors = Self::tt_anchors_from_events(events);
+    }
+
+    /// Hydrate prefix fold from the on-log checkpoint blob (M154 / ADR-012).
+    /// Missing or unreadable blob is a no-op; `replay_check` fails closed.
+    fn apply_checkpoint_blob(&mut self, blob_digest: &str) {
+        let Some(bytes) = self.blobs.get(blob_digest).cloned() else {
+            return;
+        };
+        let Ok(snap) = serde_json::from_slice::<Snapshot>(&bytes) else {
+            return;
+        };
+        let blobs = std::mem::take(&mut self.blobs);
+        *self = snap.fold;
+        self.blobs = blobs;
+        self.rebuild_hot_maps();
     }
 
     pub fn index_mode(&self) -> FoldIndexMode {
@@ -897,10 +929,10 @@ impl GraphFold {
             Op::TtAnchor { wall } => {
                 self.tt_anchors.insert(*wall, event.ingested_at);
             }
-            Op::Define { .. }
-            | Op::QuantumOutcome { .. }
-            | Op::JustificationCite { .. }
-            | Op::Checkpoint { .. } => {}
+            Op::Checkpoint { blob_digest, .. } => {
+                self.apply_checkpoint_blob(blob_digest);
+            }
+            Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
         }
     }
 
