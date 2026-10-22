@@ -21,6 +21,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - After checkpoint, persist the encoded log (Defines then graph), not the compacted graph-only rewrite. `committed_prefix` can then classify `kutha:admission` / `kutha:action` in the tail, and `snapshot.log_offset` matches the committed fold-affecting count. Persister attach sees the same event count as `encoded_log`.
 - `Op::Checkpoint` apply and `replay_check` verify blob digest, restored `fact_count`, and `fingerprint_hex` against the prefix Snapshot; mismatch is `ReplayDivergence` (open fail-closed). Fingerprint still hashes all facts including dead ones.
 - Prefix `QuantumOutcome` and `JustificationCite` ride the rewritten log like kept `StoreBlob`s, so `outcome_records` / `justification_records` match the un-checkpointed twin. `Op::Checkpoint` is not copied (R5 re-checkpoint keeps one receipt).
+- `Op::Checkpoint` is valid only on an empty fold (`facts` empty, `next_seq == 0`) after kept prefix meta (`StoreBlob` / `QuantumOutcome` / `JustificationCite` / `Define`). A duplicate receipt or one moved after tail events is `ReplayDivergence` (`open` / `replay_check` fail closed; apply does not clobber).
 
 Lease and honeycomb cells stay **Proposed**.
 

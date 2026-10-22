@@ -364,6 +364,16 @@ pub(crate) fn checkpoint_kept_prefix_op(op: &Op) -> bool {
     )
 }
 
+/// Ops that may precede `Op::Checkpoint` while the restored prefix is still empty.
+pub(crate) fn checkpoint_prefix_meta_op(op: &Op) -> bool {
+    matches!(op, Op::Define { .. }) || checkpoint_kept_prefix_op(op)
+}
+
+/// A checkpoint restores a prefix: valid only on an empty fold (`facts` and `next_seq`).
+pub(crate) fn checkpoint_fold_is_empty_prefix(fold: &GraphFold) -> bool {
+    fold.facts.is_empty() && fold.next_seq == 0
+}
+
 /// Prefix Snapshot if blob digest, `fact_count`, and `fingerprint_hex` match.
 pub(crate) fn checkpoint_snapshot_if_receipt_ok(
     bytes: &[u8],
@@ -968,7 +978,12 @@ impl GraphFold {
                 fact_count,
                 ..
             } => {
-                self.apply_checkpoint_blob(blob_digest, fingerprint_hex, *fact_count);
+                // Restore only when the fold is still empty (kept StoreBlob /
+                // sidecar / dictionary ops precede the receipt). Duplicate or
+                // tail-moved Checkpoint must not clobber; replay_check fails closed.
+                if checkpoint_fold_is_empty_prefix(self) {
+                    self.apply_checkpoint_blob(blob_digest, fingerprint_hex, *fact_count);
+                }
             }
             Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
         }

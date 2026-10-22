@@ -1,5 +1,7 @@
 //! Replay and provenance (ADR-060). Not a MATCH compiler.
-use crate::fold::{checkpoint_snapshot_if_receipt_ok, GraphFold};
+use crate::fold::{
+    checkpoint_prefix_meta_op, checkpoint_snapshot_if_receipt_ok, GraphFold,
+};
 use crate::quantum::{Runtime, RuntimeError};
 use crate::receipt::digest_to_hex;
 use kutha_common::{Event, EventId, Op, TransactionTime, ValidTime};
@@ -101,8 +103,11 @@ impl Runtime {
     }
 
     /// Receipt fields on `Op::Checkpoint` must match the blob Snapshot (M154).
+    /// A checkpoint restores a prefix: only `Define` / kept `StoreBlob` /
+    /// `QuantumOutcome` / `JustificationCite` may precede it (empty fold).
     fn check_checkpoint_receipts(events: &[Event]) -> Result<(), RuntimeError> {
         let mut blobs: HashMap<&str, &[u8]> = HashMap::new();
+        let mut only_prefix_meta = true;
         for e in events {
             match &e.op {
                 Op::StoreBlob { digest, bytes } => {
@@ -114,6 +119,9 @@ impl Runtime {
                     blob_digest,
                     ..
                 } => {
+                    if !only_prefix_meta {
+                        return Err(checkpoint_receipt_error(fingerprint_hex, [0u8; 32]));
+                    }
                     let Some(bytes) = blobs.get(blob_digest.as_str()).copied() else {
                         return Err(checkpoint_receipt_error(blob_digest, [0u8; 32]));
                     };
@@ -134,8 +142,13 @@ impl Runtime {
                             return Err(checkpoint_receipt_error(fingerprint_hex, actual));
                         }
                     }
+                    // Receipt consumed the empty prefix; a second Checkpoint is invalid.
+                    only_prefix_meta = false;
                 }
-                _ => {}
+                op if checkpoint_prefix_meta_op(op) => {}
+                _ => {
+                    only_prefix_meta = false;
+                }
             }
         }
         Ok(())
