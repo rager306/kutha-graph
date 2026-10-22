@@ -155,6 +155,15 @@ pub fn persist(runtime: &Runtime, dir: &Path) -> std::io::Result<()> {
     persist_until(runtime, dir, None)
 }
 
+/// Compile-only entry for sealed-prefix checkpoint (M154 / ADR-012). Does not
+/// rewrite segments; `Ok` is not a completed compaction.
+pub fn checkpoint_sealed_prefix(_dir: &Path) -> std::io::Result<()> {
+    Err(std::io::Error::new(
+        ErrorKind::Other,
+        "checkpoint_sealed_prefix: sealed prefix rewrite is not implemented",
+    ))
+}
+
 /// Uncommitted suffix events skipped by [`migrate`] (COMMIT-01).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct MigrateReport {

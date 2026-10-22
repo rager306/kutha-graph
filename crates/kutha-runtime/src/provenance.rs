@@ -177,7 +177,8 @@ impl Runtime {
             | Op::QuantumOutcome { .. }
             | Op::JustificationCite { .. }
             | Op::StoreBlob { .. }
-            | Op::TtAnchor { .. } => return false,
+            | Op::TtAnchor { .. }
+            | Op::Checkpoint { .. } => return false,
         };
         if !self.fold.rule_hash_live_at(&rule_version, tt, vt) {
             return false;

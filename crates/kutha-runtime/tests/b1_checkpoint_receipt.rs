@@ -46,7 +46,7 @@ fn checkpoint_sealed_prefix_preserves_fingerprint_and_pit() {
     let _limits = tiny_limits();
     let dir = persist_dir();
     let mut rt = Runtime::default();
-    rt.emit_allow("inForceAs", 2010, None).unwrap();
+    // Genesis already allows inForceAs (delivery_key); a second emit_allow conflicts.
     let relation = rt.intern("inForceAs");
     let mut live_assert = None;
     for i in 0..6 {
@@ -92,7 +92,9 @@ fn checkpoint_sealed_prefix_preserves_fingerprint_and_pit() {
     store::checkpoint_sealed_prefix(&dir).unwrap();
 
     let opened = store::open(&dir).expect("open after checkpoint");
-    opened.replay_check().expect("replay_check after checkpoint");
+    opened
+        .replay_check()
+        .expect("replay_check after checkpoint");
     assert_eq!(opened.fold().fingerprint(), fingerprint);
     assert_eq!(opened.as_of(ValidTime::from(2009)), as_of_2009);
     assert_eq!(opened.as_of(ValidTime::from(2015)), as_of_2015);

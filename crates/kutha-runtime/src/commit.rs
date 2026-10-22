@@ -25,7 +25,8 @@ pub fn op_commit_class(op: &Op) -> CommitClass {
         | Op::QuantumOutcome { .. }
         | Op::JustificationCite { .. }
         | Op::StoreBlob { .. }
-        | Op::TtAnchor { .. } => CommitClass::SelfCommit,
+        | Op::TtAnchor { .. }
+        | Op::Checkpoint { .. } => CommitClass::SelfCommit,
     }
 }
 

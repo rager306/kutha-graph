@@ -515,6 +515,7 @@ pub fn brief_ops(events: &[Event]) -> String {
             Op::QuantumOutcome { .. } => "QO",
             Op::StoreBlob { .. } => "Blob",
             Op::JustificationCite { .. } => "Cite",
+            Op::Checkpoint { .. } => "Checkpoint",
         })
         .collect::<Vec<_>>()
         .join(",")

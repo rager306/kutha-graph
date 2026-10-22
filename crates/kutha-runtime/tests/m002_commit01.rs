@@ -1,8 +1,10 @@
 //! M002 S05 / COMMIT-01 oracles (Phase 53). Option A: QuantumOutcome is the marker.
 //! D-07: RED records current failures; FF5/FF6/M010–M017 / m002_snap01 / m002_append01 stay.
 
-use kutha_common::{Event, EventId, KUTHA_ALLOWS, KUTHA_RESERVED_RELS, Op, OutcomeDisposition, ValidTime};
-use kutha_runtime::{Runtime, Snapshot, store};
+use kutha_common::{
+    Event, EventId, Op, OutcomeDisposition, ValidTime, KUTHA_ALLOWS, KUTHA_RESERVED_RELS,
+};
+use kutha_runtime::{store, Runtime, Snapshot};
 use std::fs;
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
@@ -139,7 +141,10 @@ fn complete_quantum_with_outcome_is_visible() {
     p.append(&rt).unwrap();
     let opened = store::open(&dir).unwrap();
     assert_eq!(opened.fold().fingerprint(), rt.fold().fingerprint());
-    assert_eq!(opened.as_of(ValidTime::from(VF_FIRST)), rt.as_of(ValidTime::from(VF_FIRST)));
+    assert_eq!(
+        opened.as_of(ValidTime::from(VF_FIRST)),
+        rt.as_of(ValidTime::from(VF_FIRST))
+    );
     assert_eq!(log_ids(&opened), log_ids(&rt));
     opened.replay_check().unwrap();
 
@@ -381,7 +386,7 @@ fn heal_crash_matrix_reopens_to_committed_prefix() {
 fn every_op_variant_is_classified() {
     use store::CommitClass::*;
     let nil = EventId::nil();
-    let table: [(Op, store::CommitClass); 10] = [
+    let table: [(Op, store::CommitClass); 11] = [
         (product_assert_op(1), NeedsOutcome),
         (Op::Retract { event_id: nil }, NeedsOutcome),
         (
@@ -448,6 +453,17 @@ fn every_op_variant_is_classified() {
             SelfCommit,
         ),
         (Op::TtAnchor { wall: 1 }, SelfCommit),
+        (
+            Op::Checkpoint {
+                first_event_id: nil,
+                last_event_id: nil,
+                dropped_count: 0,
+                fact_count: 0,
+                fingerprint_hex: String::new(),
+                blob_digest: String::new(),
+            },
+            SelfCommit,
+        ),
     ];
     for (op, want) in table {
         assert_eq!(store::op_commit_class(&op), want, "op={op:?}");
@@ -485,6 +501,7 @@ fn prefix_tags(events: &[Event]) -> Vec<&'static str> {
             Op::Correct { .. } => "Correct",
             Op::CorrectInterval { .. } => "CorrectInterval",
             Op::Behavior { .. } => "Behavior",
+            Op::Checkpoint { .. } => "Checkpoint",
         })
         .collect()
 }

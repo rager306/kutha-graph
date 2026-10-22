@@ -232,7 +232,10 @@ impl Runtime {
     }
 
     fn reject_forged_meta(&self, op: &Op) -> Result<(), RuntimeError> {
-        if matches!(op, Op::QuantumOutcome { .. } | Op::JustificationCite { .. }) {
+        if matches!(
+            op,
+            Op::QuantumOutcome { .. } | Op::JustificationCite { .. } | Op::Checkpoint { .. }
+        ) {
             return Err(RuntimeError::MetaOpRejected);
         }
         if let Op::Assert { relation, .. } = op {

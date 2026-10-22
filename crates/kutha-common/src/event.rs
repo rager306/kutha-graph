@@ -1,4 +1,4 @@
-use crate::rule::{RuleAst, rule_body_hash};
+use crate::rule::{rule_body_hash, RuleAst};
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
@@ -245,6 +245,16 @@ pub enum Op {
     TtAnchor {
         wall: u64,
     },
+    /// On-log receipt for a sealed prefix rewrite (ADR-012 / M154). Modern serde
+    /// variant; old readers fail open. Fold does not restore facts from this op.
+    Checkpoint {
+        first_event_id: EventId,
+        last_event_id: EventId,
+        dropped_count: u64,
+        fact_count: u64,
+        fingerprint_hex: String,
+        blob_digest: String,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
@@ -276,7 +286,8 @@ impl Event {
             | Op::QuantumOutcome { .. }
             | Op::JustificationCite { .. }
             | Op::StoreBlob { .. }
-            | Op::TtAnchor { .. } => vec![],
+            | Op::TtAnchor { .. }
+            | Op::Checkpoint { .. } => vec![],
             Op::Correct { object, .. } | Op::CorrectInterval { object, .. } => vec![*object],
         };
         Self {
@@ -504,6 +515,24 @@ impl Event {
             Op::TtAnchor { wall } => {
                 h.update(b"tt-anchor");
                 h.update(wall.to_le_bytes());
+            }
+            Op::Checkpoint {
+                first_event_id,
+                last_event_id,
+                dropped_count,
+                fact_count,
+                fingerprint_hex,
+                blob_digest,
+            } => {
+                h.update(b"checkpoint");
+                h.update(first_event_id.as_bytes());
+                h.update(last_event_id.as_bytes());
+                h.update(dropped_count.to_le_bytes());
+                h.update(fact_count.to_le_bytes());
+                h.update((fingerprint_hex.len() as u64).to_le_bytes());
+                h.update(fingerprint_hex.as_bytes());
+                h.update((blob_digest.len() as u64).to_le_bytes());
+                h.update(blob_digest.as_bytes());
             }
         }
         h.finalize().into()

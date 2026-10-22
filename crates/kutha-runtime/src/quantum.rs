@@ -247,7 +247,8 @@ pub(crate) fn op_relation(op: &Op) -> Option<TermId> {
         | Op::QuantumOutcome { .. }
         | Op::JustificationCite { .. }
         | Op::StoreBlob { .. }
-        | Op::TtAnchor { .. } => None,
+        | Op::TtAnchor { .. }
+        | Op::Checkpoint { .. } => None,
     }
 }
 

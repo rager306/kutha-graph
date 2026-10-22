@@ -897,7 +897,10 @@ impl GraphFold {
             Op::TtAnchor { wall } => {
                 self.tt_anchors.insert(*wall, event.ingested_at);
             }
-            Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
+            Op::Define { .. }
+            | Op::QuantumOutcome { .. }
+            | Op::JustificationCite { .. }
+            | Op::Checkpoint { .. } => {}
         }
     }
 
