@@ -4,15 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-22 — Trajectory: M149 / GSD v1.43 closed
+
+Process tag **v1.43** / Phase **223**. Not a SemVer release.
+
+- `interpret_cargo_output`: non-zero exit + missing required + no FAILED collapses to one `observe-incomplete` (partial ok stream retries via M146). Real FAILED stays per-name; exit 0 keeps per-name missing. Check `observe-partial-incomplete`; budget 101→102. Matrix `SEM-m149-partial-observe-incomplete` killed.
+- `L_delivery=M149-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.43 / Phase 223. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-22 — Trajectory: lease M149-S01 (partial observe incomplete)
 
 Process tag **v1.43** / Phase **223**. Not a SemVer release.
 
 - Active Milestone **M149**, Active Slice **S01** (`L_delivery=M149-S01`): non-zero cargo exit with missing required names and no FAILED → `observe-incomplete` (retry). Honeycomb stays Proposed.
-
-### Fixed (process)
-
-- `interpret_cargo_output`: non-zero exit + missing required + no FAILED collapses to one `observe-incomplete` (partial ok stream retries via M146). Real FAILED stays per-name; exit 0 keeps per-name missing. Check `observe-partial-incomplete`; budget 101→102. Matrix `SEM-m149-partial-observe-incomplete` killed.
 
 ## 2026-10-22 — Trajectory: M148 / GSD v1.42 closed
 

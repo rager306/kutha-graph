@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M149: partial cargo observe → incomplete retry — OPEN (GSD v1.43)
+## M149: partial cargo observe → incomplete retry — CLOSED (GSD v1.43)
 
 Dogfood follow-on to M148: parallel/cold cargo can exit 101 after some required tests print `ok`, so M145's "no verdict" incomplete gate misses and M146 never retries — N x `observe-missing` instead. Thin slice: non-zero exit + missing required + no FAILED among required → one `observe-incomplete` (retryable). Real FAILED stays per-name. Honeycomb stays Proposed. Budget 101→102.
 
-- [ ] **S01: partial-run incomplete honesty** `risk:low` `depends:[]`
-  > After this: matrix `SEM-m149-partial-observe-incomplete` killed. Phase 223.
+- [x] **S01: partial-run incomplete honesty** `risk:low` `depends:[]`
+  > After this: matrix `SEM-m149-partial-observe-incomplete` killed. Phase 223. Landed.
 
 ## M148: ci summary observe_retried label — CLOSED (GSD v1.42)
 
