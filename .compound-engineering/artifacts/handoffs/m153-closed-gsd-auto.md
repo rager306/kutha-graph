@@ -3,7 +3,7 @@ ce-handoff/v1: true
 title: "M153 closed (Verus on-ramp) — Arc B next, B1 vacuum candidate"
 date: 2026-10-22
 branch: work/main-line
-head: PENDING
+head: 89257ca
 resume_focus: "After the user asks to continue: lease B1 (ADR-012 thin vacuum with receipt) with a fresh RED, bundle STATE+ROADMAP+CHANGELOG+README. Harness moratorium applies. Verus proofs ride inside the product slice that touches the kernel. Do not thaw Cypher/HNSW/SIX-01/legal pack without their own lease."
 ---
 
