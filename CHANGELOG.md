@@ -9,6 +9,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Added
 
 - `store::checkpoint_sealed_prefix` under `kutha.lock` rewrites a sealed prefix to `Op::StoreBlob` (prefix `Snapshot` fold, same shape as `snapshot.rs`) plus `Op::Checkpoint` receipt plus the unchanged tail. `snapshot.json` stays a lease, never the carrier.
+- Oracle `user_emit_checkpoint_is_meta_op_rejected`: public `Runtime::emit(Op::Checkpoint)` returns `MetaOpRejected` and does not append.
 
 ### Changed
 

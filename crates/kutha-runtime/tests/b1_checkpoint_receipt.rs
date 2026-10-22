@@ -2,8 +2,8 @@
 //! RED: `store::checkpoint_sealed_prefix` is missing (E0425). Do not treat
 //! sealed-file deletion as the RED.
 
-use kutha_common::{Op, ValidTime, WallTime};
-use kutha_runtime::{store, GraphFold, Runtime};
+use kutha_common::{EventId, Op, ValidTime, WallTime};
+use kutha_runtime::{GraphFold, Runtime, RuntimeError, store};
 use std::fs;
 use std::path::PathBuf;
 
@@ -105,4 +105,22 @@ fn checkpoint_sealed_prefix_preserves_fingerprint_and_pit() {
         GraphFold::replay_with_dict(opened.log().as_slice(), opened.dictionary()).fingerprint(),
         fingerprint
     );
+}
+
+#[test]
+fn user_emit_checkpoint_is_meta_op_rejected() {
+    let mut rt = Runtime::default();
+    let before = rt.log().len();
+    let err = rt
+        .emit(Op::Checkpoint {
+            first_event_id: EventId::nil(),
+            last_event_id: EventId::nil(),
+            dropped_count: 0,
+            fact_count: 0,
+            fingerprint_hex: String::new(),
+            blob_digest: String::new(),
+        })
+        .unwrap_err();
+    assert!(matches!(err, RuntimeError::MetaOpRejected), "{err:?}");
+    assert_eq!(rt.log().len(), before);
 }
