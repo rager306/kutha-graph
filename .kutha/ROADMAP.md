@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M152: Arc 0 hygiene — OPEN (GSD v1.46)
+## M152: Arc 0 hygiene — CLOSED (GSD v1.46)
 
 First arc of the long-horizon direction proposal (`.compound-engineering/artifacts/research/2026-10-22-long-horizon-direction-roadmap.md`, owner order B then C then A). Hygiene only: track untracked CE artifacts, record a harness moratorium (a new harness milestone needs a RED that fired in CI or review), rename the working branch to `work/main-line` and push it as a backup. No product or harness code, no check added, budget stays 104. Honeycomb stays Proposed; nothing is thawed.
 
-- [ ] **S01: Arc 0 hygiene** `risk:low` `depends:[]`
-  > After this: handoffs and research tracked; moratorium in `docs/process/gsd-auto-contract.md`; branch `work/main-line` pushed. Phase 226.
+- [x] **S01: Arc 0 hygiene** `risk:low` `depends:[]`
+  > After this: handoffs and research tracked; moratorium in `docs/process/gsd-auto-contract.md`; branch `work/main-line` pushed. Phase 226. Landed.
 
 ## M151: observe phase_ms wall honesty — CLOSED (GSD v1.45)
 

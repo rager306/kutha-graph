@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M152
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M152-S01
+L_delivery=M152-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M152 S01 leased (v1.46) | Capability proven / Cypher started |
+| L_delivery | M152 closed (v1.46) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**Active Milestone:** M152 · **Active Slice:** S01 — Arc 0 hygiene: track CE handoff and research artifacts, record the harness moratorium in the GSD-auto contract, rename the working branch and push a backup. Docs and git only; no product or harness code. Direction proposal: `.compound-engineering/artifacts/research/2026-10-22-long-horizon-direction-roadmap.md` (order B, C, A; a proposal, not a thaw). Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+Arc 0 hygiene is closed. Next arc is B (physics) per the owner order B, C, A in `.compound-engineering/artifacts/research/2026-10-22-long-horizon-direction-roadmap.md` (a proposal). First candidate lease: **B1** ADR-012 thin vacuum with a receipt op (no thaw needed; fresh RED first: a store cannot compact without losing replay exactness). In parallel, before B3: free disk (root is 97% full) and set up the Samyama and FalkorDB baseline environment with the owner. The harness moratorium applies (`docs/process/gsd-auto-contract.md`). Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 

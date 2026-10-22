@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-22 — Trajectory: M152 / GSD v1.46 closed
+
+Process tag **v1.46** / Phase **226**. Not a SemVer release.
+
+- Arc 0 hygiene: CE handoffs, audit roadmap, review run and the direction proposal are tracked; harness moratorium recorded in the GSD-auto contract; working branch renamed `chore/m013-roadmap-reset` to `work/main-line` and pushed as a backup. No product or harness code changed; budget stays 104.
+- `L_delivery=M152-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.46 / Phase 226. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-22 — Process: harness moratorium
 
 ### Changed
