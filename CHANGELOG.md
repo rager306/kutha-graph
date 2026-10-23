@@ -8,11 +8,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Added
 
-- Read-side `diff_folds` / `GraphFold::diff` fact-set query (`FoldDiff` added / removed / changed). Identity is `(event_id, valid_from, valid_to)` plus canonical rank among equal keys; `seq` never keys, ranks, or marks changed. A test-only `apply_diff` in `b4_fork_diff.rs` reconstructs the other side as a multiset of rows modulo `seq` (including `as_of` / `as_known_on` oracles). Checkpointed `fork_at(c+1..=len)` diffs like the copied-log twin; interior `1..=c` is `ForkCutUnavailable`. No Op, named refs, GED, merge, operator CLI, or harness check.
+- Read-side `diff_folds` / `GraphFold::diff` fact-set query in `fold_diff.rs` (`FoldDiff` added / removed / changed). Identity is `(event_id, valid_from, valid_to)` plus canonical rank among equal keys; `seq` never keys, ranks, or marks changed. A test-only `apply_diff` in `b4_fork_diff.rs` reconstructs the other side as a multiset of rows modulo `seq` (including `as_of` / `as_known_on` oracles). Checkpointed `fork_at(c+1..=len)` diffs like the copied-log twin; interior `1..=c` is `ForkCutUnavailable`. No Op, named refs, GED, merge, operator CLI, or harness check.
 
 ### Changed
 
-- Bench PRE (230-01, load **2.88 3.79 4.09**, `taskset -c 0`, `KUTHA_BENCH_N=10000 cargo bench -p kutha-runtime --bench baseline --offline`) vs quiet POST (2026-10-23T10:49:43Z load **1.88 3.73 6.01** → after **2.12 3.56 5.86**): ingest_plain.n **97567248 ns** → **95695483 ns** (−1.9%); as_of.n **206975 ns** → **283138 ns** (+36.8%, eager). `as_of` source is unchanged this wave (`diff_folds` is appended in `fold_query.rs`, not on the ingest/`as_of` path). Discarded noisy passes after `/root/prime-agent` cargo (not touched): load **4.70 7.16 7.83** compile 85s ingest_plain.n 119518426 / as_of.n 284320; load **2.45 5.04 6.86** ingest_plain.n 139537588 / as_of.n 322110. `validated yes`. Leaked `tmp/kutha-bench-plain-*` removed.
+- Picture-diff types moved out of `fold_query.rs` (now byte-identical to 791df68) into `fold_diff.rs` so ingest/`as_of` codegen is isolated. `Fact` no longer derives `Default`; `Fact::blank` is a crate-private zeroed row for `FactChange::default` only.
+- Bench A/B vs 791df68 (9 alternating pairs, `taskset -c 0`, `KUTHA_BENCH_N=10000` direct `--bench` binaries; pair 1 BASE then HEAD, pair 2 HEAD then BASE, …). PRE (BASE medians) ingest_plain.n **120198466 ns**, as_of.n **264152 ns**. POST (HEAD medians) ingest_plain.n **116451919 ns** (HEAD/BASE 0.969), as_of.n **267389 ns** (1.012). No run was a >3× outlier from its arm median. 1-min load 3.21–6.06. `validated yes`.
 
 ### Trajectory
 

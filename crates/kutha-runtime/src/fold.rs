@@ -111,7 +111,7 @@ fn polarity_for_row(
 }
 
 /// One asserted (or behavior-asserted) fact in the fold. Losers stay on retract (ADR-013).
-#[derive(Clone, Debug, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct Fact {
     pub seq: u64,
     pub subject: TermId,
@@ -139,6 +139,25 @@ pub struct Fact {
 impl Fact {
     pub fn object(&self) -> TermId {
         self.object
+    }
+
+    /// Zeroed row for `Default` of picture-diff types. Not on the ingest path.
+    /// `object` is module-private, so `fold_diff` cannot write a struct literal.
+    pub(crate) fn blank() -> Self {
+        Self {
+            seq: 0,
+            subject: 0,
+            relation: 0,
+            object: 0,
+            valid_from: 0,
+            valid_to: None,
+            ingested_at: 0,
+            invalidated_at: None,
+            claim_id: EventId::nil(),
+            event_id: EventId::nil(),
+            delivery_key: None,
+            polarity: None,
+        }
     }
 
     pub fn is_live_at(&self, tt: impl Into<TransactionTime>, vt: impl Into<ValidTime>) -> bool {
