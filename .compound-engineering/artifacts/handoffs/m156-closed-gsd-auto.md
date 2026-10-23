@@ -3,7 +3,7 @@ ce-handoff/v1: true
 title: "M156 closed (fork diff, B2) — Arc B continues"
 date: 2026-10-23
 branch: work/main-line
-head: pending
+head: c8b4dff
 resume_focus: "After the user asks to continue: pick the next Arc B slice (B3 needs the owner's baseline environment; B4 HNSW / B6 Cypher AS OF need their own lease with a fresh RED), bundle STATE+ROADMAP+CHANGELOG+README, run through subagents under the GSD-auto controller protocol. Standing owner orders: do not ask permission to commit; clean temp files and target after each cycle; update docs; look for semantic gaps and glue results into one workflow. Harness moratorium applies."
 ---
 
