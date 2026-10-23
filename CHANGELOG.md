@@ -8,7 +8,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Added
 
-- Read-side `diff_folds` / `GraphFold::diff` fact-set query in `fold_diff.rs` (`FoldDiff` added / removed / changed). Identity is `(event_id, valid_from, valid_to)` plus canonical rank among equal keys; `seq` never keys, ranks, or marks changed. A test-only `apply_diff` in `b4_fork_diff.rs` reconstructs the other side as a multiset of rows modulo `seq` (including `as_of` / `as_known_on` oracles). Checkpointed `fork_at(c+1..=len)` diffs like the copied-log twin; interior `1..=c` is `ForkCutUnavailable`. No Op, named refs, GED, merge, operator CLI, or harness check.
+- Read-side `diff_folds` / `GraphFold::diff` fact-set query in `fold_diff.rs` (`FoldDiff` added / removed / changed). Identity is `(event_id, valid_from, valid_to)` plus canonical rank among equal keys; `seq` never keys, ranks, or marks changed. A test-only `apply_diff` in `b4_fork_diff.rs` reconstructs the other side as a multiset of rows modulo `seq` (including `as_of` / `as_known_on` oracles). Checkpointed `fork_at(c+1..=len)` diffs like the copied-log twin; interior `1..=c` is `ForkCutUnavailable`. No Op, named refs, GED, merge, operator CLI, or harness check. Independent kill-tests in `b4_fork_diff_kill.rs` pin apply-diff totality, equal-key rank, seq-ignored identity, dead-row domain, checkpointed twin, and Option-faithful `valid_to` / `invalidated_at` (None is not `u64::MAX`).
 
 ### Changed
 

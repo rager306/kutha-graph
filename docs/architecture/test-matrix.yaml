@@ -2881,6 +2881,24 @@ rows:
     gate: default
     owner: M156-S01
     source: Phase 230 / fork diff
+  - id: SEM-m156-kill-independent
+    plane: product
+    invariant: independent apply-diff totality, equal-key rank, seq-ignored identity, dead-row domain, checkpoint twin, Option-faithful window identity
+    layer: kill
+    oracle:
+      - kill_totality_mirror_aa_random_pairs
+      - kill_equal_keys_full_duplicates_and_rank_not_insertion
+      - kill_seq_only_empty_but_real_field_change_is_not
+      - kill_dead_rows_are_in_the_domain
+      - kill_fail_closed_cut_never_reaches_diff
+      - kill_checkpointed_fork_matches_plain_twin
+      - kill_open_interval_is_not_u64_max_identity
+      - kill_invalidated_at_none_vs_max_rank_is_total
+    kill_mutation: key/rank on seq or insertion order; drop dead facts(); reconstruct 1..=c; collapse Option None with u64::MAX via sentinel
+    status: killed
+    gate: default
+    owner: M156-S01
+    source: Phase 230 / independent verify
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute
