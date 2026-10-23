@@ -12,6 +12,10 @@
 
 `fork_at` fails closed on compacted cuts (`ForkCutUnavailable { cut, log_len }`; `n` is an offset into the current log). Status stays **Proposed**.
 
+### Evidence (2026-10-23, Phase 230 / M156 S01; Proposed)
+
+Fact-set `diff_folds` / `GraphFold::diff` ships as a `facts()` query (`FoldDiff` added/removed/changed). Named refs (D061-1) and GED (D061-3) remain open. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

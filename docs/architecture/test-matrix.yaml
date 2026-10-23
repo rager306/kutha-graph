@@ -2824,6 +2824,63 @@ rows:
     gate: default
     owner: M155-S01
     source: Phase 229 / checkpoint is a cut
+  - id: SEM-m156-empty-mirror
+    plane: product
+    invariant: diff_folds(a,a) is empty; diff_folds(a,b) mirrors diff_folds(b,a)
+    layer: kill
+    oracle:
+      - diff_folds_aa_is_empty
+      - diff_folds_mirror_symmetry
+    kill_mutation: return a non-empty self-diff or swap added/removed without swapping changed before/after
+    status: killed
+    gate: default
+    owner: M156-S01
+    source: Phase 230 / fork diff
+  - id: SEM-m156-fork-counterfactual
+    plane: product
+    invariant: fork_at(cut) then live post-cut mints are added and invalidated rows are changed, keyed and sorted
+    layer: kill
+    oracle:
+      - fork_diff_exact_on_counterfactual_fixture
+      - diff_fold_vs_fork_at_matches_post_cut_mints
+    kill_mutation: omit post-cut Assert/CI residuals from added or skip Retract/CI invalidation in changed
+    status: killed
+    gate: default
+    owner: M156-S01
+    source: Phase 230 / fork diff
+  - id: SEM-m156-apply-diff
+    plane: product
+    invariant: normalize(apply_diff(a, diff_folds(a,b))) equals normalize(b) as a multiset of rows modulo seq
+    layer: kill
+    oracle:
+      - apply_diff_reproduces_other_side_modulo_seq
+    kill_mutation: apply_diff ignore added/removed/changed or key identity on seq
+    status: killed
+    gate: default
+    owner: M156-S01
+    source: Phase 230 / fork diff
+  - id: SEM-m156-equal-keys
+    plane: product
+    invariant: equal (event_id, window) heads rank stably; CI residuals share event_id with distinct windows
+    layer: kill
+    oracle:
+      - diff_handles_equal_keys_ci_residuals_and_multipath_heads
+    kill_mutation: key rows by event_id alone or rank by insertion/seq
+    status: killed
+    gate: default
+    owner: M156-S01
+    source: Phase 230 / fork diff
+  - id: SEM-m156-checkpoint-fork
+    plane: product
+    invariant: checkpointed fork_at(c+1..=len) diffs like the un-checkpointed twin; interior cut is ForkCutUnavailable
+    layer: kill
+    oracle:
+      - diff_of_checkpointed_fork_matches_plain_twin
+    kill_mutation: reconstruct interior cuts from snapshot.json or the blob
+    status: killed
+    gate: default
+    owner: M156-S01
+    source: Phase 230 / fork diff
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute
