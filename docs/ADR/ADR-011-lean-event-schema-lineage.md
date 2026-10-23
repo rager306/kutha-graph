@@ -8,6 +8,10 @@
 
 Product writes use live `Op` variants; Retract/Correct/justification cite `EventId` (`m012a_stable_refs.rs`, `m013_write_path.rs`). Public consumer oracle: `statute_as_of_via_facade` (`facade_statute.rs`).
 
+### Evidence (2026-10-23; Proposed)
+
+Shipped `Op` kinds also include `Checkpoint` (M154 sealed-prefix receipt via `store::checkpoint_sealed_prefix`; prefix `StoreBlob`, `QuantumOutcome`, and `JustificationCite` kept verbatim). The 2026-10-08 D011-1 pointer listed kinds through `TtAnchor`. This note does not rewrite D011-1…D011-4. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

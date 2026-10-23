@@ -38,8 +38,8 @@ Capabilities already in the P0 spike (not honeycomb Accepted; not a legal corpus
 
 - ✓ Named `GraphFold::as_of` / `live_at` (no implicit “now”) and FF5 statute PIT — existing (`crates/kutha-runtime/tests/ff5_legal_pit.rs`)
 - ✓ FF6 fail-closed unknown product relation — existing (`allow.rs`, `tests/ff6_allowlist.rs`)
-- ✓ Log, fold, emit→idle quantum, receipt, snapshot + WAL-cousin, CSR lease, leapfrog intersect, `Materializer`, `fork_at` — existing. Also at HEAD: `manifest.json` + `KUTHASEG` (`store::persist_until` / `segment::persist_log`), `Persister` segmented append, `store::migrate` / `store::export_jsonl`, optional unwired `rocks_index::SegmentIndex`.
-- ✓ Typed `Op::{Assert,Retract,Correct,CorrectInterval,Behavior,Define,QuantumOutcome,JustificationCite,StoreBlob,TtAnchor}` in `crates/kutha-common/src/event.rs` (not STCA-guide §5 JSON merge-patch) — existing
+- ✓ Log, fold, emit→idle quantum, receipt, snapshot + WAL-cousin, CSR lease, leapfrog intersect, `Materializer`, `fork_at` — existing. Also at HEAD: `manifest.json` + `KUTHASEG` (`store::persist_until` / `segment::persist_log`), `Persister` segmented append, `store::migrate` / `store::export_jsonl`, `store::checkpoint_sealed_prefix` (library API only, no operator CLI, not vacuum), optional unwired `rocks_index::SegmentIndex`.
+- ✓ Typed `Op::{Assert,Retract,Correct,CorrectInterval,Behavior,Define,QuantumOutcome,JustificationCite,StoreBlob,TtAnchor,Checkpoint}` in `crates/kutha-common/src/event.rs` (not STCA-guide §5 JSON merge-patch) — existing
 - ✓ M010 semantic recovery without snapshot; live intern appends `Op::Define` — existing
 - ✓ M011 S01–S03: portable `claim_id`, unknown-claim fail-closed, replay `caused_by`, thin P→Q `derivation_eligible_at` — existing
 - ✓ Harness H0–H4 in; H2/H4 tenant AS OF dogfood (not ADR-090 ontology) — existing

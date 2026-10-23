@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-23 — Process: post-M154 docs reconciliation and temp hygiene
+
+### Changed
+
+- Reconciled post-M154 docs and rustdoc with the checkpoint receipt: `GraphFold::apply` of `Op::Checkpoint` restores facts from the Snapshot-shaped blob on an empty fold; current `store::open` verifies receipts and fails closed on mismatch (old readers still fail open on the unknown serde variant); Op inventories include `Checkpoint`; `Persister::checkpoint` (snapshot refresh) is named separately from `store::checkpoint_sealed_prefix` / `Op::Checkpoint` (sealed-prefix receipt). Capability is library API only (no `Runtime` method or operator CLI, not vacuum). `kutha-migrate` / `migrate_compat` must not be run on a checkpointed store (they demote to jsonl; answers unchanged). No product code behavior change.
+
+### Fixed
+
+- M153 closed handoff still named a B1 vacuum lease; superseded by the M154 handoff. Direction-roadmap status records B1 as thin checkpoint.
+
 ## 2026-10-22 — Trajectory: M154 / GSD v1.48 closed
 
 Process tag **v1.48** / Phase **228**. Not a SemVer release.

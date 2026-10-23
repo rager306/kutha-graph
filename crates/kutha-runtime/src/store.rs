@@ -169,6 +169,8 @@ pub fn persist(runtime: &Runtime, dir: &Path) -> std::io::Result<()> {
 /// receipt into the new Snapshot). `fact_count` is the prefix fold fact count.
 /// The rewritten dir is persisted as [`encoded_log`] (Defines then graph) so
 /// `committed_prefix` can classify `kutha:*` and Persister attach matches.
+/// Not [`Persister::checkpoint`]: that only refreshes `snapshot.json` and
+/// sidecars on the append path. Library API only (no `Runtime` method, no CLI).
 pub fn checkpoint_sealed_prefix(dir: &Path) -> std::io::Result<()> {
     let _lock = acquire_store_write_lock(dir)?;
     if !dir.join(crate::segment::MANIFEST_REL).exists() {

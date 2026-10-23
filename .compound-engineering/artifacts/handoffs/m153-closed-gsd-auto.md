@@ -7,6 +7,8 @@ head: 89257ca
 resume_focus: "After the user asks to continue: lease B1 (ADR-012 thin vacuum with receipt) with a fresh RED, bundle STATE+ROADMAP+CHANGELOG+README. Harness moratorium applies. Verus proofs ride inside the product slice that touches the kernel. Do not thaw Cypher/HNSW/SIX-01/legal pack without their own lease."
 ---
 
+Superseded by m154-closed-gsd-auto.md
+
 # Handoff — M153 closed, Arc B next
 
 ## Closed

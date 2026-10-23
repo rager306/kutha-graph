@@ -1,3 +1,4 @@
+# 2026-10-23 restage (post-M154 docs: Op::Checkpoint on ADR-011 evidence; ADR-060 receipt replay_check; Persister vs sealed-prefix noun split): ADR-011, ADR-012, ADR-014, ADR-060; map/delivery/capability unchanged.
 # 2026-10-22 restage (M154 S01 checkpoint receipt: empty-fold Checkpoint placement): ADR-012; map/delivery/capability unchanged.
 # 2026-10-22 restage (M154 S01 checkpoint receipt: prefix QO/JustificationCite copy): ADR-012; map/delivery/capability unchanged.
 # 2026-10-22 restage (M154 S01 checkpoint receipt: prefix StoreBlob copy): ADR-012; map/delivery/capability unchanged.

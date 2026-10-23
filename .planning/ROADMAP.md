@@ -1,5 +1,8 @@
 # Roadmap: Kutha
 
+Living GSD focus is `.planning/STATE.md`. The harness delivery list is `.kutha/ROADMAP.md`.
+This file is frozen at v1.16; it is not the live milestone list.
+
 ## Overview
 
 v0.01–v1.15 shipped. v1.16 forbids Path::new("tmp/…") under crates. Honeycomb stays Proposed.

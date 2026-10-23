@@ -7,6 +7,8 @@ persisted product logs after the M013 dictionary-as-facts rewrite.
 
 **Policy: documented break; open fail-open; explicit migrate for AllowRelation, RegisterRule, PinPolicy, RecordAdmission, and RecordAction (serde aliases forbidden).**
 
+On vintage rows, **fail open** means deserialize / `store::open` returns `InvalidData` (the store does not open; no silent skip). That is also how **old readers** treat an unknown serde variant such as `Op::Checkpoint`. **Current** `store::open` (M154) deserializes `Op::Checkpoint` and **fails closed** on a receipt mismatch (blob digest, `fact_count`, `fingerprint_hex`, placement on an empty fold).
+
 | Vintage | Wire shape | `store::open` / deserialize | Explicit migrate |
 |---------|------------|-----------------------------|------------------|
 | Pre-dictionary (main-era / pre–Phase 26) | `Op::AllowRelation` | **Fail open** (`InvalidData` / serde error). No silent skip. | **Leased (M062-S01):** `remap_legacy_ops` → `kutha:allows` Assert via caller intern |
@@ -15,7 +17,7 @@ persisted product logs after the M013 dictionary-as-facts rewrite.
 | Pre-dictionary | `Op::RecordAdmission` | **Fail open** | **Leased (M065-S01):** `record_admission_to_assert` → `kutha:admission` Assert (mirrors `record_justification`) |
 | Pre-dictionary | `Op::RecordAction` | **Fail open** | **Leased (M066-S01):** `record_action_to_assert` → `kutha:action` Assert (mirrors `record_action`) |
 | Current writers | `Op::Assert` on reserved `kutha:allows` / `kutha:rule` / `kutha:policy` / `kutha:admission` / `kutha:action` (+ `StoreBlob` for bodies) | Supported | n/a |
-| Current writers (2026-10-22 / M154) | `Op::Checkpoint` | **Fail open** (unknown serde variant). No aliases; no `remap_legacy_ops` entry; no new `op-wire.v1` meaning. Receipt: `dropped_count` = sealed prefix event count minus prefix ops copied verbatim (`StoreBlob`, `QuantumOutcome`, `JustificationCite`; same ids/order) onto the new log. `Op::Checkpoint` is not copied (a re-checkpoint folds the old receipt into the new Snapshot). `fact_count` = prefix fold fact count (including dead facts). `GraphFold.blobs` stays serde-skip. | n/a — do **not** run `migrate_op_wire` on a checkpointed store (it demotes segments) |
+| Current writers (2026-10-22 / M154) | `Op::Checkpoint` | **Current `open`:** deserializes the modern variant and verifies the receipt (blob digest, `fact_count`, `fingerprint_hex`, empty-fold placement); mismatch is fail-closed (`ReplayDivergence` / `InvalidData`). **Old readers:** fail open on the unknown serde variant. No aliases; no `remap_legacy_ops` entry; no new `op-wire.v1` meaning. Receipt: `dropped_count` = sealed prefix event count minus prefix ops copied verbatim (`StoreBlob`, `QuantumOutcome`, `JustificationCite`; same ids/order) onto the new log. `Op::Checkpoint` is not copied (a re-checkpoint folds the old receipt into the new Snapshot). `fact_count` = prefix fold fact count (including dead facts). `GraphFold.blobs` stays serde-skip. | n/a — do **not** run `migrate_op_wire` on a checkpointed store (it demotes segments) |
 
 Reasons serde aliases stay forbidden:
 
@@ -40,10 +42,16 @@ Open stays fail-open until the operator runs this step (`recover_events` /
 sealed `scan_segment` return `InvalidData` on CRC-good frames that are valid
 JSON but not a modern `Event` — no silent drop of legacy meta-ops).
 
+## Operator surface (M154)
+
+`store::checkpoint_sealed_prefix` is a **library API only**. There is no
+`Runtime` method and no operator CLI that invokes it. It is not vacuum.
+
 Do **not** run `migrate_op_wire` (or `migrate_compat` / `kutha-migrate`) on a
-store that already carries `Op::Checkpoint`: the rewrite demotes sealed
-segments to legacy jsonl and would drop the receipt layout. `Op::Checkpoint` is
-a modern serde variant; old readers fail open. No serde aliases.
+store that already carries `Op::Checkpoint`: they demote sealed segments to
+legacy jsonl (answers unchanged) and are not a checkpoint tool. `Op::Checkpoint`
+is a modern serde variant; old readers fail open on the unknown tag. No serde
+aliases. Current `open` verifies receipts and fails closed on mismatch.
 
 **Shipped (M076):** `store::migrate_compat` runs `migrate_op_wire` then
 `migrate_pins` (reuse; no new remap rules) so meta-op rewrite precedes pin

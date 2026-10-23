@@ -246,7 +246,12 @@ pub enum Op {
         wall: u64,
     },
     /// On-log receipt for a sealed prefix rewrite (ADR-012 / M154). Modern serde
-    /// variant; old readers fail open. Fold does not restore facts from this op.
+    /// variant; old readers fail open on the unknown tag. `GraphFold::apply`
+    /// restores facts / `next_seq` / `tt_anchors` from the Snapshot-shaped blob
+    /// only when the fold is still empty (`facts` empty, `next_seq == 0`); a
+    /// duplicate or tail-moved receipt does not clobber (`replay_check` fails
+    /// closed). Not `Persister::checkpoint` (that only refreshes `snapshot.json`
+    /// and sidecars on the append path).
     Checkpoint {
         first_event_id: EventId,
         last_event_id: EventId,

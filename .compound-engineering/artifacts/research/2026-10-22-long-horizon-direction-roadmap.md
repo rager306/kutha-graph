@@ -264,3 +264,7 @@ Scope, cost and drop rule (from the assessment):
 2. May the baseline runs stop `fd_api` and `9router` temporarily on an idle window?
 3. Hygiene (Arc 0), decided: branch `work/main-line` with a backup push of that branch. Still open: modified `reviews/2026-10-11-ce-whole-repo/report.md` (the owner's answer was unclear; left untouched).
 
+## Status (2026-10-23)
+
+B1 landed as M154 thin checkpoint (not vacuum; vacuum proper B1b open). Verus on-ramp M153 landed. Next planned slice: checkpoint is a cut, not a hole (`fork_at` fails closed on compacted cuts, Horn cascade parity, receipt binds anchors, migrate fails closed) before B2 diff.
+

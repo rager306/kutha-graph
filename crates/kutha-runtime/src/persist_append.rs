@@ -195,6 +195,9 @@ impl Persister {
         self.append_until(runtime, None, None)
     }
 
+    /// Refresh `snapshot.json` and sidecars via `replace_via_tmp` after append.
+    /// Not [`crate::store::checkpoint_sealed_prefix`] / `Op::Checkpoint` (those
+    /// are the sealed-prefix receipt rewrite).
     pub fn checkpoint(&mut self, runtime: &Runtime) -> std::io::Result<()> {
         self.fail_if_poisoned()?;
         match self.checkpoint_until(runtime, None) {

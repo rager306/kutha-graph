@@ -48,6 +48,10 @@ Segmented `open` loads via `segment::load_events` when a manifest exists, then `
 
 Metamorphic oracles (`m019_sem_meta.rs`): replay of the same log twice matches (`SEM-replay-idempotence`); persist+open matches in-memory stamps for legacy, segmented, migrated, and `export_jsonl`-imported layouts (`SEM-persist-roundtrip-random`); flip/swap/drop one fold-affecting event fails closed or the fold differs and is never silently equal (`SEM-replay-tamper-random`). Still open: Horn@TT=`MAX`, `as_of` vs eligibility, C01. This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
 
+### Evidence (2026-10-23, M154; Proposed)
+
+`replay_check` verifies checkpoint receipts (blob digest, `fact_count`, fingerprint, placement on an empty fold). This is `Op::Checkpoint` / `store::checkpoint_sealed_prefix`, not `Persister::checkpoint` (snapshot refresh). This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

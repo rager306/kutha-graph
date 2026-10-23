@@ -18,7 +18,7 @@ SNAP-01 closed by Phase 50: outcome and justification sidecars are tmp+`sync_all
 
 ### Evidence (2026-10-03, Phase 52 / M002 S04; Proposed)
 
-Between checkpoints, outcome and justification sidecars stay stale leases (Phase 50 prefix-absent on open). `Persister::checkpoint` / `close` refresh them through `replace_via_tmp`. Acknowledged-vs-unacknowledged is `append`'s `Ok`, not the sidecar. Historical (superseded by Phase 53): COMMIT-01 remains S05. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
+Between checkpoints, outcome and justification sidecars stay stale leases (Phase 50 prefix-absent on open). `Persister::checkpoint` / `close` refresh them through `replace_via_tmp`. That snapshot refresh is not `Op::Checkpoint` / `store::checkpoint_sealed_prefix` (sealed-prefix receipt). Acknowledged-vs-unacknowledged is `append`'s `Ok`, not the sidecar. Historical (superseded by Phase 53): COMMIT-01 remains S05. This subsection does not rewrite D014-1…D014-5. Status stays **Proposed**.
 
 ### Evidence (2026-10-04, Phase 53 / M002 S05; Proposed)
 
