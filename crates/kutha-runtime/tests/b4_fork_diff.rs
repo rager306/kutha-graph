@@ -1,7 +1,9 @@
 //! Phase 230 / M156 S01 — fact-set fork diff (b4).
 //! `diff_folds` is a query; no Op. Plan 02 owns totality / equal-key / checkpoint GREEN.
 
-use kutha_common::{Event, EventId, Op, TermId};
+use kutha_common::{
+    Event, EventId, Op, TermDictionary, TermId, ValidTime, WallTime,
+};
 use kutha_runtime::{
     diff_folds, store, Fact, FactChange, FoldDiff, GraphFold, Runtime, RuntimeError,
 };
@@ -186,8 +188,40 @@ fn post_cut_mint_ids(live: &Runtime, cut: usize) -> BTreeSet<EventId> {
         .collect()
 }
 
-fn apply_diff(rows_a: &[Fact], _diff: &FoldDiff) -> Vec<Fact> {
-    rows_a.to_vec()
+/// Eleven-field identity (every Fact field except fold-local `seq`).
+fn same_except_seq(a: &Fact, b: &Fact) -> bool {
+    a.subject == b.subject
+        && a.relation == b.relation
+        && a.object() == b.object()
+        && a.valid_from == b.valid_from
+        && a.valid_to == b.valid_to
+        && a.ingested_at == b.ingested_at
+        && a.invalidated_at == b.invalidated_at
+        && a.claim_id == b.claim_id
+        && a.event_id == b.event_id
+        && a.delivery_key == b.delivery_key
+        && a.polarity == b.polarity
+}
+
+/// Reconstruct `b` from `a`'s rows plus `diff_folds(a,b)`. Does not read `b`.
+fn apply_diff(rows_a: &[Fact], diff: &FoldDiff) -> Vec<Fact> {
+    let mut out = rows_a.to_vec();
+    for rem in &diff.removed {
+        let i = out
+            .iter()
+            .position(|f| same_except_seq(f, rem))
+            .unwrap_or_else(|| panic!("removed row not in a (diff hole)"));
+        out.remove(i);
+    }
+    for ch in &diff.changed {
+        let i = out
+            .iter()
+            .position(|f| same_except_seq(f, &ch.before))
+            .unwrap_or_else(|| panic!("changed.before not in a (diff hole)"));
+        out[i] = ch.after.clone();
+    }
+    out.extend(diff.added.iter().cloned());
+    out
 }
 
 fn normalize(rows: &[Fact]) -> Vec<Fact> {
@@ -197,6 +231,123 @@ fn normalize(rows: &[Fact]) -> Vec<Fact> {
     }
     v.sort_by(canon_cmp);
     v
+}
+
+fn xorshift32(state: &mut u32) -> u32 {
+    let mut x = *state;
+    x ^= x << 13;
+    x ^= x >> 17;
+    x ^= x << 5;
+    *state = x;
+    x
+}
+
+fn shuffle_facts(rows: &mut [Fact], seed: u32) {
+    let mut s = seed | 1;
+    for i in (1..rows.len()).rev() {
+        let j = (xorshift32(&mut s) as usize) % (i + 1);
+        rows.swap(i, j);
+    }
+}
+
+fn product_rel(dict: Option<&TermDictionary>, rel: TermId) -> bool {
+    match dict {
+        None => true,
+        Some(d) => match d.lookup(rel) {
+            Some(name) => !name.starts_with("kutha:"),
+            None => true,
+        },
+    }
+}
+
+fn product_as_of_from_rows(
+    rows: &[Fact],
+    dict: Option<&TermDictionary>,
+    vt: ValidTime,
+) -> Vec<(TermId, TermId, TermId)> {
+    let mut out: Vec<(TermId, TermId, TermId)> = rows
+        .iter()
+        .filter(|f| f.is_live_at(u64::MAX, vt) && product_rel(dict, f.relation))
+        .map(|f| (f.subject, f.relation, f.object()))
+        .collect();
+    out.sort_unstable();
+    out
+}
+
+fn product_known_from_rows(
+    rows: &[Fact],
+    dict: Option<&TermDictionary>,
+    tt: u64,
+) -> Vec<(TermId, TermId, TermId)> {
+    let mut out: Vec<(TermId, TermId, TermId)> = rows
+        .iter()
+        .filter(|f| f.is_known_at(tt) && product_rel(dict, f.relation))
+        .map(|f| (f.subject, f.relation, f.object()))
+        .collect();
+    out.sort_unstable();
+    out
+}
+
+fn sorted_triples(mut t: Vec<(TermId, TermId, TermId)>) -> Vec<(TermId, TermId, TermId)> {
+    t.sort_unstable();
+    t
+}
+
+fn assert_clock_oracles(applied: &[Fact], other: &GraphFold, dict: Option<&TermDictionary>) {
+    for year in [2011_u64, 2015, 2019] {
+        let vt = ValidTime::from(year);
+        assert_eq!(
+            product_as_of_from_rows(applied, dict, vt),
+            sorted_triples(other.as_of(vt)),
+            "as_of {year} from applied rows must match the other fold"
+        );
+    }
+    for wall_u in [2014_u64, 2020] {
+        let wall = WallTime::from(wall_u);
+        let rebuilt = other
+            .knowledge_tt_at(wall)
+            .map(|tt| product_known_from_rows(applied, dict, tt));
+        let expect = other.as_known_on(wall).map(sorted_triples);
+        assert_eq!(
+            rebuilt, expect,
+            "as_known_on {wall_u} from applied rows must match the other fold"
+        );
+    }
+}
+
+fn assert_mirror(ab: &FoldDiff, ba: &FoldDiff) {
+    assert_eq!(ab.added, ba.removed);
+    assert_eq!(ab.removed, ba.added);
+    assert_eq!(ab.changed.len(), ba.changed.len());
+    for (c1, c2) in ab.changed.iter().zip(ba.changed.iter()) {
+        assert_eq!(c1.before, c2.after);
+        assert_eq!(c1.after, c2.before);
+    }
+}
+
+fn assert_totality(a: &GraphFold, b: &GraphFold, dict: Option<&TermDictionary>) {
+    let aa = diff_folds(a, a);
+    assert!(
+        aa.added.is_empty() && aa.removed.is_empty() && aa.changed.is_empty(),
+        "diff(a,a) must be empty"
+    );
+    let diff = diff_folds(a, b);
+    let ba = diff_folds(b, a);
+    assert_mirror(&diff, &ba);
+    let got = apply_diff(a.facts(), &diff);
+    assert_eq!(
+        normalize(&got),
+        normalize(b.facts()),
+        "normalize(apply_diff(a, diff_folds(a,b))) must equal normalize(b) modulo seq"
+    );
+    let mut shuffled = a.facts().to_vec();
+    shuffle_facts(&mut shuffled, 0xC0FF_EE42);
+    assert_eq!(
+        normalize(&shuffled),
+        normalize(a.facts()),
+        "canonical rank must not depend on insertion order"
+    );
+    assert_clock_oracles(&got, b, dict);
 }
 
 #[test]
@@ -302,14 +453,54 @@ fn diff_fold_vs_fork_at_matches_post_cut_mints() {
 
 #[test]
 fn apply_diff_reproduces_other_side_modulo_seq() {
-    let fx = counterfactual();
+    let mut fx = counterfactual();
+    fx.live.emit_tt_anchor(2014).unwrap();
+    fx.live.emit_tt_anchor(2020).unwrap();
     let fork = fx.live.fork_at(fx.cut).unwrap();
-    let diff = diff_folds(fork.fold(), fx.live.fold());
-    let got = apply_diff(fork.fold().facts(), &diff);
+    let dict = Some(fx.live.dictionary());
+    assert_totality(fork.fold(), fx.live.fold(), dict);
+    assert_totality(fx.live.fold(), fork.fold(), dict);
+
+    let e1 = Event {
+        id: EventId::nil(),
+        op: Op::Assert {
+            subject: 1,
+            relation: 2,
+            object: 10,
+            valid_from: 2010,
+            valid_to: Some(2020),
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        },
+        ingested_at: 1,
+        object_ids: vec![1, 2, 10],
+    };
+    let e2 = Event {
+        id: EventId::nil(),
+        op: Op::Assert {
+            subject: 1,
+            relation: 2,
+            object: 11,
+            valid_from: 2010,
+            valid_to: Some(2020),
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        },
+        ingested_at: 2,
+        object_ids: vec![1, 2, 11],
+    };
+    let multi = GraphFold::replay(&[e1.clone(), e2.clone()]);
+    let empty = GraphFold::default();
+    assert_totality(&empty, &multi, None);
+    assert_totality(&multi, &empty, None);
+    let multi_rev = GraphFold::replay(&[e2, e1]);
+    assert_totality(&empty, &multi_rev, None);
     assert_eq!(
-        normalize(&got),
-        normalize(fx.live.fold().facts()),
-        "identity helper leaves the left side; totality stays RED until plan 02"
+        normalize(multi.facts()),
+        normalize(multi_rev.facts()),
+        "equal-key rank must not depend on replay insertion order"
     );
 }
 
@@ -345,7 +536,7 @@ fn diff_handles_equal_keys_ci_residuals_and_multipath_heads() {
         ingested_at: 2,
         object_ids: vec![1, 2, 11],
     };
-    let multi = GraphFold::replay(&[e1, e2]);
+    let multi = GraphFold::replay(&[e1.clone(), e2.clone()]);
     let empty = GraphFold::default();
     let d = diff_folds(&empty, &multi);
     assert_eq!(
@@ -357,6 +548,15 @@ fn diff_handles_equal_keys_ci_residuals_and_multipath_heads() {
     assert_eq!(d.added[1].event_id, EventId::nil());
     assert_ne!(d.added[0].object(), d.added[1].object());
     assert!(facts_sorted(&d.added));
+    let multi_rev = GraphFold::replay(&[e2, e1]);
+    assert_eq!(
+        normalize(&diff_folds(&empty, &multi).added),
+        normalize(&diff_folds(&empty, &multi_rev).added),
+        "multipath heads rank independently of replay order"
+    );
+    let mut shuffled = multi.facts().to_vec();
+    shuffle_facts(&mut shuffled, 0xA5A5_5A5A);
+    assert_eq!(normalize(&shuffled), normalize(multi.facts()));
 
     let fx = counterfactual();
     let fork = fx.live.fork_at(fx.cut).unwrap();
@@ -376,6 +576,7 @@ fn diff_handles_equal_keys_ci_residuals_and_multipath_heads() {
         .map(|f| (f.valid_from, vt_key(f.valid_to)))
         .collect();
     assert_eq!(windows.len(), ci_added.len(), "CI residuals have distinct windows");
+    assert_totality(fork.fold(), fx.live.fold(), Some(fx.live.dictionary()));
 }
 
 #[test]
