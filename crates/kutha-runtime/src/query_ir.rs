@@ -59,19 +59,71 @@ impl fmt::Display for QueryError {
 
 impl std::error::Error for QueryError {}
 
+fn term_name(rt: &Runtime, id: TermId) -> String {
+    rt.dictionary()
+        .lookup(id)
+        .map(str::to_string)
+        .unwrap_or_else(|| id.to_string())
+}
+
+fn require_term(rt: &Runtime, id: TermId) -> Result<(), QueryError> {
+    if rt.dictionary().lookup(id).is_some() {
+        Ok(())
+    } else {
+        Err(QueryError::UnknownTerm {
+            name: term_name(rt, id),
+        })
+    }
+}
+
+fn require_rels_shape(rels: &[TermId], k: u32) -> Result<(), QueryError> {
+    let n = rels.len();
+    if n == 0 || n == 1 || n == k as usize {
+        Ok(())
+    } else {
+        Err(QueryError::UnknownRelation {
+            name: "rels/k mismatch".to_string(),
+        })
+    }
+}
+
+fn apply_limit<T>(mut rows: Vec<T>, limit: usize) -> Vec<T> {
+    if limit > 0 && rows.len() > limit {
+        rows.truncate(limit);
+    }
+    rows
+}
+
 /// Named hops ctor. Looks up `dictionary().id` only; never `intern`.
 pub fn try_hops_named(
-    _rt: &Runtime,
-    _start: &str,
-    _rels: &[&str],
+    rt: &Runtime,
+    start: &str,
+    rels: &[&str],
     k: u32,
     tt: TransactionTime,
     vt: ValidTime,
     limit: usize,
 ) -> Result<QueryIr, QueryError> {
+    let start_id = rt
+        .dictionary()
+        .id(start)
+        .ok_or_else(|| QueryError::UnknownTerm {
+            name: start.to_string(),
+        })?;
+    let mut rel_ids = Vec::with_capacity(rels.len());
+    for name in rels {
+        let id = rt
+            .dictionary()
+            .id(name)
+            .ok_or_else(|| QueryError::UnknownRelation {
+                name: (*name).to_string(),
+            })?;
+        rel_ids.push(id);
+    }
+    require_rels_shape(&rel_ids, k)?;
     Ok(QueryIr::Hops {
-        start: 0,
-        rels: Vec::new(),
+        start: start_id,
+        rels: rel_ids,
         k,
         tt,
         vt,
@@ -79,7 +131,21 @@ pub fn try_hops_named(
     })
 }
 
-/// Interpret `q` over `rt` read APIs. Stub: empty triple bag (RED).
-pub fn execute(_rt: &Runtime, _q: &QueryIr) -> Result<QueryRows, QueryError> {
-    Ok(QueryRows::Triples(vec![]))
+/// Interpret `q` over `rt` read APIs. Hops walk is still a stub (task 3).
+pub fn execute(rt: &Runtime, q: &QueryIr) -> Result<QueryRows, QueryError> {
+    match q {
+        QueryIr::Scan { tt, vt, limit } => {
+            let mut rows = rt.live_at(*tt, *vt);
+            rows.sort_unstable();
+            Ok(QueryRows::Triples(apply_limit(rows, *limit)))
+        }
+        QueryIr::Hops { start, rels, k, .. } => {
+            require_term(rt, *start)?;
+            require_rels_shape(rels, *k)?;
+            for id in rels {
+                require_term(rt, *id)?;
+            }
+            Ok(QueryRows::Triples(vec![]))
+        }
+    }
 }
