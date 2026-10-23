@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-23 — Trajectory: lease M155-S01 (checkpoint is a cut, not a hole)
+
+Process tag **v1.49** / Phase **229**. Not a SemVer release.
+
+- Active Milestone **M155**, Active Slice **S01** (`L_delivery=M155-S01`): fail-closed `fork_at` on compacted cuts, Horn cascade parity after a checkpoint, `migrate_compat` fail-closed on a checkpoint. Gap closure from the 2026-10-23 audit. Honeycomb stays Proposed; nothing thawed.
+
 ## 2026-10-23 — Process: post-M154 docs reconciliation and temp hygiene
 
 ### Changed
