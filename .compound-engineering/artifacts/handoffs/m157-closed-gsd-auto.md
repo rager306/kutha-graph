@@ -3,7 +3,7 @@ ce-handoff/v1: true
 title: "M157 closed (B3-lite hop workload) — owner decision on the baseline"
 date: 2026-10-23
 branch: work/main-line
-head: pending
+head: 9f60477
 resume_focus: "Ask the owner: set up the Samyama/FalkorDB baseline (docker, >=20 GB disk, pause fd_api/9router for runs) or reorder to B6 Cypher AS OF (M003) / Arc C. Then lease the chosen slice with a fresh RED and run it through subagents under the GSD-auto controller protocol. Standing owner orders: do not ask permission to commit; clean temp files and target after each cycle (cargo clean, empty tmp/); economical cargo builds (filtered -p/--test runs, one target dir, no stray worktrees); update docs; look for semantic gaps and glue results into one workflow. Harness moratorium applies."
 ---
 
