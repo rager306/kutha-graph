@@ -372,27 +372,22 @@ pub(crate) fn checkpoint_kept_prefix_op(op: &Op) -> bool {
 /// Exact prefix `Op::Behavior` records to store in `Snapshot.behaviors`.
 ///
 /// Walks the sealed prefix in order: prior checkpoint Snapshot blobs (R5
-/// carry-forward) then live prefix `Op::Behavior` events. Dedupes by Event id.
-/// Does not keep those ops on the rewritten log (empty-fold Checkpoint placement).
+/// carry-forward) then prefix `Op::Behavior` events. Does not keep those ops
+/// on the rewritten log (empty-fold Checkpoint placement).
+///
+/// Must not drop records that share an EventId: `Event::stable_derived` for
+/// Behavior hashes pin + bindings, not `caused_by`, so two minting paths to
+/// the same head are two log rows with one id and different causes.
 pub(crate) fn checkpoint_prefix_behaviors(prefix: &[Event]) -> Vec<Event> {
     let mut out = Vec::new();
-    let mut seen = HashSet::new();
     for e in prefix {
         match &e.op {
             Op::StoreBlob { bytes, .. } => {
                 if let Ok(snap) = serde_json::from_slice::<Snapshot>(bytes) {
-                    for b in snap.behaviors {
-                        if seen.insert(b.id) {
-                            out.push(b);
-                        }
-                    }
+                    out.extend(snap.behaviors);
                 }
             }
-            Op::Behavior { .. } => {
-                if seen.insert(e.id) {
-                    out.push(e.clone());
-                }
-            }
+            Op::Behavior { .. } => out.push(e.clone()),
             _ => {}
         }
     }

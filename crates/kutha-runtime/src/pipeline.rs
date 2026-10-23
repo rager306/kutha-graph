@@ -51,56 +51,38 @@ impl Runtime {
         // Only live Behavior heads belong in retract/unindex leases. Dead rows
         // stay on the log (SoT) or in compacted_behavior_by_id but must not
         // reappear after open/rebuild (M110). Prefix compacted records first,
-        // then log (tail) — same order as the un-checkpointed twin.
-        let mut live_pins: Vec<(EventId, String)> = Vec::new();
+        // then log (tail). Index every minting row even when DET-02 reused the
+        // head EventId for a second caused_by (same as append_indexed).
         let compacted = self.fold.compacted_behaviors.clone();
         for e in &compacted {
-            if let Op::Behavior {
-                caused_by,
-                rule_version,
-                ..
-            } = &e.op
-            {
-                self.note_live_behavior(e.id, *caused_by, rule_version, &mut live_pins);
-            }
+            self.index_live_behavior_event(e);
         }
         for i in 0..self.log.len() {
-            let parsed = match &self.log.as_slice()[i].op {
-                Op::Behavior {
-                    caused_by,
-                    rule_version,
-                    ..
-                } => Some((self.log.as_slice()[i].id, *caused_by, rule_version.clone())),
-                _ => None,
-            };
-            if let Some((id, caused_by, rule_version)) = parsed {
-                self.note_live_behavior(id, caused_by, &rule_version, &mut live_pins);
-            }
-        }
-        for (id, pin) in live_pins {
-            self.index_behavior_premise_rels(id, &pin);
-            if let Some(e) = self.log_event(id).cloned() {
-                self.index_behavior_premise_facts(&e);
-            }
+            let e = self.log.as_slice()[i].clone();
+            self.index_live_behavior_event(&e);
         }
     }
 
-    fn note_live_behavior(
-        &mut self,
-        id: EventId,
-        caused_by: EventId,
-        rule_version: &str,
-        live_pins: &mut Vec<(EventId, String)>,
-    ) {
-        if self.live_behaviors.contains(&id) {
+    fn index_live_behavior_event(&mut self, e: &Event) {
+        let Op::Behavior {
+            caused_by,
+            rule_version,
+            ..
+        } = &e.op
+        else {
+            return;
+        };
+        if !self.behavior_fact_live(e.id) {
             return;
         }
-        if self.behavior_fact_live(id) {
-            self.derived_by_cause.entry(caused_by).or_default().push(id);
-            self.cause_of_behavior.insert(id, caused_by);
-            self.live_behaviors.insert(id);
-            live_pins.push((id, rule_version.to_string()));
-        }
+        self.derived_by_cause
+            .entry(*caused_by)
+            .or_default()
+            .push(e.id);
+        self.cause_of_behavior.insert(e.id, *caused_by);
+        self.live_behaviors.insert(e.id);
+        self.index_behavior_premise_rels(e.id, rule_version);
+        self.index_behavior_premise_facts(e);
     }
 
     fn index_behavior_premise_rels(&mut self, behavior_id: EventId, rule_version: &str) {
