@@ -15,6 +15,7 @@ Public-repo baseline used for this pass: GitHub community-health files, OpenSSF 
 | CI | `.github/workflows/ci.yml` runs `uv run kutha-gov ci --jobs 1` after `cargo fetch --locked` |
 | SAST | `.github/workflows/codeql.yml` (Rust and Python) |
 | Scorecard | `.github/workflows/scorecard.yml` (publishes on `main`) |
+| License | `LICENSE` — Apache License 2.0 (SPDX `Apache-2.0`) |
 | Line endings | `.gitattributes`, `.editorconfig` |
 | Rust format edition | `rustfmt.toml` (`edition = "2024"`) |
 
@@ -36,8 +37,7 @@ Secret-scanning validity checks and non-provider patterns stayed disabled. The s
 
 | Item | Why |
 |------|-----|
-| `LICENSE` / SPDX | ADR-092 D092-2. The license is undecided. A public repo with no license grants nothing. Do not invent one. |
-| `cargo deny` license allow-list | Same decision. |
+| `cargo deny` allow-list | SPDX is Apache-2.0. A `deny.toml` is still not configured. |
 | Required pull-request review | Solo working line. The ruleset still blocks force-push and deletion. |
 | Signed releases, tags, packaging | Version stays `0.0.0`. STATE does not allow a release. |
 | Fuzzing in CI | No parser boundary is leased (B6). A token fuzzer would not test the engine. |

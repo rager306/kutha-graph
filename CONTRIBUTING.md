@@ -6,7 +6,7 @@ Kutha is a research engine. Read [`README.md`](README.md), then [`AGENTS.md`](AG
 
 - One slice at a time. Do not mark an ADR **Accepted**. A cell stays **Proposed** until that cell is in the running engine.
 - Do not bump `0.0.0`, add a git tag, or publish a GitHub Release unless STATE says so.
-- Do not add an SPDX `LICENSE` file. ADR-092 D092-2 leaves the license undecided. Until a human chooses one, this repository grants no license to copy, modify, or redistribute.
+- This repository is Apache License 2.0 (`LICENSE`). Do not add a second license on this tree.
 - Docs, identifiers, and commit messages are English. Chat with the owner is Russian.
 
 ## Checks

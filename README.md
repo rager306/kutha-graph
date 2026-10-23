@@ -20,7 +20,7 @@ Governor green ≠ ADR Accepted ≠ capability. Honeycomb cells are a map, not a
 
 ## Repository
 
-Public research tree. **No license is granted.** ADR-092 D092-2 leaves the SPDX choice open, so there is no `LICENSE` file. Security reports go through [`SECURITY.md`](SECURITY.md). How to change the tree: [`CONTRIBUTING.md`](CONTRIBUTING.md). What was turned on, and what was left off on purpose: [`docs/process/repository.md`](docs/process/repository.md).
+Public research tree under the [Apache License 2.0](LICENSE) (SPDX `Apache-2.0`). ADR-092 D092-2 records that choice. Security reports go through [`SECURITY.md`](SECURITY.md). How to change the tree: [`CONTRIBUTING.md`](CONTRIBUTING.md). What was turned on, and what was left off on purpose: [`docs/process/repository.md`](docs/process/repository.md).
 
 ## Quick start
 

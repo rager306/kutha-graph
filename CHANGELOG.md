@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-24 — Process: Apache-2.0
+
+Not a SemVer release. Not an ADR acceptance.
+
+- Owner choice: this repository is Apache License 2.0 (`LICENSE`, SPDX `Apache-2.0`) on the Cargo workspace and the harness `pyproject.toml`. ADR-092 D092-2 records it. The cell stays **Proposed**. Pack and ontology licenses stay open until a pack exists.
+
 ## 2026-10-23 — Process: public repository baseline
 
 Not a SemVer release. Not an ADR acceptance.

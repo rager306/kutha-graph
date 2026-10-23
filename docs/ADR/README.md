@@ -107,7 +107,7 @@ Evidence in the engine after the 2026-10-18 table below, still not acceptance:
 - ADR-061: fact-set `diff_folds` / `GraphFold::diff`. Named refs and GED stay open.
 - ADR-040 / ADR-041: a typed CSR lease keeps relation and multiplicity. A thin query IR (`Scan`, `Hops`, `prepare` / `run`) walks those leases. Leapfrog is not on that path. No planner and no Cypher.
 
-ADR-092 D092-2: the license is undecided. Repository hygiene does not add an SPDX file.
+ADR-092 D092-2: the owner set this repository to Apache-2.0 on 2026-10-24 (`LICENSE`). The cell stays **Proposed**. Pack and ontology licenses stay open until a pack exists.
 
 ## Engine evidence (2026-10-18 audit)
 

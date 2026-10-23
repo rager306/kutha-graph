@@ -26,9 +26,11 @@ No applicability card is required (KD3 exception in the remaining-graduation pla
 
 `STRATEGY.md` and ADR-001 use **Kutha**. This ADR does not execute a rename. Historical “kutkha” remains a dialogue leftover, not an instruction to retitle the repo.
 
-### D092-2. License is undecided (core vs packs vs ontologies)
+### D092-2. This repository is Apache-2.0
 
-Split under consideration (research only): engine core vs agent packs vs legal/science ontology packs. No SPDX choice is Accepted here. Secrets and third-party code (Samyama/RuVector adapters) must not be relicensed by this cell.
+Owner choice, 2026-10-24. The engine and the harness in this tree are Apache License 2.0 (`LICENSE`, SPDX `Apache-2.0`). Cargo workspace metadata and `pyproject.toml` carry the same SPDX id.
+
+Pack and ontology licenses stay open until a pack exists. They are not a second license on this tree. Secrets and third-party code must not be relicensed by this cell. Status stays **Proposed**: choosing SPDX is not an engine acceptance.
 
 ### D092-3. Trademark / clearance is a later human process
 
@@ -37,9 +39,9 @@ Not an agent task. Do not treat this ADR as clearance.
 **Hard separations:**
 
 ```text
-Working name Kutha     ≠  Registered mark
-License research       ≠  Chosen SPDX
-Pack license           ≠  Event-log SoT
+Working name Kutha        ≠  Registered mark
+Apache-2.0 on this tree  ≠  A pack or ontology license
+Pack license             ≠  Event-log SoT
 ```
 
 ## Consequences
@@ -51,7 +53,7 @@ Pack license           ≠  Event-log SoT
 
 ### Negative / risks
 
-- Leaving license open can block downstream distribution.
+- Pack and ontology SPDX ids are still open, so a future pack is not automatically Apache-2.0.
 
 ### Non-goals
 
@@ -67,9 +69,13 @@ Pack license           ≠  Event-log SoT
 
 ## Open Research Questions
 
-1. SPDX for core vs vertical packs.
+1. SPDX for a future pack, if it is not Apache-2.0.
 2. Whether ontology packs (090/093) need a different license than the engine.
 3. Trademark search owner and timing (human).
+
+## Evidence (2026-10-24)
+
+The owner set the repository license to Apache-2.0. `LICENSE` is the Apache License 2.0 text. The cell stays **Proposed**.
 
 ## Related Decisions
 

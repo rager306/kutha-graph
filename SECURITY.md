@@ -12,4 +12,4 @@ Include what you ran, what you expected, and a minimal input if you have one. Th
 
 - Honeycomb ADR text (`docs/ADR/`) that is still **Proposed** and not in the running engine.
 - Other repositories, containers, or corpora on a developer machine.
-- A missing SPDX license. That is an open product decision (ADR-092), not a vulnerability.
+- A question about the Apache-2.0 license. That is not a vulnerability.

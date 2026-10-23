@@ -2,6 +2,7 @@
 name = "kutha-harness"
 version = "0.0.0"
 description = "Kutha parallel STCA harness — repository control plane, not product runtime."
+license = "Apache-2.0"
 requires-python = ">=3.13"
 dependencies = [
     "pyyaml>=6",

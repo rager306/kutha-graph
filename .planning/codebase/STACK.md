@@ -93,7 +93,7 @@ Do **not** put Python inside `kutha-runtime`. Do **not** introduce TypeScript/No
 - Optional: pre-commit via `uvx`
 
 **Production:**
-- Not applicable — research-stage library/CLI; no production deploy target, license undecided (ADR-092). Do not treat the tree as a shipped graph DB service
+- Not applicable — research-stage library/CLI; no production deploy target. License is Apache-2.0 (ADR-092, 2026-10-24). Do not treat the tree as a shipped graph DB service
 
 ## Dual-plane rule (prescriptive)
 

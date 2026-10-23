@@ -239,7 +239,7 @@ All ingested ADRs have classification `locked: false` and source Status **Propos
 ## ADR-092: Naming & License
 - source: docs/ADR/ADR-092-naming-and-license.md
 - status: proposed
-- decision: D092-1: working product name remains Kutha; this ADR does not execute a rename; historical “kutkha” is a dialogue leftover. D092-2: license is undecided (core vs packs vs ontologies); no SPDX choice is Accepted here. D092-3: trademark/clearance is a later human process, not an agent task. Does not rename or file trademarks.
+- decision: D092-1: working product name remains Kutha; this ADR does not execute a rename; historical “kutkha” is a dialogue leftover. D092-2: this repository is Apache-2.0 (owner, 2026-10-24); pack and ontology SPDX stay open; the cell is not Accepted. D092-3: trademark/clearance is a later human process, not an agent task. Does not rename or file trademarks.
 - scope: Kutha product naming, SPDX and licensing, engine core vs agent packs, ontology packs, trademark clearance, Packaging honeycomb
 
 ## ADR-093: Scientific Archive Pack — Scholarly Revision AST & Evidence Graph
