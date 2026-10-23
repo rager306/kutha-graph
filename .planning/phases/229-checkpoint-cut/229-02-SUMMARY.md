@@ -2,45 +2,50 @@
 phase: 229-checkpoint-cut
 plan: 02
 subsystem: runtime-store
-tags: [checkpoint, cut, Horn, migrate, ForkCutUnavailable]
+tags: [checkpoint, cut, Horn, migrate, delivery-key]
 requires: [{phase: 229-checkpoint-cut, provides: "fallible fork_at Result + b3 fork REDs GREEN"}]
-provides: ["Horn cascade twin parity after cut", "migrate InvalidData on Checkpoint"]
+provides: ["Horn cascade twin parity after cut", "migrate InvalidData on Checkpoint", "prefix keyed Assert retry after cut"]
 affects: []
-actuals: {tokens: 4215, tasks: 4, commits: 11}
+actuals: {tokens: 10012, tasks: 4, commits: 15}
 plan_head_before: c30e5e932cc66df0fd1cc80445e86dc04bf2f30e
-plan_head_after: 44962da8b1169ea695027951824b75601faf39eb
-tech-stack: {added: [], patterns: [Snapshot.behaviors exact Horn lineage including duplicate EventId paths]}
-key-files: {created: [], modified: [crates/kutha-runtime/src/fold.rs, crates/kutha-runtime/src/pipeline.rs, crates/kutha-runtime/src/snapshot.rs, crates/kutha-runtime/src/eval.rs, CHANGELOG.md]}
+plan_head_after: 513f8bfd01176485ad3704b5f67302f481e672ff
+tech-stack: {added: [], patterns: [compacted_assert_by_id reconstructed from restored facts]}
+key-files: {created: [], modified: [crates/kutha-runtime/src/pipeline.rs, crates/kutha-runtime/src/eval.rs, crates/kutha-runtime/src/hydrate.rs, crates/kutha-runtime/src/quantum.rs, crates/kutha-runtime/tests/b3_checkpoint_cut.rs, CHANGELOG.md, docs/ADR/ADR-012-snapshots-tiers-vacuum.md, docs/process/op-compat.md]}
 key-decisions:
-  - "Kill-fix r1: Snapshot.behaviors exact prefix Behavior records (option a)"
-  - "Kill-fix r2: keep same-id multi-cause Behavior rows; rebuild indexes each minting row like append"
+  - "Kill-fix r1: Snapshot.behaviors exact prefix Behavior records"
+  - "Kill-fix r2: keep same-id multi-cause Behavior rows; rebuild indexes each minting row"
+  - "Kill-fix r3: by_delivery_key + event_by_id from restored facts; no new Snapshot field"
 requirements-completed: [D-03, D-04, D-05]
-duration: 240min
+duration: 360min
 completed: 2026-10-23
 status: complete
 ---
-# Phase 229 Plan 02: checkpoint cut (Horn + migrate)
-**Exact prefix Behavior records (including two minting paths that share EventId) in the checkpoint blob; Horn cascade after a cut matches T and P; migrate refuses Checkpoint.**
-## Twin is P, not live T
-kill2 `persist_twins` persist+copy then `store::open` both. Oracle is persist+reopen (P), not a never-reopened Runtime (T). Throwaway `b3_three_arm_probe` (deleted, not committed): T=never-reopened; P=`store::open` no checkpoint; C=checkpoint+open. Command: `cargo test -p kutha-runtime --offline --test b3_three_arm_probe -- --nocapture`.
-## Three-arm BEFORE (HEAD 740051c)
-| Scenario | T A-E | P A-E | C A-E | T==P | P==C | T==C |
-| 3hop retract A-B | 0 | 0 | 2 | true | false | false |
-| 3hop retract D-E | 0 | 2 | 0 | false | false | true |
-| 2hop retract A-B | 0 | 0 | 0 | true | true | true |
-C snapshot.behaviors n=6 vs T/P log Behaviors n=7: dropped second A-E (`e33cf753`, caused_by D-E); kept caused_by B-E. 2-hop first differs at 3-hop (two paths to A-E).
-## Outcome
-**(ii) on retract A-B** (P=T, C diverges). Retract D-E: C=T but P diverges (pre-existing reopen skip). C≠P on both 3-hop retracts. Not (i): do not treat A-B as reopen-only. No separate reopen RED: rebuild alignment made P=T.
-## Root cause
-`Event::stable_derived` omits `caused_by`. `checkpoint_prefix_behaviors` HashSet-by-id dropped the second path. `rebuild_log_indexes` `note_live_behavior` skipped duplicate `live_behaviors` ids so `derived_by_cause` kept only the first cause. Live T `append_indexed` pushed both.
+# Phase 229 Plan 02: checkpoint cut
+**Prefix keyed Asserts retry after a sealed cut; Horn cascade and migrate-refuse stay green.**
+## Root cause (kill3 `r3_reregister_same_horn_after_checkpoint`)
+Twin is persist+`open` (P). `emit_rule_ast` = kept `StoreBlob` + `kutha:rule` Assert (`delivery_key`=digest). Rewrite drops that Assert; restored facts still hold the pin. `delivery_key_retry` needs `by_delivery_key` then `event_by_id` + payload match. Both were log-only → re-register minted a second live pin → Horn fired twice → `live_count(A,relatedTo,C)=2` vs twin 1. Outcome **(ii)**: P already retries (`events_in_quantum=0`). Fingerprint unchanged.
+## Fold-state audit (field | rebuilt identically? | fix)
+| Field | Identical? | Fix |
+| facts, next_seq, index_mode, tt_anchors | yes (JSON; tt_anchors also Checkpoint-blob union) | — |
+| hot_examine, horn_examine | n/a (skip counters) | — |
+| hot maps (vt_by_from, tt_by_ingest, claim_facts, fact_by_event, live_triples, allows_by_name, horns_by_premise, facts_by_relation, rules_by_pin, policies_by_pin, policy_by_ingest, horn_lease_ready) | yes (`rebuild_hot_maps` / bind) | — |
+| dictionary_rels, rel_* | yes (`bind_reserved`) | — |
+| blobs | yes (StoreBlob kept; `rebuild_blobs`) | — |
+| compacted_behaviors | yes (`Snapshot.behaviors`) | r1–r2 |
+| Runtime.log, outcomes | rewrite keeps SB/QO/JC | by design |
+| dict, next_tt, max_cascade, knows, known_by | yes (snapshot) | — |
+| derived_by_cause, live_behaviors, premise maps, compacted_behavior_by_id | yes (behaviors+log) | r2 |
+| **by_delivery_key** | no (was log Asserts only) | **facts `or_insert` after log walk** |
+| **by_event_id / event_by_id / log_event** | no (log only) | **`compacted_assert_by_id` from facts** |
+Author RED (not kill-tests): horn re-register, product key, allow, policy — C `events_in_quantum=1` vs P=0.
 ## Fix
-No id-dedup in `checkpoint_prefix_behaviors`. `index_live_behavior_event` matches `append_indexed`. AFTER probe: all three scenarios T==P==C true (fp too). Kill-tests not edited.
-## Bench PRE vs round-2 POST
-PRE ingest_plain.n **101894268 ns**, as_of.n **247421 ns**. POST 2026-10-23T06:11:28Z `taskset -c 0` load **4.93 7.13 6.78**: **97135182 ns** (−4.7%), **229128 ns** (−7.4%). Unpinned noisy samples discarded (prime-agent rustc).
+No new Snapshot field. Receipt checks and empty-fold placement unchanged. Re-checkpoint carries facts; next open rebuilds the same leases.
 ## GREEN
-`b3_checkpoint_cut_kill2 --test-threads=1` **0** (16/16). kill 11/11. `b3_checkpoint_cut`, `b1_checkpoint_kill`/`kill2`/`kill3`, `b1_checkpoint_receipt`, `m002_commit01`, `m110_rebuild_live_derived` **0**. `cargo test --workspace --offline --no-fail-fast` **0** (m019_dur_a WouldBlock once under parallel, serial 19/19 then workspace 0). `uv run kutha-gov precommit` **0**.
+`b3_checkpoint_cut_kill3 --test-threads=1` 8/8 (608s). `b3_checkpoint_cut` 8/8. `b1_checkpoint_kill{,2,3}`, `b3_checkpoint_cut_kill{,2}`, `b1_checkpoint_receipt`, `m002_commit01`, `m110*` 0. `cargo test --workspace --offline --no-fail-fast` 0. `uv run kutha-gov precommit` 0. Bench skipped (hydrate/open, not ingest_plain/as_of).
 ## Deviations
-Rule 1: rebuild indexes every minting row (also P=T on retract D-E). `.planning/STATE.md` / `229-VERIFICATION.md` not edited. Probe deleted.
-## Task Commits
-`97c984a` exact behaviors · `770150e` migrate · `44962da` multi-path Behavior rows · kill-tests `7f6d3d8`/`555c5a0` (verifier)
+Rule 2: reconstruct prefix Assert Events so payload match works, not only the key index. Kill-tests not edited. `.planning/STATE.md` / `229-VERIFICATION.md` not edited.
+## Task commits
+`e844b54` Horn indexes · `770150e` migrate · `97c984a` behaviors · `44962da` multi-path · `513f8bf` delivery-key retry · verifier `7f6d3d8`/`555c5a0`/`c8c5e96`
+## Open questions
+`kutha:admission` / `kutha:action` use the same fact walk (no dedicated author test). Dead keyed facts still `or_insert`; liveness in `delivery_key_retry` matches twin. CBM coverage `metadata_changed` (no parent reindex).
 ## Self-Check: PASSED
