@@ -4,9 +4,9 @@ independent: true
 status: failed
 verifier_model: Cursor Grok 4.6
 commands:
-  - cmd: cargo test -p kutha-runtime --offline --test b3_checkpoint_cut --test b3_checkpoint_cut_kill --test b1_checkpoint_kill --test b1_checkpoint_kill2 --test b1_checkpoint_kill3 -- --test-threads=1
+  - cmd: cargo test -p kutha-runtime --offline --test b3_checkpoint_cut --test b3_checkpoint_cut_kill --test b3_checkpoint_cut_kill2 --test b1_checkpoint_kill --test b1_checkpoint_kill2 --test b1_checkpoint_kill3 --test b1_checkpoint_receipt -- --test-threads=1
     exit: 0
-  - cmd: cargo test -p kutha-runtime --offline --test b3_checkpoint_cut_kill2 -- --test-threads=1
+  - cmd: cargo test -p kutha-runtime --offline --test b3_checkpoint_cut_kill3 -- --test-threads=1
     exit: 101
   - cmd: cargo test --workspace --offline --no-fail-fast
     exit: 101
@@ -18,32 +18,31 @@ read_only_inputs:
   - crates/kutha-runtime/src/store.rs
   - crates/kutha-runtime/src/fold.rs
   - crates/kutha-runtime/src/pipeline.rs
+  - crates/kutha-runtime/src/eval.rs
+  - crates/kutha-runtime/src/provenance.rs
   - crates/kutha-runtime/src/quantum.rs
   - crates/kutha-runtime/src/snapshot.rs
-  - crates/kutha-runtime/src/eval.rs
-  - crates/kutha-runtime/src/bin/kutha-migrate.rs
-  - crates/kutha-common/src/event.rs
-  - crates/kutha-runtime/tests/b3_checkpoint_cut_kill.rs
   - crates/kutha-runtime/tests/b3_checkpoint_cut.rs
-  - crates/kutha-runtime/tests/b1_checkpoint_kill.rs
+  - crates/kutha-runtime/tests/b3_checkpoint_cut_kill2.rs
   - crates/kutha-runtime/tests/b1_checkpoint_kill3.rs
-  - crates/kutha-runtime/tests/common/mod.rs
-  - .planning/phases/228-checkpoint-receipt/228-VERIFICATION.md
 ---
 
-# Phase 229 — independent verification (round 2)
+# Phase 229 — independent verification (round 3)
 
-**Verdict:** failed. Two HIGH R2 3-hop Horn-cascade divergences vs the un-checkpointed twin. Round-1 kills 48/48. Kill2 11/16. Workspace 101 (only `b3_checkpoint_cut_kill2`). `ci` `run_high=2` (`observe_cargo` on kill2). Kill2 committed `555c5a0` before ci. CBM: cited src `metadata_changed`, kill2 `not_tracked` (no `index_repository`). No product edits. Normalisation: named live product triples / `as_of` / `as_known_on`; fingerprint after Retract of prefix facts (same support slots).
+**Verdict:** failed. One HIGH R2: re-registering the same Horn after a cut doubles live derived `relatedTo(A,C)` on C (2) vs T (1). Round-1/2 kills 66/66 (3-hop HIGHs now pass). Kill3 7/8; property 128/128 seeds. Workspace 101 only `r3_reregister_same_horn_after_checkpoint`. `ci` `run_high=2` (`observe_cargo` timeout 360s; property ~618s). Kill3 committed `c8c5e96` before ci. CBM: cited src `metadata_changed`, kill3 `not_tracked` (no `index_repository`). No product edits. Normalisation: named live product triples / `as_of` / `as_known_on`; fingerprint only with no new UUID-v7 Assert/rule/Correct since persist.
 
-**R1** pass: `fork_at(0)` empty; `1..=c` and `n>len` `ForkCutUnavailable {cut,log_len}`; legal `c<n` Ok vs twin (kill1); after a live cascade interior/past-end still Err.
-**R2** fail: see findings. Middle-hop retract, diamond, Correct/CI mid-chain, retract derived, tail re-assert, second rule after checkpoint + trigger, `open_for_append` middle, TT history including pre-checkpoint invalidation, tamper `behaviors` stale digest fail closed — match twin. Round-1 2-hop / two-rule HIGHs now pass.
+**R1** pass: `fork_at(0)` empty; `1..=c` and `n>len` `ForkCutUnavailable {cut,log_len}`; legal `c<n` Ok vs twin; `rollback_user_cascade` after checkpoint restores pre-cascade; interior still Err after failed cascade.
+
+**R2** fail: finding 1. Round-2 3-hop / diamond / mid-chain / tail re-assert / second rule / `open_for_append` / TT history / tamper `behaviors` fail-closed — pass. Round-3 tail multi-path same EventId, first-cause after re-checkpoint, fork then retract, 128-seed T/P/C (incl. persist+open and `open_for_append` / second checkpoint) — pass. P==T on those named answers.
+
 **R3** pass: `migrate_compat` / `migrate_op_wire` / `kutha-migrate` `InvalidData` + English "Op::Checkpoint" "unchanged"; listing+bytes equal. Non-checkpointed and legacy AllowRelation still Ok.
-**R4** pass: `git diff 8ef4ef1..HEAD -- crates/*/tests crates/*/src` — only allowed kill3 migrate observation → must Err; other tests mechanical `fork_at().unwrap()` / rustfmt. No new Op, no serde alias.
-**R5** pass: `ls tmp` no new dirs after runs (PersistScratch RAII).
+
+**R4** pass: `git diff 8ef4ef1..HEAD -- crates/*/tests crates/*/src` — only allowed kill3 migrate observation → must Err; other tests mechanical `fork_at().unwrap()` / rustfmt. `rebuild_log_indexes` / `index_live_behavior_event` push every live minting row into `derived_by_cause` (same as `append_indexed`; live-gated, then unindex on Retract). No new Op, no serde alias.
+
+**R5** pass: PersistScratch RAII; `ls tmp` clean after runs. ci timeout orphaned two kill3 PIDs and scratch (killed/cleaned). Tree clean except this report before its commit.
 
 ## Findings
 
-1. **HIGH R2 first hop:** trans A-B, B-C, C-D, D-E in the sealed prefix; after checkpoint `emit(Retract A-B)` leaves two live `relatedTo(A,E)`; twin un-derives them (A-C/A-D also drop on both). Repro: `r2_three_hop_retract_first_premise`. Same hole: `r2_checkpoint_append_checkpoint_retract`, `r2_cascade_persist_reopen_then_another_retract` (fails at first cascade), `r2_fork_then_live_retract_matches_twin_fork`.
-2. **HIGH R2 last hop:** same chain; `emit(Retract D-E)` un-derives `relatedTo(A,E)` on the compacted store; twin keeps two A-E (both drop D-E/B-E/C-E). Repro: `r2_three_hop_retract_end`.
-3. **LOW:** vintage Snapshot JSON with `behaviors` removed and digest recomputed opens; after `Retract A-B` live A-C vintage=true twin=false. Receipt `fingerprint`/`fact_count` do not claim Horn lineage exactness.
-4. **LOW:** `ci` `run_high=2` from `observe_cargo` on kill2 (tree otherwise clean; `docs-coupling` 0). `m019_dur_a` 19/19 under workspace parallel (no WouldBlock this pass).
+1. **HIGH R2:** prefix transitivity + A-B + B-C, checkpoint, `emit_rule_ast(trans)` again, `Retract A-B`, re-Assert A-B (`rr-ab-re`). `live_count` A-C **C=2 T=1**. Compacted prefix `kutha:rule` Assert is off the rewritten log so `by_delivery_key` misses the pin; C mints a second live derived. Repro: `r3_reregister_same_horn_after_checkpoint` (no RNG seed).
+2. **LOW:** vintage Snapshot JSON with `behaviors` removed and digest recomputed **opens**; after `Retract A-B` live A-C vintage=true twin=false (`r2_vintage_payload_without_behaviors`).
+3. **LOW:** `ci` `run_high=2` from `observe_cargo` timeout 360s (required tests not run in that observe). Workspace already isolated the product fail to finding 1. `m019_dur_a` 19/19 under workspace parallel (no WouldBlock).
