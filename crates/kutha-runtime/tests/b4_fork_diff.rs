@@ -52,6 +52,48 @@ fn first_checkpoint_index(events: &[Event]) -> usize {
         .expect("Op::Checkpoint on current log")
 }
 
+/// Compacted `c+1` is the first tail EventId; the twin cut is that id's offset.
+fn twin_prefix_len_for_checkpointed(ckp: &Runtime, twin: &Runtime) -> usize {
+    let events = ckp.log().as_slice();
+    let c = first_checkpoint_index(events);
+    match events.get(c + 1) {
+        Some(first_tail) => twin
+            .log()
+            .as_slice()
+            .iter()
+            .position(|e| e.id == first_tail.id)
+            .expect("first tail event must exist on the copied twin log"),
+        None => twin.log().len(),
+    }
+}
+
+fn normalize_diff(diff: &FoldDiff) -> FoldDiff {
+    let mut changed: Vec<FactChange> = diff
+        .changed
+        .iter()
+        .map(|c| {
+            let mut before = c.before.clone();
+            let mut after = c.after.clone();
+            before.seq = 0;
+            after.seq = 0;
+            FactChange { before, after }
+        })
+        .collect();
+    changed.sort_by(|x, y| {
+        let c = canon_cmp(&x.after, &y.after);
+        if c != Ordering::Equal {
+            c
+        } else {
+            canon_cmp(&x.before, &y.before)
+        }
+    });
+    FoldDiff {
+        added: normalize(&diff.added),
+        removed: normalize(&diff.removed),
+        changed,
+    }
+}
+
 fn emit_keyed(
     rt: &mut Runtime,
     subject: TermId,
@@ -583,7 +625,7 @@ fn diff_handles_equal_keys_ci_residuals_and_multipath_heads() {
 fn diff_of_checkpointed_fork_matches_plain_twin() {
     let _g = tiny_limits();
     let plain_dir = common::PersistScratch::new("b4-diff-ckpt-plain");
-    let twin_dir = common::PersistScratch::new("b4-diff-ckpt-twin");
+    let ckpt_dir = common::PersistScratch::new("b4-diff-ckpt-twin");
     let mut rt = Runtime::default();
     let rel = rt.intern("relatedTo");
     let a = rt.intern("A");
@@ -594,11 +636,13 @@ fn diff_of_checkpointed_fork_matches_plain_twin() {
     }
     let extra = rt.intern("extra");
     emit_keyed(&mut rt, a, rel, extra, 2010, None, "dk-extra");
+    rt.emit_tt_anchor(2014).unwrap();
+    rt.emit_tt_anchor(2020).unwrap();
     store::persist(&rt, &plain_dir).unwrap();
-    copy_store(&plain_dir, &twin_dir);
-    store::checkpoint_sealed_prefix(&twin_dir).unwrap();
+    copy_store(&plain_dir, &ckpt_dir);
+    store::checkpoint_sealed_prefix(&ckpt_dir).unwrap();
     let plain = store::open(&plain_dir).unwrap();
-    let ckpt = store::open(&twin_dir).unwrap();
+    let ckpt = store::open(&ckpt_dir).unwrap();
     let events = ckpt.log().as_slice();
     let c = first_checkpoint_index(events);
     let len = ckpt.log().len();
@@ -619,15 +663,50 @@ fn diff_of_checkpointed_fork_matches_plain_twin() {
             format!("fork cut {n} unavailable (log_len {len})")
         );
     }
-    let d_ckpt = diff_folds(ckpt.fork_at(0).unwrap().fold(), ckpt.fold());
-    let d_plain = diff_folds(plain.fork_at(0).unwrap().fold(), plain.fold());
+    let d0_ckpt = diff_folds(ckpt.fork_at(0).unwrap().fold(), ckpt.fold());
+    let d0_plain = diff_folds(plain.fork_at(0).unwrap().fold(), plain.fold());
     assert!(
-        !d_ckpt.added.is_empty(),
+        !d0_ckpt.added.is_empty(),
         "empty fork vs checkpointed live must add facts"
     );
     assert_eq!(
-        normalize(&d_ckpt.added),
-        normalize(&d_plain.added),
+        normalize_diff(&d0_ckpt),
+        normalize_diff(&d0_plain),
         "checkpointed fork_at(0) diff must match the un-checkpointed twin"
     );
+
+    let twin_prefix = twin_prefix_len_for_checkpointed(&ckpt, &plain);
+    let tail = len - (c + 1);
+    for i in 0..=tail {
+        let n = c + 1 + i;
+        let ckpt_fork = ckpt.fork_at(n).unwrap_or_else(|e| {
+            panic!("legal checkpointed fork_at({n}) must succeed: {e}")
+        });
+        let plain_n = twin_prefix + i;
+        let plain_fork = plain.fork_at(plain_n).unwrap_or_else(|e| {
+            panic!("twin fork_at({plain_n}) must succeed: {e}")
+        });
+        let d_ckpt = diff_folds(ckpt_fork.fold(), ckpt.fold());
+        let d_plain = diff_folds(plain_fork.fold(), plain.fold());
+        assert_eq!(
+            normalize_diff(&d_ckpt),
+            normalize_diff(&d_plain),
+            "checkpointed fork_at({n}) must diff like twin fork_at({plain_n})"
+        );
+        assert_totality(
+            ckpt_fork.fold(),
+            ckpt.fold(),
+            Some(ckpt.dictionary()),
+        );
+        assert_totality(
+            plain_fork.fold(),
+            plain.fold(),
+            Some(plain.dictionary()),
+        );
+        assert_totality(
+            ckpt.fold(),
+            ckpt_fork.fold(),
+            Some(ckpt.dictionary()),
+        );
+    }
 }
