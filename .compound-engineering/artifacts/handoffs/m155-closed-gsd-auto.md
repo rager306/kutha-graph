@@ -3,7 +3,7 @@ ce-handoff/v1: true
 title: "M155 closed (checkpoint is a cut) — B2 fork diff next"
 date: 2026-10-23
 branch: work/main-line
-head: PENDING
+head: a2f7b4b
 resume_focus: "After the user asks to continue: lease B2 (ADR-061 fork diff over the now-honest fork_at) with a fresh RED, bundle STATE+ROADMAP+CHANGELOG+README, run through subagents under the GSD-auto controller protocol. Standing owner orders: do not ask permission to commit; clean temp files and target after each cycle; update docs; look for semantic gaps and glue results into one workflow. Harness moratorium applies."
 ---
 
