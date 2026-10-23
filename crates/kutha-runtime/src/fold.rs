@@ -1,7 +1,7 @@
 use crate::snapshot::Snapshot;
 use kutha_common::{
-    sha256_hex, Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY,
-    KUTHA_RULE, Op, RuleAst, SupportPolarity, TermDictionary, TermId, TransactionTime, ValidTime,
+    Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE, Op,
+    RuleAst, SupportPolarity, TermDictionary, TermId, TransactionTime, ValidTime, sha256_hex,
 };
 use rustc_hash::FxHashMap;
 use smallvec::SmallVec;
@@ -309,6 +309,11 @@ pub struct GraphFold {
     /// Content-addressed bodies from `Op::StoreBlob` (store-once). Not fingerprint input.
     #[serde(skip)]
     pub(crate) blobs: HashMap<String, Vec<u8>>,
+    /// Prefix `Op::Behavior` records restored from a checkpoint Snapshot blob.
+    /// Droppable cascade lease; not fingerprint / JSON (`Snapshot.behaviors` is
+    /// the durable copy, covered by the blob digest).
+    #[serde(skip)]
+    pub(crate) compacted_behaviors: Vec<Event>,
     /// Wall date → transaction time (`Event.ingested_at`) from `Op::TtAnchor`. Not fingerprint.
     pub(crate) tt_anchors: BTreeMap<u64, u64>,
     /// True when `tt_anchors` was present in snapshot JSON (legacy files omit the key).
@@ -362,6 +367,36 @@ pub(crate) fn checkpoint_kept_prefix_op(op: &Op) -> bool {
         op,
         Op::StoreBlob { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. }
     )
+}
+
+/// Exact prefix `Op::Behavior` records to store in `Snapshot.behaviors`.
+///
+/// Walks the sealed prefix in order: prior checkpoint Snapshot blobs (R5
+/// carry-forward) then live prefix `Op::Behavior` events. Dedupes by Event id.
+/// Does not keep those ops on the rewritten log (empty-fold Checkpoint placement).
+pub(crate) fn checkpoint_prefix_behaviors(prefix: &[Event]) -> Vec<Event> {
+    let mut out = Vec::new();
+    let mut seen = HashSet::new();
+    for e in prefix {
+        match &e.op {
+            Op::StoreBlob { bytes, .. } => {
+                if let Ok(snap) = serde_json::from_slice::<Snapshot>(bytes) {
+                    for b in snap.behaviors {
+                        if seen.insert(b.id) {
+                            out.push(b);
+                        }
+                    }
+                }
+            }
+            Op::Behavior { .. } => {
+                if seen.insert(e.id) {
+                    out.push(e.clone());
+                }
+            }
+            _ => {}
+        }
+    }
+    out
 }
 
 /// Ops that may precede `Op::Checkpoint` while the restored prefix is still empty.
@@ -422,6 +457,7 @@ impl GraphFold {
             rel_admission: None,
             rel_action: None,
             blobs: HashMap::new(),
+            compacted_behaviors: Vec::new(),
             tt_anchors: BTreeMap::new(),
             tt_anchors_pinned: false,
         }
@@ -526,8 +562,10 @@ impl GraphFold {
             return;
         };
         let blobs = std::mem::take(&mut self.blobs);
+        let behaviors = snap.behaviors;
         *self = snap.fold;
         self.blobs = blobs;
+        self.compacted_behaviors = behaviors;
         self.rebuild_hot_maps();
     }
 
@@ -981,6 +1019,8 @@ impl GraphFold {
                 // Restore only when the fold is still empty (kept StoreBlob /
                 // sidecar / dictionary ops precede the receipt). Duplicate or
                 // tail-moved Checkpoint must not clobber; replay_check fails closed.
+                // Also restores Snapshot.behaviors onto compacted_behaviors
+                // (exact Horn lineage; not re-applied as facts).
                 if checkpoint_fold_is_empty_prefix(self) {
                     self.apply_checkpoint_blob(blob_digest, fingerprint_hex, *fact_count);
                 }

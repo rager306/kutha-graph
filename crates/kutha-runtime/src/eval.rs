@@ -183,14 +183,6 @@ impl Runtime {
                 };
                 Some((e.id, *caused_by, rule_version.clone()))
             }) else {
-                // Compacted prefix: minting Behavior is gone; the restored live
-                // head is still in the fold. Un-derive by id (D-03).
-                if self.behavior_fact_live(id) && retracting.insert(id) {
-                    out.push(Event::stable_derived(
-                        Op::Retract { event_id: id },
-                        trigger.ingested_at,
-                    ));
-                }
                 continue;
             };
             if caused_by != premise {
@@ -253,34 +245,7 @@ impl Runtime {
                     Op::Retract { event_id },
                     trigger.ingested_at,
                 ));
-                continue;
             }
-            if id == premise || retracting.contains(&id) || !self.behavior_fact_live(id) {
-                continue;
-            }
-            let Some(idx) = self.fold.fact_index_by_event_id(id) else {
-                continue;
-            };
-            let fact = &self.fold.facts()[idx];
-            let subject = fact.subject;
-            let relation = fact.relation;
-            let object = fact.object();
-            let valid_from = fact.valid_from;
-            let valid_to = fact.valid_to;
-            self.retract_examine.bump();
-            if self
-                .rematch_restored_horn_head(
-                    subject, relation, object, valid_from, valid_to, &except,
-                )
-                .is_some()
-            {
-                continue;
-            }
-            retracting.insert(id);
-            out.push(Event::stable_derived(
-                Op::Retract { event_id: id },
-                trigger.ingested_at,
-            ));
         }
         out
     }
@@ -364,8 +329,10 @@ impl Runtime {
     }
 
     pub(crate) fn log_event(&self, id: EventId) -> Option<&Event> {
-        let pos = *self.by_event_id.get(&id)?;
-        self.log.as_slice().get(pos)
+        if let Some(pos) = self.by_event_id.get(&id) {
+            return self.log.as_slice().get(*pos);
+        }
+        self.compacted_behavior_by_id.get(&id)
     }
 
     pub(crate) fn behavior_fact_live(&self, event_id: EventId) -> bool {
@@ -377,59 +344,6 @@ impl Runtime {
 
     /// Horn body still matches over `head` VT with `except` treated as dead.
     /// Named bodies are skipped (treated as still matching).
-    /// Rematch a restored live head against kept Horn blobs (no Behavior on the log).
-    /// Returns pin + supporting premise ids; does not mint ops.
-    pub(crate) fn rematch_restored_horn_head(
-        &self,
-        subject: TermId,
-        relation: TermId,
-        object: TermId,
-        valid_from: u64,
-        valid_to: Option<u64>,
-        except: &HashSet<EventId>,
-    ) -> Option<(String, Vec<EventId>)> {
-        for horn in self.live_horns_scan(valid_from, valid_to) {
-            let RuleAst::Horn { head, premises } = horn.ast else {
-                continue;
-            };
-            let Some(head_rel) = self.dict.id(&head.relation) else {
-                continue;
-            };
-            if head_rel != relation {
-                continue;
-            }
-            let mut bind = [None; MAX_VAR];
-            if !unify_term(&head.subject, subject, &self.dict, &mut bind) {
-                continue;
-            }
-            if !unify_term(&head.object, object, &self.dict, &mut bind) {
-                continue;
-            }
-            let hits = search_all(
-                self,
-                &premises,
-                premises.len(),
-                bind,
-                valid_from,
-                valid_to,
-                u64::MAX,
-                except,
-            );
-            for hit in hits {
-                if !windows_cover(&hit.windows, valid_from, valid_to) {
-                    continue;
-                }
-                let mut parts = vec![(valid_from, valid_to), (horn.pin_from, horn.pin_to)];
-                parts.extend(hit.windows.iter().copied());
-                if conjunct_vt(parts).is_none() {
-                    continue;
-                }
-                return Some((horn.pin, hit.premise_ids));
-            }
-        }
-        None
-    }
-
     fn horn_body_matches_except(&self, e: &Event, except: &HashSet<EventId>) -> bool {
         let Op::Behavior {
             rule_version,

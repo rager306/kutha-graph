@@ -3,9 +3,8 @@ use crate::quantum::{PersistedQuantumOutcome, QuantumOutcome, Runtime, RuntimeEr
 use crate::receipt::{QuantumReceipt, digest_to_hex};
 use kutha_common::{
     Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE, Op,
-    OutcomeDisposition, RuleAst, TermId, WallTime, blob_digest_matches, policy_version_hash,
+    OutcomeDisposition, RuleAst, WallTime, blob_digest_matches, policy_version_hash,
 };
-use std::collections::HashSet;
 
 /// How the shared pipeline finishes a committed quantum (D-01 / D-07).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -29,6 +28,7 @@ impl Runtime {
         self.premise_rels_of_behavior.clear();
         self.behaviors_by_premise_fact.clear();
         self.premise_facts_of_behavior.clear();
+        self.compacted_behavior_by_id.clear();
         let n = self.log.len();
         self.by_event_id.reserve(n);
         self.by_delivery_key.reserve(n);
@@ -45,25 +45,36 @@ impl Runtime {
                 }
             }
         }
+        for e in &self.fold.compacted_behaviors {
+            self.compacted_behavior_by_id.insert(e.id, e.clone());
+        }
         // Only live Behavior heads belong in retract/unindex leases. Dead rows
-        // stay on the log (SoT) but must not reappear after open/rebuild (M110).
+        // stay on the log (SoT) or in compacted_behavior_by_id but must not
+        // reappear after open/rebuild (M110). Prefix compacted records first,
+        // then log (tail) — same order as the un-checkpointed twin.
         let mut live_pins: Vec<(EventId, String)> = Vec::new();
-        for e in self.log.as_slice() {
+        let compacted = self.fold.compacted_behaviors.clone();
+        for e in &compacted {
             if let Op::Behavior {
                 caused_by,
                 rule_version,
                 ..
             } = &e.op
             {
-                if self.behavior_fact_live(e.id) {
-                    self.derived_by_cause
-                        .entry(*caused_by)
-                        .or_default()
-                        .push(e.id);
-                    self.cause_of_behavior.insert(e.id, *caused_by);
-                    self.live_behaviors.insert(e.id);
-                    live_pins.push((e.id, rule_version.clone()));
-                }
+                self.note_live_behavior(e.id, *caused_by, rule_version, &mut live_pins);
+            }
+        }
+        for i in 0..self.log.len() {
+            let parsed = match &self.log.as_slice()[i].op {
+                Op::Behavior {
+                    caused_by,
+                    rule_version,
+                    ..
+                } => Some((self.log.as_slice()[i].id, *caused_by, rule_version.clone())),
+                _ => None,
+            };
+            if let Some((id, caused_by, rule_version)) = parsed {
+                self.note_live_behavior(id, caused_by, &rule_version, &mut live_pins);
             }
         }
         for (id, pin) in live_pins {
@@ -72,69 +83,23 @@ impl Runtime {
                 self.index_behavior_premise_facts(&e);
             }
         }
-        self.index_restored_horn_behaviors();
     }
 
-    /// Compacted prefix drops minting `Op::Behavior` rows; restored live heads
-    /// still sit in the fold. Rebuild Horn cascade leases from those facts plus
-    /// kept StoreBlob rule bodies (D-03). Does not append Behavior ops.
-    fn index_restored_horn_behaviors(&mut self) {
-        let mut candidates: Vec<(EventId, TermId, TermId, TermId, u64, Option<u64>)> = Vec::new();
-        for f in self.fold.facts() {
-            if f.invalidated_at.is_some() {
-                continue;
-            }
-            if self.by_event_id.contains_key(&f.event_id) {
-                continue;
-            }
-            if f.event_id.get_version_num() != 8 {
-                continue;
-            }
-            if self.fold.is_dictionary_rel(f.relation) {
-                continue;
-            }
-            candidates.push((
-                f.event_id,
-                f.subject,
-                f.relation,
-                f.object(),
-                f.valid_from,
-                f.valid_to,
-            ));
+    fn note_live_behavior(
+        &mut self,
+        id: EventId,
+        caused_by: EventId,
+        rule_version: &str,
+        live_pins: &mut Vec<(EventId, String)>,
+    ) {
+        if self.live_behaviors.contains(&id) {
+            return;
         }
-        let none = HashSet::new();
-        let mut restored: Vec<(EventId, String, Vec<EventId>)> = Vec::new();
-        for (event_id, subject, relation, object, valid_from, valid_to) in candidates {
-            if self.live_behaviors.contains(&event_id) {
-                continue;
-            }
-            let Some((pin, mut premises)) = self
-                .rematch_restored_horn_head(subject, relation, object, valid_from, valid_to, &none)
-            else {
-                continue;
-            };
-            premises.retain(|p| *p != event_id);
-            if premises.is_empty() {
-                continue;
-            }
-            restored.push((event_id, pin, premises));
-        }
-        for (id, pin, premises) in restored {
-            let caused_by = premises
-                .iter()
-                .copied()
-                .max_by_key(|pid| {
-                    self.fold
-                        .fact_index_by_event_id(*pid)
-                        .and_then(|i| self.fold.facts().get(i).map(|f| f.ingested_at))
-                        .unwrap_or(0)
-                })
-                .unwrap_or(premises[0]);
+        if self.behavior_fact_live(id) {
             self.derived_by_cause.entry(caused_by).or_default().push(id);
             self.cause_of_behavior.insert(id, caused_by);
             self.live_behaviors.insert(id);
-            self.index_behavior_premise_rels(id, &pin);
-            self.index_behavior_premise_fact_ids(id, premises);
+            live_pins.push((id, rule_version.to_string()));
         }
     }
 

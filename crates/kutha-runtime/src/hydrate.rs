@@ -59,6 +59,7 @@ impl Runtime {
             dict_strings: self.dict.strings().to_vec(),
             knows: self.knows,
             known_by: self.known_by,
+            behaviors: self.fold.compacted_behaviors.clone(),
         }
     }
 
@@ -75,6 +76,7 @@ impl Runtime {
             .filter(|e| !matches!(e.op, Op::Define { .. }))
             .collect();
         let mut fold = snap.fold;
+        fold.compacted_behaviors = snap.behaviors;
         let mut next_tt = snap.next_tt;
         let offset = snap.log_offset;
         let mut fold_seen = 0usize;
@@ -115,6 +117,7 @@ impl Runtime {
             premise_rels_of_behavior: IngestMap::default(),
             behaviors_by_premise_fact: IngestMap::default(),
             premise_facts_of_behavior: IngestMap::default(),
+            compacted_behavior_by_id: IngestMap::default(),
         };
         rt.hydrate_from_log();
         rt
@@ -168,6 +171,7 @@ impl Runtime {
             premise_rels_of_behavior: IngestMap::default(),
             behaviors_by_premise_fact: IngestMap::default(),
             premise_facts_of_behavior: IngestMap::default(),
+            compacted_behavior_by_id: IngestMap::default(),
         };
         rt.hydrate_from_log();
         Ok(rt)
@@ -224,6 +228,7 @@ impl Runtime {
             premise_rels_of_behavior: IngestMap::default(),
             behaviors_by_premise_fact: IngestMap::default(),
             premise_facts_of_behavior: IngestMap::default(),
+            compacted_behavior_by_id: IngestMap::default(),
         };
         rt.hydrate_from_log();
         Ok(rt)

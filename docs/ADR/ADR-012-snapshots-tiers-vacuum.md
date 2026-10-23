@@ -70,7 +70,7 @@ Sealed-prefix checkpoint receipt: `store::checkpoint_sealed_prefix` holds `kutha
 
 ### Evidence (2026-10-23, Phase 229 / M155 S01; Proposed)
 
-Compacted cuts fail closed (`ForkCutUnavailable`): defined failure, not a hole (D012-4). Status stays **Proposed**. This block does not rewrite D012-1–D012-5.
+Compacted cuts fail closed (`ForkCutUnavailable`): defined failure, not a hole (D012-4). Checkpoint Snapshot blobs carry prefix `Op::Behavior` records in `behaviors` (blob digest covers the field; empty omitted). Apply restores those records onto a droppable lease and rebuilds Horn cascade indexes exactly; they are not re-applied as facts and stay off the rewritten log (Checkpoint valid only on an empty fold). M154/M155 blobs written before this field are not cascade-exact (fail closed for Horn lineage; no such stores outside tests). Status stays **Proposed**. This block does not rewrite D012-1–D012-5.
 
 ## Date
 

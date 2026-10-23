@@ -1,4 +1,4 @@
-use crate::fold::{GraphFold, checkpoint_kept_prefix_op};
+use crate::fold::{GraphFold, checkpoint_kept_prefix_op, checkpoint_prefix_behaviors};
 use crate::quantum::{
     Justification, PersistedQuantumOutcome, Runtime, RuntimeError, cascade_limit,
 };
@@ -213,6 +213,9 @@ pub fn checkpoint_sealed_prefix(dir: &Path) -> std::io::Result<()> {
     // Sidecar queries read QuantumOutcome / JustificationCite from the log.
     // Copy those prefix ops verbatim (same Event ids and order). Do not copy
     // Op::Checkpoint: re-checkpoint folds the old receipt into the new Snapshot.
+    // Prefix Op::Behavior records ride Snapshot.behaviors (blob digest covers
+    // them) so Horn cascade after a cut has exact lineage; they stay off the
+    // rewritten log (Checkpoint valid only on an empty fold).
     let kept: Vec<Event> = prefix
         .iter()
         .filter(|e| checkpoint_kept_prefix_op(&e.op))
@@ -227,6 +230,7 @@ pub fn checkpoint_sealed_prefix(dir: &Path) -> std::io::Result<()> {
         dict_strings: dict_strings.clone(),
         knows: opened_snap.knows,
         known_by: opened_snap.known_by,
+        behaviors: checkpoint_prefix_behaviors(prefix),
     };
     let bytes = serde_json::to_vec(&blob_snap).map_err(json_err)?;
     let blob_digest = sha256_hex(&bytes);

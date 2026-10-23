@@ -336,6 +336,9 @@ pub struct Runtime {
     pub(crate) behaviors_by_premise_fact: IngestMap<EventId, Vec<EventId>>,
     /// Behavior id → supporting premise fact ids (M139).
     pub(crate) premise_facts_of_behavior: IngestMap<EventId, Vec<EventId>>,
+    /// Prefix `Op::Behavior` records restored from a checkpoint Snapshot
+    /// (not on the compacted log). Droppable; rebuilt on hydrate.
+    pub(crate) compacted_behavior_by_id: IngestMap<EventId, Event>,
 }
 
 impl Default for Runtime {
@@ -370,6 +373,7 @@ impl Runtime {
             premise_rels_of_behavior: IngestMap::default(),
             behaviors_by_premise_fact: IngestMap::default(),
             premise_facts_of_behavior: IngestMap::default(),
+            compacted_behavior_by_id: IngestMap::default(),
             unindex_premise_examine: IngestExamine::default(),
             unindex_live_examine: IngestExamine::default(),
         };
