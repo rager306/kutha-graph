@@ -19,6 +19,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Fixed
 
 - `m019_dur_a` lock-oracle flake (`persist_migrate_race_serialized_or_fails_closed` WouldBlock on `kutha.lock`): tests now use `PersistScratch` so the `Persister` drops before directory removal, and a file-local `Mutex` serializes lock oracles plus `set_test_segment_limits` users. Production `store.rs` lock handling unchanged.
+- `m002_rock00` (ROCK-00 oracles): scratch dirs under `tmp/p51-store-*` are removed on test exit via `PersistScratch` instead of leaking after each run.
 
 ### Trajectory
 

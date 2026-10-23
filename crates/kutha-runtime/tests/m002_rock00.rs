@@ -7,25 +7,18 @@ use kutha_runtime::Runtime;
 use kutha_runtime::rocks_spike;
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, Seek};
-use std::path::{Path, PathBuf};
+use std::path::Path;
+
+mod common;
 
 const T_OLD: u64 = 2015;
 const VF_FIRST: u64 = 2010;
 const VF_SECOND: u64 = 2020;
 
-fn persist_dir(label: &str) -> PathBuf {
-    let nanos = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../..")
-        .join("tmp")
-        .join(format!("p51-store-{label}-{nanos}"));
-    let _ = fs::remove_dir_all(&dir);
-    fs::create_dir_all(&dir).unwrap();
-    kutha_runtime::store::ensure_legacy_dir(&dir).unwrap();
-    dir
+fn persist_dir(label: &str) -> common::PersistScratch {
+    let scratch = common::PersistScratch::new(&format!("p51-store-{label}"));
+    kutha_runtime::store::ensure_legacy_dir(scratch.as_ref()).unwrap();
+    scratch
 }
 
 fn seed_runtime() -> Runtime {
