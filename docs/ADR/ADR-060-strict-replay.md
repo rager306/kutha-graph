@@ -52,6 +52,10 @@ Metamorphic oracles (`m019_sem_meta.rs`): replay of the same log twice matches (
 
 `replay_check` verifies checkpoint receipts (blob digest, `fact_count`, fingerprint, placement on an empty fold). This is `Op::Checkpoint` / `store::checkpoint_sealed_prefix`, not `Persister::checkpoint` (snapshot refresh). This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
 
+### Evidence (2026-10-23, Phase 229 / M155 S01; Proposed)
+
+A compacted prefix is not reconstructed for interior `fork_at`; the cut is `ForkCutUnavailable`. This subsection does not rewrite D060-1…D060-3. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

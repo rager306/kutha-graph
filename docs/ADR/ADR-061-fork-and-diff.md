@@ -8,6 +8,10 @@
 
 `Runtime::fork_at` isolates a log prefix (`hydrate.rs`; `fork_at_parent_indexes_untouched`). GED-style `diff` is still absent from the public API (F8 remainder).
 
+### Evidence (2026-10-23, Phase 229 / M155 S01; Proposed)
+
+`fork_at` fails closed on compacted cuts (`ForkCutUnavailable { cut, log_len }`; `n` is an offset into the current log). Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

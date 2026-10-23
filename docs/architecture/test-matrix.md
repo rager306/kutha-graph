@@ -261,6 +261,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M154 S01 (checkpoint receipt):** Phase 228 — `SEM-m154-checkpoint-receipt` `killed` (owner `M154-S01`). Oracle: `checkpoint_sealed_prefix_preserves_fingerprint_and_pit`. Kill: drop `store::checkpoint_sealed_prefix` rewrite, drop prefix `StoreBlob` / `QuantumOutcome` / `JustificationCite` copy, or `GraphFold::apply` Checkpoint hydrate. Kept kinds on the rewritten log are those three; `dropped_count` is prefix length minus them.
 
+**M155 S01 (checkpoint cut):** Phase 229 — `SEM-m155-fork-cut`, `SEM-m155-migrate-checkpoint`, `SEM-m155-horn-cascade` `killed` (owner `M155-S01`). Oracles: `fork_at_interior_of_checkpointed_prefix_is_err`, `fork_at_past_log_end_is_err_without_checkpoint`, `migrate_compat_refuses_checkpointed_store_and_leaves_dir_unchanged`, `retract_prefix_horn_premise_after_checkpoint_matches_twin`. A compacted prefix is an atomic cut: interior/`n>len` `fork_at` is `ForkCutUnavailable`; migrate returns `InvalidData` and leaves the directory unchanged; live Retract of a prefix Horn premise matches the un-checkpointed twin.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

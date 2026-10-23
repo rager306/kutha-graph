@@ -121,7 +121,7 @@ Replay of the historical log; external I/O — content-addressed cache (`SHA256(
 
 ### 4.2. Fork-and-Diff
 
-`fork_at(event_id)` → change a behavior → stabilization → structural graph diff.
+`fork_at(n)` takes a `usize` offset into the **current** log. A compacted checkpoint prefix is atomic: cuts inside it (or past `log.len()`) fail closed (`ForkCutUnavailable`). Then change a behavior → stabilization → structural graph diff.
 
 ### 4.3. Regimes Gated Loop (Nakajima, arXiv:2606.10241)
 

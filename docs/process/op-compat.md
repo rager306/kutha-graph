@@ -17,7 +17,7 @@ On vintage rows, **fail open** means deserialize / `store::open` returns `Invali
 | Pre-dictionary | `Op::RecordAdmission` | **Fail open** | **Leased (M065-S01):** `record_admission_to_assert` → `kutha:admission` Assert (mirrors `record_justification`) |
 | Pre-dictionary | `Op::RecordAction` | **Fail open** | **Leased (M066-S01):** `record_action_to_assert` → `kutha:action` Assert (mirrors `record_action`) |
 | Current writers | `Op::Assert` on reserved `kutha:allows` / `kutha:rule` / `kutha:policy` / `kutha:admission` / `kutha:action` (+ `StoreBlob` for bodies) | Supported | n/a |
-| Current writers (2026-10-22 / M154) | `Op::Checkpoint` | **Current `open`:** deserializes the modern variant and verifies the receipt (blob digest, `fact_count`, `fingerprint_hex`, empty-fold placement); mismatch is fail-closed (`ReplayDivergence` / `InvalidData`). **Old readers:** fail open on the unknown serde variant. No aliases; no `remap_legacy_ops` entry; no new `op-wire.v1` meaning. Receipt: `dropped_count` = sealed prefix event count minus prefix ops copied verbatim (`StoreBlob`, `QuantumOutcome`, `JustificationCite`; same ids/order) onto the new log. `Op::Checkpoint` is not copied (a re-checkpoint folds the old receipt into the new Snapshot). `fact_count` = prefix fold fact count (including dead facts). `GraphFold.blobs` stays serde-skip. | n/a — do **not** run `migrate_op_wire` on a checkpointed store (it demotes segments) |
+| Current writers (2026-10-22 / M154) | `Op::Checkpoint` | **Current `open`:** deserializes the modern variant and verifies the receipt (blob digest, `fact_count`, `fingerprint_hex`, empty-fold placement); mismatch is fail-closed (`ReplayDivergence` / `InvalidData`). **Old readers:** fail open on the unknown serde variant. No aliases; no `remap_legacy_ops` entry; no new `op-wire.v1` meaning. Receipt: `dropped_count` = sealed prefix event count minus prefix ops copied verbatim (`StoreBlob`, `QuantumOutcome`, `JustificationCite`; same ids/order) onto the new log. `Op::Checkpoint` is not copied (a re-checkpoint folds the old receipt into the new Snapshot). `fact_count` = prefix fold fact count (including dead facts). `GraphFold.blobs` stays serde-skip. | n/a — `migrate_op_wire` / `migrate_compat` / `kutha-migrate` return `InvalidData` when the log contains `Op::Checkpoint`; directory unchanged |
 
 Reasons serde aliases stay forbidden:
 
@@ -47,9 +47,10 @@ JSON but not a modern `Event` — no silent drop of legacy meta-ops).
 `store::checkpoint_sealed_prefix` is a **library API only**. There is no
 `Runtime` method and no operator CLI that invokes it. It is not vacuum.
 
-Do **not** run `migrate_op_wire` (or `migrate_compat` / `kutha-migrate`) on a
-store that already carries `Op::Checkpoint`: they demote sealed segments to
-legacy jsonl (answers unchanged) and are not a checkpoint tool. `Op::Checkpoint`
+`migrate_op_wire` / `migrate_compat` / `kutha-migrate` on a store whose log
+contains `Op::Checkpoint` return `InvalidData` (English: migrate refuses a store
+that contains `Op::Checkpoint`; directory unchanged). No demote, no snapshot
+delete, no `events.jsonl` write. They are not a checkpoint tool. `Op::Checkpoint`
 is a modern serde variant; old readers fail open on the unknown tag. No serde
 aliases. Current `open` verifies receipts and fails closed on mismatch.
 

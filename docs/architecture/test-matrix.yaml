@@ -2790,6 +2790,40 @@ rows:
     gate: default
     owner: M154-S01
     source: Phase 228 / checkpoint receipt thin B1
+  - id: SEM-m155-fork-cut
+    plane: product
+    invariant: fork_at fails closed inside a compacted prefix and past log end; n==0 and n>c through len stay Ok
+    layer: kill
+    oracle:
+      - fork_at_interior_of_checkpointed_prefix_is_err
+      - fork_at_past_log_end_is_err_without_checkpoint
+    kill_mutation: restore infallible fork_at that returns an empty or full fold at an interior cut or past end
+    status: killed
+    gate: default
+    owner: M155-S01
+    source: Phase 229 / checkpoint is a cut
+  - id: SEM-m155-migrate-checkpoint
+    plane: product
+    invariant: migrate_compat and migrate_op_wire return InvalidData on Op::Checkpoint and leave the directory unchanged
+    layer: kill
+    oracle:
+      - migrate_compat_refuses_checkpointed_store_and_leaves_dir_unchanged
+    kill_mutation: restore demote of a checkpointed store to jsonl
+    status: killed
+    gate: default
+    owner: M155-S01
+    source: Phase 229 / checkpoint is a cut
+  - id: SEM-m155-horn-cascade
+    plane: product
+    invariant: live emit Retract of a prefix Horn premise on a reopened checkpointed runtime matches the un-checkpointed twin
+    layer: kill
+    oracle:
+      - retract_prefix_horn_premise_after_checkpoint_matches_twin
+    kill_mutation: drop rebuild of derived_by_cause / premise maps from restored live facts after a cut
+    status: killed
+    gate: default
+    owner: M155-S01
+    source: Phase 229 / checkpoint is a cut
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

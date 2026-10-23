@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-23 — Product: checkpoint cut
+
+### Changed
+
+- Compacted prefix is an atomic cut: `Runtime::fork_at` returns `ForkCutUnavailable` for `1..=c` and `n > log.len()` (`n` is an offset into the current log). Horn cascade after reopen rematches restored live heads against kept StoreBlob rule bodies (no Behavior ops re-appended). `migrate_compat` / `migrate_op_wire` / `kutha-migrate` return `InvalidData` when the log contains `Op::Checkpoint`; directory unchanged.
+- Bench PRE (229-01, 2026-10-23T02:57:57Z load **4.05 3.54 3.23**, `/root/prime-agent` `cargo test -p pa-core` looping) vs POST (2026-10-23T03:38:12Z load **2.99 4.52 4.39**, pa-core gone after wait): `KUTHA_BENCH_N=10000 cargo bench -p kutha-runtime --bench baseline --offline` alone, ingest_plain.n **101894268 ns** → **100147178 ns** (−1.7%); as_of.n **247421 ns** → **267138 ns** (+8.0%, eager). Neither regresses over 10 percent (a prior POST pass ingest_plain.n 140268212 ns sat under load **5.41 4.99 4.49** plus a 19s bench compile; discarded as noise).
+
+### Trajectory
+
+- ADR-012 / ADR-060 / ADR-061 gained Evidence one-liners only. Status stays **Proposed**. Honeycomb restaged; map/delivery/capability unchanged.
+
 ## 2026-10-23 — Trajectory: lease M155-S01 (checkpoint is a cut, not a hole)
 
 Process tag **v1.49** / Phase **229**. Not a SemVer release.
