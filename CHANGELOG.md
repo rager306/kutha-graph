@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-23 — Trajectory: lease M156-S01 (fork diff, B2)
+
+Process tag **v1.50** / Phase **230**. Not a SemVer release.
+
+- Active Milestone **M156**, Active Slice **S01** (`L_delivery=M156-S01`): read-side `diff_folds` over fold fact rows plus fork-then-diff on a counterfactual fixture. No Op, no wire change, no thaw. Honeycomb stays Proposed.
+
 ## 2026-10-23 — Trajectory: M155 / GSD v1.49 closed
 
 Process tag **v1.49** / Phase **229**. Not a SemVer release.

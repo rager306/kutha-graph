@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M156
+**Active Slice:** S01
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M155-closed
+L_delivery=M156-S01
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M155 closed (v1.49) | Capability proven / Cypher started |
+| L_delivery | M156-S01 leased (v1.50): fork diff (B2) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M155 is closed: after a checkpoint, `fork_at` fails closed on compacted cuts, the Horn cascade equals the twin (exact derivation records ride in the checkpoint payload; every dedup index is rebuilt from restored facts), and `migrate_compat` refuses a checkpointed store. Four independent verification rounds found and closed six more HIGH defects, including a reopen defect that predates the checkpoint (multi-path derived heads). Next: **B2** ADR-061 fork diff over the now-honest `fork_at` (fresh RED first; scout report: pure `diff_folds` over facts keyed by (event id, valid from, valid to), no new Op). Residuals that stay open until a fired RED: ordinary `StoreBlob` digests are not verified on open; `horn_behavior_reproducible` fails open on a missing rule blob; dangling lineage ids (`caused_by`, sidecar cites) after a checkpoint; a vintage checkpoint payload without `behaviors` opens with approximate Horn lineage (no such stores exist outside tests); `cause_of_behavior` is last-wins on duplicate event ids; checkpoint has no operator surface; B1b vacuum proper. Before B3: Samyama and FalkorDB baseline environment with the owner. Verus proofs ride inside the slice that touches the kernel. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M156 S01 (B2, ADR-061 reduced to a fact-set diff): a pure read-side `diff_folds(a, b)` over fold fact rows (identity: minting event id plus valid-time window, rank among equal keys; never `seq`), deterministic and sorted, with `added` / `removed` / `changed`; exactness proven on a counterfactual fork fixture (`fork_at` is fallible after M155), on a checkpointed store (`ForkCutUnavailable` is the defined failure), and by an apply-diff oracle (applying the diff to one side reproduces the other as a multiset of rows modulo `seq`). No Op, no wire change, no named refs, no GED, no merge, no thaw, fingerprint contract unchanged. Residuals that stay open until a fired RED: ordinary `StoreBlob` digests are not verified on open; `horn_behavior_reproducible` fails open on a missing rule blob; dangling lineage ids after a checkpoint; vintage checkpoint payloads; checkpoint has no operator surface; B1b vacuum. Before B3: Samyama and FalkorDB baseline environment with the owner. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 
