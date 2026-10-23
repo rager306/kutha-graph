@@ -1,4 +1,4 @@
-use crate::fold::{checkpoint_kept_prefix_op, GraphFold};
+use crate::fold::{GraphFold, checkpoint_kept_prefix_op};
 use crate::quantum::{
     Justification, PersistedQuantumOutcome, Runtime, RuntimeError, cascade_limit,
 };
@@ -311,9 +311,12 @@ pub struct OpWireMigrateReport {
 /// fail-open until this runs. Segmented layout is demoted to legacy jsonl SoT
 /// (operator may later run [`migrate`] for segments again); demote also removes
 /// every `seg-*.log` including generation-unique orphans (M070).
+/// Stores whose log contains [`Op::Checkpoint`] return `InvalidData` and leave
+/// the directory unchanged (D-04).
 pub fn migrate_op_wire(dir: &Path) -> std::io::Result<OpWireMigrateReport> {
     fs::create_dir_all(dir)?;
     let _lock = acquire_store_write_lock(dir)?;
+    migrate_refuse_checkpointed(dir)?;
     let marker = dir.join(OP_WIRE_MARKER_REL);
     if marker.exists() {
         return Ok(OpWireMigrateReport {
@@ -587,9 +590,29 @@ pub struct CompatMigrateReport {
 /// remap while meta-op envelopes remain. Idempotent when `op-wire.v1` and both
 /// pin markers already exist. Does not invent new remap rules.
 pub fn migrate_compat(dir: &Path) -> std::io::Result<CompatMigrateReport> {
+    migrate_refuse_checkpointed(dir)?;
     let op_wire = migrate_op_wire(dir)?;
     let pins = migrate_pins(dir)?;
     Ok(CompatMigrateReport { op_wire, pins })
+}
+
+/// Operator rewrite must not demote a compacted cut (D-04). Read-only: no marker,
+/// snapshot, or jsonl writes. `load_log_events` parses modern [`Event`] JSON;
+/// legacy envelopes (`AllowRelation`, …) return `InvalidData` here — those
+/// stores cannot contain `Op::Checkpoint`, so the helper returns Ok and
+/// [`migrate_op_wire`] remaps them.
+fn migrate_refuse_checkpointed(dir: &Path) -> std::io::Result<()> {
+    let events = match load_log_events(dir) {
+        Ok(events) => events,
+        Err(e) if e.kind() == ErrorKind::InvalidData => return Ok(()),
+        Err(e) => return Err(e),
+    };
+    if events.iter().any(|e| matches!(e.op, Op::Checkpoint { .. })) {
+        return Err(io_invalid(
+            "migrate refuses a store that contains Op::Checkpoint; directory unchanged",
+        ));
+    }
+    Ok(())
 }
 
 fn read_jsonl_values(path: &Path) -> std::io::Result<(Vec<serde_json::Value>, usize)> {

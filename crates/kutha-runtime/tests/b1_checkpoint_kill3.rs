@@ -684,8 +684,8 @@ fn r4_checkpoint_while_open_for_append_lock_held() {
     let _ = fs::remove_dir_all(&dir);
 }
 
-/// `migrate_compat` / `kutha-migrate` on a checkpointed dir must fail closed or
-/// leave query answers and the Checkpoint receipt intact (document which).
+/// `migrate_compat` / `kutha-migrate` on a checkpointed dir must fail closed
+/// (`InvalidData`) and leave payload files unchanged (D-04).
 #[test]
 fn r4_migrate_compat_and_kutha_migrate_on_checkpointed() {
     let _g = tiny_limits();
@@ -704,52 +704,15 @@ fn r4_migrate_compat_and_kutha_migrate_on_checkpointed() {
     let dir = persist_dir("mig-lib");
     store::persist(&rt, &dir).unwrap();
     store::checkpoint_sealed_prefix(&dir).unwrap();
-    let before_rt = store::open(&dir).unwrap();
-    let before_fp = before_rt.fold().fingerprint();
-    let before_as_of = before_rt.as_of(ValidTime::from(2015));
-    drop(before_rt);
     let before_files = payload_listing(&dir);
 
-    let lib = match store::migrate_compat(&dir) {
-        Err(e) => {
-            assert_eq!(
-                payload_listing(&dir),
-                before_files,
-                "HIGH R4: migrate_compat Err must leave payload files unchanged"
-            );
-            format!("fail-closed:{e}")
-        }
-        Ok(report) => {
-            let opened = store::open(&dir).unwrap_or_else(|e| {
-                panic!("HIGH R4: migrate_compat Ok then open failed: {e}");
-            });
-            opened.replay_check().unwrap_or_else(|e| {
-                panic!("HIGH R4: migrate_compat Ok then replay_check failed: {e}");
-            });
-            assert_eq!(
-                opened.fold().fingerprint(),
-                before_fp,
-                "HIGH R4: migrate_compat must not change fingerprint"
-            );
-            assert_eq!(opened.as_of(ValidTime::from(2015)), before_as_of);
-            assert!(
-                opened
-                    .log()
-                    .iter()
-                    .any(|e| matches!(e.op, Op::Checkpoint { .. })),
-                "HIGH R4: migrate_compat must not drop Op::Checkpoint"
-            );
-            format!(
-                "ok already={} remapped={} demoted_segments={}",
-                report.op_wire.already_migrated,
-                report.op_wire.remapped_lines,
-                !dir.join(store::MANIFEST_REL).exists()
-            )
-        }
-    };
-    // Observed library behaviour is recorded in 228-VERIFICATION.md.
-    assert!(!lib.is_empty(), "migrate_compat observation");
-    eprintln!("kill3 migrate_compat observation: {lib}");
+    let err = store::migrate_compat(&dir).expect_err("migrate_compat must refuse Checkpoint");
+    assert_eq!(err.kind(), ErrorKind::InvalidData);
+    assert_eq!(
+        payload_listing(&dir),
+        before_files,
+        "HIGH R4: migrate_compat Err must leave payload files unchanged"
+    );
 
     let cli_dir = persist_dir("mig-cli");
     let mut rt = Runtime::default();
@@ -765,32 +728,14 @@ fn r4_migrate_compat_and_kutha_migrate_on_checkpointed() {
     pad(&mut rt, 6, "migc");
     store::persist(&rt, &cli_dir).unwrap();
     store::checkpoint_sealed_prefix(&cli_dir).unwrap();
-    let before = store::open(&cli_dir).unwrap();
-    let fp = before.fold().fingerprint();
-    drop(before);
     let out = Command::new(env!("CARGO_BIN_EXE_kutha-migrate"))
         .arg(&cli_dir)
         .output()
         .expect("spawn kutha-migrate");
-    if !out.status.success() {
-        // fail closed
-    } else {
-        let opened = store::open(&cli_dir).unwrap_or_else(|e| {
-            panic!("HIGH R4: kutha-migrate exit 0 then open failed: {e}");
-        });
-        assert_eq!(
-            opened.fold().fingerprint(),
-            fp,
-            "HIGH R4: kutha-migrate must not change fingerprint"
-        );
-        assert!(
-            opened
-                .log()
-                .iter()
-                .any(|e| matches!(e.op, Op::Checkpoint { .. })),
-            "HIGH R4: kutha-migrate must not drop Op::Checkpoint"
-        );
-    }
+    assert!(
+        !out.status.success(),
+        "HIGH R4: kutha-migrate must not succeed on a checkpointed store"
+    );
     let _ = fs::remove_dir_all(&dir);
     let _ = fs::remove_dir_all(&cli_dir);
 }
