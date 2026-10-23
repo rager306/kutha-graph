@@ -41,8 +41,14 @@ impl Default for FactChange {
     }
 }
 
-fn vt_ord(to: Option<u64>) -> u64 {
-    to.unwrap_or(u64::MAX)
+/// `None` (open interval / no invalidation) is distinct from `Some(u64::MAX)` and ranks greater than any `Some`.
+fn opt_u64_cmp(a: Option<u64>, b: Option<u64>) -> Ordering {
+    match (a, b) {
+        (None, None) => Ordering::Equal,
+        (None, Some(_)) => Ordering::Greater,
+        (Some(_), None) => Ordering::Less,
+        (Some(x), Some(y)) => x.cmp(&y),
+    }
 }
 
 fn polarity_rank(p: Option<SupportPolarity>) -> u8 {
@@ -67,7 +73,7 @@ fn canon_cmp(a: &Fact, b: &Fact) -> Ordering {
     a.event_id
         .cmp(&b.event_id)
         .then(a.valid_from.cmp(&b.valid_from))
-        .then(vt_ord(a.valid_to).cmp(&vt_ord(b.valid_to)))
+        .then(opt_u64_cmp(a.valid_to, b.valid_to))
         .then(a.object().cmp(&b.object()))
         .then(a.relation.cmp(&b.relation))
         .then(a.subject.cmp(&b.subject))
@@ -75,15 +81,15 @@ fn canon_cmp(a: &Fact, b: &Fact) -> Ordering {
         .then(delivery_key_cmp(&a.delivery_key, &b.delivery_key))
         .then(polarity_rank(a.polarity).cmp(&polarity_rank(b.polarity)))
         .then(a.ingested_at.cmp(&b.ingested_at))
-        .then(vt_ord(a.invalidated_at).cmp(&vt_ord(b.invalidated_at)))
+        .then(opt_u64_cmp(a.invalidated_at, b.invalidated_at))
 }
 
-fn identity_key(f: &Fact) -> (EventId, u64, u64) {
-    (f.event_id, f.valid_from, vt_ord(f.valid_to))
+fn identity_key(f: &Fact) -> (EventId, u64, Option<u64>) {
+    (f.event_id, f.valid_from, f.valid_to)
 }
 
-fn ranked_picture(facts: &[Fact]) -> BTreeMap<((EventId, u64, u64), usize), Fact> {
-    let mut groups: BTreeMap<(EventId, u64, u64), Vec<Fact>> = BTreeMap::new();
+fn ranked_picture(facts: &[Fact]) -> BTreeMap<((EventId, u64, Option<u64>), usize), Fact> {
+    let mut groups: BTreeMap<(EventId, u64, Option<u64>), Vec<Fact>> = BTreeMap::new();
     for f in facts {
         groups.entry(identity_key(f)).or_default().push(f.clone());
     }

@@ -29,7 +29,7 @@ RED empty stub then GREEN keyed `diff_folds` (`30afc37`, `a3358ab`, `7aae862`).
 ## GREEN
 b4 7/7. Totality both directions, `as_of` 2011/2015/2019, `as_known_on` two walls, xorshift rank, CI residuals, multipath `EventId::nil()`. Interior `1..=c` is `ForkCutUnavailable`.
 ## Isolation
-`FoldDiff` / `FactChange` / `diff_folds` / `GraphFold::diff` moved to `fold_diff.rs` (same `lib.rs` re-exports). `fold_query.rs` byte-identical to 791df68. `Fact` drops `Default`; `Fact::blank` is crate-private for `FactChange::default`.
+`FoldDiff` / `FactChange` / `diff_folds` / `GraphFold::diff` moved to `fold_diff.rs` (same `lib.rs` re-exports). `fold_query.rs` byte-identical to 791df68. `Fact` drops `Default`; `Fact::blank` is crate-private for `FactChange::default`. Identity/`canon_cmp` compare `Option<u64>` for `valid_to`/`invalidated_at` (`None` > any `Some`; not `u64::MAX`).
 ## Bench A/B
 Replaces single-sample POST. BASE=791df68 vs HEAD, 9 alternating pairs, `taskset -c 0`, `KUTHA_BENCH_N=10000 <bin> --bench`. PRE (BASE median) ingest_plain.n=**120198466** as_of.n=**264152**. POST (HEAD median) **116451919** (ratio 0.969) / **267389** (ratio 1.012). Min 95486772 / 99172304 and 234027 / 251208. No >3× outliers. 1-min load 3.21–6.06. Verdict PASS.
 ## Gates

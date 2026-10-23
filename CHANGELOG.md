@@ -10,6 +10,10 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Read-side `diff_folds` / `GraphFold::diff` fact-set query in `fold_diff.rs` (`FoldDiff` added / removed / changed). Identity is `(event_id, valid_from, valid_to)` plus canonical rank among equal keys; `seq` never keys, ranks, or marks changed. A test-only `apply_diff` in `b4_fork_diff.rs` reconstructs the other side as a multiset of rows modulo `seq` (including `as_of` / `as_known_on` oracles). Checkpointed `fork_at(c+1..=len)` diffs like the copied-log twin; interior `1..=c` is `ForkCutUnavailable`. No Op, named refs, GED, merge, operator CLI, or harness check. Independent kill-tests in `b4_fork_diff_kill.rs` pin apply-diff totality, equal-key rank, seq-ignored identity, dead-row domain, checkpointed twin, and Option-faithful `valid_to` / `invalidated_at` (None is not `u64::MAX`).
 
+### Fixed
+
+- `identity_key` / `canon_cmp` keep `valid_to` and `invalidated_at` as `Option<u64>` (`None` ranks after every `Some`, including `Some(u64::MAX)`); open interval / no invalidation is not a `u64::MAX` sentinel.
+
 ### Changed
 
 - Picture-diff types moved out of `fold_query.rs` (now byte-identical to 791df68) into `fold_diff.rs` so ingest/`as_of` codegen is isolated. `Fact` no longer derives `Default`; `Fact::blank` is a crate-private zeroed row for `FactChange::default` only.
