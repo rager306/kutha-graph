@@ -353,8 +353,7 @@ fn b5_hop_fail_closed_unknown_relation() {
 
     let a = rt.intern("A");
     let related = rt.intern("relatedTo");
-    let _in_force = rt.intern("inForceAs");
-    let _ = related;
+    let in_force = rt.intern("inForceAs");
     let log1 = rt.log().len();
     let fp1 = rt.fold().fingerprint();
 
@@ -391,8 +390,30 @@ fn b5_hop_fail_closed_unknown_relation() {
     )
     .unwrap_err();
     assert!(
-        matches!(mismatch, QueryError::UnknownRelation { ref name } if name == "rels/k mismatch"),
+        matches!(mismatch, QueryError::RelsShape { rels: 2, k: 1 }),
         "{mismatch:?}"
+    );
+    assert_eq!(
+        mismatch.to_string(),
+        "rels length 2 is not 0, 1, or k=1 (unlabeled, repeated, or per-hop)"
+    );
+    assert_eq!(log1, rt.log().len());
+    assert_eq!(fp1, rt.fold().fingerprint());
+
+    let mismatch_exec = execute(
+        &rt,
+        &hops(
+            a,
+            vec![related, in_force],
+            1,
+            TransactionTime::MAX,
+            ValidTime::from(T_OLD),
+        ),
+    )
+    .unwrap_err();
+    assert!(
+        matches!(mismatch_exec, QueryError::RelsShape { rels: 2, k: 1 }),
+        "{mismatch_exec:?}"
     );
     assert_eq!(log1, rt.log().len());
     assert_eq!(fp1, rt.fold().fingerprint());
@@ -411,7 +432,6 @@ fn b5_hop_fail_closed_unknown_relation() {
     assert!(matches!(oob, QueryError::UnknownTerm { .. }), "{oob:?}");
     assert_eq!(log1, rt.log().len());
     assert_eq!(fp1, rt.fold().fingerprint());
-    let _ = a;
 }
 
 #[test]
@@ -455,4 +475,100 @@ fn b5_hop_shuffle_deterministic() {
     }
     assert_eq!(answers[0], answers[1]);
     assert_eq!(answers[1], answers[2]);
+}
+
+#[test]
+fn b5_hop_per_hop_rels_order() {
+    let mut rt = Runtime::default();
+    let a = rt.intern("A");
+    let b = rt.intern("B");
+    let c = rt.intern("C");
+    let r1 = rt.intern("relatedTo");
+    let r2 = rt.intern("inForceAs");
+    emit_edge(&mut rt, a, r1, b, VF_FIRST, None);
+    emit_edge(&mut rt, b, r2, c, VF_FIRST, None);
+
+    let tt = TransactionTime::MAX;
+    let vt = ValidTime::from(T_OLD);
+    let right = try_hops_named(&rt, "A", &["relatedTo", "inForceAs"], 2, tt, vt, 0).unwrap();
+    let wrong = try_hops_named(&rt, "A", &["inForceAs", "relatedTo"], 2, tt, vt, 0).unwrap();
+
+    let got_right = nodes(execute(&rt, &right).unwrap());
+    let join_right = nested_join_ends(&rt, a, &[r1, r2], 2, tt, vt);
+    assert_eq!(got_right, join_right);
+    assert_eq!(got_right, vec![c], "A-relatedTo-B-inForceAs-C");
+
+    let got_wrong = nodes(execute(&rt, &wrong).unwrap());
+    let join_wrong = nested_join_ends(&rt, a, &[r2, r1], 2, tt, vt);
+    assert_eq!(got_wrong, join_wrong);
+    assert!(
+        got_wrong.is_empty(),
+        "swapped per-hop rels must not walk the chain"
+    );
+}
+
+#[test]
+fn b5_hop_limit_truncates_sorted_prefix() {
+    // limit == 0 is unlimited (QueryIr Scan/Hops); otherwise a prefix of the sorted rows.
+    let mut rt = Runtime::default();
+    let (a, b, c, d, x, y, z, rel) = intern_chain(&mut rt);
+    load_chain_branch_diamond(&mut rt, a, b, c, d, x, y, z, rel);
+    let tt = TransactionTime::MAX;
+    let vt = ValidTime::from(T_OLD);
+
+    let unlimited = nodes(execute(&rt, &hops(a, vec![rel], 1, tt, vt)).unwrap());
+    let mut expect = vec![b, d, x, y];
+    expect.sort_unstable();
+    assert_eq!(unlimited, expect, "limit 0 keeps the full sorted node set");
+
+    let limited = nodes(
+        execute(
+            &rt,
+            &QueryIr::Hops {
+                start: a,
+                rels: vec![rel],
+                k: 1,
+                tt,
+                vt,
+                limit: 2,
+            },
+        )
+        .unwrap(),
+    );
+    assert_eq!(
+        limited,
+        expect[..2],
+        "limit 2 is the prefix of sorted unique ends"
+    );
+
+    let mut as_of_sorted = rt.as_of(vt);
+    as_of_sorted.sort_unstable();
+    assert!(
+        as_of_sorted.len() > 2,
+        "scan bag must be long enough to show truncation"
+    );
+    let scan_unlimited = execute(
+        &rt,
+        &QueryIr::Scan {
+            tt: TransactionTime::MAX,
+            vt,
+            limit: 0,
+        },
+    )
+    .unwrap();
+    assert_eq!(scan_unlimited, QueryRows::Triples(as_of_sorted.clone()));
+    let scan_limited = execute(
+        &rt,
+        &QueryIr::Scan {
+            tt: TransactionTime::MAX,
+            vt,
+            limit: 2,
+        },
+    )
+    .unwrap();
+    assert_eq!(
+        scan_limited,
+        QueryRows::Triples(as_of_sorted[..2].to_vec()),
+        "Scan limit is a prefix of the sorted bag"
+    );
 }

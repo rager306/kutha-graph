@@ -10,6 +10,10 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Thin typed query IR in `query_ir.rs` (`Workload = QueryIr`; no serde). `execute(&Runtime, &QueryIr)` is read-only over `live_at` / `typed_csr_lease_at` / `csr_lease_at`. Scan is a sorted product bag (`tt == MAX` equals `as_of(vt)`; `limit == 0` unlimited). Hops return sorted unique end nodes (`BTreeSet` frontier; unlabeled any-rel; typed rel filter; diamond and support multiplicity collapse). `try_hops_named` uses `dictionary().id` only (never `intern` / `admit`); intern-map miss is `QueryError`. Oracles in `tests/b5_hop_workload.rs` (in-memory only): scan vs sorted `as_of` on FF5+statute, nested join on chain+branch+diamond, unlabeled vs untyped neighbors, VT window-end and TT retract PIT, fail-closed unknown names, xorshift shuffle. No parser, planner, Op, wire, or fingerprint change. Hop bench band is 231-02.
 
+### Fixed
+
+- `QueryError::RelsShape { rels, k }` is the fail-closed error when hops `rels.len()` is not 0, 1, or `k` (no longer `UnknownRelation { name: "rels/k mismatch" }`). Named oracles: per-hop `rels` order vs nested join (`b5_hop_per_hop_rels_order`); `limit` is a prefix of sorted rows and `limit == 0` is unlimited (`b5_hop_limit_truncates_sorted_prefix`). `try_hops_named` stays re-exported from `lib.rs`.
+
 ## 2026-10-23 — Product: fork diff
 
 ### Added

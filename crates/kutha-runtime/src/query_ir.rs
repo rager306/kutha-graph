@@ -40,11 +40,20 @@ pub enum QueryRows {
     Nodes(Vec<TermId>),
 }
 
-/// Fail-closed intern-map miss. Relation Display copies [`crate::RuntimeError`].
+/// Fail-closed intern-map miss or hops `rels` shape. Relation Display copies [`crate::RuntimeError`].
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum QueryError {
-    UnknownRelation { name: String },
-    UnknownTerm { name: String },
+    UnknownRelation {
+        name: String,
+    },
+    UnknownTerm {
+        name: String,
+    },
+    /// `rels.len()` is not 0 (unlabeled), 1 (same rel every hop), or `k` (per-hop).
+    RelsShape {
+        rels: usize,
+        k: usize,
+    },
 }
 
 impl fmt::Display for QueryError {
@@ -54,6 +63,12 @@ impl fmt::Display for QueryError {
                 write!(f, "unknown relation {name} (not in allowlist)")
             }
             QueryError::UnknownTerm { name } => write!(f, "unknown term {name}"),
+            QueryError::RelsShape { rels, k } => {
+                write!(
+                    f,
+                    "rels length {rels} is not 0, 1, or k={k} (unlabeled, repeated, or per-hop)"
+                )
+            }
         }
     }
 }
@@ -82,8 +97,9 @@ fn require_rels_shape(rels: &[TermId], k: u32) -> Result<(), QueryError> {
     if n == 0 || n == 1 || n == k as usize {
         Ok(())
     } else {
-        Err(QueryError::UnknownRelation {
-            name: "rels/k mismatch".to_string(),
+        Err(QueryError::RelsShape {
+            rels: n,
+            k: k as usize,
         })
     }
 }
