@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M156: fork diff (B2) — LEASED (GSD v1.50)
+## M156: fork diff (B2) — CLOSED (GSD v1.50)
 
 Second product slice of Arc B. ADR-061 reduced (as the direction proposal allows) to a fact-set diff of two folds, plus fork-then-diff on a counterfactual fixture. Read-side only: no Op, no wire change, no named refs, no GED, no merge. Depends on M155 (`fork_at` fails closed on compacted cuts). Scout (2026-10-23) found `rg diff_folds|FoldDiff crates` empty and ADR-061 F8 "no public diff" open. Honeycomb stays Proposed; nothing thawed.
 
-- [ ] **S01: diff_folds over fact rows** `risk:medium` `depends:[]`
-  > After this: `diff_folds(a, b)` returns sorted `added` / `removed` / `changed` keyed by (event id, valid window, rank); `diff(a,a)` empty; antisymmetric; applying the diff to `a` reproduces `b` as a multiset of rows modulo `seq`; counterfactual fork fixture exact; checkpointed store gives the defined failure on interior cuts; bench gate recorded. Phase 230.
+- [x] **S01: diff_folds over fact rows** `risk:medium` `depends:[]`
+  > After this: `diff_folds(a, b)` returns sorted `added` / `removed` / `changed` keyed by (event id, valid window, rank); `diff(a,a)` empty; antisymmetric; applying the diff to `a` reproduces `b` as a multiset of rows modulo `seq`; counterfactual fork fixture exact; checkpointed store gives the defined failure on interior cuts; bench gate recorded. Phase 230. Landed (independent verification found two HIGH Option-sentinel defects, fixed and re-run).
 
 ## M155: checkpoint is a cut, not a hole — CLOSED (GSD v1.49)
 

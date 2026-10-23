@@ -1,7 +1,7 @@
 ---
 phase: 230-fork-diff
 independent: true
-status: failed
+status: passed-after-fix
 verifier_model: Cursor Grok 4.6
 commands:
   - cmd: cargo test -p kutha-runtime --offline --no-fail-fast
@@ -24,7 +24,7 @@ read_only_inputs:
 
 # Phase 230 — independent verification
 
-**Verdict: FAIL.** `diff_folds` / `GraphFold::diff` is a `facts()` query (ADR-061 Evidence 2026-10-23). CBM: `fold_diff.rs` `not_tracked`; source read. No product edit.
+**Verdict: FAIL at 83d7366; PASS at 74bdfb3 (see Re-run).** `diff_folds` / `GraphFold::diff` is a `facts()` query (ADR-061 Evidence 2026-10-23). CBM: `fold_diff.rs` `not_tracked`; source read. No product edit.
 
 ## Claims
 
@@ -53,3 +53,7 @@ read_only_inputs:
 - `uv run kutha-gov ci --jobs 1` **1**, `run_high=2` (observe_cargo 101 on the kill file; incomplete). `test-matrix` / docs-coupling 0.
 
 No `index_repository`. PersistScratch RAII; `tmp/` empty.
+
+## Re-run after fix (74bdfb3)
+
+Findings 1 and 2 were fixed in `fold_diff.rs` (`None` is a distinct value above every `Some`; identity key keeps `Option<u64>`). The verifier's kill-tests were not edited; both now pass (8/8). Controller re-ran the gates on the fixed tree: `cargo test --workspace --offline --no-fail-fast` **0** (`m019_dur_a` 19/19; finding 3 did not reproduce), `uv run kutha-gov ci --jobs 1` **0**, `run_high=0`. Bench gate: hot-path files unchanged (`fold_query.rs` identical to 791df68), A/B in the CHANGELOG Product entry.

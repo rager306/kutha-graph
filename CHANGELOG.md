@@ -23,6 +23,14 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - ADR-061 Evidence 2026-10-23: fact-set `diff_folds` shipped; named refs (D061-1) and GED (D061-3) still open. Status stays **Proposed**. Honeycomb restaged; map/delivery/capability unchanged.
 
+## 2026-10-23 — Trajectory: M156 / GSD v1.50 closed
+
+Process tag **v1.50** / Phase **230**. Not a SemVer release.
+
+- B2 fork diff: read-side `diff_folds` / `GraphFold::diff` over fold fact rows, exact on counterfactual and checkpointed forks, order-independent. One independent verification round found two HIGH defects (open interval and no-invalidation collapsed with `u64::MAX` in identity and rank); fixed and re-run. `cargo test --workspace --offline --no-fail-fast` 0, `kutha-gov ci --jobs 1` `run_high=0`. Bench numbers (9 alternating A/B pairs; an earlier single-sample and a 7-pair non-alternating run were order-biased and are superseded) are in the Product entry below.
+- Residuals (each needs a fired RED before a lease): ordinary `StoreBlob` digests are not verified on open; `horn_behavior_reproducible` fails open on a missing rule blob; dangling lineage ids after a checkpoint; vintage checkpoint payload without `behaviors`; `cause_of_behavior` last-wins on duplicate event ids; checkpoint has no operator surface; B1b vacuum.
+- `L_delivery=M156-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.50 / Phase 230. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-23 — Trajectory: lease M156-S01 (fork diff, B2)
 
 Process tag **v1.50** / Phase **230**. Not a SemVer release.
