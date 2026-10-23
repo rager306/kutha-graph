@@ -3,7 +3,7 @@
 //! Does not change the 29 `baseline.rs` keys.
 
 use kutha_common::{Op, TermId, TransactionTime, ValidTime};
-use kutha_runtime::{QueryIr, QueryRows, Runtime, execute};
+use kutha_runtime::{Prepared, QueryIr, QueryRows, Runtime, prepare};
 use std::collections::BTreeMap;
 use std::env;
 use std::hint::black_box;
@@ -96,7 +96,7 @@ fn main() {
     let mut metrics: BTreeMap<String, (String, String)> = BTreeMap::new();
     put(&mut metrics, "base_n", n, "1");
 
-    // One calibration loop for all sizes so hop2.{n,2n,4n} share a denominator.
+    // One calibration loop for all sizes so hop2.walk.{n,2n,4n} share a denominator.
     let calib_iters = 20_000_000u64;
     let calib_ns = calibrate(calib_iters);
     put(&mut metrics, "calib", calib_ns, "ns");
@@ -112,37 +112,49 @@ fn main() {
         let suffix = size_suffix(factor);
         let mut rt = Runtime::default();
         let (rel, starts) = fill_layered(&mut rt, planned);
+        let Some(first) = starts.first().copied() else {
+            eprintln!("hop2.walk needs at least one layer-0 start at factor {factor}");
+            process::exit(1);
+        };
+        let template = QueryIr::Hops {
+            start: first,
+            rels: vec![rel],
+            k: 2,
+            tt,
+            vt,
+            limit: 0,
+        };
 
+        // Lease built once at this cut; timed separately from the walk.
         let t_csr = Instant::now();
-        let lease = rt.typed_csr_lease_at(tt, vt);
+        let prepared = match prepare(&rt, &template) {
+            Ok(Prepared::Hops(h)) => h,
+            other => {
+                eprintln!("prepare hops failed at factor {factor}: {other:?}");
+                process::exit(1);
+            }
+        };
         csr_raw[idx] = t_csr.elapsed().as_nanos();
-        black_box(lease);
 
-        let t_hop = Instant::now();
+        let t_walk = Instant::now();
         for start in &starts {
-            let q = QueryIr::Hops {
-                start: *start,
-                rels: vec![rel],
-                k: 2,
-                tt,
-                vt,
-                limit: 0,
-            };
-            match execute(&rt, &q) {
+            match prepared.run_from(*start) {
                 Ok(QueryRows::Nodes(nodes)) if !nodes.is_empty() => {
                     black_box(nodes);
                 }
                 other => {
-                    eprintln!("hop2 empty or non-Nodes for start at factor {factor}: {other:?}");
+                    eprintln!(
+                        "hop2.walk empty or non-Nodes for start at factor {factor}: {other:?}"
+                    );
                     process::exit(1);
                 }
             }
         }
-        hop_raw[idx] = t_hop.elapsed().as_nanos();
+        hop_raw[idx] = t_walk.elapsed().as_nanos();
 
         put(
             &mut metrics,
-            &format!("hop2.{suffix}"),
+            &format!("hop2.walk.{suffix}"),
             ratio(hop_raw[idx], calib_ns),
             "calib",
         );
@@ -154,7 +166,7 @@ fn main() {
         );
         put(
             &mut metrics,
-            &format!("hop2.{suffix}_ns"),
+            &format!("hop2.walk.{suffix}_ns"),
             hop_raw[idx],
             "ns",
         );
@@ -168,13 +180,13 @@ fn main() {
 
     put(
         &mut metrics,
-        "hop2.2n_over_n",
+        "hop2.walk.2n_over_n",
         ratio(hop_raw[1], hop_raw[0]),
         "1",
     );
     put(
         &mut metrics,
-        "hop2.4n_over_2n",
+        "hop2.walk.4n_over_2n",
         ratio(hop_raw[2], hop_raw[1]),
         "1",
     );
@@ -192,13 +204,14 @@ fn main() {
     );
 
     let expected = [
-        "hop2.n",
-        "hop2.2n",
-        "hop2.4n",
+        "hop2.walk.n",
+        "hop2.walk.2n",
+        "hop2.walk.4n",
         "csr_lease.n",
         "csr_lease.2n",
         "csr_lease.4n",
-        "hop2.2n_over_n",
+        "hop2.walk.2n_over_n",
+        "hop2.walk.4n_over_2n",
         "csr_lease.2n_over_n",
     ];
     for key in expected {

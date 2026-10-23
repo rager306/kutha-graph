@@ -40,7 +40,10 @@ pub use quantum::{
     ActionRecord, ConflictReport, Justification, NormTriple, NormView, OutcomeDisposition,
     PersistedQuantumOutcome, QuantumOutcome, Runtime, RuntimeError, disposition,
 };
-pub use query_ir::{execute, try_hops_named, QueryError, QueryIr, QueryRows, Workload};
+pub use query_ir::{
+    execute, prepare, try_hops_named, Prepared, PreparedHops, PreparedScan, QueryError, QueryIr,
+    QueryRows, Workload,
+};
 pub use receipt::{QuantumReceipt, digest_to_hex};
 pub use snapshot::Snapshot;
 pub use tenant::{IngestReport, TenantError, ingest_harness_jsonl, ingest_harness_jsonl_str};

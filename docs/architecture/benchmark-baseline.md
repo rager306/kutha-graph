@@ -473,18 +473,20 @@ Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated worktrees (`tmp/v013-close-bas
 
 Second `[[bench]]` `hop_k` (`crates/kutha-runtime/benches/hop_k.rs`). `baseline.rs` still prints the same 29 keys. hop2 has no BASE twin; the 10% gate is ingest_plain.n / as_of.n vs `46b7114` (see CHANGELOG Product: hop workload).
 
-Default `KUTHA_HOP_N=256`, factors 1/2/4, three layers of `n` nodes, fan-out 4, `relatedTo`. Calibration is a 20e6 `black_box` wrapping-add loop (shared denominator). `hop2.{n,2n,4n}` is 2-hop `execute(Hops)` from every layer-0 node as a ratio vs that loop; `csr_lease.{n,2n,4n}` times one `typed_csr_lease_at`. Also print 2n/n and 4n/2n from raw ns.
+Default `KUTHA_HOP_N=256`, factors 1/2/4, three layers of `n` nodes, fan-out 4, `relatedTo`. Calibration is a 20e6 `black_box` wrapping-add loop (shared denominator; kept, not DCE). `prepare` builds the typed CSR lease **once** at the query cut; `hop2.walk.{n,2n,4n}` times only `PreparedHops::run_from` over every layer-0 start; `csr_lease.{n,2n,4n}` times that one `prepare`. Also print 2n/n and 4n/2n from raw ns.
 
-Recorded range (4 runs, `taskset -c 0`, load 3.05 3.34 3.38). Not an absolute-ns promise.
+The previous `hop2.{n,2n,4n}` band (n/calib **1.39–2.14**, 2n/n **2.73–2.88**, 4n/2n **4.06–4.51**) measured interpreter + n×CSR rebuild, not the walk, and is superseded.
+
+Recorded range (4 runs, `taskset -c 0`, load 16.0–19.3 after a 15 min wait on foreign cargo). Not an absolute-ns promise.
 
 | metric | range |
 |--------|-------|
-| hop2.n / calib | 1.39–2.14 |
-| hop2 2n/n | 2.73–2.88 |
-| hop2 4n/2n | 4.06–4.51 |
-| csr_lease.n / calib | 0.010–0.031 |
+| hop2.walk.n / calib | 0.005–0.013 |
+| hop2.walk 2n/n | 1.56–3.01 |
+| hop2.walk 4n/2n | 1.36–2.56 |
+| csr_lease.n / calib | 0.010–0.020 |
 
-`execute` rebuilds the typed CSR per start, so hop2 4n/2n is superlinear (~starts × lease size), not ~2. csr_lease 2n/n is noisy (one `from_fold` per size, hundreds of µs).
+Walk 4n/2n is ~2 (linear in starts) rather than ~4.5. csr_lease 2n/n stays noisy (one `from_fold` per size). The 2n/n upper end is load-noisy on a busy host; the shape is still ~linear, not Θ(n²) rebuild.
 
 
 

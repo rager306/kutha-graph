@@ -1,7 +1,9 @@
 //! B3-lite hop workload oracles (M157 S01). In-memory `Runtime::default()` only.
 
 use kutha_common::{Op, TermId, TransactionTime, ValidTime};
-use kutha_runtime::{QueryError, QueryIr, QueryRows, Runtime, execute, try_hops_named};
+use kutha_runtime::{
+    Prepared, QueryError, QueryIr, QueryRows, Runtime, execute, prepare, try_hops_named,
+};
 use std::collections::BTreeSet;
 
 const T_OLD: u64 = 2015;
@@ -570,5 +572,119 @@ fn b5_hop_limit_truncates_sorted_prefix() {
         scan_limited,
         QueryRows::Triples(as_of_sorted[..2].to_vec()),
         "Scan limit is a prefix of the sorted bag"
+    );
+}
+
+#[test]
+fn b5_hop_prepare_run_equals_execute() {
+    let mut rt = Runtime::default();
+    let article = rt.intern("art-12-speed");
+    let in_force = rt.intern("inForceAs");
+    let limit_50 = rt.intern("50-kmh");
+    let limit_30 = rt.intern("30-kmh");
+    let statute = rt.intern("statute-x");
+    let in_force_obj = rt.intern("in-force");
+    emit_edge(
+        &mut rt,
+        article,
+        in_force,
+        limit_50,
+        VF_FIRST,
+        Some(VF_SECOND),
+    );
+    emit_edge(&mut rt, article, in_force, limit_30, VF_SECOND, None);
+    emit_edge(&mut rt, statute, in_force, in_force_obj, VF_FIRST, None);
+
+    for vt in [T_OLD, T_NEW] {
+        let q = QueryIr::Scan {
+            tt: TransactionTime::MAX,
+            vt: ValidTime::from(vt),
+            limit: 0,
+        };
+        assert_eq!(
+            prepare(&rt, &q).unwrap().run(),
+            execute(&rt, &q).unwrap(),
+            "prepare+run Scan equals execute at vt={vt}"
+        );
+    }
+
+    let (a, b, _c, _d, _x, _y, _z, rel) = intern_chain(&mut rt);
+    load_chain_branch_diamond(&mut rt, a, b, _c, _d, _x, _y, _z, rel);
+    let tt = TransactionTime::MAX;
+    let vt = ValidTime::from(T_OLD);
+    let qh = hops(a, vec![rel], 2, tt, vt);
+    let prepared = prepare(&rt, &qh).unwrap();
+    assert_eq!(
+        prepared.run(),
+        execute(&rt, &qh).unwrap(),
+        "prepare+run hops equals execute on chain+diamond"
+    );
+    let Prepared::Hops(hop) = &prepared else {
+        panic!("chain hops must prepare as Hops");
+    };
+    let from_b = hops(b, vec![rel], 2, tt, vt);
+    assert_eq!(
+        hop.run_from(b).unwrap(),
+        execute(&rt, &from_b).unwrap(),
+        "run_from reuses the lease for another start at the same cut"
+    );
+}
+
+#[test]
+fn b5_hop_prepared_cut_is_snapshot() {
+    // Mismatched-cut reuse is unrepresentable: Prepared::run does not take QueryIr.
+    // A snapshot at VT 2015 must not silently answer VT 2021; run_from cannot change the cut.
+    let mut rt = Runtime::default();
+    let a = rt.intern("A");
+    let b = rt.intern("B");
+    let c = rt.intern("C");
+    let rel = rt.intern("relatedTo");
+    emit_edge(&mut rt, a, rel, b, VF_FIRST, None);
+    let bc = emit_edge(&mut rt, b, rel, c, VF_FIRST, Some(VF_SECOND));
+    let rels = vec![rel];
+    let q_early = hops(
+        a,
+        rels.clone(),
+        2,
+        TransactionTime::MAX,
+        ValidTime::from(T_OLD),
+    );
+    let q_late = hops(
+        a,
+        rels.clone(),
+        2,
+        TransactionTime::MAX,
+        ValidTime::from(T_NEW),
+    );
+    let prepared_early = prepare(&rt, &q_early).unwrap();
+    let early = prepared_early.run();
+    let late = execute(&rt, &q_late).unwrap();
+    assert_eq!(early, execute(&rt, &q_early).unwrap());
+    assert_ne!(
+        early, late,
+        "prepared 2015 snapshot must not equal execute at 2021"
+    );
+    assert_eq!(nodes(early.clone()), vec![c]);
+    assert!(nodes(late).is_empty());
+
+    rt.emit(Op::Retract { event_id: bc }).unwrap();
+    assert_eq!(
+        prepared_early.run(),
+        early,
+        "prepared lease is a fold snapshot, not live-updating"
+    );
+    assert!(
+        nodes(execute(&rt, &q_early).unwrap()).is_empty(),
+        "live execute after Retract drops C"
+    );
+
+    let Prepared::Hops(hop) = prepared_early else {
+        panic!("hops prepare");
+    };
+    assert_eq!(hop.run_from(a).unwrap(), early);
+    let oob = hop.run_from(TermId::MAX).unwrap_err();
+    assert!(
+        matches!(oob, QueryError::UnknownTerm { .. }),
+        "run_from unknown start fails closed: {oob:?}"
     );
 }

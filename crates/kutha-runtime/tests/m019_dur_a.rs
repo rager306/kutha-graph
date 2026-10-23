@@ -10,9 +10,21 @@ use std::os::unix::fs::MetadataExt;
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::sync::Arc;
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::{Arc, Mutex, MutexGuard};
 
-struct LimitGuard;
+mod common;
+
+/// Serializes tests that set process-global segment limits or assert exclusive
+/// `kutha.lock` oracles. Poison recovery avoids a panicked sibling wedging the file.
+fn exclusive_lock() -> MutexGuard<'static, ()> {
+    static M: Mutex<()> = Mutex::new(());
+    M.lock().unwrap_or_else(|p| p.into_inner())
+}
+
+struct LimitGuard {
+    _excl: MutexGuard<'static, ()>,
+}
 
 impl Drop for LimitGuard {
     fn drop(&mut self) {
@@ -21,8 +33,9 @@ impl Drop for LimitGuard {
 }
 
 fn tiny_limits() -> LimitGuard {
+    let _excl = exclusive_lock();
     store::set_test_segment_limits(Some(4096), Some(3));
-    LimitGuard
+    LimitGuard { _excl }
 }
 
 fn crc32(data: &[u8]) -> u32 {
@@ -45,24 +58,11 @@ const T_NEW: u64 = 2021;
 const VF_FIRST: u64 = 2010;
 const VF_SECOND: u64 = 2020;
 
-fn persist_dir(label: &str) -> PathBuf {
-    // Unique even under same-binary parallel tests (nanos alone can collide).
-    static N: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
-    let seq = N.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-    let nanos = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../..")
-        .join("tmp")
-        .join(format!(
-            "p60-store-{label}-{}-{nanos}-{seq}",
-            std::process::id()
-        ));
-    let _ = fs::remove_dir_all(&dir);
-    fs::create_dir_all(&dir).unwrap();
-    dir
+fn persist_dir(label: &str) -> common::PersistScratch {
+    // Seq in the label: PersistScratch is pid+nanos; seq avoids same-ns collisions.
+    static N: AtomicU64 = AtomicU64::new(0);
+    let seq = N.fetch_add(1, Ordering::Relaxed);
+    common::PersistScratch::new(&format!("p60-m019-{label}-{seq}"))
 }
 
 fn seed_runtime() -> Runtime {
@@ -225,7 +225,6 @@ fn checkpoint_omitted_qo_then_open_for_append_fails_closed() {
         err.to_string().contains("snapshot log_offset is ahead"),
         "needle must stay snapshot-ahead; got {err}"
     );
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
@@ -242,7 +241,6 @@ fn jsonl_inode_changes_on_persist_rename() {
         ino1, ino2,
         "jsonl must be replaced via tmp+rename (inode must change)"
     );
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
@@ -260,7 +258,6 @@ fn seg_manifest_tmp_sync_all_before_rename() {
     );
     assert!(dir.join(store::MANIFEST_REL).exists());
     assert!(!dir.join("manifest.json.tmp").exists());
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
@@ -280,8 +277,6 @@ fn seg_final_sync_dir_after_persist_log() {
         fail_delta + 1,
         "complete segmented persist must add the final sync_dir; ok={ok_delta} fail={fail_delta}"
     );
-    let _ = fs::remove_dir_all(&fail_dir);
-    let _ = fs::remove_dir_all(&ok_dir);
 }
 
 #[test]
@@ -306,7 +301,6 @@ fn mixed_typed_dict_partial_group_is_visible() {
         "characterization: a crashed Typed/Dictionary group can expose its Define prefix"
     );
     opened.replay_check().unwrap();
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
@@ -339,7 +333,6 @@ fn migrate_tail_guard_rejects_same_length_last_frame_swap() {
         tampered,
         "rejected append must write nothing"
     );
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
@@ -367,7 +360,6 @@ fn active_truncate_at_exact_frame_end_keeps_prefix() {
     let opened = store::open(&dir).expect("exact frame-end truncate keeps the prefix");
     assert_eq!(log_ids(&opened), prefix);
     opened.replay_check().unwrap();
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
@@ -389,11 +381,11 @@ fn wrong_role_active_names_sealed_file_fails_closed() {
         Ok(_) => panic!("active naming a sealed file must fail closed"),
         Err(e) => assert_eq!(e.kind(), ErrorKind::InvalidData),
     }
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
 fn two_writer_attach_fails_closed() {
+    let _excl = exclusive_lock();
     let rt = seed_runtime();
     let dir = persist_dir("two-writer");
     persist_segmented(&rt, &dir);
@@ -403,11 +395,11 @@ fn two_writer_attach_fails_closed() {
         Err(e) => e,
     };
     assert_writer_lock_error(&err);
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
 fn second_writer_names_kutha_lock() {
+    let _excl = exclusive_lock();
     let rt = seed_runtime();
     let dir = persist_dir("lock-msg");
     persist_legacy(&rt, &dir);
@@ -416,11 +408,11 @@ fn second_writer_names_kutha_lock() {
     assert_writer_lock_error(&err);
     drop(p);
     store::persist(&rt, &dir).expect("persist after drop");
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
 fn reader_open_while_writer_holds_lock() {
+    let _excl = exclusive_lock();
     let rt = seed_runtime();
     let dir = persist_dir("reader");
     persist_segmented(&rt, &dir);
@@ -429,7 +421,6 @@ fn reader_open_while_writer_holds_lock() {
     let opened = store::open(&dir).expect("reader takes no lock");
     assert_eq!(log_ids(&opened), want);
     opened.replay_check().unwrap();
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
@@ -450,13 +441,15 @@ fn dead_process_stale_lock_does_not_block() {
             std::thread::park();
         }
     }
+    let _excl = exclusive_lock();
     let rt = seed_runtime();
     let dir = persist_dir("dead-lock");
     persist_segmented(&rt, &dir);
     let exe = std::env::current_exe().expect("test binary");
     let mut child = Command::new(&exe)
-        .arg("dead_process_stale_lock_does_not_block")
         .arg("--exact")
+        .arg("--test-threads=1")
+        .arg("dead_process_stale_lock_does_not_block")
         .env("KUTHA_P60_HOLD_LOCK", dir.display().to_string())
         .spawn()
         .expect("spawn lock holder");
@@ -471,11 +464,11 @@ fn dead_process_stale_lock_does_not_block() {
     let _ = child.wait();
     let _p =
         store::Persister::attach(&rt, &dir).expect("advisory lock must die with the child process");
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
 fn panic_releases_writer_lock() {
+    let _excl = exclusive_lock();
     let rt = seed_runtime();
     let dir = persist_dir("panic-lock");
     persist_segmented(&rt, &dir);
@@ -485,11 +478,11 @@ fn panic_releases_writer_lock() {
     }));
     assert!(panicked.is_err(), "inner panic must run");
     store::Persister::attach(&rt, &dir).expect("Drop on unwind must release kutha.lock");
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
 fn lock_file_ignored_by_dir_listings() {
+    let _excl = exclusive_lock();
     let rt = seed_runtime();
     let dir = persist_dir("lock-list");
     persist_segmented(&rt, &dir);
@@ -506,7 +499,6 @@ fn lock_file_ignored_by_dir_listings() {
         tmp.is_empty(),
         "listings that skip the lock must see no .tmp; {tmp:?}"
     );
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
@@ -528,7 +520,6 @@ fn chain_active_prev_hash_flip_fails_closed() {
             );
         }
     }
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
@@ -553,7 +544,6 @@ fn manifest_pre_rename_second_open_keeps_prefix() {
     let opened = store::open(&dir).expect("second open after pre-rename crash");
     assert_eq!(log_ids(&opened), committed);
     opened.replay_check().unwrap();
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
@@ -597,11 +587,11 @@ fn sealed_trailer_bytes_lie_fails_closed() {
         Ok(_) => panic!("trailer.bytes rewritten to match a truncated sealed file must fail"),
         Err(e) => assert_eq!(e.kind(), ErrorKind::InvalidData),
     }
-    let _ = fs::remove_dir_all(&dir);
 }
 
 #[test]
 fn persist_migrate_race_serialized_or_fails_closed() {
+    let _excl = exclusive_lock();
     let rt = seed_runtime();
     let dir = persist_dir("race");
     persist_legacy(&rt, &dir);
@@ -610,9 +600,9 @@ fn persist_migrate_race_serialized_or_fails_closed() {
     assert_writer_lock_error(&err);
     drop(p);
 
-    let dir2 = persist_dir("race-threads");
-    persist_legacy(&rt, &dir2);
-    let dir2 = Arc::new(dir2);
+    let scratch2 = persist_dir("race-threads");
+    persist_legacy(&rt, &scratch2);
+    let dir2 = Arc::new(scratch2.to_path_buf());
     let rt = Arc::new(rt);
     std::thread::scope(|s| {
         let d_p = Arc::clone(&dir2);
@@ -633,12 +623,11 @@ fn persist_migrate_race_serialized_or_fails_closed() {
         }
     });
     store::open(dir2.as_path()).expect("race must not leave an unopenable store");
-    let _ = fs::remove_dir_all(&dir);
-    let _ = fs::remove_dir_all(dir2.as_path());
 }
 
 #[test]
 fn persister_is_poisoned_after_failed_append_and_cannot_write_without_lock() {
+    let _excl = exclusive_lock();
     let mut rt = seed_runtime();
     let dir = persist_dir("poison");
     persist_segmented(&rt, &dir);
@@ -700,7 +689,6 @@ fn persister_is_poisoned_after_failed_append_and_cannot_write_without_lock() {
         store::open_for_append(&dir).expect("heal is a new open_for_append that re-takes the lock");
     fresh.append(&healed).expect("fresh writer after heal");
     drop(fresh);
-    let _ = fs::remove_dir_all(&dir);
 }
 
 fn listing_bytes(dir: &Path) -> Vec<(String, Vec<u8>)> {

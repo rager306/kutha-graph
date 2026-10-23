@@ -2987,6 +2987,28 @@ rows:
     gate: default
     owner: M157-S01
     source: Phase 231 / hop workload
+  - id: SEM-m157-prepare-run
+    plane: product
+    invariant: prepare then run returns the same rows as execute on FF5 Scan and chain hops
+    layer: kill
+    oracle:
+      - b5_hop_prepare_run_equals_execute
+    kill_mutation: rebuild the CSR in run or diverge Scan bag from execute
+    status: killed
+    gate: default
+    owner: M157-S01
+    source: Phase 231 / hop prepare split
+  - id: SEM-m157-prepared-cut-snapshot
+    plane: product
+    invariant: prepared hops lease is bound to its (tt, vt) fold snapshot; mismatched cut is unrepresentable and not live-updating
+    layer: kill
+    oracle:
+      - b5_hop_prepared_cut_is_snapshot
+    kill_mutation: run a different cut through the prepared lease or refresh the CSR on emit
+    status: killed
+    gate: default
+    owner: M157-S01
+    source: Phase 231 / hop prepare split
   - id: SEM-m157-kill-independent
     plane: product
     invariant: independent live_at hop oracle, Scan bag vs as_of, both clocks, fail-closed intern, Horn/CI residuals

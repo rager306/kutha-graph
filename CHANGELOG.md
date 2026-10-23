@@ -8,12 +8,17 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Added
 
-- Self-relative `[[bench]] hop_k` (`KUTHA_HOP_N` default 256, factors 1/2/4): layered fan-out-4 graph, 2-hop via `execute(Hops)` from every layer-0 node, `typed_csr_lease_at` as `csr_lease.{n,2n,4n}`. Reports calib-loop ratios and 2n/n. `baseline.rs` 29 keys unchanged. hop2 has no BASE twin.
+- Self-relative `[[bench]] hop_k` (`KUTHA_HOP_N` default 256, factors 1/2/4): layered fan-out-4 graph, 2-hop walk via `prepare` + `PreparedHops::run_from` from every layer-0 node (one CSR lease per size), `prepare` timed as `csr_lease.{n,2n,4n}`. Reports calib-loop ratios and 2n/n. `baseline.rs` 29 keys unchanged. hop2 has no BASE twin.
+- `query_ir::prepare` / `Prepared::{Scan,Hops}`: validate names/shape and snapshot Scan rows or the CSR lease at the query's `(tt, vt)` cut. `Prepared::run` walks that snapshot. `execute` is prepare+run (same rows). `PreparedHops::run_from` reuses the lease for many starts at that cut. The lease is not live-updating; a different cut cannot be fed into `run` (unrepresentable). Re-exported from `lib.rs`.
 
 ### Changed
 
 - Bench A/B vs `46b7114` (9 alternating pairs, `taskset -c 0`, `KUTHA_BENCH_N=10000` direct `--bench` binaries; pair 1 BASE then HEAD, pair 2 HEAD then BASE, …; shared `CARGO_TARGET_DIR`). PRE (BASE medians) ingest_plain.n **117180497 ns**, as_of.n **275864 ns**. POST (HEAD medians) ingest_plain.n **120307962 ns** (HEAD/BASE 1.027), as_of.n **296743 ns** (1.076). Discarded HEAD as_of pairs 3 and 4 as >3× the HEAD arm median (1209884 ns, 895488 ns); after discard as_of.n **265565 ns** (0.963). No ingest sample was a >3× outlier. 1-min load 2.58–5.27. Gate **PASS** (both HEAD/BASE ≤ 1.10).
-- hop_k self-relative band (4 runs, `KUTHA_HOP_N=256`, `taskset -c 0`; recorded range, not an absolute-ns budget): hop2.n / calib **1.39–2.14**; hop2 2n/n **2.73–2.88**; hop2 4n/2n **4.06–4.51**. csr_lease.n / calib **0.010–0.031** (single `from_fold`; 2n/n not a stable ratio).
+- hop_k self-relative band (4 runs, `KUTHA_HOP_N=256`, `taskset -c 0`, load 16–19; recorded range, not an absolute-ns budget): hop2.walk.n / calib **0.005–0.013**; hop2.walk 2n/n **1.56–3.01**; hop2.walk 4n/2n **1.36–2.56**. csr_lease.n / calib **0.010–0.020** (single `prepare`/`from_fold`; 2n/n not a stable ratio). The previous hop2.n / calib **1.39–2.14** / 4n/2n **4.06–4.51** measured interpreter + n×CSR rebuild and is superseded.
+
+### Fixed
+
+- `m019_dur_a` lock-oracle flake (`persist_migrate_race_serialized_or_fails_closed` WouldBlock on `kutha.lock`): tests now use `PersistScratch` so the `Persister` drops before directory removal, and a file-local `Mutex` serializes lock oracles plus `set_test_segment_limits` users. Production `store.rs` lock handling unchanged.
 
 ### Trajectory
 
