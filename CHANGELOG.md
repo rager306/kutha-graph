@@ -9,7 +9,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Added
 
 - Self-relative `[[bench]] hop_k` (`KUTHA_HOP_N` default 256, factors 1/2/4): layered fan-out-4 graph, 2-hop walk via `prepare` + `PreparedHops::run_from` from every layer-0 node (one CSR lease per size), `prepare` timed as `csr_lease.{n,2n,4n}`. Reports calib-loop ratios and 2n/n. `baseline.rs` 29 keys unchanged. hop2 has no BASE twin.
-- `query_ir::prepare` / `Prepared::{Scan,Hops}`: validate names/shape and snapshot Scan rows or the CSR lease at the query's `(tt, vt)` cut. `Prepared::run` walks that snapshot. `execute` is prepare+run (same rows). `PreparedHops::run_from` reuses the lease for many starts at that cut. The lease is not live-updating; a different cut cannot be fed into `run` (unrepresentable). Re-exported from `lib.rs`.
+- `query_ir::prepare` / `Prepared::{Scan,Hops}`: validate names/shape and snapshot Scan rows or the CSR lease at the query's `(tt, vt)` cut. `Prepared::run` walks that snapshot. `execute` is prepare+run (same rows). `PreparedHops::run_from` reuses the lease for many starts at that cut. The lease is not live-updating; a different cut cannot be fed into `run` (unrepresentable). Re-exported from `lib.rs`. Independent kill-tests in `tests/b5_hop_prepared_kill.rs` pin snapshot vs live `execute`, `run_from` reuse/`limit`/out-of-range, and `RelsShape` at `prepare`.
 
 ### Changed
 

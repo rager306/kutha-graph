@@ -3033,6 +3033,24 @@ rows:
     gate: default
     owner: M157-S01
     source: Phase 231 / independent verify
+  - id: SEM-m157-kill-prepared
+    plane: product
+    invariant: Prepared is a fold snapshot; run_from reuses the lease; shape errors at prepare; live execute sees later emits
+    layer: kill
+    oracle:
+      - kill_prepared_hops_frozen_after_assert_and_retract
+      - kill_prepared_scan_frozen_equals_execute_at_cut
+      - kill_run_from_reuse_equals_per_start_execute_and_oracle
+      - kill_run_from_unknown_out_of_range_and_not_in_lease
+      - kill_run_from_limit_is_sorted_prefix
+      - kill_rels_shape_errors_at_prepare_not_run
+      - kill_k0_run_from_and_scan_limit_snapshot
+      - kill_property_run_from_vs_execute_vs_oracle
+    kill_mutation: refresh CSR on emit; run_from rebuilds a lease; accept TermId::MAX; apply shape at run; ignore prepared limit
+    status: killed
+    gate: default
+    owner: M157-S01
+    source: Phase 231 / independent verify prepare split
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute
