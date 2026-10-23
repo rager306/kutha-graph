@@ -2,7 +2,7 @@
 use crate::fold::GraphFold;
 use crate::log::EventLog;
 use crate::quantum::{
-    op_affects_fold, IngestExamine, PersistedQuantumOutcome, Runtime, RuntimeError,
+    IngestExamine, PersistedQuantumOutcome, Runtime, RuntimeError, op_affects_fold,
 };
 use crate::snapshot::Snapshot;
 use kutha_common::{Event, Op, TermDictionary};
@@ -174,7 +174,25 @@ impl Runtime {
     }
 
     /// Named overlay: replay a log prefix (ADR-061 P0). Does not share tentatives.
-    pub fn fork_at(&self, n: usize) -> Self {
+    /// Compacted checkpoint prefix is a cut: `n == 0` is empty Ok; `1..=c` and
+    /// `n > log.len()` are [`RuntimeError::ForkCutUnavailable`].
+    pub fn fork_at(&self, n: usize) -> Result<Self, RuntimeError> {
+        let log_len = self.log.len();
+        if n > log_len {
+            return Err(RuntimeError::ForkCutUnavailable { cut: n, log_len });
+        }
+        if n > 0 {
+            if let Some(c) = self
+                .log
+                .as_slice()
+                .iter()
+                .position(|e| matches!(e.op, Op::Checkpoint { .. }))
+            {
+                if n <= c {
+                    return Err(RuntimeError::ForkCutUnavailable { cut: n, log_len });
+                }
+            }
+        }
         let prefix = self.log.prefix(n);
         let mut fold = GraphFold::with_index_mode(self.index_mode());
         let mut next_tt = 0;
@@ -208,6 +226,6 @@ impl Runtime {
             premise_facts_of_behavior: IngestMap::default(),
         };
         rt.hydrate_from_log();
-        rt
+        Ok(rt)
     }
 }

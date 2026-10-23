@@ -1,13 +1,12 @@
 //! Phase 229 / M155 S01 — checkpoint is a cut, not a hole (b3).
-//! RED against infallible `Runtime::fork_at` (`-> Self`). Signature stays `-> Self`
-//! in this file until plan 01 task 3.
+//! `fork_at` is `Result<Self, RuntimeError::ForkCutUnavailable>`. Horn and
+//! migrate tests stay RED for plan 02.
 
 use kutha_common::{Event, EventId, Op, RuleAst, RuleAtom, RuleTerm, ValidTime};
-use kutha_runtime::{Runtime, store};
+use kutha_runtime::{Runtime, RuntimeError, store};
 use std::collections::BTreeMap;
 use std::fs;
 use std::io::ErrorKind;
-use std::panic::AssertUnwindSafe;
 use std::path::Path;
 
 mod common;
@@ -138,12 +137,6 @@ fn payload_listing(dir: &Path) -> BTreeMap<String, Vec<u8>> {
     out
 }
 
-/// Current signature is `-> Self`. Wrap so a later panic is not an abort.
-fn infallible_fork(rt: &Runtime, n: usize) -> Runtime {
-    std::panic::catch_unwind(AssertUnwindSafe(|| rt.fork_at(n)))
-        .unwrap_or_else(|_| panic!("fork_at({n}) panicked; signature is still -> Self"))
-}
-
 fn first_checkpoint_index(events: &[Event]) -> usize {
     events
         .iter()
@@ -182,34 +175,42 @@ fn fork_at_interior_of_checkpointed_prefix_is_err() {
     let fact_count = receipt_fact_count(&events[c].op);
     let len = opened.log().len();
 
-    let empty = infallible_fork(&opened, 0);
+    let empty = opened.fork_at(0).unwrap();
     assert_eq!(empty.fold().facts().len(), 0, "n==0 empty fold");
     assert_eq!(empty.log().len(), 0);
 
     for n in 1..=c {
-        let fork = infallible_fork(&opened, n);
-        assert_ne!(
-            fork.fold().facts().len(),
-            0,
-            "fork_at({n}) interior of checkpointed prefix is a hole (Self, want Err)"
+        let err = match opened.fork_at(n) {
+            Err(e) => e,
+            Ok(_) => panic!("interior cut must be ForkCutUnavailable"),
+        };
+        assert!(
+            matches!(
+                err,
+                RuntimeError::ForkCutUnavailable { cut, log_len } if cut == n && log_len == len
+            ),
+            "{err:?}"
         );
-        panic!(
-            "fork_at({n}) must be Err ForkCutUnavailable; got Self facts={} log_len={}",
-            fork.fold().facts().len(),
-            fork.log().len()
+        assert_eq!(
+            err.to_string(),
+            format!("fork cut {n} unavailable (log_len {len})")
         );
     }
 
-    let past = infallible_fork(&opened, len + 1);
-    assert_ne!(
-        past.log().len(),
-        len,
-        "fork_at({}) past end must not return the full log",
-        len + 1
+    let past = match opened.fork_at(len + 1) {
+        Err(e) => e,
+        Ok(_) => panic!("past end must be ForkCutUnavailable"),
+    };
+    assert!(
+        matches!(
+            past,
+            RuntimeError::ForkCutUnavailable { cut, log_len } if cut == len + 1 && log_len == len
+        ),
+        "{past:?}"
     );
 
     for n in (c + 1)..=len {
-        let fork = infallible_fork(&opened, n);
+        let fork = opened.fork_at(n).unwrap();
         if n == c + 1 {
             assert_eq!(
                 fork.fold().facts().len(),
@@ -240,12 +241,20 @@ fn fork_at_past_log_end_is_err_without_checkpoint() {
         "no receipt"
     );
     let len = rt.log().len();
-    let fork = infallible_fork(&rt, len + 1);
-    assert_ne!(
-        fork.log().len(),
-        len,
-        "fork_at({}) currently returns the full log; want Err",
-        len + 1
+    let err = match rt.fork_at(len + 1) {
+        Err(e) => e,
+        Ok(_) => panic!("past end without checkpoint must be ForkCutUnavailable"),
+    };
+    assert!(
+        matches!(
+            err,
+            RuntimeError::ForkCutUnavailable { cut, log_len } if cut == len + 1 && log_len == len
+        ),
+        "{err:?}"
+    );
+    assert_eq!(
+        err.to_string(),
+        format!("fork cut {} unavailable (log_len {len})", len + 1)
     );
 }
 

@@ -1,6 +1,6 @@
 //! TH-03..TH-05: Eager/Lazy known-on, fork_at, mid-cut snapshot+tail, GraphFold::replay.
 
-use kutha_common::{WallTime};
+use kutha_common::WallTime;
 mod common;
 
 use kutha_common::Op;
@@ -18,10 +18,7 @@ fn fork_known_on_store_dir() -> std::path::PathBuf {
     let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
         .join("tmp")
-        .join(format!(
-            "p36-02-fork-{}-{nanos}-{seq}",
-            std::process::id()
-        ));
+        .join(format!("p36-02-fork-{}-{nanos}-{seq}", std::process::id()));
     let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir_all(&dir).expect("persist dir");
     dir
@@ -39,8 +36,14 @@ fn as_known_on_eager_equals_lazy() {
     let s_e = common::seed_statute_between_anchors(&mut eager);
     let s_l = common::seed_statute_between_anchors(&mut lazy);
     assert_eq!(s_e, s_l, "same intern order yields the same TermIds");
-    assert_eq!(eager.as_known_on(WallTime::from(D)), lazy.as_known_on(WallTime::from(D)));
-    assert_eq!(eager.as_known_on(WallTime::from(W2)), lazy.as_known_on(WallTime::from(W2)));
+    assert_eq!(
+        eager.as_known_on(WallTime::from(D)),
+        lazy.as_known_on(WallTime::from(D))
+    );
+    assert_eq!(
+        eager.as_known_on(WallTime::from(W2)),
+        lazy.as_known_on(WallTime::from(W2))
+    );
 }
 
 #[test]
@@ -63,7 +66,7 @@ fn fork_at_before_later_anchor_differs_and_persist_open() {
     .unwrap();
     let cut = rt.log().len();
     rt.emit_tt_anchor(W2).unwrap();
-    let fork = rt.fork_at(cut);
+    let fork = rt.fork_at(cut).unwrap();
     let live_w2 = rt.as_known_on(WallTime::from(W2));
     let fork_w2 = fork.as_known_on(WallTime::from(W2));
     assert_ne!(
@@ -128,7 +131,10 @@ fn snapshot_mid_cut_tail_assert_and_anchor_recovers_known_on() {
         "tail must contain a fold-affecting Assert"
     );
     let restored = Runtime::from_snapshot(snap, rt.log().as_slice().to_vec());
-    assert_eq!(restored.as_known_on(WallTime::from(W1)), rt.as_known_on(WallTime::from(W1)));
+    assert_eq!(
+        restored.as_known_on(WallTime::from(W1)),
+        rt.as_known_on(WallTime::from(W1))
+    );
     let known = restored
         .as_known_on(WallTime::from(W1))
         .expect("tail TtAnchor must hydrate");
@@ -145,8 +151,16 @@ fn graph_fold_replay_as_known_on_matches_live() {
         replayed.as_known_on(WallTime::from(W2)).is_some(),
         "GraphFold::replay_with_dict must apply TtAnchor and bind reserved"
     );
-    assert_eq!(replayed.as_known_on(WallTime::from(D)), rt.fold().as_known_on(WallTime::from(D)));
-    assert_eq!(replayed.as_known_on(WallTime::from(W2)), rt.fold().as_known_on(WallTime::from(W2)));
-    let known_w2 = replayed.as_known_on(WallTime::from(W2)).expect("replay applies TtAnchor");
+    assert_eq!(
+        replayed.as_known_on(WallTime::from(D)),
+        rt.fold().as_known_on(WallTime::from(D))
+    );
+    assert_eq!(
+        replayed.as_known_on(WallTime::from(W2)),
+        rt.fold().as_known_on(WallTime::from(W2))
+    );
+    let known_w2 = replayed
+        .as_known_on(WallTime::from(W2))
+        .expect("replay applies TtAnchor");
     assert!(known_w2.contains(&statute));
 }

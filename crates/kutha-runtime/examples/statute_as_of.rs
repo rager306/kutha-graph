@@ -68,16 +68,24 @@ fn main() -> Result<(), RuntimeError> {
 
     let nv_2015 = rt.norm_view(ValidTime::from(2015), WallTime::from(2015));
     let nv_2021 = rt.norm_view(ValidTime::from(2021), WallTime::from(2021));
-    println!("norm in force on 2015, as known on 2015 → {}", fmt_norm(&rt, &nv_2015));
-    println!("norm in force on 2021, as known on 2021 → {}", fmt_norm(&rt, &nv_2021));
+    println!(
+        "norm in force on 2015, as known on 2015 → {}",
+        fmt_norm(&rt, &nv_2015)
+    );
+    println!(
+        "norm in force on 2021, as known on 2021 → {}",
+        fmt_norm(&rt, &nv_2021)
+    );
     match (&nv_2015, &nv_2021) {
         (NormView::Ok(a), NormView::Ok(b)) => {
             assert!(
-                a.iter().any(|t| rt.dictionary().lookup(t.object) == Some("50-kmh")),
+                a.iter()
+                    .any(|t| rt.dictionary().lookup(t.object) == Some("50-kmh")),
                 "2015 envelope must list 50-kmh"
             );
             assert!(
-                b.iter().any(|t| rt.dictionary().lookup(t.object) == Some("30-kmh")),
+                b.iter()
+                    .any(|t| rt.dictionary().lookup(t.object) == Some("30-kmh")),
                 "2021 envelope must list 30-kmh"
             );
             assert_ne!(
@@ -100,7 +108,7 @@ fn main() -> Result<(), RuntimeError> {
     let dir = facade_example_store_dir();
     rt.persist(&dir)?;
     let opened = Runtime::open(&dir)?;
-    let _fork = opened.fork_at(0);
+    let _fork = opened.fork_at(0).unwrap();
     opened.replay_check()?;
     let _ = std::fs::remove_dir_all(dir);
     Ok(())

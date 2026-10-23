@@ -69,7 +69,7 @@ fn fork_at_rebuilds_outcomes_from_log_quantum_outcomes() {
     rt.attach_outcomes(Vec::new());
     assert!(rt.outcome_records().is_empty());
 
-    let rebuilt = rt.fork_at(rt.log().len());
+    let rebuilt = rt.fork_at(rt.log().len()).unwrap();
     assert_eq!(
         rebuilt.outcome_records().len(),
         qo_in_log,

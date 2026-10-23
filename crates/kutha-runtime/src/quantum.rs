@@ -5,8 +5,8 @@ use crate::log::EventLog;
 use crate::materializer::{CsrMaterializer, Materializer};
 use crate::receipt::QuantumReceipt;
 use kutha_common::{
-    rule_definition_hash, Event, EventId, Op, TermDictionary, TermId, TransactionTime, ValidTime,
-    WallTime, KUTHA_RESERVED_RELS,
+    Event, EventId, KUTHA_RESERVED_RELS, Op, TermDictionary, TermId, TransactionTime, ValidTime,
+    WallTime, rule_definition_hash,
 };
 use rustc_hash::{FxHashMap, FxHashSet};
 use std::fmt;
@@ -102,6 +102,11 @@ pub enum RuntimeError {
     ExecutionReplayFailed {
         event_id: EventId,
     },
+    /// Compacted checkpoint prefix or past-end cut (ADR-012 D012-4).
+    ForkCutUnavailable {
+        cut: usize,
+        log_len: usize,
+    },
 }
 
 impl fmt::Display for RuntimeError {
@@ -144,6 +149,9 @@ impl fmt::Display for RuntimeError {
             },
             RuntimeError::ExecutionReplayFailed { event_id } => {
                 write!(f, "execution replay failed for {event_id}")
+            }
+            RuntimeError::ForkCutUnavailable { cut, log_len } => {
+                write!(f, "fork cut {cut} unavailable (log_len {log_len})")
             }
         }
     }

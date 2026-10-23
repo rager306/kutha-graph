@@ -280,7 +280,7 @@ fn retract_register_rule_drops_eligibility_at_later_cut() {
         "retracted registry hash must drop eligibility"
     );
 
-    let mut prefix = rt.fork_at(n);
+    let mut prefix = rt.fork_at(n).unwrap();
     let p = prefix.intern("P");
     let q = prefix.intern("Q");
     let rel = prefix.intern("relatedTo");

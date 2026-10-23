@@ -1,7 +1,7 @@
 //! D-04 GREEN (PIPE-03/04): facade-only statute consumer.
 //! Import only the public crate surface. Never edit `.kutha/STATE.md`.
 
-use kutha_common::{ValidTime};
+use kutha_common::ValidTime;
 
 use kutha_runtime::{Runtime, RuntimeError};
 
@@ -109,7 +109,7 @@ fn statute_as_of_via_facade() -> Result<(), RuntimeError> {
     assert_eq!(sorted_as_of(&opened, T_OLD), pre_persist_2015);
     assert_eq!(sorted_as_of(&opened, T_NEW), pre_persist_2021);
 
-    let fork = opened.fork_at(0);
+    let fork = opened.fork_at(0).unwrap();
     assert_eq!(sorted_as_of(&fork, T_OLD), vec![] as Vec<(u32, u32, u32)>);
     assert_eq!(sorted_as_of(&fork, T_NEW), vec![]);
 

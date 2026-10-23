@@ -64,7 +64,7 @@ fn retract_seeded_related_to_fails_closed_after() {
     );
     assert_eq!(n, rt.log().len(), "fail-closed: log must not grow");
 
-    let mut prefix = rt.fork_at(cut);
+    let mut prefix = rt.fork_at(cut).unwrap();
     let rel = prefix.intern("relatedTo");
     let s = prefix.intern("alice-seed");
     let o = prefix.intern("bob-seed");

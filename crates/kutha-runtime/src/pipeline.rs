@@ -1,9 +1,9 @@
 //! One write path: propose → admit → commit → receipt (D-01).
-use crate::quantum::{disposition, PersistedQuantumOutcome, QuantumOutcome, Runtime, RuntimeError};
-use crate::receipt::{digest_to_hex, QuantumReceipt};
+use crate::quantum::{PersistedQuantumOutcome, QuantumOutcome, Runtime, RuntimeError, disposition};
+use crate::receipt::{QuantumReceipt, digest_to_hex};
 use kutha_common::{
-    blob_digest_matches, policy_version_hash, Event, EventId, Op, OutcomeDisposition, RuleAst,
-    WallTime, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE,
+    Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE, Op,
+    OutcomeDisposition, RuleAst, WallTime, blob_digest_matches, policy_version_hash,
 };
 
 /// How the shared pipeline finishes a committed quantum (D-01 / D-07).
@@ -422,7 +422,9 @@ impl Runtime {
     /// error cannot leave a live Assert without `QuantumOutcome`.
     fn rollback_user_cascade(&mut self, prefix: usize, next_tt: u64) {
         if self.log.len() != prefix {
-            *self = self.fork_at(prefix);
+            *self = self
+                .fork_at(prefix)
+                .expect("rollback prefix was log.len() before the failed cascade");
         }
         self.next_tt = next_tt;
     }

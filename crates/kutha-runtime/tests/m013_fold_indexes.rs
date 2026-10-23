@@ -123,7 +123,7 @@ fn open_retract_reemit_indexes_match_fingerprint() {
         opened.replay_check().unwrap().fingerprint(),
         "replay_check must match in-memory fingerprint"
     );
-    let mut forked = opened.fork_at(opened.log().len());
+    let mut forked = opened.fork_at(opened.log().len()).unwrap();
     emit_keyed(&mut forked, 2, rel, obj);
     assert_eq!(
         forked.fold().fingerprint(),
@@ -140,7 +140,7 @@ fn fork_at_parent_indexes_untouched() {
     emit_keyed(&mut parent, 0, rel, obj);
     let before = parent.fold().fingerprint();
     let n = parent.log().len();
-    let mut child = parent.fork_at(n);
+    let mut child = parent.fork_at(n).unwrap();
     emit_keyed(&mut child, 1, rel, obj);
     assert_eq!(parent.fold().fingerprint(), before);
     assert_ne!(child.fold().fingerprint(), before);

@@ -1,7 +1,7 @@
 //! In-crate Runtime invariants (moved out of quantum.rs so src files stay ≤800).
-use kutha_common::WallTime;
 use super::*;
 use kutha_common::Op;
+use kutha_common::WallTime;
 use std::time::Instant;
 
 #[test]
@@ -208,7 +208,10 @@ fn snapshot_plus_tail_matches_full_replay() {
     assert!(rt.graph_len() > offset, "non-empty fold-affecting tail");
     let events = rt.log().as_slice().to_vec();
     let restored = Runtime::from_snapshot(snap, events);
-    assert_eq!(restored.as_known_on(WallTime::from(2014)), rt.as_known_on(WallTime::from(2014)));
+    assert_eq!(
+        restored.as_known_on(WallTime::from(2014)),
+        rt.as_known_on(WallTime::from(2014))
+    );
     assert_eq!(restored.fold().fingerprint(), rt.fold().fingerprint());
     restored.replay_check().unwrap();
 }
@@ -300,7 +303,7 @@ fn fork_at_isolates_prefix() {
         polarity: None,
     })
     .unwrap();
-    let fork = rt.fork_at(cut);
+    let fork = rt.fork_at(cut).unwrap();
     assert_eq!(fork.log().len(), cut);
     assert!(fork.fold().live_count(u64::MAX, 0) < rt.fold().live_count(u64::MAX, 0));
     fork.replay_check().unwrap();
@@ -330,10 +333,7 @@ fn quantum_known_on_store_dir() -> std::path::PathBuf {
     let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../..")
         .join("tmp")
-        .join(format!(
-            "p32-01-store-{}-{nanos}-{seq}",
-            std::process::id()
-        ));
+        .join(format!("p32-01-store-{}-{nanos}-{seq}", std::process::id()));
     let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir_all(&dir).expect("persist dir");
     dir
@@ -356,12 +356,18 @@ fn quantum_known_on_store_dirs_differ_across_calls() {
 fn as_known_on_survives_persist_open_and_matches_fold() {
     let mut rt = Runtime::default();
     rt.emit_tt_anchor(2015).unwrap();
-    assert_eq!(rt.as_known_on(WallTime::from(2015)), rt.fold().as_known_on(WallTime::from(2015)));
+    assert_eq!(
+        rt.as_known_on(WallTime::from(2015)),
+        rt.fold().as_known_on(WallTime::from(2015))
+    );
     let dir = quantum_known_on_store_dir();
     rt.persist(&dir).unwrap();
     let opened = Runtime::open(&dir).unwrap();
     assert!(opened.as_known_on(WallTime::from(2015)).is_some());
-    assert_eq!(opened.as_known_on(WallTime::from(2015)), opened.fold().as_known_on(WallTime::from(2015)));
+    assert_eq!(
+        opened.as_known_on(WallTime::from(2015)),
+        opened.fold().as_known_on(WallTime::from(2015))
+    );
     let _ = std::fs::remove_dir_all(dir);
 }
 

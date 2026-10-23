@@ -315,7 +315,7 @@ fn retract_admission_and_policy_version_at_later_cut() {
         None,
         rt.admission_status_at(&jid, TransactionTime::MAX, ValidTime::from(2017))
     );
-    let fork = rt.fork_at(n);
+    let fork = rt.fork_at(n).unwrap();
     assert_eq!(
         Some(true),
         fork.admission_status_at(&jid, TransactionTime::MAX, ValidTime::from(2017))

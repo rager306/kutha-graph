@@ -1,6 +1,8 @@
 //! Phase 44 independent semantic kill-tests (public API). Differential vs `4d669ca`.
 
-use kutha_common::{Event, Op, RuleAst, RuleAtom, RuleTerm, TermId, TransactionTime, ValidTime, policy_version_hash};
+use kutha_common::{
+    Event, Op, RuleAst, RuleAtom, RuleTerm, TermId, TransactionTime, ValidTime, policy_version_hash,
+};
 use kutha_runtime::{FoldIndexMode, GraphFold, Runtime};
 use std::fs;
 use std::path::PathBuf;
@@ -129,7 +131,9 @@ fn live_count(rt: &Runtime, s: TermId, r: TermId, o: TermId) -> usize {
 }
 
 fn has_as_of(rt: &Runtime, s: TermId, r: TermId, o: TermId) -> bool {
-    rt.as_of(ValidTime::from(2010u64)).iter().any(|t| *t == (s, r, o))
+    rt.as_of(ValidTime::from(2010u64))
+        .iter()
+        .any(|t| *t == (s, r, o))
 }
 
 fn last_tt(rt: &Runtime) -> u64 {
@@ -320,7 +324,7 @@ fn v44_e_persist_open_fork_replay() {
     replay_fingerprint_matches(&opened);
     let _ = fs::remove_dir_all(&dir);
 
-    let mut forked = rt.fork_at(rt.log().len());
+    let mut forked = rt.fork_at(rt.log().len()).unwrap();
     emit_assert(&mut forked, b, m, c);
     dump_as_of("e_fork_after_new_prem", &forked);
     assert!(

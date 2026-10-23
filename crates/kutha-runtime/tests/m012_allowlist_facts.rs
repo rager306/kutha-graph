@@ -160,7 +160,7 @@ fn retract_allow_relation_drops_admit_at_later_cut() {
     );
     assert_eq!(after, rt.log().len(), "fail-closed: log must not grow");
 
-    let mut prefix = rt.fork_at(n);
+    let mut prefix = rt.fork_at(n).unwrap();
     let rel = prefix.intern("leasedRel");
     let s = prefix.intern("alice-lease");
     let o = prefix.intern("bob-lease");

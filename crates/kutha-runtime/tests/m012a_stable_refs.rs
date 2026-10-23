@@ -128,7 +128,7 @@ fn justification_cites_source_event_ids_survive_fork() {
         .expect("record_justification");
     rt.check_admission(&jid).unwrap();
 
-    let fork = rt.fork_at(rt.log().len());
+    let fork = rt.fork_at(rt.log().len()).unwrap();
     rt.emit(Op::Retract { event_id: minting }).unwrap();
     let parent_err = rt.check_admission(&jid).unwrap_err();
     assert!(

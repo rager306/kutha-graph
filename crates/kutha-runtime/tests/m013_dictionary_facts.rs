@@ -91,7 +91,7 @@ fn admission_and_policy_visible_on_as_of_after_later_pin() {
         !later.iter().any(|&(_, rel, _)| rel == admission),
         "dictionary_as_of after Retract must lack kutha:admission"
     );
-    let fork = rt.fork_at(cut_a);
+    let fork = rt.fork_at(cut_a).unwrap();
     let fork_triples = fork.fold().dictionary_as_of(ValidTime::from(2010));
     assert!(
         fork_triples.iter().any(|&(_, rel, _)| rel == admission),
@@ -144,7 +144,7 @@ fn genesis_allow_visible_on_as_of() {
         "{err:?}"
     );
     assert_eq!(n, rt.log().len(), "fail-closed: log must not grow");
-    let mut prefix = rt.fork_at(cut);
+    let mut prefix = rt.fork_at(cut).unwrap();
     let rel = prefix.intern("relatedTo");
     let s = prefix.intern("alice-dict");
     let o = prefix.intern("bob-dict");
