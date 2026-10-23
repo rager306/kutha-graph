@@ -55,6 +55,14 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - ADR-061 Evidence 2026-10-23: fact-set `diff_folds` shipped; named refs (D061-1) and GED (D061-3) still open. Status stays **Proposed**. Honeycomb restaged; map/delivery/capability unchanged.
 
+## 2026-10-23 — Trajectory: M157 / GSD v1.51 closed
+
+Process tag **v1.51** / Phase **231**. Not a SemVer release.
+
+- B3-lite (Kutha side): thin typed query IR over existing read APIs, `prepare` / `run` snapshot split, self-relative `hop_k` bench. Two independent verification rounds: round one found the bench measured n x CSR rebuild (fixed by the split), the `m019_dur_a` lock flake fired in the gate (test isolation fixed; `store.rs` untouched). `cargo test --workspace --offline --no-fail-fast` 0, `kutha-gov ci --jobs 1` `run_high=0`. Bench A/B (9 alternating pairs, medians) and the hop band are in the Product entry below.
+- Deferred: competitor baseline (owner, docker, 20 GB disk), planner (B5), parser (B6), Verus V2, HNSW (B4; the kill rule needs the baseline first).
+- `L_delivery=M157-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.51 / Phase 231. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-23 — Trajectory: lease M157-S01 (B3-lite hop workload)
 
 Process tag **v1.51** / Phase **231**. Not a SemVer release.

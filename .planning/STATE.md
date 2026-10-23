@@ -14,6 +14,6 @@ progress:
 
 # Project State
 
-**Milestone:** v1.51 B3-lite hop workload — leased as M157
+**Milestone:** v1.51 B3-lite hop workload — closed as M157
 **Phase:** 231
-**Status:** 231-01/02 executed; independent verify PASS-WITH-FINDINGS; fix round (prepare/run + hop_k walk band + m019 isolation). Honeycomb stays Proposed.
+**Status:** hop IR and bench landed; independent verification passed (second round). Honeycomb stays Proposed.
