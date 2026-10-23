@@ -19,17 +19,17 @@ Each YAML row is one invariant. `oracle` is a list of real `#[test]` function na
 
 ## Counts (this file)
 
-Counted from `test-matrix.yaml` rows on 2026-10-23 (M156 S01). Recount after you edit the YAML; do not invent a coverage percentage.
+Counted from `test-matrix.yaml` rows on 2026-10-23 (M157 S01). Recount after you edit the YAML; do not invent a coverage percentage.
 
 | Status | Rows |
 |--------|------|
-| killed | 242 |
+| killed | 250 |
 | characterization | 11 |
 | gap | 0 |
 | blocked | 0 |
 | spec-only | 4 |
 | gate | 1 |
-| **total** | **258** |
+| **total** | **266** |
 
 Planes: product vs harness. Layers: decision, characterization, property, crash, kill, governor, bench.
 
@@ -264,6 +264,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 **M155 S01 (checkpoint cut):** Phase 229 — `SEM-m155-fork-cut`, `SEM-m155-migrate-checkpoint`, `SEM-m155-horn-cascade` `killed` (owner `M155-S01`). Oracles: `fork_at_interior_of_checkpointed_prefix_is_err`, `fork_at_past_log_end_is_err_without_checkpoint`, `migrate_compat_refuses_checkpointed_store_and_leaves_dir_unchanged`, `retract_prefix_horn_premise_after_checkpoint_matches_twin`. A compacted prefix is an atomic cut: interior/`n>len` `fork_at` is `ForkCutUnavailable`; migrate returns `InvalidData` and leaves the directory unchanged; live Retract of a prefix Horn premise matches the un-checkpointed twin.
 
 **M156 S01 (fork diff):** Phase 230 — `SEM-m156-empty-mirror`, `SEM-m156-fork-counterfactual`, `SEM-m156-apply-diff`, `SEM-m156-equal-keys`, `SEM-m156-checkpoint-fork`, `SEM-m156-kill-independent` `killed` (owner `M156-S01`). Oracles: executor `b4_fork_diff` plus independent `b4_fork_diff_kill` (`kill_totality_mirror_aa_random_pairs`, `kill_equal_keys_full_duplicates_and_rank_not_insertion`, `kill_seq_only_empty_but_real_field_change_is_not`, `kill_dead_rows_are_in_the_domain`, `kill_fail_closed_cut_never_reaches_diff`, `kill_checkpointed_fork_matches_plain_twin`, `kill_open_interval_is_not_u64_max_identity`, `kill_invalidated_at_none_vs_max_rank_is_total`). Fact-set `diff_folds` turns fold `a` into `b`; `apply_diff` reconstructs `b` modulo `seq`; checkpointed legal cuts match the twin; interior cut is `ForkCutUnavailable`. Not named refs, GED, or merge.
+
+**M157 S01 (hop workload):** Phase 231 — `SEM-m157-scan-as-of`, `SEM-m157-nested-join`, `SEM-m157-unlabeled-neighbors`, `SEM-m157-cuts-pit`, `SEM-m157-fail-closed`, `SEM-m157-shuffle`, `SEM-m157-per-hop-rels`, `SEM-m157-limit-prefix` `killed` (owner `M157-S01`). Oracles in `b5_hop_workload.rs`. Scan equals sorted `as_of`; hops equal a nested `live_at` join; unlabeled 1-hop matches untyped neighbors; PIT cuts differ; intern-map miss and `RelsShape` fail closed; shuffle is deterministic; per-hop `rels` order matters; `limit` is a sorted prefix (`0` unlimited). Not Cypher, planner, or leapfrog-on-query-path.
 
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 

@@ -469,5 +469,22 @@ Same host, Eager, `KUTHA_BENCH_N=10000`. Isolated worktrees (`tmp/v013-close-bas
 
 ≤10% vs tag `v0.12` on ingest/`as_of`/`open.n`: **PASS**. No median exceeded 10%, so the 10-pair re-measure was not required. Worktrees and target dirs removed after the run.
 
+## Phase 231 (M157 S01): hop_k self-relative band
+
+Second `[[bench]]` `hop_k` (`crates/kutha-runtime/benches/hop_k.rs`). `baseline.rs` still prints the same 29 keys. hop2 has no BASE twin; the 10% gate is ingest_plain.n / as_of.n vs `46b7114` (see CHANGELOG Product: hop workload).
+
+Default `KUTHA_HOP_N=256`, factors 1/2/4, three layers of `n` nodes, fan-out 4, `relatedTo`. Calibration is a 20e6 `black_box` wrapping-add loop (shared denominator). `hop2.{n,2n,4n}` is 2-hop `execute(Hops)` from every layer-0 node as a ratio vs that loop; `csr_lease.{n,2n,4n}` times one `typed_csr_lease_at`. Also print 2n/n and 4n/2n from raw ns.
+
+Recorded range (4 runs, `taskset -c 0`, load 3.05 3.34 3.38). Not an absolute-ns promise.
+
+| metric | range |
+|--------|-------|
+| hop2.n / calib | 1.39–2.14 |
+| hop2 2n/n | 2.73–2.88 |
+| hop2 4n/2n | 4.06–4.51 |
+| csr_lease.n / calib | 0.010–0.031 |
+
+`execute` rebuilds the typed CSR per start, so hop2 4n/2n is superlinear (~starts × lease size), not ~2. csr_lease 2n/n is noisy (one `from_fold` per size, hundreds of µs).
+
 
 

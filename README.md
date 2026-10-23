@@ -51,7 +51,7 @@ This host’s Cargo uses **kache** as `rustc-wrapper` and **mold** as linker (`~
 | `.planning/` | GSD overlay: STATE, PROJECT, REQUIREMENTS, ROADMAP, `config.json`, `codebase/`, `intel/`, `INGEST-CONFLICTS.md` |
 | `.kutha/` | Harness pyramid: STATE, ROADMAP, dictionaries, gitignored `events.jsonl` |
 | `.cursor/` | Cursor rules, MCP, CBM adapter, GSD skills/core |
-| `crates/kutha-common`, `crates/kutha-runtime` | Product: events, fold, fork diff, quantum, CSR lease, allowlist, tenant ingest |
+| `crates/kutha-common`, `crates/kutha-runtime` | Product: events, fold, fork diff, quantum, CSR lease, thin query IR / hop workload, allowlist, tenant ingest |
 | `docs/ADR/` | Spine + honeycomb (Proposed) |
 | `docs/process/` | Harness contract, governor intake, Codex subagents |
 | `docs/process/governor-intake.md` | Control loop / bridge / map → governor dictionaries |

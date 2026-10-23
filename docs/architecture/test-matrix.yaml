@@ -2899,6 +2899,94 @@ rows:
     gate: default
     owner: M156-S01
     source: Phase 230 / independent verify
+  - id: SEM-m157-scan-as-of
+    plane: product
+    invariant: Scan bag at tt=MAX equals sorted as_of on FF5 plus statute names
+    layer: kill
+    oracle:
+      - b5_hop_scan_equals_as_of_ff5
+    kill_mutation: return an empty or unsorted Scan bag
+    status: killed
+    gate: default
+    owner: M157-S01
+    source: Phase 231 / hop workload
+  - id: SEM-m157-nested-join
+    plane: product
+    invariant: k-hop unique ends equal a nested live_at join on chain+branch+diamond
+    layer: kill
+    oracle:
+      - b5_hop_nested_join_oracle
+    kill_mutation: skip diamond collapse or stop the walk before k
+    status: killed
+    gate: default
+    owner: M157-S01
+    source: Phase 231 / hop workload
+  - id: SEM-m157-unlabeled-neighbors
+    plane: product
+    invariant: unlabeled 1-hop equals untyped csr_lease_at neighbors with labels dropped
+    layer: kill
+    oracle:
+      - b5_hop_unlabeled_equals_untyped_neighbors
+    kill_mutation: filter unlabeled hops by a single relation
+    status: killed
+    gate: default
+    owner: M157-S01
+    source: Phase 231 / hop workload
+  - id: SEM-m157-cuts-pit
+    plane: product
+    invariant: 2-hop from A differs at VT window-end and after TT retract
+    layer: kill
+    oracle:
+      - b5_hop_cuts_pit
+    kill_mutation: ignore valid_to exclusivity or invalidated_at on Retract
+    status: killed
+    gate: default
+    owner: M157-S01
+    source: Phase 231 / hop workload
+  - id: SEM-m157-fail-closed
+    plane: product
+    invariant: unknown names and rels/k shape fail closed without intern or fingerprint change
+    layer: kill
+    oracle:
+      - b5_hop_fail_closed_unknown_relation
+    kill_mutation: intern a ghost name or map a bad rels length to UnknownRelation
+    status: killed
+    gate: default
+    owner: M157-S01
+    source: Phase 231 / hop workload
+  - id: SEM-m157-shuffle
+    plane: product
+    invariant: xorshift emit order does not change nonempty hop answers
+    layer: kill
+    oracle:
+      - b5_hop_shuffle_deterministic
+    kill_mutation: drop the nonempty assertion so empty==empty passes
+    status: killed
+    gate: default
+    owner: M157-S01
+    source: Phase 231 / hop workload
+  - id: SEM-m157-per-hop-rels
+    plane: product
+    invariant: per-hop rels (len==k) walk the nested join; swapped order yields no rows
+    layer: kill
+    oracle:
+      - b5_hop_per_hop_rels_order
+    kill_mutation: ignore hop index and reuse rels[0] for every hop
+    status: killed
+    gate: default
+    owner: M157-S01
+    source: Phase 231 / hop workload
+  - id: SEM-m157-limit-prefix
+    plane: product
+    invariant: limit truncates the sorted answer to a prefix; limit 0 is unlimited
+    layer: kill
+    oracle:
+      - b5_hop_limit_truncates_sorted_prefix
+    kill_mutation: treat limit 0 as zero rows or truncate before sort
+    status: killed
+    gate: default
+    owner: M157-S01
+    source: Phase 231 / hop workload
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

@@ -20,6 +20,10 @@ Seeded differential (`SEM-csr-fold-diff`, `m019_sem_diff.rs`): typed and untyped
 
 I-F15 visit bound remains `extra_relatedto_horn_visits_constant_in_n` (`m017_ingest_scaling.rs`; GREEN after M017 `horns_by_premise`). This subsection does not rewrite D041-1…D041-4. Status stays **Proposed**.
 
+### Evidence (2026-10-23, Phase 231 / M157 S01; Proposed)
+
+Kutha-side hop number: `query_ir::execute` interprets `Hops` over `typed_csr_lease_at` (typed) / `csr_lease_at` (unlabeled). `leapfrog_intersect` is still off the query path (`lib.rs` re-export + `leapfrog.rs` unit tests only). Status stays **Proposed**. This subsection does not rewrite D041-1–D041-4.
+
 ## Date
 
 2026-08-18

@@ -121,7 +121,7 @@ Replay of the historical log; external I/O — content-addressed cache (`SHA256(
 
 ### 4.2. Fork-and-Diff
 
-`fork_at(n)` takes a `usize` offset into the **current** log. A compacted checkpoint prefix is atomic: cuts inside it (or past `log.len()`) fail closed (`ForkCutUnavailable`). Then change a behavior → stabilization → structural graph diff. `diff_folds` is a `facts()` query including losers, not named refs, GED, or merge; dictionaries, rules, and blobs are out of domain.
+`fork_at(n)` takes a `usize` offset into the **current** log. A compacted checkpoint prefix is atomic: cuts inside it (or past `log.len()`) fail closed (`ForkCutUnavailable`). Then change a behavior → stabilization → structural graph diff. `diff_folds` is a `facts()` query including losers, not named refs, GED, or merge; dictionaries, rules, and blobs are out of domain. `execute(QueryIr)` (with `try_hops_named`, re-exported from `lib.rs`) is a typed IR over `live_at` / CSR leases, not Cypher or a planner.
 
 ### 4.3. Regimes Gated Loop (Nakajima, arXiv:2606.10241)
 

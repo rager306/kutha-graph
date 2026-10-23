@@ -8,6 +8,10 @@
 
 Fold-internal ingest leases include `allows_by_name`, delivery-key, and EventId maps (`fold.rs`). Oracles: `green_ingest_visits_constant_in_n`, `lazy_as_of_matches_eager_after_same_ingest` (`m013_fold_indexes.rs`, `m013_fold_index_mode.rs`).
 
+### Evidence (2026-10-23, Phase 231 / M157 S01; Proposed)
+
+Hops consume the existing CSR lease (`typed_csr_lease_at` / `csr_lease_at`): droppable, not SoT. `execute(QueryIr)` does not add a materializer plugin. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

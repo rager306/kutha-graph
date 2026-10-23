@@ -1,3 +1,4 @@
+# 2026-10-23 restage (M157 S01 hop workload: query_ir hops over existing CSR lease; leapfrog still off query path): ADR-040, ADR-041; map/delivery/capability unchanged.
 # 2026-10-23 restage (M156 S01 fork diff: fact-set diff_folds Evidence on ADR-061): ADR-061; map/delivery/capability unchanged.
 # 2026-10-23 restage (M155 S01 checkpoint cut: Snapshot.behaviors exact Horn lineage): ADR-012; map/delivery/capability unchanged.
 # 2026-10-23 restage (M155 S01 checkpoint cut: fork_at fail-closed, migrate refuse Checkpoint): ADR-012, ADR-060, ADR-061; map/delivery/capability unchanged.

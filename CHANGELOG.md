@@ -4,6 +4,22 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-23 — Product: hop workload
+
+### Added
+
+- Self-relative `[[bench]] hop_k` (`KUTHA_HOP_N` default 256, factors 1/2/4): layered fan-out-4 graph, 2-hop via `execute(Hops)` from every layer-0 node, `typed_csr_lease_at` as `csr_lease.{n,2n,4n}`. Reports calib-loop ratios and 2n/n. `baseline.rs` 29 keys unchanged. hop2 has no BASE twin.
+
+### Changed
+
+- Bench A/B vs `46b7114` (9 alternating pairs, `taskset -c 0`, `KUTHA_BENCH_N=10000` direct `--bench` binaries; pair 1 BASE then HEAD, pair 2 HEAD then BASE, …; shared `CARGO_TARGET_DIR`). PRE (BASE medians) ingest_plain.n **117180497 ns**, as_of.n **275864 ns**. POST (HEAD medians) ingest_plain.n **120307962 ns** (HEAD/BASE 1.027), as_of.n **296743 ns** (1.076). Discarded HEAD as_of pairs 3 and 4 as >3× the HEAD arm median (1209884 ns, 895488 ns); after discard as_of.n **265565 ns** (0.963). No ingest sample was a >3× outlier. 1-min load 2.58–5.27. Gate **PASS** (both HEAD/BASE ≤ 1.10).
+- hop_k self-relative band (4 runs, `KUTHA_HOP_N=256`, `taskset -c 0`; recorded range, not an absolute-ns budget): hop2.n / calib **1.39–2.14**; hop2 2n/n **2.73–2.88**; hop2 4n/2n **4.06–4.51**. csr_lease.n / calib **0.010–0.031** (single `from_fold`; 2n/n not a stable ratio).
+
+### Trajectory
+
+- ADR-041 Evidence 2026-10-23: Kutha-side hop number via `query_ir::execute` over the typed CSR lease; `leapfrog_intersect` still off the query path. ADR-040 Evidence: hops consume the existing droppable CSR lease. Status stays **Proposed**. Honeycomb restaged; map/delivery/capability unchanged.
+- Deferred: competitor baseline (owner + docker + 20 GB), planner B5, parser B6, Verus V2.
+
 ## 2026-10-23 — Product: B3-lite hop query IR
 
 ### Added
