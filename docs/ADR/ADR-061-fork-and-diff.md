@@ -6,7 +6,7 @@
 
 ### Evidence (2026-10-02; Proposed)
 
-`Runtime::fork_at` isolates a log prefix (`hydrate.rs`; `fork_at_parent_indexes_untouched`). GED-style `diff` is still absent from the public API (F8 remainder).
+`Runtime::fork_at` isolates a log prefix (`hydrate.rs`; `fork_at_parent_indexes_untouched`). GED-style `diff` was absent at that date; a fact-set `diff` shipped later (Phase 230 Evidence below), GED stays open.
 
 ### Evidence (2026-10-23, Phase 229 / M155 S01; Proposed)
 
@@ -59,7 +59,7 @@ A fork changes recorded state, not the external world. Reusing an old tool respo
 
 ### Open question (2026-09-30)
 
-Open, from docs/architecture/semantic-gap-review.md (F8): D061-3 says diff is GED-class, not cosine. Fork-at-offset is present; a diff surface is not shown in this cell. The unexercised diff half is an evidence gap, not a Decision rewrite. This question does not mark this cell Accepted.
+Open, from docs/architecture/semantic-gap-review.md (F8): D061-3 says diff is GED-class, not cosine. Fork-at-offset is present; a fact-set diff surface shipped on 2026-10-23 (see Evidence), the GED half is still open. The remaining gap is evidence, not a Decision rewrite. This question does not mark this cell Accepted.
 
 **Hard separations:**
 

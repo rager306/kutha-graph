@@ -10,17 +10,11 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.16 fixed-tmp persist-dir dogfood — closed (M122)
+## Current Milestone: v1.51 B3-lite hop workload — leased (M157)
 
-**Goal:** Close the 2026-10-18 audit residuals (policy election, premise-rel unindex, Define emit-once, full Horn combinations, replay VT coverage) without thawing Cypher, HNSW, or a legal pack.
+**Goal:** Arc B (physics), third slice: a workload-as-data plus a thin typed query IR interpreted over existing read APIs, equal to the `as_of` facade on FF5, and a self-relative multi-hop benchmark on the typed CSR lease. No competitor baseline yet (needs the owner), no parser, no planner, no thaw.
 
-**Target features:**
-- Newest-first `live_policy_pin_at`
-- O(1) premise-rel unindex
-- Duplicate modern Define skipped on Op-wire rewrite
-- Every premise combination can mint a head; replay requires VT coverage
-
-**Last shipped:** v0.98 unindex cause reverse pointer (M104). Honeycomb stays Proposed.
+**Last shipped:** v1.50 fork diff (M156), v1.49 checkpoint cut (M155), v1.48 checkpoint receipt (M154). Honeycomb stays Proposed. Live pointer: `.kutha/STATE.md`.
 
 
 ## Business Context

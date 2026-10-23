@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M157: B3-lite hop workload — LEASED (GSD v1.51)
+
+Third product slice of Arc B. The competitor baseline (Samyama/FalkorDB) needs docker, disk and the owner's OK to pause foreign containers, so this slice does only the Kutha side: a workload as data, a thin typed query IR interpreted over existing read APIs (no parser, no planner), and a self-relative multi-hop benchmark on the typed CSR lease so the roadmap kill rule has a Kutha hop number. Scout (2026-10-23): `rg 'QueryIr|QueryIR|k_hop' crates` is empty, `benches/baseline.rs` has no CSR/hop/leapfrog metric, `leapfrog_intersect` is not on the query path. Verus V2 is deferred until a slice rewrites `leapfrog.rs`. Honeycomb stays Proposed; nothing thawed.
+
+- [ ] **S01: workload as data, thin IR, hop bench** `risk:medium` `depends:[]`
+  > After this: a committed workload (start, relation, k, tt/vt cut, limit) is interpreted by a thin IR over `live_at` / `typed_csr_lease_at`; the scan form equals `as_of` on FF5 and the statute fixture; k-hop equals a nested join of `live_at` triples on a chain fixture; unlabeled 1-hop equals untyped `neighbors` (labels documented as dropped); a `hop_k.{n,2n,4n}` bench with a calibration loop records a self-relative budget; existing `ingest_plain.n` / `as_of.n` gate holds. Phase 231.
+
 ## M156: fork diff (B2) — CLOSED (GSD v1.50)
 
 Second product slice of Arc B. ADR-061 reduced (as the direction proposal allows) to a fact-set diff of two folds, plus fork-then-diff on a counterfactual fixture. Read-side only: no Op, no wire change, no named refs, no GED, no merge. Depends on M155 (`fork_at` fails closed on compacted cuts). Scout (2026-10-23) found `rg diff_folds|FoldDiff crates` empty and ADR-061 F8 "no public diff" open. Honeycomb stays Proposed; nothing thawed.

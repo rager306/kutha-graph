@@ -10,7 +10,7 @@ This is not a production graph database and not Graphiti / Samyama / Harvey.
 
 | Plane | Where | Now |
 |-------|--------|-----|
-| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | M156 closed (`L_delivery=M156-closed`); harness phase **H5** |
+| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | M157-S01 leased (`L_delivery=M157-S01`); harness phase **H5** |
 | Architecture map | [`docs/ADR/README.md`](docs/ADR/README.md) | Spine + honeycomb **Proposed**, not Accepted |
 | Capability | `crates/kutha-runtime` tests | FF5 green (`as_of(2015) ≠ as_of(2021)` on a statute-shaped fixture) |
 
@@ -51,7 +51,7 @@ This host’s Cargo uses **kache** as `rustc-wrapper` and **mold** as linker (`~
 | `.planning/` | GSD overlay: STATE, PROJECT, REQUIREMENTS, ROADMAP, `config.json`, `codebase/`, `intel/`, `INGEST-CONFLICTS.md` |
 | `.kutha/` | Harness pyramid: STATE, ROADMAP, dictionaries, gitignored `events.jsonl` |
 | `.cursor/` | Cursor rules, MCP, CBM adapter, GSD skills/core |
-| `crates/kutha-common`, `crates/kutha-runtime` | Product: events, fold, quantum, CSR lease, allowlist, tenant ingest |
+| `crates/kutha-common`, `crates/kutha-runtime` | Product: events, fold, fork diff, quantum, CSR lease, allowlist, tenant ingest |
 | `docs/ADR/` | Spine + honeycomb (Proposed) |
 | `docs/process/` | Harness contract, governor intake, Codex subagents |
 | `docs/process/governor-intake.md` | Control loop / bridge / map → governor dictionaries |

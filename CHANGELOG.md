@@ -23,6 +23,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - ADR-061 Evidence 2026-10-23: fact-set `diff_folds` shipped; named refs (D061-1) and GED (D061-3) still open. Status stays **Proposed**. Honeycomb restaged; map/delivery/capability unchanged.
 
+## 2026-10-23 — Trajectory: lease M157-S01 (B3-lite hop workload)
+
+Process tag **v1.51** / Phase **231**. Not a SemVer release.
+
+- Active Milestone **M157**, Active Slice **S01** (`L_delivery=M157-S01`): workload as data, thin typed query IR over existing read APIs, self-relative multi-hop bench on the typed CSR lease. Competitor baseline deferred (owner, docker, disk). No parser, no planner, no thaw. Also: ADR-061 stale first Evidence/Open question reconciled with the shipped fact-set diff, `.planning/PROJECT.md` pointer moved to v1.51, README layout names the fork diff.
+
 ## 2026-10-23 — Trajectory: M156 / GSD v1.50 closed
 
 Process tag **v1.50** / Phase **230**. Not a SemVer release.

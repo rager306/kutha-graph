@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M157
+**Active Slice:** S01
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M156-closed
+L_delivery=M157-S01
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M156 closed (v1.50) | Capability proven / Cypher started |
+| L_delivery | M157-S01 leased (v1.51): B3-lite hop workload | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M156 is closed: `diff_folds(a, b)` / `GraphFold::diff` (read-side, `fold_diff.rs`) gives an exact, order-independent diff of two folds over `facts()` including dead rows; identity is (event id, valid window, rank among equal keys), never `seq`; totality oracle `apply_diff(a, diff) == b` modulo `seq`; exact on counterfactual forks and on checkpointed forks. The independent verifier found two HIGH defects (`None` collapsed with `Some(u64::MAX)` in identity and rank), fixed and re-run. No Op, no wire change. Next: Arc B continues. B3 CSR benchmark vs Samyama/FalkorDB needs the baseline environment and the owner's OK to pause `fd_api` / `9router`; otherwise B4 HNSW (M005) or B6 Cypher AS OF (M003) need their own lease with a fresh RED. Residuals that stay open until a fired RED: ordinary `StoreBlob` digests are not verified on open; `horn_behavior_reproducible` fails open on a missing rule blob; dangling lineage ids after a checkpoint; vintage checkpoint payloads; `cause_of_behavior` last-wins on duplicate event ids; checkpoint has no operator surface; B1b vacuum. Verus proofs ride inside the slice that touches a kernel. The harness moratorium applies. Honeycomb stays Proposed. `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M157 S01 (B3-lite, Kutha side only): a workload as data (start, relation, k, tt/vt cut, limit), a thin typed query IR interpreted over existing read APIs (`live_at`, `typed_csr_lease_at`), equal to `as_of` on FF5 and the statute fixture and to a nested join of `live_at` triples on a chain; a `hop_k.{n,2n,4n}` bench with a calibration loop gives a self-relative budget (ratios, not ns). No parser, no planner, no new Op, no wire change, no thaw, fingerprint contract unchanged, `eval.rs`, `fold_query.rs` and `leapfrog.rs` bodies untouched. The competitor baseline (Samyama, FalkorDB) is deferred: it needs docker, at least 20 GB of disk and the owner's OK to pause `fd_api` / `9router`. Residuals that stay open until a fired RED: ordinary `StoreBlob` digests are not verified on open; `horn_behavior_reproducible` fails open on a missing rule blob; dangling lineage ids after a checkpoint; vintage checkpoint payloads; `cause_of_behavior` last-wins on duplicate event ids; checkpoint has no operator surface; B1b vacuum; non-RAII test scratch dirs and `m019_dur_a` parallel lock flake (a fired RED only if the flake recurs in a slice gate). The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 
