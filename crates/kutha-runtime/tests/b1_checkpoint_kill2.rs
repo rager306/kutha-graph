@@ -12,6 +12,8 @@ use kutha_runtime::{GraphFold, Justification, PersistedQuantumOutcome, Runtime, 
 use std::fs;
 use std::path::{Path, PathBuf};
 
+mod common;
+
 struct LimitGuard;
 
 impl Drop for LimitGuard {
@@ -25,18 +27,8 @@ fn tiny_limits() -> LimitGuard {
     LimitGuard
 }
 
-fn persist_dir(label: &str) -> PathBuf {
-    let nanos = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../..")
-        .join("tmp")
-        .join(format!("b1-kill2-{label}-{nanos}"));
-    let _ = fs::remove_dir_all(&dir);
-    fs::create_dir_all(&dir).unwrap();
-    dir
+fn persist_dir(label: &str) -> common::PersistScratch {
+    common::PersistScratch::new(&format!("b1-kill2-{label}"))
 }
 
 fn horn_related() -> RuleAst {

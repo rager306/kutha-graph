@@ -13,6 +13,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ### Fixed
 
 - M153 closed handoff still named a B1 vacuum lease; superseded by the M154 handoff. Direction-roadmap status records B1 as thin checkpoint.
+- Checkpoint integration tests drop their repo-local `tmp/` store directories on unwind (including panic).
 
 ## 2026-10-22 — Trajectory: M154 / GSD v1.48 closed
 

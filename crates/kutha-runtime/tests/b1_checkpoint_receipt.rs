@@ -8,7 +8,9 @@ use kutha_common::{
 };
 use kutha_runtime::{store, GraphFold, Runtime, RuntimeError};
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
+
+mod common;
 
 struct LimitGuard;
 
@@ -25,19 +27,8 @@ fn tiny_limits() -> LimitGuard {
     LimitGuard
 }
 
-fn persist_dir() -> PathBuf {
-    let nanos = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    let dir = std::env::temp_dir().join(format!(
-        "kutha-b1-checkpoint-{}-{}",
-        std::process::id(),
-        nanos
-    ));
-    let _ = fs::remove_dir_all(&dir);
-    fs::create_dir_all(&dir).unwrap();
-    dir
+fn persist_dir() -> common::PersistScratch {
+    common::PersistScratch::new("b1-checkpoint")
 }
 
 fn sealed_len(dir: &Path) -> usize {

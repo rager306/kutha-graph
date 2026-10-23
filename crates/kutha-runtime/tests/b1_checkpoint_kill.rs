@@ -8,7 +8,9 @@ use kutha_common::{
 use kutha_runtime::{store, GraphFold, Runtime, RuntimeError};
 use std::collections::BTreeMap;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
+
+mod common;
 
 struct LimitGuard;
 
@@ -25,18 +27,8 @@ fn tiny_limits() -> LimitGuard {
     LimitGuard
 }
 
-fn persist_dir(label: &str) -> PathBuf {
-    let nanos = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../..")
-        .join("tmp")
-        .join(format!("b1-kill-{label}-{nanos}"));
-    let _ = fs::remove_dir_all(&dir);
-    fs::create_dir_all(&dir).unwrap();
-    dir
+fn persist_dir(label: &str) -> common::PersistScratch {
+    common::PersistScratch::new(&format!("b1-kill-{label}"))
 }
 
 fn horn_related() -> RuleAst {

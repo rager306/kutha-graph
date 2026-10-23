@@ -14,8 +14,10 @@ use kutha_runtime::{Runtime, RuntimeError, store};
 use std::collections::BTreeMap;
 use std::fs;
 use std::io::ErrorKind;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::Command;
+
+mod common;
 
 struct LimitGuard;
 
@@ -30,18 +32,8 @@ fn tiny_limits() -> LimitGuard {
     LimitGuard
 }
 
-fn persist_dir(label: &str) -> PathBuf {
-    let nanos = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../..")
-        .join("tmp")
-        .join(format!("b1-kill3-{label}-{nanos}"));
-    let _ = fs::remove_dir_all(&dir);
-    fs::create_dir_all(&dir).unwrap();
-    dir
+fn persist_dir(label: &str) -> common::PersistScratch {
+    common::PersistScratch::new(&format!("b1-kill3-{label}"))
 }
 
 fn horn_related() -> RuleAst {
