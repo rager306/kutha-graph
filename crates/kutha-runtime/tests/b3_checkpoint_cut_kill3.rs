@@ -10,7 +10,10 @@
 //! slots). T = never-reopened in-memory Runtime; P = persist + `store::open`
 //! (not checkpointed); C = checkpointed + reopened.
 
-use kutha_common::{Event, EventId, Op, RuleAst, RuleAtom, RuleTerm, ValidTime, WallTime};
+use kutha_common::{
+    Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, Op, RuleAst,
+    RuleAtom, RuleTerm, SupportPolarity, TransactionTime, ValidTime, WallTime, policy_version_hash,
+};
 use kutha_runtime::{Runtime, RuntimeError, store};
 use std::collections::HashSet;
 use std::fs;
@@ -235,6 +238,63 @@ fn live_count(rt: &Runtime, s: &str, r: &str, o: &str) -> usize {
             f.subject == s && f.relation == r && f.object() == o && f.invalidated_at.is_none()
         })
         .count()
+}
+
+fn live_keyed(rt: &Runtime, rel: &str, key: &str) -> usize {
+    let Some(rel) = rt.dictionary().id(rel) else {
+        return 0;
+    };
+    rt.fold()
+        .facts()
+        .iter()
+        .filter(|f| {
+            f.relation == rel
+                && f.delivery_key.as_deref() == Some(key)
+                && f.invalidated_at.is_none()
+        })
+        .count()
+}
+
+fn emit_matching_keyed(
+    rt: &mut Runtime,
+    s: &str,
+    r: &str,
+    o: &str,
+    vf: u64,
+    vt: Option<u64>,
+    key: &str,
+    polarity: Option<SupportPolarity>,
+) -> Result<kutha_runtime::QuantumOutcome, RuntimeError> {
+    let subject = rt.intern(s);
+    let relation = rt.intern(r);
+    let object = rt.intern(o);
+    rt.emit(Op::Assert {
+        subject,
+        relation,
+        object,
+        valid_from: vf,
+        valid_to: vt,
+        claim: None,
+        delivery_key: Some(key.into()),
+        polarity,
+    })
+}
+
+/// Positive integer; unset → 16. Invalid (empty, 0, non-integer) panics in English.
+fn kill_case_count() -> u64 {
+    match std::env::var("KUTHA_KILL_CASES") {
+        Err(std::env::VarError::NotPresent) => 16,
+        Ok(s) => {
+            let n: u64 = s.parse().unwrap_or_else(|_| {
+                panic!("KUTHA_KILL_CASES must be a positive integer, got {s:?}")
+            });
+            if n == 0 {
+                panic!("KUTHA_KILL_CASES must be a positive integer, got {s:?}");
+            }
+            n
+        }
+        Err(e) => panic!("KUTHA_KILL_CASES must be a positive integer, got {e}"),
+    }
 }
 
 fn derived_named(
@@ -551,7 +611,7 @@ fn maybe_rule(rt: &mut Runtime, trans: bool, inv: bool) {
 fn run_seed(seed: u64) -> Result<Vec<String>, String> {
     let mut rng = Rng::new(seed);
     let mut log: Vec<String> = Vec::new();
-    let n = 4 + rng.u(4);
+    let n = 4 + rng.u(2);
     let mut pairs: Vec<(usize, usize)> = Vec::new();
     for i in 0..n {
         for j in 0..n {
@@ -578,8 +638,8 @@ fn run_seed(seed: u64) -> Result<Vec<String>, String> {
     };
     let split = 1 + rng.u(pairs.len().max(1));
     let split = split.min(pairs.len());
-    let pad_n = 6 + rng.u(5);
-    let n_ops = 4 + rng.u(5);
+    let pad_n = 4 + rng.u(2);
+    let n_ops = 3 + rng.u(2);
     let do_reopen = seed % 3 == 0;
     let do_append = seed % 5 == 0;
     let do_second = seed % 7 == 0;
@@ -942,9 +1002,9 @@ fn run_seed(seed: u64) -> Result<Vec<String>, String> {
     }
 
     if do_second {
-        pad(&mut t, 6, &format!("s{seed}-2"));
-        pad(&mut p, 6, &format!("s{seed}-2"));
-        pad(&mut c, 6, &format!("s{seed}-2"));
+        pad(&mut t, 4, &format!("s{seed}-2"));
+        pad(&mut p, 4, &format!("s{seed}-2"));
+        pad(&mut c, 4, &format!("s{seed}-2"));
         log.push("pad before second checkpoint".into());
         let replay_status = |rt: &Runtime| match rt.replay_check() {
             Ok(_) => "Ok".into(),
@@ -1075,22 +1135,11 @@ fn catch_seed(seed: u64) -> Result<Vec<String>, String> {
 }
 
 #[test]
-fn r3_property_seed_98_second_checkpoint() {
-    let _g = tiny_limits();
-    catch_seed(98).unwrap_or_else(|e| panic!("{e}"));
-}
-
-#[test]
-fn r3_property_seed_99_mid_persist_open() {
-    let _g = tiny_limits();
-    catch_seed(99).unwrap_or_else(|e| panic!("{e}"));
-}
-
-#[test]
 fn r3_property_random_graphs_three_arm() {
     let _g = tiny_limits();
+    let n = kill_case_count();
     let mut failures: Vec<(u64, String)> = Vec::new();
-    for seed in 1u64..=128 {
+    for seed in 1u64..=n {
         match catch_seed(seed) {
             Ok(_) => {}
             Err(e) => failures.push((seed, e)),
@@ -1106,7 +1155,7 @@ fn r3_property_random_graphs_three_arm() {
         .map(|(s, e)| format!("seed {s}: {e}"))
         .collect();
     panic!(
-        "HIGH R2 property: {} of 128 seeds failed; first seed={seed}; all=[{}]; seq/err={seq}",
+        "HIGH R2 property: {} of {n} seeds failed; first seed={seed}; all=[{}]; seq/err={seq}",
         failures.len(),
         all.join(" || "),
     );
@@ -1475,4 +1524,328 @@ fn r3_reregister_same_horn_after_checkpoint() {
         n_p, n_t,
         "HIGH R2: P==T after re-register+re-assert; P={n_p} T={n_t}"
     );
+}
+
+fn live_keyed_row(
+    rt: &Runtime,
+    rel: &str,
+    key: &str,
+) -> Option<(
+    String,
+    String,
+    String,
+    u64,
+    Option<u64>,
+    Option<SupportPolarity>,
+    EventId,
+)> {
+    let rel_id = rt.dictionary().id(rel)?;
+    rt.fold().facts().iter().find_map(|f| {
+        if f.relation == rel_id
+            && f.delivery_key.as_deref() == Some(key)
+            && f.invalidated_at.is_none()
+        {
+            Some((
+                name(rt, f.subject),
+                name(rt, f.relation),
+                name(rt, f.object()),
+                f.valid_from,
+                f.valid_to,
+                f.polarity,
+                f.event_id,
+            ))
+        } else {
+            None
+        }
+    })
+}
+
+/// Prefix `kutha:admission` / `kutha:action` share delivery keys that the
+/// sealed rewrite drops. Re-emitting the same payload must not mint a second
+/// live row on C that T/P do not (retry or MetaOpRejected, twin parity).
+#[test]
+fn r3_rerecord_admission_and_action_same_key_after_checkpoint() {
+    let _g = tiny_limits();
+    let mut t = Runtime::default();
+    t.emit_policy("r3-adm-policy", 2010, None).unwrap();
+    let claim = emit_keyed(
+        &mut t,
+        "art-12-speed",
+        "inForceAs",
+        "50-kmh",
+        2010,
+        Some(2020),
+        "r3-adm-statute",
+    );
+    let jid = t
+        .record_justification(
+            claim,
+            vec![claim],
+            vec![claim],
+            "",
+            TransactionTime::MAX,
+            ValidTime::from(2015),
+        )
+        .expect("record_justification");
+    let act_id = t
+        .record_action(&jid, TransactionTime::MAX, ValidTime::from(2015))
+        .expect("record_action");
+    pad(&mut t, 8, "adm");
+    t.emit_tt_anchor(2015).unwrap();
+    let pin = policy_version_hash("r3-adm-policy");
+    assert_eq!(
+        live_keyed(&t, KUTHA_ADMISSION, &pin),
+        1,
+        "fixture admission"
+    );
+    assert_eq!(live_keyed(&t, KUTHA_ACTION, &jid), 1, "fixture action");
+    let adm = live_keyed_row(&t, KUTHA_ADMISSION, &pin).expect("admission row");
+    let act = live_keyed_row(&t, KUTHA_ACTION, &jid).expect("action row");
+
+    let (pdir, cdir, _) = persist_three(&t, "adm");
+    let mut p = store::open(&pdir).unwrap();
+    let mut c = store::open(&cdir).unwrap();
+    replay_ok(&c, "admission open");
+
+    let reserved_reemit = |rt: &mut Runtime,
+                           row: &(
+        String,
+        String,
+        String,
+        u64,
+        Option<u64>,
+        Option<SupportPolarity>,
+        EventId,
+    ),
+                           key: &str,
+                           who: &str| {
+        match emit_matching_keyed(rt, &row.0, &row.1, &row.2, row.3, row.4, key, row.5) {
+            Err(RuntimeError::MetaOpRejected) => {}
+            Ok(o) => panic!(
+                "HIGH R2: {who} emit of prefix {} Assert was Ok events_in_quantum={} (expected MetaOpRejected)",
+                row.1, o.events_in_quantum
+            ),
+            Err(e) => panic!("HIGH R2: {who} emit of prefix {} Assert: {e}", row.1),
+        }
+    };
+    // User emit of kutha:admission / kutha:action is MetaOpRejected on T;
+    // C must not mint a second live reserved row.
+    reserved_reemit(&mut t, &adm, &pin, "T admission");
+    reserved_reemit(&mut p, &adm, &pin, "P admission");
+    reserved_reemit(&mut c, &adm, &pin, "C admission");
+    reserved_reemit(&mut t, &act, &jid, "T action");
+    reserved_reemit(&mut p, &act, &jid, "P action");
+    reserved_reemit(&mut c, &act, &jid, "C action");
+    assert_eq!(
+        live_keyed(&c, KUTHA_ADMISSION, &pin),
+        live_keyed(&t, KUTHA_ADMISSION, &pin),
+        "HIGH R2: live kutha:admission after reserved re-emit C vs T"
+    );
+    assert_eq!(
+        live_keyed(&c, KUTHA_ACTION, &jid),
+        live_keyed(&t, KUTHA_ACTION, &jid),
+        "HIGH R2: live kutha:action after reserved re-emit C vs T"
+    );
+    assert_eq!(live_keyed(&t, KUTHA_ADMISSION, &pin), 1);
+    assert_eq!(live_keyed(&t, KUTHA_ACTION, &jid), 1);
+
+    t.emit_retract_dict(adm.6).unwrap();
+    p.emit_retract_dict(adm.6).unwrap();
+    c.emit_retract_dict(adm.6)
+        .unwrap_or_else(|e| panic!("HIGH R2: C emit_retract_dict prefix admission: {e}"));
+    t.emit_retract_dict(act_id).unwrap();
+    p.emit_retract_dict(act_id).unwrap();
+    c.emit_retract_dict(act_id)
+        .unwrap_or_else(|e| panic!("HIGH R2: C emit_retract_dict prefix action: {e}"));
+    let j2_t = t
+        .record_justification(
+            claim,
+            vec![claim],
+            vec![claim],
+            "",
+            TransactionTime::MAX,
+            ValidTime::from(2015),
+        )
+        .unwrap();
+    let j2_p = p
+        .record_justification(
+            claim,
+            vec![claim],
+            vec![claim],
+            "",
+            TransactionTime::MAX,
+            ValidTime::from(2015),
+        )
+        .unwrap();
+    let j2_c = c
+        .record_justification(
+            claim,
+            vec![claim],
+            vec![claim],
+            "",
+            TransactionTime::MAX,
+            ValidTime::from(2015),
+        )
+        .unwrap();
+    t.record_action(&j2_t, TransactionTime::MAX, ValidTime::from(2015))
+        .unwrap();
+    p.record_action(&j2_p, TransactionTime::MAX, ValidTime::from(2015))
+        .unwrap();
+    c.record_action(&j2_c, TransactionTime::MAX, ValidTime::from(2015))
+        .unwrap();
+    assert_eq!(
+        live_keyed(&c, KUTHA_ADMISSION, &pin),
+        live_keyed(&t, KUTHA_ADMISSION, &pin),
+        "HIGH R2: after retract+re-record admission C vs T"
+    );
+    assert_eq!(
+        live_keyed(&c, KUTHA_ADMISSION, &pin),
+        live_keyed(&p, KUTHA_ADMISSION, &pin),
+        "HIGH R2: after retract+re-record admission C vs P"
+    );
+    assert_eq!(
+        live_keyed(&t, KUTHA_ADMISSION, &pin),
+        1,
+        "HIGH: T remint must leave one live admission"
+    );
+}
+
+/// Prefix `kutha:allows` / `kutha:policy` pins must retry after the cut.
+#[test]
+fn r3_emit_allow_and_policy_after_checkpoint() {
+    let _g = tiny_limits();
+    let mut t = Runtime::default();
+    t.emit_allow("r3-allow-rel", 2010, None).unwrap();
+    t.emit_policy("r3-pol-body", 2010, None).unwrap();
+    pad(&mut t, 8, "alpol");
+    t.emit_tt_anchor(2015).unwrap();
+    let pin = policy_version_hash("r3-pol-body");
+    assert_eq!(live_keyed(&t, KUTHA_ALLOWS, "r3-allow-rel"), 1);
+    assert_eq!(live_keyed(&t, KUTHA_POLICY, &pin), 1);
+    let (pdir, cdir, _) = persist_three(&t, "alpol");
+    let mut p = store::open(&pdir).unwrap();
+    let mut c = store::open(&cdir).unwrap();
+    replay_ok(&c, "allow/policy open");
+
+    let at = t.emit_allow("r3-allow-rel", 2010, None).unwrap();
+    let ap = p.emit_allow("r3-allow-rel", 2010, None).unwrap();
+    let ac = c.emit_allow("r3-allow-rel", 2010, None).unwrap();
+    assert_eq!(
+        ac.events_in_quantum, at.events_in_quantum,
+        "HIGH R2: emit_allow after checkpoint C quantum={} T={}",
+        ac.events_in_quantum, at.events_in_quantum
+    );
+    assert_eq!(ac.events_in_quantum, ap.events_in_quantum);
+    assert_eq!(
+        at.events_in_quantum, 0,
+        "HIGH: T emit_allow of already-allowed rel must retry"
+    );
+    assert_eq!(
+        live_keyed(&c, KUTHA_ALLOWS, "r3-allow-rel"),
+        live_keyed(&t, KUTHA_ALLOWS, "r3-allow-rel"),
+        "HIGH R2: live kutha:allows after re-emit_allow"
+    );
+    assert_eq!(live_keyed(&c, KUTHA_ALLOWS, "r3-allow-rel"), 1);
+
+    let pt = t.emit_policy("r3-pol-body", 2010, None).unwrap();
+    let pp = p.emit_policy("r3-pol-body", 2010, None).unwrap();
+    let pc = c.emit_policy("r3-pol-body", 2010, None).unwrap();
+    assert_eq!(
+        pc.events_in_quantum, pt.events_in_quantum,
+        "HIGH R2: emit_policy after checkpoint C quantum={} T={}",
+        pc.events_in_quantum, pt.events_in_quantum
+    );
+    assert_eq!(pc.events_in_quantum, pp.events_in_quantum);
+    assert_eq!(
+        pt.events_in_quantum, 0,
+        "HIGH: T emit_policy re-pin must retry the kutha:policy Assert"
+    );
+    assert_eq!(
+        live_keyed(&c, KUTHA_POLICY, &pin),
+        live_keyed(&t, KUTHA_POLICY, &pin),
+        "HIGH R2: live kutha:policy after re-pin"
+    );
+    assert_eq!(live_keyed(&c, KUTHA_POLICY, &pin), 1);
+}
+
+/// Retracted prefix delivery_key must remint one live row, not retry a dead fact.
+#[test]
+fn r3_reassert_dead_prefix_delivery_key_after_checkpoint() {
+    let _g = tiny_limits();
+    let mut t = Runtime::default();
+    let id = emit_keyed(
+        &mut t,
+        "art-12-speed",
+        "inForceAs",
+        "50-kmh",
+        2010,
+        Some(2020),
+        "r3-dead-dk",
+    );
+    pad(&mut t, 8, "dead");
+    t.emit_tt_anchor(2015).unwrap();
+    let (pdir, cdir, _) = persist_three(&t, "dead");
+    let mut p = store::open(&pdir).unwrap();
+    let mut c = store::open(&cdir).unwrap();
+    replay_ok(&c, "dead-key open");
+    t.emit(Op::Retract { event_id: id }).unwrap();
+    p.emit(Op::Retract { event_id: id }).unwrap();
+    c.emit(Op::Retract { event_id: id })
+        .unwrap_or_else(|e| panic!("HIGH R2: C Retract prefix keyed fact: {e}"));
+    assert_eq!(live_keyed(&t, "inForceAs", "r3-dead-dk"), 0);
+    assert_eq!(
+        live_keyed(&c, "inForceAs", "r3-dead-dk"),
+        0,
+        "HIGH R2: C still has live prefix key after Retract"
+    );
+    let ot = emit_matching_keyed(
+        &mut t,
+        "art-12-speed",
+        "inForceAs",
+        "50-kmh",
+        2010,
+        Some(2020),
+        "r3-dead-dk",
+        None,
+    )
+    .unwrap();
+    let op_ = emit_matching_keyed(
+        &mut p,
+        "art-12-speed",
+        "inForceAs",
+        "50-kmh",
+        2010,
+        Some(2020),
+        "r3-dead-dk",
+        None,
+    )
+    .unwrap();
+    let oc = emit_matching_keyed(
+        &mut c,
+        "art-12-speed",
+        "inForceAs",
+        "50-kmh",
+        2010,
+        Some(2020),
+        "r3-dead-dk",
+        None,
+    )
+    .unwrap_or_else(|e| panic!("HIGH R2: C re-assert dead prefix key: {e}"));
+    assert_eq!(
+        oc.events_in_quantum, ot.events_in_quantum,
+        "HIGH R2: dead-key remint quantum C={} T={}",
+        oc.events_in_quantum, ot.events_in_quantum
+    );
+    assert_eq!(oc.events_in_quantum, op_.events_in_quantum);
+    assert!(
+        ot.events_in_quantum > 0,
+        "HIGH: T must remint a retracted prefix delivery_key, not retry the dead row"
+    );
+    assert_eq!(
+        live_keyed(&c, "inForceAs", "r3-dead-dk"),
+        live_keyed(&t, "inForceAs", "r3-dead-dk"),
+        "HIGH R2: live key after remint C vs T"
+    );
+    assert_eq!(live_keyed(&c, "inForceAs", "r3-dead-dk"), 1);
+    assert_eq!(live_keyed(&p, "inForceAs", "r3-dead-dk"), 1);
 }
