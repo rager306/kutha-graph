@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-23 — Product: B3-lite hop query IR
+
+### Added
+
+- Thin typed query IR in `query_ir.rs` (`Workload = QueryIr`; no serde). `execute(&Runtime, &QueryIr)` is read-only over `live_at` / `typed_csr_lease_at` / `csr_lease_at`. Scan is a sorted product bag (`tt == MAX` equals `as_of(vt)`; `limit == 0` unlimited). Hops return sorted unique end nodes (`BTreeSet` frontier; unlabeled any-rel; typed rel filter; diamond and support multiplicity collapse). `try_hops_named` uses `dictionary().id` only (never `intern` / `admit`); intern-map miss is `QueryError`. Oracles in `tests/b5_hop_workload.rs` (in-memory only): scan vs sorted `as_of` on FF5+statute, nested join on chain+branch+diamond, unlabeled vs untyped neighbors, VT window-end and TT retract PIT, fail-closed unknown names, xorshift shuffle. No parser, planner, Op, wire, or fingerprint change. Hop bench band is 231-02.
+
 ## 2026-10-23 — Product: fork diff
 
 ### Added

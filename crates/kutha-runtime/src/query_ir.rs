@@ -5,6 +5,7 @@
 
 use crate::quantum::Runtime;
 use kutha_common::{TermId, TransactionTime, ValidTime};
+use std::collections::BTreeSet;
 use std::fmt;
 
 /// Workload alias: the hop/scan IR is the leased B3-lite workload.
@@ -131,7 +132,7 @@ pub fn try_hops_named(
     })
 }
 
-/// Interpret `q` over `rt` read APIs. Hops walk is still a stub (task 3).
+/// Interpret `q` over `rt` read APIs (`live_at` / CSR leases). Read-only.
 pub fn execute(rt: &Runtime, q: &QueryIr) -> Result<QueryRows, QueryError> {
     match q {
         QueryIr::Scan { tt, vt, limit } => {
@@ -139,13 +140,53 @@ pub fn execute(rt: &Runtime, q: &QueryIr) -> Result<QueryRows, QueryError> {
             rows.sort_unstable();
             Ok(QueryRows::Triples(apply_limit(rows, *limit)))
         }
-        QueryIr::Hops { start, rels, k, .. } => {
+        QueryIr::Hops {
+            start,
+            rels,
+            k,
+            tt,
+            vt,
+            limit,
+        } => {
             require_term(rt, *start)?;
             require_rels_shape(rels, *k)?;
             for id in rels {
                 require_term(rt, *id)?;
             }
-            Ok(QueryRows::Triples(vec![]))
+            if *k == 0 {
+                return Ok(QueryRows::Nodes(apply_limit(vec![*start], *limit)));
+            }
+            let mut frontier: BTreeSet<TermId> = BTreeSet::from([*start]);
+            if rels.is_empty() {
+                let csr = rt.csr_lease_at(*tt, *vt);
+                for _ in 0..*k {
+                    let mut next = BTreeSet::new();
+                    for v in frontier {
+                        next.extend(csr.neighbors(v).iter().copied());
+                    }
+                    frontier = next;
+                }
+            } else {
+                let typed = rt.typed_csr_lease_at(*tt, *vt);
+                for hop in 0..*k {
+                    let rel = if rels.len() == 1 {
+                        rels[0]
+                    } else {
+                        rels[hop as usize]
+                    };
+                    let mut next = BTreeSet::new();
+                    for v in frontier {
+                        for e in typed.edges_out(v) {
+                            if e.relation == rel {
+                                next.insert(e.object);
+                            }
+                        }
+                    }
+                    frontier = next;
+                }
+            }
+            let nodes: Vec<TermId> = frontier.into_iter().collect();
+            Ok(QueryRows::Nodes(apply_limit(nodes, *limit)))
         }
     }
 }
