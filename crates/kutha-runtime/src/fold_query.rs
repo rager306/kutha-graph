@@ -2,7 +2,7 @@
 use kutha_common::{EventId, SupportPolarity, TermId, TransactionTime, ValidTime, WallTime};
 use sha2::{Digest, Sha256};
 
-use crate::fold::{leftover_halves, vt_intersect, Fact, GraphFold, LiveFactFilter};
+use crate::fold::{Fact, GraphFold, LiveFactFilter, leftover_halves, vt_intersect};
 
 impl GraphFold {
     pub(crate) fn live_facts_at(
@@ -172,8 +172,11 @@ impl GraphFold {
             .filter_map(|idx| {
                 self.hot_examine.bump();
                 let fact = &self.facts[idx];
-                (fact.is_known_at(tt) && keep(fact))
-                    .then_some((fact.subject, fact.relation, fact.object()))
+                (fact.is_known_at(tt) && keep(fact)).then_some((
+                    fact.subject,
+                    fact.relation,
+                    fact.object(),
+                ))
             })
             .collect()
     }
@@ -696,4 +699,32 @@ fn subtract_vt_window(windows: &mut Vec<(u64, Option<u64>)>, cut_from: u64, cut_
         }
     }
     *windows = next;
+}
+
+/// Fact-set picture diff: what turns fold `a` into fold `b` (ADR-061).
+/// Identity is `(event_id, valid_from, valid_to)` plus rank; `seq` does not participate.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct FoldDiff {
+    pub added: Vec<Fact>,
+    pub removed: Vec<Fact>,
+    pub changed: Vec<FactChange>,
+}
+
+/// One `(key, rank)` pair whose non-`seq` fields differ between the two folds.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct FactChange {
+    pub before: Fact,
+    pub after: Fact,
+}
+
+/// What turns `a` into `b`. Compile-only empty stub (D-01); real query replaces this.
+pub fn diff_folds(_a: &GraphFold, _b: &GraphFold) -> FoldDiff {
+    FoldDiff::default()
+}
+
+impl GraphFold {
+    /// Thin wrapper around [`diff_folds`].
+    pub fn diff(&self, other: &GraphFold) -> FoldDiff {
+        diff_folds(self, other)
+    }
 }

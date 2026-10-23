@@ -111,7 +111,7 @@ fn polarity_for_row(
 }
 
 /// One asserted (or behavior-asserted) fact in the fold. Losers stay on retract (ADR-013).
-#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct Fact {
     pub seq: u64,
     pub subject: TermId,

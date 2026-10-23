@@ -30,6 +30,7 @@ pub mod rocks_spike;
 
 pub use csr::{CsrLease, TypedCsrLease, TypedEdge};
 pub use fold::{Fact, FoldIndexMode, GraphFold};
+pub use fold_query::{diff_folds, FactChange, FoldDiff};
 pub use leapfrog::{AdjacencyIter, leapfrog_intersect};
 pub use log::EventLog;
 pub use materializer::{CsrMaterializer, Materializer};
