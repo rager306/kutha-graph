@@ -155,6 +155,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.45 | 225 | M151 | S01 | observe phase_ms wall honesty under overlap | shipped |
 | v1.46 | 226 | M152 | S01 | Arc 0 hygiene: tracked CE artifacts, harness moratorium, branch work/main-line | shipped |
 | v1.47 | 227 | M153 | S01 | Verus on-ramp: pin, `verus/vt_intersect.rs`, sync check | shipped |
+| v1.51 | 231 | M157 | S01 | B3-lite: workload as data, thin typed query IR over existing read APIs, prepare/run split, self-relative `hop_k` bench | shipped |
 | v1.50 | 230 | M156 | S01 | fork diff: pure read-side `diff_folds` over fold fact rows (B2, ADR-061 reduced) | shipped |
 | v1.49 | 229 | M155 | S01 | checkpoint is a cut: fork_at fails closed on compacted cuts, Horn cascade parity, migrate refuses a checkpoint | shipped |
 | v1.48 | 228 | M154 | S01 | checkpoint receipt: sealed prefix replaced by on-log checkpoint + `Op::Checkpoint` (thin B1) | shipped |
