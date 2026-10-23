@@ -339,6 +339,10 @@ pub struct Runtime {
     /// Prefix `Op::Behavior` records restored from a checkpoint Snapshot
     /// (not on the compacted log). Droppable; rebuilt on hydrate.
     pub(crate) compacted_behavior_by_id: IngestMap<EventId, Event>,
+    /// Prefix `Op::Assert` reconstructed from restored facts whose minting
+    /// Event was dropped by the sealed-prefix rewrite (delivery-key retry).
+    /// Droppable; rebuilt on hydrate. Not fingerprint / JSON.
+    pub(crate) compacted_assert_by_id: IngestMap<EventId, Event>,
 }
 
 impl Default for Runtime {
@@ -374,6 +378,7 @@ impl Runtime {
             behaviors_by_premise_fact: IngestMap::default(),
             premise_facts_of_behavior: IngestMap::default(),
             compacted_behavior_by_id: IngestMap::default(),
+            compacted_assert_by_id: IngestMap::default(),
             unindex_premise_examine: IngestExamine::default(),
             unindex_live_examine: IngestExamine::default(),
         };

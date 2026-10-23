@@ -2,7 +2,10 @@
 //! `fork_at` is `Result<Self, RuntimeError::ForkCutUnavailable>`. Horn and
 //! migrate tests stay RED for plan 02.
 
-use kutha_common::{Event, EventId, Op, RuleAst, RuleAtom, RuleTerm, ValidTime};
+use kutha_common::{
+    Event, EventId, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE, Op, RuleAst, RuleAtom, RuleTerm,
+    ValidTime,
+};
 use kutha_runtime::{Runtime, RuntimeError, store};
 use std::collections::BTreeMap;
 use std::fs;
@@ -337,4 +340,188 @@ fn migrate_compat_refuses_checkpointed_store_and_leaves_dir_unchanged() {
         before,
         "migrate_compat Err must leave payload files unchanged"
     );
+}
+
+fn live_count(rt: &Runtime, s: &str, r: &str, o: &str) -> usize {
+    let (Some(s), Some(r), Some(o)) = (
+        rt.dictionary().id(s),
+        rt.dictionary().id(r),
+        rt.dictionary().id(o),
+    ) else {
+        return 0;
+    };
+    rt.fold()
+        .facts()
+        .iter()
+        .filter(|f| {
+            f.subject == s && f.relation == r && f.object() == o && f.invalidated_at.is_none()
+        })
+        .count()
+}
+
+fn live_keyed(rt: &Runtime, rel: &str, key: &str) -> usize {
+    let Some(rel) = rt.dictionary().id(rel) else {
+        return 0;
+    };
+    rt.fold()
+        .facts()
+        .iter()
+        .filter(|f| {
+            f.relation == rel
+                && f.delivery_key.as_deref() == Some(key)
+                && f.invalidated_at.is_none()
+        })
+        .count()
+}
+
+fn persist_twins(rt: &Runtime, label: &str) -> (common::PersistScratch, common::PersistScratch) {
+    let ckp = persist_dir(&format!("{label}-ckp"));
+    let twin = persist_dir(&format!("{label}-twin"));
+    store::persist(rt, &ckp).unwrap();
+    copy_store(&ckp, &twin);
+    store::checkpoint_sealed_prefix(&ckp).unwrap();
+    (ckp, twin)
+}
+
+/// Prefix Horn, then the same `emit_rule_ast` after the cut, then Retract and
+/// re-assert of A-B. Compacted `kutha:rule` pin must retry like the twin.
+#[test]
+fn reregister_same_horn_after_checkpoint_matches_twin() {
+    let _g = tiny_limits();
+    let mut rt = Runtime::default();
+    rt.emit_rule_ast(&horn_related(), 2010, None).unwrap();
+    let ab = emit_keyed(&mut rt, "A", "relatedTo", "B", 2010, None, "rr-ab");
+    let _bc = emit_keyed(&mut rt, "B", "relatedTo", "C", 2010, None, "rr-bc");
+    pad(&mut rt, 8, "rr");
+    rt.emit_tt_anchor(2015).unwrap();
+    assert_eq!(live_count(&rt, "A", "relatedTo", "C"), 1);
+    let (ckp, twin) = persist_twins(&rt, "rr-horn");
+    let mut a = store::open(&ckp).unwrap();
+    let mut b = store::open(&twin).unwrap();
+    let rc = a.emit_rule_ast(&horn_related(), 2010, None).unwrap();
+    let rp = b.emit_rule_ast(&horn_related(), 2010, None).unwrap();
+    assert_eq!(
+        rc.events_in_quantum, rp.events_in_quantum,
+        "re-register kutha:rule must retry (events_in_quantum C={} P={})",
+        rc.events_in_quantum, rp.events_in_quantum
+    );
+    assert_eq!(
+        live_keyed(&a, KUTHA_RULE, &horn_related().hash()),
+        live_keyed(&b, KUTHA_RULE, &horn_related().hash()),
+        "live kutha:rule pins after re-register"
+    );
+    a.emit(Op::Retract { event_id: ab }).unwrap();
+    b.emit(Op::Retract { event_id: ab }).unwrap();
+    emit_keyed(&mut a, "A", "relatedTo", "B", 2010, None, "rr-ab-re");
+    emit_keyed(&mut b, "A", "relatedTo", "B", 2010, None, "rr-ab-re");
+    assert_eq!(
+        live_count(&a, "A", "relatedTo", "C"),
+        live_count(&b, "A", "relatedTo", "C"),
+        "after re-assert A-B, live relatedTo(A,C) must match twin"
+    );
+    assert_eq!(live_count(&a, "A", "relatedTo", "C"), 1);
+}
+
+/// Prefix product Assert with a delivery_key must retry after the cut.
+#[test]
+fn reassert_prefix_delivery_key_after_checkpoint_is_retry() {
+    let _g = tiny_limits();
+    let mut rt = Runtime::default();
+    emit_keyed(
+        &mut rt,
+        "art-12-speed",
+        "inForceAs",
+        "50-kmh",
+        2010,
+        Some(2020),
+        "statute-50",
+    );
+    pad(&mut rt, 6, "dk");
+    rt.emit_tt_anchor(2015).unwrap();
+    let (ckp, twin) = persist_twins(&rt, "rr-dk");
+    let mut a = store::open(&ckp).unwrap();
+    let mut b = store::open(&twin).unwrap();
+    let before_c = live_keyed(&a, "inForceAs", "statute-50");
+    let sa = a.intern("art-12-speed");
+    let ra = a.intern("inForceAs");
+    let oa = a.intern("50-kmh");
+    let rc = a
+        .emit(Op::Assert {
+            subject: sa,
+            relation: ra,
+            object: oa,
+            valid_from: 2010,
+            valid_to: Some(2020),
+            claim: None,
+            delivery_key: Some("statute-50".into()),
+            polarity: None,
+        })
+        .unwrap();
+    let sb = b.intern("art-12-speed");
+    let rb = b.intern("inForceAs");
+    let ob = b.intern("50-kmh");
+    let rp = b
+        .emit(Op::Assert {
+            subject: sb,
+            relation: rb,
+            object: ob,
+            valid_from: 2010,
+            valid_to: Some(2020),
+            claim: None,
+            delivery_key: Some("statute-50".into()),
+            polarity: None,
+        })
+        .unwrap();
+    assert_eq!(rc.events_in_quantum, 0, "C must retry prefix delivery_key");
+    assert_eq!(rp.events_in_quantum, 0, "P must retry prefix delivery_key");
+    assert_eq!(live_keyed(&a, "inForceAs", "statute-50"), before_c);
+    assert_eq!(
+        live_keyed(&a, "inForceAs", "statute-50"),
+        live_keyed(&b, "inForceAs", "statute-50")
+    );
+}
+
+/// Prefix `kutha:allows` pin must retry `emit_allow` after the cut.
+#[test]
+fn reregister_same_allow_after_checkpoint_is_retry() {
+    let _g = tiny_limits();
+    let mut rt = Runtime::default();
+    rt.emit_allow("b3-cut-rel", 2010, None).unwrap();
+    pad(&mut rt, 6, "al");
+    rt.emit_tt_anchor(2015).unwrap();
+    let (ckp, twin) = persist_twins(&rt, "rr-allow");
+    let mut a = store::open(&ckp).unwrap();
+    let mut b = store::open(&twin).unwrap();
+    let rc = a.emit_allow("b3-cut-rel", 2010, None).unwrap();
+    let rp = b.emit_allow("b3-cut-rel", 2010, None).unwrap();
+    assert_eq!(rc.events_in_quantum, 0);
+    assert_eq!(rp.events_in_quantum, 0);
+    assert_eq!(
+        live_keyed(&a, KUTHA_ALLOWS, "b3-cut-rel"),
+        live_keyed(&b, KUTHA_ALLOWS, "b3-cut-rel")
+    );
+    assert_eq!(live_keyed(&a, KUTHA_ALLOWS, "b3-cut-rel"), 1);
+}
+
+/// Prefix `kutha:policy` pin must retry `emit_policy` after the cut.
+#[test]
+fn reregister_same_policy_after_checkpoint_is_retry() {
+    let _g = tiny_limits();
+    let mut rt = Runtime::default();
+    rt.emit_policy("b3-cut-policy", 2010, None).unwrap();
+    pad(&mut rt, 6, "pol");
+    rt.emit_tt_anchor(2015).unwrap();
+    let (ckp, twin) = persist_twins(&rt, "rr-pol");
+    let mut a = store::open(&ckp).unwrap();
+    let mut b = store::open(&twin).unwrap();
+    let rc = a.emit_policy("b3-cut-policy", 2010, None).unwrap();
+    let rp = b.emit_policy("b3-cut-policy", 2010, None).unwrap();
+    assert_eq!(rc.events_in_quantum, 0, "C policy Assert must retry");
+    assert_eq!(rp.events_in_quantum, 0, "P policy Assert must retry");
+    let pin = kutha_common::policy_version_hash("b3-cut-policy");
+    assert_eq!(
+        live_keyed(&a, KUTHA_POLICY, &pin),
+        live_keyed(&b, KUTHA_POLICY, &pin)
+    );
+    assert_eq!(live_keyed(&a, KUTHA_POLICY, &pin), 1);
 }

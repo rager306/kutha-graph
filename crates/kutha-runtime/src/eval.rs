@@ -332,7 +332,9 @@ impl Runtime {
         if let Some(pos) = self.by_event_id.get(&id) {
             return self.log.as_slice().get(*pos);
         }
-        self.compacted_behavior_by_id.get(&id)
+        self.compacted_behavior_by_id
+            .get(&id)
+            .or_else(|| self.compacted_assert_by_id.get(&id))
     }
 
     pub(crate) fn behavior_fact_live(&self, event_id: EventId) -> bool {

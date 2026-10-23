@@ -15,6 +15,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Independent verifier kill-tests `r2_chain_two_hops_retract_first_premise` (live `relatedTo(A,D)` after retracting prefix A-B) and `r2_two_rules_two_premises_chain_and_no_live_premise` (inverse `relatedTo(C,B)` of still-live B-C dropped) — exact derivation records through the checkpoint, not rematch.
 - Round-2 kill2 3-hop (`b3_checkpoint_cut_kill2`): `checkpoint_prefix_behaviors` no longer drops a second `Op::Behavior` that shares EventId (`Event::stable_derived` hashes pin+bindings, not `caused_by`). `rebuild_log_indexes` indexes every live minting row so `derived_by_cause` sees both causes. Retract A-B and retract D-E on a checkpointed store match the never-reopened twin and the persist+`open` twin.
+- Round-3 kill3 `r3_reregister_same_horn_after_checkpoint`: prefix keyed Asserts (product, `kutha:rule` / `kutha:allows` / `kutha:policy`) live in restored facts but were dropped from the rewritten log, so `by_delivery_key` missed them and a re-register minted a second live pin. `rebuild_log_indexes` now fills `by_delivery_key` from facts (`or_insert` after the log walk) and reconstructs those Assert Events for `event_by_id`. Payload shape and fingerprint unchanged.
 
 ### Trajectory
 

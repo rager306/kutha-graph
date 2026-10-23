@@ -118,6 +118,7 @@ impl Runtime {
             behaviors_by_premise_fact: IngestMap::default(),
             premise_facts_of_behavior: IngestMap::default(),
             compacted_behavior_by_id: IngestMap::default(),
+            compacted_assert_by_id: IngestMap::default(),
         };
         rt.hydrate_from_log();
         rt
@@ -172,6 +173,7 @@ impl Runtime {
             behaviors_by_premise_fact: IngestMap::default(),
             premise_facts_of_behavior: IngestMap::default(),
             compacted_behavior_by_id: IngestMap::default(),
+            compacted_assert_by_id: IngestMap::default(),
         };
         rt.hydrate_from_log();
         Ok(rt)
@@ -229,6 +231,7 @@ impl Runtime {
             behaviors_by_premise_fact: IngestMap::default(),
             premise_facts_of_behavior: IngestMap::default(),
             compacted_behavior_by_id: IngestMap::default(),
+            compacted_assert_by_id: IngestMap::default(),
         };
         rt.hydrate_from_log();
         Ok(rt)

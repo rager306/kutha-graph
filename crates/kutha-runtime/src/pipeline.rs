@@ -1,10 +1,36 @@
 //! One write path: propose → admit → commit → receipt (D-01).
+use crate::fold::Fact;
 use crate::quantum::{PersistedQuantumOutcome, QuantumOutcome, Runtime, RuntimeError, disposition};
 use crate::receipt::{QuantumReceipt, digest_to_hex};
 use kutha_common::{
     Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE, Op,
     OutcomeDisposition, RuleAst, WallTime, blob_digest_matches, policy_version_hash,
 };
+
+/// Rebuild a prefix Assert Event that the sealed-prefix rewrite dropped.
+fn event_from_assert_fact(fact: &Fact) -> Event {
+    let claim = if fact.claim_id == fact.event_id {
+        None
+    } else {
+        Some(fact.claim_id)
+    };
+    let op = Op::Assert {
+        subject: fact.subject,
+        relation: fact.relation,
+        object: fact.object(),
+        valid_from: fact.valid_from,
+        valid_to: fact.valid_to,
+        claim,
+        delivery_key: fact.delivery_key.clone(),
+        polarity: fact.polarity,
+    };
+    Event {
+        id: fact.event_id,
+        ingested_at: fact.ingested_at,
+        op,
+        object_ids: vec![fact.subject, fact.relation, fact.object()],
+    }
+}
 
 /// How the shared pipeline finishes a committed quantum (D-01 / D-07).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -29,6 +55,7 @@ impl Runtime {
         self.behaviors_by_premise_fact.clear();
         self.premise_facts_of_behavior.clear();
         self.compacted_behavior_by_id.clear();
+        self.compacted_assert_by_id.clear();
         let n = self.log.len();
         self.by_event_id.reserve(n);
         self.by_delivery_key.reserve(n);
@@ -47,6 +74,25 @@ impl Runtime {
         }
         for e in &self.fold.compacted_behaviors {
             self.compacted_behavior_by_id.insert(e.id, e.clone());
+        }
+        // Prefix Asserts were dropped from the rewritten log. Restored facts
+        // still carry delivery_key + event_id; fill leases the log walk missed
+        // (or_insert: tail log Asserts stay last-wins).
+        for fact in self.fold.facts() {
+            if let Some(k) = fact.delivery_key.as_ref() {
+                if !k.is_empty() {
+                    self.by_delivery_key
+                        .entry((fact.relation, k.clone()))
+                        .or_insert(fact.event_id);
+                }
+            }
+            if self.by_event_id.contains_key(&fact.event_id)
+                || self.compacted_behavior_by_id.contains_key(&fact.event_id)
+            {
+                continue;
+            }
+            self.compacted_assert_by_id
+                .insert(fact.event_id, event_from_assert_fact(fact));
         }
         // Only live Behavior heads belong in retract/unindex leases. Dead rows
         // stay on the log (SoT) or in compacted_behavior_by_id but must not
@@ -219,8 +265,12 @@ impl Runtime {
 
     pub(crate) fn event_by_id(&self, id: kutha_common::EventId) -> Option<&Event> {
         self.ingest_examine.bump();
-        let pos = *self.by_event_id.get(&id)?;
-        self.log.as_slice().get(pos)
+        if let Some(pos) = self.by_event_id.get(&id) {
+            return self.log.as_slice().get(*pos);
+        }
+        self.compacted_behavior_by_id
+            .get(&id)
+            .or_else(|| self.compacted_assert_by_id.get(&id))
     }
 
     pub(crate) fn next_tt(&mut self) -> u64 {
