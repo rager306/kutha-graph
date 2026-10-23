@@ -23,13 +23,13 @@ Counted from `test-matrix.yaml` rows on 2026-10-23 (M157 S01). Recount after you
 
 | Status | Rows |
 |--------|------|
-| killed | 250 |
+| killed | 251 |
 | characterization | 11 |
 | gap | 0 |
 | blocked | 0 |
 | spec-only | 4 |
 | gate | 1 |
-| **total** | **266** |
+| **total** | **267** |
 
 Planes: product vs harness. Layers: decision, characterization, property, crash, kill, governor, bench.
 
@@ -265,7 +265,7 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M156 S01 (fork diff):** Phase 230 — `SEM-m156-empty-mirror`, `SEM-m156-fork-counterfactual`, `SEM-m156-apply-diff`, `SEM-m156-equal-keys`, `SEM-m156-checkpoint-fork`, `SEM-m156-kill-independent` `killed` (owner `M156-S01`). Oracles: executor `b4_fork_diff` plus independent `b4_fork_diff_kill` (`kill_totality_mirror_aa_random_pairs`, `kill_equal_keys_full_duplicates_and_rank_not_insertion`, `kill_seq_only_empty_but_real_field_change_is_not`, `kill_dead_rows_are_in_the_domain`, `kill_fail_closed_cut_never_reaches_diff`, `kill_checkpointed_fork_matches_plain_twin`, `kill_open_interval_is_not_u64_max_identity`, `kill_invalidated_at_none_vs_max_rank_is_total`). Fact-set `diff_folds` turns fold `a` into `b`; `apply_diff` reconstructs `b` modulo `seq`; checkpointed legal cuts match the twin; interior cut is `ForkCutUnavailable`. Not named refs, GED, or merge.
 
-**M157 S01 (hop workload):** Phase 231 — `SEM-m157-scan-as-of`, `SEM-m157-nested-join`, `SEM-m157-unlabeled-neighbors`, `SEM-m157-cuts-pit`, `SEM-m157-fail-closed`, `SEM-m157-shuffle`, `SEM-m157-per-hop-rels`, `SEM-m157-limit-prefix` `killed` (owner `M157-S01`). Oracles in `b5_hop_workload.rs`. Scan equals sorted `as_of`; hops equal a nested `live_at` join; unlabeled 1-hop matches untyped neighbors; PIT cuts differ; intern-map miss and `RelsShape` fail closed; shuffle is deterministic; per-hop `rels` order matters; `limit` is a sorted prefix (`0` unlimited). Not Cypher, planner, or leapfrog-on-query-path.
+**M157 S01 (hop workload):** Phase 231 — `SEM-m157-scan-as-of`, `SEM-m157-nested-join`, `SEM-m157-unlabeled-neighbors`, `SEM-m157-cuts-pit`, `SEM-m157-fail-closed`, `SEM-m157-shuffle`, `SEM-m157-per-hop-rels`, `SEM-m157-limit-prefix`, `SEM-m157-kill-independent` `killed` (owner `M157-S01`). Oracles in `b5_hop_workload.rs` plus independent `b5_hop_workload_kill.rs` (live_at exact-k oracle, Scan bag vs sorted `as_of`, TT/VT cuts, fail-closed intern, Horn/CI residuals, `KUTHA_KILL_CASES` graphs). Not Cypher, planner, or leapfrog-on-query-path.
 
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 

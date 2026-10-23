@@ -2987,6 +2987,30 @@ rows:
     gate: default
     owner: M157-S01
     source: Phase 231 / hop workload
+  - id: SEM-m157-kill-independent
+    plane: product
+    invariant: independent live_at hop oracle, Scan bag vs as_of, both clocks, fail-closed intern, Horn/CI residuals
+    layer: kill
+    oracle:
+      - kill_scan_equals_sorted_as_of_bag_and_keeps_multiplicity
+      - kill_scan_honours_tt_not_only_as_of
+      - kill_hops_exact_k_set_matches_live_at_oracle
+      - kill_per_hop_rels_shape_and_order
+      - kill_unlabeled_follows_any_relation
+      - kill_clocks_valid_to_exclusive_and_retract_tt
+      - kill_limit_is_sorted_prefix_zero_unlimited
+      - kill_fail_closed_unknown_names_no_intern
+      - kill_no_panic_weird_input
+      - kill_horn_derived_heads_visible_iff_live
+      - kill_correct_interval_residuals_match_oracle
+      - kill_shuffle_assert_order_deterministic
+      - kill_multiplicity_parallel_dead_and_synthetic_horn
+      - kill_property_random_graphs_vs_live_at_oracle
+    kill_mutation: at-most-k visited BFS; unique Scan; intern on miss; inclusive valid_to; ignore tt; skip derived/CI residuals
+    status: killed
+    gate: default
+    owner: M157-S01
+    source: Phase 231 / independent verify
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute
