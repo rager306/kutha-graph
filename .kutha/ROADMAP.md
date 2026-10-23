@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M155: checkpoint is a cut, not a hole — LEASED (GSD v1.49)
+## M155: checkpoint is a cut, not a hole — CLOSED (GSD v1.49)
 
 Gap closure for thin B1, found by the 2026-10-23 read-only audit of M153/M154 against the surrounding workflow (ingest, persist, checkpoint, open, fork, migrate): `fork_at` on a checkpointed store returns an empty or a later fold silently, a live retract of a prefix Horn premise is not exercised by the kill suite, and `migrate_compat` demotes a checkpointed store. Fired evidence: audit findings F1, F2, F3 (source read plus `rg`; F1 is confirmed only by its RED). Honeycomb stays Proposed; nothing thawed; no new Op.
 
-- [ ] **S01: fail-closed cuts and cascade parity** `risk:high` `depends:[]`
-  > After this: `Runtime::fork_at` returns a typed error for a cut inside a compacted prefix or past the log end and Ok at or after the receipt; Retract/Correct of a prefix Horn premise on a reopened checkpointed store equals the un-checkpointed twin; `migrate_compat` fails closed on `Op::Checkpoint`; bench gate recorded. Phase 229.
+- [x] **S01: fail-closed cuts and cascade parity** `risk:high` `depends:[]`
+  > After this: `Runtime::fork_at` returns a typed error for a cut inside a compacted prefix or past the log end and Ok at or after the receipt; Retract/Correct of a prefix Horn premise on a reopened checkpointed store equals the un-checkpointed twin; `migrate_compat` fails closed on `Op::Checkpoint`; bench gate recorded. Phase 229. Landed (four independent verification rounds).
 
 ## M154: checkpoint receipt (thin B1) — CLOSED (GSD v1.48)
 

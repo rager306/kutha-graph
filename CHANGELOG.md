@@ -4,6 +4,15 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-23 — Trajectory: M155 / GSD v1.49 closed
+
+Process tag **v1.49** / Phase **229**. Not a SemVer release.
+
+- Gap closure for thin B1 from the 2026-10-23 audit: `fork_at` fails closed on compacted cuts (typed `ForkCutUnavailable`), the Horn cascade after a checkpoint equals the un-checkpointed twin, `migrate_compat` refuses a checkpointed store. Four independent verification rounds closed seven HIGH defects (two Horn lineage holes, multi-path derived heads incl. a reopen defect that predates the checkpoint, prefix delivery-key retry). `cargo test --workspace --offline --no-fail-fast` 0, `kutha-gov ci --jobs 1` `run_high=0`. Bench numbers are in the Product entry below.
+- Test hygiene: kill3 property cases default 16 (`KUTHA_KILL_CASES` for deep runs), new tests clean up their scratch dirs.
+- Residuals (each needs a fired RED before a lease): ordinary `StoreBlob` digests are not verified on open; `horn_behavior_reproducible` fails open on a missing rule blob; dangling lineage ids after a checkpoint; vintage checkpoint payload without `behaviors`; checkpoint has no operator surface; B1b vacuum.
+- `L_delivery=M155-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.49 / Phase 229. ADR-000 D3 still rejects a hard FSM as the only control model.
+
 ## 2026-10-23 — Product: checkpoint cut
 
 ### Changed

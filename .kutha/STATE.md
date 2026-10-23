@@ -4,27 +4,27 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M155
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 
 ## Lifecycles (do not collapse)
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M155-S01
+L_delivery=M155-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M155-S01 leased (v1.49): checkpoint is a cut, not a hole | Capability proven / Cypher started |
+| L_delivery | M155 closed (v1.49) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M155 S01 (finish thin B1; audit 2026-10-23 found the gaps in the M154 workflow): after a checkpoint, `fork_at` on a cut inside the compacted prefix must fail closed (typed error, `n > len` too) instead of returning an empty or later fold; a live Retract/Correct of a prefix Horn premise must cascade exactly like the un-checkpointed twin (RED first; if it already passes the finding is wrong and is dropped); `migrate_compat` / `kutha-migrate` must fail closed on a checkpointed store. No new Op, no thaw, fingerprint contract unchanged. Then B2 (ADR-061 fork diff over the now-honest `fork_at`). Residuals that stay open until a fired RED: ordinary `StoreBlob` digests are not verified on open; `horn_behavior_reproducible` fails open on a missing rule blob; dangling lineage ids (`caused_by`, sidecar cites) after a checkpoint; checkpoint has no operator surface; B1b vacuum proper. Before B3: Samyama and FalkorDB baseline environment with the owner. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M155 is closed: after a checkpoint, `fork_at` fails closed on compacted cuts, the Horn cascade equals the twin (exact derivation records ride in the checkpoint payload; every dedup index is rebuilt from restored facts), and `migrate_compat` refuses a checkpointed store. Four independent verification rounds found and closed six more HIGH defects, including a reopen defect that predates the checkpoint (multi-path derived heads). Next: **B2** ADR-061 fork diff over the now-honest `fork_at` (fresh RED first; scout report: pure `diff_folds` over facts keyed by (event id, valid from, valid to), no new Op). Residuals that stay open until a fired RED: ordinary `StoreBlob` digests are not verified on open; `horn_behavior_reproducible` fails open on a missing rule blob; dangling lineage ids (`caused_by`, sidecar cites) after a checkpoint; a vintage checkpoint payload without `behaviors` opens with approximate Horn lineage (no such stores exist outside tests); `cause_of_behavior` is last-wins on duplicate event ids; checkpoint has no operator surface; B1b vacuum proper. Before B3: Samyama and FalkorDB baseline environment with the owner. Verus proofs ride inside the slice that touches the kernel. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 
