@@ -18,6 +18,10 @@ Governor green ≠ ADR Accepted ≠ capability. Honeycomb cells are a map, not a
 
 **Frozen items and their thaw gates:** see [`.kutha/STATE.md`](.kutha/STATE.md) Thaw map. Do not duplicate that table here.
 
+## Repository
+
+Public research tree. **No license is granted.** ADR-092 D092-2 leaves the SPDX choice open, so there is no `LICENSE` file. Security reports go through [`SECURITY.md`](SECURITY.md). How to change the tree: [`CONTRIBUTING.md`](CONTRIBUTING.md). What was turned on, and what was left off on purpose: [`docs/process/repository.md`](docs/process/repository.md).
+
 ## Quick start
 
 Product (Rust workspace):
@@ -56,6 +60,8 @@ This host’s Cargo uses **kache** as `rustc-wrapper` and **mold** as linker (`~
 | `docs/process/` | Harness contract, governor intake, Codex subagents |
 | `docs/process/governor-intake.md` | Control loop / bridge / map → governor dictionaries |
 | `docs/process/gsd-auto-contract.md` | Id map, controller protocol, code-graph tool pair, verification and artifact gates for GSD auto runs |
+| `docs/process/repository.md` | Public-repo baseline: community files, CI, GitHub settings, license gap |
+| `SECURITY.md`, `CONTRIBUTING.md` | Vulnerability reports and how a change is allowed to land |
 | `scripts/kutha_gov/` | Governor CLI interpreter |
 | `verus/`, `tools/verus/` | Verus proofs of pure kernels (evidence, not a gate) and the pinned release + checksum |
 | `.compound-engineering/artifacts/` | CE `docs_root` (applicability cards, research notes, handoffs archive) |

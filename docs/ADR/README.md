@@ -97,6 +97,18 @@ All coordinate-band working titles listed in this README are **opened** as Propo
 
 This index lists **32** ADR files; all are **Proposed**.
 
+## Status recheck (2026-10-23)
+
+32 files, 32 index rows. Every `## Status` is **Proposed**. None are Accepted, Deprecated, or Superseded. Honeycomb stays a map.
+
+Evidence in the engine after the 2026-10-18 table below, still not acceptance:
+
+- ADR-012: a sealed prefix can be replaced by a checkpoint receipt (`Op::Checkpoint`). `fork_at` fails closed on a compacted cut. `migrate_compat` refuses a checkpointed store. Vacuum proper is not this.
+- ADR-061: fact-set `diff_folds` / `GraphFold::diff`. Named refs and GED stay open.
+- ADR-040 / ADR-041: a typed CSR lease keeps relation and multiplicity. A thin query IR (`Scan`, `Hops`, `prepare` / `run`) walks those leases. Leapfrog is not on that path. No planner and no Cypher.
+
+ADR-092 D092-2: the license is undecided. Repository hygiene does not add an SPDX file.
+
 ## Engine evidence (2026-10-18 audit)
 
 Status stays **Proposed**. This is spike evidence, not acceptance. Source: CBM `kutha-graph` reindex and GitNexus `analyze --index-only` the same day. Residuals closed in the working tree after that audit (still not Accepted):

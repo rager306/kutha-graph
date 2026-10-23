@@ -1,0 +1,33 @@
+# Supply-chain pins are commit SHAs. Dependabot updates the github-actions ecosystem.
+name: ci
+
+on:
+  push:
+    branches: [main, work/main-line]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e
+        with:
+          enable-cache: true
+          python-version: "3.13"
+      - name: fetch crates for the offline observe step
+        run: cargo fetch --locked
+      - name: install the harness
+        run: uv sync --frozen
+      - name: governor ci
+        run: |
+          cp .env.example .env
+          uv run kutha-gov ci --jobs 1

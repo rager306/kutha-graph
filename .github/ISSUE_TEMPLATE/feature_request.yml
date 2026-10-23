@@ -1,0 +1,18 @@
+name: Change
+description: A concrete change. Honeycomb cells are Proposed and are not a backlog.
+title: "change: "
+labels: []
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What should change
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: What fails or is missing today
+      description: A command, a test, or a file path. A wish without evidence is not a lease.
+    validations:
+      required: true

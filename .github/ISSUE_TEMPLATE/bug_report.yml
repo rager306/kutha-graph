@@ -1,0 +1,25 @@
+name: Bug
+description: A failing behavior in the running engine or the harness
+title: "bug: "
+labels: []
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Command, input, and the output you got.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Commit
+      description: git rev-parse --short HEAD
+    validations:
+      required: true

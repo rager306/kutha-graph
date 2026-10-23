@@ -4,6 +4,15 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-23 — Process: public repository baseline
+
+Not a SemVer release. Not an ADR acceptance.
+
+- Community files (`SECURITY.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`), issue and PR templates, Dependabot for cargo / uv / github-actions, and three workflows (governor CI, CodeQL, OpenSSF Scorecard) with actions pinned to commit SHAs and least-privilege `permissions`.
+- GitHub settings: Dependabot alerts and security updates, secret scanning, push protection, private vulnerability reporting, delete-branch-on-merge, and a ruleset that blocks deletion and non-fast-forward pushes on `main` and `work/main-line`. Direct fast-forward pushes stay allowed.
+- ADR recheck: 32 files, 32 index rows, every status **Proposed**. Stale sentences in `docs/architecture/semantic-contract-validation.md` now mention typed CSR, the thin query IR, and fact-set diff. License stays undecided (ADR-092 D092-2): no `LICENSE` file.
+- Record: `docs/process/repository.md`.
+
 ## 2026-10-23 — Product: hop workload
 
 ### Added
