@@ -27,8 +27,7 @@ pub(crate) fn inverse_knows_rule() -> RuleAst {
 type Bind = [Option<TermId>; MAX_VAR];
 
 fn pin_window_overlaps(f: &crate::fold::Fact, win_from: u64, win_to: Option<u64>) -> bool {
-    f.is_known_at(u64::MAX)
-        && vt_intersect(f.valid_from, f.valid_to, win_from, win_to).is_some()
+    f.is_known_at(u64::MAX) && vt_intersect(f.valid_from, f.valid_to, win_from, win_to).is_some()
 }
 
 impl Runtime {
@@ -184,6 +183,14 @@ impl Runtime {
                 };
                 Some((e.id, *caused_by, rule_version.clone()))
             }) else {
+                // Compacted prefix: minting Behavior is gone; the restored live
+                // head is still in the fold. Un-derive by id (D-03).
+                if self.behavior_fact_live(id) && retracting.insert(id) {
+                    out.push(Event::stable_derived(
+                        Op::Retract { event_id: id },
+                        trigger.ingested_at,
+                    ));
+                }
                 continue;
             };
             if caused_by != premise {
@@ -218,34 +225,60 @@ impl Runtime {
             .cloned()
             .unwrap_or_default();
         for id in candidates {
-            let Some(e) = self.log_event(id) else {
+            if let Some(e) = self.log_event(id) {
+                let Op::Behavior { rule_version, .. } = &e.op else {
+                    continue;
+                };
+                let event_id = e.id;
+                if event_id == premise
+                    || retracting.contains(&event_id)
+                    || !self.behavior_fact_live(event_id)
+                {
+                    continue;
+                }
+                let Some(bytes) = self.fold.blobs.get(rule_version) else {
+                    continue;
+                };
+                if let Some(RuleAst::Horn { premises, .. }) = RuleAst::from_canonical(bytes) {
+                    if premises.len() <= 1 {
+                        continue;
+                    }
+                }
+                self.retract_examine.bump();
+                if self.horn_body_matches_except(e, &except) {
+                    continue;
+                }
+                retracting.insert(event_id);
+                out.push(Event::stable_derived(
+                    Op::Retract { event_id },
+                    trigger.ingested_at,
+                ));
+                continue;
+            }
+            if id == premise || retracting.contains(&id) || !self.behavior_fact_live(id) {
+                continue;
+            }
+            let Some(idx) = self.fold.fact_index_by_event_id(id) else {
                 continue;
             };
-            let Op::Behavior { rule_version, .. } = &e.op else {
-                continue;
-            };
-            let event_id = e.id;
-            if event_id == premise
-                || retracting.contains(&event_id)
-                || !self.behavior_fact_live(event_id)
+            let fact = &self.fold.facts()[idx];
+            let subject = fact.subject;
+            let relation = fact.relation;
+            let object = fact.object();
+            let valid_from = fact.valid_from;
+            let valid_to = fact.valid_to;
+            self.retract_examine.bump();
+            if self
+                .rematch_restored_horn_head(
+                    subject, relation, object, valid_from, valid_to, &except,
+                )
+                .is_some()
             {
                 continue;
             }
-            let Some(bytes) = self.fold.blobs.get(rule_version) else {
-                continue;
-            };
-            if let Some(RuleAst::Horn { premises, .. }) = RuleAst::from_canonical(bytes) {
-                if premises.len() <= 1 {
-                    continue;
-                }
-            }
-            self.retract_examine.bump();
-            if self.horn_body_matches_except(e, &except) {
-                continue;
-            }
-            retracting.insert(event_id);
+            retracting.insert(id);
             out.push(Event::stable_derived(
-                Op::Retract { event_id },
+                Op::Retract { event_id: id },
                 trigger.ingested_at,
             ));
         }
@@ -344,6 +377,59 @@ impl Runtime {
 
     /// Horn body still matches over `head` VT with `except` treated as dead.
     /// Named bodies are skipped (treated as still matching).
+    /// Rematch a restored live head against kept Horn blobs (no Behavior on the log).
+    /// Returns pin + supporting premise ids; does not mint ops.
+    pub(crate) fn rematch_restored_horn_head(
+        &self,
+        subject: TermId,
+        relation: TermId,
+        object: TermId,
+        valid_from: u64,
+        valid_to: Option<u64>,
+        except: &HashSet<EventId>,
+    ) -> Option<(String, Vec<EventId>)> {
+        for horn in self.live_horns_scan(valid_from, valid_to) {
+            let RuleAst::Horn { head, premises } = horn.ast else {
+                continue;
+            };
+            let Some(head_rel) = self.dict.id(&head.relation) else {
+                continue;
+            };
+            if head_rel != relation {
+                continue;
+            }
+            let mut bind = [None; MAX_VAR];
+            if !unify_term(&head.subject, subject, &self.dict, &mut bind) {
+                continue;
+            }
+            if !unify_term(&head.object, object, &self.dict, &mut bind) {
+                continue;
+            }
+            let hits = search_all(
+                self,
+                &premises,
+                premises.len(),
+                bind,
+                valid_from,
+                valid_to,
+                u64::MAX,
+                except,
+            );
+            for hit in hits {
+                if !windows_cover(&hit.windows, valid_from, valid_to) {
+                    continue;
+                }
+                let mut parts = vec![(valid_from, valid_to), (horn.pin_from, horn.pin_to)];
+                parts.extend(hit.windows.iter().copied());
+                if conjunct_vt(parts).is_none() {
+                    continue;
+                }
+                return Some((horn.pin, hit.premise_ids));
+            }
+        }
+        None
+    }
+
     fn horn_body_matches_except(&self, e: &Event, except: &HashSet<EventId>) -> bool {
         let Op::Behavior {
             rule_version,
@@ -489,12 +575,7 @@ impl Runtime {
     /// Horn pins whose valid-time overlaps `[win_from, win_to)` and that are
     /// still known at the transaction tip. A pin that starts after the trigger
     /// is kept; `horn_fires_except` conjuncts the pin window with the premises.
-    fn live_horns(
-        &self,
-        win_from: u64,
-        win_to: Option<u64>,
-        relation: TermId,
-    ) -> Vec<LiveHorn> {
+    fn live_horns(&self, win_from: u64, win_to: Option<u64>, relation: TermId) -> Vec<LiveHorn> {
         if self.fold.rel_rule.is_none() {
             return vec![];
         }
@@ -769,7 +850,17 @@ fn search_at_all(
     }
     if idx == skip {
         search_at_all(
-            rt, premises, idx + 1, skip, bind, win_from, win_to, tt, windows, except, out,
+            rt,
+            premises,
+            idx + 1,
+            skip,
+            bind,
+            win_from,
+            win_to,
+            tt,
+            windows,
+            except,
+            out,
         );
         return;
     }

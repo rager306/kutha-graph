@@ -3,8 +3,9 @@ use crate::quantum::{PersistedQuantumOutcome, QuantumOutcome, Runtime, RuntimeEr
 use crate::receipt::{QuantumReceipt, digest_to_hex};
 use kutha_common::{
     Event, EventId, KUTHA_ACTION, KUTHA_ADMISSION, KUTHA_ALLOWS, KUTHA_POLICY, KUTHA_RULE, Op,
-    OutcomeDisposition, RuleAst, WallTime, blob_digest_matches, policy_version_hash,
+    OutcomeDisposition, RuleAst, TermId, WallTime, blob_digest_matches, policy_version_hash,
 };
+use std::collections::HashSet;
 
 /// How the shared pipeline finishes a committed quantum (D-01 / D-07).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -71,6 +72,70 @@ impl Runtime {
                 self.index_behavior_premise_facts(&e);
             }
         }
+        self.index_restored_horn_behaviors();
+    }
+
+    /// Compacted prefix drops minting `Op::Behavior` rows; restored live heads
+    /// still sit in the fold. Rebuild Horn cascade leases from those facts plus
+    /// kept StoreBlob rule bodies (D-03). Does not append Behavior ops.
+    fn index_restored_horn_behaviors(&mut self) {
+        let mut candidates: Vec<(EventId, TermId, TermId, TermId, u64, Option<u64>)> = Vec::new();
+        for f in self.fold.facts() {
+            if f.invalidated_at.is_some() {
+                continue;
+            }
+            if self.by_event_id.contains_key(&f.event_id) {
+                continue;
+            }
+            if f.event_id.get_version_num() != 8 {
+                continue;
+            }
+            if self.fold.is_dictionary_rel(f.relation) {
+                continue;
+            }
+            candidates.push((
+                f.event_id,
+                f.subject,
+                f.relation,
+                f.object(),
+                f.valid_from,
+                f.valid_to,
+            ));
+        }
+        let none = HashSet::new();
+        let mut restored: Vec<(EventId, String, Vec<EventId>)> = Vec::new();
+        for (event_id, subject, relation, object, valid_from, valid_to) in candidates {
+            if self.live_behaviors.contains(&event_id) {
+                continue;
+            }
+            let Some((pin, mut premises)) = self
+                .rematch_restored_horn_head(subject, relation, object, valid_from, valid_to, &none)
+            else {
+                continue;
+            };
+            premises.retain(|p| *p != event_id);
+            if premises.is_empty() {
+                continue;
+            }
+            restored.push((event_id, pin, premises));
+        }
+        for (id, pin, premises) in restored {
+            let caused_by = premises
+                .iter()
+                .copied()
+                .max_by_key(|pid| {
+                    self.fold
+                        .fact_index_by_event_id(*pid)
+                        .and_then(|i| self.fold.facts().get(i).map(|f| f.ingested_at))
+                        .unwrap_or(0)
+                })
+                .unwrap_or(premises[0]);
+            self.derived_by_cause.entry(caused_by).or_default().push(id);
+            self.cause_of_behavior.insert(id, caused_by);
+            self.live_behaviors.insert(id);
+            self.index_behavior_premise_rels(id, &pin);
+            self.index_behavior_premise_fact_ids(id, premises);
+        }
     }
 
     fn index_behavior_premise_rels(&mut self, behavior_id: EventId, rule_version: &str) {
@@ -102,10 +167,13 @@ impl Runtime {
 
     fn index_behavior_premise_facts(&mut self, e: &Event) {
         let ids = self.supporting_premise_ids_for_behavior(e);
+        self.index_behavior_premise_fact_ids(e.id, ids);
+    }
+
+    fn index_behavior_premise_fact_ids(&mut self, behavior_id: EventId, ids: Vec<EventId>) {
         if ids.is_empty() {
             return;
         }
-        let behavior_id = e.id;
         self.premise_facts_of_behavior
             .entry(behavior_id)
             .or_default()
