@@ -269,6 +269,8 @@ Planes: product vs harness. Layers: decision, characterization, property, crash,
 
 **M158 S01 (fork then query):** Phase 232 — `SEM-m158-kill-independent` `killed` (owner `M158-S01`). Independent oracles in `b6_fork_query_kill.rs`. `Runtime::diff` is `diff_folds` of the two folds; Scan is live; interior checkpoint cut is `ForkCutUnavailable`. Not named refs, GED, or a planner.
 
+**M159 S01 (missing Horn blob):** Phase 233 — `SEM-m159-kill-independent` `killed` (owner `M159-S01`). Independent oracles in `b7_horn_blob_kill.rs`. Missing nonempty pin and empty pin are `ExecutionReplayFailed`; matching Horn blob Ok; present Named body skips; garbage bytes fail closed. Not a new Op.
+
 **M052 S02 (cascade atomicity):** Phase 113 — `SEM-m052-cascade-atomic` `killed` (owner `M052-S02`). Oracles: `later_hop_unknown_head_leaves_log_fold_outcomes_unchanged`, `inverse_knows_cascade_writes_quantum_outcome`.
 
 **M052 S03 (lock before heal):** Phase 114 — `SEM-m052-lock-before-heal` `killed` (owner `M052-S03`). Oracles: `losing_attach_while_writer_holds_lock_does_not_heal`, `attach_heals_interrupted_seal_after_lock_released`.

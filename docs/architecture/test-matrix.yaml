@@ -3068,6 +3068,21 @@ rows:
     gate: default
     owner: M158-S01
     source: Phase 232 / independent verify
+  - id: SEM-m159-kill-independent
+    plane: product
+    invariant: missing nonempty Horn pin and empty pin fail replay_check with ExecutionReplayFailed; matching Horn blob Ok; present Named body skips; garbage bytes fail closed
+    layer: kill
+    oracle:
+      - kill_missing_nonempty_pin_is_execution_replay_failed
+      - kill_empty_pin_is_execution_replay_failed
+      - kill_present_horn_match_is_ok
+      - kill_present_non_horn_body_skips_ok
+      - kill_garbage_bytes_not_rule_ast_fail_closed
+    kill_mutation: treat nonempty missing pin as success; treat empty pin as skip; parse Named with trailing bytes as skip; skip Horn match
+    status: killed
+    gate: default
+    owner: M159-S01
+    source: Phase 233 / independent verify
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute

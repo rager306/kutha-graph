@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-24 — Product: Horn blob fail-closed kill-tests
+
+### Added
+
+- Independent kill-tests in `tests/b7_horn_blob_kill.rs`: missing nonempty pin and empty pin are `ExecutionReplayFailed`; matching Horn blob Ok; present Named body skips; garbage (Named prefix plus trailing byte) fails closed. Matrix `SEM-m159-kill-independent`.
+
+### Trajectory
+
+- Lease unchanged (`L_delivery=M159-S01`). Honeycomb stays **Proposed**.
+
 ## 2026-10-24 — Product: missing Horn blob
 
 ### Fixed
