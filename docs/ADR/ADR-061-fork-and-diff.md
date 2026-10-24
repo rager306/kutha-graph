@@ -16,6 +16,10 @@
 
 Fact-set `diff_folds` / `GraphFold::diff` ships as a `facts()` query (`FoldDiff` added/removed/changed). Named refs (D061-1) and GED (D061-3) remain open. Status stays **Proposed**.
 
+### Evidence (2026-10-24, Phase 232 / M158 S01; Proposed)
+
+`Runtime::diff` ships as `diff_folds` of two folds (`fold_diff.rs`). Glue only; GED (D061-3) and named refs (D061-1) remain open. Status stays **Proposed**.
+
 ## Date
 
 2026-08-18

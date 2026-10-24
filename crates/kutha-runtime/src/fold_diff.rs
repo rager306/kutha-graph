@@ -5,6 +5,7 @@ use std::cmp::Ordering;
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::fold::{Fact, GraphFold};
+use crate::quantum::Runtime;
 
 /// Fact-set picture diff: what turns fold `a` into fold `b` (ADR-061).
 /// Identity is `(event_id, valid_from, valid_to)` plus rank; `seq` does not participate.
@@ -161,5 +162,12 @@ impl GraphFold {
     /// Thin wrapper around [`diff_folds`].
     pub fn diff(&self, other: &GraphFold) -> FoldDiff {
         diff_folds(self, other)
+    }
+}
+
+impl Runtime {
+    /// Fact-set picture diff of two folds (ADR-061). Thin wrapper around [`diff_folds`].
+    pub fn diff(&self, other: &Runtime) -> FoldDiff {
+        diff_folds(self.fold(), other.fold())
     }
 }

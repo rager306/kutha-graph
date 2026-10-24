@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-24 — Product: fork then query
+
+### Added
+
+- `Runtime::diff(&self, other: &Runtime) -> FoldDiff` in `fold_diff.rs` is `diff_folds` of the two folds. One chain test (`runtime_diff_explains_scan_on_fork`) runs ingest, `fork_at`, diff, and `execute(Scan)` on both sides with the same `QueryIr`: Retract shows as `changed`, Scan drops the dead triple, a legal checkpointed cut matches the twin, an interior cut is `ForkCutUnavailable`. No Op, no wire or fingerprint change. `apply_diff` stays a test helper.
+
+### Trajectory
+
+- ADR-061 Evidence 2026-10-24: glue `Runtime::diff` shipped; GED still open. Status stays **Proposed**. Honeycomb restaged; map/delivery/capability unchanged.
+
 ## 2026-10-24 — Trajectory: lease M158-S01 (fork then query)
 
 Process tag **v1.52** / Phase **232**. Not a new release id. `VERSION` stays `0.0.01`.
