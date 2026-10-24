@@ -16,6 +16,7 @@ Public-repo baseline used for this pass: GitHub community-health files, OpenSSF 
 | SAST | `.github/workflows/codeql.yml` (Rust and Python) |
 | Scorecard | `.github/workflows/scorecard.yml` (publishes on `main`) |
 | License | `LICENSE` — Apache License 2.0 (SPDX `Apache-2.0`) |
+| Release id | `VERSION` — `N.N.NN` (now `0.0.01`). Cargo and pyproject use `0.0.1` |
 | Line endings | `.gitattributes`, `.editorconfig` |
 | Rust format edition | `rustfmt.toml` (`edition = "2024"`) |
 
@@ -39,7 +40,7 @@ Secret-scanning validity checks and non-provider patterns stayed disabled. The s
 |------|-----|
 | `cargo deny` allow-list | SPDX is Apache-2.0. A `deny.toml` is still not configured. |
 | Required pull-request review | Solo working line. The ruleset still blocks force-push and deletion. |
-| Signed releases, tags, packaging | Version stays `0.0.0`. STATE does not allow a release. |
+| crates.io publish | `publish` stays false. The GitHub Release is the tag `0.0.01`, not a crate publish. |
 | Fuzzing in CI | No parser boundary is leased (B6). A token fuzzer would not test the engine. |
 | Verus in CI | Evidence tool, not a gate (`AGENTS.md`, `tools/verus/`). |
 | CII Best Practices badge | Not registered. |

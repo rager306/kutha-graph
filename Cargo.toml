@@ -3,7 +3,8 @@ resolver = "2"
 members = ["crates/kutha-common", "crates/kutha-runtime"]
 
 [workspace.package]
-version = "0.0.0"
+# Release id is N.N.NN in VERSION (0.0.01). Cargo rejects a leading zero.
+version = "0.0.1"
 edition = "2024"
 rust-version = "1.99"
 license = "Apache-2.0"

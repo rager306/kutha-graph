@@ -7,6 +7,7 @@
 **Active Milestone:** None
 **Active Slice:** None
 **Phase:** H5
+**Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
 ## Lifecycles (do not collapse)
 

@@ -11,7 +11,7 @@ last_mapped_at: 2026-09-29
 ## Languages
 
 **Primary:**
-- Rust 2021 edition (workspace `0.0.0`, `publish = false`) — product plane in `crates/kutha-common` and `crates/kutha-runtime`
+- Rust 2024 edition (release id `0.0.01`, Cargo `0.0.1`, `publish = false`) — product plane in `crates/kutha-common` and `crates/kutha-runtime`
 - Toolchain: `rust-toolchain.toml` pins `1.99.0` (rustfmt, clippy); workspace `rust-version = "1.99"`, edition 2024, resolver `"2"`
 
 **Secondary:**

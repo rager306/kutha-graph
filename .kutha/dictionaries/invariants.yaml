@@ -91,7 +91,7 @@ invariants:
     check: idle-delivery-closed
 
   - id: I-version-freeze
-    claim: "Cargo and pyproject stay 0.0.0; publish = true is forbidden"
+    claim: "Release ids are N.N.NN (VERSION). Cargo and pyproject use the unpadded SemVer form. publish = true is forbidden"
     source: ".kutha/STATE.md"
     disposition: check
     check: version-freeze

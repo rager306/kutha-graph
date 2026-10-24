@@ -1,6 +1,6 @@
 # Security
 
-Kutha is a **research-stage** engine. It is not a supported product, and `0.0.0` is not a release. The only code in scope for a report is the default branch of this repository.
+Kutha is a **research-stage** engine. The named release is `0.0.01` (tag on `main`). Reports about older untagged history are out of date. The code in scope is that tag and the default branch after it.
 
 ## Reporting
 

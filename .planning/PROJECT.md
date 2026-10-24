@@ -20,7 +20,7 @@ A developer can prove **legal point-in-time** on a named statute-shaped fixture 
 ## Business Context
 
 - **Customer**: Builders of legal/normative temporal agents (research wedge); not a paying GTM motion yet
-- **Revenue model**: None (research engine, `0.0.0`, unpublished)
+- **Revenue model**: None (research engine, release id `0.0.01`, not on crates.io)
 - **Success metric**: FF5 stays green; `uv run kutha-gov ci` fail-closed and honest; one Active Slice — **not** “implement ADR-010–093”
 - **Strategy notes**: `STRATEGY.md`; idea stack STCA (ADR-002) → vision (ADR-001) → D1–D10 (ADR-000) → honeycomb map (ADR-010–093, all Proposed)
 
@@ -90,7 +90,7 @@ GSD overlay v0.09 (Phases 36–40 — M016 executable rules):
 - STCA-guide §5 JSON merge-patch / `object.created` as the product write surface
 - Mandatory Neo4j / FalkorDB / Graphiti / cloud LLM for assert → invalidate → AS OF
 - Promoting ADR cells to Accepted because governor is green
-- Product SemVer bump (`0.0.0`), crates.io publish, GitHub Releases (repo policy; GSD overlay tags `v0.0x` are process-only)
+- crates.io publish stays off. Release ids are `N.N.NN` (`0.0.01` now). GSD overlay tags `v0.0x` stay process-only and are not the product release id.
 
 <decisions>
 ## Foundation locks (ADR-000 D1–D10)

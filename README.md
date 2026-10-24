@@ -1,6 +1,7 @@
 # Kutha
 
 [![License](https://img.shields.io/github/license/rager306/kutha-graph)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/rager306/kutha-graph?display_name=tag)](https://github.com/rager306/kutha-graph/releases/tag/0.0.01)
 [![ci](https://img.shields.io/github/actions/workflow/status/rager306/kutha-graph/ci.yml?branch=main)](https://github.com/rager306/kutha-graph/actions/workflows/ci.yml)
 
 Research-stage **hybrid AI-native temporal graph engine** (Rust). An append-only event log is the source of truth; the working graph is a deterministic fold of that log; CSR / later HNSW / views are droppable leases. LLM proposes; dictionaries and the log own audited fact truth.
@@ -92,7 +93,7 @@ These are spike capabilities in the crates. Honeycomb cells stay **Proposed**. N
 
 ## Limitations
 
-- Version stays **`0.0.0`**. History is [`CHANGELOG.md`](CHANGELOG.md). There is no git tag and no GitHub Release until `.kutha/STATE.md` names one.
+- Release id is **`0.0.01`** ([`VERSION`](VERSION)), format `N.N.NN`. Cargo and the harness say `0.0.1` because a leading zero is not a legal Cargo version. History is [`CHANGELOG.md`](CHANGELOG.md). This is not published to crates.io.
 - Not a production graph database. Not Graphiti, Samyama, or Harvey.
 - Cypher, HNSW, a legal pack, and ABAC stay frozen until their own leases.
 - Pack and ontology licenses are still open. This tree is Apache-2.0 only.

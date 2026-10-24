@@ -1,6 +1,6 @@
 [project]
 name = "kutha-harness"
-version = "0.0.0"
+version = "0.0.1"
 description = "Kutha parallel STCA harness — repository control plane, not product runtime."
 license = "Apache-2.0"
 requires-python = ">=3.13"

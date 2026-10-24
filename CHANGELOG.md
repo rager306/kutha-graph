@@ -4,6 +4,23 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-24 — Release 0.0.01
+
+Format is `N.N.NN` (third component two digits). This is the first named release. Not an ADR acceptance. Not a crates.io publish.
+
+### Product
+
+- `VERSION` is `0.0.01`. `Cargo.toml` and `pyproject.toml` are `0.0.1`. Cargo rejects `0.0.01` (`invalid leading zero in patch version number`), so the packaging field is the same numbers with leading zeros removed. `publish` stays false.
+
+### Process
+
+- `version-freeze` now requires that pair and still forbids `publish = true`. The next id is `0.0.02` (packaging `0.0.2`); the check needles move with `VERSION` and `.kutha/STATE.md`.
+- GitHub Release tag is `0.0.01`. This file stays dated history. The legend below still says it is not itself a GitHub Release.
+
+### Trajectory
+
+- Lease unchanged (`L_delivery=M157-closed`). Honeycomb stays **Proposed**.
+
 ## 2026-10-24 — Process: README matches Apache-2.0
 
 Not a SemVer release. Not a git tag. Not a GitHub Release. Version stays `0.0.0` until `.kutha/STATE.md` names a release.

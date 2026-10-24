@@ -801,25 +801,34 @@ checks:
         label: Phase
 
   - id: version-freeze
-    description: research-stage versions stay 0.0.0 until STATE names a release
+    description: >-
+      Release ids are N.N.NN (VERSION, third component two digits). Cargo.toml
+      and pyproject.toml store the same numbers with leading zeros removed,
+      because Cargo rejects them. This row is release 0.0.01, packaging 0.0.1.
+      publish = true stays forbidden (not a crates.io publish).
     steps:
+      - kind: file_equals
+        path: VERSION
+        equals: "0.0.01"
+        category: version-freeze
+        message: "VERSION must be the N.N.NN release id 0.0.01"
       - kind: file_contains
         path: Cargo.toml
-        needles: ['version = "0.0.0"']
+        needles: ['version = "0.0.1"']
         require: all
         category: version-freeze
-        message: "workspace version must stay 0.0.0 until STATE names a release"
+        message: "workspace version must be 0.0.1, the SemVer form of 0.0.01"
       - kind: file_contains
         path: pyproject.toml
-        needles: ['version = "0.0.0"']
+        needles: ['version = "0.0.1"']
         require: all
         category: version-freeze
-        message: "harness version must stay 0.0.0 until STATE names a release"
+        message: "harness version must be 0.0.1, the SemVer form of 0.0.01"
       - kind: file_absent
         path: Cargo.toml
         needles: ["publish = true"]
         category: version-freeze
-        message: "crates stay publish = false at 0.0.0"
+        message: "crates stay publish = false"
 
   - id: changelog-planes
     description: CHANGELOG keeps product/process/Trajectory distinct and is not a GitHub Release

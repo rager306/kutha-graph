@@ -2,31 +2,28 @@
 name: kutha-changelog
 description: >-
   Writes dated CHANGELOG.md entries on product / process / Trajectory planes.
-  Does not bump versions, tag, or publish GitHub Releases. Hands commit off to
-  ce-commit. Use when the user asks for a changelog, dated history, запись в
-  CHANGELOG, "сделай changelog", or says release / bump version / GitHub Release
-  / 发布 (to refuse SemVer and write history instead).
+  Writes dated CHANGELOG.md entries. Release ids are N.N.NN in VERSION.
+  Hands commit off to ce-commit. Use when the user asks for a changelog, dated
+  history, запись в CHANGELOG, "сделай changelog", or a named release.
 ---
 
 # Kutha changelog (not a release bumper)
 
 Rewrite of [baoyu `release-skills`](https://github.com/JimLiu/baoyu-skills/blob/main/.claude/skills/release-skills/SKILL.md) for this repo.
 
-Baoyu owns SemVer, annotated tags, GitHub Releases, and `chore: release vX`. This repo forbids that until `.kutha/STATE.md` names a release. `git_path_implies` is coupling, not a bumper (`.kutha/META.md`). Commit skill is **ce-commit**; ship/PR skill is **ce-commit-push-pr**. This skill only authors `CHANGELOG.md`.
+Release ids are `N.N.NN` in `VERSION` (third component exactly two digits): `0.0.01`, `0.0.02`, `0.1.00`. Cargo and `pyproject.toml` store the same numbers with leading zeros removed (`0.0.01` → `0.0.1`), because Cargo rejects a leading zero. `publish` stays false. A git tag and a GitHub Release use the `VERSION` id only when the user names that id and `.kutha/STATE.md` records it. `git_path_implies` is coupling, not a bumper (`.kutha/META.md`). Commit skill is **ce-commit**; ship/PR skill is **ce-commit-push-pr**. This skill authors `CHANGELOG.md` and does not itself run `gh release`.
 
 ## Hard stop
 
 Do **not**:
 
-- Edit `Cargo.toml` / `pyproject.toml` versions (stay `0.0.0`)
-- Set `publish = true`
-- `git tag`, `gh release`, crates.io / `cargo publish`
-- Add `.releaserc.yml`, `CHANGELOG.zh.md`, or a Keep a Changelog `[Unreleased]` SemVer bucket
+- Put a leading zero in `Cargo.toml` or `pyproject.toml` (`0.0.01` does not parse)
+- Set `publish = true` or `cargo publish`
+- Tag or `gh release` an id STATE does not name
+- Add `.releaserc.yml`, `CHANGELOG.zh.md`, or a Keep a Changelog `[Unreleased]` bucket
 - Invent a second commit protocol (no baoyu “commit each module then release commit”)
 - Call **ce-commit-push-pr**, `git push`, or open a PR unless the user explicitly asked to ship/PR
 - Treat governor green, honeycomb restage, or a changelog date as ADR **Accepted**
-
-If the user said “release” / “bump” / “GitHub Release” / “发布”: say so in Russian, keep `0.0.0`, and continue with a dated history entry only if they still want the changelog.
 
 ## Neighbor skills
 

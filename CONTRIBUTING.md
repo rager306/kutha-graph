@@ -5,7 +5,7 @@ Kutha is a research engine. Read [`README.md`](README.md), then [`AGENTS.md`](AG
 ## What a change may do
 
 - One slice at a time. Do not mark an ADR **Accepted**. A cell stays **Proposed** until that cell is in the running engine.
-- Do not bump `0.0.0`, add a git tag, or publish a GitHub Release unless STATE says so.
+- The next release id is the next `N.N.NN` (`0.0.02`, then `0.0.03`). Cargo and pyproject get the same numbers with leading zeros removed. Do not set `publish = true`. Do not tag an id `.kutha/STATE.md` does not name.
 - This repository is Apache License 2.0 (`LICENSE`). Do not add a second license on this tree.
 - Docs, identifiers, and commit messages are English. Chat with the owner is Russian.
 
