@@ -3,7 +3,7 @@ ce-handoff/v1: true
 title: "M158 closed (fork then query) — baseline still needs the owner"
 date: 2026-10-24
 branch: work/main-line
-head: pending
+head: a8c23cd
 resume_focus: "Ask the owner before the competitor baseline (docker, pause fd_api/9router). Otherwise the next lease is B6 Cypher AS OF (M003) or Arc C, each with a fresh RED. Do not bump VERSION unless the owner names the next N.N.NN. Harness moratorium applies."
 ---
 
