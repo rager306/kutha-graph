@@ -261,7 +261,7 @@ dependencies = [
 
 [[package]]
 name = "kutha-common"
-version = "0.0.0"
+version = "0.0.1"
 dependencies = [
  "serde",
  "serde_json",
@@ -272,7 +272,7 @@ dependencies = [
 
 [[package]]
 name = "kutha-runtime"
-version = "0.0.0"
+version = "0.0.1"
 dependencies = [
  "crc32fast",
  "kutha-common",

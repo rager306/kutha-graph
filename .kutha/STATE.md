@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M158
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M158-S01
+L_delivery=M158-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M158-S01 leased (v1.52): fork then query | Capability proven / Cypher started |
+| L_delivery | M158 closed (v1.52) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M158 S01 (glue, not a new engine): `Runtime::diff(&self, other)` returns `diff_folds` of the two folds. One test runs ingest, `fork_at`, diff, and `execute(Scan)` on both sides, including a legal checkpointed cut and a fail-closed interior cut. Diff stays the fact picture (dead rows included); Scan stays the live picture. No new Op, no wire or fingerprint change, no Hops or Horn claim, no planner. Release id stays `0.0.01`. Competitor baseline still needs the owner's docker and a pause of `fd_api` / `9router`. Residuals that stay open until a fired RED: ordinary `StoreBlob` digests are not verified on open; `horn_behavior_reproducible` fails open on a missing rule blob; dangling lineage ids after a checkpoint; vintage checkpoint payloads; `cause_of_behavior` last-wins on duplicate event ids; checkpoint has no operator surface; B1b vacuum. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M158 is closed: `Runtime::diff` is `diff_folds` of the two folds. A fork, the diff, and `execute(Scan)` on both sides agree: dead rows stay in the diff and drop out of Scan; a legal checkpoint cut matches; an interior cut stays `ForkCutUnavailable`. No new Op. Release id stays `0.0.01`. Next: the roadmap kill rule still needs Samyama and FalkorDB numbers (docker, and the owner's OK to pause `fd_api` / `9router`), or a later lease of B6 Cypher AS OF (M003) or Arc C with a fresh RED. Residuals that stay open until a fired RED: ordinary `StoreBlob` digests are not verified on open; `horn_behavior_reproducible` fails open on a missing rule blob; dangling lineage ids after a checkpoint; vintage checkpoint payloads; `cause_of_behavior` last-wins on duplicate event ids; checkpoint has no operator surface; B1b vacuum; `b1_checkpoint_kill3` can WouldBlock on `kutha.lock` under parallel workspace tests (serial rerun passed; not a diff defect). The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 

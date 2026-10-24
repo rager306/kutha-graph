@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M158: fork then query — LEASED (GSD v1.52)
+## M158: fork then query — CLOSED (GSD v1.52)
 
 Glue for Arc B after B1–B3-lite. The pieces exist (`fork_at`, `diff_folds`, `execute`) but a caller has to hand-wire folds, and no test runs the chain through the query IR. Scout (2026-10-24): `rg Runtime::diff` is empty; `fork_at` never meets `query_ir` in tests. Read-side only. Competitor baseline and Cypher/HNSW stay frozen. Honeycomb stays Proposed; nothing thawed. Release id stays `0.0.01`.
 
-- [ ] **S01: Runtime::diff and the fork-scan chain** `risk:low` `depends:[]`
-  > After this: `Runtime::diff` is `diff_folds` of the two folds; a fork of a counterfactual (retract and interval correction) explains a Scan change on both clocks; a legal checkpointed cut matches; an interior cut stays `ForkCutUnavailable`. No new Op, no wire change, no Hops claim, no Horn claim. Phase 232.
+- [x] **S01: Runtime::diff and the fork-scan chain** `risk:low` `depends:[]`
+  > After this: `Runtime::diff` is `diff_folds` of the two folds; a fork of a counterfactual (retract and interval correction) explains a Scan change on both clocks; a legal checkpointed cut matches; an interior cut stays `ForkCutUnavailable`. No new Op, no wire change, no Hops claim, no Horn claim. Phase 232. Landed (independent kill-tests passed; one parallel lock flake in an older checkpoint test did not reproduce serially).
 
 ## M157: B3-lite hop workload — CLOSED (GSD v1.51)
 

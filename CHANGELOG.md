@@ -14,6 +14,13 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - ADR-061 Evidence 2026-10-24: glue `Runtime::diff` shipped; GED still open. Status stays **Proposed**. Honeycomb restaged; map/delivery/capability unchanged.
 
+## 2026-10-24 — Trajectory: M158 / GSD v1.52 closed
+
+Process tag **v1.52** / Phase **232**. Not a new release id. `VERSION` stays `0.0.01`.
+
+- Fork then query: `Runtime::diff` is the fact-set diff of two runtimes. One chain covers fork, diff, and Scan, including a legal checkpoint cut and a fail-closed interior cut. Independent kill-tests passed. `kutha-gov ci --jobs 1` `run_high=0`. A parallel `b1_checkpoint_kill3` WouldBlock did not reproduce serially.
+- `L_delivery=M158-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.52 / Phase 232.
+
 ## 2026-10-24 — Trajectory: lease M158-S01 (fork then query)
 
 Process tag **v1.52** / Phase **232**. Not a new release id. `VERSION` stays `0.0.01`.

@@ -14,7 +14,7 @@ This is not a production graph database and not Graphiti / Samyama / Harvey.
 
 | Plane | Where | Now |
 |-------|--------|-----|
-| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | M158-S01 leased (`L_delivery=M158-S01`); harness phase **H5** |
+| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | M158 closed (`L_delivery=M158-closed`); harness phase **H5** |
 | Architecture map | [`docs/ADR/README.md`](docs/ADR/README.md) | Spine + honeycomb **Proposed**, not Accepted |
 | Capability | `crates/kutha-runtime` tests | FF5 green (`as_of(2015) ≠ as_of(2021)` on a statute-shaped fixture) |
 
@@ -88,7 +88,7 @@ These are spike capabilities in the crates. Honeycomb cells stay **Proposed**. N
 
 - Point-in-time reads: `as_of`, `live_at`, `as_known_on` (FF5: `as_of(2015) ≠ as_of(2021)` on a statute-shaped fixture).
 - A sealed log prefix can be replaced by a checkpoint receipt. `fork_at` fails closed on a compacted cut.
-- `diff_folds` is a fact-set diff of two folds. It is not graph-edit distance and not a merge.
+- `diff_folds` / `Runtime::diff` is a fact-set diff of two folds, including a fork against its parent. It is not graph-edit distance and not a merge. Scan on each side is the live picture; the diff also keeps dead rows.
 - A thin query IR (`Scan`, `Hops`) walks the CSR lease. There is no Cypher parser and no HNSW index.
 
 ## Limitations
