@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M159: missing Horn blob fails closed — LEASED (GSD v1.53)
+
+Gap in the replay cascade, named in the M158 close and confirmed in source: `horn_behavior_reproducible` returns success when `rule_version` is nonempty and the rule blob is absent (`eval.rs`, `return !rule_version.is_empty()`). The doc comment says missing blob fails closed (RULE-04). `replay_check` then accepts a Behavior it cannot re-derive. No new Op, no thaw, release id stays `0.0.01`. Honeycomb stays Proposed.
+
+- [ ] **S01: fail closed on a missing rule blob** `risk:medium` `depends:[]`
+  > After this: a Behavior whose pin is nonempty and whose blob is absent makes `replay_check` return `ExecutionReplayFailed`; a present Horn blob that matches still passes; an empty pin still fails closed; a non-Horn body with its blob present still skips. Phase 233.
+
 ## M158: fork then query — CLOSED (GSD v1.52)
 
 Glue for Arc B after B1–B3-lite. The pieces exist (`fork_at`, `diff_folds`, `execute`) but a caller has to hand-wire folds, and no test runs the chain through the query IR. Scout (2026-10-24): `rg Runtime::diff` is empty; `fork_at` never meets `query_ir` in tests. Read-side only. Competitor baseline and Cypher/HNSW stay frozen. Honeycomb stays Proposed; nothing thawed. Release id stays `0.0.01`.

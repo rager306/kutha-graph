@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-24 — Trajectory: lease M159-S01 (missing Horn blob fails closed)
+
+Process tag **v1.53** / Phase **233**. Not a new release id. `VERSION` stays `0.0.01`.
+
+- Active Milestone **M159**, Active Slice **S01** (`L_delivery=M159-S01`): `replay_check` rejects a Behavior whose rule blob is missing. No Op, no thaw. Honeycomb stays Proposed.
+
 ## 2026-10-24 — Product: fork then query
 
 ### Added
