@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-24 — Trajectory: lease M158-S01 (fork then query)
+
+Process tag **v1.52** / Phase **232**. Not a new release id. `VERSION` stays `0.0.01`.
+
+- Active Milestone **M158**, Active Slice **S01** (`L_delivery=M158-S01`): `Runtime::diff` plus one chain test from fork to Scan. No Op, no thaw. Honeycomb stays Proposed.
+
 ## 2026-10-24 — Release 0.0.01
 
 Format is `N.N.NN` (third component two digits). This is the first named release. Not an ADR acceptance. Not a crates.io publish.

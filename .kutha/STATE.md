@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M158
+**Active Slice:** S01
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M157-closed
+L_delivery=M158-S01
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M157 closed (v1.51) | Capability proven / Cypher started |
+| L_delivery | M158-S01 leased (v1.52): fork then query | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M157 is closed: `query_ir.rs` gives a thin typed IR (`Scan`, `Hops`) interpreted over `live_at` and the typed/untyped CSR leases, with `prepare` / `Prepared::run` / `PreparedHops::run_from` (a snapshot bound to its (tt, vt) cut) and fail-closed named lookup; a self-relative `hop_k` bench records a band (ratios against a calibration loop; walk is linear in starts, lease build is measured separately). Hops return a sorted set of end nodes; Scan keeps the `as_of` bag. The independent verifier found that the first bench measured n x CSR rebuild; the prepare/run split fixed it, and the `m019_dur_a` lock flake that fired in this slice's gate was fixed in the test file (production lock code unchanged). Leapfrog is still off the query path. Next: the roadmap kill rule ("if B3 shows no gap against the baseline, skip B4/B5 and go to B6") needs the competitor numbers, so the next step is an owner decision: (1) set up the Samyama and FalkorDB baseline (docker, at least 20 GB free disk, OK to pause `fd_api` / `9router` for a run), or (2) reorder to B6 Cypher AS OF (M003) or Arc C with their own leases and fresh REDs. Residuals that stay open until a fired RED: ordinary `StoreBlob` digests are not verified on open; `horn_behavior_reproducible` fails open on a missing rule blob; dangling lineage ids after a checkpoint; vintage checkpoint payloads; `cause_of_behavior` last-wins on duplicate event ids; checkpoint has no operator surface; B1b vacuum; about 20 older tests still use non-RAII scratch dirs (`m002_rock00.rs` leaks `tmp/p51-store-*`); the `hop_k` band is wide because the host is shared with a foreign cargo job (record on a quiet host before it is used as a regression gate). Verus V2 waits for a slice that rewrites `leapfrog.rs`. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M158 S01 (glue, not a new engine): `Runtime::diff(&self, other)` returns `diff_folds` of the two folds. One test runs ingest, `fork_at`, diff, and `execute(Scan)` on both sides, including a legal checkpointed cut and a fail-closed interior cut. Diff stays the fact picture (dead rows included); Scan stays the live picture. No new Op, no wire or fingerprint change, no Hops or Horn claim, no planner. Release id stays `0.0.01`. Competitor baseline still needs the owner's docker and a pause of `fd_api` / `9router`. Residuals that stay open until a fired RED: ordinary `StoreBlob` digests are not verified on open; `horn_behavior_reproducible` fails open on a missing rule blob; dangling lineage ids after a checkpoint; vintage checkpoint payloads; `cause_of_behavior` last-wins on duplicate event ids; checkpoint has no operator surface; B1b vacuum. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 
