@@ -3,7 +3,7 @@ ce-handoff/v1: true
 title: "M159 closed (missing Horn blob fails closed)"
 date: 2026-10-24
 branch: work/main-line
-head: pending
+head: 668a7b6
 resume_focus: "Ask the owner before the competitor baseline (docker, pause fd_api/9router). Otherwise lease B6 Cypher AS OF (M003) or Arc C with a fresh RED. Do not bump VERSION unless the owner names the next N.N.NN. Disk was near full; cargo clean after the cycle. Harness moratorium applies."
 ---
 
