@@ -8,7 +8,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ### Added
 
-- `Runtime::diff(&self, other: &Runtime) -> FoldDiff` in `fold_diff.rs` is `diff_folds` of the two folds. One chain test (`runtime_diff_explains_scan_on_fork`) runs ingest, `fork_at`, diff, and `execute(Scan)` on both sides with the same `QueryIr`: Retract shows as `changed`, Scan drops the dead triple, a legal checkpointed cut matches the twin, an interior cut is `ForkCutUnavailable`. No Op, no wire or fingerprint change. `apply_diff` stays a test helper.
+- `Runtime::diff(&self, other: &Runtime) -> FoldDiff` in `fold_diff.rs` is `diff_folds` of the two folds. One chain test (`runtime_diff_explains_scan_on_fork`) runs ingest, `fork_at`, diff, and `execute(Scan)` on both sides with the same `QueryIr`: Retract shows as `changed`, Scan drops the dead triple, a legal checkpointed cut matches the twin, an interior cut is `ForkCutUnavailable`. No Op, no wire or fingerprint change. `apply_diff` stays a test helper. Independent kill-tests in `tests/b6_fork_query_kill.rs` pin wrapper equality, empty/mirror/seq-ignored identity, Retract as `changed` with Scan dropping the dead triple, expired rows in the fact picture, checkpoint interior `ForkCutUnavailable`, Prepared isolation, and fail-closed unknown relation on the fork.
 
 ### Trajectory
 

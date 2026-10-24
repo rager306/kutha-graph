@@ -3051,6 +3051,23 @@ rows:
     gate: default
     owner: M157-S01
     source: Phase 231 / independent verify prepare split
+  - id: SEM-m158-kill-independent
+    plane: product
+    invariant: Runtime::diff equals diff_folds of the two folds; Scan is the live bag; interior checkpoint cut is ForkCutUnavailable
+    layer: kill
+    oracle:
+      - kill_runtime_diff_equals_diff_folds_aa_empty_and_mirror
+      - kill_seq_only_empty_via_the_method
+      - kill_retract_is_changed_not_removed_and_scan_drops
+      - kill_expired_rows_stay_in_diff_not_in_scan
+      - kill_checkpoint_legal_cut_vs_interior_err
+      - kill_prepared_from_one_runtime_is_not_the_other_picture
+      - kill_unknown_relation_fail_closed_on_fork_scan_still_ok
+    kill_mutation: filter live rows in Runtime::diff; key identity on seq; treat Retract as removed; reconstruct interior 1..=c; intern on hops miss
+    status: killed
+    gate: default
+    owner: M158-S01
+    source: Phase 232 / independent verify
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute
