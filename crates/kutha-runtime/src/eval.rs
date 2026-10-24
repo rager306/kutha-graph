@@ -616,7 +616,7 @@ impl Runtime {
             return true;
         };
         let Some(bytes) = self.fold.blobs.get(rule_version) else {
-            return !rule_version.is_empty();
+            return false;
         };
         let Some(ast) = RuleAst::from_canonical(bytes) else {
             return false;

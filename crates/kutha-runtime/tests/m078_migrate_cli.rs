@@ -1,7 +1,7 @@
 //! M078 S01 — kutha-migrate operator CLI runs migrate_compat.
 
 use kutha_common::{
-    legacy_ident_rule_pin, rule_definition_hash, Event, EventId, Op, OutcomeDisposition,
+    legacy_ident_rule_pin, rule_definition_hash, Event, EventId, Op, OutcomeDisposition, RuleAst,
     KUTHA_ALLOWS,
 };
 use kutha_runtime::store::{
@@ -42,6 +42,27 @@ fn append_jsonl(dir: &std::path::Path, events: &[Event]) {
         serde_json::to_writer(&mut f, e).expect("json");
         writeln!(f).expect("nl");
     }
+}
+
+fn named_derive_pq_blobs(ingested_at: u64) -> [Event; 2] {
+    let ast = RuleAst::named("derive_pq").expect("named");
+    let bytes = ast.encode();
+    let mk = |id, digest: String| Event {
+        id: EventId::from_u128(id),
+        op: Op::StoreBlob {
+            digest,
+            bytes: bytes.clone(),
+        },
+        ingested_at,
+        object_ids: vec![],
+    };
+    [
+        mk(
+            0xB10B_0001,
+            legacy_ident_rule_pin("derive_pq").expect("legacy"),
+        ),
+        mk(0xB10B_0002, ast.hash()),
+    ]
 }
 
 fn commit_outcome(ids: &[EventId], ingested_at: u64) -> Event {
@@ -90,9 +111,12 @@ fn kutha_migrate_runs_compat_on_store_dir() {
     let legacy = legacy_ident_rule_pin("derive_pq").expect("legacy");
     let behavior_id = EventId::from_u128(42);
     let cite_id = EventId::from_u128(43);
+    let [legacy_blob, v1_blob] = named_derive_pq_blobs(899);
     append_jsonl(
         &dir,
         &[
+            legacy_blob,
+            v1_blob,
             Event {
                 id: behavior_id,
                 op: Op::Behavior {

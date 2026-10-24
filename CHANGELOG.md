@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-24 — Product: missing Horn blob
+
+### Fixed
+
+- `horn_behavior_reproducible` returns `false` when `blobs.get` misses, matching the RULE-04 comment. A nonempty pin with no blob now fails `replay_check` (`ExecutionReplayFailed`). Empty pin still fails closed. A present non-Horn blob still skips. A matching Horn blob still Ok. No Op, no wire, no fingerprint change.
+
+### Trajectory
+
+- Lease unchanged (`L_delivery=M159-S01`). Honeycomb stays **Proposed**.
+
 ## 2026-10-24 — Trajectory: lease M159-S01 (missing Horn blob fails closed)
 
 Process tag **v1.53** / Phase **233**. Not a new release id. `VERSION` stays `0.0.01`.

@@ -2,7 +2,7 @@
 //! cite (CE residual: unlock window untested; converge via markers).
 
 use kutha_common::{
-    legacy_ident_rule_pin, rule_definition_hash, Event, EventId, Op, OutcomeDisposition,
+    legacy_ident_rule_pin, rule_definition_hash, Event, EventId, Op, OutcomeDisposition, RuleAst,
 };
 use kutha_runtime::store::{
     acquire_store_write_lock, ensure_legacy_dir, migrate_pin_cite, migrate_pin_wire, migrate_pins,
@@ -33,6 +33,27 @@ fn append_jsonl(dir: &std::path::Path, events: &[Event]) {
         serde_json::to_writer(&mut f, e).expect("json");
         writeln!(f).expect("nl");
     }
+}
+
+fn named_derive_pq_blobs(ingested_at: u64) -> [Event; 2] {
+    let ast = RuleAst::named("derive_pq").expect("named");
+    let bytes = ast.encode();
+    let mk = |id, digest: String| Event {
+        id: EventId::from_u128(id),
+        op: Op::StoreBlob {
+            digest,
+            bytes: bytes.clone(),
+        },
+        ingested_at,
+        object_ids: vec![],
+    };
+    [
+        mk(
+            0xB10B_0001,
+            legacy_ident_rule_pin("derive_pq").expect("legacy"),
+        ),
+        mk(0xB10B_0002, ast.hash()),
+    ]
 }
 
 fn commit_outcome(ids: &[EventId], ingested_at: u64) -> Event {
@@ -110,9 +131,12 @@ fn seeded_both(label: &str) -> (PathBuf, EventId, EventId) {
         ingested_at: 901,
         object_ids: vec![],
     };
+    let [legacy_blob, v1_blob] = named_derive_pq_blobs(899);
     append_jsonl(
         &dir,
         &[
+            legacy_blob,
+            v1_blob,
             behavior,
             cite,
             commit_outcome(&[behavior_id, cite_id], 902),

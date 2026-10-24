@@ -1,7 +1,7 @@
 //! M071 S01 — directory pin-wire migrate for Behavior rule_version.
 
 use kutha_common::{
-    legacy_ident_rule_pin, rule_definition_hash, Event, EventId, Op, OutcomeDisposition,
+    legacy_ident_rule_pin, rule_definition_hash, Event, EventId, Op, OutcomeDisposition, RuleAst,
 };
 use kutha_runtime::store::{
     ensure_legacy_dir, migrate_pin_wire, open, persist, PIN_WIRE_MARKER_BODY, PIN_WIRE_MARKER_REL,
@@ -31,6 +31,28 @@ fn append_jsonl(dir: &std::path::Path, events: &[Event]) {
         serde_json::to_writer(&mut f, e).expect("json");
         writeln!(f).expect("nl");
     }
+}
+
+/// Named `derive_pq` body at both legacy and v1 pins (fail-closed replay).
+fn named_derive_pq_blobs(ingested_at: u64) -> [Event; 2] {
+    let ast = RuleAst::named("derive_pq").expect("named");
+    let bytes = ast.encode();
+    let mk = |id, digest: String| Event {
+        id: EventId::from_u128(id),
+        op: Op::StoreBlob {
+            digest,
+            bytes: bytes.clone(),
+        },
+        ingested_at,
+        object_ids: vec![],
+    };
+    [
+        mk(
+            0xB10B_0001,
+            legacy_ident_rule_pin("derive_pq").expect("legacy"),
+        ),
+        mk(0xB10B_0002, ast.hash()),
+    ]
 }
 
 fn commit_outcome(behavior_id: EventId, ingested_at: u64) -> Event {
@@ -87,7 +109,8 @@ fn migrate_pin_wire_rewrites_behavior_legacy_utf8_pin() {
         ingested_at: 999,
         object_ids: vec![subject, relation, object],
     };
-    append_jsonl(&dir, &[behavior, commit_outcome(id, 1000)]);
+    let [legacy_blob, v1_blob] = named_derive_pq_blobs(998);
+    append_jsonl(&dir, &[legacy_blob, v1_blob, behavior, commit_outcome(id, 1000)]);
 
     let before = open(&dir).expect("open with legacy pin still deserializes");
     assert!(before.log().as_slice().iter().any(|e| {
@@ -141,7 +164,8 @@ fn migrate_pin_wire_leaves_v1_pin_unchanged() {
         ingested_at: 50,
         object_ids: vec![subject, relation, object],
     };
-    append_jsonl(&dir, &[behavior, commit_outcome(id, 51)]);
+    let [legacy_blob, v1_blob] = named_derive_pq_blobs(49);
+    append_jsonl(&dir, &[legacy_blob, v1_blob, behavior, commit_outcome(id, 51)]);
     let report = migrate_pin_wire(&dir).expect("migrate");
     assert_eq!(report.remapped_lines, 0);
     assert!(dir.join(PIN_WIRE_MARKER_REL).exists());
