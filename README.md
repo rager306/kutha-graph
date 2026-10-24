@@ -1,5 +1,8 @@
 # Kutha
 
+[![License](https://img.shields.io/github/license/rager306/kutha-graph)](LICENSE)
+[![ci](https://img.shields.io/github/actions/workflow/status/rager306/kutha-graph/ci.yml?branch=main)](https://github.com/rager306/kutha-graph/actions/workflows/ci.yml)
+
 Research-stage **hybrid AI-native temporal graph engine** (Rust). An append-only event log is the source of truth; the working graph is a deterministic fold of that log; CSR / later HNSW / views are droppable leases. LLM proposes; dictionaries and the log own audited fact truth.
 
 Primary wedge: legal / normative temporal agents — a norm **AS OF a date** as three cuts (valid-time `as_of`, bitemporal `live_at`, knowledge-cut `as_known_on`), without treating the LLM as legal authority.
@@ -60,7 +63,7 @@ This host’s Cargo uses **kache** as `rustc-wrapper` and **mold** as linker (`~
 | `docs/process/` | Harness contract, governor intake, Codex subagents |
 | `docs/process/governor-intake.md` | Control loop / bridge / map → governor dictionaries |
 | `docs/process/gsd-auto-contract.md` | Id map, controller protocol, code-graph tool pair, verification and artifact gates for GSD auto runs |
-| `docs/process/repository.md` | Public-repo baseline: community files, CI, GitHub settings, license gap |
+| `docs/process/repository.md` | Public-repo baseline: community files, CI, GitHub settings, Apache-2.0 |
 | `SECURITY.md`, `CONTRIBUTING.md` | Vulnerability reports and how a change is allowed to land |
 | `scripts/kutha_gov/` | Governor CLI interpreter |
 | `verus/`, `tools/verus/` | Verus proofs of pure kernels (evidence, not a gate) and the pinned release + checksum |
@@ -78,6 +81,22 @@ This host’s Cargo uses **kache** as `rustc-wrapper` and **mold** as linker (`~
 
 Agent instructions: [`AGENTS.md`](AGENTS.md). Claude Code also loads [`CLAUDE.md`](CLAUDE.md) (shim to the same file).
 
+## What runs
+
+These are spike capabilities in the crates. Honeycomb cells stay **Proposed**. None of this is a product release.
+
+- Point-in-time reads: `as_of`, `live_at`, `as_known_on` (FF5: `as_of(2015) ≠ as_of(2021)` on a statute-shaped fixture).
+- A sealed log prefix can be replaced by a checkpoint receipt. `fork_at` fails closed on a compacted cut.
+- `diff_folds` is a fact-set diff of two folds. It is not graph-edit distance and not a merge.
+- A thin query IR (`Scan`, `Hops`) walks the CSR lease. There is no Cypher parser and no HNSW index.
+
+## Limitations
+
+- Version stays **`0.0.0`**. History is [`CHANGELOG.md`](CHANGELOG.md). There is no git tag and no GitHub Release until `.kutha/STATE.md` names one.
+- Not a production graph database. Not Graphiti, Samyama, or Harvey.
+- Cypher, HNSW, a legal pack, and ABAC stay frozen until their own leases.
+- Pack and ontology licenses are still open. This tree is Apache-2.0 only.
+
 ## License
 
-Undecided (ADR-092). No SPDX identifier is Accepted. Do not treat this tree as Apache-2.0 or MIT by default.
+[Apache License 2.0](LICENSE) (SPDX `Apache-2.0`). ADR-092 records the choice and stays **Proposed**.

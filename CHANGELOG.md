@@ -4,6 +4,14 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-24 — Process: README matches Apache-2.0
+
+Not a SemVer release. Not a git tag. Not a GitHub Release. Version stays `0.0.0` until `.kutha/STATE.md` names a release.
+
+### Fixed
+
+- `README.md` still ended with "License: Undecided" after `LICENSE` existed. The license section, the layout row, and `.planning/PROJECT.md` now say Apache-2.0. The README also states what the spike runs and what it does not (no Cypher, no HNSW, no release).
+
 ## 2026-10-24 — Process: Apache-2.0
 
 Not a SemVer release. Not an ADR acceptance.

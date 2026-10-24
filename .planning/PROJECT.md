@@ -221,7 +221,7 @@ Literature bound is closed (164 files in `cards/`: 163 original matrix rows + M0
 | Refactor and legal-fixture reconnaissance before durability (M013 before M002) | Post-M012 review R1: riskiest assumption last | ✓ Done (v0.06; `.planning/MILESTONES.md`) |
 | Independent verification and planning-artifact budget as gates | Post-M012 review R4/R5; Phase 28 `28-VERIFICATION.md` | ✓ Good (v0.06 PROC) |
 | CBM and GitNexus used together on M013 refactor phases | Measured tool limits; `rg` is arbiter | ✓ Done (v0.06; `.planning/MILESTONES.md`) |
-| License / rename (ADR-092) | Undecided | — Pending |
+| License / rename (ADR-092) | Repository is Apache-2.0 (2026-10-24). Name stays Kutha. Pack SPDX still open. Cell stays Proposed. | ✓ License file; rename not done |
 
 ## Evolution
 
