@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-25 — Product: StoreBlob digest kill-tests
+
+### Added
+
+- Independent kill-tests in `tests/b8_blob_digest_kill.rs`: same-length tamper and sha256-of-other-content fail `open`/`replay_check` with `UnknownRuleVersion`; truncated length fails after CRC rewrite; matching twin, policy hash, and rule-body hash still open; a leading bad ordinary blob plus a missing Horn blob stays `ExecutionReplayFailed`. Matrix `SEM-m160-kill-independent`.
+
+### Trajectory
+
+- Lease unchanged (`L_delivery=M160-S01`). Honeycomb stays **Proposed**.
+
 ## 2026-10-25 — Product: StoreBlob digest on open
 
 ### Fixed

@@ -3083,6 +3083,21 @@ rows:
     gate: default
     owner: M159-S01
     source: Phase 233 / independent verify
+  - id: SEM-m160-kill-independent
+    plane: product
+    invariant: ordinary StoreBlob whose bytes fail blob_digest_matches fails replay_check/open with UnknownRuleVersion after the Behavior walk; matching sha256, policy, and rule-body hashes open; missing Horn plus a bad ordinary blob stays ExecutionReplayFailed
+    layer: kill
+    oracle:
+      - kill_same_length_tamper_fails_open_matching_twin_ok
+      - kill_truncated_length_fails_open_crc_rewritten
+      - kill_missing_horn_wins_over_leading_bad_ordinary_blob
+      - kill_policy_and_rule_body_hash_matching_blobs_open
+      - kill_digest_sha256_of_other_content_fails
+    kill_mutation: skip digest check on open; check StoreBlob before Behavior; accept any 64-hex digest; reject policy/rule-body hashes; treat truncated length as CRC-only
+    status: killed
+    gate: default
+    owner: M160-S01
+    source: Phase 234 / independent verify
   - id: SEM-m121-facade-statute-store-dir
     plane: product
     invariant: facade-statute persist/open directories differ across calls and are not the fixed tmp/p27-facade-statute
