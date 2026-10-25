@@ -3,7 +3,7 @@ ce-handoff/v1: true
 title: "M160 closed (StoreBlob digest on open)"
 date: 2026-10-25
 branch: work/main-line
-head: pending
+head: b063f20
 resume_focus: "Ask the owner before the competitor baseline (docker, pause fd_api/9router). Otherwise lease B6 Cypher AS OF (M003) or Arc C with a fresh RED. Do not bump VERSION unless the owner names the next N.N.NN. Cargo clean after the cycle. Harness moratorium applies."
 ---
 
