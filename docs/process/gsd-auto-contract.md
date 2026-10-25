@@ -155,6 +155,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.45 | 225 | M151 | S01 | observe phase_ms wall honesty under overlap | shipped |
 | v1.46 | 226 | M152 | S01 | Arc 0 hygiene: tracked CE artifacts, harness moratorium, branch work/main-line | shipped |
 | v1.47 | 227 | M153 | S01 | Verus on-ramp: pin, `verus/vt_intersect.rs`, sync check | shipped |
+| v1.54 | 234 | M160 | S01 | ordinary StoreBlob digest checked on replay (`UnknownRuleVersion`) | shipped |
 | v1.53 | 233 | M159 | S01 | missing Horn rule blob fails `replay_check` (`ExecutionReplayFailed`) | shipped |
 | v1.52 | 232 | M158 | S01 | fork then query: `Runtime::diff` plus Scan on both sides of a fork | shipped |
 | v1.51 | 231 | M157 | S01 | B3-lite: workload as data, thin typed query IR over existing read APIs, prepare/run split, self-relative `hop_k` bench | shipped |

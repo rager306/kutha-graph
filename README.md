@@ -14,7 +14,7 @@ This is not a production graph database and not Graphiti / Samyama / Harvey.
 
 | Plane | Where | Now |
 |-------|--------|-----|
-| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | M160-S01 leased (`L_delivery=M160-S01`); harness phase **H5** |
+| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | M160 closed (`L_delivery=M160-closed`); harness phase **H5** |
 | Architecture map | [`docs/ADR/README.md`](docs/ADR/README.md) | Spine + honeycomb **Proposed**, not Accepted |
 | Capability | `crates/kutha-runtime` tests | FF5 green (`as_of(2015) ≠ as_of(2021)` on a statute-shaped fixture) |
 
@@ -87,7 +87,7 @@ Agent instructions: [`AGENTS.md`](AGENTS.md). Claude Code also loads [`CLAUDE.md
 These are spike capabilities in the crates. Honeycomb cells stay **Proposed**. None of this is a product release.
 
 - Point-in-time reads: `as_of`, `live_at`, `as_known_on` (FF5: `as_of(2015) ≠ as_of(2021)` on a statute-shaped fixture).
-- A sealed log prefix can be replaced by a checkpoint receipt. `fork_at` fails closed on a compacted cut. A Behavior whose rule blob is missing fails replay (`ExecutionReplayFailed`).
+- A sealed log prefix can be replaced by a checkpoint receipt. `fork_at` fails closed on a compacted cut. A Behavior whose rule blob is missing fails replay (`ExecutionReplayFailed`). An ordinary `StoreBlob` whose bytes do not match its digest fails open (`UnknownRuleVersion`).
 - `diff_folds` / `Runtime::diff` is a fact-set diff of two folds, including a fork against its parent. It is not graph-edit distance and not a merge. Scan on each side is the live picture; the diff also keeps dead rows.
 - A thin query IR (`Scan`, `Hops`) walks the CSR lease. There is no Cypher parser and no HNSW index.
 

@@ -44,6 +44,13 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Lease unchanged (`L_delivery=M159-S01`). Honeycomb stays **Proposed**.
 
+## 2026-10-25 — Trajectory: M160 / GSD v1.54 closed
+
+Process tag **v1.54** / Phase **234**. Not a new release id. `VERSION` stays `0.0.01`.
+
+- Ordinary `StoreBlob` bytes are checked on replay. A mismatch is `UnknownRuleVersion`. A missing Horn blob stays `ExecutionReplayFailed`. Independent kill-tests passed. `cargo test --workspace` 0. `kutha-gov ci --jobs 1` `run_high=0`.
+- `L_delivery=M160-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.54 / Phase 234.
+
 ## 2026-10-25 — Trajectory: lease M160-S01 (StoreBlob digest on open)
 
 Process tag **v1.54** / Phase **234**. Not a new release id. `VERSION` stays `0.0.01`.

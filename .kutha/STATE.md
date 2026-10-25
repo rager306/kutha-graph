@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M160
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M160-S01
+L_delivery=M160-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M160-S01 leased (v1.54): StoreBlob digest on open | Capability proven / Cypher started |
+| L_delivery | M160 closed (v1.54) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M160 S01: `replay_check` rejects an ordinary `StoreBlob` whose bytes do not match its digest (`UnknownRuleVersion`), after the Behavior walk so a missing Horn blob stays `ExecutionReplayFailed`. A matching blob still opens. No new Op, no wire change, release id stays `0.0.01`. Competitor baseline still needs the owner's docker and a pause of `fd_api` / `9router`. Other residuals stay open until their own RED: dangling lineage ids after a checkpoint; vintage checkpoint payloads; `cause_of_behavior` last-wins; checkpoint operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M160 is closed: `replay_check` rejects an ordinary `StoreBlob` whose bytes do not match its digest (`UnknownRuleVersion`), after the Behavior walk, so a missing Horn blob stays `ExecutionReplayFailed`. A matching blob, including a policy or rule-body hash, still opens. A same-length or shortened rewrite fails. Migrate fixtures no longer call `store::open` on a pre-migrate log whose digest does not match; their pin and cite oracles stayed. Release id stays `0.0.01`. Next: the roadmap kill rule still needs Samyama and FalkorDB numbers (docker, and the owner's OK to pause `fd_api` / `9router`), or a later lease of B6 Cypher AS OF (M003) or Arc C with a fresh RED. Residuals that stay open until a fired RED: dangling lineage ids after a checkpoint; vintage checkpoint payloads; `cause_of_behavior` last-wins on duplicate event ids; checkpoint has no operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 
