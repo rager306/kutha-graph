@@ -1,10 +1,8 @@
 //! Replay and provenance (ADR-060). Not a MATCH compiler.
-use crate::fold::{
-    checkpoint_prefix_meta_op, checkpoint_snapshot_if_receipt_ok, GraphFold,
-};
+use crate::fold::{GraphFold, checkpoint_prefix_meta_op, checkpoint_snapshot_if_receipt_ok};
 use crate::quantum::{Runtime, RuntimeError};
 use crate::receipt::digest_to_hex;
-use kutha_common::{Event, EventId, Op, TransactionTime, ValidTime};
+use kutha_common::{Event, EventId, Op, TransactionTime, ValidTime, blob_digest_matches};
 use sha2::{Digest, Sha256};
 use std::collections::{HashMap, HashSet};
 
@@ -70,6 +68,16 @@ impl Runtime {
                 }
             }
             seen.insert(e.id);
+        }
+        // After the Behavior walk so a missing Horn blob stays ExecutionReplayFailed.
+        for e in self.log.iter() {
+            if let Op::StoreBlob { digest, bytes } = &e.op {
+                if !blob_digest_matches(digest, bytes) {
+                    return Err(RuntimeError::UnknownRuleVersion {
+                        pin: digest.clone(),
+                    });
+                }
+            }
         }
         Ok(rebuilt)
     }

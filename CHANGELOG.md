@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-25 — Product: StoreBlob digest on open
+
+### Fixed
+
+- `Runtime::replay_check` rejects `Op::StoreBlob` when `!blob_digest_matches(digest, bytes)` with `UnknownRuleVersion { pin: digest }`, after the Behavior walk so a missing Horn blob stays `ExecutionReplayFailed`. Admit already used this check. A matching ordinary blob still opens. No new Op, no `GraphFold::apply` fallibility, no version bump.
+
+### Trajectory
+
+- Lease unchanged (`L_delivery=M160-S01`). Honeycomb stays **Proposed**.
+
 ## 2026-10-24 — Product: Horn blob fail-closed kill-tests
 
 ### Added

@@ -35,25 +35,17 @@ fn append_jsonl(dir: &std::path::Path, events: &[Event]) {
     }
 }
 
-fn named_derive_pq_blobs(ingested_at: u64) -> [Event; 2] {
+fn named_derive_pq_blob(ingested_at: u64) -> Event {
     let ast = RuleAst::named("derive_pq").expect("named");
-    let bytes = ast.encode();
-    let mk = |id, digest: String| Event {
-        id: EventId::from_u128(id),
+    Event {
+        id: EventId::from_u128(0xB10B_0002),
         op: Op::StoreBlob {
-            digest,
-            bytes: bytes.clone(),
+            digest: ast.hash(),
+            bytes: ast.encode(),
         },
         ingested_at,
         object_ids: vec![],
-    };
-    [
-        mk(
-            0xB10B_0001,
-            legacy_ident_rule_pin("derive_pq").expect("legacy"),
-        ),
-        mk(0xB10B_0002, ast.hash()),
-    ]
+    }
 }
 
 fn commit_outcome(ids: &[EventId], ingested_at: u64) -> Event {
@@ -131,11 +123,10 @@ fn seeded_both(label: &str) -> (PathBuf, EventId, EventId) {
         ingested_at: 901,
         object_ids: vec![],
     };
-    let [legacy_blob, v1_blob] = named_derive_pq_blobs(899);
+    let v1_blob = named_derive_pq_blob(899);
     append_jsonl(
         &dir,
         &[
-            legacy_blob,
             v1_blob,
             behavior,
             cite,

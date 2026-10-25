@@ -1,7 +1,7 @@
 //! M011 S07 provenance digest; ADR-060 obligation 2.
 //! State fold fingerprint stays Facts-only; lineage mix is a separate surface.
 
-use kutha_common::{Event, EventId, Op, RuleAst, rule_definition_hash};
+use kutha_common::{Event, EventId, Op, RuleAst, rule_definition_hash, sha256_hex};
 use kutha_runtime::Runtime;
 
 /// Two valid priors plus a Behavior caused_by the first, name `derive_pq`, pin `r1`.
@@ -93,6 +93,10 @@ fn provenance_detects_caused_by_swap_when_state_fingerprint_matches() {
 #[test]
 fn provenance_detects_rule_version_change_when_state_fingerprint_matches() {
     let (rt, _a1, _a2) = baseline_derive_pq_r1();
+    let bytes = RuleAst::named("derive_pq")
+        .expect("named derive_pq")
+        .encode();
+    let matching_pin = sha256_hex(&bytes);
     let mut pinned = rt.log().as_slice().to_vec();
     for e in &mut pinned {
         if let Op::Behavior {
@@ -100,16 +104,18 @@ fn provenance_detects_rule_version_change_when_state_fingerprint_matches() {
         } = &mut e.op
         {
             if name == "derive_pq" {
-                *rule_version = "r2".into();
+                *rule_version = matching_pin.clone();
             }
         }
     }
-    let bytes = RuleAst::named("derive_pq").expect("named derive_pq").encode();
-    let next_tt = pinned.last().map(|e| e.ingested_at.saturating_add(1)).unwrap_or(0);
+    let next_tt = pinned
+        .last()
+        .map(|e| e.ingested_at.saturating_add(1))
+        .unwrap_or(0);
     pinned.push(Event {
         id: EventId::from_u128(0xB10B),
         op: Op::StoreBlob {
-            digest: "r2".into(),
+            digest: matching_pin,
             bytes,
         },
         ingested_at: next_tt,

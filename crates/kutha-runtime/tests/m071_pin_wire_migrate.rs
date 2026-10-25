@@ -1,12 +1,12 @@
 //! M071 S01 — directory pin-wire migrate for Behavior rule_version.
 
 use kutha_common::{
-    legacy_ident_rule_pin, rule_definition_hash, Event, EventId, Op, OutcomeDisposition, RuleAst,
-};
-use kutha_runtime::store::{
-    ensure_legacy_dir, migrate_pin_wire, open, persist, PIN_WIRE_MARKER_BODY, PIN_WIRE_MARKER_REL,
+    Event, EventId, Op, OutcomeDisposition, RuleAst, legacy_ident_rule_pin, rule_definition_hash,
 };
 use kutha_runtime::Runtime;
+use kutha_runtime::store::{
+    PIN_WIRE_MARKER_BODY, PIN_WIRE_MARKER_REL, ensure_legacy_dir, migrate_pin_wire, open, persist,
+};
 use std::fs;
 use std::io::Write;
 use std::path::PathBuf;
@@ -33,26 +33,27 @@ fn append_jsonl(dir: &std::path::Path, events: &[Event]) {
     }
 }
 
-/// Named `derive_pq` body at both legacy and v1 pins (fail-closed replay).
-fn named_derive_pq_blobs(ingested_at: u64) -> [Event; 2] {
+/// Matching v1 Named `derive_pq` body. Do not key a blob with the legacy pin:
+/// `blob_digest_matches` rejects that pair, and production must not special-case it.
+fn named_derive_pq_blob(ingested_at: u64) -> Event {
     let ast = RuleAst::named("derive_pq").expect("named");
-    let bytes = ast.encode();
-    let mk = |id, digest: String| Event {
-        id: EventId::from_u128(id),
+    Event {
+        id: EventId::from_u128(0xB10B_0002),
         op: Op::StoreBlob {
-            digest,
-            bytes: bytes.clone(),
+            digest: ast.hash(),
+            bytes: ast.encode(),
         },
         ingested_at,
         object_ids: vec![],
-    };
-    [
-        mk(
-            0xB10B_0001,
-            legacy_ident_rule_pin("derive_pq").expect("legacy"),
-        ),
-        mk(0xB10B_0002, ast.hash()),
-    ]
+    }
+}
+
+fn jsonl_events(dir: &std::path::Path) -> Vec<Event> {
+    let text = fs::read_to_string(dir.join("events.jsonl")).expect("jsonl");
+    text.lines()
+        .filter(|l| !l.trim().is_empty())
+        .map(|l| serde_json::from_str(l).expect("event"))
+        .collect()
 }
 
 fn commit_outcome(behavior_id: EventId, ingested_at: u64) -> Event {
@@ -109,11 +110,11 @@ fn migrate_pin_wire_rewrites_behavior_legacy_utf8_pin() {
         ingested_at: 999,
         object_ids: vec![subject, relation, object],
     };
-    let [legacy_blob, v1_blob] = named_derive_pq_blobs(998);
-    append_jsonl(&dir, &[legacy_blob, v1_blob, behavior, commit_outcome(id, 1000)]);
+    let v1_blob = named_derive_pq_blob(998);
+    append_jsonl(&dir, &[v1_blob, behavior, commit_outcome(id, 1000)]);
 
-    let before = open(&dir).expect("open with legacy pin still deserializes");
-    assert!(before.log().as_slice().iter().any(|e| {
+    let before = jsonl_events(&dir);
+    assert!(before.iter().any(|e| {
         matches!(
             &e.op,
             Op::Behavior { rule_version, .. } if rule_version == &legacy
@@ -164,14 +165,18 @@ fn migrate_pin_wire_leaves_v1_pin_unchanged() {
         ingested_at: 50,
         object_ids: vec![subject, relation, object],
     };
-    let [legacy_blob, v1_blob] = named_derive_pq_blobs(49);
-    append_jsonl(&dir, &[legacy_blob, v1_blob, behavior, commit_outcome(id, 51)]);
+    let v1_blob = named_derive_pq_blob(49);
+    append_jsonl(&dir, &[v1_blob, behavior, commit_outcome(id, 51)]);
     let report = migrate_pin_wire(&dir).expect("migrate");
     assert_eq!(report.remapped_lines, 0);
     assert!(dir.join(PIN_WIRE_MARKER_REL).exists());
     let opened = open(&dir).expect("open");
-    assert!(opened.log().as_slice().iter().any(|e| {
-        matches!(&e.op, Op::Behavior { rule_version, .. } if rule_version == &v1)
-    }));
+    assert!(
+        opened
+            .log()
+            .as_slice()
+            .iter()
+            .any(|e| { matches!(&e.op, Op::Behavior { rule_version, .. } if rule_version == &v1) })
+    );
     let _ = fs::remove_dir_all(&dir);
 }

@@ -72,6 +72,38 @@ fn with_empty_pin(rt: &Runtime, behavior_id: EventId) -> Runtime {
     rebuild(rt, events)
 }
 
+fn with_matching_named(
+    rt: &Runtime,
+    old_pin: &str,
+    new_pin: &str,
+    bytes: Vec<u8>,
+    behavior_id: EventId,
+) -> Runtime {
+    let events: Vec<Event> = rt
+        .log()
+        .as_slice()
+        .iter()
+        .map(|e| {
+            let mut e = e.clone();
+            match &mut e.op {
+                Op::StoreBlob {
+                    digest,
+                    bytes: slot,
+                } if digest.as_str() == old_pin => {
+                    *digest = new_pin.to_string();
+                    *slot = bytes.clone();
+                }
+                Op::Behavior { rule_version, .. } if e.id == behavior_id => {
+                    *rule_version = new_pin.to_string();
+                }
+                _ => {}
+            }
+            e
+        })
+        .collect();
+    rebuild(rt, events)
+}
+
 fn with_pin_bytes(rt: &Runtime, pin: &str, bytes: Vec<u8>) -> Runtime {
     let events: Vec<Event> = rt
         .log()
@@ -177,7 +209,9 @@ fn kill_present_horn_match_is_ok() {
 fn kill_present_non_horn_body_skips_ok() {
     let twin = knows_inverse_runtime();
     let (behavior_id, pin) = inverse_behavior(&twin);
-    let named = RuleAst::named("namedSkip").expect("named").encode();
+    let ast = RuleAst::named("namedSkip").expect("named");
+    let named = ast.encode();
+    let named_pin = ast.hash();
     assert_ne!(named, {
         twin.log()
             .iter()
@@ -188,12 +222,15 @@ fn kill_present_non_horn_body_skips_ok() {
             .expect("Horn blob bytes")
     });
 
-    let skipped = with_pin_bytes(&twin, &pin, named);
+    // Digest and Behavior pin both become the Named hash so blob_digest_matches
+    // holds; Named still skips Horn replay (M159). Do not keep the Horn pin on
+    // Named bytes (that pair is UnknownRuleVersion after M160).
+    let skipped = with_matching_named(&twin, &pin, &named_pin, named, behavior_id);
     skipped
         .replay_check()
         .expect("present Named body must skip (replay Ok)");
 
-    let missing = without_pin_blob(&skipped, &pin);
+    let missing = without_pin_blob(&skipped, &named_pin);
     assert_execution_replay_failed(
         &missing,
         behavior_id,
