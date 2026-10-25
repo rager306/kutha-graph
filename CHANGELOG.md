@@ -44,6 +44,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Lease unchanged (`L_delivery=M159-S01`). Honeycomb stays **Proposed**.
 
+## 2026-10-25 — Trajectory: lease M161-S01 (every cause of a shared head)
+
+Process tag **v1.55** / Phase **235**. Not a new release id. `VERSION` stays `0.0.01`.
+
+- Active Milestone **M161**, Active Slice **S01** (`L_delivery=M161-S01`): a shared Behavior EventId keeps every `caused_by`, and unindex clears each reverse pointer. No Op, no thaw. Honeycomb stays Proposed.
+
 ## 2026-10-25 — Trajectory: M160 / GSD v1.54 closed
 
 Process tag **v1.54** / Phase **234**. Not a new release id. `VERSION` stays `0.0.01`.
