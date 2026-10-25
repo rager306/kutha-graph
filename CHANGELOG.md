@@ -24,6 +24,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Lease unchanged (`L_delivery=M159-S01`). Honeycomb stays **Proposed**.
 
+## 2026-10-25 — Trajectory: lease M160-S01 (StoreBlob digest on open)
+
+Process tag **v1.54** / Phase **234**. Not a new release id. `VERSION` stays `0.0.01`.
+
+- Active Milestone **M160**, Active Slice **S01** (`L_delivery=M160-S01`): ordinary `StoreBlob` bytes are checked on replay. No Op, no thaw. Honeycomb stays Proposed.
+
 ## 2026-10-24 — Trajectory: M159 / GSD v1.53 closed
 
 Process tag **v1.53** / Phase **233**. Not a new release id. `VERSION` stays `0.0.01`.

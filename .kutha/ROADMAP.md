@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M160: StoreBlob digest on open — LEASED (GSD v1.54)
+
+Gap in the open/replay cascade. Admit checks `blob_digest_matches`; `GraphFold::apply(StoreBlob)` and `replay_check` do not. A same-length rewrite of an ordinary blob still opens. Checkpoint snapshot bytes are already checked. Horn missing-blob is M159 and must stay `ExecutionReplayFailed`. No new Op, no thaw, release id stays `0.0.01`. Honeycomb stays Proposed.
+
+- [ ] **S01: reject a tampered ordinary blob** `risk:medium` `depends:[]`
+  > After this: `replay_check` returns `UnknownRuleVersion` when `Op::StoreBlob` bytes do not match the digest, after the Behavior walk so a missing Horn blob is still `ExecutionReplayFailed`. A matching blob still opens. Phase 234.
+
 ## M159: missing Horn blob fails closed — CLOSED (GSD v1.53)
 
 Gap in the replay cascade, named in the M158 close and confirmed in source: `horn_behavior_reproducible` returns success when `rule_version` is nonempty and the rule blob is absent (`eval.rs`, `return !rule_version.is_empty()`). The doc comment says missing blob fails closed (RULE-04). `replay_check` then accepts a Behavior it cannot re-derive. No new Op, no thaw, release id stays `0.0.01`. Honeycomb stays Proposed.

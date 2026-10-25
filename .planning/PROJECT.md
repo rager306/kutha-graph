@@ -10,7 +10,7 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.53 Missing Horn blob — closed (M159)
+## Current Milestone: v1.54 StoreBlob digest on open — leased (M160)
 
 **Goal:** Arc B (physics), third slice: a workload-as-data plus a thin typed query IR interpreted over existing read APIs, equal to the `as_of` facade on FF5, and a self-relative multi-hop benchmark on the typed CSR lease. No competitor baseline yet (needs the owner), no parser, no planner, no thaw.
 
