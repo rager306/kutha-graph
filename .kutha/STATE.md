@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M161
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M161-S01
+L_delivery=M161-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M161-S01 leased (v1.55): every cause of a shared head | Capability proven / Cypher started |
+| L_delivery | M161 closed (v1.55) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M161 S01: `cause_of_behavior` must keep every distinct `caused_by` when DET-02 reuses one EventId, and `unindex_behavior` must drop that id from `derived_by_cause` under each cause. A single-cause head stays as it is. No new Op, no wire change, release id stays `0.0.01`. Competitor baseline still needs the owner's docker and a pause of `fd_api` / `9router`. Other residuals stay open until their own RED: dangling lineage ids after a checkpoint; vintage checkpoint payloads; checkpoint operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M161 is closed: a Behavior EventId shared by two Horn paths keeps every distinct `caused_by`, and retracting that id removes it from `derived_by_cause` under each cause. Indexing the same cause twice does not store it twice. A single-cause head still clears its one reverse list. No new Op. Release id stays `0.0.01`. Next: the roadmap kill rule still needs Samyama and FalkorDB numbers (docker, and the owner's OK to pause `fd_api` / `9router`), or a later lease of B6 Cypher AS OF (M003) or Arc C with a fresh RED. Residuals that stay open until a fired RED: dangling lineage ids after a checkpoint; vintage checkpoint payloads; checkpoint has no operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. `derived_by_cause` can still list the same head twice if the same cause is indexed twice; unindex removes every copy. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 

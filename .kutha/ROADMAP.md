@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M161: every cause of a shared head — LEASED (GSD v1.55)
+## M161: every cause of a shared head — CLOSED (GSD v1.55)
 
 Gap in the Horn cascade index. Two Behavior rows may share one EventId when DET-02 ignores `caused_by` (`Event::stable_derived`). `derived_by_cause` pushes both causes. `cause_of_behavior` is a single slot, so the second insert wins, and `unindex_behavior` removes the head from only that cause. The first cause still lists a head that was retracted. No new Op, no thaw, release id stays `0.0.01`. Honeycomb stays Proposed.
 
-- [ ] **S01: unindex every cause** `risk:medium` `depends:[]`
-  > After this: `cause_of_behavior` keeps every distinct `caused_by` for an EventId; retracting that id removes it from `derived_by_cause` under each of those causes. A single-cause head is unchanged. Phase 235.
+- [x] **S01: unindex every cause** `risk:medium` `depends:[]`
+  > After this: `cause_of_behavior` keeps every distinct `caused_by` for an EventId; retracting that id removes it from `derived_by_cause` under each of those causes. A single-cause head is unchanged. Phase 235. Landed (independent in-crate attacks passed).
 
 ## M160: StoreBlob digest on open — CLOSED (GSD v1.54)
 
