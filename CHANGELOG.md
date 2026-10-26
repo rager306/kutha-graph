@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-26 — Product: vintage checkpoint lineage kill-tests
+
+### Added
+
+- Independent `b9_vintage_checkpoint` attacks: explicit `behaviors_exact: false` with a matching digest fails `store::open`; a marked no-Horn blob still opens; a marked Horn blob restores compacted `behaviors`; digest mismatch with the mark true fails; `checkpoint_sealed_prefix` on a vintage log returns Err and leaves store bytes unchanged (except `kutha.lock`).
+
+### Trajectory
+
+- Lease unchanged (`L_delivery=M163-S01`). Honeycomb stays **Proposed**.
+
 ## 2026-10-26 — Product: vintage checkpoint lineage
 
 ### Added
