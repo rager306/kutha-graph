@@ -3,7 +3,7 @@ ce-handoff/v1: true
 title: "M162 closed (one head per cause)"
 date: 2026-10-26
 branch: work/main-line
-head: pending
+head: 0577c7f
 resume_focus: "The remote baseline sample is not a B3 gate. Next product lease needs a fresh RED: dangling lineage after checkpoint, vintage checkpoint payload, checkpoint operator surface, or B1b vacuum. B6 Cypher (M003) and HNSW (M005) stay frozen. Do not bump VERSION unless the owner names the next N.N.NN."
 ---
 
