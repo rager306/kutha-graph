@@ -10,6 +10,12 @@ commands:
     exit: 0
   - cmd: uv run kutha-gov ci --jobs 1
     exit: 0
+read_only_inputs:
+  - crates/kutha-runtime/src/snapshot.rs
+  - crates/kutha-runtime/src/fold.rs
+  - crates/kutha-runtime/src/hydrate.rs
+  - crates/kutha-runtime/src/store.rs
+  - crates/kutha-runtime/tests/b9_vintage_checkpoint.rs
 ---
 
 # Phase 237 — independent verification
