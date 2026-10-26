@@ -659,3 +659,92 @@ fn derived_by_cause_lists_a_head_once() {
     );
     assert_eq!(kids[0], head);
 }
+
+/// Two distinct causes each list the head once; repeating only one cause must
+/// not grow that list or drop the other (kills "move id to the latest cause").
+#[test]
+fn derived_by_cause_two_causes_stay_len_one_after_repeat_index() {
+    let mut rt = Runtime::default();
+    let terms = shared_head_terms(&mut rt);
+    let head = EventId::from_u128(0xb1);
+    let cause_a = EventId::from_u128(0xb2);
+    let cause_b = EventId::from_u128(0xb3);
+    rt.append_indexed(shared_head_row(terms, head, cause_a, 1));
+    rt.append_indexed(shared_head_row(terms, head, cause_b, 2));
+    rt.append_indexed(shared_head_row(terms, head, cause_a, 3));
+    assert_eq!(derived_head_count(&rt, cause_a, head), 1);
+    assert_eq!(derived_head_count(&rt, cause_b, head), 1);
+    assert_eq!(rt.derived_by_cause.get(&cause_a).map(Vec::len), Some(1));
+    assert_eq!(rt.derived_by_cause.get(&cause_b).map(Vec::len), Some(1));
+}
+
+/// Sibling heads under one cause: repeating only one id must not wipe the other
+/// (kills `insert(cause, vec![id])` overwrite).
+#[test]
+fn derived_by_cause_sibling_head_survives_repeat_index() {
+    let mut rt = Runtime::default();
+    let terms = shared_head_terms(&mut rt);
+    let head_a = EventId::from_u128(0xb4);
+    let head_b = EventId::from_u128(0xb5);
+    let cause = EventId::from_u128(0xb6);
+    rt.append_indexed(shared_head_row(terms, head_a, cause, 1));
+    rt.append_indexed(shared_head_row(terms, head_b, cause, 2));
+    rt.append_indexed(shared_head_row(terms, head_a, cause, 3));
+    let kids = rt
+        .derived_by_cause
+        .get(&cause)
+        .expect("cause must keep both heads");
+    assert_eq!(kids.len(), 2, "overwrite dropped a sibling, got {kids:?}");
+    assert_eq!(derived_head_count(&rt, cause, head_a), 1);
+    assert_eq!(derived_head_count(&rt, cause, head_b), 1);
+}
+
+/// `rebuild_log_indexes` walks `index_live_behavior_event`. Two log rows with
+/// the same (head, cause) plus a second cause must not duplicate; fold fingerprint
+/// must not move.
+#[test]
+fn derived_by_cause_rebuild_index_live_does_not_duplicate() {
+    let mut rt = Runtime::default();
+    let terms = shared_head_terms(&mut rt);
+    let head = EventId::from_u128(0xb7);
+    let cause_a = EventId::from_u128(0xb8);
+    let cause_b = EventId::from_u128(0xb9);
+    rt.commit_event(shared_head_row(terms, head, cause_a, 1));
+    rt.commit_event(shared_head_row(terms, head, cause_b, 2));
+    rt.commit_event(shared_head_row(terms, head, cause_a, 3));
+    let before = rt.fold().fingerprint();
+    rt.rebuild_log_indexes();
+    assert_eq!(
+        before,
+        rt.fold().fingerprint(),
+        "rebuild must not move the fold fingerprint"
+    );
+    assert_eq!(derived_head_count(&rt, cause_a, head), 1);
+    assert_eq!(derived_head_count(&rt, cause_b, head), 1);
+}
+
+/// Retract after a duplicate index of one of two causes still clears both lists.
+#[test]
+fn derived_by_cause_retract_after_duplicate_index_clears_every_cause() {
+    let mut rt = Runtime::default();
+    let terms = shared_head_terms(&mut rt);
+    let head = EventId::from_u128(0xba);
+    let cause_a = EventId::from_u128(0xbb);
+    let cause_b = EventId::from_u128(0xbc);
+    rt.append_indexed(shared_head_row(terms, head, cause_a, 1));
+    rt.append_indexed(shared_head_row(terms, head, cause_b, 2));
+    rt.append_indexed(shared_head_row(terms, head, cause_a, 3));
+    retract_named(&mut rt, head, 0xbd, 4);
+    assert!(
+        !rt.derived_by_cause
+            .get(&cause_a)
+            .is_some_and(|kids| kids.contains(&head)),
+        "cause_a still lists the retracted head"
+    );
+    assert!(
+        !rt.derived_by_cause
+            .get(&cause_b)
+            .is_some_and(|kids| kids.contains(&head)),
+        "cause_b still lists the retracted head"
+    );
+}

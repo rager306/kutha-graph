@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-26 — Product: one-head-per-cause kill-tests
+
+### Added
+
+- Independent in-crate attacks: two causes stay length 1 after repeating only one; a sibling head under the same cause survives a repeat index; `rebuild_log_indexes` (`index_live_behavior_event`) does not duplicate and does not move the fold fingerprint; retract after a duplicate index clears every cause.
+
+### Trajectory
+
+- Lease unchanged (`L_delivery=M162-S01`). Honeycomb stays **Proposed**.
+
 ## 2026-10-26 — Product: one head per cause
 
 ### Fixed
