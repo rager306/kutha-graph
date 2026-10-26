@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-26 — Product: shared-head unindex kill-tests
+
+### Added
+
+- Independent in-crate attacks: duplicate `(id, cause)` is stored once in `cause_of_behavior`; three causes all unindex; unknown Retract does not drop a live head; a single-cause retract still clears that reverse list; `rebuild_log_indexes` keeps both causes and does not move the fold fingerprint.
+
+### Trajectory
+
+- Lease unchanged (`L_delivery=M161-S01`). Honeycomb stays **Proposed**.
+
 ## 2026-10-25 — Product: shared head causes
 
 ### Fixed

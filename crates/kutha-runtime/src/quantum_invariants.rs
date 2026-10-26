@@ -1,6 +1,6 @@
 //! In-crate Runtime invariants (moved out of quantum.rs so src files stay ≤800).
 use super::*;
-use kutha_common::{Event, EventId, Op, WallTime};
+use kutha_common::{Event, EventId, Op, TermId, WallTime};
 use std::time::Instant;
 
 #[test]
@@ -467,4 +467,174 @@ fn shared_head_unindex_clears_every_cause() {
             .is_some_and(|kids| kids.contains(&head)),
         "second cause still lists the retracted shared head"
     );
+}
+
+fn shared_head_terms(rt: &mut Runtime) -> (TermId, TermId, TermId) {
+    let s = rt.intern("shared-head-s");
+    let r = rt.intern("shared-head-r");
+    let o = rt.intern("shared-head-o");
+    (s, r, o)
+}
+
+fn shared_head_row(
+    terms: (TermId, TermId, TermId),
+    head: EventId,
+    caused_by: EventId,
+    ingested_at: u64,
+) -> Event {
+    let (s, r, o) = terms;
+    Event {
+        id: head,
+        ingested_at,
+        op: Op::Behavior {
+            name: "shared-head".into(),
+            caused_by,
+            rule_version: String::new(),
+            subject: s,
+            relation: r,
+            object: o,
+            valid_from: 0,
+            valid_to: None,
+        },
+        object_ids: vec![s, r, o],
+    }
+}
+
+fn retract_named(rt: &mut Runtime, event_id: EventId, row_id: u128, ingested_at: u64) {
+    rt.append_indexed(Event {
+        id: EventId::from_u128(row_id),
+        ingested_at,
+        op: Op::Retract { event_id },
+        object_ids: vec![],
+    });
+}
+
+fn derived_head_count(rt: &Runtime, cause: EventId, head: EventId) -> usize {
+    rt.derived_by_cause
+        .get(&cause)
+        .map(|kids| kids.iter().filter(|id| **id == head).count())
+        .unwrap_or(0)
+}
+
+/// Same (id, cause) indexed twice must not duplicate `cause_of_behavior`.
+/// `derived_by_cause` may list the head twice; unindex must still drop the key.
+#[test]
+fn shared_head_duplicate_cause_is_stored_once() {
+    let mut rt = Runtime::default();
+    let terms = shared_head_terms(&mut rt);
+    let head = EventId::from_u128(0x41);
+    let cause = EventId::from_u128(0x42);
+    rt.append_indexed(shared_head_row(terms, head, cause, 1));
+    rt.append_indexed(shared_head_row(terms, head, cause, 2));
+    let causes = rt.cause_of_behavior.get(&head).expect("head tracked");
+    assert_eq!(
+        causes.as_slice(),
+        &[cause],
+        "same cause must not be stored twice"
+    );
+    assert!(
+        derived_head_count(&rt, cause, head) >= 1,
+        "reverse list must still name the head"
+    );
+    retract_named(&mut rt, head, 0x43, 3);
+    assert!(rt.cause_of_behavior.get(&head).is_none());
+    assert!(
+        rt.derived_by_cause.get(&cause).is_none(),
+        "empty reverse list must drop the cause key"
+    );
+}
+
+/// Three distinct caused_by values all leave reverse lists; retract walks every stored cause.
+#[test]
+fn shared_head_three_causes_all_clear() {
+    let mut rt = Runtime::default();
+    let terms = shared_head_terms(&mut rt);
+    let head = EventId::from_u128(0x51);
+    let causes = [
+        EventId::from_u128(0x52),
+        EventId::from_u128(0x53),
+        EventId::from_u128(0x54),
+    ];
+    for (i, cause) in causes.into_iter().enumerate() {
+        rt.append_indexed(shared_head_row(terms, head, cause, (i as u64) + 1));
+    }
+    let stored = rt.cause_of_behavior.get(&head).expect("head tracked");
+    assert_eq!(stored.as_slice(), &causes);
+    for cause in causes {
+        assert_eq!(derived_head_count(&rt, cause, head), 1);
+    }
+    rt.reset_unindex_cause_examine_count();
+    retract_named(&mut rt, head, 0x55, 4);
+    assert_eq!(rt.unindex_cause_examine_count(), 3);
+    assert!(rt.cause_of_behavior.get(&head).is_none());
+    for cause in causes {
+        assert!(
+            rt.derived_by_cause.get(&cause).is_none(),
+            "cause {cause} still lists the retracted shared head"
+        );
+    }
+}
+
+/// Unknown Retract must not panic and must not drop a live shared head.
+#[test]
+fn shared_head_unknown_retract_leaves_indexed_head() {
+    let mut rt = Runtime::default();
+    let terms = shared_head_terms(&mut rt);
+    let head = EventId::from_u128(0x61);
+    let cause = EventId::from_u128(0x62);
+    rt.append_indexed(shared_head_row(terms, head, cause, 1));
+    retract_named(&mut rt, EventId::from_u128(0xDEAD), 0x63, 2);
+    assert_eq!(
+        rt.cause_of_behavior.get(&head).map(Vec::as_slice),
+        Some(&[cause][..])
+    );
+    assert_eq!(derived_head_count(&rt, cause, head), 1);
+}
+
+/// A single-cause head still unindexes that one reverse list (empty key dropped).
+#[test]
+fn shared_head_single_cause_retract_clears_that_list() {
+    let mut rt = Runtime::default();
+    let terms = shared_head_terms(&mut rt);
+    let head = EventId::from_u128(0x71);
+    let cause = EventId::from_u128(0x72);
+    rt.append_indexed(shared_head_row(terms, head, cause, 1));
+    assert_eq!(derived_head_count(&rt, cause, head), 1);
+    retract_named(&mut rt, head, 0x73, 2);
+    assert!(rt.cause_of_behavior.get(&head).is_none());
+    assert!(
+        rt.derived_by_cause.get(&cause).is_none(),
+        "single-cause retract must drop the reverse list"
+    );
+}
+
+/// `index_live_behavior_event` rebuild (open/hydrate path) keeps both distinct causes.
+#[test]
+fn shared_head_rebuild_keeps_both_causes() {
+    let mut rt = Runtime::default();
+    let terms = shared_head_terms(&mut rt);
+    let head = EventId::from_u128(0x81);
+    let cause_a = EventId::from_u128(0x82);
+    let cause_b = EventId::from_u128(0x83);
+    rt.commit_event(shared_head_row(terms, head, cause_a, 1));
+    rt.commit_event(shared_head_row(terms, head, cause_b, 2));
+    let before = rt.fold().fingerprint();
+    rt.rebuild_log_indexes();
+    assert_eq!(
+        before,
+        rt.fold().fingerprint(),
+        "rebuild must not move the fold fingerprint"
+    );
+    let stored = rt
+        .cause_of_behavior
+        .get(&head)
+        .expect("head tracked after rebuild");
+    assert!(stored.contains(&cause_a) && stored.contains(&cause_b));
+    assert_eq!(stored.len(), 2);
+    assert_eq!(derived_head_count(&rt, cause_a, head), 1);
+    assert_eq!(derived_head_count(&rt, cause_b, head), 1);
+    retract_named(&mut rt, head, 0x84, 3);
+    assert!(rt.cause_of_behavior.get(&head).is_none());
+    assert!(rt.derived_by_cause.get(&cause_a).is_none());
+    assert!(rt.derived_by_cause.get(&cause_b).is_none());
 }
