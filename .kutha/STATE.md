@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M163
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M163-S01
+L_delivery=M163-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M163-S01 leased (v1.57): vintage checkpoint lineage fails closed | Capability proven / Cypher started |
+| L_delivery | M163 closed (v1.57) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M163 S01: checkpoint Snapshot blobs must carry `behaviors_exact: true`. `replay_check` rejects a blob that omits it, so a vintage payload cannot open as an empty Horn lineage. New checkpoints, including ones with no Horn rows, write the mark. No new Op, release id stays `0.0.01`. The `bkk-edge01` sample stays a note, not a B3 gate. Other residuals stay open until their own RED: dangling lineage ids after a checkpoint; checkpoint has no operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M163 is closed: a checkpoint blob without `behaviors_exact: true` fails replay. New checkpoints write the mark, including when there is no Horn row. A marked blob still opens. No new Op. Release id stays `0.0.01`. The 2026-10-26 sample on `bkk-edge01` is in `.compound-engineering/artifacts/research/2026-10-26-remote-baseline-sample.md`. It is not the B3 kill-rule budget. Residuals that stay open until a fired RED: dangling lineage ids after a checkpoint; checkpoint has no operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 
