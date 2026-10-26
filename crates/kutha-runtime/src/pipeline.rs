@@ -125,7 +125,7 @@ impl Runtime {
             .entry(*caused_by)
             .or_default()
             .push(e.id);
-        self.cause_of_behavior.insert(e.id, *caused_by);
+        self.record_cause_of_behavior(e.id, *caused_by);
         self.live_behaviors.insert(e.id);
         self.index_behavior_premise_rels(e.id, rule_version);
         self.index_behavior_premise_facts(e);
@@ -179,6 +179,13 @@ impl Runtime {
         }
     }
 
+    fn record_cause_of_behavior(&mut self, id: EventId, caused_by: EventId) {
+        let causes = self.cause_of_behavior.entry(id).or_default();
+        if !causes.contains(&caused_by) {
+            causes.push(caused_by);
+        }
+    }
+
     fn unindex_behavior(&mut self, id: EventId) {
         let tracked = self.cause_of_behavior.contains_key(&id)
             || self.premise_rels_of_behavior.contains_key(&id)
@@ -191,12 +198,15 @@ impl Runtime {
         }
         // Reverse pointers are authoritative (M104/M105). Missing keys mean the
         // id was never in that lease — do not fall back to a full-bucket scan.
-        if let Some(cause) = self.cause_of_behavior.remove(&id) {
-            self.unindex_cause_examine.bump();
-            if let Some(kids) = self.derived_by_cause.get_mut(&cause) {
-                kids.retain(|x| *x != id);
-                if kids.is_empty() {
-                    self.derived_by_cause.remove(&cause);
+        // Walk every stored cause: DET-02 can share one EventId across Horn paths.
+        if let Some(causes) = self.cause_of_behavior.remove(&id) {
+            for cause in causes {
+                self.unindex_cause_examine.bump();
+                if let Some(kids) = self.derived_by_cause.get_mut(&cause) {
+                    kids.retain(|x| *x != id);
+                    if kids.is_empty() {
+                        self.derived_by_cause.remove(&cause);
+                    }
                 }
             }
         }
@@ -247,7 +257,7 @@ impl Runtime {
                     .entry(*caused_by)
                     .or_default()
                     .push(event.id);
-                self.cause_of_behavior.insert(event.id, *caused_by);
+                self.record_cause_of_behavior(event.id, *caused_by);
                 self.live_behaviors.insert(event.id);
                 self.index_behavior_premise_rels(event.id, rule_version);
                 self.index_behavior_premise_facts(&event);

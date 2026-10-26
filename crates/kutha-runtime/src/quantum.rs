@@ -319,8 +319,8 @@ pub struct Runtime {
     pub(crate) unindex_live_examine: IngestExamine,
     /// Live Behavior ids keyed by `caused_by` (droppable; rebuilt from the log).
     pub(crate) derived_by_cause: IngestMap<EventId, Vec<EventId>>,
-    /// Behavior id → `caused_by` for O(1) unindex of `derived_by_cause` (M104).
-    pub(crate) cause_of_behavior: IngestMap<EventId, EventId>,
+    /// Behavior id → distinct `caused_by` values for unindex of `derived_by_cause` (M161).
+    pub(crate) cause_of_behavior: IngestMap<EventId, Vec<EventId>>,
     /// Currently live Horn Behavior event ids (droppable; rebuilt from the log).
     pub(crate) live_behaviors: FxHashSet<EventId>,
     /// Live Behavior ids keyed by Horn body premise relation (droppable; rebuilt

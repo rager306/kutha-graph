@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-25 — Product: shared head causes
+
+### Fixed
+
+- `cause_of_behavior` keeps every distinct `caused_by` when DET-02 reuses one Behavior EventId. `unindex_behavior` drops that id from `derived_by_cause` under each stored cause. The same cause is not pushed twice. No Op, fingerprint, or version bump.
+
+### Trajectory
+
+- Lease unchanged (`L_delivery=M161-S01`). Honeycomb stays **Proposed**.
+
 ## 2026-10-25 — Product: StoreBlob digest kill-tests
 
 ### Added

@@ -1,7 +1,6 @@
 //! In-crate Runtime invariants (moved out of quantum.rs so src files stay ≤800).
 use super::*;
-use kutha_common::Op;
-use kutha_common::WallTime;
+use kutha_common::{Event, EventId, Op, WallTime};
 use std::time::Instant;
 
 #[test]
@@ -408,5 +407,64 @@ fn replay_empty_inverse_pin_fails_execution_replay() {
     assert!(
         matches!(err, RuntimeError::ExecutionReplayFailed { .. }),
         "{err:?}"
+    );
+}
+
+/// DET-02 reuses one EventId for two Horn paths. Unindex must clear both reverse lists.
+#[test]
+fn shared_head_unindex_clears_every_cause() {
+    let mut rt = Runtime::default();
+    let head = EventId::from_u128(0x11);
+    let cause_a = EventId::from_u128(0x21);
+    let cause_b = EventId::from_u128(0x22);
+    let s = rt.intern("shared-head-s");
+    let r = rt.intern("shared-head-r");
+    let o = rt.intern("shared-head-o");
+    let row = |caused_by: EventId, ingested_at: u64| Event {
+        id: head,
+        ingested_at,
+        op: Op::Behavior {
+            name: "shared-head".into(),
+            caused_by,
+            rule_version: String::new(),
+            subject: s,
+            relation: r,
+            object: o,
+            valid_from: 0,
+            valid_to: None,
+        },
+        object_ids: vec![s, r, o],
+    };
+    rt.append_indexed(row(cause_a, 1));
+    rt.append_indexed(row(cause_b, 2));
+    assert!(
+        rt.derived_by_cause
+            .get(&cause_a)
+            .is_some_and(|kids| kids.contains(&head)),
+        "first cause must list the shared head after both indexes"
+    );
+    assert!(
+        rt.derived_by_cause
+            .get(&cause_b)
+            .is_some_and(|kids| kids.contains(&head)),
+        "second cause must list the shared head after both indexes"
+    );
+    rt.append_indexed(Event {
+        id: EventId::from_u128(0x33),
+        ingested_at: 3,
+        op: Op::Retract { event_id: head },
+        object_ids: vec![],
+    });
+    assert!(
+        !rt.derived_by_cause
+            .get(&cause_a)
+            .is_some_and(|kids| kids.contains(&head)),
+        "first cause still lists the retracted shared head"
+    );
+    assert!(
+        !rt.derived_by_cause
+            .get(&cause_b)
+            .is_some_and(|kids| kids.contains(&head)),
+        "second cause still lists the retracted shared head"
     );
 }
