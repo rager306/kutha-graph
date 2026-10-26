@@ -121,10 +121,7 @@ impl Runtime {
         if !self.behavior_fact_live(e.id) {
             return;
         }
-        self.derived_by_cause
-            .entry(*caused_by)
-            .or_default()
-            .push(e.id);
+        self.record_derived_by_cause(e.id, *caused_by);
         self.record_cause_of_behavior(e.id, *caused_by);
         self.live_behaviors.insert(e.id);
         self.index_behavior_premise_rels(e.id, rule_version);
@@ -176,6 +173,13 @@ impl Runtime {
                 .entry(pid)
                 .or_default()
                 .push(behavior_id);
+        }
+    }
+
+    fn record_derived_by_cause(&mut self, id: EventId, caused_by: EventId) {
+        let kids = self.derived_by_cause.entry(caused_by).or_default();
+        if !kids.contains(&id) {
+            kids.push(id);
         }
     }
 
@@ -253,10 +257,7 @@ impl Runtime {
                 rule_version,
                 ..
             } => {
-                self.derived_by_cause
-                    .entry(*caused_by)
-                    .or_default()
-                    .push(event.id);
+                self.record_derived_by_cause(event.id, *caused_by);
                 self.record_cause_of_behavior(event.id, *caused_by);
                 self.live_behaviors.insert(event.id);
                 self.index_behavior_premise_rels(event.id, rule_version);

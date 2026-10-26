@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-26 — Product: one head per cause
+
+### Fixed
+
+- `derived_by_cause` stores a Behavior EventId once per `caused_by`. Re-indexing the same head under the same cause does not duplicate the reverse list. Two distinct causes still each list the head once. Unindex still clears every cause. No Op, fingerprint, or version bump.
+
+### Trajectory
+
+- Lease unchanged (`L_delivery=M162-S01`). Honeycomb stays **Proposed**.
+
 ## 2026-10-26 — Trajectory: lease M162-S01 (one head per cause)
 
 Process tag **v1.56** / Phase **236**. Not a new release id. `VERSION` stays `0.0.01`.

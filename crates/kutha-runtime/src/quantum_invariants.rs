@@ -638,3 +638,24 @@ fn shared_head_rebuild_keeps_both_causes() {
     assert!(rt.derived_by_cause.get(&cause_a).is_none());
     assert!(rt.derived_by_cause.get(&cause_b).is_none());
 }
+
+/// Same Behavior indexed twice under one cause must appear once in `derived_by_cause`.
+#[test]
+fn derived_by_cause_lists_a_head_once() {
+    let mut rt = Runtime::default();
+    let terms = shared_head_terms(&mut rt);
+    let head = EventId::from_u128(0x91);
+    let cause = EventId::from_u128(0x92);
+    rt.append_indexed(shared_head_row(terms, head, cause, 1));
+    rt.append_indexed(shared_head_row(terms, head, cause, 2));
+    let kids = rt
+        .derived_by_cause
+        .get(&cause)
+        .expect("cause must list the head");
+    assert_eq!(
+        kids.len(),
+        1,
+        "reverse list must store the head once, got {kids:?}"
+    );
+    assert_eq!(kids[0], head);
+}
