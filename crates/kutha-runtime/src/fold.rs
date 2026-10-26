@@ -423,7 +423,8 @@ pub(crate) fn checkpoint_fold_is_empty_prefix(fold: &GraphFold) -> bool {
     fold.facts.is_empty() && fold.next_seq == 0
 }
 
-/// Prefix Snapshot if blob digest, `fact_count`, and `fingerprint_hex` match.
+/// Prefix Snapshot if blob digest, `fact_count`, `fingerprint_hex`, and
+/// `behaviors_exact` match. Missing `behaviors_exact` deserializes as false.
 pub(crate) fn checkpoint_snapshot_if_receipt_ok(
     bytes: &[u8],
     blob_digest: &str,
@@ -438,6 +439,9 @@ pub(crate) fn checkpoint_snapshot_if_receipt_ok(
         return Err(());
     }
     if crate::receipt::digest_to_hex(&snap.fold.fingerprint()) != fingerprint_hex {
+        return Err(());
+    }
+    if !snap.behaviors_exact {
         return Err(());
     }
     Ok(snap)

@@ -13,8 +13,14 @@ pub struct Snapshot {
     pub known_by: TermId,
     /// Prefix `Op::Behavior` records compacted out of the log (exact Horn
     /// lineage: head id, `caused_by`, `rule_version`). Covered by the checkpoint
-    /// blob digest. Empty is omitted so a no-Horn payload stays field-compatible.
+    /// blob digest. Empty is omitted; a no-Horn payload is marked by
+    /// `behaviors_exact`, not by omitting this field.
     /// Not fingerprint input (fingerprint walks `fold.facts`).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub behaviors: Vec<Event>,
+    /// Checkpoint lineage mark (M163). Missing deserializes as false. Always
+    /// serialized. Receipt rejects false after digest / fact_count / fingerprint
+    /// so a vintage blob cannot open as an empty Horn lineage.
+    #[serde(default)]
+    pub behaviors_exact: bool,
 }

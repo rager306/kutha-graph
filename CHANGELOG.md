@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-26 — Product: vintage checkpoint lineage
+
+### Added
+
+- `Snapshot.behaviors_exact` (`#[serde(default)]`, always serialized). `Runtime::snapshot` and the checkpoint blob constructor write `true`.
+
+### Fixed
+
+- `checkpoint_snapshot_if_receipt_ok` returns the existing receipt error when the mark is missing or false, after digest, fact_count, and fingerprint match. A marked blob with empty `behaviors` still opens. No Op, no new `RuntimeError`, no version bump.
+
+### Trajectory
+
+- Lease unchanged (`L_delivery=M163-S01`). Honeycomb stays **Proposed**.
+
 ## 2026-10-26 — Product: one-head-per-cause kill-tests
 
 ### Added

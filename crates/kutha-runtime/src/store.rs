@@ -231,6 +231,7 @@ pub fn checkpoint_sealed_prefix(dir: &Path) -> std::io::Result<()> {
         knows: opened_snap.knows,
         known_by: opened_snap.known_by,
         behaviors: checkpoint_prefix_behaviors(prefix),
+        behaviors_exact: true,
     };
     let bytes = serde_json::to_vec(&blob_snap).map_err(json_err)?;
     let blob_digest = sha256_hex(&bytes);

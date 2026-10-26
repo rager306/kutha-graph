@@ -60,6 +60,7 @@ impl Runtime {
             knows: self.knows,
             known_by: self.known_by,
             behaviors: self.fold.compacted_behaviors.clone(),
+            behaviors_exact: true,
         }
     }
 
