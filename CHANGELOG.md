@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-26 — Trajectory: lease M162-S01 (one head per cause)
+
+Process tag **v1.56** / Phase **236**. Not a new release id. `VERSION` stays `0.0.01`.
+
+- Active Milestone **M162**, Active Slice **S01** (`L_delivery=M162-S01`): `derived_by_cause` stores a head once per cause. No Op, no thaw. Honeycomb stays Proposed.
+
 ## 2026-10-26 — Trajectory: M161 / GSD v1.55 closed
 
 Process tag **v1.55** / Phase **235**. Not a new release id. `VERSION` stays `0.0.01`.

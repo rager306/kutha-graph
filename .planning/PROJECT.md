@@ -10,9 +10,9 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.55 Every cause of a shared head — closed (M161)
+## Current Milestone: v1.56 One head per cause — leased (M162)
 
-**Goal:** A Behavior EventId that DET-02 shares across two `caused_by` values keeps both causes, and unindex clears both reverse pointers.
+**Goal:** `derived_by_cause` lists a Behavior head once per cause. Two different causes still both list it.
 
 **Last shipped:** v1.54 StoreBlob digest (M160), v1.53 missing Horn blob (M159), v1.52 fork then query (M158), v1.51 B3-lite (M157). Honeycomb stays Proposed. Live pointer: `.kutha/STATE.md`.
 

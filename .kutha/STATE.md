@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M162
+**Active Slice:** S01
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M161-closed
+L_delivery=M162-S01
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M161 closed (v1.55) | Capability proven / Cypher started |
+| L_delivery | M162-S01 leased (v1.56): one head per cause | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M161 is closed: a Behavior EventId shared by two Horn paths keeps every distinct `caused_by`, and retracting that id removes it from `derived_by_cause` under each cause. Indexing the same cause twice does not store it twice. A single-cause head still clears its one reverse list. No new Op. Release id stays `0.0.01`. Next: the roadmap kill rule still needs Samyama and FalkorDB numbers (docker, and the owner's OK to pause `fd_api` / `9router`), or a later lease of B6 Cypher AS OF (M003) or Arc C with a fresh RED. Residuals that stay open until a fired RED: dangling lineage ids after a checkpoint; vintage checkpoint payloads; checkpoint has no operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. `derived_by_cause` can still list the same head twice if the same cause is indexed twice; unindex removes every copy. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M162 S01: `derived_by_cause` must push a Behavior id once per `caused_by`, the same way `cause_of_behavior` stores a cause once. Two different causes still both list the head. Retract still clears every cause. No new Op, release id stays `0.0.01`. A one-shot competitor sample on `bkk-edge01` (2026-10-26) is recorded in `.compound-engineering/artifacts/research/2026-10-26-remote-baseline-sample.md`. It is not the B3 kill-rule budget: the workloads differ, and Samyama OOM'd at n=256 on that 2 GB host. Other residuals stay open until their own RED: dangling lineage ids after a checkpoint; vintage checkpoint payloads; checkpoint operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 
