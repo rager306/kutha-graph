@@ -390,20 +390,35 @@ pub(crate) fn checkpoint_kept_prefix_op(op: &Op) -> bool {
 
 /// Exact prefix `Op::Behavior` records to store in `Snapshot.behaviors`.
 ///
-/// Walks the sealed prefix in order: prior checkpoint Snapshot blobs (R5
-/// carry-forward) then prefix `Op::Behavior` events. Does not keep those ops
-/// on the rewritten log (empty-fold Checkpoint placement).
+/// First pass: every `Op::Checkpoint` `blob_digest` in the prefix (the same
+/// cite `tt_anchors_from_events` uses). Second pass: copy `Snapshot.behaviors`
+/// from a `StoreBlob` only when that digest is cited and `behaviors_exact` is
+/// true. An ordinary blob that merely parses as a Snapshot is not lineage.
+/// Prefix `Op::Behavior` events are still copied (log rows, not blob payload).
+/// Does not keep those ops on the rewritten log (empty-fold Checkpoint
+/// placement).
 ///
 /// Must not drop records that share an EventId: `Event::stable_derived` for
 /// Behavior hashes pin + bindings, not `caused_by`, so two minting paths to
 /// the same head are two log rows with one id and different causes.
 pub(crate) fn checkpoint_prefix_behaviors(prefix: &[Event]) -> Vec<Event> {
+    let cited: HashSet<&str> = prefix
+        .iter()
+        .filter_map(|e| match &e.op {
+            Op::Checkpoint { blob_digest, .. } => Some(blob_digest.as_str()),
+            _ => None,
+        })
+        .collect();
     let mut out = Vec::new();
     for e in prefix {
         match &e.op {
-            Op::StoreBlob { bytes, .. } => {
-                if let Ok(snap) = serde_json::from_slice::<Snapshot>(bytes) {
-                    out.extend(snap.behaviors);
+            Op::StoreBlob { digest, bytes } => {
+                if cited.contains(digest.as_str()) {
+                    if let Ok(snap) = serde_json::from_slice::<Snapshot>(bytes) {
+                        if snap.behaviors_exact {
+                            out.extend(snap.behaviors);
+                        }
+                    }
                 }
             }
             Op::Behavior { .. } => out.push(e.clone()),

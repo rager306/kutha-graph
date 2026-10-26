@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-26 — Product: cited checkpoint lineage
+
+### Fixed
+
+- `checkpoint_prefix_behaviors` copies `Snapshot.behaviors` from a `StoreBlob` only when an `Op::Checkpoint` in the same prefix cites that digest and `behaviors_exact` is true. Prefix `Op::Behavior` rows are still copied. An ordinary blob that merely parses as a Snapshot is not lineage.
+
+### Added
+
+- `b10_cited_lineage` oracle: a digest-matching ordinary Snapshot blob with a Behavior that never occurred on the log is not harvested after `checkpoint_sealed_prefix`.
+
+### Trajectory
+
+- Lease unchanged (`L_delivery=M164-S01`). Honeycomb stays **Proposed**.
+
 ## 2026-10-26 — Trajectory: lease M164-S01 (cited checkpoint lineage)
 
 Process tag **v1.58** / Phase **238**. Not a new release id. `VERSION` stays `0.0.01`.
