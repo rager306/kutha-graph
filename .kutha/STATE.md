@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M164
+**Active Slice:** S01
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M163-closed
+L_delivery=M164-S01
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M163 closed (v1.57) | Capability proven / Cypher started |
+| L_delivery | M164-S01 leased (v1.58): checkpoint harvests lineage only from a cited blob | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M163 is closed: a checkpoint blob without `behaviors_exact: true` fails replay. New checkpoints write the mark, including when there is no Horn row. A marked blob still opens. No new Op. Release id stays `0.0.01`. The 2026-10-26 sample on `bkk-edge01` is in `.compound-engineering/artifacts/research/2026-10-26-remote-baseline-sample.md`. It is not the B3 kill-rule budget. Residuals that stay open until a fired RED: dangling lineage ids after a checkpoint; checkpoint has no operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M164 S01: `checkpoint_prefix_behaviors` copies `Snapshot.behaviors` only from a `StoreBlob` whose digest is cited by `Op::Checkpoint` in that prefix, the same binding `tt_anchors_from_events` uses. An ordinary blob that merely parses as a Snapshot is not lineage, even when `behaviors_exact` is true. Prefix `Op::Behavior` rows are still copied. No new Op, release id stays `0.0.01`. The `bkk-edge01` sample stays a note, not a B3 gate. Other residuals stay open until their own RED: dangling log lineage (already `BrokenLineage`); checkpoint has no separate operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 

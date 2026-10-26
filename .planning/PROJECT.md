@@ -10,9 +10,9 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.57 Vintage checkpoint lineage — closed (M163)
+## Current Milestone: v1.58 Cited checkpoint lineage — leased (M164)
 
-**Goal:** A checkpoint blob without `behaviors_exact: true` fails replay. New checkpoints write the mark, including when there is no Horn row.
+**Goal:** A checkpoint copies Horn lineage only from a blob an `Op::Checkpoint` cites, plus real prefix `Op::Behavior` rows.
 
 **Last shipped:** v1.57 vintage checkpoint lineage (M163), v1.56 one head per cause (M162), v1.55 shared causes (M161), v1.54 StoreBlob digest (M160). Honeycomb stays Proposed. Live pointer: `.kutha/STATE.md`.
 

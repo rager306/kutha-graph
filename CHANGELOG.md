@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-26 — Trajectory: lease M164-S01 (cited checkpoint lineage)
+
+Process tag **v1.58** / Phase **238**. Not a new release id. `VERSION` stays `0.0.01`.
+
+- Active Milestone **M164**, Active Slice **S01** (`L_delivery=M164-S01`): checkpoint harvest copies behaviors only from a blob cited by `Op::Checkpoint`. No Op, no thaw. Honeycomb stays Proposed.
+
 ## 2026-10-26 — Trajectory: M163 / GSD v1.57 closed
 
 Process tag **v1.57** / Phase **237**. Not a new release id. `VERSION` stays `0.0.01`.
