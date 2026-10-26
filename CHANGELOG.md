@@ -24,6 +24,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Lease unchanged (`L_delivery=M162-S01`). Honeycomb stays **Proposed**.
 
+## 2026-10-26 — Trajectory: lease M163-S01 (vintage checkpoint lineage fails closed)
+
+Process tag **v1.57** / Phase **237**. Not a new release id. `VERSION` stays `0.0.01`.
+
+- Active Milestone **M163**, Active Slice **S01** (`L_delivery=M163-S01`): a checkpoint blob without `behaviors_exact` fails replay. No Op, no thaw. Honeycomb stays Proposed.
+
 ## 2026-10-26 — Trajectory: M162 / GSD v1.56 closed
 
 Process tag **v1.56** / Phase **236**. Not a new release id. `VERSION` stays `0.0.01`.
