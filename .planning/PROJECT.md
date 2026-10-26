@@ -10,7 +10,7 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.56 One head per cause — leased (M162)
+## Current Milestone: v1.56 One head per cause — closed (M162)
 
 **Goal:** `derived_by_cause` lists a Behavior head once per cause. Two different causes still both list it.
 

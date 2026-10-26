@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M162: one head per cause — LEASED (GSD v1.56)
+## M162: one head per cause — CLOSED (GSD v1.56)
 
 Gap left by M161. `cause_of_behavior` stores a cause once. `derived_by_cause` still `push`es the head on every index of the same `(caused_by, event id)`, so the reverse list can hold the same head twice. Unindex removes every copy, so retract still ends clean, but the list lies while the head is live. No new Op, no thaw, release id stays `0.0.01`. Honeycomb stays Proposed.
 
-- [ ] **S01: push a head once per cause** `risk:low` `depends:[]`
-  > After this: indexing the same Behavior under the same `caused_by` twice leaves one entry in `derived_by_cause`. Two different causes still both list the head. Retract still clears every cause. Phase 236.
+- [x] **S01: push a head once per cause** `risk:low` `depends:[]`
+  > After this: indexing the same Behavior under the same `caused_by` twice leaves one entry in `derived_by_cause`. Two different causes still both list the head. Retract still clears every cause. Phase 236. Landed (independent in-crate attacks passed).
 
 ## M161: every cause of a shared head — CLOSED (GSD v1.55)
 

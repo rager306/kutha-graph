@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M162
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M162-S01
+L_delivery=M162-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M162-S01 leased (v1.56): one head per cause | Capability proven / Cypher started |
+| L_delivery | M162 closed (v1.56) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M162 S01: `derived_by_cause` must push a Behavior id once per `caused_by`, the same way `cause_of_behavior` stores a cause once. Two different causes still both list the head. Retract still clears every cause. No new Op, release id stays `0.0.01`. A one-shot competitor sample on `bkk-edge01` (2026-10-26) is recorded in `.compound-engineering/artifacts/research/2026-10-26-remote-baseline-sample.md`. It is not the B3 kill-rule budget: the workloads differ, and Samyama OOM'd at n=256 on that 2 GB host. Other residuals stay open until their own RED: dangling lineage ids after a checkpoint; vintage checkpoint payloads; checkpoint operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M162 is closed: `derived_by_cause` stores a Behavior head once per cause. Two different causes still both list the head. Retract still clears every cause. No new Op. Release id stays `0.0.01`. The 2026-10-26 sample on `bkk-edge01` is in `.compound-engineering/artifacts/research/2026-10-26-remote-baseline-sample.md`. It is not the B3 kill-rule budget: the workloads differ, and Samyama OOM'd at n=256 on that 2 GB host. Residuals that stay open until a fired RED: dangling lineage ids after a checkpoint; vintage checkpoint payloads; checkpoint has no operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 

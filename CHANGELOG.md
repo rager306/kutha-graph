@@ -24,6 +24,14 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Lease unchanged (`L_delivery=M162-S01`). Honeycomb stays **Proposed**.
 
+## 2026-10-26 — Trajectory: M162 / GSD v1.56 closed
+
+Process tag **v1.56** / Phase **236**. Not a new release id. `VERSION` stays `0.0.01`.
+
+- `derived_by_cause` stores a head once per cause. Independent in-crate attacks passed. `cargo test --workspace` 0. `kutha-gov ci --jobs 1` `run_high=0`.
+- A one-shot FalkorDB and Samyama sample on `bkk-edge01` is in `.compound-engineering/artifacts/research/2026-10-26-remote-baseline-sample.md`. It is not a regression gate.
+- `L_delivery=M162-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.56 / Phase 236.
+
 ## 2026-10-26 — Trajectory: lease M162-S01 (one head per cause)
 
 Process tag **v1.56** / Phase **236**. Not a new release id. `VERSION` stays `0.0.01`.

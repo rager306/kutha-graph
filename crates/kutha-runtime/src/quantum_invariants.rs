@@ -516,8 +516,7 @@ fn derived_head_count(rt: &Runtime, cause: EventId, head: EventId) -> usize {
         .unwrap_or(0)
 }
 
-/// Same (id, cause) indexed twice must not duplicate `cause_of_behavior`.
-/// `derived_by_cause` may list the head twice; unindex must still drop the key.
+/// Same (id, cause) indexed twice stores the cause once and the reverse head once.
 #[test]
 fn shared_head_duplicate_cause_is_stored_once() {
     let mut rt = Runtime::default();
@@ -532,9 +531,10 @@ fn shared_head_duplicate_cause_is_stored_once() {
         &[cause],
         "same cause must not be stored twice"
     );
-    assert!(
-        derived_head_count(&rt, cause, head) >= 1,
-        "reverse list must still name the head"
+    assert_eq!(
+        derived_head_count(&rt, cause, head),
+        1,
+        "reverse list must store the head once"
     );
     retract_named(&mut rt, head, 0x43, 3);
     assert!(rt.cause_of_behavior.get(&head).is_none());
