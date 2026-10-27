@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-27 — Product: compacted Horn cause kill-tests
+
+### Added
+
+- Independent `b11_compacted_cause` attacks: stripping the kept Horn `rule_version` StoreBlob fails open as `ExecutionReplayFailed` (not the digest walk); a poisoned cited blob still fails `BrokenLineage` when `snapshot.json` keeps the honest cause.
+
+### Trajectory
+
+- Lease unchanged (`L_delivery=M165-S01`). Honeycomb stays **Proposed**.
+
 ## 2026-10-27 — Product: compacted Horn cause
 
 ### Fixed

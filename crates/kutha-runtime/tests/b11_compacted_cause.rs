@@ -205,6 +205,46 @@ fn fail_open_msg(dir: &Path, what: &str) -> String {
     }
 }
 
+fn snapshot_json_caused_by(dir: &Path) -> EventId {
+    let snap: Snapshot =
+        serde_json::from_slice(&fs::read(dir.join("snapshot.json")).expect("snapshot.json"))
+            .expect("snapshot.json Snapshot");
+    match &snap.behaviors[0].op {
+        Op::Behavior { caused_by, .. } => *caused_by,
+        _ => panic!("snapshot.json behaviors[0] must be Op::Behavior"),
+    }
+}
+
+fn strip_cited_horn_rule_blob(events: &mut Vec<Event>) {
+    let ckpt = checkpoint_blob_digest(events);
+    let pin = {
+        let snap: Snapshot = events
+            .iter()
+            .find_map(|e| match &e.op {
+                Op::StoreBlob { digest, bytes } if *digest == ckpt => {
+                    Some(serde_json::from_slice(bytes).expect("checkpoint Snapshot"))
+                }
+                _ => None,
+            })
+            .expect("checkpoint StoreBlob");
+        match &snap.behaviors[0].op {
+            Op::Behavior { rule_version, .. } => rule_version.clone(),
+            _ => panic!("behaviors[0] must be Op::Behavior"),
+        }
+    };
+    assert_ne!(pin, ckpt, "Horn pin must not be the checkpoint blob");
+    let before = events.len();
+    events.retain(|e| match &e.op {
+        Op::StoreBlob { digest, .. } => *digest != pin,
+        _ => true,
+    });
+    assert_eq!(
+        events.len(),
+        before - 1,
+        "expected one StoreBlob keyed by Horn rule_version {pin}"
+    );
+}
+
 #[test]
 fn honest_horn_checkpoint_opens() {
     let _g = tiny_limits();
@@ -255,6 +295,49 @@ fn swapped_caused_by_in_cited_blob_fails_open() {
     recompute_blob_digest(&mut events);
     rewrite_on_disk_log(&dir, &events);
     let msg = fail_open_msg(&dir, "swapped caused_by in cited blob must fail open");
+    assert!(
+        msg.starts_with("broken lineage caused_by="),
+        "expected BrokenLineage, got {msg}"
+    );
+}
+
+#[test]
+fn missing_kept_rule_blob_is_execution_replay_failed() {
+    let _g = tiny_limits();
+    let dir = checkpoint_horn("miss-rule");
+    let mut events = export_events(&dir);
+    strip_cited_horn_rule_blob(&mut events);
+    rewrite_on_disk_log(&dir, &events);
+    let msg = fail_open_msg(&dir, "missing kept rule StoreBlob must fail open");
+    assert!(
+        msg.starts_with("execution replay failed for "),
+        "expected ExecutionReplayFailed from compacted_horn_cause, got {msg}"
+    );
+    assert!(
+        !msg.contains("unknown rule version"),
+        "digest walk must not win: {msg}"
+    );
+}
+
+#[test]
+fn poison_log_stale_snapshot_json_still_fails_open() {
+    let _g = tiny_limits();
+    let dir = checkpoint_horn("stale-snap");
+    let snap_cause = snapshot_json_caused_by(&dir);
+    let mut events = export_events(&dir);
+    let old = mutate_compacted_caused_by(&mut events, EventId::nil());
+    assert_eq!(old, snap_cause);
+    recompute_blob_digest(&mut events);
+    rewrite_on_disk_log(&dir, &events);
+    assert_eq!(
+        snapshot_json_caused_by(&dir),
+        snap_cause,
+        "snapshot.json must remain the honest lease"
+    );
+    let msg = fail_open_msg(
+        &dir,
+        "poison cited blob with stale honest snapshot.json must fail open",
+    );
     assert!(
         msg.starts_with("broken lineage caused_by="),
         "expected BrokenLineage, got {msg}"
