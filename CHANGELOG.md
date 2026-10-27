@@ -4,6 +4,16 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-27 — Product: compacted Horn cause
+
+### Fixed
+
+- After a checkpoint, `replay_check` requires each compacted Horn behavior to have a `search_all` hit that covers the head window and whose `premise_ids` contain `caused_by`. Missing blob or no covering hit is `ExecutionReplayFailed`; a covering hit without that cause is `BrokenLineage`. Log-row `horn_behavior_reproducible` is unchanged. No new Op.
+
+### Trajectory
+
+- Lease unchanged (`L_delivery=M165-S01`). Honeycomb stays **Proposed**.
+
 ## 2026-10-27 — Trajectory: lease M165-S01 (compacted Horn cause)
 
 Process tag **v1.59** / Phase **239**. Not a new release id. `VERSION` stays `0.0.01`.

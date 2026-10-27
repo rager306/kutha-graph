@@ -69,6 +69,13 @@ impl Runtime {
             }
             seen.insert(e.id);
         }
+        // Compacted Horn rows live on the log-hydrated fold, not the log. Do not
+        // use `seen`: an honest prefix assert is a restored fact. Walk `rebuilt`
+        // (cited blob) so a rewritten StoreBlob is visible when snapshot.json is
+        // a stale lease; snapshot fold blobs are serde-skip.
+        for e in &rebuilt.compacted_behaviors {
+            self.compacted_horn_cause(&rebuilt, e)?;
+        }
         // After the Behavior walk so a missing Horn blob stays ExecutionReplayFailed.
         for e in self.log.iter() {
             if let Op::StoreBlob { digest, bytes } = &e.op {

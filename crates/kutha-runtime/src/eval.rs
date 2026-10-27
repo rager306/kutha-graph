@@ -1,7 +1,7 @@
 //! Horn evaluation over live product triples (M016 S03 / RULE-02).
 //! Named bodies are pins only; they do not auto-fire.
 
-use crate::fold::{leftover_halves, vt_intersect};
+use crate::fold::{leftover_halves, vt_intersect, GraphFold};
 use crate::quantum::{Runtime, RuntimeError};
 use kutha_common::{Event, EventId, Op, RuleAst, RuleAtom, RuleTerm, TermDictionary, TermId};
 use std::collections::HashSet;
@@ -296,6 +296,7 @@ impl Runtime {
             }
             let hits = search_all(
                 self,
+                &self.fold,
                 &premises,
                 i,
                 bind,
@@ -383,6 +384,7 @@ impl Runtime {
         }
         search_all(
             self,
+            &self.fold,
             &premises,
             premises.len(),
             bind,
@@ -450,6 +452,7 @@ impl Runtime {
                 }
                 let hits = search_all(
                     self,
+                    &self.fold,
                     &premises,
                     i,
                     bind,
@@ -603,6 +606,16 @@ impl Runtime {
     /// Horn-pinned Behavior is reproducible from premises overlapping head VT.
     /// Named bodies skip. Missing blob or unmatched Horn fails closed (RULE-04).
     pub(crate) fn horn_behavior_reproducible(&self, e: &Event) -> bool {
+        match self.covering_horn_hits_in(&self.fold, e) {
+            None => true,
+            Some(hits) => !hits.is_empty(),
+        }
+    }
+
+    /// Covering `search_all` hits for a Horn Behavior (same window rule as
+    /// [`Self::horn_behavior_reproducible`]). `None` = named / non-Horn skip.
+    /// `Some([])` = missing blob, unparseable body, unmatched head, or no covering hit.
+    fn covering_horn_hits_in(&self, fold: &GraphFold, e: &Event) -> Option<Vec<PremMatch>> {
         let Op::Behavior {
             rule_version,
             subject,
@@ -613,42 +626,72 @@ impl Runtime {
             ..
         } = &e.op
         else {
-            return true;
+            return None;
         };
-        let Some(bytes) = self.fold.blobs.get(rule_version) else {
-            return false;
+        let Some(bytes) = fold.blobs.get(rule_version) else {
+            return Some(Vec::new());
         };
         let Some(ast) = RuleAst::from_canonical(bytes) else {
-            return false;
+            return Some(Vec::new());
         };
         let RuleAst::Horn { head, premises } = ast else {
-            return true;
+            return None;
         };
         let Some(head_rel) = self.dict.id(&head.relation) else {
-            return false;
+            return Some(Vec::new());
         };
         if head_rel != *relation {
-            return false;
+            return Some(Vec::new());
         }
         let mut bind = [None; MAX_VAR];
         if !unify_term(&head.subject, *subject, &self.dict, &mut bind) {
-            return false;
+            return Some(Vec::new());
         }
         if !unify_term(&head.object, *object, &self.dict, &mut bind) {
-            return false;
+            return Some(Vec::new());
         }
-        search_all(
-            self,
-            &premises,
-            premises.len(),
-            bind,
-            *valid_from,
-            *valid_to,
-            e.ingested_at,
-            &HashSet::new(),
+        Some(
+            search_all(
+                self,
+                fold,
+                &premises,
+                premises.len(),
+                bind,
+                *valid_from,
+                *valid_to,
+                e.ingested_at,
+                &HashSet::new(),
+            )
+            .into_iter()
+            .filter(|hit| windows_cover(&hit.windows, *valid_from, *valid_to))
+            .collect(),
         )
-        .iter()
-        .any(|hit| windows_cover(&hit.windows, *valid_from, *valid_to))
+    }
+
+    /// Compacted Horn: a covering hit's `premise_ids` must contain `caused_by`.
+    /// Named / non-Horn skip. Missing blob or no covering hit:
+    /// `ExecutionReplayFailed`. Covering hit without that cause: `BrokenLineage`.
+    pub(crate) fn compacted_horn_cause(
+        &self,
+        fold: &GraphFold,
+        e: &Event,
+    ) -> Result<(), RuntimeError> {
+        let Some(hits) = self.covering_horn_hits_in(fold, e) else {
+            return Ok(());
+        };
+        if hits.is_empty() {
+            return Err(RuntimeError::ExecutionReplayFailed { event_id: e.id });
+        }
+        let Op::Behavior { caused_by, .. } = &e.op else {
+            return Ok(());
+        };
+        if hits.iter().any(|hit| hit.premise_ids.contains(caused_by)) {
+            Ok(())
+        } else {
+            Err(RuntimeError::BrokenLineage {
+                caused_by: *caused_by,
+            })
+        }
     }
 }
 
@@ -718,6 +761,7 @@ fn instantiate(term: &RuleTerm, bind: &Bind, dict: &TermDictionary) -> Option<Te
 
 fn search_all(
     rt: &Runtime,
+    fold: &GraphFold,
     premises: &[RuleAtom],
     skip: usize,
     bind: Bind,
@@ -729,6 +773,7 @@ fn search_all(
     let mut out = Vec::new();
     search_at_all(
         rt,
+        fold,
         premises,
         0,
         skip,
@@ -745,6 +790,7 @@ fn search_all(
 
 fn search_at_all(
     rt: &Runtime,
+    fold: &GraphFold,
     premises: &[RuleAtom],
     idx: usize,
     skip: usize,
@@ -767,6 +813,7 @@ fn search_at_all(
     if idx == skip {
         search_at_all(
             rt,
+            fold,
             premises,
             idx + 1,
             skip,
@@ -786,11 +833,8 @@ fn search_at_all(
     let Some(rel) = rt.dict.id(&prem.relation) else {
         return;
     };
-    for f in rt
-        .fold
-        .facts_overlapping_relation(rel, tt, win_from, win_to)
-    {
-        rt.fold.horn_examine.bump();
+    for f in fold.facts_overlapping_relation(rel, tt, win_from, win_to) {
+        fold.horn_examine.bump();
         if except.contains(&f.event_id) {
             continue;
         }
@@ -809,6 +853,7 @@ fn search_at_all(
         let before = out.len();
         search_at_all(
             rt,
+            fold,
             premises,
             idx + 1,
             skip,
