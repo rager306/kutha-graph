@@ -201,12 +201,12 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
-## M164: cited checkpoint lineage — LEASED (GSD v1.58)
+## M164: cited checkpoint lineage — CLOSED (GSD v1.58)
 
 Gap in the checkpoint cascade, left after M163. `checkpoint_prefix_behaviors` deserializes every `StoreBlob` that parses as a `Snapshot` and copies `behaviors`. `tt_anchors_from_events` only reads a blob cited by `Op::Checkpoint`. An ordinary blob can therefore be laundered into the next checkpoint's Horn lineage. No new Op. Release id stays `0.0.01`. Honeycomb stays Proposed.
 
-- [ ] **S01: harvest only a cited blob** `risk:medium` `depends:[]`
-  > After this: a `StoreBlob` that parses as a Snapshot is copied into the next checkpoint only when an `Op::Checkpoint` in that prefix cites its digest. A cited blob with `behaviors_exact: false` is not copied. Prefix `Op::Behavior` rows are still copied. A real second checkpoint still restores Horn rows. Phase 238.
+- [x] **S01: harvest only a cited blob** `risk:medium` `depends:[]`
+  > After this: a `StoreBlob` that parses as a Snapshot is copied into the next checkpoint only when an `Op::Checkpoint` in that prefix cites its digest. A cited blob with `behaviors_exact: false` is not copied. Prefix `Op::Behavior` rows are still copied. A real second checkpoint still restores Horn rows. Phase 238. Landed (independent kill-tests passed).
 
 ## M163: vintage checkpoint lineage fails closed — CLOSED (GSD v1.57)
 

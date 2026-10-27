@@ -155,6 +155,7 @@ One table. GSD versions are process tags, harness milestones are delivery ids, A
 | v1.45 | 225 | M151 | S01 | observe phase_ms wall honesty under overlap | shipped |
 | v1.46 | 226 | M152 | S01 | Arc 0 hygiene: tracked CE artifacts, harness moratorium, branch work/main-line | shipped |
 | v1.47 | 227 | M153 | S01 | Verus on-ramp: pin, `verus/vt_intersect.rs`, sync check | shipped |
+| v1.58 | 238 | M164 | S01 | checkpoint harvests behaviors only from a blob `Op::Checkpoint` cites | shipped |
 | v1.57 | 237 | M163 | S01 | checkpoint blob without `behaviors_exact` fails replay | shipped |
 | v1.56 | 236 | M162 | S01 | `derived_by_cause` stores a Behavior head once per cause | shipped |
 | v1.55 | 235 | M161 | S01 | shared Behavior EventId keeps every `caused_by`; unindex clears each reverse pointer | shipped |

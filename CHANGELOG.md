@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-26 — Trajectory: M164 / GSD v1.58 closed
+
+Process tag **v1.58** / Phase **238**. Not a new release id. `VERSION` stays `0.0.01`.
+
+- A checkpoint copies Horn behaviors only from a blob cited by `Op::Checkpoint`, and only when `behaviors_exact` is true. Independent kill-tests passed. `cargo test --workspace` 0. `kutha-gov ci --jobs 1` `run_high=0`.
+- `L_delivery=M164-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.58 / Phase 238.
+
 ## 2026-10-26 — Product: cited checkpoint lineage kill-tests
 
 ### Added
