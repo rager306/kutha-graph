@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-27 — Trajectory: lease M165-S01 (compacted Horn cause)
+
+Process tag **v1.59** / Phase **239**. Not a new release id. `VERSION` stays `0.0.01`.
+
+- Active Milestone **M165**, Active Slice **S01** (`L_delivery=M165-S01`): a compacted Horn `caused_by` must be a premise of a hit that reproduces the head. No Op, no thaw. Honeycomb stays Proposed.
+
 ## 2026-10-26 — Trajectory: M164 / GSD v1.58 closed
 
 Process tag **v1.58** / Phase **238**. Not a new release id. `VERSION` stays `0.0.01`.

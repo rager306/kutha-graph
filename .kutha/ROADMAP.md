@@ -201,6 +201,13 @@ IO-01 and VAC-01 stay intake. Whole-file `persist` and O(N) `open` stay residual
 - [x] **S05: Process contract** `risk:low` `depends:[S04]`
   > After this: lease = STATE+CHANGELOG only (codified); product close records bench; post-verify VERIFICATION edits require re-verify; M020 closed.
 
+## M165: compacted Horn cause must support the head — LEASED (GSD v1.59)
+
+Gap in the open cascade, left after M164. `replay_check` applies `BrokenLineage` only to log `Op::Behavior`. After a checkpoint those rows live in `Snapshot.behaviors`. Fingerprint walks `fold.facts`, so a rewritten `caused_by` with a recomputed blob digest still opens, and retract of the real premise misses the head. No new Op. Release id stays `0.0.01`. Honeycomb stays Proposed.
+
+- [ ] **S01: reject a compacted cause that does not support the head** `risk:medium` `depends:[]`
+  > After this: a cited checkpoint blob whose Horn `caused_by` is nil, or an assert that is not a premise of a reproducing hit, fails `replay_check`. An honest Horn checkpoint still opens. A missing rule blob on a compacted Horn stays `ExecutionReplayFailed`. Phase 239.
+
 ## M164: cited checkpoint lineage — CLOSED (GSD v1.58)
 
 Gap in the checkpoint cascade, left after M163. `checkpoint_prefix_behaviors` deserializes every `StoreBlob` that parses as a `Snapshot` and copies `behaviors`. `tt_anchors_from_events` only reads a blob cited by `Op::Checkpoint`. An ordinary blob can therefore be laundered into the next checkpoint's Horn lineage. No new Op. Release id stays `0.0.01`. Honeycomb stays Proposed.
