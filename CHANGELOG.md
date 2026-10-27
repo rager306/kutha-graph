@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-27 — Trajectory: M165 / GSD v1.59 closed
+
+Process tag **v1.59** / Phase **239**. Not a new release id. `VERSION` stays `0.0.01`.
+
+- A compacted Horn `caused_by` must be a premise of a hit that reproduces the head. Independent kill-tests passed. `cargo test --workspace` 0. `kutha-gov ci --jobs 1` `run_high=0`.
+- `L_delivery=M165-closed`, Active Milestone/Slice **None**. Honeycomb stays Proposed. Id map v1.59 / Phase 239.
+
 ## 2026-10-27 — Product: compacted Horn cause kill-tests
 
 ### Added

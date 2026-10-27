@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M165
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M165-S01
+L_delivery=M165-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M165-S01 leased (v1.59): compacted Horn cause must support the head | Capability proven / Cypher started |
+| L_delivery | M165 closed (v1.59) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M165 S01: `replay_check` must reject a compacted Horn behavior whose `caused_by` is not a premise of a hit that reproduces the head. A cited blob can keep `behaviors_exact`, a matching digest, and the same fold fingerprint while pointing `caused_by` at nil or at another assert. Log `seen` must not be the test: an honest prefix assert is a restored fact, not a log row. No new Op, release id stays `0.0.01`. The `bkk-edge01` sample stays a note, not a B3 gate. Other residuals stay open until their own RED: checkpoint has no separate operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M165 is closed: a compacted Horn behavior fails replay when `caused_by` is not a premise of a hit that reproduces the head. Nil and a swapped non-premise cause are `BrokenLineage`. A missing rule blob on that row is `ExecutionReplayFailed`. An honest checkpoint still opens. Log-row Horn checks are unchanged. No new Op. Release id stays `0.0.01`. The 2026-10-26 sample on `bkk-edge01` is in `.compound-engineering/artifacts/research/2026-10-26-remote-baseline-sample.md`. It is not the B3 kill-rule budget. Residuals that stay open until a fired RED: checkpoint has no separate operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 
