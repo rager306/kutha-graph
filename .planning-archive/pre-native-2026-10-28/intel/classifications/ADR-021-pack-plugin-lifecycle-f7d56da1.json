@@ -1,0 +1,26 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-021-pack-plugin-lifecycle.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-021: Pack / Plugin Lifecycle",
+  "summary": "Proposed decision: versioned pack install, activate, and retire on the log, distinct from view leases and schema SMO.",
+  "scope": ["pack lifecycle", "PackInstall", "PackActivate", "PackRetire", "leases", "dictionaries", "operators", "schema SMO"],
+  "cross_refs": [
+    ".compound-engineering/artifacts/research/applicability/cards/paper-graph-pack-plugin-lifecycle.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-online-pg-schema-evolution.md",
+    "ADR-000",
+    "ADR-010",
+    "ADR-014",
+    "ADR-020",
+    "ADR-031",
+    "ADR-040",
+    "ADR-050",
+    "ADR-081",
+    "ADR-090",
+    "ADR-093"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

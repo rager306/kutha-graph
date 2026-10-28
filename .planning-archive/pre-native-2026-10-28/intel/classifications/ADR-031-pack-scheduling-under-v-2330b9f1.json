@@ -1,0 +1,22 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-031-pack-scheduling-under-v.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-031: Pack Scheduling Under V",
+  "summary": "Proposed decision to allocate leftover cost envelope V and admit, queue, or reject requests before leapfrog among packs.",
+  "scope": ["pack scheduling", "cost envelope V", "admission control", "materializers", "Composition axis", "CASA"],
+  "cross_refs": [
+    "ADR-014",
+    "ADR-030",
+    "ADR-043",
+    "ADR-080",
+    "ADR-021",
+    "ADR-081",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-query-admission-control.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-max-convolution-budgets.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

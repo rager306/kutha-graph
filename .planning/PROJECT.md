@@ -10,12 +10,11 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.59 Compacted Horn cause — closed (M165)
+## Current Milestone: none — GSD native reset (2026-10-28)
 
-**Goal:** A compacted Horn behavior whose `caused_by` does not support the head fails replay. An honest checkpoint still opens.
+**Goal:** No milestone is leased. The GSD overlay was reset to native artifacts on `gsd-core` 1.19.0; prior planning history is preserved in `.planning-archive/pre-native-2026-10-28/`, on the git branch `archive/pre-gsd-native-2026-10-28`, and in the local backup `tmp/backups/pre-gsd-1.19-2026-10-28.tar.gz`.
 
-**Last shipped:** v1.59 compacted Horn cause (M165), v1.58 cited checkpoint lineage (M164), v1.57 vintage checkpoint lineage (M163), v1.56 one head per cause (M162). Honeycomb stays Proposed. Live pointer: `.kutha/STATE.md`.
-
+**Last shipped:** v1.59 compacted Horn cause (M165, 2026-10-27), closing the checkpoint/replay lineage arc M154–M165. Honeycomb stays Proposed. Live pointer: `.kutha/STATE.md`.
 
 ## Business Context
 
@@ -71,7 +70,7 @@ GSD overlay v0.09 (Phases 36–40 — M016 executable rules):
 - [x] **v0.09 Test hardening + executable rules (M016 S01–S05):** shipped 2026-10-02 — archive `.planning/milestones/v0.09-*`, tag `v0.09`
 - [x] **v0.10 Docs honesty and replay integrity (M017 S01–S04):** shipped 2026-10-03 — archive `.planning/milestones/v0.10-*`, tag `v0.10`
 - [x] **v0.12 Log durability protocol (M002 S01–S07):** shipped 2026-10-04 — archive `.planning/milestones/v0.12-*`, tag `v0.12`
-- [x] **v0.13 Post-M002 coherence (M019 S01–S07):** shipped 2026-10-05 — archive `.planning/milestones/v0.13-*`, process tag `v0.13`
+- [x] **v0.13 Post-M002 coherence (M019 S01–S07):** shipped 2026-10-05 — archive `.planning-archive/pre-native-2026-10-28/milestones/v0.13-*`, process tag `v0.13`
 - [x] **v0.14–v0.17** — shipped 2026-10-07…08 (M020–M023); see `.planning/MILESTONES.md`
 - [x] **v0.18 Fold identity and write semantics (M024 S01–S02):** shipped 2026-10-08 — audit `.planning/milestones/v0.18-MILESTONE-AUDIT.md`
 
@@ -172,11 +171,11 @@ Harness compact index: `.kutha/dictionaries/honeycomb.yaml` (`uv run kutha-gov m
 
 ## Current State
 
-Shipped **GSD v0.01** (2026-09-29), **v0.02** / **v0.03** (2026-09-30), **v0.04 — Single-log SoT + stable references** (2026-10-01, M012a S01–S06), **v0.05 — Dictionaries as facts** (2026-10-01, M012 S01–S05), **v0.06 — Honest baseline and one write path** (2026-10-02, M013 S01–S09), **v0.07 — Typed clocks and as-known-on** (2026-10-02, M014 S01–S03), **v0.08 — Known-on honesty** (2026-10-02, M015), **v0.09 — Test hardening + executable rules** (2026-10-02, M016 S01–S05), **v0.10 — Docs honesty and replay integrity** (2026-10-03, M017 S01–S04), **v0.12 — Log durability protocol** (2026-10-04, M002 S01–S07), and **v0.13 — Post-M002 coherence** (2026-10-05, M019 S01–S07). v0.11 is paused at the owner's decision. Honeycomb cells stay Proposed. Product stays `0.0.0`. Lease and thaw map: `.kutha/STATE.md`. The freeze list came from agent-assisted commits (2026-08-18, Cursor co-authored); the owner states he did not decide it; M002 thawed 2026-10-03 at the owner's request and closed 2026-10-04.
+Last shipped: **v1.59 — Compacted Horn cause** (M165, 2026-10-27), closing the checkpoint/replay lineage arc M154–M165. Prior GSD milestones v0.01–v1.58 are archived in `.planning-archive/pre-native-2026-10-28/` and git history. Product release id is `0.0.01` (`VERSION`; Cargo/pyproject `0.0.1`); `publish = false`. Honeycomb cells stay Proposed. Harness phase H5. `.kutha/STATE.md` is the only lease and thaw map.
 
 ## Next Milestone Goals
 
-Next slice: `.kutha/STATE.md` only. v0.11 Phase 46 / M018 S02 is leased (C01 pack stamp, Horn ingest-at-head, `as_of` support-live). Remaining thaw gates: `.kutha/STATE.md` § Thaw map.
+None leased. The next milestone is an owner decision; `.kutha/STATE.md` must name it first. Start it with the GSD `new-milestone` workflow, not by hand-editing phases. Remaining thaw gates: `.kutha/STATE.md` § Thaw map.
 
 ## Context
 
@@ -186,7 +185,7 @@ Brownfield research repo. Codebase map: `.planning/codebase/ARCHITECTURE.md`, `S
 
 - Active Milestone, Active Slice and `L_delivery`: cite `.kutha/STATE.md` only (they change per slice)
 - Phase, `L_map`, `L_capability`, and Thaw map: cite `.kutha/STATE.md` only
-- Next: the slice named in STATE (`docs/process/gsd-auto-contract.md`); one lease at a time. Thaw map holds. Green governor ≠ ADR Accepted ≠ L_capability.
+- Next: the slice named in STATE; one lease at a time. Thaw map holds. Green governor ≠ ADR Accepted ≠ L_capability.
 
 GSD files live under `.planning/`. **Never overwrite** `.kutha/STATE.md` with GSD STATE.
 
@@ -227,18 +226,18 @@ Literature bound is closed (164 files in `cards/`: 163 original matrix rows + M0
 
 This document evolves at phase transitions and milestone boundaries.
 
-**After each phase transition** (via `/gsd-transition`):
+**After each phase transition** (GSD transition workflow):
 1. Requirements invalidated? → Move to Out of Scope with reason
 2. Requirements validated? → Move to Validated with phase reference
 3. New requirements emerged? → Add to Active
 4. Decisions to log? → Add to Key Decisions
 5. "What This Is" still accurate? → Update if drifted
 
-**After each milestone** (via `/gsd-complete-milestone`):
+**After each milestone** (GSD complete-milestone workflow):
 1. Full review of all sections
 2. Core Value check — still the right priority?
 3. Audit Out of Scope — reasons still valid?
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-05 after M019 close (v0.13 archived)*
+*Last updated: 2026-10-28 after GSD native reset*

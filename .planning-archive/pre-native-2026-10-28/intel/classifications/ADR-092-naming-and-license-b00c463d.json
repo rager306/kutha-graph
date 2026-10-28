@@ -1,0 +1,25 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-092-naming-and-license.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-092: Naming & License",
+  "summary": "Proposed packaging ADR: Kutha stays the working name; core vs pack licensing and trademarks remain open research.",
+  "scope": [
+    "Kutha product naming",
+    "SPDX and licensing",
+    "engine core vs agent packs",
+    "ontology packs",
+    "trademark clearance",
+    "Packaging honeycomb"
+  ],
+  "cross_refs": [
+    "ADR-000",
+    "ADR-001",
+    "STRATEGY.md",
+    "ADR-090",
+    "ADR-093"
+  ],
+  "locked": false,
+  "precedence": null
+}

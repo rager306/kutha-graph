@@ -1,0 +1,26 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-041-csr-graphblas-hot-path.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-041: CSR / GraphBLAS Hot Path",
+  "summary": "Proposed decision: Kutha-owned CSR sparse adjacency and LFTJ-class WCOJ for hot hops; vendor kernels are evidence, not SoT.",
+  "scope": ["CSR", "GraphBLAS", "LFTJ", "leapfrog triejoin", "frozen adjacency", "interned ids", "late materialization", "hot path"],
+  "cross_refs": [
+    "STRATEGY",
+    "AGENTS.md",
+    "ADR-000",
+    "ADR-011",
+    "ADR-012",
+    "ADR-040",
+    "ADR-043",
+    "ADR-070",
+    ".compound-engineering/artifacts/research/applicability/cards/samyama-csr-frozen-adjacency.md",
+    ".compound-engineering/artifacts/research/applicability/cards/samyama-leapfrog-triejoin.md",
+    ".compound-engineering/artifacts/research/applicability/cards/samyama-late-materialization.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-lftj-wcoj.md",
+    ".compound-engineering/artifacts/research/applicability/cards/falkor-graphblas-sparse-adj.md"
+  ],
+  "locked": false,
+  "precedence": null
+}

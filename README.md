@@ -15,6 +15,7 @@ This is not a production graph database and not Graphiti / Samyama / Harvey.
 | Plane | Where | Now |
 |-------|--------|-----|
 | Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | M165 closed (`L_delivery=M165-closed`); harness phase **H5** |
+| GSD planning | [`.planning/STATE.md`](.planning/STATE.md) | Native reset 2026-10-28 on gsd-core **1.19.0**; no milestone leased |
 | Architecture map | [`docs/ADR/README.md`](docs/ADR/README.md) | Spine + honeycomb **Proposed**, not Accepted |
 | Capability | `crates/kutha-runtime` tests | FF5 green (`as_of(2015) ≠ as_of(2021)` on a statute-shaped fixture) |
 
@@ -56,9 +57,10 @@ This host’s Cargo uses **kache** as `rustc-wrapper` and **mold** as linker (`~
 | `CHANGELOG.md` | Dated project history (product vs process) |
 | `STRATEGY.md` | Wedge, metrics, non-goals |
 | `Cargo.toml`, `pyproject.toml` | Rust workspace + uv harness (Python 3.13) |
-| `.planning/` | GSD overlay: STATE, PROJECT, REQUIREMENTS, ROADMAP, `config.json`, `codebase/`, `intel/`, `INGEST-CONFLICTS.md` |
+| `.planning/` | Active GSD overlay: STATE, PROJECT, REQUIREMENTS, ROADMAP, `config.json`, `codebase/`, `intel/` |
+| `.planning-archive/` | Pre-reset GSD planning tree (2026-10-28); not active |
 | `.kutha/` | Harness pyramid: STATE, ROADMAP, dictionaries, gitignored `events.jsonl` |
-| `.cursor/` | Cursor rules, MCP, CBM adapter, GSD skills/core |
+| `.cursor/` | Legacy Cursor path: installed `gsd-core`, workflow markdown, and old rules/agents; not an AllSpark runtime |
 | `crates/kutha-common`, `crates/kutha-runtime` | Product: events, fold, fork diff, quantum, CSR lease, thin query IR / hop workload, allowlist, tenant ingest |
 | `docs/ADR/` | Spine + honeycomb (Proposed) |
 | `docs/process/` | Harness contract, governor intake, Codex subagents |

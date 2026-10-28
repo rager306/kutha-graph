@@ -1,19 +1,55 @@
 ---
-gsd_state_version: "1.0"
-milestone: v1.59
-milestone_name: Compacted Horn cause
-status: completed
-stopped_at: "239-compacted-cause"
-last_updated: "2026-10-27T02:30:00.000Z"
+gsd_state_version: '1.0'
+status: planning
 progress:
-  total_phases: 1
-  completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
-**Milestone:** v1.59 Compacted Horn cause — closed as M165
-**Phase:** 239
-**Status:** compacted Horn cause landed; independent verification passed. Budget 105. Honeycomb stays Proposed.
+## Project Reference
+
+See: .planning/PROJECT.md (updated 2026-10-28)
+
+**Core value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
+**Current focus:** No active milestone; GSD native reset complete.
+
+## Current Position
+
+Phase: none of 0
+Plan: none
+Status: Ready for a new milestone
+Last activity: 2026-10-28 — GSD overlay reset on gsd-core 1.19.0
+
+Progress: [░░░░░░░░░░] 0%
+
+## Accumulated Context
+
+### Decisions
+
+- 2026-10-28: GSD overlay reset to native artifacts. Pre-reset planning history is on branch `archive/pre-gsd-native-2026-10-28`.
+- Architecture remains `docs/ADR/`; harness lease remains `.kutha/STATE.md`.
+
+### Pending Todos
+
+None.
+
+### Blockers/Concerns
+
+No milestone is leased. Start the next one with the GSD new-milestone workflow after the owner names it in `.kutha/STATE.md`.
+
+## Deferred Items
+
+| Category | Item | Status | Deferred At | Milestone |
+|----------|------|--------|-------------|-----------|
+| *(none)* | | | | |
+
+## Session Continuity
+
+Last session: 2026-10-28
+Stopped at: Reset complete; next milestone not leased.
+Resume file: None

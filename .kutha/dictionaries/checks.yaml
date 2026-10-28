@@ -1309,13 +1309,14 @@ checks:
 
   - id: agents-lean
     description: >-
-      AGENTS.md line count is wc -l and must stay at or under 110 (Phase 9
-      result was 100). file_absent forbids lease assignment tokens
-      L_delivery=, L_map=, L_capability=, and the sentence M011 is active.
+      AGENTS.md line count is wc -l and must stay at or under 160 (AllSpark +
+      gsd-core runtime surface; Phase 9 result was 100; consolidated
+      2026-10-28). file_absent forbids lease assignment tokens L_delivery=,
+      L_map=, L_capability=, and the sentence M011 is active.
     steps:
       - kind: file_max_lines
         path: AGENTS.md
-        max: 110
+        max: 160
       - kind: file_absent
         path: AGENTS.md
         needles:

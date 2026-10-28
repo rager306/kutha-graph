@@ -1,0 +1,23 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-061-fork-and-diff.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-061: Fork-and-Diff",
+  "summary": "Proposed Verify cell: named log branches, fork-at-offset replay, and GED-class diff without CRDT merge.",
+  "scope": ["fork-and-diff", "named branches", "fork-at-offset", "graph edit distance", "event log", "Verify"],
+  "cross_refs": [
+    "ADR-000",
+    "ADR-010",
+    "ADR-011",
+    "ADR-012",
+    "ADR-013",
+    "ADR-060",
+    "ADR-062",
+    "ADR-091",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-graph-branch-fork.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-graph-edit-distance.md"
+  ],
+  "locked": false,
+  "precedence": null
+}

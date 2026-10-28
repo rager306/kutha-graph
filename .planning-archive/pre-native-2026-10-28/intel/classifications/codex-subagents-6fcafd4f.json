@@ -1,0 +1,27 @@
+{
+  "source_path": "/root/kutha-graph/docs/process/codex-subagents.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Codex subagent workflow",
+  "summary": "Process guide for Codex CLI subagent roles, delegation briefs, integrator ownership, and validation; explicitly not product ADR.",
+  "scope": [
+    "Codex CLI subagents",
+    "delegation contract",
+    "codebase-memory roles",
+    "Cursor Task mapping",
+    "integrator ownership",
+    "kutha harness constraints"
+  ],
+  "cross_refs": [
+    ".kutha/STATE.md",
+    "AGENTS.md",
+    ".kutha/events.jsonl",
+    ".kutha/tenant",
+    "~/.codex/config.toml",
+    "~/.codex/agents/"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

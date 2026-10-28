@@ -1,0 +1,39 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-052-genai-enrichment-pack.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-052: GenAI Enrichment as Optional Pack",
+  "summary": "Proposes GenAI enrichment as a reversible ADR-021 pack with derived events, async dual-process ingest, and no LLM on the trust core SoT path.",
+  "scope": [
+    "GenAI enrichment",
+    "optional pack",
+    "derived events",
+    "LLM extract/summarize/embed",
+    "content-addressed cache",
+    "dual-process ingest",
+    "temporal coherence gating",
+    "ruvector-temporal-coherence"
+  ],
+  "cross_refs": [
+    ".compound-engineering/artifacts/research/applicability/cards/samyama-agentic-enrichment-gak.md",
+    ".compound-engineering/artifacts/research/applicability/cards/raven-in-db-ai-agents.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-llm-compiler-not-executor.md",
+    ".compound-engineering/artifacts/research/ruvector-plugin-adaptation.md",
+    "ADR-010",
+    "ADR-050",
+    "ADR-040",
+    "ADR-071",
+    "ADR-081",
+    "ADR-011",
+    "ADR-013",
+    "ADR-014",
+    "ADR-060",
+    "ADR-090",
+    "ADR-021",
+    "ADR-042"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

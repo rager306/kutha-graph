@@ -1,5 +1,7 @@
 # GSD auto contract
 
+> **Status 2026-10-28:** The GSD overlay was reset to native artifacts. This file remains the id map and the pre-reset controller protocol; new work uses the GSD `new-milestone` / `plan-phase` / `execute-phase` workflows through `.cursor/gsd-core/bin/gsd-tools.cjs`. Do not run `/gsd-autonomous` (the Cursor slash command is gone). `.kutha/STATE.md` still gates the lease.
+
 Agent workflow, not a product ADR and not a delivery lease. `.kutha/STATE.md` decides what is allowed; this file says how a GSD auto run executes inside that lease. Honeycomb stays **Proposed**. GSD progress (`.planning/STATE.md`) is not harness lease, and governor green is not verification.
 
 ## Id map

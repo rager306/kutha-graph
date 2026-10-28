@@ -1,0 +1,33 @@
+{
+  "source_path": "/root/kutha-graph/docs/architecture/stca-guide.md",
+  "type": "SPEC",
+  "confidence": "medium",
+  "manifest_override": false,
+  "title": "Руководство: Spatiotemporal Compositional Architecture (STCA) на Rust",
+  "summary": "STCA manifest-spec for Kutha: paradigm, fold algorithms, Rust workspace layout, testing regimes, and agent change protocol.",
+  "scope": [
+    "STCA",
+    "Kutha",
+    "append-only event log",
+    "deterministic fold",
+    "vertical slices",
+    "Relation Behaviors",
+    "Cui max-convolution",
+    "Rust Cargo workspace",
+    "Strict Replay",
+    "Fork-and-Diff",
+    "Regimes Gated Loop"
+  ],
+  "cross_refs": [
+    "ADR-002",
+    "ADR-001",
+    "ADR-000",
+    "ADR-010+",
+    "ADR-000 §Prototype",
+    "ideation идея-21",
+    "Studio stca-guide"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": "Self-labeled manifest-spec; cites ADR-002 as normative support but lacks ADR Context/Decision/Consequences. Dominant extractable content is algorithms, workspace laws, and test/agent protocols → SPEC over DOC."
+}

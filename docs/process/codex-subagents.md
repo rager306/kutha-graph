@@ -1,5 +1,7 @@
 # Codex subagent workflow
 
+> **Status 2026-10-28:** Historical Codex/Cursor note. The active AllSpark subagent contract is `AGENTS.md` § Runtime. Do not use Codex TOML roles or Cursor `Task` types.
+
 This is an agent workflow, not a product ADR or a delivery milestone. Repository instructions and `.kutha/STATE.md` determine the authorized scope.
 
 ## Local configuration

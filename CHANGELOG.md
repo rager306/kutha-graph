@@ -4,6 +4,14 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-28 — Process: AllSpark runtime and gsd-core contract
+
+- `AGENTS.md` now documents the AllSpark/prime-agent runtime, the `gsd-core` CLI and workflow surface, the GSD artifact schema, and the reset GSD state. Cursor slash commands, rules, hooks, and `Task` syntax are explicitly not loaded.
+- `agents-lean` ceiling raised from 110 to 160 lines for the consolidated agent surface. `README.md` and `docs/process/codex-subagents.md` now mark `.cursor/` and the old Codex/Cursor notes as legacy.
+- `gsd-core` updated from 1.16.0 to **1.19.0** at `.cursor/gsd-core` (Cursor runtime path; AllSpark uses the CLI).
+- GSD overlay reset: the pre-native `.planning` tree is archived in `.planning-archive/pre-native-2026-10-28/`, on branch `archive/pre-gsd-native-2026-10-28`, and in `tmp/backups/pre-gsd-1.19-2026-10-28.tar.gz`. Fresh `.planning` has PROJECT/STATE/ROADMAP/REQUIREMENTS/MILESTONES and empty phases; `validate health` is **healthy**, `validate consistency` clean, `audit-open` clear. `smart-entry` reports `needs-first-phase`; no milestone is leased. `roadmap validate` keeps V004 until the first phase exists.
+- No product, lease, or ADR change.
+
 ## 2026-10-27 — Trajectory: M165 / GSD v1.59 closed
 
 Process tag **v1.59** / Phase **239**. Not a new release id. `VERSION` stays `0.0.01`.

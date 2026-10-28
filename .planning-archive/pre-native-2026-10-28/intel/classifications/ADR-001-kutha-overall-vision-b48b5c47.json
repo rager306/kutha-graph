@@ -1,0 +1,13 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-001-kutha-overall-vision.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-001: Kutha Overall Vision",
+  "summary": "Proposed north-star ADR framing Kutha as STCA-first Rust graph engine with event-log SoT and honeycomb ADR growth.",
+  "scope": ["Kutha", "STCA", "event log", "graph engine", "Rust", "honeycomb ADRs", "vertical packs", "materializations", "dict-first agents"],
+  "cross_refs": ["ADR-000", "ADR-002", "ADR-010+", "ADR-090", "ADR-093", "docs/architecture/stca-guide.md", ".compound-engineering/artifacts/ideation/2026-08-15-kutha-adr-crystallization-ideation.html", "ADR README"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

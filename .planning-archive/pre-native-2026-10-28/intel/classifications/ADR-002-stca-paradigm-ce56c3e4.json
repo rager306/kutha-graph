@@ -1,0 +1,21 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-002-stca-paradigm.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-002: Spatiotemporal Compositional Architecture (STCA)",
+  "summary": "Adopts STCA as Kutha's paradigm: vertical slices and ports, append-only event log SoT, Cui max-convolution for pack budgets.",
+  "scope": ["STCA", "event log", "vertical slices", "ports", "behaviors", "packs", "max-convolution", "Kutha"],
+  "cross_refs": [
+    "ADR-000",
+    "ADR-001",
+    "ADR-010+",
+    "ADR-013",
+    "ADR-040+",
+    "ADR-050+",
+    "docs/architecture/stca-guide.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

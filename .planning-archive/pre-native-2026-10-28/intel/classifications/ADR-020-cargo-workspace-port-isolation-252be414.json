@@ -1,0 +1,34 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-020-cargo-workspace-port-isolation.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-020: Cargo Workspace & Port Isolation",
+  "summary": "Proposed compile-time Space via Cargo workspace, port isolation laws, and crate layout vs runtime tenant slices.",
+  "scope": [
+    "Cargo workspace",
+    "Port isolation",
+    "STCA Space",
+    "app-shell",
+    "domain/internal/adapters",
+    "compile-time isolation",
+    "named graphs",
+    "tenant slices"
+  ],
+  "cross_refs": [
+    "docs/architecture/stca-guide.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-named-graphs-rdf-dataset.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-worlddb-worlds-edge-programs.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-graph-tenant-isolation.md",
+    "STRATEGY",
+    "ADR-000",
+    "ADR-001",
+    "ADR-002",
+    "ADR-021",
+    "ADR-022",
+    "ADR-080"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

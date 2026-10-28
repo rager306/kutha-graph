@@ -1,0 +1,38 @@
+{
+  "source_path": "/root/kutha-graph/docs/ADR/ADR-040-materialization-plugin-protocol.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-040: Materialization Plugin Protocol",
+  "summary": "Proposes view/lease materialization protocol (build, apply delta, snapshot, unload) separate from pack lifecycle and event log SoT.",
+  "scope": [
+    "materialization plugin protocol",
+    "view lease contract",
+    "CSR",
+    "HNSW",
+    "IVM",
+    "DBSP",
+    "fold at offset",
+    "MaterializerPort"
+  ],
+  "cross_refs": [
+    "ADR-000",
+    "ADR-010",
+    "ADR-011",
+    "ADR-014",
+    "ADR-021",
+    "ADR-041",
+    "ADR-042",
+    "ADR-043",
+    "ADR-080",
+    "ADR-090",
+    "ADR-093",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-pg-materialized-views.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-dbsp-ivm.md",
+    ".compound-engineering/artifacts/research/applicability/cards/paper-graph-pack-plugin-lifecycle.md",
+    "STRATEGY"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}
