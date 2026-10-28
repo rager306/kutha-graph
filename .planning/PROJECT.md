@@ -10,11 +10,13 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: none — GSD native reset (2026-10-28)
+## Current Milestone: v1.60 Operational honesty — closed (M166)
 
-**Goal:** No milestone is leased. The GSD overlay was reset to native artifacts on `gsd-core` 1.19.0; prior planning history is preserved in `.planning-archive/pre-native-2026-10-28/`, on the git branch `archive/pre-gsd-native-2026-10-28`, and in the local backup `tmp/backups/pre-gsd-1.19-2026-10-28.tar.gz`.
+**Goal:** Make the gates truthful before new product work. Fix the observe timeout retry, make GitHub CI actually install the pinned toolchain and run the governor plus pytest, and record a fresh benchmark baseline. No product feature and no thaw. Closed 2026-10-28.
 
-**Last shipped:** v1.59 compacted Horn cause (M165, 2026-10-27), closing the checkpoint/replay lineage arc M154–M165. Honeycomb stays Proposed. Live pointer: `.kutha/STATE.md`.
+**Lease:** `.kutha/STATE.md` is `M166-S01`; phases 240–242. Prior planning history is preserved in `.planning-archive/pre-native-2026-10-28/`, on the git branch `archive/pre-gsd-native-2026-10-28`, and in the local backup `tmp/backups/pre-gsd-1.19-2026-10-28.tar.gz`.
+
+**Last shipped:** v1.59 compacted Horn cause (M165, 2026-10-27), closing the checkpoint/replay lineage arc M154–M165. Honeycomb stays Proposed.
 
 ## Business Context
 

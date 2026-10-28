@@ -13,7 +13,7 @@ process: docs/process/governor-intake.md
 
 invariants:
   - id: I-trajectory
-    claim: "Active Milestone is None or a ROADMAP M### id; Active Slice is None or an unchecked ROADMAP S## id; ROADMAP must not say ACTIVE while the milestone is None"
+    claim: "Active Milestone is None or a ROADMAP M### id; Active Slice is None or an unchecked ROADMAP S## id; ROADMAP must not say ACTIVE while the milestone is None; .kutha/ROADMAP.md is a historical ledger (165 closed M ids), so the inflation bound is only a sanity cap (200), not a count of open leases"
     source: ".kutha/STATE.md"
     disposition: check
     check: trajectory
@@ -508,7 +508,7 @@ invariants:
     check: pin-compat-policy
 
   - id: I-verification-uv-only
-    claim: "VERIFICATION command records invoke kutha-gov via uv, not ambient python -m"
+    claim: "VERIFICATION command records invoke kutha-gov via uv, not ambient python -m; after a GSD archive with no live phases the selftest skips because the mutation target is outside its copy"
     source: ".planning/phases/127-hygiene/127-CONTEXT.md"
     disposition: check
     check: verification-uv-only

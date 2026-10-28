@@ -1045,6 +1045,31 @@ class ObserveBuildTests(unittest.TestCase):
         self.assertEqual(1, len(calls))
         self.assertTrue(any(f.category == "observe-error" for f in findings))
 
+    def test_observe_timeout_does_not_retry_with_retries_env(self) -> None:
+        import subprocess
+        from unittest.mock import patch
+
+        from kutha_gov.observe import run_cargo_observation
+
+        calls: list[list[str]] = []
+
+        def fake_run(cmd: list[str], **_kwargs: object) -> object:
+            calls.append(list(cmd))
+            raise subprocess.TimeoutExpired(cmd=cmd, timeout=1)
+
+        spec = {
+            "bin": "cargo",
+            "args": ["test", "--offline"],
+            "build": {"bin": "cargo", "args": ["build", "--offline"]},
+            "required": ["foo"],
+        }
+        with patch.dict(os.environ, {"KUTHA_GOV_CARGO_OBSERVE_RETRIES": "2"}):
+            with patch("kutha_gov.observe.subprocess.run", side_effect=fake_run):
+                code, _seen, findings = run_cargo_observation(ROOT, spec)
+        self.assertEqual(124, code)
+        self.assertEqual(1, len(calls))
+        self.assertTrue(any(f.category == "observe-error" for f in findings))
+
 
 if __name__ == "__main__":
     unittest.main()

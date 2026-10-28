@@ -12,7 +12,7 @@ Public-repo baseline used for this pass: GitHub community-health files, OpenSSF 
 | Issue and PR forms | `.github/ISSUE_TEMPLATE/`, `.github/PULL_REQUEST_TEMPLATE.md` |
 | Owner hint | `.github/CODEOWNERS` (does not block a push) |
 | Dependency PRs | `.github/dependabot.yml` (cargo, uv, github-actions, weekly) |
-| CI | `.github/workflows/ci.yml` runs `uv run kutha-gov ci --jobs 1` after `cargo fetch --locked` |
+| CI | `.github/workflows/ci.yml` installs Rust 1.99.0, runs `uv run pytest -q` and `uv run kutha-gov ci --jobs 1` after `cargo fetch --locked` |
 | SAST | `.github/workflows/codeql.yml` (Rust and Python) |
 | Scorecard | `.github/workflows/scorecard.yml` (publishes on `main`) |
 | License | `LICENSE` — Apache License 2.0 (SPDX `Apache-2.0`) |

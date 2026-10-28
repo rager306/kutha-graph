@@ -1,0 +1,28 @@
+{
+  "contract": "1.0.0",
+  "flavor": "core",
+  "milestone": "v1.60",
+  "phases": [
+    {
+      "number": "240",
+      "name": "Observe timeout honesty",
+      "status": "complete"
+    },
+    {
+      "number": "241",
+      "name": "CI gate truth",
+      "status": "complete"
+    },
+    {
+      "number": "242",
+      "name": "Benchmark baseline",
+      "status": "complete"
+    }
+  ],
+  "next": {
+    "command": "/gsd-progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
+  },
+  "updated_at": "2026-10-28T16:43:02.176Z"
+}

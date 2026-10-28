@@ -490,3 +490,27 @@ Walk 4n/2n is ~2 (linear in starts) rather than ~4.5. csr_lease 2n/n stays noisy
 
 
 
+
+
+## 2026-10-28 (M166 phase 242): fresh baseline after checkpoint lineage
+
+Host: 12 cores, 47 GB RAM, Linux. Bench run alone: no pytest, verifier, or second cargo process. The first sample was discarded because the full harness pytest ran concurrently; its `as_of.n` and `ingest_plain.n` were inflated and are not recorded here.
+
+```text
+KUTHA_BENCH_N=10000 cargo bench -p kutha-runtime --bench baseline
+```
+
+| key | value | unit |
+|-----|------:|------|
+| ingest_plain.n | 115733914 | ns |
+| as_of.n | 334032 | ns |
+| open.n | 2761849414 | ns |
+| persist.n | 2421032562 | ns |
+| replay_check.n | 8983909 | ns |
+| bytes_per_fact | 0 | B |
+
+Ratios: ingest_plain 2N/N **1.611**, 4N/N **3.479**; as_of 2N/N **1.595**, 4N/N **4.320**.
+
+Against the 2026-10-01 default-N table (`ingest_plain.n` 95,383,904; `as_of.n` 83,195): ingest **+21.3%**, as_of **4.0×**, open **+2.4%**, persist **−58.7%**, replay_check **−6.5%**. This is **not** a D-06 pass/fail claim: the code has changed since 2026-10-01 and `bytes_per_fact` reads 0 B (RSS sampling failed), so the old `bytes_per_fact` 13,674 B is not comparable. The +21.3% ingest and 4× as_of are a follow-up RED for a later product milestone, not evidence for B3.
+
+This is a same-host regression reference, **not** the B3 FalkorDB/Samyama competitor gate. The 2026-10-26 `bkk-edge01` sample remains a separate note.

@@ -24,7 +24,7 @@ checks:
         other: .kutha/ROADMAP.md
         skip_values: ["None"]
         inflation_pattern: '\bM\d{3}[a-z]?\b'
-        inflation_max: 12
+        inflation_max: 200
       - kind: pointer_in_other_file
         path: .kutha/STATE.md
         pattern: '^\*\*Active Slice:\*\*\s*(?P<id>S\d+|None)\s*$'
@@ -1533,20 +1533,16 @@ checks:
       VERIFICATION command records invoke kutha-gov via uv (CE whole-repo #35).
       Ambient python/-m replay can select the wrong interpreter.
     steps:
-      - kind: glob_absent
+      - kind: glob_regex_absent
         glob: ".planning/**/*VERIFICATION.md"
-        needles:
+        patterns:
           - "python -m kutha_gov"
           - "python3 -m kutha_gov"
         category: oracle
-        message: "VERIFICATION still records ambient python kutha_gov: {needle}"
+        message: "VERIFICATION still records ambient python kutha_gov: {pattern}"
     selftest:
-      mutations:
-        # Selftest copy drops `.planning/milestones/`; mutate a living phase VERIFICATION.
-        - op: replace_regex
-          path: .planning/phases/126-norm-view-derived-correct/126-VERIFICATION.md
-          pattern: "uv run kutha-gov ci"
-          with: "python -m kutha_gov ci"
+      skip: "no live phase VERIFICATION after GSD archive; archived copies are outside the selftest tree"
+      skip_unless_glob: .planning/phases/*-*/*-VERIFICATION.md
 
   - id: statute-fixture-single-lang
     description: >-

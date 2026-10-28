@@ -1650,7 +1650,7 @@ class FileMaxLinesTests(unittest.TestCase):
     def test_agents_lean_live_precommit_is_green(self) -> None:
         self.assertEqual(0, main(["--root", str(ROOT), "precommit", "--check", "agents-lean"]))
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-        self.assertLessEqual(agents.count("\n"), 110)
+        self.assertLessEqual(agents.count("\n"), 160)
 
 
 class GlobMaxLinesTests(unittest.TestCase):

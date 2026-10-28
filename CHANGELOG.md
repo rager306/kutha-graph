@@ -4,6 +4,36 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-28 — Trajectory: M166 / GSD v1.60 closed
+
+- M166-S01 operational honesty closed; GSD v1.60 phases 240–242 complete. `L_delivery=M166-closed`; Active Milestone/Slice None. Not a release id; `VERSION` stays `0.0.01`.
+- `uv run pytest`: 296 passed, 2 skipped, 21 subtests, 0 failed (326 s). `uv run kutha-gov precommit`: 105 OK.
+- Local CI workflow now pins Rust 1.99.0 and runs pytest plus the governor gate. Remote green remains unverified until a push is observed.
+- Fresh baseline: `ingest_plain.n` 115,733,914 ns; `as_of.n` 334,032 ns; +21.3% and 4.0× vs 2026-10-01; `bytes_per_fact` 0 B. Follow-up RED, not B3.
+- Honeycomb stays Proposed. No thaw. Residuals: checkpoint operator surface, B1b vacuum, parallel `b1_checkpoint_kill3` WouldBlock.
+
+## 2026-10-28 — Trajectory: lease M166-S01 (operational honesty)
+
+GSD v1.60 / phases 240–242. Not a release. REDs that fired: GitHub CI failed 40/40 at action parse; `uv run pytest` fails the observe-timeout test; the bench gate has no recorded numbers after M157. Scope: observe timeout honesty, CI gate truth, benchmark baseline. No product feature, no thaw; honeycomb stays Proposed.
+
+## 2026-10-28 — Process: benchmark baseline (M166 phase 242)
+
+- Fresh same-host `KUTHA_BENCH_N=10000` baseline after the checkpoint lineage arc: `ingest_plain.n` 115,733,914 ns; `as_of.n` 334,032 ns; open 2.76 s; persist 2.42 s; replay_check 8.98 ms.
+- Ratios: ingest 2N/N 1.611, 4N/N 3.479; as_of 2N/N 1.595, 4N/N 4.320. `bytes_per_fact` reads 0 B (RSS sampling failed), so the old 13,674 B is not comparable.
+- Against 2026-10-01: ingest +21.3%, as_of 4.0×, persist −58.7%. This is a follow-up RED, not a B3 competitor result. The first sample was discarded because pytest ran concurrently.
+- No product code, no Op.
+
+## 2026-10-28 — Process: CI gate truth (M166 phase 241)
+
+- `.github/workflows/ci.yml` now passes `toolchain: 1.99.0` to the pinned `dtolnay/rust-toolchain` action and runs `uv run pytest -q` before `uv run kutha-gov ci --jobs 1`.
+- Why: all 40 runs since 2026-10-23 failed at action parse, so the public CI badge and the gate were false. Remote green is not claimed until a push is observed.
+- No product code, no Op.
+
+## 2026-10-28 — Process: observe timeout honesty (M166 phase 240)
+
+- `run_cargo_observation` breaks the retry loop on `124`/`127`; a timeout no longer spends a second cargo timeout budget.
+- Regression: existing timeout test plus `test_observe_timeout_does_not_retry_with_retries_env` with `KUTHA_GOV_CARGO_OBSERVE_RETRIES=2`. No product code, no Op.
+
 ## 2026-10-28 — Process: AllSpark runtime and gsd-core contract
 
 - `AGENTS.md` now documents the AllSpark/prime-agent runtime, the `gsd-core` CLI and workflow surface, the GSD artifact schema, and the reset GSD state. Cursor slash commands, rules, hooks, and `Task` syntax are explicitly not loaded.

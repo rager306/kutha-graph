@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M165-closed
+L_delivery=M166-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M165 closed (v1.59) | Capability proven / Cypher started |
+| L_delivery | M166 closed (GSD v1.60) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M165 is closed: a compacted Horn behavior fails replay when `caused_by` is not a premise of a hit that reproduces the head. Nil and a swapped non-premise cause are `BrokenLineage`. A missing rule blob on that row is `ExecutionReplayFailed`. An honest checkpoint still opens. Log-row Horn checks are unchanged. No new Op. Release id stays `0.0.01`. The 2026-10-26 sample on `bkk-edge01` is in `.compound-engineering/artifacts/research/2026-10-26-remote-baseline-sample.md`. It is not the B3 kill-rule budget. Residuals that stay open until a fired RED: checkpoint has no separate operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. The harness moratorium applies. Honeycomb stays Proposed. Not Cypher/HNSW until their milestones are leased; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M166 is closed (GSD v1.60, phases 240–242): cargo timeout/missing binary no longer retries; GitHub CI installs Rust 1.99.0 and runs pytest plus the governor gate; a fresh baseline is recorded. `uv run pytest` 296 passed, 2 skipped, 0 failed. Residuals: remote CI is unverified until a push is observed; the fresh baseline is `ingest_plain.n` 115.7 ms and `as_of.n` 334 µs, +21.3% and 4.0× versus 2026-10-01, and `bytes_per_fact` reads 0 B — a follow-up RED, not B3 evidence. Other open items stay open until their own RED: checkpoint operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
 
 ## Thaw map
 

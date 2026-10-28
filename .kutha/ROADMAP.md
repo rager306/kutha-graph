@@ -8,6 +8,13 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
+## M166: operational honesty — CLOSED (GSD v1.60)
+
+REDs that fired: GitHub CI failed 40/40 at action parse; `uv run pytest` fails the observe-timeout test; the bench gate has no recorded numbers after M157. Scope: observe timeout honesty, CI gate truth, benchmark baseline. No product feature, no thaw.
+
+- [x] **S01: operational honesty** `risk:low` `depends:[]`
+  > After this: a cargo timeout does not spend a second timeout budget; GitHub CI installs the pinned toolchain, runs the governor gate and pytest; `ingest_plain.n` and `as_of.n` are recorded from a fresh baseline. Honeycomb stays Proposed.
+
 ## M001: Legal PIT steel thread — CLOSED
 
 **Closed:** S01–S03 delivered. Historical lease was `L_delivery=M001-closed`. Archive: `.planning/milestones/v0.01-*`. Not product Accepted.

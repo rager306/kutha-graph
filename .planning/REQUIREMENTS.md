@@ -3,6 +3,21 @@
 **Defined:** 2026-10-28
 **Core Value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
 
-## Next Milestone
+## v1.60 Requirements
 
-No requirements are defined yet. The next GSD milestone workflow creates them from the owner's goal and `.kutha/STATE.md` lease.
+- [x] **OP-01**: A cargo timeout or missing binary does not retry the test invocation; `test_observe_skips_build_after_timeout` passes.
+- [x] **OP-02**: GitHub CI installs the pinned toolchain and runs the governor gate plus pytest; the workflow no longer fails at action parse.
+- [x] **OP-03**: A fresh `KUTHA_BENCH_N=10000` baseline records `ingest_plain.n`, `as_of.n`, and ratios in `docs/architecture/benchmark-baseline.md` and the close entry.
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| OP-01 | Phase 240 | Complete |
+| OP-02 | Phase 241 | Complete |
+| OP-03 | Phase 242 | Complete |
+
+**Coverage:**
+- v1.60 requirements: 3 total
+- Mapped to phases: 3
+- Unmapped: 0

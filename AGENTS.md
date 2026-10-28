@@ -72,7 +72,7 @@ $GSD init new-milestone --cwd /root/kutha-graph   # context only; the workflow w
 
 ### GSD health after reset (2026-10-28)
 
-The pre-native overlay was archived and `.planning` rebuilt on **1.19.0**. Current probes: `validate health` **healthy**, `validate consistency` clean, `audit-open` clear, `progress` 0 phases, `state-snapshot` `planning`. `smart-entry` reports `needs-first-phase`; `init new-milestone` sees `latest_completed_milestone=v1.59` and `phase_archive_path=.planning/milestones/v1.59-phases`. `roadmap validate` warns V004 until the first phase exists; that is the only expected warning.
+The pre-native overlay was archived and `.planning` rebuilt on **1.19.0**. Milestone **v1.60 Operational honesty** closed on 2026-10-28; no milestone is active. Current probes: `validate health` **healthy**, `validate consistency` clean, `audit-open` clear, `progress` 0 phases, `state-snapshot` `Awaiting next milestone`. `init new-milestone` sees `latest_completed_milestone=v1.60` and `phase_archive_path=.planning/milestones/v1.60-phases`. `roadmap validate` warns V004 until the next phase exists; that is the only expected warning.
 
 Pre-reset history: `.planning-archive/pre-native-2026-10-28/`, git branch `archive/pre-gsd-native-2026-10-28`, and local backup `tmp/backups/pre-gsd-1.19-2026-10-28.tar.gz`. Do not restore the old tree into `.planning/`; it has non-canonical verification statuses and an unrecognized ROADMAP.
 

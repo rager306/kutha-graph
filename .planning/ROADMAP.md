@@ -2,7 +2,7 @@
 
 ## Overview
 
-GSD overlay reset on 2026-10-28. No milestone is active. Prior planning artifacts are preserved in `.planning-archive/pre-native-2026-10-28/`, on the git branch `archive/pre-gsd-native-2026-10-28`, and in the local backup `tmp/backups/pre-gsd-1.19-2026-10-28.tar.gz`. The next milestone is created by the GSD new-milestone workflow after the owner names it in `.kutha/STATE.md`.
+GSD overlay reset on 2026-10-28. Milestone **v1.60 Operational honesty** (M166) is **closed** (2026-10-28). It made the external and internal gates truthful: observe timeout honesty, a CI gate that runs, and a fresh benchmark baseline. No product feature and no thaw. No next milestone is leased.
 
 ## Id map
 
@@ -10,8 +10,46 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-_No phases yet._
+- [x] **Phase 240: Observe timeout honesty** - a timeout or missing cargo does not retry and does not double the wall-clock budget (completed 2026-10-28)
+- [x] **Phase 241: CI gate truth** - GitHub installs the pinned toolchain and runs the governor plus pytest (completed 2026-10-28)
+- [x] **Phase 242: Benchmark baseline** - fresh `ingest_plain.n` / `as_of.n` numbers are recorded (completed 2026-10-28)
 
 ## Phase Details
 
-_None yet._
+### Phase 240: Observe timeout honesty
+**Goal**: A cargo timeout or missing binary returns 124/127 without a second test attempt; the build step is skipped.
+**Depends on**: Nothing
+**Requirements**: OP-01
+**Success Criteria**:
+  1. `run_cargo_observation` makes one cargo call on `TimeoutExpired`.
+  2. `test_observe_skips_build_after_timeout` passes.
+  3. A new test pins no retry on 124/127.
+**Plans**: 1/1 plans complete
+
+### Phase 241: CI gate truth
+**Goal**: The GitHub workflow installs Rust 1.99.0 and runs the governor gate plus pytest.
+**Depends on**: Phase 240
+**Requirements**: OP-02
+**Success Criteria**:
+  1. `dtolnay/rust-toolchain` has `toolchain: 1.99.0`.
+  2. The workflow runs `uv run kutha-gov ci --jobs 1` and `uv run pytest -q`.
+  3. Local YAML parse and `uv run kutha-gov precommit` pass.
+**Plans**: 1/1 plans complete
+
+### Phase 242: Benchmark baseline
+**Goal**: Record a fresh same-host bench baseline after the checkpoint lineage arc.
+**Depends on**: Phase 241
+**Requirements**: OP-03
+**Success Criteria**:
+  1. `KUTHA_BENCH_N=10000 cargo bench -p kutha-runtime --bench baseline` completes.
+  2. `ingest_plain.n`, `as_of.n`, and ratios are written to `docs/architecture/benchmark-baseline.md`.
+  3. The close entry cites the numbers.
+**Plans**: 1/1 plans complete
+
+## Progress
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 240. Observe timeout honesty | 1/1 | Complete    | 2026-10-28 |
+| 241. CI gate truth | 1/1 | Complete    | 2026-10-28 |
+| 242. Benchmark baseline | 1/1 | Complete    | 2026-10-28 |

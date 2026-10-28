@@ -304,6 +304,10 @@ def run_cargo_observation(root: object, spec: Step) -> tuple[int, list[str], lis
                 incomplete = _has_observe_incomplete(observe_findings)
                 # Replace prior attempt findings so a successful retry is clean.
                 findings = list(run_findings) + list(observe_findings)
+                # A timeout or missing binary already spent the wall-clock budget;
+                # retrying doubles it and contradicts the build skip below.
+                if code in {124, 127}:
+                    break
                 if not incomplete:
                     if attempt > 0:
                         recovered_after_incomplete = True

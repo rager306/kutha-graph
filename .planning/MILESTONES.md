@@ -1,5 +1,20 @@
 # Project Milestones: Kutha
 
+## v1.60 Operational honesty (Shipped: 2026-10-28)
+
+**Delivered:** M166. A cargo timeout or missing binary no longer retries; GitHub CI installs Rust 1.99.0 and runs pytest plus the governor gate; a fresh same-host benchmark baseline is recorded.
+
+**Phases completed:** 240–242 (3 plans)
+
+**Key accomplishments:**
+- `run_cargo_observation` breaks on 124/127; new retries-env regression.
+- CI action parse fixed; pytest and governor gates wired.
+- Baseline: `ingest_plain.n` 115,733,914 ns; `as_of.n` 334,032 ns; +21.3% / 4.0× vs 2026-10-01; `bytes_per_fact` 0 B is a follow-up RED.
+
+**What's next:** no milestone is leased.
+
+---
+
 ## v1.59 Compacted Horn cause (Shipped: 2026-10-27)
 
 **Delivered:** Checkpoint and replay lineage hardening (M154–M165): checkpoint receipt, checkpoint-is-a-cut, fork diff, hop workload, missing Horn blob, StoreBlob digest, shared-head causes, one head per cause, vintage and cited lineage, compacted Horn cause.
