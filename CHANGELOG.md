@@ -10,13 +10,18 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - `cargo test --workspace`: 730 passed, 0 failed. `kutha-gov ci --jobs 1`: exit 0, `run_high=0`, `run_low=0`, 105 checks.
 - eCFR fixture: 1 CFR 304.1/304.2/304.10 at 2015-12-18, 2017-01-23, 2017-03-14; public-domain test data, not a legal pack.
 - Probe: `as_of` at 7 day-scale cuts, TT-only `as_known_on`, `norm_view` force∩knowledge, persist/checkpoint/replay parity. No new Op, no core schema change, no thaw.
-- Residuals: remote CI still needs a green run (egg-info + CARGO_BUILD_JOBS fix are in this tree); bench A/B and `bytes_per_fact` 0 B remain open. Honeycomb stays Proposed.
+- Residuals: remote CI is green at `0853171` (runs 40849658747 / 40849662993), with the optional rocks observe skipped; bench A/B and `bytes_per_fact` 0 B remain open. Honeycomb stays Proposed.
 
 ## 2026-10-29 — Product: eCFR PIT probe (M167)
 
 - Added a public-domain eCFR fixture (1 CFR 304.1/304.2/304.10 at 2015-12-18, 2017-01-23, 2017-03-14) as test data, not a legal pack. Fetch tool and licence note are committed.
 - `m167_ecfr_pit` proves `as_of` at three cuts, TT-only `as_known_on` (no future edition), `norm_view` force∩knowledge, and persist/checkpoint replay parity. Day-scale VT is probe-only.
 - No new Op, no core schema change, no thaw; `I-legal-pack-not-next` stays.
+
+## 2026-10-29 — Process: remote CI green after rocks skip
+
+- GitHub `ci` is green on `main` and `work/main-line` at `0853171` (runs 40849662993 / 40849658747): pinned Rust 1.99.0, pytest, governor gate, cargo/tenant ok. The optional rocks observe is recorded as skipped on the 7 GB runner.
+- This closes the remote half of M166's CI residual. The local rocks observe still runs.
 
 ## 2026-10-29 — Process: CI rocks observe skip (M167 residual)
 
