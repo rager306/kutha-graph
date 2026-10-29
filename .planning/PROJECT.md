@@ -10,11 +10,11 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.61 Legal PIT probe — closed (M167)
+## Current Milestone: v1.62 Performance truth — closed (M168)
 
-**Goal:** Prove `as_of`, `as_known_on`, and `norm_view` on a small real eCFR fixture: 3 sections × 3 edition dates, committed as test data. This is a probe, not a legal pack and not legal advice.
+**Goal:** Replace the uncontrolled 2026-10-01 comparison with an interleaved A/B bench on this host (HEAD vs `cdf1942`), and stop reporting `0 B` when the RSS delta is zero.
 
-**Lease:** `.kutha/STATE.md` is `M167-S01`; phases 243–244. No thaw; `I-legal-pack-not-next` stays.
+**Lease:** `.kutha/STATE.md` is `M168-S01`; phases 245–246. No thaw.
 
 **Last shipped:** v1.60 Operational honesty (M166, 2026-10-28); v1.59 compacted Horn cause (M165, 2026-10-27). Honeycomb stays Proposed.
 

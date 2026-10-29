@@ -8,6 +8,13 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
+## M168: performance truth — CLOSED (GSD v1.62)
+
+The 2026-10-28 baseline is +21.3% ingest and 4.0× as_of versus 2026-10-01, but the comparison is not controlled. Run an interleaved A/B against `cdf1942` on this host and stop reporting `0 B` when the RSS delta is zero. No product semantics, no thaw.
+
+- [x] **S01: bench A/B and bytes honesty** `risk:low` `depends:[]`
+  > After this: same-host interleaved medians for HEAD vs `cdf1942` are recorded; `bytes_per_fact` is `n/a` when RSS delta is zero; the next perf decision is not based on an uncontrolled number. Honeycomb stays Proposed.
+
 ## M167: legal PIT probe on eCFR — CLOSED (GSD v1.61)
 
 Prove the wedge mechanism on real public text before building a legal pack. eCFR sections with three edition dates are test data, not a pack and not legal advice. No thaw; `I-legal-pack-not-next` stays.

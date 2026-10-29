@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M167-closed
+L_delivery=M168-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M167 closed (GSD v1.61) | Capability proven / Cypher started |
+| L_delivery | M168 closed (GSD v1.62) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M167 is closed (GSD v1.61, phases 243–244): a public-domain eCFR fixture (1 CFR 304.1/304.2/304.10 at 2015-12-18, 2017-01-23, 2017-03-14) is committed as test data, and `m167_ecfr_pit` proves `as_of` at seven day-scale cuts, TT-only `as_known_on`, `norm_view` force∩knowledge, and persist/checkpoint/replay parity. `cargo test --workspace` 730 passed; `kutha-gov ci --jobs 1` run_high=0. No new Op, no core schema change, no thaw. Residuals: remote CI is unverified (egg-info fix + `CARGO_BUILD_JOBS=1` are in this tree), benchmark A/B and `bytes_per_fact` 0 B remain open, and the first two eCFR editions are textually identical so 2017-01 is a liveness check rather than a distinct text. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M168 is closed (GSD v1.62, phases 245–246): interleaved A/B of `cdf1942` vs HEAD on this host, and `bytes_per_fact` now prints `n/a` on a zero RSS delta. Old reproduces the 2026-10-01 `as_of` (84–99 µs) and bytes (13.7 KB); HEAD medians are ingest +12.6%, as_of **3.32×**, open −3.0%, persist −67.0%, replay +1.1%. The as_of gap is a **real regression**; next step is `git bisect` over `cdf1942..HEAD` with a short as_of predicate, not another benchmark reshuffle. No product semantics, no thaw. Residuals: eCFR first two editions textually identical; rocks observe skipped on remote CI; GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

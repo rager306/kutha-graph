@@ -330,11 +330,16 @@ fn main() {
     let live = sample.fold().live_count(u64::MAX, 2010) as u64;
     let rss_after = vm_rss_bytes();
     match (rss_before, rss_after) {
-        (Some(before), Some(after)) if after >= before => {
+        (Some(before), Some(after)) if after >= before && live > 0 => {
             // Denominator is sample live_count only (same n as fill_plain above).
             let delta = after - before;
-            let bpf = if live > 0 { delta / live.max(1) } else { 0 };
-            put(&mut metrics, "bytes_per_fact", bpf, "B");
+            if delta == 0 {
+                // A zero RSS delta is a measurement miss (warm allocator), not 0 B/fact.
+                put(&mut metrics, "bytes_per_fact", "n/a", "n/a");
+            } else {
+                let bpf = delta / live.max(1);
+                put(&mut metrics, "bytes_per_fact", bpf, "B");
+            }
         }
         _ => put(&mut metrics, "bytes_per_fact", "n/a", "n/a"),
     }

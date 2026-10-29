@@ -1,5 +1,19 @@
 # Project Milestones: Kutha
 
+## v1.62 Performance truth (Shipped: 2026-10-29)
+
+**Delivered:** M168. Interleaved old-vs-HEAD bench and `bytes_per_fact` honesty.
+
+**Phases completed:** 245–246 (2 plans)
+
+**Key accomplishments:**
+- Old `cdf1942` reproduces the 2026-10-01 `as_of` (84–99 µs) and `bytes_per_fact` (13.7 KB).
+- HEAD medians: ingest +12.6%, as_of **3.32×**, open −3.0%, persist −67.0%, replay +1.1%.
+- The as_of gap is a real regression; next step is a bisect, not another benchmark reshuffle.
+- `bytes_per_fact` is `n/a` on a zero RSS delta.
+
+---
+
 ## v1.61 Legal PIT probe (Shipped: 2026-10-29)
 
 **Delivered:** M167. A public-domain eCFR fixture (3 sections × 3 editions) and a probe proving `as_of`, TT-only `as_known_on`, `norm_view`, and checkpoint/replay parity on real text.

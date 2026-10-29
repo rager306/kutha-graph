@@ -1,12 +1,12 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.61
+milestone: v1.62
 status: completed
-stopped_at: Phase 244 complete — all phases complete
-last_updated: "2026-10-29T08:13:14.471Z"
+stopped_at: Phase 246 complete — all phases complete
+last_updated: "2026-10-29T13:32:20.544Z"
 last_activity: 2026-10-29
-last_activity_desc: Milestone v1.61 completed and archived
-state_head: eea006dd6f7578173dc9d36cefbe3c52d74c1810
+last_activity_desc: Milestone v1.62 completed and archived
+state_head: d4172899eec724d921b8d4a5fbf67b092592d11f
 progress:
   total_phases: 2
   completed_phases: 2
@@ -21,21 +21,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-29)
 
 **Core value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
-**Current focus:** v1.61 Legal PIT probe complete; no active phase.
+**Current focus:** v1.62 Performance truth (M168-S01), phase 245.
 
 ## Current Position
 
-Phase: Milestone v1.61 complete
+Phase: Milestone v1.62 complete
 Plan: —
 Status: Awaiting next milestone
-Last activity: 2026-10-29 — Milestone v1.61 completed and archived
+Last activity: 2026-10-29 — Milestone v1.62 completed and archived
 
 ## Accumulated Context
 
 ### Decisions
 
-- 2026-10-29: M167-S01 probes the wedge on eCFR test data; not a legal pack.
-- 2026-10-28: v1.60 Operational honesty closed; remote CI still needs a green observation.
+- 2026-10-29: The 2026-10-28 baseline is not comparable until an interleaved A/B against `cdf1942` exists.
+- 2026-10-29: `bytes_per_fact` 0 B is a measurement defect, not a fact.
 
 ### Pending Todos
 
@@ -43,7 +43,7 @@ None.
 
 ### Blockers/Concerns
 
-eCFR API is intermittently under load; the fetch script must retry and record failures rather than invent text.
+The host may carry background load; record the method and do not claim B3.
 
 ## Deferred Items
 
@@ -54,7 +54,7 @@ eCFR API is intermittently under load; the fetch script must retry and record fa
 ## Session Continuity
 
 Last session: 2026-10-29
-Stopped at: Phase 244 complete — all phases complete
+Stopped at: Phase 246 complete — all phases complete
 Resume file: None
 
 ## Operator Next Steps

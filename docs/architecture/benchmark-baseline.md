@@ -514,3 +514,28 @@ Ratios: ingest_plain 2N/N **1.611**, 4N/N **3.479**; as_of 2N/N **1.595**, 4N/N 
 Against the 2026-10-01 default-N table (`ingest_plain.n` 95,383,904; `as_of.n` 83,195): ingest **+21.3%**, as_of **4.0×**, open **+2.4%**, persist **−58.7%**, replay_check **−6.5%**. This is **not** a D-06 pass/fail claim: the code has changed since 2026-10-01 and `bytes_per_fact` reads 0 B (RSS sampling failed), so the old `bytes_per_fact` 13,674 B is not comparable. The +21.3% ingest and 4× as_of are a follow-up RED for a later product milestone, not evidence for B3.
 
 This is a same-host regression reference, **not** the B3 FalkorDB/Samyama competitor gate. The 2026-10-26 `bkk-edge01` sample remains a separate note.
+
+
+## 2026-10-29 (M168 phase 245): interleaved A/B vs cdf1942
+
+Host: 12 cores, 47 GB RAM. Old = `cdf1942` (2026-10-01 baseline note) in a detached worktree with its own `CARGO_TARGET_DIR`; HEAD = current tree. Sequence: Old1, HEAD1, Old2, HEAD2, HEAD3, `KUTHA_BENCH_N=10000`. Logs: `tmp/bench-old-1.log`, `bench-head-1.log`, `bench-old-2.log`, `bench-head-2.log`, `bench-head-3.log`.
+
+| key | old 1 | old 2 | old median | HEAD 1 | HEAD 2 | HEAD 3 | HEAD median |
+|-----|------:|------:|-----------:|-------:|-------:|-------:|------------:|
+| ingest_plain.n (ns) | 109,149,752 | 117,339,328 | 113,244,540 | 127,469,929 | 127,341,055 | 133,025,967 | 127,469,929 |
+| as_of.n (ns) | 84,146 | 98,524 | 91,335 | 4,607,638 | 303,355 | 285,853 | 303,355 |
+| open.n (ns) | 3,304,291,857 | 3,360,179,679 | 3,332,235,768 | 3,349,348,685 | 3,231,444,822 | 2,864,562,172 | 3,231,444,822 |
+| persist.n (ns) | 9,633,441,029 | 8,797,146,461 | 9,215,293,745 | 4,763,013,903 | 3,045,344,997 | 2,535,821,798 | 3,045,344,997 |
+| replay_check.n (ns) | 9,976,819 | 12,283,134 | 11,129,977 | 12,832,509 | 11,249,035 | 10,451,679 | 11,249,035 |
+| bytes_per_fact (B) | 13,674 | 13,691 | 13,682 | 0 | 0 | 0 | 0 |
+
+Medians (2 old, 3 HEAD): ingest **+12.6%**, as_of **3.32×**, open **−3.0%**, persist **−67.0%**, replay_check **+1.1%**.
+
+The old commit reproduces the 2026-10-01 `as_of.n` (84–99 µs) and `bytes_per_fact` (13.7 KB), so the HEAD `as_of` gap is **not** host or method drift. HEAD1's 4.6 ms `as_of.n` is a load outlier (its 2N/4N are 674 µs / 1.30 ms); HEAD2/3 at 303/286 µs are the stable shape. The next step is a `git bisect` over `cdf1942..HEAD` with a short as_of bench predicate, not another reshuffle of the same benchmark.
+
+The two harnesses are not byte-identical: old logs do not have `fold_index_mode` or `persist_append.n`, and `events_per_assert` is 3.0002 (old) vs 3.031 (HEAD). Treat `as_of` as the clean discriminating metric and `ingest`/`persist` as operation-shape comparisons. This is not B3 and not a competitor comparison.
+
+
+### Phase 246 fresh HEAD run (bytes honesty)
+
+`tmp/bench-head-4.log`: `ingest_plain.n` 107,315,884 ns, `as_of.n` 224,278 ns, `open.n` 2.84 s, `persist.n` 2.27 s, `replay_check.n` 14.3 ms, `bytes_per_fact` **n/a** (RSS delta was zero). This run is recorded only as the post-fix key; it also shows the HEAD `as_of` spread (224–303 µs across the stable runs, with the 4.6 ms load outlier). The old-vs-HEAD conclusion above is unchanged: the 3.3× gap is real, and the next step is a bisect.

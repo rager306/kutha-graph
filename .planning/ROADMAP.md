@@ -2,7 +2,7 @@
 
 ## Overview
 
-v1.60 Operational honesty closed on 2026-10-28. Milestone **v1.61 Legal PIT probe** (M167) **closed** on 2026-10-29: the wedge mechanism is proved on a small real eCFR fixture as test data, not a legal pack. No thaw, no next milestone leased.
+v1.61 Legal PIT probe closed on 2026-10-29. Milestone **v1.62 Performance truth** (M168) **closed** on 2026-10-29: the A/B confirms a real 3.3× `as_of` regression and `bytes_per_fact` now prints `n/a` on a zero RSS delta. No product semantics, no thaw, no next milestone leased.
 
 ## Id map
 
@@ -10,35 +10,33 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [x] **Phase 243: eCFR fixture** - fetch and commit 3 sections × 3 edition dates with source and public-domain status (completed 2026-10-29)
-- [x] **Phase 244: PIT probe** - `as_of` / `as_known_on` / `norm_view` at edition boundaries, replay divergence 0 (completed 2026-10-29)
+- [x] **Phase 245: Bench A/B** - interleaved HEAD vs `cdf1942` medians on this host (completed 2026-10-29)
+- [x] **Phase 246: Bytes honesty** - zero RSS delta reports `n/a`, not `0 B` (completed 2026-10-29)
 
 ## Phase Details
 
-### Phase 243: eCFR fixture
-**Goal**: A small public-domain eCFR fixture with three dated editions per section is committed with a reproducible fetch script and licence note.
+### Phase 245: Bench A/B
+**Goal**: Run old and HEAD benches interleaved on the same idle host and record medians.
 **Depends on**: Nothing
-**Requirements**: LP-01
+**Requirements**: PF-01
 **Success Criteria**:
-  1. 3 sections × 3 dates are present as text extracted from eCFR XML.
-  2. `fixtures/ecfr/README.md` records URLs, dates, and public-domain status.
-  3. The fetch script is committed and does not run in CI.
+  1. `cdf1942` and HEAD each run at least twice, interleaved.
+  2. `ingest_plain.n` and `as_of.n` medians are recorded with host/method.
+  3. The old commit's numbers are compared to the 2026-10-01 table.
 **Plans**: 1/1 plans complete
 
-### Phase 244: PIT probe
-**Goal**: Build cuts from the fixture and prove the three temporal surfaces at edition boundaries.
-**Depends on**: Phase 243
-**Requirements**: LP-02
+### Phase 246: Bytes honesty
+**Goal**: Stop printing `0 B` when RSS did not move.
+**Depends on**: Phase 245
+**Requirements**: PF-02
 **Success Criteria**:
-  1. `as_of` differs at a boundary where the text changed; unchanged text stays equal.
-  2. `as_known_on` distinguishes publication/known-on from force where the fixture has an anchor.
-  3. `replay_check` and a checkpoint round-trip diverge 0.
-  4. No `Op` or core schema change is needed for the fixture.
+  1. Zero delta or zero live facts prints `n/a`.
+  2. A fresh HEAD bench records the new key honestly.
 **Plans**: 1/1 plans complete
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 243. eCFR fixture | 1/1 | Complete    | 2026-10-29 |
-| 244. PIT probe | 1/1 | Complete    | 2026-10-29 |
+| 245. Bench A/B | 1/1 | Complete    | 2026-10-29 |
+| 246. Bytes honesty | 1/1 | Complete    | 2026-10-29 |

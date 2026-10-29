@@ -4,6 +4,29 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-29 — Process: bytes honesty (M168 phase 246)
+
+- `baseline.rs` now prints `bytes_per_fact n/a` when the RSS delta is zero or live is zero; `0 B` was a measurement miss, not a fact.
+- Fresh HEAD run: `ingest_plain.n` 107,315,884 ns, `as_of.n` 224,278 ns, `bytes_per_fact n/a`. The as_of spread across stable HEAD runs is 224–303 µs; the old-vs-HEAD 3.3× gap stands and needs a bisect.
+- No product semantics, no thaw.
+
+## 2026-10-29 — Process: bench A/B (M168 phase 245)
+
+- Interleaved old (`cdf1942`) vs HEAD at `KUTHA_BENCH_N=10000`: old reproduces the 2026-10-01 baseline (`as_of.n` 84–99 µs; `bytes_per_fact` 13.7 KB).
+- HEAD medians: `ingest_plain.n` +12.6%, `as_of.n` **3.32×**, open −3.0%, persist −67.0%, replay +1.1% versus old.
+- Conclusion: the `as_of` gap is a real regression, not host/method drift. Next step is a `git bisect` over `cdf1942..HEAD`, not a new benchmark reshuffle. `bytes_per_fact` remains 0 B until phase 246.
+
+## 2026-10-29 — Trajectory: M168 / GSD v1.62 closed
+
+- M168-S01 performance truth closed; GSD v1.62 phases 245–246 complete. `L_delivery=M168-closed`; Active Milestone/Slice None. Not a release; `VERSION` stays `0.0.01`.
+- A/B: old `cdf1942` reproduces 2026-10-01 (`as_of.n` 84–99 µs; bytes 13.7 KB); HEAD medians ingest +12.6%, `as_of.n` **3.32×**, open −3.0%, persist −67.0%, replay +1.1%.
+- The `as_of` gap is a real regression; next step is `git bisect` over `cdf1942..HEAD`, not another benchmark reshuffle.
+- `bytes_per_fact` is `n/a` on a zero RSS delta. No product semantics, no thaw.
+
+## 2026-10-29 — Trajectory: lease M168-S01 (performance truth)
+
+GSD v1.62 / phases 245–246. Goal: interleaved A/B bench HEAD vs `cdf1942` on this host; `bytes_per_fact` must be `n/a` when the RSS delta is zero. No product semantics, no thaw. M167 closed at GSD v1.61 with remote CI green.
+
 ## 2026-10-29 — Trajectory: M167 / GSD v1.61 closed
 
 - M167-S01 legal PIT probe closed; GSD v1.61 phases 243–244 complete. `L_delivery=M167-closed`; Active Milestone/Slice None. Not a release; `VERSION` stays `0.0.01`.
