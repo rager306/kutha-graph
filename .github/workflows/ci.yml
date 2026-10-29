@@ -19,7 +19,7 @@ jobs:
       # Rocks is an optional lease; the 7 GB runner cannot compile it inside 15 min.
       KUTHA_GOV_SKIP_ROCKS: "1"
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
