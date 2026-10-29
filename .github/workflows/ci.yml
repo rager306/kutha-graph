@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 90
     env:
       # librocksdb-sys compiles C++ in-tree; one job keeps the 7 GB runner alive.
-      CARGO_BUILD_JOBS: "1"
+      CARGO_BUILD_JOBS: "2"
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:

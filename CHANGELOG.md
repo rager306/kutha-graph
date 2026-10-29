@@ -18,6 +18,11 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - `m167_ecfr_pit` proves `as_of` at three cuts, TT-only `as_known_on` (no future edition), `norm_view` force∩knowledge, and persist/checkpoint replay parity. Day-scale VT is probe-only.
 - No new Op, no core schema change, no thaw; `I-legal-pack-not-next` stays.
 
+## 2026-10-29 — Process: CI rocks build hotfix (M167 residual)
+
+- Remote `governor ci` needs to compile `librocksdb-sys`; the old 420 s observe timeout and a single job were too tight. CI now uses `CARGO_BUILD_JOBS=2` and `observe_rocks.timeout_sec: 900`.
+- Fired RED: GitHub run 40840924775 timed out at exactly 420103 ms. No product code, no lease change.
+
 ## 2026-10-29 — Process: CI egg-info hotfix (M166 residual)
 
 - The first green-workflow push exposed a remote-only failure: `uv sync --frozen` creates `scripts/*.egg-info`, and the `dogfood` check rejects it. CI now removes `scripts/*.egg-info` after sync.
