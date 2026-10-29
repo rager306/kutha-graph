@@ -28,7 +28,9 @@ jobs:
       - name: fetch crates for the offline observe step
         run: cargo fetch --locked
       - name: install the harness
-        run: uv sync --frozen
+        run: |
+          uv sync --frozen
+          rm -rf scripts/*.egg-info
       - name: harness pytest
         run: uv run pytest -q
       - name: governor ci
