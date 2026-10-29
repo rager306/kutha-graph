@@ -20,7 +20,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ## 2026-10-29 — Process: CI rocks build hotfix (M167 residual)
 
-- Remote `governor ci` needs to compile `librocksdb-sys`; the old 420 s observe timeout and a single job were too tight. CI now uses `CARGO_BUILD_JOBS=2` and `observe_rocks.timeout_sec: 900`.
+- Remote `governor ci` needs to compile `librocksdb-sys`; two C++ jobs still hit the 7 GB runner limit (exit 101 at 294 s). CI keeps `CARGO_BUILD_JOBS=1` and gives `observe_rocks.timeout_sec: 900`.
 - Fired RED: GitHub run 40840924775 timed out at exactly 420103 ms. No product code, no lease change.
 
 ## 2026-10-29 — Process: CI egg-info hotfix (M166 residual)
