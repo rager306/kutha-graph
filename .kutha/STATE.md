@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M166-closed
+L_delivery=M167-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M166 closed (GSD v1.60) | Capability proven / Cypher started |
+| L_delivery | M167 closed (GSD v1.61) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M166 is closed (GSD v1.60, phases 240–242): cargo timeout/missing binary no longer retries; GitHub CI installs Rust 1.99.0 and runs pytest plus the governor gate; a fresh baseline is recorded. `uv run pytest` 296 passed, 2 skipped, 0 failed. Residuals: remote CI is unverified until a push is observed; the fresh baseline is `ingest_plain.n` 115.7 ms and `as_of.n` 334 µs, +21.3% and 4.0× versus 2026-10-01, and `bytes_per_fact` reads 0 B — a follow-up RED, not B3 evidence. Other open items stay open until their own RED: checkpoint operator surface; B1b vacuum; parallel `b1_checkpoint_kill3` WouldBlock. Honeycomb stays Proposed. Not Cypher/HNSW; `I-legal-pack-not-next` stays. Not a hard FSM (ADR-000 D3).
+M167 is closed (GSD v1.61, phases 243–244): a public-domain eCFR fixture (1 CFR 304.1/304.2/304.10 at 2015-12-18, 2017-01-23, 2017-03-14) is committed as test data, and `m167_ecfr_pit` proves `as_of` at seven day-scale cuts, TT-only `as_known_on`, `norm_view` force∩knowledge, and persist/checkpoint/replay parity. `cargo test --workspace` 730 passed; `kutha-gov ci --jobs 1` run_high=0. No new Op, no core schema change, no thaw. Residuals: remote CI is unverified (egg-info fix + `CARGO_BUILD_JOBS=1` are in this tree), benchmark A/B and `bytes_per_fact` 0 B remain open, and the first two eCFR editions are textually identical so 2017-01 is a liveness check rather than a distinct text. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

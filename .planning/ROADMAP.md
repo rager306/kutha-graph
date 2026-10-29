@@ -2,7 +2,7 @@
 
 ## Overview
 
-GSD overlay reset on 2026-10-28. Milestone **v1.60 Operational honesty** (M166) is **closed** (2026-10-28). It made the external and internal gates truthful: observe timeout honesty, a CI gate that runs, and a fresh benchmark baseline. No product feature and no thaw. No next milestone is leased.
+v1.60 Operational honesty closed on 2026-10-28. Milestone **v1.61 Legal PIT probe** (M167) **closed** on 2026-10-29: the wedge mechanism is proved on a small real eCFR fixture as test data, not a legal pack. No thaw, no next milestone leased.
 
 ## Id map
 
@@ -10,46 +10,35 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [x] **Phase 240: Observe timeout honesty** - a timeout or missing cargo does not retry and does not double the wall-clock budget (completed 2026-10-28)
-- [x] **Phase 241: CI gate truth** - GitHub installs the pinned toolchain and runs the governor plus pytest (completed 2026-10-28)
-- [x] **Phase 242: Benchmark baseline** - fresh `ingest_plain.n` / `as_of.n` numbers are recorded (completed 2026-10-28)
+- [x] **Phase 243: eCFR fixture** - fetch and commit 3 sections × 3 edition dates with source and public-domain status (completed 2026-10-29)
+- [x] **Phase 244: PIT probe** - `as_of` / `as_known_on` / `norm_view` at edition boundaries, replay divergence 0 (completed 2026-10-29)
 
 ## Phase Details
 
-### Phase 240: Observe timeout honesty
-**Goal**: A cargo timeout or missing binary returns 124/127 without a second test attempt; the build step is skipped.
+### Phase 243: eCFR fixture
+**Goal**: A small public-domain eCFR fixture with three dated editions per section is committed with a reproducible fetch script and licence note.
 **Depends on**: Nothing
-**Requirements**: OP-01
+**Requirements**: LP-01
 **Success Criteria**:
-  1. `run_cargo_observation` makes one cargo call on `TimeoutExpired`.
-  2. `test_observe_skips_build_after_timeout` passes.
-  3. A new test pins no retry on 124/127.
+  1. 3 sections × 3 dates are present as text extracted from eCFR XML.
+  2. `fixtures/ecfr/README.md` records URLs, dates, and public-domain status.
+  3. The fetch script is committed and does not run in CI.
 **Plans**: 1/1 plans complete
 
-### Phase 241: CI gate truth
-**Goal**: The GitHub workflow installs Rust 1.99.0 and runs the governor gate plus pytest.
-**Depends on**: Phase 240
-**Requirements**: OP-02
+### Phase 244: PIT probe
+**Goal**: Build cuts from the fixture and prove the three temporal surfaces at edition boundaries.
+**Depends on**: Phase 243
+**Requirements**: LP-02
 **Success Criteria**:
-  1. `dtolnay/rust-toolchain` has `toolchain: 1.99.0`.
-  2. The workflow runs `uv run kutha-gov ci --jobs 1` and `uv run pytest -q`.
-  3. Local YAML parse and `uv run kutha-gov precommit` pass.
-**Plans**: 1/1 plans complete
-
-### Phase 242: Benchmark baseline
-**Goal**: Record a fresh same-host bench baseline after the checkpoint lineage arc.
-**Depends on**: Phase 241
-**Requirements**: OP-03
-**Success Criteria**:
-  1. `KUTHA_BENCH_N=10000 cargo bench -p kutha-runtime --bench baseline` completes.
-  2. `ingest_plain.n`, `as_of.n`, and ratios are written to `docs/architecture/benchmark-baseline.md`.
-  3. The close entry cites the numbers.
+  1. `as_of` differs at a boundary where the text changed; unchanged text stays equal.
+  2. `as_known_on` distinguishes publication/known-on from force where the fixture has an anchor.
+  3. `replay_check` and a checkpoint round-trip diverge 0.
+  4. No `Op` or core schema change is needed for the fixture.
 **Plans**: 1/1 plans complete
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 240. Observe timeout honesty | 1/1 | Complete    | 2026-10-28 |
-| 241. CI gate truth | 1/1 | Complete    | 2026-10-28 |
-| 242. Benchmark baseline | 1/1 | Complete    | 2026-10-28 |
+| 243. eCFR fixture | 1/1 | Complete    | 2026-10-29 |
+| 244. PIT probe | 1/1 | Complete    | 2026-10-29 |

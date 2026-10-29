@@ -4,6 +4,29 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-29 — Trajectory: M167 / GSD v1.61 closed
+
+- M167-S01 legal PIT probe closed; GSD v1.61 phases 243–244 complete. `L_delivery=M167-closed`; Active Milestone/Slice None. Not a release; `VERSION` stays `0.0.01`.
+- `cargo test --workspace`: 730 passed, 0 failed. `kutha-gov ci --jobs 1`: exit 0, `run_high=0`, `run_low=0`, 105 checks.
+- eCFR fixture: 1 CFR 304.1/304.2/304.10 at 2015-12-18, 2017-01-23, 2017-03-14; public-domain test data, not a legal pack.
+- Probe: `as_of` at 7 day-scale cuts, TT-only `as_known_on`, `norm_view` force∩knowledge, persist/checkpoint/replay parity. No new Op, no core schema change, no thaw.
+- Residuals: remote CI still needs a green run (egg-info + CARGO_BUILD_JOBS fix are in this tree); bench A/B and `bytes_per_fact` 0 B remain open. Honeycomb stays Proposed.
+
+## 2026-10-29 — Product: eCFR PIT probe (M167)
+
+- Added a public-domain eCFR fixture (1 CFR 304.1/304.2/304.10 at 2015-12-18, 2017-01-23, 2017-03-14) as test data, not a legal pack. Fetch tool and licence note are committed.
+- `m167_ecfr_pit` proves `as_of` at three cuts, TT-only `as_known_on` (no future edition), `norm_view` force∩knowledge, and persist/checkpoint replay parity. Day-scale VT is probe-only.
+- No new Op, no core schema change, no thaw; `I-legal-pack-not-next` stays.
+
+## 2026-10-29 — Process: CI egg-info hotfix (M166 residual)
+
+- The first green-workflow push exposed a remote-only failure: `uv sync --frozen` creates `scripts/*.egg-info`, and the `dogfood` check rejects it. CI now removes `scripts/*.egg-info` after sync.
+- This is a fired-RED fix for the M166 CI gate; no product code, no lease change.
+
+## 2026-10-29 — Trajectory: lease M167-S01 (legal PIT probe)
+
+GSD v1.61 / phases 243–244. Goal: `as_of` / `as_known_on` / `norm_view` on 3 eCFR sections × 3 editions as test data, not a legal pack. No thaw; `I-legal-pack-not-next` stays. M166 residual (remote CI, bench A/B, `bytes_per_fact` 0 B) stays open.
+
 ## 2026-10-28 — Trajectory: M166 / GSD v1.60 closed
 
 - M166-S01 operational honesty closed; GSD v1.60 phases 240–242 complete. `L_delivery=M166-closed`; Active Milestone/Slice None. Not a release id; `VERSION` stays `0.0.01`.

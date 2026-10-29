@@ -1,23 +1,21 @@
 # Requirements: Kutha
 
-**Defined:** 2026-10-28
+**Defined:** 2026-10-29
 **Core Value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
 
-## v1.60 Requirements
+## v1.61 Requirements
 
-- [x] **OP-01**: A cargo timeout or missing binary does not retry the test invocation; `test_observe_skips_build_after_timeout` passes.
-- [x] **OP-02**: GitHub CI installs the pinned toolchain and runs the governor gate plus pytest; the workflow no longer fails at action parse.
-- [x] **OP-03**: A fresh `KUTHA_BENCH_N=10000` baseline records `ingest_plain.n`, `as_of.n`, and ratios in `docs/architecture/benchmark-baseline.md` and the close entry.
+- [x] **LP-01**: A committed eCFR fixture contains 3 sections × 3 edition dates with source URLs, dates, and public-domain status; no proprietary text.
+- [x] **LP-02**: A Rust probe builds cuts from the fixture and proves `as_of` / `as_known_on` / `norm_view` differ across edition boundaries, with replay/checkpoint divergence 0 and no core edit needed.
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| OP-01 | Phase 240 | Complete |
-| OP-02 | Phase 241 | Complete |
-| OP-03 | Phase 242 | Complete |
+| LP-01 | Phase 243 | Complete |
+| LP-02 | Phase 244 | Complete |
 
 **Coverage:**
-- v1.60 requirements: 3 total
-- Mapped to phases: 3
+- v1.61 requirements: 2 total
+- Mapped to phases: 2
 - Unmapped: 0

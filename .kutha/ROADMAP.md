@@ -8,6 +8,13 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
+## M167: legal PIT probe on eCFR — CLOSED (GSD v1.61)
+
+Prove the wedge mechanism on real public text before building a legal pack. eCFR sections with three edition dates are test data, not a pack and not legal advice. No thaw; `I-legal-pack-not-next` stays.
+
+- [x] **S01: eCFR PIT probe** `risk:medium` `depends:[]`
+  > After this: `as_of` / `as_known_on` / `norm_view` answer correctly at every edition boundary on 3 eCFR sections × 3 dates; replay/checkpoint diverges 0; the fixture's source and public-domain status are recorded. Honeycomb stays Proposed.
+
 ## M166: operational honesty — CLOSED (GSD v1.60)
 
 REDs that fired: GitHub CI failed 40/40 at action parse; `uv run pytest` fails the observe-timeout test; the bench gate has no recorded numbers after M157. Scope: observe timeout honesty, CI gate truth, benchmark baseline. No product feature, no thaw.

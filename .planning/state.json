@@ -4,18 +4,13 @@
   "milestone": "v1.60",
   "phases": [
     {
-      "number": "240",
-      "name": "Observe timeout honesty",
+      "number": "243",
+      "name": "eCFR fixture",
       "status": "complete"
     },
     {
-      "number": "241",
-      "name": "CI gate truth",
-      "status": "complete"
-    },
-    {
-      "number": "242",
-      "name": "Benchmark baseline",
+      "number": "244",
+      "name": "PIT probe",
       "status": "complete"
     }
   ],
@@ -24,5 +19,5 @@
     "label": "Show progress",
     "reason": "Unsure of state — showing progress"
   },
-  "updated_at": "2026-10-28T16:43:02.176Z"
+  "updated_at": "2026-10-29T08:13:14.501Z"
 }

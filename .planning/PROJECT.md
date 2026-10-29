@@ -10,13 +10,13 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.60 Operational honesty — closed (M166)
+## Current Milestone: v1.61 Legal PIT probe — closed (M167)
 
-**Goal:** Make the gates truthful before new product work. Fix the observe timeout retry, make GitHub CI actually install the pinned toolchain and run the governor plus pytest, and record a fresh benchmark baseline. No product feature and no thaw. Closed 2026-10-28.
+**Goal:** Prove `as_of`, `as_known_on`, and `norm_view` on a small real eCFR fixture: 3 sections × 3 edition dates, committed as test data. This is a probe, not a legal pack and not legal advice.
 
-**Lease:** `.kutha/STATE.md` is `M166-S01`; phases 240–242. Prior planning history is preserved in `.planning-archive/pre-native-2026-10-28/`, on the git branch `archive/pre-gsd-native-2026-10-28`, and in the local backup `tmp/backups/pre-gsd-1.19-2026-10-28.tar.gz`.
+**Lease:** `.kutha/STATE.md` is `M167-S01`; phases 243–244. No thaw; `I-legal-pack-not-next` stays.
 
-**Last shipped:** v1.59 compacted Horn cause (M165, 2026-10-27), closing the checkpoint/replay lineage arc M154–M165. Honeycomb stays Proposed.
+**Last shipped:** v1.60 Operational honesty (M166, 2026-10-28); v1.59 compacted Horn cause (M165, 2026-10-27). Honeycomb stays Proposed.
 
 ## Business Context
 

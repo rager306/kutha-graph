@@ -1,5 +1,19 @@
 # Project Milestones: Kutha
 
+## v1.61 Legal PIT probe (Shipped: 2026-10-29)
+
+**Delivered:** M167. A public-domain eCFR fixture (3 sections × 3 editions) and a probe proving `as_of`, TT-only `as_known_on`, `norm_view`, and checkpoint/replay parity on real text.
+
+**Phases completed:** 243–244 (2 plans)
+
+**Key accomplishments:**
+- 1 CFR 304.1/304.2/304.10 at 2015-12-18, 2017-01-23, 2017-03-14; fetch tool and licence note.
+- 7 day-scale cuts; 2017-03-13 vs 2017-03-14 is the discriminating boundary.
+- `cargo test --workspace` 730 passed; `kutha-gov ci --jobs 1` `run_high=0`.
+- No new Op, no core schema change, no thaw.
+
+---
+
 ## v1.60 Operational honesty (Shipped: 2026-10-28)
 
 **Delivered:** M166. A cargo timeout or missing binary no longer retries; GitHub CI installs Rust 1.99.0 and runs pytest plus the governor gate; a fresh same-host benchmark baseline is recorded.
