@@ -1,5 +1,19 @@
 # Project Milestones: Kutha
 
+## v1.63 as_of regression (Shipped: 2026-10-29)
+
+**Delivered:** M169. The 3.32× as_of gap is traced to `cec5b64` and reduced to 1.35×.
+
+**Phases completed:** 247–248 (2 plans)
+
+**Key accomplishments:**
+- First bad commit `cec5b64` added a per-fact HashSet `is_dictionary_rel` probe to `LiveFactFilter::Product`.
+- Dense `dictionary_rel_flags: Vec<bool>` replaces the HashSet; semantics unchanged.
+- N=10000 `as_of.n` 303 µs → 123 µs (old 91 µs); residual 1.35× is the accepted product-filter cost.
+- `kutha-gov ci` green; cargo observe budget raised to 600 s for cold builds.
+
+---
+
 ## v1.62 Performance truth (Shipped: 2026-10-29)
 
 **Delivered:** M168. Interleaved old-vs-HEAD bench and `bytes_per_fact` honesty.

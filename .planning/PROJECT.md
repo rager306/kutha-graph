@@ -10,11 +10,11 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.62 Performance truth — closed (M168)
+## Current Milestone: v1.63 as_of regression — closed (M169)
 
-**Goal:** Replace the uncontrolled 2026-10-01 comparison with an interleaved A/B bench on this host (HEAD vs `cdf1942`), and stop reporting `0 B` when the RSS delta is zero.
+**Goal:** Locate the commit behind the 3.32× `as_of` gap and fix it or record an explicit tradeoff with a same-host bench.
 
-**Lease:** `.kutha/STATE.md` is `M168-S01`; phases 245–246. No thaw.
+**Lease:** `.kutha/STATE.md` is `M169-S01`; phases 247–248. No thaw.
 
 **Last shipped:** v1.60 Operational honesty (M166, 2026-10-28); v1.59 compacted Horn cause (M165, 2026-10-27). Honeycomb stays Proposed.
 

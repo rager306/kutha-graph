@@ -312,9 +312,11 @@ pub struct GraphFold {
     /// not "lease never built" (fallback scan).
     #[serde(skip)]
     pub(crate) horn_lease_ready: bool,
-    /// Interned `kutha:*` relation TermIds (D-05). Rebuilt from the dictionary; not fingerprint.
+    /// `true` for interned `kutha:*` relation TermIds (D-05), indexed by TermId.
+    /// Rebuilt from the dictionary; not fingerprint. A dense flag vec keeps the
+    /// per-fact product filter O(1) instead of a HashSet probe.
     #[serde(skip)]
-    pub(crate) dictionary_rels: HashSet<TermId>,
+    pub(crate) dictionary_rel_flags: Vec<bool>,
     #[serde(skip)]
     pub(crate) rel_allows: Option<TermId>,
     #[serde(skip)]
@@ -483,7 +485,7 @@ impl GraphFold {
             policies_by_pin: IngestMap::default(),
             policy_by_ingest: Vec::new(),
             horn_lease_ready: false,
-            dictionary_rels: HashSet::new(),
+            dictionary_rel_flags: Vec::new(),
             rel_allows: None,
             rel_rule: None,
             rel_policy: None,
@@ -530,10 +532,10 @@ impl GraphFold {
 
     /// Bind reserved `kutha:*` relation TermIds from the live dictionary (D-01 / D-05).
     pub fn bind_reserved(&mut self, dict: &TermDictionary) {
-        self.dictionary_rels.clear();
+        self.dictionary_rel_flags = vec![false; dict.strings().len()];
         for (i, s) in dict.strings().iter().enumerate() {
             if s.starts_with("kutha:") {
-                self.dictionary_rels.insert(i as TermId);
+                self.dictionary_rel_flags[i] = true;
             }
         }
         let prev_allows = self.rel_allows;
@@ -559,7 +561,10 @@ impl GraphFold {
     }
 
     pub(crate) fn is_dictionary_rel(&self, rel: TermId) -> bool {
-        self.dictionary_rels.contains(&rel)
+        self.dictionary_rel_flags
+            .get(rel as usize)
+            .copied()
+            .unwrap_or(false)
     }
 
     pub(crate) fn store_blob_once(&mut self, digest: &str, bytes: &[u8]) {
@@ -1066,7 +1071,7 @@ impl GraphFold {
     ///
     /// Fingerprint-safe (fingerprint walks `facts` directly). Product queries
     /// (`as_of` / `known_at`) need [`Self::replay_with_dict`] or a later
-    /// [`Self::bind_reserved`] — otherwise dictionary_rels stay empty and
+    /// [`Self::bind_reserved`] — otherwise dictionary_rel_flags stay empty and
     /// genesis allows leak into the product picture (CE review P1 #10).
     pub fn replay(events: &[Event]) -> Self {
         let mut fold = Self::default();

@@ -2,7 +2,7 @@
 
 ## Overview
 
-v1.61 Legal PIT probe closed on 2026-10-29. Milestone **v1.62 Performance truth** (M168) **closed** on 2026-10-29: the A/B confirms a real 3.3× `as_of` regression and `bytes_per_fact` now prints `n/a` on a zero RSS delta. No product semantics, no thaw, no next milestone leased.
+v1.62 Performance truth closed on 2026-10-29. Milestone **v1.63 as_of regression** (M169) **closed** on 2026-10-29: the first bad commit is `cec5b64`; the per-fact dictionary HashSet was replaced by dense flags, and `as_of` fell from 303 µs to 123 µs. No product feature, no thaw, no next milestone leased.
 
 ## Id map
 
@@ -10,33 +10,34 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [x] **Phase 245: Bench A/B** - interleaved HEAD vs `cdf1942` medians on this host (completed 2026-10-29)
-- [x] **Phase 246: Bytes honesty** - zero RSS delta reports `n/a`, not `0 B` (completed 2026-10-29)
+- [x] **Phase 247: As_of bisect** - test the suspect commits and name the cause (completed 2026-10-29)
+- [x] **Phase 248: Fix or accept** - post-fix bench or explicit tradeoff (completed 2026-10-29)
 
 ## Phase Details
 
-### Phase 245: Bench A/B
-**Goal**: Run old and HEAD benches interleaved on the same idle host and record medians.
+### Phase 247: As_of bisect
+**Goal**: Name the commit that took `as_of.n` from ~91 µs to ~303 µs.
 **Depends on**: Nothing
-**Requirements**: PF-01
+**Requirements**: PF-03
 **Success Criteria**:
-  1. `cdf1942` and HEAD each run at least twice, interleaved.
-  2. `ingest_plain.n` and `as_of.n` medians are recorded with host/method.
-  3. The old commit's numbers are compared to the 2026-10-01 table.
+  1. Suspect commits are tested on the same host.
+  2. The first bad commit is named.
+  3. The cause is stated in code terms.
 **Plans**: 1/1 plans complete
 
-### Phase 246: Bytes honesty
-**Goal**: Stop printing `0 B` when RSS did not move.
-**Depends on**: Phase 245
-**Requirements**: PF-02
+### Phase 248: Fix or accept
+**Goal**: Remove the regression or record why the new cost is the price of dictionary facts.
+**Depends on**: Phase 247
+**Requirements**: PF-04
 **Success Criteria**:
-  1. Zero delta or zero live facts prints `n/a`.
-  2. A fresh HEAD bench records the new key honestly.
+  1. A post-change bench shows `as_of` vs old and HEAD.
+  2. If not fixed, the tradeoff and its cause are recorded.
+  3. No product semantics change beyond the hot-path fix.
 **Plans**: 1/1 plans complete
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 245. Bench A/B | 1/1 | Complete    | 2026-10-29 |
-| 246. Bytes honesty | 1/1 | Complete    | 2026-10-29 |
+| 247. As_of bisect | 1/1 | Complete    | 2026-10-29 |
+| 248. Fix or accept | 1/1 | Complete    | 2026-10-29 |

@@ -1,5 +1,5 @@
 //! M035 S01 / Phase 95 — GraphFold replay must bind reserved kutha:* for
-//! product queries (CE review P1 #10). Bare `replay` leaves dictionary_rels
+//! product queries (CE review P1 #10). Bare `replay` leaves dictionary_rel_flags
 //! empty so as_of includes genesis allows; bound replay matches live.
 
 use kutha_common::{Op, ValidTime};

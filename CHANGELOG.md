@@ -16,6 +16,27 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - HEAD medians: `ingest_plain.n` +12.6%, `as_of.n` **3.32×**, open −3.0%, persist −67.0%, replay +1.1% versus old.
 - Conclusion: the `as_of` gap is a real regression, not host/method drift. Next step is a `git bisect` over `cdf1942..HEAD`, not a new benchmark reshuffle. `bytes_per_fact` remains 0 B until phase 246.
 
+## 2026-10-29 — Process: CI cargo observe budget (M169 residual)
+
+- `observe_cargo.timeout_sec` raised 180 → 600: a cold full workspace build after the fold.rs edit hit the 180 s timeout (exit 124) even though the tests pass. Fired RED: local `kutha-gov ci` observe timeout at 180048 ms. No product code.
+
+## 2026-10-29 — Trajectory: M169 / GSD v1.63 closed
+
+- M169-S01 as_of regression closed; GSD v1.63 phases 247–248 complete. `L_delivery=M169-closed`; Active Milestone/Slice None.
+- First bad commit `cec5b64`; per-fact HashSet `is_dictionary_rel` replaced by dense `Vec<bool>`; N=10000 `as_of.n` 303 µs → 123 µs (old 91 µs). Residual 1.35× accepted as product-filter cost.
+- `cargo test --workspace` and `kutha-gov ci --jobs 1` green; cargo observe budget 600 s for cold builds. Ingest +12.6% remains a separate bisect.
+
+## 2026-10-29 — Product: as_of regression fixed (M169)
+
+- Bisect at N=2000: parent `7e79912` 34.2/68.7 µs, `cec5b64` 129.2/212.1 µs (2N/4N), HEAD pre-fix 112.1/220.1 µs.
+- First bad commit **`cec5b64`** added `LiveFactFilter::Product`, which did a HashSet `is_dictionary_rel` probe per fact.
+- Fix: dense `dictionary_rel_flags: Vec<bool>` indexed by TermId. N=10000 post-fix `as_of.n` **123,019 ns** vs old 91,335 and pre-fix 303,355. Residual 1.35× is the accepted product-filter cost.
+- `ingest_plain.n` stays 128.5 ms; the +12.6% ingest delta is a separate bisect. No Op or ADR change.
+
+## 2026-10-29 — Trajectory: lease M169-S01 (as_of regression)
+
+GSD v1.63 / phases 247–248. Goal: locate the commit behind the 3.32× `as_of` gap and fix or explicitly accept it. Prime suspect: per-fact `LiveFactFilter::Product` / `is_dictionary_rel` from `cec5b64`. No product feature, no thaw.
+
 ## 2026-10-29 — Trajectory: M168 / GSD v1.62 closed
 
 - M168-S01 performance truth closed; GSD v1.62 phases 245–246 complete. `L_delivery=M168-closed`; Active Milestone/Slice None. Not a release; `VERSION` stays `0.0.01`.

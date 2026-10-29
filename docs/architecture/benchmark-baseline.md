@@ -539,3 +539,23 @@ The two harnesses are not byte-identical: old logs do not have `fold_index_mode`
 ### Phase 246 fresh HEAD run (bytes honesty)
 
 `tmp/bench-head-4.log`: `ingest_plain.n` 107,315,884 ns, `as_of.n` 224,278 ns, `open.n` 2.84 s, `persist.n` 2.27 s, `replay_check.n` 14.3 ms, `bytes_per_fact` **n/a** (RSS delta was zero). This run is recorded only as the post-fix key; it also shows the HEAD `as_of` spread (224–303 µs across the stable runs, with the 4.6 ms load outlier). The old-vs-HEAD conclusion above is unchanged: the 3.3× gap is real, and the next step is a bisect.
+
+
+## 2026-10-29 (M169): as_of regression bisect and fix
+
+N=2000 bisect, same host, stable `as_of.2n`/`4n` (the single `.n` is a noisy first call):
+
+| commit | as_of.2n (ns) | as_of.4n (ns) | ingest_plain.n (ns) |
+|--------|--------------:|--------------:|--------------------:|
+| `7e79912` (parent) | 34,203 | 68,708 | 20,550,772 |
+| `cec5b64` (first bad) | 129,171 | 212,146 | 82,151,209 |
+| HEAD pre-fix | 112,149 | 220,061 | 20,526,065 |
+| HEAD post-fix | 50,704 | 102,021 | 35,123,706 |
+
+First bad commit: **`cec5b64`** ("dictionary entries as kutha facts and StoreBlob"). It added `LiveFactFilter::Product`, whose `keep` called `is_dictionary_rel` (HashSet probe) on every fact during `as_of`. Ingest at the same commit also jumped 4×, but later commits brought ingest back to the parent level.
+
+Fix: replace `dictionary_rels: HashSet<TermId>` with `dictionary_rel_flags: Vec<bool>` indexed by TermId; `is_dictionary_rel` is now a bounds-checked array read. Semantics unchanged.
+
+N=10000 post-fix: `as_of.n` **123,019 ns** (old median 91,335; pre-fix HEAD 303,355), `as_of.2n` 231,191, `as_of.4n` 715,674; `ingest_plain.n` 128,494,291 (unchanged). The residual **1.35×** vs old is the documented cost of the product filter; it is accepted for M169, not a full return to baseline. The pre-fix 3.32× is gone.
+
+This is not B3 and not a competitor comparison.

@@ -8,6 +8,13 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
+## M169: as_of regression — CLOSED (GSD v1.63)
+
+M168 proved a real 3.32× `as_of` gap: old `cdf1942` 91 µs vs HEAD 303 µs. Prime suspect is per-fact `LiveFactFilter::Product` / `is_dictionary_rel` added with dictionary facts (`cec5b64`). Find the commit; fix or record the tradeoff.
+
+- [x] **S01: as_of regression** `risk:medium` `depends:[]`
+  > After this: the commit that introduced the gap is named with a same-host bench, and the gap is either fixed or explicitly accepted with its cause. No product feature, no thaw.
+
 ## M168: performance truth — CLOSED (GSD v1.62)
 
 The 2026-10-28 baseline is +21.3% ingest and 4.0× as_of versus 2026-10-01, but the comparison is not controlled. Run an interleaved A/B against `cdf1942` on this host and stop reporting `0 B` when the RSS delta is zero. No product semantics, no thaw.

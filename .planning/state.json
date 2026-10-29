@@ -1,16 +1,16 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v1.61",
+  "milestone": "v1.62",
   "phases": [
     {
-      "number": "245",
-      "name": "Bench A/B",
+      "number": "247",
+      "name": "As_of bisect",
       "status": "complete"
     },
     {
-      "number": "246",
-      "name": "Bytes honesty",
+      "number": "248",
+      "name": "Fix or accept",
       "status": "complete"
     }
   ],
@@ -19,5 +19,5 @@
     "label": "Show progress",
     "reason": "Unsure of state — showing progress"
   },
-  "updated_at": "2026-10-29T13:32:20.576Z"
+  "updated_at": "2026-10-29T16:44:07.010Z"
 }

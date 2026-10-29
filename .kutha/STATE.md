@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M168-closed
+L_delivery=M169-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M168 closed (GSD v1.62) | Capability proven / Cypher started |
+| L_delivery | M169 closed (GSD v1.63) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M168 is closed (GSD v1.62, phases 245–246): interleaved A/B of `cdf1942` vs HEAD on this host, and `bytes_per_fact` now prints `n/a` on a zero RSS delta. Old reproduces the 2026-10-01 `as_of` (84–99 µs) and bytes (13.7 KB); HEAD medians are ingest +12.6%, as_of **3.32×**, open −3.0%, persist −67.0%, replay +1.1%. The as_of gap is a **real regression**; next step is `git bisect` over `cdf1942..HEAD` with a short as_of predicate, not another benchmark reshuffle. No product semantics, no thaw. Residuals: eCFR first two editions textually identical; rocks observe skipped on remote CI; GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M169 is closed (GSD v1.63, phases 247–248): the 3.32× `as_of` gap came from `cec5b64`, which added a per-fact `is_dictionary_rel` HashSet probe in `LiveFactFilter::Product`. Dense `dictionary_rel_flags: Vec<bool>` replaced it; N=10000 `as_of.n` fell from 303 µs to **123 µs** (old 91 µs), residual 1.35× accepted as product-filter cost. `kutha-gov ci --jobs 1` run_high=0; cargo observe budget raised to 600 s for cold builds. Residuals: ingest +12.6% needs its own bisect; eCFR first two editions textually identical; remote rocks observe skipped; GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

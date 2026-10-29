@@ -26,7 +26,8 @@ states:
     overlap_with: [run_checks, run_selftest]
     bin: cargo
     args: ["test", "--workspace", "--offline"]
-    timeout_sec: 180
+    # A cold full workspace build after a code edit can exceed 3 min on this host.
+    timeout_sec: 600
     build:
       bin: cargo
       args:
