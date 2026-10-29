@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import time
 from collections.abc import Mapping
 from concurrent.futures import Future, ThreadPoolExecutor
@@ -181,6 +182,13 @@ def _overlap_pipeline(
     skip_rest = False
     for name, spec in specs:
         if skip_rest:
+            out[name] = None
+            continue
+        if name == "observe_rocks" and os.environ.get("KUTHA_GOV_SKIP_ROCKS", "").strip() in {
+            "1",
+            "true",
+            "yes",
+        }:
             out[name] = None
             continue
         started = time.monotonic()
@@ -377,6 +385,13 @@ def _execute(
             )
         return "done"
     if kind == "observe_cargo":
+        if state == "observe_rocks" and os.environ.get("KUTHA_GOV_SKIP_ROCKS", "").strip() in {
+            "1",
+            "true",
+            "yes",
+        }:
+            _note_observe_skipped(outcome, state, "skip_rocks")
+            return "done"
         if _skip_heavy_observe(ctx, outcome):
             cause = "skip_cargo" if ctx.skip_cargo else "prior-high"
             _note_observe_skipped(outcome, state, cause)

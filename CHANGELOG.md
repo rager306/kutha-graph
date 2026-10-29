@@ -18,6 +18,11 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - `m167_ecfr_pit` proves `as_of` at three cuts, TT-only `as_known_on` (no future edition), `norm_view` force∩knowledge, and persist/checkpoint replay parity. Day-scale VT is probe-only.
 - No new Op, no core schema change, no thaw; `I-legal-pack-not-next` stays.
 
+## 2026-10-29 — Process: CI rocks observe skip (M167 residual)
+
+- The 7 GB GitHub runner cannot compile `librocksdb-sys` inside the step budget (exit 101 at 294 s and 620 s). CI now sets `KUTHA_GOV_SKIP_ROCKS=1`; the optional rocks observe is recorded as skipped, not claimed green. Local `ci` still runs it.
+- Fired RED: GitHub runs 40840924775 and 40844868068. No product code, no lease change.
+
 ## 2026-10-29 — Process: CI rocks build hotfix (M167 residual)
 
 - Remote `governor ci` needs to compile `librocksdb-sys`; two C++ jobs still hit the 7 GB runner limit (exit 101 at 294 s). CI keeps `CARGO_BUILD_JOBS=1` and gives `observe_rocks.timeout_sec: 900`.

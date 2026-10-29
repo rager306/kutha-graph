@@ -16,6 +16,8 @@ jobs:
     env:
       # librocksdb-sys compiles C++ in-tree; one job keeps the 7 GB runner alive.
       CARGO_BUILD_JOBS: "1"
+      # Rocks is an optional lease; the 7 GB runner cannot compile it inside 15 min.
+      KUTHA_GOV_SKIP_ROCKS: "1"
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
