@@ -50,7 +50,7 @@ None.
 
 ### Blockers/Concerns
 
-B3 environment is up: FalkorDB `kutha-b3-falkor` (127.0.0.1:6381) and Samyama `kutha-b3-samyama` (127.0.0.1:6380/8081), both smoke-tested; artifact `.compound-engineering/artifacts/research/2026-10-30-b3-environment.md`. The layered workload has not been rendered/loaded or timed, so there is no competitor ratio yet. Do not start HNSW/planner/Cypher before phase 252. Bisect builds must not share a target dir; use a detached worktree. The M171 five-sample table is in `docs/architecture/benchmark-baseline.md`; the earlier n=2 outlier is retained only as a caveat.
+B3 environment is up: FalkorDB `kutha-b3-falkor` (127.0.0.1:6381) and Samyama `kutha-b3-samyama` (127.0.0.1:6380/8081), both smoke-tested; artifact `.compound-engineering/artifacts/research/2026-10-30-b3-environment.md`. FalkorDB loaded the 768-node/2048-edge shape and returns 4096 for the 2-hop count (internal 5.0 ms, not calibrated). Samyama `RETURN 1` works, but `UNWIND ... CREATE` is rejected by its parser; a supported load form is still needed. No competitor ratio and no B4/B5 decision. Do not start HNSW/planner/Cypher before phase 252. Bisect builds must not share a target dir; use a detached worktree. The M171 five-sample table is in `docs/architecture/benchmark-baseline.md`; the earlier n=2 outlier is retained only as a caveat.
 
 ## Deferred Items
 

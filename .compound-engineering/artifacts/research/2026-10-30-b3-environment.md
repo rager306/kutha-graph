@@ -16,6 +16,11 @@ Both containers started 2026-10-30 ~15:47 +07. Samyama health `healthy`; Falkor 
 - FalkorDB: `GRAPH.QUERY b3 "RETURN 1"` returns 1.
 - Samyama: `POST /api/query {"query":"RETURN 1 AS one","graph":"b3"}` returns `{"columns":["one"],...,"records":[[1]]}`.
 
+## Smoke load
+
+- FalkorDB loaded the phase-251 shape: 768 nodes (L0/L1/L2 x 256) and 2,048 `REL` edges; `MATCH (a:L0)-[:REL*2]->(c:L2) RETURN count(c)` returns 4,096; internal execution 5.0 ms. This is a smoke number, not a calibrated comparison: the client path differs from Kutha's in-process walk.
+- Samyama `RETURN 1` works, but `UNWIND range(0,255) AS i CREATE (:L0 {id:i})` is rejected by its parser (`expected query`). A full load needs a supported create/batch form or per-row statements; do not call this a Samyama failure until the documented API shape is tried.
+
 ## Not done
 
-No layered workload rendered or loaded; no timed comparison; no B3 floor decision. The next step is a single back-to-back run of the phase-251 layered workload (256 nodes/layer, fan-out 4) through both engines with calibrated client overhead, then the B4/B5 decision. The environment is ready; this note is not evidence of a competitor ratio.
+No back-to-back calibrated comparison and no B3 floor decision. The next step is a supported Samyama load path plus one same-sitting run of the phase-251 layered workload through both engines, then the B4/B5 decision. This note is not evidence of a competitor ratio.
