@@ -7,7 +7,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ## 2026-10-30 — Process: B3 competitor environment ready
 
 - Pulled and started `falkordb/falkordb:latest` (digest `sha256:725b74d...`) and `public.ecr.aws/f9f6l5u4/samyama-graph:1.1.0` (digest `sha256:4588950...`). Containers: `kutha-b3-falkor` (127.0.0.1:6381) and `kutha-b3-samyama` (127.0.0.1:6380/8081). Both smoke-tested: Falkor `RETURN 1`, Samyama `/api/query RETURN 1`.
-- Artifact: `.compound-engineering/artifacts/research/2026-10-30-b3-environment.md`. FalkorDB loaded the phase-251 768-node/2048-edge shape and returns 4,096 for the 2-hop count (internal 5.0 ms, not calibrated). Samyama `RETURN 1` works, but `UNWIND ... CREATE` is rejected by its parser; a supported load form is still needed. No competitor ratio and no B4/B5 decision; this is phase 252 setup, not a gate pass.
+- Artifact: `.compound-engineering/artifacts/research/2026-10-30-b3-environment.md`. FalkorDB loaded the phase-251 768-node/2048-edge shape and returns 4,096 for the 2-hop count (internal 5.0 ms, not calibrated). Samyama `RETURN 1` works; `UNWIND ... CREATE` is rejected, but comma `CREATE` and single-edge `CREATE` are accepted; a batch load form is still needed. No competitor ratio and no B4/B5 decision; this is phase 252 setup, not a gate pass.
 
 ## 2026-10-30 — Process: B3 workload and Kutha baseline
 

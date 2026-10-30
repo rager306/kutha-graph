@@ -19,7 +19,7 @@ Both containers started 2026-10-30 ~15:47 +07. Samyama health `healthy`; Falkor 
 ## Smoke load
 
 - FalkorDB loaded the phase-251 shape: 768 nodes (L0/L1/L2 x 256) and 2,048 `REL` edges; `MATCH (a:L0)-[:REL*2]->(c:L2) RETURN count(c)` returns 4,096; internal execution 5.0 ms. This is a smoke number, not a calibrated comparison: the client path differs from Kutha's in-process walk.
-- Samyama `RETURN 1` works, but `UNWIND range(0,255) AS i CREATE (:L0 {id:i})` is rejected by its parser (`expected query`). A full load needs a supported create/batch form or per-row statements; do not call this a Samyama failure until the documented API shape is tried.
+- Samyama `RETURN 1` works; `UNWIND range(0,255) AS i CREATE (:L0 {id:i})` is rejected by its parser (`expected query`), but comma `CREATE (:L0 {id:0}), (:L0 {id:1})` and `CREATE (a:L0 {id:2})-[:REL]->(b:L1 {id:2})` are accepted. A full load needs a comma/merge batch or per-edge statements; the parser is not a blocker.
 
 ## Not done
 
