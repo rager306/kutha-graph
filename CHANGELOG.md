@@ -4,6 +4,17 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Trajectory: M174-S01 closed (Gate GB)
+
+- Gate GB closed for supported M003a scope: FF5 vt 2015/2020; B3 every layer-0 start x 1/2 hops; M167 eCFR 3 sections x 7 cuts. GPML `AS OF` equals the typed facade; unknown vocabulary fails closed.
+- Security eligibility boundary recorded: ADR-080/081 / C4/C6 require a separate owner-leased milestone. No ABAC/sandbox implementation, no thaw beyond M003a; M003b stays gated on C2.
+- GSD v1.67 closed; phases 255–256 archived; `Active Milestone=None`, `L_delivery=M174-S01-closed`. Independent verifier PASS; workspace 744 passed / 0 failed; no product/ADR/CI change.
+
+## 2026-10-30 — Process: Gate GB fixture parity and closure
+
+- Added `m174_gate_gb.rs`: GPML `AS OF` parity across FF5 (2015/2020), B3 layered workload (every layer-0 start, 1/2 hops), and M167 eCFR (3 sections x 7 cuts); unknown relation/term fail closed.
+- Gate GB is closed for supported M003a scope. Security ADR-080/081 / C4/C6 is technically eligible for a separate owner-leased milestone, but no ABAC/sandbox implementation and no thaw beyond M003a. M003b remains gated on C2.
+
 ## 2026-10-30 — Process: GSD v1.67 and M174-S01 Gate GB
 
 - Owner continued after M003a; GSD milestone **v1.67 Gate GB fixture parity** opened. Phase 255 proves GPML `AS OF` parity across FF5, B3 layered workload, and M167 eCFR sections/cuts. Phase 256 records Gate GB closure, scope/caveats, and security eligibility boundary.

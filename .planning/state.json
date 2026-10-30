@@ -4,20 +4,20 @@
   "milestone": "v1.67",
   "phases": [
     {
-      "number": "253",
-      "name": "M003a parser subset",
+      "number": "255",
+      "name": "Gate GB fixture parity",
       "status": "complete"
     },
     {
-      "number": "254",
-      "name": "M003a differential falsifier",
+      "number": "256",
+      "name": "Gate GB closure decision",
       "status": "complete"
     }
   ],
   "next": {
-    "command": "/gsd-discuss-phase",
-    "label": "Discuss the first phase",
-    "reason": "Project initialized — plan your first phase"
+    "command": "/gsd-progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
   },
-  "updated_at": "2026-10-30T14:43:37.163Z"
+  "updated_at": "2026-10-30T14:56:39.505Z"
 }

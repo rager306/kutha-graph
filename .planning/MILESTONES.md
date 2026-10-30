@@ -1,10 +1,16 @@
 # Project Milestones: Kutha
 
-## v1.67 Gate GB fixture parity (Active: 2026-10-30)
+## v1.67 Gate GB fixture parity (Shipped: 2026-10-30)
 
-**M174-S01.** Prove GPML `AS OF` parity across FF5, B3, and M167 eCFR fixtures; record Gate GB closure and security eligibility boundary. No C4/C6 implementation, no thaw beyond M003a.
+**Delivered:** M174. Gate GB closed for supported M003a scope: GPML `AS OF` parity across FF5, B3 layered workload, and M167 eCFR sections/cuts. Security remains separately owner-leased; no C4/C6 implementation.
 
-**Phases:** 255–256 (0/2 plans complete)
+**Phases completed:** 255–256 (2 plans)
+
+**Key accomplishments:**
+- FF5 vt 2015/2020: GPML == typed IR == `as_of` facade.
+- B3: every layer-0 start x 1/2 hops; GPML == typed IR; execution non-empty.
+- M167 eCFR: 3 sections x 7 cuts GPML-vs-facade parity; unknown relation/term fail closed.
+- Security eligibility boundary recorded; ADR-080/081 / C4/C6 require a separate owner-leased milestone; M003b stays gated on C2.
 
 ---
 

@@ -8,11 +8,11 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
-## M174: Gate GB fixture parity — ACTIVE (harness lease)
+## M174: Gate GB fixture parity — CLOSED (harness lease)
 
-M003a satisfied the technical prerequisite for security. M174 proves Gate GB across the existing fixture corpus: FF5, B3 layered workload, and M167 eCFR sections/cuts. It records scope/caveats and the security eligibility boundary; no C4/C6 implementation.
+M003a satisfied the technical prerequisite for security. M174 proved Gate GB across FF5, B3, and M167 eCFR; recorded scope/caveats and the security eligibility boundary. No C4/C6 implementation, no thaw beyond M003a.
 
-- [ ] **S01: Gate GB fixture parity and closure** `risk:low` `depends:[]`
+- [x] **S01: Gate GB fixture parity and closure** `risk:low` `depends:[]`
   > After this: Gate GB evidence is recorded; security remains a separate owner-leased milestone. No thaw beyond M003a.
 
 ## M173: M003a GPML AS OF parser — CLOSED (harness lease)

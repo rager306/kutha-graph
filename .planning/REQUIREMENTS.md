@@ -5,15 +5,15 @@
 
 ## v1.67 Requirements
 
-- [ ] **GB-01**: GPML `AS OF` parity is proven across the existing fixture corpus: FF5 statute, B3 layered workload, and M167 eCFR PIT sections/cuts.
-- [ ] **GB-02**: Gate GB closure is recorded with explicit scope/caveats, and the security milestone remains a separate owner decision (no C4/C6 implementation).
+- [x] **GB-01**: GPML `AS OF` parity is proven across the existing fixture corpus: FF5 statute, B3 layered workload, and M167 eCFR PIT sections/cuts.
+- [x] **GB-02**: Gate GB closure is recorded with explicit scope/caveats, and the security milestone remains a separate owner decision (no C4/C6 implementation).
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| GB-01 | Phase 255 | Pending |
-| GB-02 | Phase 256 | Pending |
+| GB-01 | Phase 255 | Complete |
+| GB-02 | Phase 256 | Complete |
 
 **Coverage:**
 - v1.67 requirements: 2 total
