@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M170
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M170-S01-open
+L_delivery=M170-S01-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M170-S01 active (as_of allocation; harness lease) | Capability proven / Cypher started |
+| L_delivery | M170-S01 closed (as_of allocation; harness lease) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M170-S01 is leased as a harness slice: `GraphFold::live_at`/`as_of` collect triples directly through `collect_live_triples_at`, reserving the candidate count from `vt_by_from` on the warm path and `facts.len()` on the cold path. `wal.rs` header `try_into().unwrap()` and `leapfrog.rs` min/max `unwrap()` became `expect("...")`. N=10000 applied-HEAD bench: `as_of.n` median 73.6 µs (68.3/73.6/76.6) vs 126.7 µs before; `as_of.2n` 147.5 vs 258.5 µs; `ingest_plain.n` is unchanged by the code path (noise only). `cargo test --workspace` 730 passed; `kutha-gov ci --jobs 1` run_high=0; default clippy stays 108; selected BeautifulRust lib lints 471 → 467. Close after an independent verifier and a final interleaved bench. Residuals stay separate: M170 ingest bisect, eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M170-S01 is closed. `GraphFold::live_at`/`as_of` collect triples directly through `collect_live_triples_at`; `wal.rs` header and `leapfrog.rs` min/max `unwrap()` became `expect("...")`. Independent verifier PASS (`independent: true`) reproduced 730 tests and `kutha-gov ci --jobs 1` run_high=0. Final interleaved bench `89b0b9c` vs `456334c`: `as_of.n` 145.4 → 71.8 µs (2 runs each; ~2.0×), `as_of.2n` 260.2 → 150.4 µs (~1.73×); `ingest_plain.n` stayed noise-dominated. Non-blocking follow-ups: shared scan helper, capacity pre-pass/over-reservation for heavily retracted cuts, and the `beautifulrust.md` example wording. Residuals stay separate: ingest bisect, eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

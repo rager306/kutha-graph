@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Trajectory: M170-S01 closed (as_of allocation)
+
+- Independent verifier **PASS** (`independent: true`; fresh context; no edits/commit/push): 730 tests passed, `kutha-gov ci --jobs 1` exit 0 / `run_high=0`, default clippy 108, no ADR/Op/CI change.
+- Final interleaved bench `89b0b9c` vs `456334c` (2 runs each, N=10000): `as_of.n` 145.4 → 71.8 µs (~2.0×), `as_of.2n` 260.2 → 150.4 µs (~1.73×); `ingest_plain.n` stayed noise-dominated. Per-run samples are in `tmp/jit-bench-*.log`.
+- JiT differential parity on the same pair: 5/5 tests passed on base and 5/5 on head; no candidate-only failure. Artifact: `tmp/jit/M170-S01/`.
+- Lease closed: `Active Milestone=None`, `Active Slice=None`, `L_delivery=M170-S01-closed`. Non-blocking follow-ups: shared scan helper, capacity pre-pass/over-reservation on heavily retracted cuts, and the `beautifulrust.md` example wording (the last one is now corrected).
+
 ## 2026-10-30 — Trajectory: lease M170-S01 (as_of allocation)
 
 Harness lease `M170-S01` after the probe. `L_delivery=M170-S01-open`; `Active Milestone=M170`, `Active Slice=S01`. No GSD milestone, no thaw, no ADR/Op change. Close only after an independent verifier and a final interleaved bench.
@@ -14,7 +21,7 @@ Harness lease `M170-S01` after the probe. `L_delivery=M170-S01-open`; `Active Mi
 - `wal.rs` frame-header `try_into().unwrap()` calls and `leapfrog.rs` min/max `unwrap()` calls became `expect("...")` with the invariant in the message.
 - N=10000, release, current HEAD after patch: `as_of.n` 68.3/73.6/76.6 µs (median 73.6) vs 115.5/163.5/117.3/136.1 µs before (median 126.7); `as_of.2n` median 147.5 vs 258.5 µs; `as_of.4n` 625.8 vs 717.9 µs. `ingest_plain.n` 99.2/103.8/141.1 ms (median 103.8) vs 112.3/111.7/179.0/126.0 ms (median 119.2); the ingest path is untouched and the 141 ms run is an outlier.
 - `cargo test --workspace` 730 passed, 0 failed. Selected BeautifulRust lib lints 471 → 467 warnings; the four removed are the production `unwrap` sites. No new warnings.
-- Leased as `M170-S01` after the probe; code commit `70f861e`. No GSD milestone, no ADR/Op change. Not a close until the independent verifier and final interleaved bench.
+- Closed as `M170-S01` after the independent verifier and final interleaved bench; code commit `70f861e`, close record in the 2026-10-30 trajectory entry. No GSD milestone, no ADR/Op change.
 
 ## 2026-10-30 — Process: BeautifulRust advisory policy
 

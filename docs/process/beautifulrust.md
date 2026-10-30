@@ -54,8 +54,9 @@ Notable production signal:
   environment concurrently. `apply_dotenv()` is a safe function called from
   `Runtime::new` / `FoldIndexMode`; treat this as a soundness caveat, not as proof that
   the current startup path is unsafe.
-- `wal.rs:209/210` slice fixed 8-byte headers with `try_into().unwrap()`; replacing them
-  with `expect("8-byte header")` is low-risk and lint-clean.
+- `wal.rs:209/210` slice fixed 8-byte headers with `try_into().unwrap()`; replacing the
+  two four-byte slices with `expect("frame header has a 4-byte length prefix")` and
+  `expect("frame header has a 4-byte checksum")` is low-risk and lint-clean.
 - `leapfrog.rs:51` unwraps `mn`/`mx` after a guard proves the rows are non-empty; an
   `expect("non-empty rows")` documents the invariant without changing behaviour.
 
