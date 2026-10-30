@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M176
+**Active Slice:** S01
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M175-S01-closed
+L_delivery=M176-S01-open
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M175-S01 closed (C4 path-policy foundation; GSD v1.68) | Full ABAC / tenant product |
+| L_delivery | M176-S01 active (C1 pack lifecycle foundation; GSD v1.69) | Full ABAC / tenant product |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M175-S01 is closed under GSD **v1.68 C4 path-policy foundation**. Delivered `crates/kutha-runtime/src/security.rs`: closed-default `PathPolicy` over existing typed QueryIr. `Scan`, unlabeled walks, and zero-hop queries deny by default; labeled hops require every relation to resolve and be policy-allowed. `compile_path_policy` decides before `prepare`; `execute_authorized` preserves authorized GPML/typed results and denied queries return typed `SecurityError::PolicyDenied`, never empty rows. Post-policy query failures use distinct `SecurityError::QueryRejected`. Tests: policy 5/5, integration 4/4, workspace 753 passed / 0 failed; independent verifiers PASS. Security ADR-080/081 stay Proposed; no grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, full ABAC, or ADR Accepted. M174-S01 remains closed (Gate GB; security eligibility recorded). M173-S01 remains closed (M003a parser delivered). M172-S01 remains closed (B3 no-gap; B4/B5 skipped). M171/M170 residuals stay non-blocking. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M176-S01 is leased under GSD **v1.69 C1 pack lifecycle foundation**. Scope is bounded: typed D021 lifecycle log events and a replay-derived droppable lifecycle lease; fail-closed install/activate/retire transitions. No pack artifact loading, dynamic operator registration, dictionary facets, lease rebuilding, WASM, marketplace, schema SMO, or ADR Accepted. M175-S01 is closed (C4 path-policy foundation). Delivered `crates/kutha-runtime/src/security.rs`: closed-default `PathPolicy` over existing typed QueryIr. `Scan`, unlabeled walks, and zero-hop queries deny by default; labeled hops require every relation to resolve and be policy-allowed. `compile_path_policy` decides before `prepare`; `execute_authorized` preserves authorized GPML/typed results and denied queries return typed `SecurityError::PolicyDenied`, never empty rows. Post-policy query failures use distinct `SecurityError::QueryRejected`. Tests: policy 5/5, integration 4/4, workspace 753 passed / 0 failed; independent verifiers PASS. Security ADR-080/081 stay Proposed; no grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, full ABAC, or ADR Accepted. M174-S01 remains closed (Gate GB; security eligibility recorded). M173-S01 remains closed (M003a parser delivered). M172-S01 remains closed (B3 no-gap; B4/B5 skipped). M171/M170 residuals stay non-blocking. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

@@ -1,19 +1,16 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.68
-status: Awaiting next milestone
-stopped_at: Phase 258 complete — all phases complete
-last_updated: "2026-10-30T15:43:42.182Z"
+milestone: v1.69
+milestone_name: C1 pack lifecycle foundation
+status: planning
+last_updated: "2026-10-30T15:55:52.490Z"
 last_activity: 2026-10-30
-last_activity_desc: Milestone v1.68 completed and archived
-state_head: d489abf431ac6e00df622eb0111aa7116991b5bf
 progress:
   total_phases: 2
-  completed_phases: 2
+  completed_phases: 0
   total_plans: 2
-  completed_plans: 2
-milestone_name: C4 path-policy foundation
-current_phase: null
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -23,14 +20,15 @@ current_phase: null
 See: .planning/PROJECT.md (updated 2026-10-29)
 
 **Core value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
-**Current focus:** v1.68 C4 path-policy foundation (M175-S01), complete.
+**Current focus:** v1.69 C1 pack lifecycle foundation (M176-S01), phase 259.
 
 ## Current Position
 
-Phase: Milestone v1.68 complete
-Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-10-30 — Milestone v1.68 completed and archived
+Phase: 259 — C1 lifecycle log schema
+Plan: 259-01
+Status: Ready to execute
+Last activity: 2026-10-30 — Milestone v1.69 started; C1 lifecycle schema planned
+
 
 ## Accumulated Context
 
@@ -41,6 +39,7 @@ Last activity: 2026-10-30 — Milestone v1.68 completed and archived
 - 2026-10-30: `KUTHA_FOLD_INDEX_MODE=lazy|thin` is the bounded write-thin opt-out; Eager remains default.
 - 2026-10-30: B3 showed no gap; B4/B5 are skipped. M003a leases the read-only GPML/Cypher subset parser; HNSW/planner and legal pack stay frozen.
 - 2026-10-30: M003a binder uses intern/allowlist now; pack-dictionary binder is a later small lease (M003b after C2).
+- 2026-10-30: C1 foundation is bounded to typed lifecycle events and a replay-derived lease; no artifact loading, operator registration, dictionary facets, lease rebuild, WASM, or marketplace.
 - 2026-10-30: Gate GB closed; M175 leases the bounded C4 foundation only — closed-default path-policy compiler before prepare. Grants, tenants, vacuum, capabilities, WASM, and full ABAC remain out of scope.
 
 ### Pending Todos

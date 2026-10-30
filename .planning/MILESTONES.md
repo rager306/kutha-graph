@@ -1,5 +1,13 @@
 # Project Milestones: Kutha
 
+## v1.69 C1 pack lifecycle foundation (Active: 2026-10-30)
+
+**M176-S01.** Bounded C1 foundation from ADR-021: typed D021 lifecycle log events plus a replay-derived droppable lifecycle lease. No artifact loading, dynamic operators, dictionary facets, lease rebuilds, WASM, marketplace, schema SMO, or ADR Accepted.
+
+**Phases:** 259–260 (0/2 plans complete)
+
+---
+
 ## v1.68 C4 path-policy foundation (Shipped: 2026-10-30)
 
 **Delivered:** M175. Bounded C4 security foundation permitted by M003a + Gate GB: closed-default path-policy compiler over existing typed QueryIr, deny-before-prepare. No grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, full ABAC, or ADR Accepted.

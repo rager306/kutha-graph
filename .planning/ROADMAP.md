@@ -2,7 +2,7 @@
 
 ## Overview
 
-v1.68 C4 path-policy foundation is closed. After M003a + Gate GB, M175 added a bounded closed-default path-policy compiler over the existing typed `QueryIr`; unauthorized scans/hops deny before prepare, and authorized execution preserves GPML/typed results. It does **not** implement grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, full ABAC policy language, or ADR Accepted.
+v1.69 starts the bounded C1 pack-lifecycle foundation from ADR-021. It adds typed `PackInstall` / `PackActivate` / `PackRetire` log events and a droppable lifecycle lease, without loading pack artifacts, registering operators, rebuilding leases, or changing graph semantics. No marketplace, WASM, dictionary facets, schema SMO, or ADR Accepted.
 
 ## Id map
 
@@ -10,40 +10,40 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [x] **Phase 257: C4 path-policy rewrite foundation** - closed-default compiler over typed QueryIr (completed 2026-10-30)
-- [x] **Phase 258: C4 authorized execution integration** - GPML/typed query integration and fail-closed tests (completed 2026-10-30)
+- [ ] **Phase 259: C1 lifecycle log schema** - typed lifecycle ops, serde/wire compatibility, admission/receipt classification
+- [ ] **Phase 260: C1 lifecycle runtime lease** - deterministic lifecycle state, persistence/replay/fork parity
 
 ## Phase Details
 
-### Phase 257: C4 path-policy rewrite foundation
-**Goal**: Add a typed path-policy decision that can allow or deny an existing query before `prepare`.
+### Phase 259: C1 lifecycle log schema
+**Goal**: Add D021 lifecycle log events and fail-closed admission transitions.
 **Depends on**: Nothing
-**Requirements**: SEC-01
+**Requirements**: C1-01
 **Success Criteria**:
-  1. Closed default: scan and unlabeled walks deny unless explicitly allowed.
-  2. Labeled hops require every relation to be policy-allowed.
-  3. Denied decisions occur before lease/row materialization and carry a typed error.
-**Plans**: 1/1 plans complete
+  1. Typed variants carry pack id/name/version and serialize/deserialize compatibly.
+  2. Lifecycle meta ops classify as self-commit and do not create graph facts.
+  3. Invalid ordering (activate before install, duplicate install, unknown retire) is rejected at admission.
+**Plans**: 0 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 257 to break down)
+- [ ] TBD (run /gsd-plan-phase 259 to break down)
 
-### Phase 258: C4 authorized execution integration
-**Goal**: Integrate the policy compiler with typed and GPML-produced queries without changing authorized results.
-**Depends on**: Phase 257
-**Requirements**: SEC-02
+### Phase 260: C1 lifecycle runtime lease
+**Goal**: Expose a deterministic lifecycle lease built by replay, with persistence and fork parity.
+**Depends on**: Phase 259
+**Requirements**: C1-02
 **Success Criteria**:
-  1. Authorized GPML/typed queries return the same rows as direct execution.
-  2. Denied GPML/typed queries return typed security errors, not empty rows.
-  3. No grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, or full ABAC language.
-**Plans**: 1/1 plans complete
+  1. Current pack state is queryable and derived only from the log.
+  2. Persist/open, replay, and fork preserve lifecycle state or intentionally cut it as a lease.
+  3. Graph fold fingerprint and product fact results remain unchanged.
+**Plans**: 0 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 258 to break down)
+- [ ] TBD (run /gsd-plan-phase 260 to break down)
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 257. C4 path-policy rewrite foundation | 1/1 | Complete    | 2026-10-30 |
-| 258. C4 authorized execution integration | 1/1 | Complete    | 2026-10-30 |
+| 259. C1 lifecycle log schema | 0/1 | Pending | — |
+| 260. C1 lifecycle runtime lease | 0/1 | Pending | — |

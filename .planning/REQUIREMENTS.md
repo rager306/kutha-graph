@@ -3,23 +3,23 @@
 **Defined:** 2026-10-30
 **Core Value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
 
-## v1.68 Requirements
+## v1.69 Requirements
 
-- [x] **SEC-01**: A closed-default path-policy compiler evaluates existing typed queries before prepare; unauthorized relations, unlabeled walks, and scans are denied without materializing a lease or rows.
-- [x] **SEC-02**: Authorized execution integrates with existing `QueryIr` / GPML-produced queries and preserves typed cuts/results; denied execution returns a typed security error, not a silent empty result.
+- [ ] **C1-01**: D021 lifecycle facts (`PackInstall`, `PackActivate`, `PackRetire`) are typed log events with versioned pack identity, wire/serde compatibility, and fail-closed duplicate/state transitions.
+- [ ] **C1-02**: A droppable runtime lifecycle lease replays the event log deterministically, exposes current pack state, and persists/reopens without changing graph facts or fold fingerprint.
 
 ## Explicit non-goals
 
-- No grants-as-facts, tenant slices, vacuum authority, capabilities, WASM sandbox, ABAC policy language, or ADR Accepted status.
+- No pack artifact loading, dynamic operator registration, dictionary facets, lease rebuilding, WASM, marketplace, schema SMO, or ADR Accepted status.
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SEC-01 | Phase 257 | Complete |
-| SEC-02 | Phase 258 | Complete |
+| C1-01 | Phase 259 | Pending |
+| C1-02 | Phase 260 | Pending |
 
 **Coverage:**
-- v1.68 requirements: 2 total
+- v1.69 requirements: 2 total
 - Mapped to phases: 2
 - Unmapped: 0

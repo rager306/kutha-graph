@@ -10,11 +10,11 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.68 C4 path-policy foundation — active (M175)
+## Current Milestone: v1.69 C1 pack lifecycle foundation — active (M176)
 
-**Goal:** Add a bounded closed-default path-policy compiler over existing typed QueryIr; deny unauthorized scans/hops before prepare. No grants, tenants, vacuum authority, capabilities, WASM, or full ABAC.
+**Goal:** Add typed D021 lifecycle log events and a replay-derived droppable lifecycle lease. No artifact loading, operator registration, dictionary facets, lease rebuilding, WASM, or marketplace.
 
-**Lease:** `.kutha/STATE.md` is `M175-S01`; phases 257–258. Security ADRs stay Proposed.
+**Lease:** `.kutha/STATE.md` is `M176-S01`; phases 259–260. No thaw beyond M003a.
 
 **Last shipped:** v1.60 Operational honesty (M166, 2026-10-28); v1.59 compacted Horn cause (M165, 2026-10-27). Honeycomb stays Proposed.
 

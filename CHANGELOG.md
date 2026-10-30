@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Process: GSD v1.69 and M176-S01 C1 foundation
+
+- Owner continued after C4 foundation; GSD milestone **v1.69 C1 pack lifecycle foundation** opened. Phase 259 adds typed D021 lifecycle log schema/admission; phase 260 adds a replay-derived droppable lifecycle lease.
+- Harness lease **M176-S01** opened; `L_delivery=M176-S01-open`; `.kutha/ROADMAP.md` has unchecked S01.
+- Explicit non-goals: pack artifact loading, dynamic operator registration, dictionary facets, lease rebuilding, WASM, marketplace, schema SMO, ADR Accepted.
+
 ## 2026-10-30 — Trajectory: M175-S01 closed (C4 foundation)
 
 - Delivered `crates/kutha-runtime/src/security.rs`: closed-default `PathPolicy` over existing typed QueryIr. `Scan`, unlabeled walks, and zero-hop queries deny by default; labeled hops require every relation to resolve and be policy-allowed.
