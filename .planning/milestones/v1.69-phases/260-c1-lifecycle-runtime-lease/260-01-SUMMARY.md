@@ -30,4 +30,4 @@ coverage:
 
 # Phase 260 summary — C1 lifecycle runtime lease
 
-Added `pack_lifecycle.rs` and `Runtime::pack_lifecycle()`. State derives deterministically from admitted D021 events in first-install order, with installed/active/retired states and event ids. Tests cover graph neutrality, persist/open parity, fork-at prefix cuts, and product graph event isolation. Runtime tests 5/5, including checkpoint_sealed_prefix survival; workspace 762 passed / 0 failed.
+Added `pack_lifecycle.rs` and `Runtime::pack_lifecycle()`. State derives deterministically from admitted D021 events in first-install order, with installed/active/retired states and event ids. Tests cover graph neutrality, persist/open parity, fork-at prefix cuts, and product graph event isolation. Runtime tests 5/5, including a checkpoint_sealed_prefix test where Pack* events are forced into the sealed prefix by a second persist; workspace 763 passed / 0 failed.

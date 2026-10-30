@@ -20,6 +20,6 @@ read_only_inputs:
 
 # Phase 260 verification — C1 lifecycle runtime lease
 
-Independent verifier PASSed replay-derived lifecycle state: Runtime::pack_lifecycle derives installed/active/retired records from admitted events in first-install order, ignores product graph events, preserves graph fingerprint, and survives persist/open, fork prefix cuts, and checkpoint_sealed_prefix. Runtime tests 5/5; workspace 762 passed / 0 failed; precommit exit 0.
+Independent verifier PASSed replay-derived lifecycle state: Runtime::pack_lifecycle derives installed/active/retired records from admitted events in first-install order, ignores product graph events, preserves graph fingerprint, and survives persist/open, fork prefix cuts, and checkpoint_sealed_prefix. Runtime tests 5/5; the checkpoint test first persists lifecycle events, appends six product Asserts, persists again so Pack* sits in the sealed prefix, then checkpoints. Workspace 763 passed / 0 failed; precommit exit 0.
 
-No pack artifact loading, operator registration, dictionary facets, lease rebuilding, WASM, marketplace, schema SMO, or ADR Accepted. F1 checkpoint preservation was added before close and is covered by the fifth runtime test.
+No pack artifact loading, operator registration, dictionary facets, lease rebuilding, WASM, marketplace, schema SMO, or ADR Accepted. F1 checkpoint preservation is covered by the fifth runtime test with Pack* forced into the sealed prefix. Replay-side ordering is not revalidated (admission is the gate); a hand-edited log can open with orphan transitions. That is an explicit foundation limitation, not a claimed invariant.

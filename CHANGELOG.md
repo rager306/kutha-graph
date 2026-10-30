@@ -7,7 +7,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ## 2026-10-31 — Trajectory: M176-S01 closed (C1 foundation)
 
 - Delivered typed D021 lifecycle events (`PackInstall` / `PackActivate` / `PackRetire`) and `Runtime::pack_lifecycle()` replay-derived lease. Lifecycle events are meta-only, graph-neutral, and fail closed on invalid ordering/empty identifiers/user forgery; checkpoint preserves prefix lifecycle state.
-- Tests: schema 4/4, runtime 5/5, workspace 762 passed / 0 failed. Bench at close: `as_of.n` 502,546 / 76,282 ns (first is a load outlier), `ingest_plain.n` 118,958,583 / 119,958,215 ns; C1 touches no ingest/fold hot path.
+- Tests: schema 4/4, runtime 5/5, workspace 762 passed / 0 failed. Bench at close: `as_of.n` 502,546 / 76,282 ns (first is a load outlier), `ingest_plain.n` 118,958,583 / 119,958,215 ns; C1 touches no ingest/fold hot path. Replay does not revalidate lifecycle ordering; admission is the gate, and a hand-edited log can open with orphan transitions (explicit foundation limitation).
 - GSD v1.69 closed; phases 259–260 archived; `Active Milestone=None`, `L_delivery=M176-S01-closed`. No pack artifact loading, operator registration, dictionary facets, lease rebuild, WASM, marketplace, schema SMO, or ADR Accepted.
 
 ## 2026-10-30 — Product: C1 pack lifecycle foundation
@@ -15,8 +15,8 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - Added typed `Op::PackInstall` / `PackActivate` / `PackRetire` with pack id/name/version; deterministic digest, empty `object_ids`, self-commit meta classification, no graph facts.
 - Admission replays D021 lifecycle events and rejects duplicate install, activate without install/version mismatch, retire without install/version mismatch, repeated activate/retire. Runtime exposes dictionary-mode `emit_pack_*` constructors.
 - Added `pack_lifecycle.rs` and `Runtime::pack_lifecycle()`: replay-derived installed/active/retired lease, graph-neutral, persist/open and fork-prefix parity. No pack artifact loading, operator registration, dictionary facets, lease rebuild, WASM, marketplace, schema SMO, or ADR Accepted.
-- Tests: schema 4/4, runtime 5/5 (including checkpoint_sealed_prefix survival), workspace 762 passed / 0 failed. Checkpoint copies prefix Pack* events verbatim; empty identifiers and user-forged Pack* are rejected.
-- Bench at close (N=10000, same host): two runs `as_of.n` 502,546 / 76,282 ns and `ingest_plain.n` 118,958,583 / 119,958,215 ns. The first `as_of` is a load outlier; the second is in the normal band. C1 touches no ingest/fold hot path.
+- Tests: schema 5/5 (including digest length-collision guard), runtime 5/5 (Pack* forced into the sealed prefix before checkpoint), workspace 763 passed / 0 failed. Checkpoint copies prefix Pack* events verbatim; empty identifiers and user-forged Pack* are rejected.
+- Bench at close (N=10000, same host): two runs `as_of.n` 502,546 / 76,282 ns and `ingest_plain.n` 118,958,583 / 119,958,215 ns. The first `as_of` is a load outlier; the second is in the normal band. C1 touches no ingest/fold hot path. Replay does not revalidate lifecycle ordering; admission is the gate, and a hand-edited log can open with orphan transitions (explicit foundation limitation).
 
 ## 2026-10-30 — Process: GSD v1.69 and M176-S01 C1 foundation
 

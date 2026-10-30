@@ -91,10 +91,30 @@ fn lifecycle_state_survives_checkpoint_sealed_prefix() {
     let _reset = Reset;
     store::set_test_segment_limits(Some(4096), Some(2));
 
-    let rt = build_runtime();
+    let mut rt = build_runtime();
     let dir = std::path::PathBuf::from("tmp/m176-lifecycle-checkpoint");
     std::fs::remove_dir_all(&dir).ok();
-    rt.persist(&dir).expect("persist");
+    rt.persist(&dir).expect("persist lifecycle prefix");
+    // Force the Pack* events into a sealed prefix: append product events and
+    // persist again, so the checkpoint boundary includes the lifecycle events.
+    let article = rt.intern("article");
+    let relation = rt.intern("relatedTo");
+    let object = rt.intern("value");
+    for _ in 0..6 {
+        rt.emit(Op::Assert {
+            subject: article,
+            relation,
+            object,
+            valid_from: 2010,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .expect("product assert");
+    }
+    rt.persist(&dir)
+        .expect("persist with sealed lifecycle prefix");
     store::checkpoint_sealed_prefix(&dir).expect("checkpoint");
     let opened = Runtime::open(&dir).expect("open");
     assert_eq!(

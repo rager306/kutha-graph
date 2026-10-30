@@ -1,6 +1,6 @@
 //! M176 phase 259: D021 lifecycle log schema, admission, and compatibility.
 
-use kutha_common::{Event, Op};
+use kutha_common::{Event, EventId, Op};
 use kutha_runtime::{Runtime, RuntimeError};
 
 fn install(pack_id: &str, version: &str) -> Op {
@@ -101,4 +101,31 @@ fn lifecycle_rejects_empty_identifiers_and_user_forgery() {
         rt.emit(install("core", "1.0.0")),
         Err(RuntimeError::MetaOpRejected)
     ));
+}
+
+#[test]
+fn pack_digest_separates_length_collisions() {
+    let id = EventId::nil();
+    // Use explicit ops for the collision shape; install() prefixes the name.
+    let a = Event {
+        id,
+        op: Op::PackInstall {
+            pack_id: "ab".to_string(),
+            name: "c".to_string(),
+            version: "1".to_string(),
+        },
+        ingested_at: 1,
+        object_ids: vec![],
+    };
+    let b = Event {
+        id,
+        op: Op::PackInstall {
+            pack_id: "a".to_string(),
+            name: "bc".to_string(),
+            version: "1".to_string(),
+        },
+        ingested_at: 1,
+        object_ids: vec![],
+    };
+    assert_ne!(a.digest_bytes(), b.digest_bytes());
 }
