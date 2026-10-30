@@ -128,4 +128,31 @@ fn pack_digest_separates_length_collisions() {
         object_ids: vec![],
     };
     assert_ne!(a.digest_bytes(), b.digest_bytes());
+
+    let activate = |pack_id: &str, version: &str| Event {
+        id,
+        op: Op::PackActivate {
+            pack_id: pack_id.to_string(),
+            version: version.to_string(),
+        },
+        ingested_at: 1,
+        object_ids: vec![],
+    };
+    assert_ne!(
+        activate("ab", "c").digest_bytes(),
+        activate("a", "bc").digest_bytes()
+    );
+    let retire = |pack_id: &str, version: &str| Event {
+        id,
+        op: Op::PackRetire {
+            pack_id: pack_id.to_string(),
+            version: version.to_string(),
+        },
+        ingested_at: 1,
+        object_ids: vec![],
+    };
+    assert_ne!(
+        retire("ab", "c").digest_bytes(),
+        retire("a", "bc").digest_bytes()
+    );
 }

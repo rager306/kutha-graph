@@ -10,7 +10,7 @@ Product writes use live `Op` variants; Retract/Correct/justification cite `Event
 
 ### Evidence (2026-10-23; Proposed)
 
-Shipped `Op` kinds also include `Checkpoint` (M154 sealed-prefix receipt via `store::checkpoint_sealed_prefix`; prefix `StoreBlob`, `QuantumOutcome`, and `JustificationCite` kept verbatim). The 2026-10-08 D011-1 pointer listed kinds through `TtAnchor`. This note does not rewrite D011-1…D011-4. Status stays **Proposed**.
+Shipped `Op` kinds also include `Checkpoint` (M154 sealed-prefix receipt via `store::checkpoint_sealed_prefix`; prefix `StoreBlob`, `QuantumOutcome`, `JustificationCite`, and D021 `PackInstall` / `PackActivate` / `PackRetire` kept verbatim). The 2026-10-08 D011-1 pointer listed kinds through `TtAnchor`. This note does not rewrite D011-1…D011-4. Status stays **Proposed**.
 
 ## Date
 

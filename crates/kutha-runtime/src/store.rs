@@ -161,12 +161,15 @@ pub fn persist(runtime: &Runtime, dir: &Path) -> std::io::Result<()> {
 /// Holds [`STORE_LOCK_REL`]. Fails closed when `manifest.json` is missing or
 /// `sealed` is empty. Does not go through `Runtime::emit`. `snapshot.json` is
 /// refreshed as a lease, not the checkpoint carrier. Prefix `Op::StoreBlob`
-/// events, `Op::QuantumOutcome`, and `Op::JustificationCite` are copied
+/// events, `Op::QuantumOutcome`, `Op::JustificationCite`, and D021
+/// `Op::PackInstall` / `Op::PackActivate` / `Op::PackRetire` are copied
 /// verbatim (same ids/order) before the checkpoint blob: `GraphFold.blobs` is
-/// serde-skip and sidecar queries read those ops from the log. `dropped_count`
+/// serde-skip, sidecar queries read those ops from the log, and lifecycle
+/// state must survive a sealed-prefix rewrite. `dropped_count`
 /// is prefix length minus those kept kinds (`StoreBlob`, `QuantumOutcome`,
-/// `JustificationCite`; not `Op::Checkpoint` — a re-checkpoint folds the old
-/// receipt into the new Snapshot). `fact_count` is the prefix fold fact count.
+/// `JustificationCite`, `PackInstall`, `PackActivate`, `PackRetire`; not
+/// `Op::Checkpoint` — a re-checkpoint folds the old receipt into the new
+/// Snapshot). `fact_count` is the prefix fold fact count.
 /// The rewritten dir is persisted as [`encoded_log`] (Defines then graph) so
 /// `committed_prefix` can classify `kutha:*` and Persister attach matches.
 /// Not [`Persister::checkpoint`]: that only refreshes `snapshot.json` and

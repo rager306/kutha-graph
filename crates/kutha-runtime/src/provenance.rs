@@ -119,7 +119,8 @@ impl Runtime {
 
     /// Receipt fields on `Op::Checkpoint` must match the blob Snapshot (M154).
     /// A checkpoint restores a prefix: only `Define` / kept `StoreBlob` /
-    /// `QuantumOutcome` / `JustificationCite` may precede it (empty fold).
+    /// `QuantumOutcome` / `JustificationCite` / `PackInstall` / `PackActivate` /
+    /// `PackRetire` may precede it (empty fold).
     fn check_checkpoint_receipts(events: &[Event]) -> Result<(), RuntimeError> {
         let mut blobs: HashMap<&str, &[u8]> = HashMap::new();
         let mut only_prefix_meta = true;
