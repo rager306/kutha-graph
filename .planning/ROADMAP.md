@@ -10,8 +10,8 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [ ] **Phase 263: C5 enrichment log schema and admission** - typed proposal record, source/pin identity, fail-closed admission
-- [ ] **Phase 264: C5 enrichment ledger parity** - replay-derived ledger, persist/open/fork/checkpoint parity, graph neutrality
+- [x] **Phase 263: C5 enrichment log schema and admission** - typed proposal record, source/pin identity, fail-closed admission (completed 2026-10-31)
+- [x] **Phase 264: C5 enrichment ledger parity** - replay-derived ledger, persist/open/fork/checkpoint parity, graph neutrality (completed 2026-10-31)
 
 ## Phase Details
 
@@ -23,10 +23,10 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
   1. A proposal carries pack id/version, source event ids, model/prompt/cache pins, and content-addressed payload.
   2. Admission rejects unknown pack, retired pack, missing source, missing/mismatched blob, empty pins, and duplicate proposal identity.
   3. A proposal never creates, supersedes, or invalidates a kernel fact.
-**Plans**: 1 plan
+**Plans**: 1/1 plans complete
 
 Plans:
-- [ ] 263-01-PLAN.md — proposal schema, blob pin, admission
+- [x] 263-01-PLAN.md — proposal schema, blob pin, admission
 
 ### Phase 264: C5 enrichment ledger parity
 **Goal**: Derive a deterministic enrichment ledger and prove persistence parity.
@@ -36,14 +36,14 @@ Plans:
   1. `Runtime::enrichment_ledger()` lists proposals with pack lifecycle state.
   2. Ledger survives persist/open, fork prefix cuts, and checkpoint_sealed_prefix.
   3. Graph facts and fold fingerprint remain unchanged; no derived lease is built.
-**Plans**: 1 plan
+**Plans**: 1/1 plans complete
 
 Plans:
-- [ ] 264-01-PLAN.md — replay-derived ledger and parity tests
+- [x] 264-01-PLAN.md — replay-derived ledger and parity tests
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 263. C5 enrichment log schema and admission | 0/1 | Pending | — |
-| 264. C5 enrichment ledger parity | 0/1 | Pending | — |
+| 263. C5 enrichment log schema and admission | 1/1 | Complete    | 2026-10-31 |
+| 264. C5 enrichment ledger parity | 1/1 | Complete    | 2026-10-31 |

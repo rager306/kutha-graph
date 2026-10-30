@@ -3,9 +3,21 @@
   "flavor": "core",
   "milestone": "v1.71",
   "phases": [
-    { "number": "263", "name": "C5 enrichment log schema and admission", "status": "pending" },
-    { "number": "264", "name": "C5 enrichment ledger parity", "status": "pending" }
+    {
+      "number": "263",
+      "name": "C5 enrichment log schema and admission",
+      "status": "complete"
+    },
+    {
+      "number": "264",
+      "name": "C5 enrichment ledger parity",
+      "status": "complete"
+    }
   ],
-  "next": { "command": "/gsd-progress", "label": "Show progress", "reason": "Milestone v1.71 planned" },
-  "updated_at": "2026-10-31T00:00:00.000Z"
+  "next": {
+    "command": "/gsd-progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
+  },
+  "updated_at": "2026-10-30T19:25:33.805Z"
 }

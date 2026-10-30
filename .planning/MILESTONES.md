@@ -1,5 +1,19 @@
 # Project Milestones: Kutha
 
+## v1.71 C5 enrichment foundation (Shipped: 2026-10-31)
+
+**Delivered:** M178. Bounded ADR-052 foundation: typed content-addressed enrichment proposals and a replay-derived ledger. Derived data only; never a kernel fact.
+
+**Phases completed:** 263–264 (2 plans)
+
+**Key accomplishments:**
+- `Op::EnrichmentProposal` carries pack id/version, source event ids, model/prompt/cache pins, and a raw-SHA-256 `StoreBlob` digest; meta-only with empty `object_ids`.
+- Admission is fail-closed: active pack only, exact version, non-empty pins, existing sources, blob present and digest-matching, unique cache key; validation runs before the payload append so no orphan blob remains.
+- `Runtime::enrichment_ledger()` is replay-derived and lifecycle-aware; survives persist/open, fork cuts, and checkpoint_sealed_prefix; no model call and no derived lease.
+- Tests: enrichment 10/10, workspace 788 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0. No LLM, HNSW, trust-path write, or ADR Accepted.
+
+---
+
 ## v1.70 C1b pack manifest and operator registry (Shipped: 2026-10-31)
 
 **Delivered:** M177. Bounded C1 extension from ADR-021: a content-addressed pack manifest and a replay-derived operator registry. No operator execution, code loading, dictionary facets, lease rebuild, WASM, marketplace, schema SMO, or ADR Accepted.

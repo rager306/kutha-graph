@@ -5,8 +5,8 @@
 
 ## v1.71 Requirements
 
-- [ ] **C5-01**: An enrichment proposal is a typed log record pinned to an installed/active pack, source event ids, model/prompt/cache identity, and a content-addressed payload; admission rejects unknown/retired packs, missing sources, missing or mismatched blobs, empty pins, and duplicate identity, and never touches a kernel fact.
-- [ ] **C5-02**: A droppable enrichment ledger is derived deterministically from the log, reports pack lifecycle state, and survives persist/open, fork, and checkpoint without changing graph facts or fold fingerprint.
+- [x] **C5-01**: An enrichment proposal is a typed log record pinned to an installed/active pack, source event ids, model/prompt/cache identity, and a content-addressed payload; admission rejects unknown/retired packs, missing sources, missing or mismatched blobs, empty pins, and duplicate identity, and never touches a kernel fact.
+- [x] **C5-02**: A droppable enrichment ledger is derived deterministically from the log, reports pack lifecycle state, and survives persist/open, fork, and checkpoint without changing graph facts or fold fingerprint.
 
 ## Explicit non-goals
 
@@ -16,8 +16,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| C5-01 | Phase 263 | Pending |
-| C5-02 | Phase 264 | Pending |
+| C5-01 | Phase 263 | Complete |
+| C5-02 | Phase 264 | Complete |
 
 **Coverage:**
 - v1.71 requirements: 2 total

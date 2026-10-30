@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Trajectory: M178-S01 closed (C5 foundation)
+
+- GSD v1.71 closed; phases 263–264 archived. `Active Milestone=None`, `L_delivery=M178-S01-closed`.
+- Enrichment stays derived: no model call, no derived lease, no trust-path write, no graph-fact change. Independent verifier PASS; low findings closed (pre-append validation, version-mismatch test).
+- Explicit limitations: replay does not revalidate admission; ledger state is end-of-log lifecycle; cache-key uniqueness is global; source ids are existence-only.
+- Tests: enrichment 10/10, workspace 788 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0.
+
 ## 2026-10-31 — Product: C5 enrichment foundation
 
 - Added typed `Op::EnrichmentProposal` (ADR-052): pack id/version, source event ids, model/prompt/cache pins, and a raw-SHA-256 `StoreBlob` payload digest. Meta-only; never a kernel fact.
