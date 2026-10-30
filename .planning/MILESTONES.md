@@ -1,10 +1,15 @@
 # Project Milestones: Kutha
 
-## v1.66 M003a GPML AS OF parser (Active: 2026-10-30)
+## v1.66 M003a GPML AS OF parser (Shipped: 2026-10-30)
 
-**M173-S01.** Lease M003a: read-only GPML/Cypher subset parser into typed QueryIr with intern/allowlist binder. Differential falsifier on B3/FF5. No writes, aggregation, path functions, planner, HNSW, or legal pack.
+**Delivered:** M173 / M003a. Read-only GPML/Cypher subset parser into typed QueryIr with intern/allowlist binder; differential proof on B3/FF5; fail-closed vocabulary.
 
-**Phases:** 253–254 (0/2 plans complete)
+**Phases completed:** 253–254 (2 plans)
+
+**Key accomplishments:**
+- `crates/kutha-runtime/src/gpml.rs`: read-only subset parser + `VocabBinder` / `RuntimeBinder`; zero intern calls; FF6 allowlist checked before dictionary id.
+- Focused tests 7/7; differential tests 5/5 including B3 render/parse parity and FF5 `AS OF` equals typed facade; workspace 741 passed / 0 failed.
+- Mixed repeated/per-hop chain fails closed at prepare with `RelsShape`; no writes, aggregation, path functions, planner, HNSW, or legal pack.
 
 ---
 

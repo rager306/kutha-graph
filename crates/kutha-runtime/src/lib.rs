@@ -8,6 +8,7 @@ mod eval;
 mod fold;
 mod fold_diff;
 mod fold_query;
+mod gpml;
 mod hydrate;
 mod justification;
 mod leapfrog;
@@ -44,6 +45,7 @@ pub use query_ir::{
     execute, prepare, try_hops_named, Prepared, PreparedHops, PreparedScan, QueryError, QueryIr,
     QueryRows, Workload,
 };
+pub use gpml::{parse_gpml, GpmlError, RuntimeBinder, VocabBinder};
 pub use receipt::{QuantumReceipt, digest_to_hex};
 pub use snapshot::Snapshot;
 pub use tenant::{IngestReport, TenantError, ingest_harness_jsonl, ingest_harness_jsonl_str};

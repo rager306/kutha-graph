@@ -5,15 +5,15 @@
 
 ## v1.66 Requirements
 
-- [ ] **GPML-01**: A read-only GPML/Cypher subset parser converts fixed-hop node/relationship patterns, property filters, `AS OF`, `RETURN`, and `LIMIT` into the existing typed `QueryIr` using a `VocabBinder` over intern/allowlist; unknown label or relation fails closed.
-- [ ] **GPML-02**: Differential falsifier proves `parse(render(workload)) == IR` for the B3 workload and FF5/PIT fixture; query failures match `QueryError`.
+- [x] **GPML-01**: A read-only GPML/Cypher subset parser converts fixed-hop node/relationship patterns, property filters, `AS OF`, `RETURN`, and `LIMIT` into the existing typed `QueryIr` using a `VocabBinder` over intern/allowlist; unknown label or relation fails closed.
+- [x] **GPML-02**: Differential falsifier proves `parse(render(workload)) == IR` for the B3 workload and FF5/PIT fixture; query failures match `QueryError`.
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| GPML-01 | Phase 253 | Pending |
-| GPML-02 | Phase 254 | Pending |
+| GPML-01 | Phase 253 | Complete |
+| GPML-02 | Phase 254 | Complete |
 
 **Coverage:**
 - v1.66 requirements: 2 total

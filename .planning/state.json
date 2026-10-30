@@ -4,20 +4,20 @@
   "milestone": "v1.66",
   "phases": [
     {
-      "number": "251",
-      "name": "B3 workload and baseline",
+      "number": "253",
+      "name": "M003a parser subset",
       "status": "complete"
     },
     {
-      "number": "252",
-      "name": "B3 decision",
+      "number": "254",
+      "name": "M003a differential falsifier",
       "status": "complete"
     }
   ],
   "next": {
-    "command": "/gsd-discuss-phase",
-    "label": "Discuss the first phase",
-    "reason": "Project initialized — plan your first phase"
+    "command": "/gsd-progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
   },
-  "updated_at": "2026-10-30T12:35:28.421Z"
+  "updated_at": "2026-10-30T13:08:52.326Z"
 }

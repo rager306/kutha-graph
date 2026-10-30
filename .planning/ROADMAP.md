@@ -10,8 +10,8 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [ ] **Phase 253: M003a parser subset** - lexer/parser and `VocabBinder` to typed `QueryIr`
-- [ ] **Phase 254: M003a differential falsifier** - render/parse parity on B3 + FF5 and fail-closed tests
+- [x] **Phase 253: M003a parser subset** - lexer/parser and `VocabBinder` to typed `QueryIr` (completed 2026-10-30)
+- [x] **Phase 254: M003a differential falsifier** - render/parse parity on B3 + FF5 and fail-closed tests (completed 2026-10-30)
 
 ## Phase Details
 
@@ -23,7 +23,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
   1. Parser supports the fixed subset only; unknown constructs fail closed.
   2. `AS OF` is typed, not stringly parsed; scans/hops map to `QueryIr::Scan` / `QueryIr::Hops`.
   3. No writes, aggregation, path functions, HNSW, planner, or legal-pack behavior are added.
-**Plans**: 0 plans
+**Plans**: 1/1 plans complete
 
 Plans:
 - [ ] TBD (run /gsd-plan-phase 253 to break down)
@@ -36,7 +36,7 @@ Plans:
   1. For every rendered B3/FF5 query, parsed IR equals the handwritten IR used today.
   2. Unknown label/relation and malformed queries fail closed with useful errors.
   3. `AS OF` result equals the typed facade on FF5.
-**Plans**: 0 plans
+**Plans**: 1/1 plans complete
 
 Plans:
 - [ ] TBD (run /gsd-plan-phase 254 to break down)
@@ -45,5 +45,5 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 253. M003a parser subset | 0/1 | Pending | — |
-| 254. M003a differential falsifier | 0/1 | Pending | — |
+| 253. M003a parser subset | 1/1 | Complete    | 2026-10-30 |
+| 254. M003a differential falsifier | 1/1 | Complete    | 2026-10-30 |

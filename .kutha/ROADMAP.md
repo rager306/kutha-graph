@@ -8,11 +8,11 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
-## M173: M003a GPML AS OF parser — ACTIVE (harness lease)
+## M173: M003a GPML AS OF parser — CLOSED (harness lease)
 
-B3 no-gap; B4/B5 skipped. M173 leases **M003a**: read-only GPML/Cypher subset parser into typed QueryIr with intern/allowlist binder; differential falsifier on B3/FF5; unknown vocabulary fails closed. No writes, aggregation, path functions, planner, HNSW, or legal pack.
+B3 no-gap; B4/B5 skipped. M173/M003a delivered the read-only GPML/Cypher subset parser into typed QueryIr with intern/allowlist binder; differential falsifier passed on B3/FF5; unknown vocabulary fails closed. No writes, aggregation, path functions, planner, HNSW, or legal pack.
 
-- [ ] **S01: M003a parser and differential** `risk:medium` `depends:[]`
+- [x] **S01: M003a parser and differential** `risk:medium` `depends:[]`
   > After this: GPML text equals typed IR on B3/FF5, AS OF equals the typed facade, unknown vocabulary fails closed. Binder swap (M003b) stays later; HNSW/planner/legal pack stay frozen.
 
 ## M172: B3 hot-path benchmark — CLOSED (harness lease)

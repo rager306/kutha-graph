@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Trajectory: M173-S01 closed (M003a)
+
+- M003a delivered: read-only GPML/Cypher subset parser into existing typed `QueryIr`; `VocabBinder` / `RuntimeBinder` resolves through dictionary + FF6 allowlist and never interns. Repeated same-rel bounded hops use compact `rels.len()==1`; per-hop chains stay per-hop.
+- Differential proof: B3 render/parse parity over every layer-0 start (1/2 hops); FF5 `GPML AS OF` equals typed facade at 2015/2020; unknown terms/relations and out-of-scope constructs fail closed. Focused 7/7, differential 5/5, workspace 741 passed / 0 failed; independent verifier PASS.
+- GSD v1.66 closed; phases 253–254 archived; `Active Milestone=None`, `L_delivery=M173-S01-closed`. M003b pack-dictionary binder swap remains gated on C2. No planner/HNSW/legal-pack/Op/ADR/CI change.
+
+## 2026-10-30 — Product: M003a GPML AS OF parser
+
+- Added read-only `crates/kutha-runtime/src/gpml.rs`: lexer/parser for the M003a subset (node/relationship patterns, fixed hops and bounded variable length, `name` start filter, typed `AS OF`, optional `TT`, `RETURN`, `LIMIT`), mapped to existing `QueryIr::Hops` without changing IR shape or fold semantics.
+- Added `VocabBinder` with intern/allowlist runtime binding; unknown terms/relations and out-of-scope constructs fail closed. Relation lookup checks the FF6 allowlist before dictionary id and never interns.
+- Added 7 focused parser tests and 5 differential tests: B3 render/parse parity, FF5 `AS OF` equals typed facade, typed TT/limit preservation, mixed repeated/per-hop chain fails closed at prepare, unknown vocabulary/out-of-scope fail-closed. Workspace now 741 passed / 0 failed.
+- No writes, aggregation, path functions, planner, HNSW, legal pack, Op/ADR/CI change. M003b pack-dictionary binder swap stays gated on C2.
+
 ## 2026-10-30 — Process: GSD v1.66 and M003a lease
 
 - Owner authorized M003a after B3 no-gap; GSD milestone **v1.66 M003a GPML AS OF parser** opened. Phases 253 (parser subset) and 254 (differential falsifier), requirements GPML-01/GPML-02.
