@@ -1,5 +1,21 @@
 # Project Milestones: Kutha
 
+## v1.72 Gate GC toy-pack probe (Shipped: 2026-10-31)
+
+**Delivered:** M179. Gate GC answered with a read-only probe: a toy non-legal pack installs, product facts answer GPML `AS OF` at two cuts, the pack retires, and a reopened store matches. Zero production edits.
+
+**Phases completed:** 265 (1 plan)
+
+**Key accomplishments:**
+- Toy pack installs with a manifest and activates; manifest blob and operator registry are genuinely loaded.
+- `AS OF 2015` returns `50-kmh`, `AS OF 2020` returns `30-kmh` (half-open boundary), with the pack installed and after retire.
+- Retire changes lifecycle/registry only; facts and fingerprint unchanged; reopen parity is non-vacuous.
+- No `crates/*/src`, Cargo, build.rs, or dictionary change in this slice.
+- Scope honesty: the query path does not consult pack state, so the probe evidences pack neutrality, not query sufficiency.
+- Tests: gate 2/2, workspace 790 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0.
+
+---
+
 ## v1.71 C5 enrichment foundation (Shipped: 2026-10-31)
 
 **Delivered:** M178. Bounded ADR-052 foundation: typed content-addressed enrichment proposals and a replay-derived ledger. Derived data only; never a kernel fact.

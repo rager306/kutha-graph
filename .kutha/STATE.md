@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M179
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M179-S01-open
+L_delivery=M179-S01-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M179-S01 active (Gate GC toy-pack probe; GSD v1.72) | Legal pack / executable operator |
+| L_delivery | M179-S01 closed (Gate GC toy-pack probe; GSD v1.72) | Legal pack / executable operator |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M179-S01 is leased under GSD **v1.72 Gate GC toy-pack probe**. Scope is bounded: a toy non-legal pack installs with a manifest, answers a GPML `AS OF` query over existing product facts, retires, and replays with zero core edits; facts, fingerprint, lifecycle, and operator registry are parity-equal. No legal corpus or legal pack, operator execution, dictionary facets, HNSW, WASM, marketplace, schema SMO, or ADR Accepted. M178-S01 remains closed (C5 enrichment foundation). M177/M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M179-S01 is closed under GSD **v1.72 Gate GC toy-pack probe**. Delivered a read-only probe: a toy non-legal pack installs with a manifest and activates; product facts answer GPML `AS OF 2015` / `AS OF 2020` (half-open boundary) while installed and after retire; retire changes lifecycle/registry only; a reopened store matches on facts, fingerprint, lifecycle, registry, and both cuts. Zero production edits (`crates/*/src`, Cargo, build.rs, dictionaries unchanged). Scope honesty: the query path does not consult pack state, so Gate GC evidences pack neutrality, not query sufficiency. Tests: gate 2/2, workspace 790 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0. No operator execution, legal corpus or legal pack, dictionary facets, HNSW, WASM, marketplace, schema SMO, or ADR Accepted. M178-S01 remains closed (C5 enrichment foundation). M177/M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

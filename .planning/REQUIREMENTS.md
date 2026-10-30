@@ -5,7 +5,7 @@
 
 ## v1.72 Requirements
 
-- [ ] **GC-01**: A toy non-legal pack installs and activates with a manifest, answers a GPML `AS OF` query over existing product facts, retires, and replays with zero core edits; facts, fingerprint, lifecycle, and operator registry match before and after retire.
+- [x] **GC-01**: A toy non-legal pack installs and activates with a manifest, answers a GPML `AS OF` query over existing product facts, retires, and replays with zero core edits; facts, fingerprint, lifecycle, and operator registry match before and after retire.
 
 ## Explicit non-goals
 
@@ -15,7 +15,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| GC-01 | Phase 265 | Pending |
+| GC-01 | Phase 265 | Complete |
 
 **Coverage:**
 - v1.72 requirements: 1 total

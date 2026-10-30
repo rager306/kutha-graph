@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Trajectory: M179-S01 closed (Gate GC)
+
+- GSD v1.72 closed; phase 265 archived. `Active Milestone=None`, `L_delivery=M179-S01-closed`.
+- Gate GC answered with zero production edits. Independent verifier PASS; the substantive finding (the GPML leg does not consult pack state) is fixed in wording: the probe evidences pack neutrality, not query sufficiency.
+- Tests: gate 2/2, workspace 790 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0.
+
 ## 2026-10-31 — Process: Gate GC passed (toy pack, zero core edits)
 
 - Added `crates/kutha-runtime/tests/m179_gate_gc.rs`: a toy non-legal pack installs with a manifest, product facts are queried through GPML `AS OF` at two cuts while the pack is installed and after retire, and a reopened store matches on facts, fingerprint, lifecycle, and operator registry. The query path does not consult pack state, so this evidences neutrality, not query sufficiency.

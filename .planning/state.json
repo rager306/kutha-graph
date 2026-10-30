@@ -3,8 +3,16 @@
   "flavor": "core",
   "milestone": "v1.72",
   "phases": [
-    { "number": "265", "name": "Gate GC toy-pack zero-core-edit probe", "status": "pending" }
+    {
+      "number": "265",
+      "name": "Gate GC toy-pack zero-core-edit probe",
+      "status": "complete"
+    }
   ],
-  "next": { "command": "/gsd-progress", "label": "Show progress", "reason": "Milestone v1.72 phase 265 ready" },
-  "updated_at": "2026-10-31T00:00:00.000Z"
+  "next": {
+    "command": "/gsd-progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
+  },
+  "updated_at": "2026-10-30T19:43:19.166Z"
 }

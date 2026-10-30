@@ -10,7 +10,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [ ] **Phase 265: Gate GC toy-pack zero-core-edit probe** - install, GPML AS OF query, retire, replay parity; zero core edits
+- [x] **Phase 265: Gate GC toy-pack zero-core-edit probe** - install, GPML AS OF query, retire, replay parity; zero core edits (completed 2026-10-31)
 
 ## Phase Details
 
@@ -22,13 +22,13 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
   1. A toy pack installs with a manifest and active lifecycle; product facts remain pack-agnostic.
   2. GPML `AS OF` returns the expected cut before and after retire; no core file changes for the probe.
   3. Retire + replay is parity-equal on facts, fingerprint, lifecycle, and operator registry.
-**Plans**: 1 plan
+**Plans**: 1/1 plans complete
 
 Plans:
-- [ ] 265-01-PLAN.md — Gate GC probe and recorded evidence
+- [x] 265-01-PLAN.md — Gate GC probe and recorded evidence
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 265. Gate GC toy-pack zero-core-edit probe | 0/1 | Pending | — |
+| 265. Gate GC toy-pack zero-core-edit probe | 1/1 | Complete    | 2026-10-31 |
