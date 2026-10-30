@@ -3,9 +3,21 @@
   "flavor": "core",
   "milestone": "v1.70",
   "phases": [
-    { "number": "261", "name": "C1b pack manifest and operator registry", "status": "pending" },
-    { "number": "262", "name": "C1b pack registry runtime parity", "status": "pending" }
+    {
+      "number": "261",
+      "name": "C1b pack manifest and operator registry",
+      "status": "complete"
+    },
+    {
+      "number": "262",
+      "name": "C1b pack registry runtime parity",
+      "status": "complete"
+    }
   ],
-  "next": { "command": "/gsd-progress", "label": "Show progress", "reason": "Milestone v1.70 planned" },
-  "updated_at": "2026-10-31T00:00:00.000Z"
+  "next": {
+    "command": "/gsd-progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
+  },
+  "updated_at": "2026-10-30T19:00:51.290Z"
 }

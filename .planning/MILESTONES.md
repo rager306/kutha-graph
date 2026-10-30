@@ -1,5 +1,19 @@
 # Project Milestones: Kutha
 
+## v1.70 C1b pack manifest and operator registry (Shipped: 2026-10-31)
+
+**Delivered:** M177. Bounded C1 extension from ADR-021: a content-addressed pack manifest and a replay-derived operator registry. No operator execution, code loading, dictionary facets, lease rebuild, WASM, marketplace, schema SMO, or ADR Accepted.
+
+**Phases completed:** 261–262 (2 plans)
+
+**Key accomplishments:**
+- `PackManifest` (`kutha-pack-manifest/v1`) as canonical JSON addressed by raw SHA-256, pinned through optional `PackInstall.manifest_digest` → `StoreBlob`; legacy manifest-less installs still parse and admit.
+- Admission requires the blob, exact identity, schema v1, unique valid read-only operator names, and no collision with an installed/active pack; retired packs release names; padded identifiers and padded operator names fail closed.
+- `Runtime::pack_operators()` is replay-derived, lifecycle-aware, and executes nothing; survives persist/open, fork prefix cuts, and checkpoint_sealed_prefix.
+- Tests: manifest 10/10, registry 5/5, workspace 778 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0.
+
+---
+
 ## v1.69 C1 pack lifecycle foundation (Shipped: 2026-10-31)
 
 **Delivered:** M176. Bounded C1 foundation from ADR-021: typed D021 lifecycle log events plus a replay-derived droppable lifecycle lease.

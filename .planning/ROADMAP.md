@@ -10,8 +10,8 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [ ] **Phase 261: C1b pack manifest and operator registry** - manifest schema, blob pin, admission validation (planned)
-- [ ] **Phase 262: C1b pack registry runtime parity** - replay-derived registry, persist/open/fork/checkpoint parity (planned)
+- [x] **Phase 261: C1b pack manifest and operator registry** - manifest schema, blob pin, admission validation (planned) (completed 2026-10-31)
+- [x] **Phase 262: C1b pack registry runtime parity** - replay-derived registry, persist/open/fork/checkpoint parity (planned) (completed 2026-10-31)
 
 ## Phase Details
 
@@ -23,10 +23,10 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
   1. `PackInstall` can pin a manifest digest; legacy manifest-less installs still parse.
   2. Manifest identity matches the install and declares unique, valid, read-only operator names.
   3. Missing, malformed, mismatched, reserved, duplicate, or cross-pack-colliding operators are rejected at admission.
-**Plans**: 1 plan
+**Plans**: 1/1 plans complete
 
 Plans:
-- [ ] 261-01-PLAN.md — manifest schema, blob pin, admission validation
+- [x] 261-01-PLAN.md — manifest schema, blob pin, admission validation
 
 ### Phase 262: C1b pack registry runtime parity
 **Goal**: Derive a deterministic operator registry from admitted manifests and prove persistence parity.
@@ -36,14 +36,14 @@ Plans:
   1. `Runtime::pack_operators()` lists declared operators with pack lifecycle state.
   2. Registry survives persist/open, fork prefix cuts, and checkpoint_sealed_prefix.
   3. Graph facts and fold fingerprint remain unchanged; no operator is executed.
-**Plans**: 1 plan
+**Plans**: 1/1 plans complete
 
 Plans:
-- [ ] 262-01-PLAN.md — replay-derived registry and parity tests
+- [x] 262-01-PLAN.md — replay-derived registry and parity tests
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 261. C1b pack manifest and operator registry | 0/1 | Pending | — |
-| 262. C1b pack registry runtime parity | 0/1 | Pending | — |
+| 261. C1b pack manifest and operator registry | 1/1 | Complete    | 2026-10-31 |
+| 262. C1b pack registry runtime parity | 1/1 | Complete    | 2026-10-31 |

@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Trajectory: M177-S01 closed (C1b foundation)
+
+- GSD v1.70 closed; phases 261–262 archived. `Active Milestone=None`, `L_delivery=M177-S01-closed`.
+- Manifest and registry remain declaration-only: no operator executes, loads code, or changes graph facts. Independent verifier PASS; low findings closed (non-zero persist count, padded identifiers, digest-scheme comment, legacy lock-out documented).
+- Tests: manifest 10/10, registry 5/5, workspace 778 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0, run_high=0 run_low=0.
+
 ## 2026-10-31 — Product: C1b pack manifest and operator registry
 
 - Added `PackManifest` (`kutha-pack-manifest/v1`) as canonical JSON addressed by raw SHA-256 and pinned through an optional `PackInstall.manifest_digest` → `StoreBlob`.
