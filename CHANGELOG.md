@@ -6,7 +6,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ## 2026-10-31 — Process: Gate GC passed (toy pack, zero core edits)
 
-- Added `crates/kutha-runtime/tests/m179_gate_gc.rs`: a toy non-legal pack installs with a manifest, product facts are queried through GPML `AS OF` at two cuts, the pack retires, and a reopened store matches on facts, fingerprint, lifecycle, and operator registry.
+- Added `crates/kutha-runtime/tests/m179_gate_gc.rs`: a toy non-legal pack installs with a manifest, product facts are queried through GPML `AS OF` at two cuts while the pack is installed and after retire, and a reopened store matches on facts, fingerprint, lifecycle, and operator registry. The query path does not consult pack state, so this evidences neutrality, not query sufficiency.
 - Zero production edits: `crates/kutha-runtime/src` and `crates/kutha-common/src` are unchanged by this slice. Evidence: `docs/architecture/gate-gc.md`.
 - No operator executes, no legal corpus, no dictionary facets, no HNSW, no WASM. ADR-021/052 stay Proposed.
 - Tests: gate 2/2, workspace 790 passed / 0 failed.

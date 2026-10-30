@@ -2,7 +2,7 @@
 
 ## Overview
 
-v1.72 answers **Gate GC** with a read-only probe: a toy (non-legal) pack installs, is queried through GPML `AS OF`, retires, and replays with zero core edits. The probe uses only the C1/C1b/C5 surfaces and existing query IR. No operator execution, no dictionary facets, no HNSW, no WASM, no legal pack, no ADR Accepted.
+v1.72 answers **Gate GC** with a read-only probe: a toy (non-legal) pack installs, is queried through GPML `AS OF`, retires, and replays with zero core edits. The probe uses only the C1/C1b surfaces and the existing query IR; it does not use C5. No operator execution, no dictionary facets, no HNSW, no WASM, no legal pack, no ADR Accepted.
 
 ## Id map
 

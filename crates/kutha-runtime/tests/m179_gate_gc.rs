@@ -2,8 +2,12 @@
 //! with zero core edits (ADR-021 D021-1 / direction proposal gate GC).
 //!
 //! The pack declares one operator and carries no code. Product facts are
-//! written by the host, not by the pack, so the query proves the pack surface
-//! is sufficient rather than proving pack-authored data.
+//! written by the host, not by the pack. The GPML leg is deliberately
+//! pack-independent: it proves that an installed or retired pack does not
+//! disturb queries, **not** that pack state is on the query path. Gate GC's
+//! "queries via Cypher AS OF" is therefore evidenced as neutrality, and the
+//! pack surface itself is exercised only through lifecycle, manifest, and
+//! registry.
 
 use kutha_common::Op;
 use kutha_runtime::{

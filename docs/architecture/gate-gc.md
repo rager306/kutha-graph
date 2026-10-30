@@ -13,7 +13,7 @@ core**? If core edits were needed, ADR-021 must be fixed before Arc A.
 |------|--------------|-----------|
 | Install + activate a toy pack with a manifest declaring one operator | C1 `emit_pack_install_with_manifest` / `emit_pack_activate`, C1b `PackManifest` | none |
 | Write product facts owned by the host, not the pack | existing `Op::Assert` | none |
-| Query at two cuts through GPML `AS OF` | M003a `parse_gpml` + `RuntimeBinder` + `execute` | none |
+| Query at two cuts through GPML `AS OF`, with the pack installed and after retire | M003a `parse_gpml` + `RuntimeBinder` + `execute`; the query path does **not** consult pack state | none |
 | Retire | C1 `emit_pack_retire` | none |
 | Reopen and compare | existing `persist` / `Runtime::open` | none |
 
@@ -26,6 +26,7 @@ Observed:
 
 ## What this does not prove
 
+- **Query sufficiency.** The GPML leg never consults pack state (`RuntimeBinder` is dictionary + FF6 only). Deleting the pack leaves both `AS OF` assertions green. What is proven is *neutrality*: install and retire do not disturb queries. Gate GC's "queries via Cypher AS OF" is met in that weaker sense; it is not evidence that a pack participates in query resolution.
 - No operator executes. The manifest names an operator; nothing resolves or runs it.
 - No dictionary facets, no schema SMO, no lease rebuild, no HNSW, no WASM, no marketplace.
 - The pack carries no code and no legal corpus. ADR-021 and ADR-052 stay **Proposed**.

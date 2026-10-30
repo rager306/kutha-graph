@@ -8,9 +8,9 @@ last_activity: 2026-10-31
 last_activity_desc: Milestone v1.72 started; Gate GC probe planned
 state_head: be77a202b4775cd748f4367d78b97c307a52723b
 progress:
-  total_phases: 2
+  total_phases: 1
   completed_phases: 0
-  total_plans: 2
+  total_plans: 1
   completed_plans: 0
 milestone_name: Gate GC toy-pack probe
 current_phase: 265
