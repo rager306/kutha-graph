@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M171
+**Active Slice:** S01
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M170-S01-closed
+L_delivery=M171-S01-open
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M170-S01 closed (as_of allocation; harness lease) | Capability proven / Cypher started |
+| L_delivery | M171-S01 active (ingest bisect; GSD v1.64) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M170-S01 is closed. `GraphFold::live_at`/`as_of` collect triples directly through `collect_live_triples_at`; `wal.rs` header and `leapfrog.rs` min/max `unwrap()` became `expect("...")`. Independent verifier PASS (`independent: true`) reproduced 730 tests and `kutha-gov ci --jobs 1` run_high=0. Final interleaved bench `89b0b9c` vs `456334c`: `as_of.n` 145.4 → 71.8 µs (2 runs each; ~2.0×), `as_of.2n` 260.2 → 150.4 µs (~1.73×); `ingest_plain.n` stayed noise-dominated. Non-blocking follow-ups: shared scan helper, capacity pre-pass/over-reservation for heavily retracted cuts, and the `beautifulrust.md` example wording. Residuals stay separate: ingest bisect, eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M171-S01 is leased under GSD **v1.64 ingest regression**: phase 249 names the first bad commit for `ingest_plain.n` versus `cdf1942` on a same-host bisect; phase 250 fixes it or records the tradeoff. No product fix in phase 249. Use a dedicated worktree and unique `CARGO_TARGET_DIR`; `ingest_plain.n` median is the pass/fail signal, `ingest_keyed.n` is secondary. M170-S01 remains closed (independent PASS, 730 tests, run_high=0) and its follow-ups stay non-blocking: shared scan helper, capacity pre-pass/over-reservation on heavily retracted cuts, and the m019 store-lock flake. Residuals stay separate: ingest cause, eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

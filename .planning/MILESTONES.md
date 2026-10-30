@@ -1,5 +1,13 @@
 # Project Milestones: Kutha
 
+## v1.64 ingest regression (Active: 2026-10-30)
+
+**M171-S01.** M168 recorded `ingest_plain.n` +12.6% versus the controlled `cdf1942` baseline. This milestone names the first bad commit and either fixes the cost or records the tradeoff. No product feature, no thaw.
+
+**Phases:** 249–250 (0/2 plans complete)
+
+---
+
 ## v1.63 as_of regression (Shipped: 2026-10-29)
 
 **Delivered:** M169. The 3.32× as_of gap is traced to `cec5b64` and reduced to 1.35×.

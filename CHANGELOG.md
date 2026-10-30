@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Process: GSD v1.64 and M171-S01 lease
+
+- GSD milestone **v1.64 ingest regression** opened on gsd-core 1.19.0: phases 249 (bisect) and 250 (fix or accept), requirements PF-05/PF-06. `.planning/STATE.md`, `ROADMAP.md`, `REQUIREMENTS.md`, `MILESTONES.md` updated; health healthy.
+- Harness lease **M171-S01** opened; `L_delivery=M171-S01-open`; `.kutha/ROADMAP.md` has the unchecked S01. This is the execution lease for the GSD milestone, not a second roadmap.
+- Scope: `ingest_plain.n` +12.6% versus `cdf1942`; bisect only in phase 249. No product fix, no thaw, honeycomb stays Proposed.
+
 ## 2026-10-30 — Process: M170 verification record and close ordering
 
 - Verifier #2 report: `tmp/m170-verifier-report.md` (gitignored). **PASS**, `independent: true`; 730 tests passed, `kutha-gov ci --jobs 1` exit 0 / `run_high=0`, default clippy 108, no ADR/Op/CI change.

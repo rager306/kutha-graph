@@ -2,7 +2,7 @@
 
 ## Overview
 
-v1.62 Performance truth closed on 2026-10-29. Milestone **v1.63 as_of regression** (M169) **closed** on 2026-10-29: the first bad commit is `cec5b64`; the per-fact dictionary HashSet was replaced by dense flags, and `as_of` fell from 303 µs to 123 µs. No product feature, no thaw, no next milestone leased.
+v1.64 Ingest regression is active. M170 closed the `as_of` allocation residual; M168 recorded `ingest_plain.n` +12.6% versus the controlled `cdf1942` baseline. Bisect `cdf1942..HEAD` on a same-host bench, name the first bad commit, then fix or record the tradeoff. No product feature, no thaw.
 
 ## Id map
 
@@ -10,34 +10,40 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [x] **Phase 247: As_of bisect** - test the suspect commits and name the cause (completed 2026-10-29)
-- [x] **Phase 248: Fix or accept** - post-fix bench or explicit tradeoff (completed 2026-10-29)
+- [ ] **Phase 249: Ingest bisect** - name the first bad commit for ingest_plain.n
+- [ ] **Phase 250: Ingest fix or accept** - fix the cost or record the tradeoff
 
 ## Phase Details
 
-### Phase 247: As_of bisect
-**Goal**: Name the commit that took `as_of.n` from ~91 µs to ~303 µs.
+### Phase 249: Ingest bisect
+**Goal**: Name the commit that took `ingest_plain.n` from the controlled `cdf1942` baseline to HEAD.
 **Depends on**: Nothing
-**Requirements**: PF-03
+**Requirements**: PF-05
 **Success Criteria**:
-  1. Suspect commits are tested on the same host.
-  2. The first bad commit is named.
-  3. The cause is stated in code terms.
-**Plans**: 1/1 plans complete
+  1. Old and HEAD are measured on the same host at a stable N.
+  2. `git bisect` yields the first bad commit.
+  3. The cause is stated in code terms; no product fix is attempted here.
+**Plans**: 0 plans
 
-### Phase 248: Fix or accept
-**Goal**: Remove the regression or record why the new cost is the price of dictionary facts.
-**Depends on**: Phase 247
-**Requirements**: PF-04
+Plans:
+- [ ] TBD (run /gsd-plan-phase 249 to break down)
+
+### Phase 250: Ingest fix or accept
+**Goal**: Remove the ingest cost or record why it is the accepted tradeoff.
+**Depends on**: Phase 249
+**Requirements**: PF-06
 **Success Criteria**:
-  1. A post-change bench shows `as_of` vs old and HEAD.
-  2. If not fixed, the tradeoff and its cause are recorded.
-  3. No product semantics change beyond the hot-path fix.
-**Plans**: 1/1 plans complete
+  1. A fix lands, or the tradeoff and its cause are explicit.
+  2. A post-change interleaved bench records `ingest_plain.n`.
+  3. No semantics change beyond the ingest path.
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 250 to break down)
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 247. As_of bisect | 1/1 | Complete    | 2026-10-29 |
-| 248. Fix or accept | 1/1 | Complete    | 2026-10-29 |
+| 249. Ingest bisect | 0/1 | Pending | — |
+| 250. Ingest fix or accept | 0/1 | Pending | — |
