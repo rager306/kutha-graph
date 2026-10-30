@@ -4,20 +4,20 @@
   "milestone": "v1.64",
   "phases": [
     {
-      "number": "247",
-      "name": "As_of bisect",
+      "number": "249",
+      "name": "Ingest bisect",
       "status": "complete"
     },
     {
-      "number": "248",
-      "name": "Fix or accept",
+      "number": "250",
+      "name": "Ingest fix or accept",
       "status": "complete"
     }
   ],
   "next": {
-    "command": "/gsd-discuss-phase",
-    "label": "Discuss the first phase",
-    "reason": "Project initialized — plan your first phase"
+    "command": "/gsd-progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
   },
-  "updated_at": "2026-10-30T02:43:34.011Z"
+  "updated_at": "2026-10-30T08:25:07.256Z"
 }

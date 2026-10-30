@@ -1,16 +1,19 @@
 ---
 gsd_state_version: "1.0"
 milestone: v1.64
-milestone_name: ingest regression
-status: planning
-last_updated: "2026-10-30T02:43:12.269Z"
+status: Awaiting next milestone
+stopped_at: Phase 250 complete — all phases complete
+last_updated: "2026-10-30T08:25:07.232Z"
 last_activity: 2026-10-30
+last_activity_desc: Milestone v1.64 completed and archived
+state_head: 163163ef1f898232a0a93ce3bee272172a255c8a
 progress:
   total_phases: 2
-  completed_phases: 0
+  completed_phases: 2
   total_plans: 2
-  completed_plans: 0
-  percent: 0
+  completed_plans: 2
+milestone_name: ingest regression
+current_phase: null
 ---
 
 # Project State
@@ -20,22 +23,22 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-29)
 
 **Core value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
-**Current focus:** v1.64 ingest regression (M171-S01), phase 249.
+**Current focus:** v1.64 ingest regression (M171-S01), complete.
 
 ## Current Position
 
-Phase: 249 — Ingest bisect
-Plan: 249-01
-Status: Blocked — measurement evidence is not yet sufficient
-Last activity: 2026-10-30 — bisect candidate 199807d; independent verifier BLOCKED
-
+Phase: Milestone v1.64 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-10-30 — Milestone v1.64 completed and archived
 
 ## Accumulated Context
 
 ### Decisions
 
 - 2026-10-29: Prime suspect is `cec5b64` / `LiveFactFilter::Product` per-fact dictionary check.
-- 2026-10-30: M169 and M170 closed the `as_of` causes; the remaining M168 residual is `ingest_plain.n` +12.6% versus `cdf1942`.
+- 2026-10-30: M169 and M170 closed the `as_of` causes; M171 identified `199807d` as the ingest index commit and accepted the per-assert map write cost.
+- 2026-10-30: `KUTHA_FOLD_INDEX_MODE=lazy|thin` is the bounded write-thin opt-out; Eager remains default.
 
 ### Pending Todos
 
@@ -43,8 +46,7 @@ None.
 
 ### Blockers/Concerns
 
-- Phase 249 BLOCKED: bisect candidate `199807d` is the first index commit, but the confirming bench is n=2 with a 1.68x outlier; no `249-SUMMARY`/baseline artifact yet. Need >=5 interleaved N=10000 samples per commit (`cdf1942`, `c26bf35`, `199807d`, `929bbc6`) on an idle host, with both min and median; then record the table and CHANGELOG. 199807d's known cost is the per-assert `by_event_id`/`by_delivery_key` maintenance; phase 250 should accept that tradeoff unless a new measurement says otherwise.
-Bisect builds must not share a target dir; use a detached worktree.
+Bisect builds must not share a target dir; use a detached worktree. The M171 five-sample table is in `docs/architecture/benchmark-baseline.md`; the earlier n=2 outlier is retained only as a caveat.
 
 ## Deferred Items
 
@@ -55,7 +57,7 @@ Bisect builds must not share a target dir; use a detached worktree.
 ## Session Continuity
 
 Last session: 2026-10-29
-Stopped at: Phase 248 complete — all phases complete
+Stopped at: Phase 250 complete — all phases complete
 Resume file: None
 
 ## Operator Next Steps

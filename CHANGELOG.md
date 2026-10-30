@@ -4,11 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
-## 2026-10-30 — Process: M171 phase 249 blocked on ingest measurement
+## 2026-10-30 — Trajectory: M171-S01 closed (ingest tradeoff)
 
-- `git bisect` over `cdf1942..929bbc6` named `199807d feat(24): fold ingest indexes with constant visit oracle`; its diff adds `Runtime::append_indexed` / `by_event_id` / `by_delivery_key`, and the Phase 24 note records +16.9% / +28.5% versus Phase 22.
-- Independent verifier #3 returned **BLOCKED**: full-bench confirmation is n=2 with a 1.68x outlier, the required 249 table is absent, and the untracked ingest-only probe used min-of-7 while the lease names median. Do not close phase 249 or M171 on this evidence.
-- Current n=2 full-bench medians (parent `c26bf35` 120.3 ms vs `199807d` 120.1 ms) do not separate; the ingest-only probe is not a criterion bench. Needed: >=5 interleaved N=10000 samples for `cdf1942`, `c26bf35`, `199807d`, `929bbc6` on an idle host, min and median. No product code changed.
+- Five interleaved N=10000 samples name `199807d` as the first index commit: parent `c26bf35` 93.5 ms -> `199807d` 130.4 ms (+39.6%), old `cdf1942` 96.3 ms -> HEAD 114.1 ms (+18.5%). The table and 20 logs are in `docs/architecture/benchmark-baseline.md` / `tmp/ingest-only-*.log`; the early-exit patch is retained at `tmp/patch_bench.py`.
+- Cause: `Runtime::append_indexed` (`by_event_id`, keyed `by_delivery_key`) and GraphFold `fact_by_event` / `live_triples`; this is per-assert write cost for O(1) event/delivery lookup. The Phase 24 note (+16.9/+28.5) and commit body (+17..28) agree.
+- Phase 250 accepts the tradeoff; no product patch. `027a2ce` already provides `FoldIndexMode::{Eager,Lazy}`; `KUTHA_FOLD_INDEX_MODE=lazy|thin` is the bounded write-thin opt-out, Eager remains default.
+- Independent verifier #4 PASSed the 5-sample table after four doc corrections; GSD health healthy, `kutha-gov precommit` green. Lease closed: `Active Milestone=None`, `Active Slice=None`, `L_delivery=M171-S01-closed`. No Op/ADR/CI change.
 
 ## 2026-10-30 — Process: GSD v1.64 and M171-S01 lease
 

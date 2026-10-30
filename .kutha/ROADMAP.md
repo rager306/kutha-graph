@@ -8,11 +8,11 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
-## M171: ingest regression — ACTIVE (harness lease)
+## M171: ingest regression — CLOSED (harness lease)
 
-M168 recorded `ingest_plain.n` +12.6% versus the controlled `cdf1942` baseline. M170 fixed the `as_of` allocation residual but did not touch the ingest path. Bisect `cdf1942..HEAD` on a stable same-host bench, name the first bad commit, then fix or record an explicit tradeoff. No product feature, no thaw.
+M168 recorded `ingest_plain.n` +12.6% versus the controlled `cdf1942` baseline. M170 fixed the `as_of` allocation residual but did not touch the ingest path. M171 named `199807d` as the first index commit and accepted the per-assert map write cost as the O(1) lookup tradeoff. No product feature, no thaw.
 
-- [ ] **S01: ingest bisect** `risk:medium` `depends:[]`
+- [x] **S01: ingest bisect** `risk:medium` `depends:[]`
   > After this: the first bad commit for `ingest_plain.n` is named with interleaved same-host evidence, and the cost is either fixed or recorded with its cause. Honeycomb stays Proposed.
 
 ## M170: as_of allocation — CLOSED (harness lease)

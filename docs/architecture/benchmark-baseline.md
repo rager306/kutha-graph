@@ -559,3 +559,20 @@ Fix: replace `dictionary_rels: HashSet<TermId>` with `dictionary_rel_flags: Vec<
 N=10000 post-fix: `as_of.n` **123,019 ns** (old median 91,335; pre-fix HEAD 303,355), `as_of.2n` 231,191, `as_of.4n` 715,674; `ingest_plain.n` 128,494,291 (unchanged). The residual **1.35×** vs old is the documented cost of the product filter; it is accepted for M169, not a full return to baseline. The pre-fix 3.32× is gone.
 
 This is not B3 and not a competitor comparison.
+
+## 2026-10-30 (M171): ingest bisect
+
+Method: the std-only `baseline` bench compiled at each commit, with a temporary `KUTHA_BENCH_INGEST_ONLY` early exit immediately after the `ingest_plain` timing block. The timed block is the same `fill_plain` code; the exit also skips `as_of`, `claim_supported_at`, and the `live_count` check, and skips persist/open/retract/keyed phases, only to make 20 samples practical. Validation of those later paths is covered by the full bench, not by these 20 samples. `KUTHA_BENCH_N=10000`, release, `taskset -c 0`, five interleaved samples per commit on the same host. The early-exit patch is retained at `tmp/patch_bench.py`; it is scratch, not a product change. At `929bbc6` the pre-`t0` setup adds `with_index_mode` + `reserve_ingest_indexes`; the other three commits use `Runtime::default()`. That capacity reserve makes the HEAD number conservative.
+
+| commit | samples (ns) | min (ns) | median (ns) |
+|--------|--------------|---------:|------------:|
+| `cdf1942` (old) | 94,540,719 / 102,297,129 / 113,283,438 / 96,346,464 / 89,252,367 | 89,252,367 | 96,346,464 |
+| `c26bf35` (parent) | 90,555,074 / 92,513,774 / 142,659,556 / 103,385,327 / 93,452,813 | 90,555,074 | 93,452,813 |
+| `199807d` (first bad) | 125,044,718 / 126,743,864 / 135,280,018 / 132,127,584 / 130,445,862 | 125,044,718 | **130,445,862** |
+| `929bbc6` (HEAD) | 114,143,499 / 108,480,269 / 116,967,962 / 109,002,602 / 117,432,516 | 108,480,269 | 114,143,499 |
+
+First bad: **`199807d`** (`feat(24): fold ingest indexes with constant visit oracle`). Parent → bad median **+39.6%** (min +38.1%); old → HEAD median **+18.5%** (min +21.5%). This is consistent with the Phase 24 note (+16.9% / +28.5%) and the commit body (+17..28%). The table is non-monotonic: `199807d` 130.4 ms > HEAD 114.1 ms because later `027a2ce` adds `reserve_ingest_indexes`; its own note says capacity alone does not clear D-06. Parent sample 3 is 142.7 ms, above the bad median; the five-sample median is used, and every `199807d` sample is >=125.0 ms while parent's non-outlier max is 103.4 ms, so the bands do not overlap.
+
+Cause: `Runtime::append_indexed` inserts every Event into `by_event_id`; a keyed Assert also clones its delivery key into `by_delivery_key`. `GraphFold::index_slot` maintains `fact_by_event` / `live_triples`. This is per-assert write cost for O(1) event/delivery lookup, not log semantics.
+
+The earlier full-bench n=2 run (parent 120.3 ms vs bad 120.1 ms) was dominated by a 1.68× outlier and is not the decision evidence; the five-sample early-exit table above is. The std-only full bench remains the close gate for `ingest_plain`; this table names the cause.

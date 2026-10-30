@@ -1,10 +1,16 @@
 # Project Milestones: Kutha
 
-## v1.64 ingest regression (Active: 2026-10-30)
+## v1.64 ingest regression (Shipped: 2026-10-30)
 
-**M171-S01.** M168 recorded `ingest_plain.n` +12.6% versus the controlled `cdf1942` baseline. This milestone names the first bad commit and either fixes the cost or records the tradeoff. No product feature, no thaw.
+**Delivered:** M171. The first index commit `199807d` is named; the per-assert map write cost is accepted as the O(1) lookup tradeoff.
 
-**Phases:** 249–250 (0/2 plans complete)
+**Phases completed:** 249–250 (2 plans)
+
+**Key accomplishments:**
+- Five interleaved N=10000 samples: parent `c26bf35` 93.5 ms -> first bad `199807d` 130.4 ms (+39.6%); old `cdf1942` 96.3 ms -> HEAD 114.1 ms (+18.5%).
+- Cause: `Runtime::append_indexed` (`by_event_id`, `by_delivery_key`) and GraphFold `fact_by_event` / `live_triples`; per-assert write cost for O(1) lookup.
+- `027a2ce` capacity reserve lowers HEAD but does not clear D-06; `KUTHA_FOLD_INDEX_MODE=lazy|thin` is the bounded opt-out.
+- No product change, no Op/ADR/CI change; phase 250 accepts the tradeoff.
 
 ---
 
