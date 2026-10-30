@@ -590,6 +590,26 @@ impl Runtime {
             });
         }
         let digest = kutha_common::sha256_hex(&payload);
+        let proposal = Op::EnrichmentProposal {
+            pack_id: pack_id.into(),
+            pack_version: pack_version.into(),
+            source_event_ids,
+            model: model.into(),
+            prompt: prompt.into(),
+            cache_key: cache_key.into(),
+            blob_digest: digest.clone(),
+        };
+        // Validate before the blob append so a rejected proposal leaves no
+        // orphan `StoreBlob` behind. Admission re-checks with the blob present.
+        crate::enrichment::validate_proposal_with_payload(
+            self.log.as_slice(),
+            &self.fold.blobs,
+            &proposal,
+            Some((&digest, &payload)),
+        )
+        .map_err(|err| RuntimeError::EnrichmentRejected {
+            reason: err.to_string(),
+        })?;
         self.pipeline_kind(
             Op::StoreBlob {
                 digest: digest.clone(),
@@ -597,18 +617,7 @@ impl Runtime {
             },
             ReceiptMode::Dictionary,
         )?;
-        self.pipeline_kind(
-            Op::EnrichmentProposal {
-                pack_id: pack_id.into(),
-                pack_version: pack_version.into(),
-                source_event_ids,
-                model: model.into(),
-                prompt: prompt.into(),
-                cache_key: cache_key.into(),
-                blob_digest: digest,
-            },
-            ReceiptMode::Dictionary,
-        )
+        self.pipeline_kind(proposal, ReceiptMode::Dictionary)
     }
 
     /// Record D021 pack install (not a graph Fact).

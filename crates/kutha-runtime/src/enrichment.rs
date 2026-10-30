@@ -75,6 +75,20 @@ pub fn validate_proposal(
     blobs: &HashMap<String, Vec<u8>>,
     proposal: &Op,
 ) -> Result<(), EnrichmentError> {
+    validate_proposal_with_payload(log, blobs, proposal, None)
+}
+
+/// Validate a proposal whose payload has not been appended yet.
+///
+/// `pending` is the `(digest, bytes)` the caller is about to store. It is used
+/// only when the digest is absent from `blobs`, so a rejected proposal does not
+/// leave an orphan `StoreBlob` on the log.
+pub fn validate_proposal_with_payload(
+    log: &[Event],
+    blobs: &HashMap<String, Vec<u8>>,
+    proposal: &Op,
+    pending: Option<(&str, &[u8])>,
+) -> Result<(), EnrichmentError> {
     let Op::EnrichmentProposal {
         pack_id,
         pack_version,
@@ -136,11 +150,18 @@ pub fn validate_proposal(
             });
         }
     }
-    let bytes = blobs
-        .get(blob_digest)
-        .ok_or_else(|| EnrichmentError::MissingBlob {
-            digest: blob_digest.clone(),
-        })?;
+    let pending_bytes = pending
+        .filter(|(digest, _)| digest == blob_digest)
+        .map(|(_, bytes)| bytes);
+    let bytes = match (blobs.get(blob_digest), pending_bytes) {
+        (Some(bytes), _) => bytes,
+        (None, Some(bytes)) => bytes,
+        (None, None) => {
+            return Err(EnrichmentError::MissingBlob {
+                digest: blob_digest.clone(),
+            });
+        }
+    };
     if sha256_hex(bytes) != *blob_digest {
         return Err(EnrichmentError::DigestMismatch {
             digest: blob_digest.clone(),

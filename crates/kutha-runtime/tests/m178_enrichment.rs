@@ -126,6 +126,33 @@ fn unknown_source_and_duplicate_key_fail_closed() {
 }
 
 #[test]
+fn wrong_version_fails_closed_without_orphan_blob() {
+    let mut rt = build_runtime();
+    let source = source(&mut rt);
+    let before = rt.log().len();
+    let err = rt
+        .emit_enrichment_proposal(
+            "enrich",
+            "2.0.0",
+            vec![source],
+            "model-x",
+            "prompt-v1",
+            "cache-version",
+            b"summary".to_vec(),
+        )
+        .expect_err("wrong version");
+    assert!(matches!(
+        err,
+        RuntimeError::EnrichmentRejected { reason } if reason.contains("version")
+    ));
+    assert_eq!(
+        rt.log().len(),
+        before,
+        "rejected proposal left an orphan event"
+    );
+}
+
+#[test]
 fn empty_pins_and_payload_fail_closed() {
     let mut rt = build_runtime();
     let source = source(&mut rt);
