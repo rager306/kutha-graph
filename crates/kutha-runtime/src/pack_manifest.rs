@@ -118,14 +118,15 @@ impl PackManifest {
         }
         let mut seen = BTreeSet::new();
         for name in &self.operators {
-            let trimmed = name.trim();
-            if trimmed.is_empty() {
+            if name.trim().is_empty() {
                 return Err(PackManifestError::EmptyOperator);
             }
-            if !valid_operator_name(trimmed) {
+            // Exact spelling is the declared name; whitespace is not normalized
+            // away, so a padded name cannot alias a clean one.
+            if !valid_operator_name(name) {
                 return Err(PackManifestError::InvalidOperator { name: name.clone() });
             }
-            if !seen.insert(trimmed) {
+            if !seen.insert(name.as_str()) {
                 return Err(PackManifestError::DuplicateOperator { name: name.clone() });
             }
         }

@@ -87,6 +87,11 @@ fn malformed_and_reserved_manifests_fail_closed() {
         bad.validate_shape(),
         Err(PackManifestError::EmptyOperator)
     ));
+    bad.operators = vec![" normalize ".into()];
+    assert!(matches!(
+        bad.validate_shape(),
+        Err(PackManifestError::InvalidOperator { .. })
+    ));
     assert!(matches!(
         PackManifest::parse(b"not json"),
         Err(PackManifestError::Malformed)
