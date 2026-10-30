@@ -2,7 +2,7 @@
 
 ## Overview
 
-v1.64 Ingest regression is complete. M170 closed the `as_of` allocation residual; M171's five-sample bisect names `199807d` as the per-assert index commit and accepts the write-cost tradeoff for O(1) lookup. No product feature, no thaw.
+v1.64 Ingest regression is closed. v1.65 runs the B3 hot-path benchmark on the existing CSR lease before any HNSW/planner/Cypher work: fix the multi-hop workload, record a same-host Kutha baseline and regression floor, then run the competitor comparison or record its environment blocker. No product thaw.
 
 ## Id map
 
@@ -10,40 +10,40 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [x] **Phase 249: Ingest bisect** - name the first bad commit for ingest_plain.n (completed 2026-10-30)
-- [x] **Phase 250: Ingest fix or accept** - fix the cost or record the tradeoff (completed 2026-10-30)
+- [ ] **Phase 251: B3 workload and baseline** - fix the workload and record the Kutha baseline
+- [ ] **Phase 252: B3 decision** - compare competitors or record the blocker; decide B4/B5
 
 ## Phase Details
 
-### Phase 249: Ingest bisect
-**Goal**: Name the commit that took `ingest_plain.n` from the controlled `cdf1942` baseline to HEAD.
+### Phase 251: B3 workload and baseline
+**Goal**: Fix the B3 multi-hop workload and record a same-host Kutha baseline with a regression floor.
 **Depends on**: Nothing
-**Requirements**: PF-05
+**Requirements**: B3-01
 **Success Criteria**:
-  1. Old and HEAD are measured on the same host at a stable N.
-  2. `git bisect` yields the first bad commit.
-  3. The cause is stated in code terms; no product fix is attempted here.
-**Plans**: 1/1 plans complete
+  1. Workload is defined as data (pattern, hops, filters) and mapped to the existing `hop_k` / typed IR.
+  2. Kutha baseline numbers and host/method are recorded; a regression floor is derived from the ratio, not absolute time.
+  3. No HNSW, planner, Cypher, or legal pack work is started.
+**Plans**: 0 plans
 
 Plans:
-- [x] 249-01 — ingest bisect
+- [ ] TBD (run /gsd-plan-phase 251 to break down)
 
-### Phase 250: Ingest fix or accept
-**Goal**: Remove the ingest cost or record why it is the accepted tradeoff.
-**Depends on**: Phase 249
-**Requirements**: PF-06
+### Phase 252: B3 decision
+**Goal**: Compare against Samyama/FalkorDB, or record why the environment cannot run, then decide B4/B5.
+**Depends on**: Phase 251
+**Requirements**: B3-02
 **Success Criteria**:
-  1. A fix lands, or the tradeoff and its cause are explicit.
-  2. A post-change interleaved bench records `ingest_plain.n`.
-  3. No semantics change beyond the ingest path.
-**Plans**: 1/1 plans complete
+  1. A competitor comparison is run in one sitting with calibration, or the environment blocker is explicit.
+  2. The decision uses ratios and the B3 floor; if there is no gap, B4/B5 are skipped.
+  3. Report under `.compound-engineering/artifacts/research/`; no thaw.
+**Plans**: 0 plans
 
 Plans:
-- [x] 250-01 — ingest fix or accept
+- [ ] TBD (run /gsd-plan-phase 252 to break down)
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 249. Ingest bisect | 1/1 | Complete    | 2026-10-30 |
-| 250. Ingest fix or accept | 1/1 | Complete    | 2026-10-30 |
+| 251. B3 workload and baseline | 0/1 | Pending | — |
+| 252. B3 decision | 0/1 | Pending | — |

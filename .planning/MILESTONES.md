@@ -1,5 +1,13 @@
 # Project Milestones: Kutha
 
+## v1.65 B3 hot-path benchmark (Active: 2026-10-30)
+
+**M172-S01.** Fix the multi-hop workload, record the Kutha baseline and regression floor, then compare with Samyama/FalkorDB or record the environment blocker. B4/B5 stay frozen unless B3 shows a real gap. No product feature, no thaw.
+
+**Phases:** 251–252 (0/2 plans complete)
+
+---
+
 ## v1.64 ingest regression (Shipped: 2026-10-30)
 
 **Delivered:** M171. The first index commit `199807d` is named; the per-assert map write cost is accepted as the O(1) lookup tradeoff.

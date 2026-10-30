@@ -10,11 +10,11 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.63 as_of regression — closed (M169)
+## Current Milestone: v1.65 B3 hot-path benchmark — active (M172)
 
-**Goal:** Locate the commit behind the 3.32× `as_of` gap and fix it or record an explicit tradeoff with a same-host bench.
+**Goal:** Fix the multi-hop workload, record a same-host Kutha baseline and regression floor, then compare with Samyama/FalkorDB or record the environment blocker. B4/B5 stay frozen unless B3 shows a real gap.
 
-**Lease:** `.kutha/STATE.md` is `M169-S01`; phases 247–248. No thaw.
+**Lease:** `.kutha/STATE.md` is `M172-S01`; phases 251–252. No thaw.
 
 **Last shipped:** v1.60 Operational honesty (M166, 2026-10-28); v1.59 compacted Horn cause (M165, 2026-10-27). Honeycomb stays Proposed.
 

@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Process: GSD v1.65 and M172-S01 lease
+
+- GSD milestone **v1.65 B3 hot-path benchmark** opened on gsd-core 1.19.0: phase 251 (workload and Kutha baseline) and 252 (competitor comparison or environment blocker; B4/B5 decision). Requirements B3-01/B3-02.
+- Harness lease **M172-S01** opened; `L_delivery=M172-S01-open`; `.kutha/ROADMAP.md` has unchecked S01. No HNSW/planner/Cypher thaw; no legal pack.
+- B3 is the gate before B4/B5. The workload uses the existing `hop_k` layered `relatedTo` graph and typed IR, not a new parser.
+
 ## 2026-10-30 — Trajectory: M171-S01 closed (ingest tradeoff)
 
 - Five interleaved N=10000 samples name `199807d` as the first index commit: parent `c26bf35` 93.5 ms -> `199807d` 130.4 ms (+39.6%), old `cdf1942` 96.3 ms -> HEAD 114.1 ms (+18.5%). The table and 20 logs are in `docs/architecture/benchmark-baseline.md` / `tmp/ingest-only-*.log`; the early-exit patch is retained at `tmp/patch_bench.py`.

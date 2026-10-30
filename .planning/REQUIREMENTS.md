@@ -3,19 +3,19 @@
 **Defined:** 2026-10-30
 **Core Value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
 
-## v1.64 Requirements
+## v1.65 Requirements
 
-- [x] **PF-05**: The first commit that raised `ingest_plain.n` versus `cdf1942` is identified by a same-host bisect.
-- [x] **PF-06**: The ingest cost is fixed, or an explicit tradeoff with its cause is recorded; a post-change interleaved bench shows the result.
+- [ ] **B3-01**: A fixed multi-hop workload and a same-host Kutha baseline are recorded, with a regression floor derived from the baseline.
+- [ ] **B3-02**: A competitor comparison is completed, or an explicit environment blocker is recorded; the B3 decision says whether B4/B5 proceed or are skipped.
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PF-05 | Phase 249 | Complete |
-| PF-06 | Phase 250 | Complete |
+| B3-01 | Phase 251 | Pending |
+| B3-02 | Phase 252 | Pending |
 
 **Coverage:**
-- v1.64 requirements: 2 total
+- v1.65 requirements: 2 total
 - Mapped to phases: 2
 - Unmapped: 0
