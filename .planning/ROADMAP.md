@@ -2,7 +2,7 @@
 
 ## Overview
 
-v1.64 Ingest regression is closed. v1.65 runs the B3 hot-path benchmark on the existing CSR lease before any HNSW/planner/Cypher work: fix the multi-hop workload, record a same-host Kutha baseline and regression floor, then run the competitor comparison or record its environment blocker. No product thaw.
+v1.66 leases **M003a** after the B3 no-gap decision: implement the read-only GPML/Cypher subset parser into the existing typed `QueryIr`, prove it against B3 and FF5 fixtures, and fail closed on unknown vocabulary. No writes, aggregation, path functions, planner, HNSW, or legal pack.
 
 ## Id map
 
@@ -10,40 +10,40 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [x] **Phase 251: B3 workload and baseline** - fix the workload and record the Kutha baseline (completed 2026-10-30)
-- [x] **Phase 252: B3 decision** - compare competitors or record the blocker; decide B4/B5 (completed 2026-10-30)
+- [ ] **Phase 253: M003a parser subset** - lexer/parser and `VocabBinder` to typed `QueryIr`
+- [ ] **Phase 254: M003a differential falsifier** - render/parse parity on B3 + FF5 and fail-closed tests
 
 ## Phase Details
 
-### Phase 251: B3 workload and baseline
-**Goal**: Fix the B3 multi-hop workload and record a same-host Kutha baseline with a regression floor.
+### Phase 253: M003a parser subset
+**Goal**: Implement the read-only GPML/Cypher subset and bind it through a `VocabBinder` to existing typed `QueryIr`.
 **Depends on**: Nothing
-**Requirements**: B3-01
+**Requirements**: GPML-01
 **Success Criteria**:
-  1. Workload is defined as data (pattern, hops, filters) and mapped to the existing `hop_k` / typed IR.
-  2. Kutha baseline numbers and host/method are recorded; a regression floor is derived from the ratio, not absolute time.
-  3. No HNSW, planner, Cypher, or legal pack work is started.
-**Plans**: 1/1 plans complete
+  1. Parser supports the fixed subset only; unknown constructs fail closed.
+  2. `AS OF` is typed, not stringly parsed; scans/hops map to `QueryIr::Scan` / `QueryIr::Hops`.
+  3. No writes, aggregation, path functions, HNSW, planner, or legal-pack behavior are added.
+**Plans**: 0 plans
 
 Plans:
-- [x] 251-01 — B3 workload and Kutha baseline
+- [ ] TBD (run /gsd-plan-phase 253 to break down)
 
-### Phase 252: B3 decision
-**Goal**: Compare against Samyama/FalkorDB, or record why the environment cannot run, then decide B4/B5.
-**Depends on**: Phase 251
-**Requirements**: B3-02
+### Phase 254: M003a differential falsifier
+**Goal**: Prove parser/IR parity on B3 workload and FF5, and fail-closed vocabulary errors.
+**Depends on**: Phase 253
+**Requirements**: GPML-02
 **Success Criteria**:
-  1. A competitor comparison is run in one sitting with calibration, or the environment blocker is explicit.
-  2. The decision uses ratios and the B3 floor; if there is no gap, B4/B5 are skipped.
-  3. Report under `.compound-engineering/artifacts/research/`; no thaw.
-**Plans**: 1/1 plans complete
+  1. For every rendered B3/FF5 query, parsed IR equals the handwritten IR used today.
+  2. Unknown label/relation and malformed queries fail closed with useful errors.
+  3. `AS OF` result equals the typed facade on FF5.
+**Plans**: 0 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 252 to break down)
+- [ ] TBD (run /gsd-plan-phase 254 to break down)
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 251. B3 workload and baseline | 1/1 | Complete    | 2026-10-30 |
-| 252. B3 decision | 1/1 | Complete    | 2026-10-30 |
+| 253. M003a parser subset | 0/1 | Pending | — |
+| 254. M003a differential falsifier | 0/1 | Pending | — |

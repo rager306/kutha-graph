@@ -1,5 +1,13 @@
 # Project Milestones: Kutha
 
+## v1.66 M003a GPML AS OF parser (Active: 2026-10-30)
+
+**M173-S01.** Lease M003a: read-only GPML/Cypher subset parser into typed QueryIr with intern/allowlist binder. Differential falsifier on B3/FF5. No writes, aggregation, path functions, planner, HNSW, or legal pack.
+
+**Phases:** 253–254 (0/2 plans complete)
+
+---
+
 ## v1.65 B3 hot-path benchmark (Shipped: 2026-10-30)
 
 **Delivered:** M172. Fixed the layered `relatedTo` workload, recorded the Kutha baseline/floor, and compared FalkorDB/Samyama.

@@ -1,19 +1,16 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.65
-status: Awaiting next milestone
-stopped_at: Phase 252 complete — all phases complete
-last_updated: "2026-10-30T09:11:39.912Z"
+milestone: v1.66
+milestone_name: M003a GPML AS OF parser
+status: planning
+last_updated: "2026-10-30T12:35:27.297Z"
 last_activity: 2026-10-30
-last_activity_desc: Milestone v1.65 completed and archived
-state_head: 3dcef9d5e5e9334a6d8b71631898a911f7025f88
 progress:
   total_phases: 2
-  completed_phases: 2
+  completed_phases: 0
   total_plans: 2
-  completed_plans: 2
-milestone_name: B3 hot-path benchmark
-current_phase: null
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -23,14 +20,15 @@ current_phase: null
 See: .planning/PROJECT.md (updated 2026-10-29)
 
 **Core value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
-**Current focus:** v1.65 B3 hot-path benchmark (M172-S01), complete.
+**Current focus:** v1.66 M003a GPML AS OF parser (M173-S01), phase 253.
 
 ## Current Position
 
-Phase: Milestone v1.65 complete
-Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-10-30 — Milestone v1.65 completed and archived
+Phase: 253 — M003a parser subset
+Plan: 253-01
+Status: Ready to execute
+Last activity: 2026-10-30 — Milestone v1.66 started; M003a parser planned
+
 
 ## Accumulated Context
 
@@ -39,7 +37,8 @@ Last activity: 2026-10-30 — Milestone v1.65 completed and archived
 - 2026-10-29: Prime suspect is `cec5b64` / `LiveFactFilter::Product` per-fact dictionary check.
 - 2026-10-30: M169 and M170 closed the `as_of` causes; M171 identified `199807d` as the ingest index commit and accepted the per-assert map write cost.
 - 2026-10-30: `KUTHA_FOLD_INDEX_MODE=lazy|thin` is the bounded write-thin opt-out; Eager remains default.
-- 2026-10-30: B3 is the next gate; HNSW/planner/Cypher stay frozen until B3 shows a real gap or the no-gap decision skips B4/B5.
+- 2026-10-30: B3 showed no gap; B4/B5 are skipped. M003a leases the read-only GPML/Cypher subset parser; HNSW/planner and legal pack stay frozen.
+- 2026-10-30: M003a binder uses intern/allowlist now; pack-dictionary binder is a later small lease (M003b after C2).
 
 ### Pending Todos
 

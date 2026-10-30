@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Process: GSD v1.66 and M003a lease
+
+- Owner authorized M003a after B3 no-gap; GSD milestone **v1.66 M003a GPML AS OF parser** opened. Phases 253 (parser subset) and 254 (differential falsifier), requirements GPML-01/GPML-02.
+- Harness lease **M173-S01** opened; `L_delivery=M173-S01-open`; `.kutha/ROADMAP.md` has unchecked S01. Thaw map marks Cypher/GPML parser thawed for M003a only.
+- Scope: read-only GPML/Cypher subset to existing typed QueryIr with intern/allowlist `VocabBinder`; `AS OF` typed; unknown vocabulary fails closed. No writes, aggregation, path functions, planner, HNSW, or legal pack. M003b binder swap stays gated on C2.
+
 ## 2026-10-30 — Trajectory: M172-S01 closed (B3 no-gap)
 
 - B3 decision: FalkorDB median 4,779 µs, Samyama 14,511 µs vs Kutha walk-only 161,912 ns / prepared 512,496 ns. Walk-only ≈29.5×/≈89.6×; prepared ≈9.3×/≈28.3× (≈3.1× vs Falkor internal 1.58 ms).

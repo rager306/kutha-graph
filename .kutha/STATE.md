@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M173
+**Active Slice:** S01
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M172-S01-closed
+L_delivery=M173-S01-open
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M172-S01 closed (B3 no-gap; B4/B5 skipped; GSD v1.65) | Capability proven / Cypher started |
+| L_delivery | M173-S01 active (M003a GPML parser; GSD v1.66) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M172-S01 is closed under GSD **v1.65 B3 hot-path benchmark**. Pinned Kutha baseline: `hop2.walk.n` 170,568 ns; 2n 353,765; 4n 714,556; ratio floors 2.28/4.61/2.22. Competitor medians: FalkorDB 4,779 µs, Samyama 14,511 µs; Kutha walk-only ≈29.5×/≈89.6× faster, prepared ≈9.3×/≈28.3×. Decision: **skip B4 (HNSW) and B5 (planner)**; **B6 (Cypher AS OF) still needs M003** and is not thawed. No product code change. M171-S01 remains closed (ingest tradeoff accepted; `KUTHA_FOLD_INDEX_MODE=lazy|thin`). M170-S01 remains closed and its follow-ups stay non-blocking: shared scan helper, capacity pre-pass/over-reservation on heavily retracted cuts, and the m019 store-lock flake. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M173-S01 is leased under GSD **v1.66 M003a GPML AS OF parser**. B3 showed no gap; B4/B5 are skipped. M003a implements the read-only GPML/Cypher subset parser into existing typed QueryIr with a `VocabBinder` over intern/allowlist; phase 254 proves `parse(render(workload)) == IR` on B3/FF5 and AS OF equals the typed facade. No writes, aggregation, path functions, planner, HNSW, or legal pack. M003b binder swap stays gated on C2. M172-S01 remains closed (B3 no-gap; B4/B5 skipped). M171-S01 remains closed (ingest tradeoff accepted; `KUTHA_FOLD_INDEX_MODE=lazy|thin`). M170-S01 follow-ups stay non-blocking: shared scan helper, capacity pre-pass/over-reservation on heavily retracted cuts, and the m019 store-lock flake. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 
@@ -34,7 +34,7 @@ The freeze list came from agent-assisted commits (`1ee5942`, `85db1f7`, 2026-08-
 | Item | Thaws when |
 |------|------------|
 | RocksDB crate | Thawed (Phase 51/55): optional dependency `rocksdb` in kutha-runtime only; `freeze-rocks` is a durable rule (optional dependencies only) |
-| Cypher/GPML parser | M003 is leased |
+| Cypher/GPML parser | Thawed (M003a leased 2026-10-30): read-only subset parser; M003b binder swap stays gated on C2 |
 | HNSW | M005 is leased |
 | ADR-050 six dictionaries | SIX-01 is leased |
 | ADR-080/081 | a security milestone is leased (after M003) |

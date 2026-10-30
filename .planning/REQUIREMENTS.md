@@ -3,19 +3,19 @@
 **Defined:** 2026-10-30
 **Core Value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
 
-## v1.65 Requirements
+## v1.66 Requirements
 
-- [x] **B3-01**: A fixed multi-hop workload and a same-host Kutha baseline are recorded, with a regression floor derived from the baseline.
-- [x] **B3-02**: A competitor comparison is completed, or an explicit environment blocker is recorded; the B3 decision says whether B4/B5 proceed or are skipped.
+- [ ] **GPML-01**: A read-only GPML/Cypher subset parser converts fixed-hop node/relationship patterns, property filters, `AS OF`, `RETURN`, and `LIMIT` into the existing typed `QueryIr` using a `VocabBinder` over intern/allowlist; unknown label or relation fails closed.
+- [ ] **GPML-02**: Differential falsifier proves `parse(render(workload)) == IR` for the B3 workload and FF5/PIT fixture; query failures match `QueryError`.
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| B3-01 | Phase 251 | Complete |
-| B3-02 | Phase 252 | Complete |
+| GPML-01 | Phase 253 | Pending |
+| GPML-02 | Phase 254 | Pending |
 
 **Coverage:**
-- v1.65 requirements: 2 total
+- v1.66 requirements: 2 total
 - Mapped to phases: 2
 - Unmapped: 0
