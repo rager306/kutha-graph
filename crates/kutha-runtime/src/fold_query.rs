@@ -121,6 +121,45 @@ impl GraphFold {
             .collect()
     }
 
+    fn collect_live_triples_at(
+        &self,
+        tt: impl Into<TransactionTime>,
+        vt: impl Into<ValidTime>,
+        filter: LiveFactFilter,
+    ) -> Vec<(TermId, TermId, TermId)> {
+        let tt = tt.into().as_u64();
+        let vt = vt.into().as_u64();
+        let keep = |f: &Fact| filter.keep(self, f);
+        let capacity = if self.hot_maps_warm {
+            self.vt_by_from
+                .range(..=vt)
+                .map(|(_, idxs)| idxs.len())
+                .sum()
+        } else {
+            self.facts.len()
+        };
+        let mut out = Vec::with_capacity(capacity);
+        if !self.hot_maps_warm {
+            for fact in &self.facts {
+                self.hot_examine.bump();
+                if fact.is_live_at(tt, vt) && keep(fact) {
+                    out.push((fact.subject, fact.relation, fact.object()));
+                }
+            }
+            return out;
+        }
+        for (_, idxs) in self.vt_by_from.range(..=vt) {
+            for &idx in idxs {
+                self.hot_examine.bump();
+                let fact = &self.facts[idx];
+                if fact.is_live_at(tt, vt) && keep(fact) {
+                    out.push((fact.subject, fact.relation, fact.object()));
+                }
+            }
+        }
+        out
+    }
+
     pub fn live_count(&self, tt: impl Into<TransactionTime>, vt: impl Into<ValidTime>) -> usize {
         self.live_at(tt, vt).len()
     }
@@ -132,10 +171,7 @@ impl GraphFold {
         tt: impl Into<TransactionTime>,
         vt: impl Into<ValidTime>,
     ) -> Vec<(TermId, TermId, TermId)> {
-        self.live_facts_at(tt, vt)
-            .into_iter()
-            .map(|f| (f.subject, f.relation, f.object()))
-            .collect()
+        self.collect_live_triples_at(tt, vt, LiveFactFilter::Product)
     }
 
     /// AS OF valid-time on the current transaction picture (`tt = MAX`).

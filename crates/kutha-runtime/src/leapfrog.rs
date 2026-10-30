@@ -48,7 +48,10 @@ pub fn leapfrog_intersect(rows: &[&[TermId]]) -> Vec<TermId> {
                 }
             }
         }
-        let (mn, mx) = (mn.unwrap(), mx.unwrap());
+        let (mn, mx) = (
+            mn.expect("non-empty rows yield a minimum key"),
+            mx.expect("non-empty rows yield a maximum key"),
+        );
         if mn == mx {
             out.push(mn);
             for it in &mut iters {

@@ -206,8 +206,16 @@ fn read_one_frame_payload(f: &mut File) -> std::io::Result<Option<Vec<u8>>> {
         Err(e) if e.kind() == std::io::ErrorKind::UnexpectedEof => return Ok(None),
         Err(e) => return Err(e),
     }
-    let len = u32::from_le_bytes(hdr[0..4].try_into().unwrap()) as usize;
-    let crc_stored = u32::from_le_bytes(hdr[4..8].try_into().unwrap());
+    let len = u32::from_le_bytes(
+        hdr[0..4]
+            .try_into()
+            .expect("frame header has a 4-byte length prefix"),
+    ) as usize;
+    let crc_stored = u32::from_le_bytes(
+        hdr[4..8]
+            .try_into()
+            .expect("frame header has a 4-byte checksum"),
+    );
     let mut payload = vec![0u8; len];
     match f.read_exact(&mut payload) {
         Ok(()) => {}
