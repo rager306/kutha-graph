@@ -1,5 +1,13 @@
 # Project Milestones: Kutha
 
+## v1.67 Gate GB fixture parity (Active: 2026-10-30)
+
+**M174-S01.** Prove GPML `AS OF` parity across FF5, B3, and M167 eCFR fixtures; record Gate GB closure and security eligibility boundary. No C4/C6 implementation, no thaw beyond M003a.
+
+**Phases:** 255–256 (0/2 plans complete)
+
+---
+
 ## v1.66 M003a GPML AS OF parser (Shipped: 2026-10-30)
 
 **Delivered:** M173 / M003a. Read-only GPML/Cypher subset parser into typed QueryIr with intern/allowlist binder; differential proof on B3/FF5; fail-closed vocabulary.

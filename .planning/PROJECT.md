@@ -10,11 +10,11 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.66 M003a GPML AS OF parser — active (M173)
+## Current Milestone: v1.67 Gate GB fixture parity — active (M174)
 
-**Goal:** Implement the read-only GPML/Cypher subset parser into existing typed `QueryIr` with intern/allowlist binder; prove parity on B3/FF5 and fail-closed vocabulary. No planner/HNSW/legal pack.
+**Goal:** Prove GPML `AS OF` parity across FF5, B3, and M167 eCFR fixtures; record Gate GB closure and the security eligibility boundary without implementing C4/C6.
 
-**Lease:** `.kutha/STATE.md` is `M173-S01` (M003a); phases 253–254. No HNSW/planner/legal-pack thaw.
+**Lease:** `.kutha/STATE.md` is `M174-S01`; phases 255–256. No thaw beyond M003a.
 
 **Last shipped:** v1.60 Operational honesty (M166, 2026-10-28); v1.59 compacted Horn cause (M165, 2026-10-27). Honeycomb stays Proposed.
 

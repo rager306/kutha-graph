@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M174
+**Active Slice:** S01
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M173-S01-closed
+L_delivery=M174-S01-open
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M173-S01 closed (M003a GPML parser; GSD v1.66) | Capability proven / Cypher started |
+| L_delivery | M174-S01 active (Gate GB fixture parity; GSD v1.67) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M173-S01 is closed under GSD **v1.66 M003a GPML AS OF parser**. Delivered `crates/kutha-runtime/src/gpml.rs`: read-only parser subset to existing typed QueryIr; `VocabBinder` / `RuntimeBinder` uses dictionary + FF6 allowlist and never interns. Differential proof: B3 render/parse parity for every layer-0 start (1/2 hops); FF5 `GPML AS OF` equals typed facade at 2015/2020; unknown vocabulary and out-of-scope constructs fail closed. Focused tests 7/7, differential 5/5, workspace 741 passed / 0 failed; independent verifier PASS. M003b pack-dictionary binder swap stays gated on C2. M172-S01 remains closed (B3 no-gap; B4/B5 skipped). M171-S01 remains closed (ingest tradeoff accepted; `KUTHA_FOLD_INDEX_MODE=lazy|thin`). M170-S01 follow-ups stay non-blocking: shared scan helper, capacity pre-pass/over-reservation on heavily retracted cuts, and the m019 store-lock flake. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M174-S01 is leased under GSD **v1.67 Gate GB fixture parity**. Phase 255 proves GPML `AS OF` parity across FF5, B3 layered workload, and M167 eCFR sections/cuts; phase 256 records Gate GB closure, caveats, and the security eligibility boundary. ADR-080/081 / C4/C6 remain a separate owner-leased security milestone; no implementation in this slice. M003b pack-dictionary binder swap stays gated on C2. M173-S01 remains closed (M003a parser delivered). M172-S01 remains closed (B3 no-gap; B4/B5 skipped). M171/M170 residuals stay non-blocking. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

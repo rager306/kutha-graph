@@ -3,19 +3,19 @@
 **Defined:** 2026-10-30
 **Core Value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
 
-## v1.66 Requirements
+## v1.67 Requirements
 
-- [x] **GPML-01**: A read-only GPML/Cypher subset parser converts fixed-hop node/relationship patterns, property filters, `AS OF`, `RETURN`, and `LIMIT` into the existing typed `QueryIr` using a `VocabBinder` over intern/allowlist; unknown label or relation fails closed.
-- [x] **GPML-02**: Differential falsifier proves `parse(render(workload)) == IR` for the B3 workload and FF5/PIT fixture; query failures match `QueryError`.
+- [ ] **GB-01**: GPML `AS OF` parity is proven across the existing fixture corpus: FF5 statute, B3 layered workload, and M167 eCFR PIT sections/cuts.
+- [ ] **GB-02**: Gate GB closure is recorded with explicit scope/caveats, and the security milestone remains a separate owner decision (no C4/C6 implementation).
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| GPML-01 | Phase 253 | Complete |
-| GPML-02 | Phase 254 | Complete |
+| GB-01 | Phase 255 | Pending |
+| GB-02 | Phase 256 | Pending |
 
 **Coverage:**
-- v1.66 requirements: 2 total
+- v1.67 requirements: 2 total
 - Mapped to phases: 2
 - Unmapped: 0

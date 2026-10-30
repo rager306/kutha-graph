@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Process: GSD v1.67 and M174-S01 Gate GB
+
+- Owner continued after M003a; GSD milestone **v1.67 Gate GB fixture parity** opened. Phase 255 proves GPML `AS OF` parity across FF5, B3 layered workload, and M167 eCFR sections/cuts. Phase 256 records Gate GB closure, scope/caveats, and security eligibility boundary.
+- Harness lease **M174-S01** opened; `L_delivery=M174-S01-open`; `.kutha/ROADMAP.md` has unchecked S01.
+- ADR-080/081 / C4/C6 remain a separate owner-leased security milestone; no ABAC/sandbox implementation. M003b stays gated on C2.
+
 ## 2026-10-30 — Trajectory: M173-S01 closed (M003a)
 
 - M003a delivered: read-only GPML/Cypher subset parser into existing typed `QueryIr`; `VocabBinder` / `RuntimeBinder` resolves through dictionary + FF6 allowlist and never interns. Repeated same-rel bounded hops use compact `rels.len()==1`; per-hop chains stay per-hop.

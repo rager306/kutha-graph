@@ -2,7 +2,7 @@
 
 ## Overview
 
-v1.66 leases **M003a** after the B3 no-gap decision: implement the read-only GPML/Cypher subset parser into the existing typed `QueryIr`, prove it against B3 and FF5 fixtures, and fail closed on unknown vocabulary. No writes, aggregation, path functions, planner, HNSW, or legal pack.
+v1.67 closes **Gate GB** for M003a: prove GPML `AS OF` parity across the existing fixture corpus (FF5, B3, M167 eCFR), record scope/caveats, and state security eligibility without implementing C4/C6. No thaw beyond M003a; no product semantics change.
 
 ## Id map
 
@@ -10,40 +10,40 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [x] **Phase 253: M003a parser subset** - lexer/parser and `VocabBinder` to typed `QueryIr` (completed 2026-10-30)
-- [x] **Phase 254: M003a differential falsifier** - render/parse parity on B3 + FF5 and fail-closed tests (completed 2026-10-30)
+- [ ] **Phase 255: Gate GB fixture parity** - GPML vs typed facade on FF5/B3/eCFR
+- [ ] **Phase 256: Gate GB closure decision** - record Gate GB result and security eligibility
 
 ## Phase Details
 
-### Phase 253: M003a parser subset
-**Goal**: Implement the read-only GPML/Cypher subset and bind it through a `VocabBinder` to existing typed `QueryIr`.
+### Phase 255: Gate GB fixture parity
+**Goal**: Prove parsed GPML `AS OF` results equal the typed facade across FF5, B3, and M167 eCFR fixtures.
 **Depends on**: Nothing
-**Requirements**: GPML-01
+**Requirements**: GB-01
 **Success Criteria**:
-  1. Parser supports the fixed subset only; unknown constructs fail closed.
-  2. `AS OF` is typed, not stringly parsed; scans/hops map to `QueryIr::Scan` / `QueryIr::Hops`.
-  3. No writes, aggregation, path functions, HNSW, planner, or legal-pack behavior are added.
-**Plans**: 1/1 plans complete
+  1. FF5 2015/2020 parity is covered.
+  2. B3 layered 1/2-hop parity is covered.
+  3. eCFR 3 sections x 7 published cuts are covered; unknown vocabulary fails closed.
+**Plans**: 0 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 253 to break down)
+- [ ] TBD (run /gsd-plan-phase 255 to break down)
 
-### Phase 254: M003a differential falsifier
-**Goal**: Prove parser/IR parity on B3 workload and FF5, and fail-closed vocabulary errors.
-**Depends on**: Phase 253
-**Requirements**: GPML-02
+### Phase 256: Gate GB closure decision
+**Goal**: Record Gate GB closure, explicit caveats, and the security eligibility boundary.
+**Depends on**: Phase 255
+**Requirements**: GB-02
 **Success Criteria**:
-  1. For every rendered B3/FF5 query, parsed IR equals the handwritten IR used today.
-  2. Unknown label/relation and malformed queries fail closed with useful errors.
-  3. `AS OF` result equals the typed facade on FF5.
-**Plans**: 1/1 plans complete
+  1. Gate GB evidence is cited.
+  2. Scope is limited to read-only supported GPML; no C4/C6 implementation.
+  3. Security remains a separate owner-leased milestone.
+**Plans**: 0 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 254 to break down)
+- [ ] TBD (run /gsd-plan-phase 256 to break down)
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 253. M003a parser subset | 1/1 | Complete    | 2026-10-30 |
-| 254. M003a differential falsifier | 1/1 | Complete    | 2026-10-30 |
+| 255. Gate GB fixture parity | 0/1 | Pending | — |
+| 256. Gate GB closure decision | 0/1 | Pending | — |
