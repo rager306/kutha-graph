@@ -26,7 +26,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 **Plans**: 1/1 plans complete
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 251 to break down)
+- [x] 251-01 — B3 workload and Kutha baseline
 
 ### Phase 252: B3 decision
 **Goal**: Compare against Samyama/FalkorDB, or record why the environment cannot run, then decide B4/B5.

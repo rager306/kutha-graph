@@ -25,13 +25,13 @@ milestone_name: B3 hot-path benchmark
 See: .planning/PROJECT.md (updated 2026-10-29)
 
 **Core value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
-**Current focus:** v1.65 B3 hot-path benchmark (M172-S01), phase 251.
+**Current focus:** v1.65 B3 hot-path benchmark (M172-S01), phase 252.
 
 ## Current Position
 
 Phase: 252 — B3 decision
-Plan: Not started
-Status: Ready to execute
+Plan: 252-01
+Status: Ready — competitor environment accessible, workload not yet rendered
 Last activity: 2026-10-30 — Phase 251 complete, transitioned to Phase 252
 
 
@@ -50,7 +50,7 @@ None.
 
 ### Blockers/Concerns
 
-B3 competitor environment may be unavailable; record the exact blocker rather than starting HNSW/planner/Cypher. Bisect builds must not share a target dir; use a detached worktree. The M171 five-sample table is in `docs/architecture/benchmark-baseline.md`; the earlier n=2 outlier is retained only as a caveat.
+B3 images are accessible (`docker manifest inspect` succeeds for falkordb/falkordb:latest and public.ecr.aws/f9f6l5u4/samyama-graph:1.1.0), but neither image is pulled and the workload has not been rendered to Cypher. Do not start HNSW/planner/Cypher before phase 252. Bisect builds must not share a target dir; use a detached worktree. The M171 five-sample table is in `docs/architecture/benchmark-baseline.md`; the earlier n=2 outlier is retained only as a caveat.
 
 ## Deferred Items
 
