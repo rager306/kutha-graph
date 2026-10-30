@@ -1,5 +1,13 @@
 # Project Milestones: Kutha
 
+## v1.68 C4 path-policy foundation (Active: 2026-10-30)
+
+**M175-S01.** Bounded security foundation permitted by M003a + Gate GB: closed-default path-policy compiler over existing typed QueryIr, deny-before-prepare. No grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, full ABAC, or ADR Accepted.
+
+**Phases:** 257–258 (0/2 plans complete)
+
+---
+
 ## v1.67 Gate GB fixture parity (Shipped: 2026-10-30)
 
 **Delivered:** M174. Gate GB closed for supported M003a scope: GPML `AS OF` parity across FF5, B3 layered workload, and M167 eCFR sections/cuts. Security remains separately owner-leased; no C4/C6 implementation.

@@ -3,19 +3,23 @@
 **Defined:** 2026-10-30
 **Core Value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
 
-## v1.67 Requirements
+## v1.68 Requirements
 
-- [x] **GB-01**: GPML `AS OF` parity is proven across the existing fixture corpus: FF5 statute, B3 layered workload, and M167 eCFR PIT sections/cuts.
-- [x] **GB-02**: Gate GB closure is recorded with explicit scope/caveats, and the security milestone remains a separate owner decision (no C4/C6 implementation).
+- [ ] **SEC-01**: A closed-default path-policy compiler evaluates existing typed queries before prepare; unauthorized relations, unlabeled walks, and scans are denied without materializing a lease or rows.
+- [ ] **SEC-02**: Authorized execution integrates with existing `QueryIr` / GPML-produced queries and preserves typed cuts/results; denied execution returns a typed security error, not a silent empty result.
+
+## Explicit non-goals
+
+- No grants-as-facts, tenant slices, vacuum authority, capabilities, WASM sandbox, ABAC policy language, or ADR Accepted status.
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| GB-01 | Phase 255 | Complete |
-| GB-02 | Phase 256 | Complete |
+| SEC-01 | Phase 257 | Pending |
+| SEC-02 | Phase 258 | Pending |
 
 **Coverage:**
-- v1.67 requirements: 2 total
+- v1.68 requirements: 2 total
 - Mapped to phases: 2
 - Unmapped: 0

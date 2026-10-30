@@ -10,11 +10,11 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.67 Gate GB fixture parity — active (M174)
+## Current Milestone: v1.68 C4 path-policy foundation — active (M175)
 
-**Goal:** Prove GPML `AS OF` parity across FF5, B3, and M167 eCFR fixtures; record Gate GB closure and the security eligibility boundary without implementing C4/C6.
+**Goal:** Add a bounded closed-default path-policy compiler over existing typed QueryIr; deny unauthorized scans/hops before prepare. No grants, tenants, vacuum authority, capabilities, WASM, or full ABAC.
 
-**Lease:** `.kutha/STATE.md` is `M174-S01`; phases 255–256. No thaw beyond M003a.
+**Lease:** `.kutha/STATE.md` is `M175-S01`; phases 257–258. Security ADRs stay Proposed.
 
 **Last shipped:** v1.60 Operational honesty (M166, 2026-10-28); v1.59 compacted Horn cause (M165, 2026-10-27). Honeycomb stays Proposed.
 

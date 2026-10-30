@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M175
+**Active Slice:** S01
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M174-S01-closed
+L_delivery=M175-S01-open
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M174-S01 closed (Gate GB parity; security eligible separately; GSD v1.67) | Capability proven / Cypher started |
+| L_delivery | M175-S01 active (C4 path-policy foundation; GSD v1.68) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M174-S01 is closed under GSD **v1.67 Gate GB fixture parity**. Gate GB is closed for supported M003a scope: FF5 vt 2015/2020 parity; B3 every layer-0 start x 1/2 hops; M167 eCFR 3 sections x 7 cuts GPML-vs-facade parity; unknown vocabulary fails closed. Security eligibility is recorded, but ADR-080/081 / C4/C6 remain a separate owner-leased milestone and are not implemented. M003b stays gated on C2. M173-S01 remains closed (M003a parser delivered). M172-S01 remains closed (B3 no-gap; B4/B5 skipped). M171/M170 residuals stay non-blocking. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M175-S01 is leased under GSD **v1.68 C4 path-policy foundation**. Scope is bounded: closed-default path-policy compiler over existing typed QueryIr; deny unauthorized scans/hops before prepare; authorized results unchanged. No grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, full ABAC, or ADR Accepted. Gate GB remains closed (security technically eligible but separately governed). M173-S01 remains closed (M003a parser delivered). M172-S01 remains closed (B3 no-gap; B4/B5 skipped). M171/M170 residuals stay non-blocking. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays. Gate GB is closed for supported M003a scope: FF5 vt 2015/2020 parity; B3 every layer-0 start x 1/2 hops; M167 eCFR 3 sections x 7 cuts GPML-vs-facade parity; unknown vocabulary fails closed. Security eligibility is recorded, but ADR-080/081 / C4/C6 remain a separate owner-leased milestone and are not implemented. M003b stays gated on C2. M173-S01 remains closed (M003a parser delivered). M172-S01 remains closed (B3 no-gap; B4/B5 skipped). M171/M170 residuals stay non-blocking. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

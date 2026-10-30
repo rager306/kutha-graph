@@ -1,19 +1,16 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.67
-status: Awaiting next milestone
-stopped_at: Phase 256 complete — all phases complete
-last_updated: "2026-10-30T14:56:39.483Z"
+milestone: v1.68
+milestone_name: C4 path-policy foundation
+status: planning
+last_updated: "2026-10-30T15:13:16.997Z"
 last_activity: 2026-10-30
-last_activity_desc: Milestone v1.67 completed and archived
-state_head: 1af2d08dbb44141e07871a58d24898852bc28df8
 progress:
   total_phases: 2
-  completed_phases: 2
+  completed_phases: 0
   total_plans: 2
-  completed_plans: 2
-milestone_name: Gate GB fixture parity
-current_phase: null
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -23,14 +20,15 @@ current_phase: null
 See: .planning/PROJECT.md (updated 2026-10-29)
 
 **Core value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
-**Current focus:** v1.67 Gate GB fixture parity (M174-S01), complete.
+**Current focus:** v1.68 C4 path-policy foundation (M175-S01), phase 257.
 
 ## Current Position
 
-Phase: Milestone v1.67 complete
-Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-10-30 — Milestone v1.67 completed and archived
+Phase: 257 — C4 path-policy rewrite foundation
+Plan: 257-01
+Status: Ready to execute
+Last activity: 2026-10-30 — Milestone v1.68 started; C4 foundation planned
+
 
 ## Accumulated Context
 
@@ -41,7 +39,7 @@ Last activity: 2026-10-30 — Milestone v1.67 completed and archived
 - 2026-10-30: `KUTHA_FOLD_INDEX_MODE=lazy|thin` is the bounded write-thin opt-out; Eager remains default.
 - 2026-10-30: B3 showed no gap; B4/B5 are skipped. M003a leases the read-only GPML/Cypher subset parser; HNSW/planner and legal pack stay frozen.
 - 2026-10-30: M003a binder uses intern/allowlist now; pack-dictionary binder is a later small lease (M003b after C2).
-- 2026-10-30: Gate GB is the next verification gate; security C4/C6 remains a separate owner-leased milestone and is not implemented by Gate GB.
+- 2026-10-30: Gate GB closed; M175 leases the bounded C4 foundation only — closed-default path-policy compiler before prepare. Grants, tenants, vacuum, capabilities, WASM, and full ABAC remain out of scope.
 
 ### Pending Todos
 

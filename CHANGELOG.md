@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Process: GSD v1.68 and M175-S01 C4 foundation
+
+- Owner continued after Gate GB; GSD milestone **v1.68 C4 path-policy foundation** opened. Phase 257 adds a closed-default path-policy compiler over existing typed QueryIr; phase 258 integrates authorized GPML/typed execution.
+- Harness lease **M174 successor M175-S01** opened; `L_delivery=M175-S01-open`; `.kutha/ROADMAP.md` has unchecked S01.
+- Explicit non-goals: grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, full ABAC policy language, ADR Accepted.
+
 ## 2026-10-30 — Trajectory: M174-S01 closed (Gate GB)
 
 - Gate GB closed for supported M003a scope: FF5 vt 2015/2020; B3 every layer-0 start x 1/2 hops; M167 eCFR 3 sections x 7 cuts. GPML `AS OF` equals the typed facade; unknown vocabulary fails closed.
