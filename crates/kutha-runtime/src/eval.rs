@@ -1,7 +1,7 @@
 //! Horn evaluation over live product triples (M016 S03 / RULE-02).
 //! Named bodies are pins only; they do not auto-fire.
 
-use crate::fold::{leftover_halves, vt_intersect, GraphFold};
+use crate::fold::{GraphFold, leftover_halves, vt_intersect};
 use crate::quantum::{Runtime, RuntimeError};
 use kutha_common::{Event, EventId, Op, RuleAst, RuleAtom, RuleTerm, TermDictionary, TermId};
 use std::collections::HashSet;

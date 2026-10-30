@@ -690,9 +690,7 @@ fn read_active(path: &Path, expected_prev: [u8; 32]) -> std::io::Result<Vec<Even
 /// modern [`Event`] are kept so callers can remap legacy meta-ops. Seal
 /// trailers are skipped. Truncated/CRC-bad tails on the active segment stop
 /// the scan; sealed segments stay fail-closed on CRC/trailer/JSON errors.
-pub(crate) fn recover_json_values(
-    dir: &Path,
-) -> std::io::Result<(Vec<serde_json::Value>, usize)> {
+pub(crate) fn recover_json_values(dir: &Path) -> std::io::Result<(Vec<serde_json::Value>, usize)> {
     let manifest = read_manifest(dir)?;
     let mut out = Vec::new();
     for entry in &manifest.sealed {

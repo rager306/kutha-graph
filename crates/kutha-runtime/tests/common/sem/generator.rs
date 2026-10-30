@@ -519,6 +519,7 @@ pub fn brief_ops(events: &[Event]) -> String {
             Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. } => {
                 "PackLifecycle"
             }
+            Op::EnrichmentProposal { .. } => "EnrichmentProposal",
         })
         .collect::<Vec<_>>()
         .join(",")

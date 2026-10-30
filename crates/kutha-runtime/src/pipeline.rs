@@ -316,6 +316,7 @@ impl Runtime {
                 | Op::PackInstall { .. }
                 | Op::PackActivate { .. }
                 | Op::PackRetire { .. }
+                | Op::EnrichmentProposal { .. }
         ) {
             return Err(RuntimeError::MetaOpRejected);
         }
@@ -562,6 +563,52 @@ impl Runtime {
     /// Return the replay-derived C1b operator registry. No operator executes.
     pub fn pack_operators(&self) -> Result<Vec<crate::PackOperator>, crate::PackManifestError> {
         crate::pack_registry::derive_pack_operators(self.log.as_slice(), &self.fold.blobs)
+    }
+
+    /// Return the replay-derived C5 enrichment ledger. No model is called.
+    pub fn enrichment_ledger(&self) -> Vec<crate::EnrichmentRecord> {
+        crate::enrichment::derive_enrichment_ledger(self.log.as_slice())
+    }
+
+    /// Record an ADR-052 enrichment proposal for an active pack.
+    ///
+    /// The payload is stored as a content-addressed `StoreBlob`; the proposal
+    /// cites it. Nothing is executed and no kernel fact changes.
+    pub fn emit_enrichment_proposal(
+        &mut self,
+        pack_id: impl Into<String>,
+        pack_version: impl Into<String>,
+        source_event_ids: Vec<kutha_common::EventId>,
+        model: impl Into<String>,
+        prompt: impl Into<String>,
+        cache_key: impl Into<String>,
+        payload: Vec<u8>,
+    ) -> Result<QuantumOutcome, RuntimeError> {
+        if payload.is_empty() {
+            return Err(RuntimeError::EnrichmentRejected {
+                reason: "enrichment payload is empty".to_string(),
+            });
+        }
+        let digest = kutha_common::sha256_hex(&payload);
+        self.pipeline_kind(
+            Op::StoreBlob {
+                digest: digest.clone(),
+                bytes: payload,
+            },
+            ReceiptMode::Dictionary,
+        )?;
+        self.pipeline_kind(
+            Op::EnrichmentProposal {
+                pack_id: pack_id.into(),
+                pack_version: pack_version.into(),
+                source_event_ids,
+                model: model.into(),
+                prompt: prompt.into(),
+                cache_key: cache_key.into(),
+                blob_digest: digest,
+            },
+            ReceiptMode::Dictionary,
+        )
     }
 
     /// Record D021 pack install (not a graph Fact).

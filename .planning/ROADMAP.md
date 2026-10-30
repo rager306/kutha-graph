@@ -2,7 +2,7 @@
 
 ## Overview
 
-v1.70 extends the C1 lifecycle foundation with a bounded **pack manifest and operator registry** (C1b). A pack install may pin a content-addressed manifest blob that declares read-only operator names; admission validates identity, schema, and cross-pack collisions, and the runtime derives an operator registry from the log. No operator execution, dictionary facets, lease rebuild, WASM, marketplace, schema SMO, or ADR Accepted.
+v1.71 adds the bounded **C5 enrichment foundation** (ADR-052). An enrichment record is a typed, content-addressed proposal pinned to a pack, a source revision, and a model/prompt/cache identity; it is never a kernel fact and never admits or overrides one. Applying an enrichment requires an explicit admission decision. No LLM is shipped, no derived lease is built, no HNSW, no trust-path write.
 
 ## Id map
 
@@ -10,40 +10,40 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [x] **Phase 261: C1b pack manifest and operator registry** - manifest schema, blob pin, admission validation (planned) (completed 2026-10-31)
-- [x] **Phase 262: C1b pack registry runtime parity** - replay-derived registry, persist/open/fork/checkpoint parity (planned) (completed 2026-10-31)
+- [ ] **Phase 263: C5 enrichment log schema and admission** - typed proposal record, source/pin identity, fail-closed admission
+- [ ] **Phase 264: C5 enrichment ledger parity** - replay-derived ledger, persist/open/fork/checkpoint parity, graph neutrality
 
 ## Phase Details
 
-### Phase 261: C1b pack manifest and operator registry
-**Goal**: Add a content-addressed pack manifest and fail-closed registration metadata without executing pack code.
-**Depends on**: Phase 260
-**Requirements**: C1B-01
+### Phase 263: C5 enrichment log schema and admission
+**Goal**: Add a typed enrichment proposal record and fail-closed admission without any trust-path effect.
+**Depends on**: Phase 262
+**Requirements**: C5-01
 **Success Criteria**:
-  1. `PackInstall` can pin a manifest digest; legacy manifest-less installs still parse.
-  2. Manifest identity matches the install and declares unique, valid, read-only operator names.
-  3. Missing, malformed, mismatched, reserved, duplicate, or cross-pack-colliding operators are rejected at admission.
-**Plans**: 1/1 plans complete
+  1. A proposal carries pack id/version, source event ids, model/prompt/cache pins, and content-addressed payload.
+  2. Admission rejects unknown pack, retired pack, missing source, missing/mismatched blob, empty pins, and duplicate proposal identity.
+  3. A proposal never creates, supersedes, or invalidates a kernel fact.
+**Plans**: 1 plan
 
 Plans:
-- [x] 261-01-PLAN.md — manifest schema, blob pin, admission validation
+- [ ] 263-01-PLAN.md — proposal schema, blob pin, admission
 
-### Phase 262: C1b pack registry runtime parity
-**Goal**: Derive a deterministic operator registry from admitted manifests and prove persistence parity.
-**Depends on**: Phase 261
-**Requirements**: C1B-02
+### Phase 264: C5 enrichment ledger parity
+**Goal**: Derive a deterministic enrichment ledger and prove persistence parity.
+**Depends on**: Phase 263
+**Requirements**: C5-02
 **Success Criteria**:
-  1. `Runtime::pack_operators()` lists declared operators with pack lifecycle state.
-  2. Registry survives persist/open, fork prefix cuts, and checkpoint_sealed_prefix.
-  3. Graph facts and fold fingerprint remain unchanged; no operator is executed.
-**Plans**: 1/1 plans complete
+  1. `Runtime::enrichment_ledger()` lists proposals with pack lifecycle state.
+  2. Ledger survives persist/open, fork prefix cuts, and checkpoint_sealed_prefix.
+  3. Graph facts and fold fingerprint remain unchanged; no derived lease is built.
+**Plans**: 1 plan
 
 Plans:
-- [x] 262-01-PLAN.md — replay-derived registry and parity tests
+- [ ] 264-01-PLAN.md — replay-derived ledger and parity tests
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 261. C1b pack manifest and operator registry | 1/1 | Complete    | 2026-10-31 |
-| 262. C1b pack registry runtime parity | 1/1 | Complete    | 2026-10-31 |
+| 263. C5 enrichment log schema and admission | 0/1 | Pending | — |
+| 264. C5 enrichment ledger parity | 0/1 | Pending | — |

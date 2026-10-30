@@ -2,10 +2,10 @@
 
 use crate::hydrate::outcomes_from_events;
 use crate::quantum::Runtime;
-use crate::segment::{self, SealedMeta, HEADER_LEN, MANIFEST_REL};
+use crate::segment::{self, HEADER_LEN, MANIFEST_REL, SealedMeta};
 use crate::store::{
-    encoded_log, json_err, replace_snapshot, sync_dir, write_justifications, write_outcomes,
-    write_terms, EVENTS_JSONL, EVENTS_WAL,
+    EVENTS_JSONL, EVENTS_WAL, encoded_log, json_err, replace_snapshot, sync_dir,
+    write_justifications, write_outcomes, write_terms,
 };
 use crate::wal;
 use kutha_common::{Event, EventId, Op};

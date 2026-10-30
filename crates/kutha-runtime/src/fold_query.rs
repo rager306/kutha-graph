@@ -2,7 +2,7 @@
 use kutha_common::{EventId, SupportPolarity, TermId, TransactionTime, ValidTime, WallTime};
 use sha2::{Digest, Sha256};
 
-use crate::fold::{leftover_halves, vt_intersect, Fact, GraphFold, LiveFactFilter};
+use crate::fold::{Fact, GraphFold, LiveFactFilter, leftover_halves, vt_intersect};
 
 impl GraphFold {
     pub(crate) fn live_facts_at(
@@ -208,8 +208,11 @@ impl GraphFold {
             .filter_map(|idx| {
                 self.hot_examine.bump();
                 let fact = &self.facts[idx];
-                (fact.is_known_at(tt) && keep(fact))
-                    .then_some((fact.subject, fact.relation, fact.object()))
+                (fact.is_known_at(tt) && keep(fact)).then_some((
+                    fact.subject,
+                    fact.relation,
+                    fact.object(),
+                ))
             })
             .collect()
     }

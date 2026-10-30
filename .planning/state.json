@@ -1,23 +1,11 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v1.70",
+  "milestone": "v1.71",
   "phases": [
-    {
-      "number": "261",
-      "name": "C1b pack manifest and operator registry",
-      "status": "complete"
-    },
-    {
-      "number": "262",
-      "name": "C1b pack registry runtime parity",
-      "status": "complete"
-    }
+    { "number": "263", "name": "C5 enrichment log schema and admission", "status": "pending" },
+    { "number": "264", "name": "C5 enrichment ledger parity", "status": "pending" }
   ],
-  "next": {
-    "command": "/gsd-progress",
-    "label": "Show progress",
-    "reason": "Unsure of state — showing progress"
-  },
-  "updated_at": "2026-10-30T19:00:51.290Z"
+  "next": { "command": "/gsd-progress", "label": "Show progress", "reason": "Milestone v1.71 planned" },
+  "updated_at": "2026-10-31T00:00:00.000Z"
 }

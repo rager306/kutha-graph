@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Product: C5 enrichment foundation
+
+- Added typed `Op::EnrichmentProposal` (ADR-052): pack id/version, source event ids, model/prompt/cache pins, and a raw-SHA-256 `StoreBlob` payload digest. Meta-only; never a kernel fact.
+- Admission is fail-closed: active pack only, exact version, non-empty pins, sources must exist, blob must exist and match its digest, cache key must be unique.
+- Added replay-derived `Runtime::enrichment_ledger()`; no model is called and no derived lease is built. Proposals survive persist/open, fork cuts, and checkpoint_sealed_prefix.
+- Tests: enrichment 9/9, workspace 787 passed / 0 failed.
+
 ## 2026-10-31 — Trajectory: M177-S01 closed (C1b foundation)
 
 - GSD v1.70 closed; phases 261–262 archived. `Active Milestone=None`, `L_delivery=M177-S01-closed`.

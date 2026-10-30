@@ -265,6 +265,18 @@ pub enum Op {
         pack_id: String,
         version: String,
     },
+    /// ADR-052 derived enrichment proposal. Meta-only; never a kernel fact.
+    /// `blob_digest` addresses a raw-SHA-256 `StoreBlob` payload. Pins identify
+    /// the model call for replay; no model is called by the runtime.
+    EnrichmentProposal {
+        pack_id: String,
+        pack_version: String,
+        source_event_ids: Vec<EventId>,
+        model: String,
+        prompt: String,
+        cache_key: String,
+        blob_digest: String,
+    },
     /// On-log receipt for a sealed prefix rewrite (ADR-012 / M154). Modern serde
     /// variant; old readers fail open on the unknown tag. `GraphFold::apply`
     /// restores facts / `next_seq` / `tt_anchors` from the Snapshot-shaped blob
@@ -315,6 +327,7 @@ impl Event {
             | Op::PackInstall { .. }
             | Op::PackActivate { .. }
             | Op::PackRetire { .. }
+            | Op::EnrichmentProposal { .. }
             | Op::Checkpoint { .. } => vec![],
             Op::Correct { object, .. } | Op::CorrectInterval { object, .. } => vec![*object],
         };
@@ -579,6 +592,25 @@ impl Event {
                 h.update(pack_id.as_bytes());
                 h.update((version.len() as u64).to_le_bytes());
                 h.update(version.as_bytes());
+            }
+            Op::EnrichmentProposal {
+                pack_id,
+                pack_version,
+                source_event_ids,
+                model,
+                prompt,
+                cache_key,
+                blob_digest,
+            } => {
+                h.update(b"enrichment-proposal");
+                for field in [pack_id, pack_version, model, prompt, cache_key, blob_digest] {
+                    h.update((field.len() as u64).to_le_bytes());
+                    h.update(field.as_bytes());
+                }
+                h.update((source_event_ids.len() as u64).to_le_bytes());
+                for id in source_event_ids {
+                    h.update(id.as_bytes());
+                }
             }
             Op::Checkpoint {
                 first_event_id,

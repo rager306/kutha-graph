@@ -191,6 +191,7 @@ impl Naive {
             | Op::PackInstall { .. }
             | Op::PackActivate { .. }
             | Op::PackRetire { .. }
+            | Op::EnrichmentProposal { .. }
             | Op::Checkpoint { .. } => {}
         }
     }

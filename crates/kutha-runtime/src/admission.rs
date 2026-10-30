@@ -109,6 +109,12 @@ impl Runtime {
             }
             return Ok(());
         }
+        if matches!(op, Op::EnrichmentProposal { .. }) {
+            return crate::enrichment::validate_proposal(self.log.as_slice(), &self.fold.blobs, op)
+                .map_err(|err| RuntimeError::EnrichmentRejected {
+                    reason: err.to_string(),
+                });
+        }
         if matches!(
             op,
             Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. }

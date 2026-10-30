@@ -280,6 +280,7 @@ impl Runtime {
             | Op::PackInstall { .. }
             | Op::PackActivate { .. }
             | Op::PackRetire { .. }
+            | Op::EnrichmentProposal { .. }
             | Op::Checkpoint { .. } => return false,
         };
         if !self.fold.rule_hash_live_at(&rule_version, tt, vt) {

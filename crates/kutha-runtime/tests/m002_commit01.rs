@@ -505,6 +505,7 @@ fn prefix_tags(events: &[Event]) -> Vec<&'static str> {
             Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. } => {
                 "PackLifecycle"
             }
+            Op::EnrichmentProposal { .. } => "EnrichmentProposal",
         })
         .collect()
 }

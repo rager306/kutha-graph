@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M178
+**Active Slice:** S01
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M177-S01-closed
+L_delivery=M178-S01-open
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M177-S01 closed (C1b manifest and operator registry; GSD v1.70) | Executable pack runtime |
+| L_delivery | M178-S01 active (C5 enrichment foundation; GSD v1.71) | Trust-path enrichment |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M177-S01 is closed under GSD **v1.70 C1b pack manifest and operator registry**. Delivered `PackManifest` (`kutha-pack-manifest/v1`) as canonical JSON addressed by raw SHA-256 and pinned through optional `PackInstall.manifest_digest` → `StoreBlob`; admission requires the blob, exact pack identity, schema v1, unique valid read-only operator names, and no collision with an installed/active pack (retired packs release names); padded identifiers and operator names fail closed; legacy manifest-less installs stay valid. `Runtime::pack_operators()` is replay-derived and lifecycle-aware, executes nothing, and survives persist/open, fork prefix cuts, and checkpoint_sealed_prefix; graph fingerprint and facts are unchanged. Tests: manifest 10/10, registry 5/5, workspace 778 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0. No operator execution, code loading, dictionary facets, lease rebuild, WASM, marketplace, schema SMO, legal pack, or ADR Accepted. M176-S01 remains closed (C1 lifecycle foundation). M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M178-S01 is leased under GSD **v1.71 C5 enrichment foundation**. Scope is bounded: a typed, content-addressed enrichment proposal pinned to an installed/active pack, source event ids, and model/prompt/cache identity; admission is fail-closed; a replay-derived ledger reports proposals. A proposal never creates, supersedes, or invalidates a kernel fact. No LLM call, model, derived lease build, HNSW, trust-path write, dictionary facets, WASM, marketplace, schema SMO, or ADR Accepted. M177-S01 remains closed (C1b manifest and operator registry). M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

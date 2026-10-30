@@ -29,6 +29,7 @@ pub fn op_commit_class(op: &Op) -> CommitClass {
         | Op::PackInstall { .. }
         | Op::PackActivate { .. }
         | Op::PackRetire { .. }
+        | Op::EnrichmentProposal { .. }
         | Op::Checkpoint { .. } => CommitClass::SelfCommit,
     }
 }

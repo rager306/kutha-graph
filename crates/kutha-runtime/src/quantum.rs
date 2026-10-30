@@ -103,6 +103,10 @@ pub enum RuntimeError {
         pack_id: String,
         reason: String,
     },
+    /// ADR-052 enrichment proposal rejected before any log append.
+    EnrichmentRejected {
+        reason: String,
+    },
     /// Horn-pinned Behavior cannot be re-derived at its ingested_at (RULE-04).
     ExecutionReplayFailed {
         event_id: EventId,
@@ -154,6 +158,9 @@ impl fmt::Display for RuntimeError {
             },
             RuntimeError::PackLifecycleRejected { pack_id, reason } => {
                 write!(f, "pack lifecycle rejected for {pack_id}: {reason}")
+            }
+            RuntimeError::EnrichmentRejected { reason } => {
+                write!(f, "enrichment proposal rejected: {reason}")
             }
             RuntimeError::ExecutionReplayFailed { event_id } => {
                 write!(f, "execution replay failed for {event_id}")
@@ -267,6 +274,7 @@ pub(crate) fn op_relation(op: &Op) -> Option<TermId> {
         | Op::PackInstall { .. }
         | Op::PackActivate { .. }
         | Op::PackRetire { .. }
+        | Op::EnrichmentProposal { .. }
         | Op::Checkpoint { .. } => None,
     }
 }

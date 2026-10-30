@@ -8,6 +8,13 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
+## M178: C5 enrichment foundation — ACTIVE (harness lease)
+
+Bounded C5 extension from ADR-052: typed content-addressed enrichment proposals pinned to a pack, source events, and model/prompt/cache identity; fail-closed admission; replay-derived ledger. No LLM call, derived lease, trust-path write, HNSW, WASM, or marketplace.
+
+- [ ] **S01: C5 enrichment proposal and ledger** `risk:medium` `depends:[]`
+  > After this: enrichment proposals are recorded and auditable; they never create or override kernel facts; the ledger is replay-derived and graph-neutral.
+
 ## M177: C1b pack manifest and operator registry — CLOSED (harness lease)
 
 Bounded C1 extension from ADR-021 delivered: a pack install may pin a content-addressed manifest declaring read-only operator names; admission validates identity, schema, reserved names, duplicates, and cross-pack collisions; the runtime derives an operator registry. No operator execution, code loading, dictionary facets, lease rebuild, WASM, or marketplace.

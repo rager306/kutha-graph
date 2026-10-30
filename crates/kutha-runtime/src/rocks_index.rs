@@ -5,11 +5,11 @@
 //! `m:sealed` (per-sealed seq+chain), `m:digest` (crc32 of `e:` key||value).
 //! Values are fixed locators / ids / meta — never event payloads.
 
-use crate::segment::{self, Manifest, HEADER_LEN, MANIFEST_REL};
+use crate::segment::{self, HEADER_LEN, MANIFEST_REL, Manifest};
 use crate::store;
 use crc32fast::Hasher;
 use kutha_common::{Event, EventId, Op};
-use rocksdb::{Direction, IteratorMode, Options, DB};
+use rocksdb::{DB, Direction, IteratorMode, Options};
 use std::fs::{self, File};
 use std::io::{self, Error, ErrorKind, Read, Seek, SeekFrom};
 use std::path::{Path, PathBuf};

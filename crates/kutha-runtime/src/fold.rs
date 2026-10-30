@@ -392,6 +392,7 @@ pub(crate) fn checkpoint_kept_prefix_op(op: &Op) -> bool {
             | Op::PackInstall { .. }
             | Op::PackActivate { .. }
             | Op::PackRetire { .. }
+            | Op::EnrichmentProposal { .. }
     )
 }
 
@@ -1069,7 +1070,10 @@ impl GraphFold {
                 }
             }
             Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
-            Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. } => {}
+            Op::PackInstall { .. }
+            | Op::PackActivate { .. }
+            | Op::PackRetire { .. }
+            | Op::EnrichmentProposal { .. } => {}
         }
     }
 

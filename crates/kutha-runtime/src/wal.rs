@@ -176,9 +176,7 @@ pub fn recover_events(path: &Path) -> std::io::Result<Vec<Event>> {
 /// [`Event`] is kept so callers can remap legacy meta-ops. Truncated/CRC-bad
 /// tails still stop the scan. Returns `(values, dropped_tail)` where
 /// `dropped_tail` is 1 when unread bytes remain after the stop (CE #13).
-pub(crate) fn recover_json_values(
-    path: &Path,
-) -> std::io::Result<(Vec<serde_json::Value>, usize)> {
+pub(crate) fn recover_json_values(path: &Path) -> std::io::Result<(Vec<serde_json::Value>, usize)> {
     if !path.exists() {
         return Ok((Vec::new(), 0));
     }
@@ -305,10 +303,7 @@ mod tests {
         write_json_payload_wal(&path, &[legacy]).unwrap();
         let err = recover_events(&path).expect_err("legacy meta-op must fail-open");
         assert_eq!(err.kind(), std::io::ErrorKind::InvalidData);
-        assert!(
-            err.to_string().contains("not a modern Event"),
-            "{err}"
-        );
+        assert!(err.to_string().contains("not a modern Event"), "{err}");
         let _ = std::fs::remove_dir_all(&dir);
     }
 }
