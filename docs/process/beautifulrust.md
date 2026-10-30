@@ -31,7 +31,7 @@ provider rejects the request with HTTP 400.
 | Do not set `max-fn-params-bools = 0`. | 17 bool parameters in `src`; several are deliberate API flags. The default threshold, or no bool lint, is less noisy. |
 | Do not make `cargo fmt --check` a gate. | HEAD is not rustfmt-clean: 81 files, 143 hunks. Formatting is a separate slice, not a side effect of review. |
 | Do not use `--all-features` for CI clippy. | It compiles `librocksdb-sys`. Kutha CI runs with `KUTHA_GOV_SKIP_ROCKS=1` on a 7 GB runner. Use default features or a dedicated job. |
-| Do not treat `rust_review` counts as bug counts. | The runtime inventory reports 48 `unwrap`, but only 4 are production sites once tests are excluded (`wal.rs:209`, `wal.rs:210`, `leapfrog.rs:51` twice). It also reports 95 `.clone()` without judging redundancy. |
+| Do not treat `rust_review` counts as bug counts. | The runtime inventory reports 48 `unwrap`, but only 4 are production sites once tests are excluded (`wal.rs:209-218`, `leapfrog.rs:50-54` twice). It also reports 95 `.clone()` without judging redundancy. |
 | Do not use `rust-port` for `tools/` or harness Python. | Python stays on the harness plane; porting it to Rust would collapse the product/harness split. |
 | Do not add a CI phase or governor check from this document alone. | A new CI phase requires the `.kutha/META.md` and `docs/process/governor-intake.md` intake. This document changes no gate. |
 
@@ -54,10 +54,10 @@ Notable production signal:
   environment concurrently. `apply_dotenv()` is a safe function called from
   `Runtime::new` / `FoldIndexMode`; treat this as a soundness caveat, not as proof that
   the current startup path is unsafe.
-- `wal.rs:209/210` slice fixed 8-byte headers with `try_into().unwrap()`; replacing the
+- `wal.rs:209-218` slice fixed 8-byte headers with `try_into().unwrap()`; replacing the
   two four-byte slices with `expect("frame header has a 4-byte length prefix")` and
   `expect("frame header has a 4-byte checksum")` is low-risk and lint-clean.
-- `leapfrog.rs:51` unwraps `mn`/`mx` after a guard proves the rows are non-empty; an
+- `leapfrog.rs:50-54` unwraps `mn`/`mx` after a guard proves the rows are non-empty; an
   `expect("non-empty rows")` documents the invariant without changing behaviour.
 
 ## Review procedure for Kutha

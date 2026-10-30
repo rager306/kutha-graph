@@ -4,12 +4,18 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Process: M170 verification record and close ordering
+
+- Verifier #2 report: `tmp/m170-verifier-report.md` (gitignored). **PASS**, `independent: true`; 730 tests passed, `kutha-gov ci --jobs 1` exit 0 / `run_high=0`, default clippy 108, no ADR/Op/CI change.
+- One earlier full `cargo test --workspace` run failed `jsonl_inode_changes_on_persist_rename` once with `WouldBlock` on `kutha.lock` (1 of 4 full runs). It did not reproduce in 3 isolated, 6 whole-binary, and 3 further full runs; `store.rs` is untouched by M170. Recorded as a pre-existing flake, not a fix inside this slice.
+- Ordering correction: `f851a2d` was authored before the verifier report existed. The code gates finished before the docs-only close diff, and `f851a2d` changes no `crates/` file, so no gate result is invalidated; future close records wait for the report. The report now confirms PASS.
+
 ## 2026-10-30 — Trajectory: M170-S01 closed (as_of allocation)
 
-- Independent verifier **PASS** (`independent: true`; fresh context; no edits/commit/push): 730 tests passed, `kutha-gov ci --jobs 1` exit 0 / `run_high=0`, default clippy 108, no ADR/Op/CI change.
+- Independent verifier #2 **PASS** (`independent: true`; fresh context; no edits/commit/push): 730 tests passed, `kutha-gov ci --jobs 1` exit 0 / `run_high=0`, default clippy 108, no ADR/Op/CI change. See the Process entry above; one store-lock flake is recorded there.
 - Final interleaved bench `89b0b9c` vs `456334c` (2 runs each, N=10000): `as_of.n` 145.4 → 71.8 µs (~2.0×), `as_of.2n` 260.2 → 150.4 µs (~1.73×); `ingest_plain.n` stayed noise-dominated. Per-run samples are in `tmp/jit-bench-*.log`.
 - JiT differential parity on the same pair: 5/5 tests passed on base and 5/5 on head; no candidate-only failure. Artifact: `tmp/jit/M170-S01/`.
-- Lease closed: `Active Milestone=None`, `Active Slice=None`, `L_delivery=M170-S01-closed`. Non-blocking follow-ups: shared scan helper, capacity pre-pass/over-reservation on heavily retracted cuts, and the `beautifulrust.md` example wording (the last one is now corrected).
+- Lease closed: `Active Milestone=None`, `Active Slice=None`, `L_delivery=M170-S01-closed`. Non-blocking follow-ups: shared scan helper, capacity pre-pass/over-reservation on heavily retracted cuts, the `beautifulrust.md` example wording (the last one is now corrected), and the pre-existing `m019` store-lock flake recorded above.
 
 ## 2026-10-30 — Trajectory: lease M170-S01 (as_of allocation)
 
