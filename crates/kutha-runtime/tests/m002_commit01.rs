@@ -2,9 +2,9 @@
 //! D-07: RED records current failures; FF5/FF6/M010–M017 / m002_snap01 / m002_append01 stay.
 
 use kutha_common::{
-    Event, EventId, Op, OutcomeDisposition, ValidTime, KUTHA_ALLOWS, KUTHA_RESERVED_RELS,
+    Event, EventId, KUTHA_ALLOWS, KUTHA_RESERVED_RELS, Op, OutcomeDisposition, ValidTime,
 };
-use kutha_runtime::{store, Runtime, Snapshot};
+use kutha_runtime::{Runtime, Snapshot, store};
 use std::fs;
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
@@ -502,6 +502,9 @@ fn prefix_tags(events: &[Event]) -> Vec<&'static str> {
             Op::CorrectInterval { .. } => "CorrectInterval",
             Op::Behavior { .. } => "Behavior",
             Op::Checkpoint { .. } => "Checkpoint",
+            Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. } => {
+                "PackLifecycle"
+            }
         })
         .collect()
 }

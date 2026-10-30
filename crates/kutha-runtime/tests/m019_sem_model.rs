@@ -5,9 +5,9 @@
 
 mod common;
 
-use common::sem::generator::{assert_seed_budget, ingest_mix, seeds, MixStyle};
+use common::sem::generator::{MixStyle, assert_seed_budget, ingest_mix, seeds};
 use common::sem::oracles::{
-    fold_stamps, is_product_rel, runtime_stamps, sorted_as_of, sorted_live, vt_cuts_for, EDGE_VT,
+    EDGE_VT, fold_stamps, is_product_rel, runtime_stamps, sorted_as_of, sorted_live, vt_cuts_for,
 };
 use common::sem::shrink::{fail_seed, fail_shrunk, replay_runtime};
 use kutha_common::{Event, EventId, Op, TermId};
@@ -188,6 +188,9 @@ impl Naive {
             | Op::QuantumOutcome { .. }
             | Op::JustificationCite { .. }
             | Op::StoreBlob { .. }
+            | Op::PackInstall { .. }
+            | Op::PackActivate { .. }
+            | Op::PackRetire { .. }
             | Op::Checkpoint { .. } => {}
         }
     }

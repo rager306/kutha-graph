@@ -98,6 +98,11 @@ pub enum RuntimeError {
         wall: u64,
         max_wall: Option<u64>,
     },
+    /// D021 lifecycle transition violated replayed pack state.
+    PackLifecycleRejected {
+        pack_id: String,
+        reason: String,
+    },
     /// Horn-pinned Behavior cannot be re-derived at its ingested_at (RULE-04).
     ExecutionReplayFailed {
         event_id: EventId,
@@ -147,6 +152,9 @@ impl fmt::Display for RuntimeError {
                 Some(max) => write!(f, "tt_anchor rejected wall {wall} max {max}"),
                 None => write!(f, "tt_anchor rejected wall {wall}"),
             },
+            RuntimeError::PackLifecycleRejected { pack_id, reason } => {
+                write!(f, "pack lifecycle rejected for {pack_id}: {reason}")
+            }
             RuntimeError::ExecutionReplayFailed { event_id } => {
                 write!(f, "execution replay failed for {event_id}")
             }
@@ -256,6 +264,9 @@ pub(crate) fn op_relation(op: &Op) -> Option<TermId> {
         | Op::JustificationCite { .. }
         | Op::StoreBlob { .. }
         | Op::TtAnchor { .. }
+        | Op::PackInstall { .. }
+        | Op::PackActivate { .. }
+        | Op::PackRetire { .. }
         | Op::Checkpoint { .. } => None,
     }
 }

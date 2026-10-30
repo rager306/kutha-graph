@@ -26,6 +26,9 @@ pub fn op_commit_class(op: &Op) -> CommitClass {
         | Op::JustificationCite { .. }
         | Op::StoreBlob { .. }
         | Op::TtAnchor { .. }
+        | Op::PackInstall { .. }
+        | Op::PackActivate { .. }
+        | Op::PackRetire { .. }
         | Op::Checkpoint { .. } => CommitClass::SelfCommit,
     }
 }

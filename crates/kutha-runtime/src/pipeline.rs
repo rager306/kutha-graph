@@ -310,7 +310,12 @@ impl Runtime {
     fn reject_forged_meta(&self, op: &Op) -> Result<(), RuntimeError> {
         if matches!(
             op,
-            Op::QuantumOutcome { .. } | Op::JustificationCite { .. } | Op::Checkpoint { .. }
+            Op::QuantumOutcome { .. }
+                | Op::JustificationCite { .. }
+                | Op::Checkpoint { .. }
+                | Op::PackInstall { .. }
+                | Op::PackActivate { .. }
+                | Op::PackRetire { .. }
         ) {
             return Err(RuntimeError::MetaOpRejected);
         }
@@ -547,6 +552,58 @@ impl Runtime {
             });
         }
         Ok(())
+    }
+
+    /// Return replay-derived D021 lifecycle lease (droppable; not graph facts).
+    pub fn pack_lifecycle(&self) -> Vec<crate::pack_lifecycle::PackLifecycle> {
+        crate::pack_lifecycle::derive_pack_lifecycle(self.log.as_slice())
+    }
+
+    /// Record D021 pack install (not a graph Fact).
+    pub fn emit_pack_install(
+        &mut self,
+        pack_id: impl Into<String>,
+        name: impl Into<String>,
+        version: impl Into<String>,
+    ) -> Result<QuantumOutcome, RuntimeError> {
+        self.pipeline_kind(
+            Op::PackInstall {
+                pack_id: pack_id.into(),
+                name: name.into(),
+                version: version.into(),
+            },
+            ReceiptMode::Dictionary,
+        )
+    }
+
+    /// Record D021 pack activation (not a graph Fact).
+    pub fn emit_pack_activate(
+        &mut self,
+        pack_id: impl Into<String>,
+        version: impl Into<String>,
+    ) -> Result<QuantumOutcome, RuntimeError> {
+        self.pipeline_kind(
+            Op::PackActivate {
+                pack_id: pack_id.into(),
+                version: version.into(),
+            },
+            ReceiptMode::Dictionary,
+        )
+    }
+
+    /// Record D021 pack retirement (not a graph Fact).
+    pub fn emit_pack_retire(
+        &mut self,
+        pack_id: impl Into<String>,
+        version: impl Into<String>,
+    ) -> Result<QuantumOutcome, RuntimeError> {
+        self.pipeline_kind(
+            Op::PackRetire {
+                pack_id: pack_id.into(),
+                version: version.into(),
+            },
+            ReceiptMode::Dictionary,
+        )
     }
 
     /// Record a wall-date → transaction-time anchor on the log (not a graph Fact).

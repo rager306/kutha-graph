@@ -16,6 +16,7 @@ mod log;
 mod materializer;
 mod persist_append;
 mod pipeline;
+mod pack_lifecycle;
 mod provenance;
 mod quantum;
 mod query_ir;
@@ -48,6 +49,7 @@ pub use query_ir::{
 };
 pub use gpml::{parse_gpml, GpmlError, RuntimeBinder, VocabBinder};
 pub use security::{compile_path_policy, execute_authorized, AuthorizedQuery, PathPolicy, SecurityError};
+pub use pack_lifecycle::{derive_pack_lifecycle, PackLifecycle, PackLifecycleState};
 pub use receipt::{QuantumReceipt, digest_to_hex};
 pub use snapshot::Snapshot;
 pub use tenant::{IngestReport, TenantError, ingest_harness_jsonl, ingest_harness_jsonl_str};

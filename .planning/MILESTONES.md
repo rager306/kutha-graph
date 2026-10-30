@@ -1,10 +1,16 @@
 # Project Milestones: Kutha
 
-## v1.69 C1 pack lifecycle foundation (Active: 2026-10-30)
+## v1.69 C1 pack lifecycle foundation (Shipped: 2026-10-31)
 
-**M176-S01.** Bounded C1 foundation from ADR-021: typed D021 lifecycle log events plus a replay-derived droppable lifecycle lease. No artifact loading, dynamic operators, dictionary facets, lease rebuilds, WASM, marketplace, schema SMO, or ADR Accepted.
+**Delivered:** M176. Bounded C1 foundation from ADR-021: typed D021 lifecycle log events plus a replay-derived droppable lifecycle lease.
 
-**Phases:** 259–260 (0/2 plans complete)
+**Phases completed:** 259–260 (2 plans)
+
+**Key accomplishments:**
+- `Op::PackInstall` / `PackActivate` / `PackRetire`: typed meta events, deterministic length-prefixed digests, empty object_ids, no graph facts.
+- Admission replays lifecycle state and rejects duplicate install, invalid/mismatched activate, invalid/mismatched retire, empty identifiers, and user-forged Pack*; only dictionary-mode `emit_pack_*` works.
+- `Runtime::pack_lifecycle()` is a replay-derived installed/active/retired lease; survives persist/open, fork prefix cuts, and checkpoint_sealed_prefix; graph fingerprint unchanged.
+- Tests: schema 4/4, runtime 5/5, workspace 762 passed / 0 failed. No artifact loading, operator registration, dictionary facets, lease rebuild, WASM, marketplace, schema SMO, or ADR Accepted.
 
 ---
 

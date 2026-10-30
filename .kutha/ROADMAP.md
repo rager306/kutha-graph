@@ -8,11 +8,11 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
-## M176: C1 pack lifecycle foundation — ACTIVE (harness lease)
+## M176: C1 pack lifecycle foundation — CLOSED (harness lease)
 
-Bounded C1 foundation from ADR-021: typed D021 lifecycle log events (`PackInstall` / `PackActivate` / `PackRetire`) and a replay-derived droppable lifecycle lease. No artifact loading, dynamic operators, dictionary facets, lease rebuilding, WASM, or marketplace.
+Bounded C1 foundation from ADR-021 delivered: typed D021 lifecycle log events and a replay-derived droppable lifecycle lease. No artifact loading, dynamic operators, dictionary facets, lease rebuilding, WASM, or marketplace.
 
-- [ ] **S01: C1 lifecycle schema and runtime lease** `risk:medium` `depends:[]`
+- [x] **S01: C1 lifecycle schema and runtime lease** `risk:medium` `depends:[]`
   > After this: lifecycle facts replay deterministically and pack state is queryable; graph facts/fingerprint unchanged. No pack artifact execution.
 
 ## M175: C4 path-policy foundation — CLOSED (harness lease)

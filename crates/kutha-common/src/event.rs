@@ -1,4 +1,4 @@
-use crate::rule::{rule_body_hash, RuleAst};
+use crate::rule::{RuleAst, rule_body_hash};
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
@@ -245,6 +245,22 @@ pub enum Op {
     TtAnchor {
         wall: u64,
     },
+    /// D021 lifecycle fact. Meta-only; not a graph Fact or pack artifact load.
+    PackInstall {
+        pack_id: String,
+        name: String,
+        version: String,
+    },
+    /// D021 lifecycle fact. Meta-only; not a graph Fact or pack artifact load.
+    PackActivate {
+        pack_id: String,
+        version: String,
+    },
+    /// D021 lifecycle fact. Meta-only; not a graph Fact or pack artifact load.
+    PackRetire {
+        pack_id: String,
+        version: String,
+    },
     /// On-log receipt for a sealed prefix rewrite (ADR-012 / M154). Modern serde
     /// variant; old readers fail open on the unknown tag. `GraphFold::apply`
     /// restores facts / `next_seq` / `tt_anchors` from the Snapshot-shaped blob
@@ -292,6 +308,9 @@ impl Event {
             | Op::JustificationCite { .. }
             | Op::StoreBlob { .. }
             | Op::TtAnchor { .. }
+            | Op::PackInstall { .. }
+            | Op::PackActivate { .. }
+            | Op::PackRetire { .. }
             | Op::Checkpoint { .. } => vec![],
             Op::Correct { object, .. } | Op::CorrectInterval { object, .. } => vec![*object],
         };
@@ -520,6 +539,33 @@ impl Event {
             Op::TtAnchor { wall } => {
                 h.update(b"tt-anchor");
                 h.update(wall.to_le_bytes());
+            }
+            Op::PackInstall {
+                pack_id,
+                name,
+                version,
+            } => {
+                h.update(b"pack-install");
+                h.update((pack_id.len() as u64).to_le_bytes());
+                h.update(pack_id.as_bytes());
+                h.update((name.len() as u64).to_le_bytes());
+                h.update(name.as_bytes());
+                h.update((version.len() as u64).to_le_bytes());
+                h.update(version.as_bytes());
+            }
+            Op::PackActivate { pack_id, version } => {
+                h.update(b"pack-activate");
+                h.update((pack_id.len() as u64).to_le_bytes());
+                h.update(pack_id.as_bytes());
+                h.update((version.len() as u64).to_le_bytes());
+                h.update(version.as_bytes());
+            }
+            Op::PackRetire { pack_id, version } => {
+                h.update(b"pack-retire");
+                h.update((pack_id.len() as u64).to_le_bytes());
+                h.update(pack_id.as_bytes());
+                h.update((version.len() as u64).to_le_bytes());
+                h.update(version.as_bytes());
             }
             Op::Checkpoint {
                 first_event_id,

@@ -10,8 +10,8 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [ ] **Phase 259: C1 lifecycle log schema** - typed lifecycle ops, serde/wire compatibility, admission/receipt classification
-- [ ] **Phase 260: C1 lifecycle runtime lease** - deterministic lifecycle state, persistence/replay/fork parity
+- [x] **Phase 259: C1 lifecycle log schema** - typed lifecycle ops, serde/wire compatibility, admission/receipt classification (completed 2026-10-31)
+- [x] **Phase 260: C1 lifecycle runtime lease** - deterministic lifecycle state, persistence/replay/fork parity (completed 2026-10-31)
 
 ## Phase Details
 
@@ -23,7 +23,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
   1. Typed variants carry pack id/name/version and serialize/deserialize compatibly.
   2. Lifecycle meta ops classify as self-commit and do not create graph facts.
   3. Invalid ordering (activate before install, duplicate install, unknown retire) is rejected at admission.
-**Plans**: 0 plans
+**Plans**: 1/1 plans complete
 
 Plans:
 - [ ] TBD (run /gsd-plan-phase 259 to break down)
@@ -36,7 +36,7 @@ Plans:
   1. Current pack state is queryable and derived only from the log.
   2. Persist/open, replay, and fork preserve lifecycle state or intentionally cut it as a lease.
   3. Graph fold fingerprint and product fact results remain unchanged.
-**Plans**: 0 plans
+**Plans**: 1/1 plans complete
 
 Plans:
 - [ ] TBD (run /gsd-plan-phase 260 to break down)
@@ -45,5 +45,5 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 259. C1 lifecycle log schema | 0/1 | Pending | — |
-| 260. C1 lifecycle runtime lease | 0/1 | Pending | — |
+| 259. C1 lifecycle log schema | 1/1 | Complete    | 2026-10-31 |
+| 260. C1 lifecycle runtime lease | 1/1 | Complete    | 2026-10-31 |

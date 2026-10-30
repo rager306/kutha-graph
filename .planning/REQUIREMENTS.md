@@ -5,8 +5,8 @@
 
 ## v1.69 Requirements
 
-- [ ] **C1-01**: D021 lifecycle facts (`PackInstall`, `PackActivate`, `PackRetire`) are typed log events with versioned pack identity, wire/serde compatibility, and fail-closed duplicate/state transitions.
-- [ ] **C1-02**: A droppable runtime lifecycle lease replays the event log deterministically, exposes current pack state, and persists/reopens without changing graph facts or fold fingerprint.
+- [x] **C1-01**: D021 lifecycle facts (`PackInstall`, `PackActivate`, `PackRetire`) are typed log events with versioned pack identity, wire/serde compatibility, and fail-closed duplicate/state transitions.
+- [x] **C1-02**: A droppable runtime lifecycle lease replays the event log deterministically, exposes current pack state, and persists/reopens without changing graph facts or fold fingerprint.
 
 ## Explicit non-goals
 
@@ -16,8 +16,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| C1-01 | Phase 259 | Pending |
-| C1-02 | Phase 260 | Pending |
+| C1-01 | Phase 259 | Complete |
+| C1-02 | Phase 260 | Complete |
 
 **Coverage:**
 - v1.69 requirements: 2 total

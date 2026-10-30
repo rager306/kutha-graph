@@ -386,7 +386,12 @@ impl<'de> serde::Deserialize<'de> for GraphFold {
 pub(crate) fn checkpoint_kept_prefix_op(op: &Op) -> bool {
     matches!(
         op,
-        Op::StoreBlob { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. }
+        Op::StoreBlob { .. }
+            | Op::QuantumOutcome { .. }
+            | Op::JustificationCite { .. }
+            | Op::PackInstall { .. }
+            | Op::PackActivate { .. }
+            | Op::PackRetire { .. }
     )
 }
 
@@ -1064,6 +1069,7 @@ impl GraphFold {
                 }
             }
             Op::Define { .. } | Op::QuantumOutcome { .. } | Op::JustificationCite { .. } => {}
+            Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. } => {}
         }
     }
 

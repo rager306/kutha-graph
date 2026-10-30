@@ -276,6 +276,9 @@ impl Runtime {
             | Op::JustificationCite { .. }
             | Op::StoreBlob { .. }
             | Op::TtAnchor { .. }
+            | Op::PackInstall { .. }
+            | Op::PackActivate { .. }
+            | Op::PackRetire { .. }
             | Op::Checkpoint { .. } => return false,
         };
         if !self.fold.rule_hash_live_at(&rule_version, tt, vt) {

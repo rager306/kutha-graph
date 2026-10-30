@@ -4,20 +4,20 @@
   "milestone": "v1.69",
   "phases": [
     {
-      "number": "257",
-      "name": "C4 path-policy rewrite foundation",
+      "number": "259",
+      "name": "C1 lifecycle log schema",
       "status": "complete"
     },
     {
-      "number": "258",
-      "name": "C4 authorized execution integration",
+      "number": "260",
+      "name": "C1 lifecycle runtime lease",
       "status": "complete"
     }
   ],
   "next": {
-    "command": "/gsd-discuss-phase",
-    "label": "Discuss the first phase",
-    "reason": "Project initialized — plan your first phase"
+    "command": "/gsd-progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
   },
-  "updated_at": "2026-10-30T15:55:53.706Z"
+  "updated_at": "2026-10-30T17:36:10.139Z"
 }

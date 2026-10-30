@@ -516,6 +516,9 @@ pub fn brief_ops(events: &[Event]) -> String {
             Op::StoreBlob { .. } => "Blob",
             Op::JustificationCite { .. } => "Cite",
             Op::Checkpoint { .. } => "Checkpoint",
+            Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. } => {
+                "PackLifecycle"
+            }
         })
         .collect::<Vec<_>>()
         .join(",")
