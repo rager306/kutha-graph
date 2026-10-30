@@ -14,6 +14,15 @@ Operating contract for **AllSpark** agents (prime-agent runtime). Chat with the 
 - AllSpark-owned state under `~/.allspark-home/` (sessions, leases, `graph.db`) is not repository content; do not edit or commit it.
 - Durable artifacts go to `.compound-engineering/artifacts/`; one-shot scratch goes to repo-local gitignored `tmp/`. Never use system `/tmp`, `$TMPDIR`, or `.tmp` for surviving output. GSD experiments use `tmp/planning-probe/`, never the live `.planning/`.
 
+## Rust review: BeautifulRust (advisory)
+
+BeautifulRust is installed in AllSpark at commit `f863cd3` (MIT, fork `rager306/BeautifulRust`); use `ALLSPARK_HOME=/root/.allspark-home`, because the nested home has an empty `auth.json` and returns provider HTTP 400. `allspark/check.py` reports `0 errors, 0 warnings`.
+
+- Use `rust-best-practices` and `rust-review` as **advisory** guidance for Rust changes and targeted audits. `rust-port` is deferred: Kutha is Rust-native, and Python stays on the harness plane.
+- BeautifulRust is not a source of truth, not an ADR source, not a governor check, and not a CI gate. ADR-000 D1–D10, `docs/ADR/`, and the current lease win. Treat Kutha as an internal library (`publish = false`, research stage): simplicity rules, not public-API ceremony.
+- Do not paste the full `lints.toml` or enable `missing_docs`, `as_conversions`, `pedantic`, or `max-fn-params-bools = 0` globally. Do not add a `cargo fmt --check` gate; HEAD is not rustfmt-clean. Do not use `--all-features` for CI clippy: it compiles `librocksdb-sys`, while CI runs with `KUTHA_GOV_SKIP_ROCKS=1`.
+- `rust_review` is a map, not a verdict: its 48 `unwrap` runtime count includes inline tests; the production count is 4. See `docs/process/beautifulrust.md` for measured baselines, the narrow lint subset, and the review procedure. A new CI phase still needs the governor-intake row.
+
 ## Two planes and the GSD overlay (do not collapse)
 
 | Plane | Owns | Must not own |

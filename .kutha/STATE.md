@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M170
+**Active Slice:** S01
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M169-closed
+L_delivery=M170-S01-open
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M169 closed (GSD v1.63) | Capability proven / Cypher started |
+| L_delivery | M170-S01 active (as_of allocation; harness lease) | Capability proven / Cypher started |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M169 is closed (GSD v1.63, phases 247–248): the 3.32× `as_of` gap came from `cec5b64`, which added a per-fact `is_dictionary_rel` HashSet probe in `LiveFactFilter::Product`. Dense `dictionary_rel_flags: Vec<bool>` replaced it; N=10000 `as_of.n` fell from 303 µs to **123 µs** (old 91 µs), residual 1.35× accepted as product-filter cost. `kutha-gov ci --jobs 1` run_high=0; cargo observe budget raised to 600 s for cold builds. Residuals: ingest +12.6% needs its own bisect; eCFR first two editions textually identical; remote rocks observe skipped; GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M170-S01 is leased as a harness slice: `GraphFold::live_at`/`as_of` collect triples directly through `collect_live_triples_at`, reserving the candidate count from `vt_by_from` on the warm path and `facts.len()` on the cold path. `wal.rs` header `try_into().unwrap()` and `leapfrog.rs` min/max `unwrap()` became `expect("...")`. N=10000 applied-HEAD bench: `as_of.n` median 73.6 µs (68.3/73.6/76.6) vs 126.7 µs before; `as_of.2n` 147.5 vs 258.5 µs; `ingest_plain.n` is unchanged by the code path (noise only). `cargo test --workspace` 730 passed; `kutha-gov ci --jobs 1` run_high=0; default clippy stays 108; selected BeautifulRust lib lints 471 → 467. Close after an independent verifier and a final interleaved bench. Residuals stay separate: M170 ingest bisect, eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

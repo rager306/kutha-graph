@@ -8,6 +8,13 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
+## M170: as_of allocation — ACTIVE (harness lease)
+
+M169 left a 1.35× `as_of` residual. The probe shows `live_at`/`as_of` still build an intermediate `Vec<&Fact>`; collect triples directly, reserve the candidate count, and remove the production `unwrap` sites in the WAL/leapfrog path. No Op or ADR change.
+
+- [ ] **S01: as_of triple collection** `risk:low` `depends:[]`
+  > After this: `as_of.n` and `as_of.2n` improve versus HEAD with an interleaved bench; production `unwrap` in `wal.rs`/`leapfrog.rs` is explicit; `cargo test --workspace` and `kutha-gov ci --jobs 1` are green. Honeycomb stays Proposed.
+
 ## M169: as_of regression — CLOSED (GSD v1.63)
 
 M168 proved a real 3.32× `as_of` gap: old `cdf1942` 91 µs vs HEAD 303 µs. Prime suspect is per-fact `LiveFactFilter::Product` / `is_dictionary_rel` added with dictionary facts (`cec5b64`). Find the commit; fix or record the tradeoff.

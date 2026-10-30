@@ -14,8 +14,8 @@ This is not a production graph database and not Graphiti / Samyama / Harvey.
 
 | Plane | Where | Now |
 |-------|--------|-----|
-| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | **M169 closed** (`L_delivery=M169-closed`); harness phase **H5** |
-| GSD planning | [`.planning/STATE.md`](.planning/STATE.md) | **v1.63 as_of regression closed** (2026-10-29) on gsd-core **1.19.0**; no milestone leased |
+| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | **M170-S01 active** (`L_delivery=M170-S01-open`; as_of allocation); harness phase **H5** |
+| GSD planning | [`.planning/STATE.md`](.planning/STATE.md) | **v1.63 as_of regression closed** (2026-10-29) on gsd-core **1.19.0**; M170-S01 is a harness lease, no GSD milestone |
 | Architecture map | [`docs/ADR/README.md`](docs/ADR/README.md) | Spine + honeycomb **Proposed**, not Accepted |
 | Capability | `crates/kutha-runtime` tests | FF5 green (`as_of(2015) ≠ as_of(2021)` on a statute-shaped fixture) |
 

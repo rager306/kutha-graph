@@ -4,6 +4,23 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Trajectory: lease M170-S01 (as_of allocation)
+
+Harness lease `M170-S01` after the probe. `L_delivery=M170-S01-open`; `Active Milestone=M170`, `Active Slice=S01`. No GSD milestone, no thaw, no ADR/Op change. Close only after an independent verifier and a final interleaved bench.
+
+## 2026-10-30 — Product: as_of triple collection (M170-S01)
+
+- `GraphFold::live_at` now collects triples in one pass through `collect_live_triples_at`; the warm path reserves the candidate count from `vt_by_from`, the cold path reserves `facts.len()`. `as_of` no longer builds an intermediate `Vec<&Fact>`.
+- `wal.rs` frame-header `try_into().unwrap()` calls and `leapfrog.rs` min/max `unwrap()` calls became `expect("...")` with the invariant in the message.
+- N=10000, release, current HEAD after patch: `as_of.n` 68.3/73.6/76.6 µs (median 73.6) vs 115.5/163.5/117.3/136.1 µs before (median 126.7); `as_of.2n` median 147.5 vs 258.5 µs; `as_of.4n` 625.8 vs 717.9 µs. `ingest_plain.n` 99.2/103.8/141.1 ms (median 103.8) vs 112.3/111.7/179.0/126.0 ms (median 119.2); the ingest path is untouched and the 141 ms run is an outlier.
+- `cargo test --workspace` 730 passed, 0 failed. Selected BeautifulRust lib lints 471 → 467 warnings; the four removed are the production `unwrap` sites. No new warnings.
+- Leased as `M170-S01` after the probe; code commit `70f861e`. No GSD milestone, no ADR/Op change. Not a close until the independent verifier and final interleaved bench.
+
+## 2026-10-30 — Process: BeautifulRust advisory policy
+
+- `AGENTS.md` now names `rust-best-practices` and `rust-review` as advisory, defers `rust-port`, and forbids the full `lints.toml`, a `cargo fmt` gate, and `--all-features` CI clippy.
+- Added `docs/process/beautifulrust.md` with the measured baseline, the narrow lint subset, the review procedure, and the prompt template. No CI phase or governor check was added.
+
 ## 2026-10-29 — Process: bytes honesty (M168 phase 246)
 
 - `baseline.rs` now prints `bytes_per_fact n/a` when the RSS delta is zero or live is zero; `0 B` was a measurement miss, not a fact.
