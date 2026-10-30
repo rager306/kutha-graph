@@ -246,10 +246,14 @@ pub enum Op {
         wall: u64,
     },
     /// D021 lifecycle fact. Meta-only; not a graph Fact or pack artifact load.
+    /// `manifest_digest` pins an optional content-addressed `PackManifest`
+    /// `StoreBlob`; absent on legacy installs and on installs without a manifest.
     PackInstall {
         pack_id: String,
         name: String,
         version: String,
+        #[serde(default)]
+        manifest_digest: Option<String>,
     },
     /// D021 lifecycle fact. Meta-only; not a graph Fact or pack artifact load.
     PackActivate {
@@ -544,6 +548,7 @@ impl Event {
                 pack_id,
                 name,
                 version,
+                manifest_digest,
             } => {
                 h.update(b"pack-install");
                 h.update((pack_id.len() as u64).to_le_bytes());
@@ -552,6 +557,14 @@ impl Event {
                 h.update(name.as_bytes());
                 h.update((version.len() as u64).to_le_bytes());
                 h.update(version.as_bytes());
+                match manifest_digest {
+                    Some(digest) => {
+                        h.update([1u8]);
+                        h.update((digest.len() as u64).to_le_bytes());
+                        h.update(digest.as_bytes());
+                    }
+                    None => h.update([0u8]),
+                }
             }
             Op::PackActivate { pack_id, version } => {
                 h.update(b"pack-activate");

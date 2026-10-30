@@ -8,6 +8,13 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
+## M177: C1b pack manifest and operator registry — ACTIVE (harness lease)
+
+Bounded C1 extension from ADR-021: a pack install may pin a content-addressed manifest declaring read-only operator names; admission validates identity, schema, reserved names, duplicates, and cross-pack collisions; the runtime derives an operator registry. No operator execution, code loading, dictionary facets, lease rebuild, WASM, or marketplace.
+
+- [ ] **S01: C1b manifest and operator registry** `risk:medium` `depends:[]`
+  > After this: installed packs can declare operators; invalid/mismatched/colliding declarations fail closed; the registry is replay-derived and graph-neutral.
+
 ## M176: C1 pack lifecycle foundation — CLOSED (harness lease)
 
 Bounded C1 foundation from ADR-021 delivered: typed D021 lifecycle log events and a replay-derived droppable lifecycle lease. No artifact loading, dynamic operators, dictionary facets, lease rebuilding, WASM, or marketplace.

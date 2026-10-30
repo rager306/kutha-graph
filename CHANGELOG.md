@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Product: C1b pack manifest and operator registry
+
+- Added `PackManifest` (`kutha-pack-manifest/v1`) as canonical JSON addressed by raw SHA-256 and pinned through an optional `PackInstall.manifest_digest` → `StoreBlob`.
+- Admission requires the blob, exact pack id/name/version match, schema v1, unique valid read-only operator names, and no collision with an installed/active pack; retired packs release names. Legacy manifest-less installs stay valid.
+- Added replay-derived `Runtime::pack_operators()`; rows carry pack id/version/operator and lifecycle state. No operator executes or loads code.
+- Tests: manifest 9/9, registry 5/5, workspace 777 passed / 0 failed. Graph facts and fold fingerprint unchanged.
+
 ## 2026-10-31 — Trajectory: M176-S01 closed (C1 foundation)
 
 - Delivered typed D021 lifecycle events (`PackInstall` / `PackActivate` / `PackRetire`) and `Runtime::pack_lifecycle()` replay-derived lease. Lifecycle events are meta-only, graph-neutral, and fail closed on invalid ordering/empty identifiers/user forgery; checkpoint preserves prefix lifecycle state.

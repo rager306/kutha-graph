@@ -559,18 +559,69 @@ impl Runtime {
         crate::pack_lifecycle::derive_pack_lifecycle(self.log.as_slice())
     }
 
+    /// Return the replay-derived C1b operator registry. No operator executes.
+    pub fn pack_operators(&self) -> Result<Vec<crate::PackOperator>, crate::PackManifestError> {
+        crate::pack_registry::derive_pack_operators(self.log.as_slice(), &self.fold.blobs)
+    }
+
     /// Record D021 pack install (not a graph Fact).
+    ///
+    /// `manifest` is optional declaration metadata. When present its canonical
+    /// bytes are stored as a `StoreBlob` first, then the install pins the
+    /// digest. Nothing in the manifest is executed.
     pub fn emit_pack_install(
         &mut self,
         pack_id: impl Into<String>,
         name: impl Into<String>,
         version: impl Into<String>,
     ) -> Result<QuantumOutcome, RuntimeError> {
+        self.emit_pack_install_with_manifest(pack_id, name, version, None)
+    }
+
+    /// Record D021 pack install with an optional [`crate::PackManifest`].
+    pub fn emit_pack_install_with_manifest(
+        &mut self,
+        pack_id: impl Into<String>,
+        name: impl Into<String>,
+        version: impl Into<String>,
+        manifest: Option<crate::PackManifest>,
+    ) -> Result<QuantumOutcome, RuntimeError> {
+        let pack_id = pack_id.into();
+        let name = name.into();
+        let version = version.into();
+        let manifest_digest = match manifest {
+            Some(manifest) => {
+                manifest
+                    .validate_shape()
+                    .map_err(|err| RuntimeError::PackLifecycleRejected {
+                        pack_id: pack_id.clone(),
+                        reason: format!("manifest: {err}"),
+                    })?;
+                manifest
+                    .validate_identity(&pack_id, &name, &version)
+                    .map_err(|err| RuntimeError::PackLifecycleRejected {
+                        pack_id: pack_id.clone(),
+                        reason: format!("manifest: {err}"),
+                    })?;
+                let bytes = manifest.canonical_bytes();
+                let digest = kutha_common::sha256_hex(&bytes);
+                self.pipeline_kind(
+                    Op::StoreBlob {
+                        digest: digest.clone(),
+                        bytes,
+                    },
+                    ReceiptMode::Dictionary,
+                )?;
+                Some(digest)
+            }
+            None => None,
+        };
         self.pipeline_kind(
             Op::PackInstall {
-                pack_id: pack_id.into(),
-                name: name.into(),
-                version: version.into(),
+                pack_id,
+                name,
+                version,
+                manifest_digest,
             },
             ReceiptMode::Dictionary,
         )

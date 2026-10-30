@@ -113,7 +113,22 @@ impl Runtime {
             op,
             Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. }
         ) {
-            return Self::check_pack_lifecycle(self.log.as_slice(), op);
+            Self::check_pack_lifecycle(self.log.as_slice(), op)?;
+            if let Op::PackInstall {
+                manifest_digest: Some(_),
+                ..
+            } = op
+            {
+                crate::pack_manifest::validate_install(self.log.as_slice(), &self.fold.blobs, op)
+                    .map_err(|err| RuntimeError::PackLifecycleRejected {
+                    pack_id: match op {
+                        Op::PackInstall { pack_id, .. } => pack_id.clone(),
+                        _ => String::new(),
+                    },
+                    reason: format!("manifest: {err}"),
+                })?;
+            }
+            return Ok(());
         }
         if mode == ReceiptMode::User {
             if let Op::Assert { relation, .. } | Op::Behavior { relation, .. } = op {
@@ -191,6 +206,7 @@ impl Runtime {
                 pack_id,
                 name,
                 version,
+                ..
             } => (pack_id.as_str(), Some(name.as_str()), version.as_str()),
             Op::PackActivate { pack_id, version } | Op::PackRetire { pack_id, version } => {
                 (pack_id.as_str(), None, version.as_str())

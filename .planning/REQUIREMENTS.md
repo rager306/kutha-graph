@@ -1,25 +1,25 @@
 # Requirements: Kutha
 
-**Defined:** 2026-10-30
+**Defined:** 2026-10-31
 **Core Value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
 
-## v1.69 Requirements
+## v1.70 Requirements
 
-- [x] **C1-01**: D021 lifecycle facts (`PackInstall`, `PackActivate`, `PackRetire`) are typed log events with versioned pack identity, wire/serde compatibility, and fail-closed duplicate/state transitions.
-- [x] **C1-02**: A droppable runtime lifecycle lease replays the event log deterministically, exposes current pack state, and persists/reopens without changing graph facts or fold fingerprint.
+- [ ] **C1B-01**: A pack install can pin a content-addressed manifest that declares read-only operator names; admission rejects missing, malformed, identity-mismatched, reserved, duplicate, or cross-pack-colliding declarations without executing pack code.
+- [ ] **C1B-02**: A droppable operator registry is derived deterministically from the log, reports pack lifecycle state, and survives persist/open, fork, and checkpoint without changing graph facts or fold fingerprint.
 
 ## Explicit non-goals
 
-- No pack artifact loading, dynamic operator registration, dictionary facets, lease rebuilding, WASM, marketplace, schema SMO, or ADR Accepted status.
+- No operator execution, dynamic code loading, dictionary facets, lease rebuild, WASM, marketplace, schema SMO, legal pack, or ADR Accepted status.
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| C1-01 | Phase 259 | Complete |
-| C1-02 | Phase 260 | Complete |
+| C1B-01 | Phase 261 | Pending |
+| C1B-02 | Phase 262 | Pending |
 
 **Coverage:**
-- v1.69 requirements: 2 total
+- v1.70 requirements: 2 total
 - Mapped to phases: 2
 - Unmapped: 0

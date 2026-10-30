@@ -8,6 +8,7 @@ fn install(pack_id: &str, version: &str) -> Op {
         pack_id: pack_id.to_string(),
         name: format!("pack-{pack_id}"),
         version: version.to_string(),
+        manifest_digest: None,
     }
 }
 
@@ -113,6 +114,7 @@ fn pack_digest_separates_length_collisions() {
             pack_id: "ab".to_string(),
             name: "c".to_string(),
             version: "1".to_string(),
+            manifest_digest: None,
         },
         ingested_at: 1,
         object_ids: vec![],
@@ -123,6 +125,7 @@ fn pack_digest_separates_length_collisions() {
             pack_id: "a".to_string(),
             name: "bc".to_string(),
             version: "1".to_string(),
+            manifest_digest: None,
         },
         ingested_at: 1,
         object_ids: vec![],

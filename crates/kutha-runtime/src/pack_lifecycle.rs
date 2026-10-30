@@ -16,7 +16,7 @@ pub struct PackLifecycle {
     pub event_ids: Vec<kutha_common::EventId>,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum PackLifecycleState {
     Installed,
     Active,
@@ -44,6 +44,7 @@ pub fn derive_pack_lifecycle(events: &[Event]) -> Vec<PackLifecycle> {
                 pack_id,
                 name,
                 version,
+                ..
             } => {
                 if records
                     .insert(

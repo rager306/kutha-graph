@@ -1,23 +1,11 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v1.69",
+  "milestone": "v1.70",
   "phases": [
-    {
-      "number": "259",
-      "name": "C1 lifecycle log schema",
-      "status": "complete"
-    },
-    {
-      "number": "260",
-      "name": "C1 lifecycle runtime lease",
-      "status": "complete"
-    }
+    { "number": "261", "name": "C1b pack manifest and operator registry", "status": "pending" },
+    { "number": "262", "name": "C1b pack registry runtime parity", "status": "pending" }
   ],
-  "next": {
-    "command": "/gsd-progress",
-    "label": "Show progress",
-    "reason": "Unsure of state — showing progress"
-  },
-  "updated_at": "2026-10-30T17:36:10.139Z"
+  "next": { "command": "/gsd-progress", "label": "Show progress", "reason": "Milestone v1.70 planned" },
+  "updated_at": "2026-10-31T00:00:00.000Z"
 }
