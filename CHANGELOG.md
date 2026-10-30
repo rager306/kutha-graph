@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Process: Gate GC passed (toy pack, zero core edits)
+
+- Added `crates/kutha-runtime/tests/m179_gate_gc.rs`: a toy non-legal pack installs with a manifest, product facts are queried through GPML `AS OF` at two cuts, the pack retires, and a reopened store matches on facts, fingerprint, lifecycle, and operator registry.
+- Zero production edits: `crates/kutha-runtime/src` and `crates/kutha-common/src` are unchanged by this slice. Evidence: `docs/architecture/gate-gc.md`.
+- No operator executes, no legal corpus, no dictionary facets, no HNSW, no WASM. ADR-021/052 stay Proposed.
+- Tests: gate 2/2, workspace 790 passed / 0 failed.
+
 ## 2026-10-31 — Trajectory: M178-S01 closed (C5 foundation)
 
 - GSD v1.71 closed; phases 263–264 archived. `Active Milestone=None`, `L_delivery=M178-S01-closed`.

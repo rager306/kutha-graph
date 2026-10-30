@@ -2,7 +2,7 @@
 
 ## Overview
 
-v1.71 adds the bounded **C5 enrichment foundation** (ADR-052). An enrichment record is a typed, content-addressed proposal pinned to a pack, a source revision, and a model/prompt/cache identity; it is never a kernel fact and never admits or overrides one. Applying an enrichment requires an explicit admission decision. No LLM is shipped, no derived lease is built, no HNSW, no trust-path write.
+v1.72 answers **Gate GC** with a read-only probe: a toy (non-legal) pack installs, is queried through GPML `AS OF`, retires, and replays with zero core edits. The probe uses only the C1/C1b/C5 surfaces and existing query IR. No operator execution, no dictionary facets, no HNSW, no WASM, no legal pack, no ADR Accepted.
 
 ## Id map
 
@@ -10,40 +10,25 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [x] **Phase 263: C5 enrichment log schema and admission** - typed proposal record, source/pin identity, fail-closed admission (completed 2026-10-31)
-- [x] **Phase 264: C5 enrichment ledger parity** - replay-derived ledger, persist/open/fork/checkpoint parity, graph neutrality (completed 2026-10-31)
+- [ ] **Phase 265: Gate GC toy-pack zero-core-edit probe** - install, GPML AS OF query, retire, replay parity; zero core edits
 
 ## Phase Details
 
-### Phase 263: C5 enrichment log schema and admission
-**Goal**: Add a typed enrichment proposal record and fail-closed admission without any trust-path effect.
-**Depends on**: Phase 262
-**Requirements**: C5-01
+### Phase 265: Gate GC toy-pack zero-core-edit probe
+**Goal**: Prove a toy pack installs, queries through GPML AS OF, and retires with zero core edits.
+**Depends on**: Phase 264
+**Requirements**: GC-01
 **Success Criteria**:
-  1. A proposal carries pack id/version, source event ids, model/prompt/cache pins, and content-addressed payload.
-  2. Admission rejects unknown pack, retired pack, missing source, missing/mismatched blob, empty pins, and duplicate proposal identity.
-  3. A proposal never creates, supersedes, or invalidates a kernel fact.
-**Plans**: 1/1 plans complete
+  1. A toy pack installs with a manifest and active lifecycle; product facts remain pack-agnostic.
+  2. GPML `AS OF` returns the expected cut before and after retire; no core file changes for the probe.
+  3. Retire + replay is parity-equal on facts, fingerprint, lifecycle, and operator registry.
+**Plans**: 1 plan
 
 Plans:
-- [x] 263-01-PLAN.md — proposal schema, blob pin, admission
-
-### Phase 264: C5 enrichment ledger parity
-**Goal**: Derive a deterministic enrichment ledger and prove persistence parity.
-**Depends on**: Phase 263
-**Requirements**: C5-02
-**Success Criteria**:
-  1. `Runtime::enrichment_ledger()` lists proposals with pack lifecycle state.
-  2. Ledger survives persist/open, fork prefix cuts, and checkpoint_sealed_prefix.
-  3. Graph facts and fold fingerprint remain unchanged; no derived lease is built.
-**Plans**: 1/1 plans complete
-
-Plans:
-- [x] 264-01-PLAN.md — replay-derived ledger and parity tests
+- [ ] 265-01-PLAN.md — Gate GC probe and recorded evidence
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 263. C5 enrichment log schema and admission | 1/1 | Complete    | 2026-10-31 |
-| 264. C5 enrichment ledger parity | 1/1 | Complete    | 2026-10-31 |
+| 265. Gate GC toy-pack zero-core-edit probe | 0/1 | Pending | — |

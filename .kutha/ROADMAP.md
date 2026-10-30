@@ -8,6 +8,13 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
+## M179: Gate GC toy-pack probe — ACTIVE (harness lease)
+
+Bounded Gate GC evidence: a toy non-legal pack installs, answers GPML AS OF, retires, and replays with zero core edits. No legal pack, operator execution, HNSW, WASM, or marketplace.
+
+- [ ] **S01: Gate GC toy-pack probe** `risk:low` `depends:[]`
+  > After this: the pack lifecycle is proven sufficient for a toy pack without core edits, or the gap is named.
+
 ## M178: C5 enrichment foundation — CLOSED (harness lease)
 
 Bounded C5 extension from ADR-052: typed content-addressed enrichment proposals pinned to a pack, source events, and model/prompt/cache identity; fail-closed admission; replay-derived ledger. No LLM call, derived lease, trust-path write, HNSW, WASM, or marketplace.

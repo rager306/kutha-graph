@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M179
+**Active Slice:** S01
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M178-S01-closed
+L_delivery=M179-S01-open
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M178-S01 closed (C5 enrichment foundation; GSD v1.71) | Trust-path enrichment |
+| L_delivery | M179-S01 active (Gate GC toy-pack probe; GSD v1.72) | Legal pack / executable operator |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M178-S01 is closed under GSD **v1.71 C5 enrichment foundation**. Delivered typed `Op::EnrichmentProposal` (ADR-052): pack id/version, source event ids, model/prompt/cache pins, raw-SHA-256 payload digest; meta-only with empty object_ids and no relation. Admission is fail-closed (active pack only, exact version, non-empty pins, existing sources, blob present and digest-matching, unique cache key); validation runs before the payload append so a rejected proposal leaves no orphan `StoreBlob`. `Runtime::enrichment_ledger()` is replay-derived and lifecycle-aware and survives persist/open, fork cuts, and checkpoint_sealed_prefix; graph fingerprint and facts unchanged. Tests: enrichment 10/10, workspace 788 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0. No LLM call, model, derived lease, HNSW, trust-path write, dictionary facets, WASM, marketplace, schema SMO, or ADR Accepted. Replay does not revalidate admission; ledger state is end-of-log lifecycle state; cache-key uniqueness is global; source ids are existence-only — explicit foundation limitations. M177-S01 remains closed (C1b manifest and operator registry). M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M179-S01 is leased under GSD **v1.72 Gate GC toy-pack probe**. Scope is bounded: a toy non-legal pack installs with a manifest, answers a GPML `AS OF` query over existing product facts, retires, and replays with zero core edits; facts, fingerprint, lifecycle, and operator registry are parity-equal. No legal corpus or legal pack, operator execution, dictionary facets, HNSW, WASM, marketplace, schema SMO, or ADR Accepted. M178-S01 remains closed (C5 enrichment foundation). M177/M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 
