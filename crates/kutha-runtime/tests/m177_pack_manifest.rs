@@ -56,6 +56,20 @@ fn install_without_manifest_stays_legal_and_has_no_operators() {
 }
 
 #[test]
+fn padded_pack_identifiers_fail_closed() {
+    let mut rt = runtime();
+    let before = rt.log().len();
+    let err = rt
+        .emit_pack_install(" core", "pack-core", "1.0.0")
+        .expect_err("padded pack id");
+    assert!(matches!(
+        err,
+        RuntimeError::PackLifecycleRejected { reason, .. } if reason == "padded_identifier"
+    ));
+    assert_eq!(rt.log().len(), before);
+}
+
+#[test]
 fn manifest_identity_mismatch_fails_closed() {
     let mut rt = runtime();
     let before = rt.log().len();

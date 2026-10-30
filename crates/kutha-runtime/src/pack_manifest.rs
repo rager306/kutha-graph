@@ -172,6 +172,9 @@ pub fn load_manifest(
         .ok_or_else(|| PackManifestError::MissingBlob {
             digest: digest.to_string(),
         })?;
+    // `StoreBlob` admission also accepts rule-body and policy digests; a pack
+    // manifest is stricter on purpose: it must be addressed by raw SHA-256 of
+    // its canonical bytes, so one blob cannot be read under two identities.
     if sha256_hex(bytes) != digest {
         return Err(PackManifestError::DigestMismatch {
             digest: digest.to_string(),

@@ -222,6 +222,16 @@ impl Runtime {
                 reason: "empty_identifier".to_string(),
             });
         }
+        // Exact spelling is identity: a padded id must not alias a clean one.
+        if next_pack_id != next_pack_id.trim()
+            || next_version != next_version.trim()
+            || next_name.is_some_and(|name| name != name.trim())
+        {
+            return Err(RuntimeError::PackLifecycleRejected {
+                pack_id: next_pack_id.to_string(),
+                reason: "padded_identifier".to_string(),
+            });
+        }
 
         let mut state: std::collections::BTreeMap<&str, (PackState, &str)> =
             std::collections::BTreeMap::new();
