@@ -1,0 +1,22 @@
+    Finished `bench` profile [optimized] target(s) in 0.06s
+     Running benches/hop_k.rs (target/release/deps/hop_k-cf9bace9037f5209)
+base_n 256 1
+calib 12994321 ns
+calib_iters 20000000 1
+csr_lease.2n 0.012829 calib
+csr_lease.2n_ns 166701 ns
+csr_lease.2n_over_n 0.542308 1
+csr_lease.4n 0.039343 calib
+csr_lease.4n_ns 511233 ns
+csr_lease.4n_over_2n 3.066766 1
+csr_lease.n 0.023656 calib
+csr_lease.n_ns 307392 ns
+hop2.walk.2n 0.025514 calib
+hop2.walk.2n_ns 331538 ns
+hop2.walk.2n_over_n 1.902166 1
+hop2.walk.4n 0.132431 calib
+hop2.walk.4n_ns 1720846 ns
+hop2.walk.4n_over_2n 5.190494 1
+hop2.walk.n 0.013413 calib
+hop2.walk.n_ns 174295 ns
+validated yes

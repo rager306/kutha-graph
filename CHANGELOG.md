@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Process: B3 workload and Kutha baseline
+
+- Fixed the B3 workload as the existing three-layer `relatedTo` / typed-IR `hop_k` graph (fan-out 4, `KUTHA_HOP_N=256`, TT=MAX, VT=2010); no parser, HNSW, planner, Cypher, or legal pack.
+- Four pinned runs (`taskset -c 0`, load 2.89): medians `hop2.walk.n` 170,568 ns, `2n` 353,765 ns, `4n` 714,556 ns. Median ratios 2N/N 2.074, 4N/N 4.189, 4N/2N 2.020; provisional floors 2.28 / 4.61 / 2.22 (median x1.10), not absolute time from another host.
+- Artifact: `.compound-engineering/artifacts/research/2026-10-30-b3-workload.md`; raw logs archived at `.compound-engineering/artifacts/research/2026-10-30-b3-hop-logs/`. No product code change.
+
 ## 2026-10-30 — Process: GSD v1.65 and M172-S01 lease
 
 - GSD milestone **v1.65 B3 hot-path benchmark** opened on gsd-core 1.19.0: phase 251 (workload and Kutha baseline) and 252 (competitor comparison or environment blocker; B4/B5 decision). Requirements B3-01/B3-02.

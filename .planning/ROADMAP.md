@@ -10,7 +10,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [ ] **Phase 251: B3 workload and baseline** - fix the workload and record the Kutha baseline
+- [x] **Phase 251: B3 workload and baseline** - fix the workload and record the Kutha baseline (completed 2026-10-30)
 - [ ] **Phase 252: B3 decision** - compare competitors or record the blocker; decide B4/B5
 
 ## Phase Details
@@ -23,7 +23,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
   1. Workload is defined as data (pattern, hops, filters) and mapped to the existing `hop_k` / typed IR.
   2. Kutha baseline numbers and host/method are recorded; a regression floor is derived from the ratio, not absolute time.
   3. No HNSW, planner, Cypher, or legal pack work is started.
-**Plans**: 0 plans
+**Plans**: 1/1 plans complete
 
 Plans:
 - [ ] TBD (run /gsd-plan-phase 251 to break down)
@@ -45,5 +45,5 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 251. B3 workload and baseline | 0/1 | Pending | — |
+| 251. B3 workload and baseline | 1/1 | Complete    | 2026-10-30 |
 | 252. B3 decision | 0/1 | Pending | — |

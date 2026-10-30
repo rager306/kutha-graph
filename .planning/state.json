@@ -4,20 +4,20 @@
   "milestone": "v1.65",
   "phases": [
     {
-      "number": "249",
-      "name": "Ingest bisect",
+      "number": "251",
+      "name": "B3 workload and baseline",
       "status": "complete"
     },
     {
-      "number": "250",
-      "name": "Ingest fix or accept",
-      "status": "complete"
+      "number": "252",
+      "name": "B3 decision",
+      "status": "pending"
     }
   ],
   "next": {
-    "command": "/gsd-discuss-phase",
-    "label": "Discuss the first phase",
-    "reason": "Project initialized — plan your first phase"
+    "command": "/gsd-progress --next",
+    "label": "Advance to the next step",
+    "reason": "Phase 2 of 2 · 50% · executing"
   },
-  "updated_at": "2026-10-30T08:40:08.643Z"
+  "updated_at": "2026-10-30T08:44:51.967Z"
 }
