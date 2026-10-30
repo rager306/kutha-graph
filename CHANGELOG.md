@@ -4,6 +4,11 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Process: B3 competitor environment ready
+
+- Pulled and started `falkordb/falkordb:latest` (digest `sha256:725b74d...`) and `public.ecr.aws/f9f6l5u4/samyama-graph:1.1.0` (digest `sha256:4588950...`). Containers: `kutha-b3-falkor` (127.0.0.1:6381) and `kutha-b3-samyama` (127.0.0.1:6380/8081). Both smoke-tested: Falkor `RETURN 1`, Samyama `/api/query RETURN 1`.
+- Artifact: `.compound-engineering/artifacts/research/2026-10-30-b3-environment.md`. No layered workload loaded/timed yet; no competitor ratio and no B4/B5 decision. This is phase 252 setup, not a gate pass.
+
 ## 2026-10-30 — Process: B3 workload and Kutha baseline
 
 - Fixed the B3 workload as the existing three-layer `relatedTo` / typed-IR `hop_k` graph (fan-out 4, `KUTHA_HOP_N=256`, TT=MAX, VT=2010); no parser, HNSW, planner, Cypher, or legal pack.

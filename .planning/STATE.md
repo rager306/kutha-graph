@@ -31,7 +31,7 @@ See: .planning/PROJECT.md (updated 2026-10-29)
 
 Phase: 252 — B3 decision
 Plan: 252-01
-Status: Ready — competitor environment accessible, workload not yet rendered
+Status: Ready — competitor containers running, workload not yet rendered
 Last activity: 2026-10-30 — Phase 251 complete, transitioned to Phase 252
 
 
@@ -50,7 +50,7 @@ None.
 
 ### Blockers/Concerns
 
-B3 images are accessible (`docker manifest inspect` succeeds for falkordb/falkordb:latest and public.ecr.aws/f9f6l5u4/samyama-graph:1.1.0), but neither image is pulled and the workload has not been rendered to Cypher. Do not start HNSW/planner/Cypher before phase 252. Bisect builds must not share a target dir; use a detached worktree. The M171 five-sample table is in `docs/architecture/benchmark-baseline.md`; the earlier n=2 outlier is retained only as a caveat.
+B3 environment is up: FalkorDB `kutha-b3-falkor` (127.0.0.1:6381) and Samyama `kutha-b3-samyama` (127.0.0.1:6380/8081), both smoke-tested; artifact `.compound-engineering/artifacts/research/2026-10-30-b3-environment.md`. The layered workload has not been rendered/loaded or timed, so there is no competitor ratio yet. Do not start HNSW/planner/Cypher before phase 252. Bisect builds must not share a target dir; use a detached worktree. The M171 five-sample table is in `docs/architecture/benchmark-baseline.md`; the earlier n=2 outlier is retained only as a caveat.
 
 ## Deferred Items
 
