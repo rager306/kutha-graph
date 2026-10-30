@@ -26,8 +26,8 @@ See: .planning/PROJECT.md (updated 2026-10-29)
 
 Phase: 249 — Ingest bisect
 Plan: 249-01
-Status: Executing
-Last activity: 2026-10-30 — Milestone v1.64 started; phase 249 planned
+Status: Blocked — measurement evidence is not yet sufficient
+Last activity: 2026-10-30 — bisect candidate 199807d; independent verifier BLOCKED
 
 
 ## Accumulated Context
@@ -43,6 +43,7 @@ None.
 
 ### Blockers/Concerns
 
+- Phase 249 BLOCKED: bisect candidate `199807d` is the first index commit, but the confirming bench is n=2 with a 1.68x outlier; no `249-SUMMARY`/baseline artifact yet. Need >=5 interleaved N=10000 samples per commit (`cdf1942`, `c26bf35`, `199807d`, `929bbc6`) on an idle host, with both min and median; then record the table and CHANGELOG. 199807d's known cost is the per-assert `by_event_id`/`by_delivery_key` maintenance; phase 250 should accept that tradeoff unless a new measurement says otherwise.
 Bisect builds must not share a target dir; use a detached worktree.
 
 ## Deferred Items

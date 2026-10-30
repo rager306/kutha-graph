@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Process: M171 phase 249 blocked on ingest measurement
+
+- `git bisect` over `cdf1942..929bbc6` named `199807d feat(24): fold ingest indexes with constant visit oracle`; its diff adds `Runtime::append_indexed` / `by_event_id` / `by_delivery_key`, and the Phase 24 note records +16.9% / +28.5% versus Phase 22.
+- Independent verifier #3 returned **BLOCKED**: full-bench confirmation is n=2 with a 1.68x outlier, the required 249 table is absent, and the untracked ingest-only probe used min-of-7 while the lease names median. Do not close phase 249 or M171 on this evidence.
+- Current n=2 full-bench medians (parent `c26bf35` 120.3 ms vs `199807d` 120.1 ms) do not separate; the ingest-only probe is not a criterion bench. Needed: >=5 interleaved N=10000 samples for `cdf1942`, `c26bf35`, `199807d`, `929bbc6` on an idle host, min and median. No product code changed.
+
 ## 2026-10-30 — Process: GSD v1.64 and M171-S01 lease
 
 - GSD milestone **v1.64 ingest regression** opened on gsd-core 1.19.0: phases 249 (bisect) and 250 (fix or accept), requirements PF-05/PF-06. `.planning/STATE.md`, `ROADMAP.md`, `REQUIREMENTS.md`, `MILESTONES.md` updated; health healthy.
