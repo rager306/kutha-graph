@@ -5,8 +5,8 @@
 
 ## v1.68 Requirements
 
-- [ ] **SEC-01**: A closed-default path-policy compiler evaluates existing typed queries before prepare; unauthorized relations, unlabeled walks, and scans are denied without materializing a lease or rows.
-- [ ] **SEC-02**: Authorized execution integrates with existing `QueryIr` / GPML-produced queries and preserves typed cuts/results; denied execution returns a typed security error, not a silent empty result.
+- [x] **SEC-01**: A closed-default path-policy compiler evaluates existing typed queries before prepare; unauthorized relations, unlabeled walks, and scans are denied without materializing a lease or rows.
+- [x] **SEC-02**: Authorized execution integrates with existing `QueryIr` / GPML-produced queries and preserves typed cuts/results; denied execution returns a typed security error, not a silent empty result.
 
 ## Explicit non-goals
 
@@ -16,8 +16,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SEC-01 | Phase 257 | Pending |
-| SEC-02 | Phase 258 | Pending |
+| SEC-01 | Phase 257 | Complete |
+| SEC-02 | Phase 258 | Complete |
 
 **Coverage:**
 - v1.68 requirements: 2 total

@@ -1,10 +1,16 @@
 # Project Milestones: Kutha
 
-## v1.68 C4 path-policy foundation (Active: 2026-10-30)
+## v1.68 C4 path-policy foundation (Shipped: 2026-10-30)
 
-**M175-S01.** Bounded security foundation permitted by M003a + Gate GB: closed-default path-policy compiler over existing typed QueryIr, deny-before-prepare. No grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, full ABAC, or ADR Accepted.
+**Delivered:** M175. Bounded C4 security foundation permitted by M003a + Gate GB: closed-default path-policy compiler over existing typed QueryIr, deny-before-prepare. No grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, full ABAC, or ADR Accepted.
 
-**Phases:** 257–258 (0/2 plans complete)
+**Phases completed:** 257–258 (2 plans)
+
+**Key accomplishments:**
+- `crates/kutha-runtime/src/security.rs`: closed-default `PathPolicy`; scan/unlabeled/zero-hop deny unless explicitly allowed; labeled hops require every relation to resolve and be policy-allowed.
+- `compile_path_policy` decides before `prepare`; denied queries never materialize leases or rows.
+- `execute_authorized` preserves authorized GPML/typed results; denied queries return typed `SecurityError::PolicyDenied`; post-policy query failures use distinct `SecurityError::QueryRejected`.
+- Tests: policy 5/5, integration 4/4, workspace 753 passed / 0 failed. Security ADRs stay Proposed.
 
 ---
 

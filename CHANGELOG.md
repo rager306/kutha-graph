@@ -4,6 +4,20 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Trajectory: M175-S01 closed (C4 foundation)
+
+- Delivered `crates/kutha-runtime/src/security.rs`: closed-default `PathPolicy` over existing typed QueryIr. `Scan`, unlabeled walks, and zero-hop queries deny by default; labeled hops require every relation to resolve and be policy-allowed.
+- `compile_path_policy` decides before `prepare`; `execute_authorized` preserves authorized GPML/typed results. Denied queries return `SecurityError::PolicyDenied`, never empty rows; post-policy query failures use distinct `SecurityError::QueryRejected`.
+- Tests: policy 5/5, integration 4/4, workspace 753 passed / 0 failed; independent verifiers PASS.
+- GSD v1.68 closed; phases 257–258 archived; `Active Milestone=None`, `L_delivery=M175-S01-closed`. Security ADR-080/081 stay Proposed; no grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, full ABAC, or ADR Accepted.
+
+## 2026-10-30 — Product: C4 path-policy foundation
+
+- Added read-only `crates/kutha-runtime/src/security.rs`: closed-default `PathPolicy` compiler over existing typed `QueryIr`. `Scan`, unlabeled walks, and zero-hop queries deny by default; labeled hops require every relation to resolve and be policy-allowed.
+- Added `compile_path_policy` and `execute_authorized`: denied queries return `SecurityError::PolicyDenied` before `prepare`/execute and never become empty rows. Post-policy query-engine failures use a distinct `SecurityError::QueryRejected`.
+- Added 5 policy tests and 4 integration tests; authorized GPML/typed results match direct execution. Workspace 753 passed / 0 failed.
+- Explicitly excluded: grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, full ABAC policy language, ADR Accepted, global enforcement of direct `execute`/`prepare`.
+
 ## 2026-10-30 — Process: GSD v1.68 and M175-S01 C4 foundation
 
 - Owner continued after Gate GB; GSD milestone **v1.68 C4 path-policy foundation** opened. Phase 257 adds a closed-default path-policy compiler over existing typed QueryIr; phase 258 integrates authorized GPML/typed execution.

@@ -21,6 +21,7 @@ mod quantum;
 mod query_ir;
 mod receipt;
 mod segment;
+mod security;
 mod snapshot;
 pub mod store;
 mod tenant;
@@ -46,6 +47,7 @@ pub use query_ir::{
     QueryRows, Workload,
 };
 pub use gpml::{parse_gpml, GpmlError, RuntimeBinder, VocabBinder};
+pub use security::{compile_path_policy, execute_authorized, AuthorizedQuery, PathPolicy, SecurityError};
 pub use receipt::{QuantumReceipt, digest_to_hex};
 pub use snapshot::Snapshot;
 pub use tenant::{IngestReport, TenantError, ingest_harness_jsonl, ingest_harness_jsonl_str};

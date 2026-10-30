@@ -8,11 +8,11 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
-## M175: C4 path-policy foundation — ACTIVE (harness lease)
+## M175: C4 path-policy foundation — CLOSED (harness lease)
 
-Gate GB closed and M003a satisfies the technical prerequisite. M175 leases only the bounded C4 foundation: closed-default path-policy compiler over existing typed QueryIr, deny-before-prepare. No grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, full ABAC, or ADR Accepted.
+Gate GB closed and M003a satisfies the technical prerequisite. M175 delivered the bounded C4 foundation: closed-default path-policy compiler over existing typed QueryIr, deny-before-prepare. No grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, full ABAC, or ADR Accepted.
 
-- [ ] **S01: C4 path-policy foundation** `risk:medium` `depends:[]`
+- [x] **S01: C4 path-policy foundation** `risk:medium` `depends:[]`
   > After this: unauthorized scans/hops deny before prepare; authorized query results unchanged. Security ADRs stay Proposed.
 
 ## M174: Gate GB fixture parity — CLOSED (harness lease)

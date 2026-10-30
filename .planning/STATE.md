@@ -1,16 +1,19 @@
 ---
 gsd_state_version: "1.0"
 milestone: v1.68
-milestone_name: C4 path-policy foundation
-status: planning
-last_updated: "2026-10-30T15:13:16.997Z"
+status: Awaiting next milestone
+stopped_at: Phase 258 complete — all phases complete
+last_updated: "2026-10-30T15:43:42.182Z"
 last_activity: 2026-10-30
+last_activity_desc: Milestone v1.68 completed and archived
+state_head: d489abf431ac6e00df622eb0111aa7116991b5bf
 progress:
   total_phases: 2
-  completed_phases: 0
+  completed_phases: 2
   total_plans: 2
-  completed_plans: 0
-  percent: 0
+  completed_plans: 2
+milestone_name: C4 path-policy foundation
+current_phase: null
 ---
 
 # Project State
@@ -20,15 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-29)
 
 **Core value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
-**Current focus:** v1.68 C4 path-policy foundation (M175-S01), phase 257.
+**Current focus:** v1.68 C4 path-policy foundation (M175-S01), complete.
 
 ## Current Position
 
-Phase: 257 — C4 path-policy rewrite foundation
-Plan: 257-01
-Status: Ready to execute
-Last activity: 2026-10-30 — Milestone v1.68 started; C4 foundation planned
-
+Phase: Milestone v1.68 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-10-30 — Milestone v1.68 completed and archived
 
 ## Accumulated Context
 
@@ -58,7 +60,7 @@ B3 environment is up: FalkorDB `kutha-b3-falkor` (127.0.0.1:6381) and Samyama `k
 ## Session Continuity
 
 Last session: 2026-10-29
-Stopped at: Phase 256 complete — all phases complete
+Stopped at: Phase 258 complete — all phases complete
 Resume file: None
 
 ## Operator Next Steps
