@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-30",
+  "workload": "layered relatedTo, 3 layers x 256 nodes, fanout 4, 2048 edges, 2-hop count from all L0",
+  "kutha": {
+    "metric": "hop2.walk.n_ns",
+    "samples_ns": [
+      161912
+    ],
+    "median_ns": 161912,
+    "source": "tmp/b3-kutha-decision.log"
+  },
+  "falkordb": {
+    "samples_us": [
+      5332,
+      3943,
+      4907,
+      5249,
+      4321,
+      4470,
+      4730,
+      7106,
+      4497,
+      4828
+    ],
+    "median_us": 4779,
+    "transport": "raw RESP localhost:6381",
+    "graph": "b3"
+  },
+  "samyama": {
+    "samples_us": [
+      20348,
+      14966,
+      11591,
+      14262,
+      19356,
+      13099,
+      33510,
+      9091,
+      14760,
+      13544
+    ],
+    "median_us": 14511,
+    "transport": "HTTP /api/query localhost:8081",
+    "graph": "b3s"
+  },
+  "ratios": {
+    "kutha_over_falkor": 0.033879891190625656,
+    "kutha_over_samyama": 0.011157880228791951
+  }
+}

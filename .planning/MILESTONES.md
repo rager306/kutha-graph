@@ -1,10 +1,15 @@
 # Project Milestones: Kutha
 
-## v1.65 B3 hot-path benchmark (Active: 2026-10-30)
+## v1.65 B3 hot-path benchmark (Shipped: 2026-10-30)
 
-**M172-S01.** Fix the multi-hop workload, record the Kutha baseline and regression floor, then compare with Samyama/FalkorDB or record the environment blocker. B4/B5 stay frozen unless B3 shows a real gap. No product feature, no thaw.
+**Delivered:** M172. Fixed the layered `relatedTo` workload, recorded the Kutha baseline/floor, and compared FalkorDB/Samyama.
 
-**Phases:** 251–252 (0/2 plans complete)
+**Phases completed:** 251–252 (2 plans)
+
+**Key accomplishments:**
+- Pinned Kutha baseline: `hop2.walk.n` 170,568 ns; 2n 353,765; 4n 714,556; ratio floors 2.28/4.61/2.22.
+- FalkorDB median 4,779 µs; Samyama 14,511 µs; Kutha walk-only ≈29.5×/≈89.6× faster, prepared ≈9.3×/≈28.3×.
+- Decision: skip B4 (HNSW) and B5 (planner); B6 (Cypher AS OF) still requires M003. No thaw.
 
 ---
 

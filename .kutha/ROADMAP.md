@@ -8,11 +8,11 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
-## M172: B3 hot-path benchmark — ACTIVE (harness lease)
+## M172: B3 hot-path benchmark — CLOSED (harness lease)
 
-B3 is the next gate before HNSW/planner/Cypher. Fix the multi-hop workload, record a same-host Kutha baseline and regression floor, then run the Samyama/FalkorDB comparison or record the environment blocker. No product thaw.
+B3 is the gate before HNSW/planner/Cypher. M172 fixed the multi-hop workload, recorded a same-host Kutha baseline and floor, and compared FalkorDB/Samyama. Kutha is faster; B4/B5 are skipped, B6 still needs M003. No product thaw.
 
-- [ ] **S01: B3 workload and baseline** `risk:medium` `depends:[]`
+- [x] **S01: B3 workload and baseline** `risk:medium` `depends:[]`
   > After this: the workload is fixed as data, Kutha baseline/ratio is recorded, and the B3 floor is set. B4/B5 stay frozen.
 
 ## M171: ingest regression — CLOSED (harness lease)

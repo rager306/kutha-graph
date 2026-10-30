@@ -11,7 +11,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 ## Phases
 
 - [x] **Phase 251: B3 workload and baseline** - fix the workload and record the Kutha baseline (completed 2026-10-30)
-- [ ] **Phase 252: B3 decision** - compare competitors or record the blocker; decide B4/B5
+- [x] **Phase 252: B3 decision** - compare competitors or record the blocker; decide B4/B5 (completed 2026-10-30)
 
 ## Phase Details
 
@@ -36,7 +36,7 @@ Plans:
   1. A competitor comparison is run in one sitting with calibration, or the environment blocker is explicit.
   2. The decision uses ratios and the B3 floor; if there is no gap, B4/B5 are skipped.
   3. Report under `.compound-engineering/artifacts/research/`; no thaw.
-**Plans**: 0 plans
+**Plans**: 1/1 plans complete
 
 Plans:
 - [ ] TBD (run /gsd-plan-phase 252 to break down)
@@ -46,4 +46,4 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 251. B3 workload and baseline | 1/1 | Complete    | 2026-10-30 |
-| 252. B3 decision | 0/1 | Pending | — |
+| 252. B3 decision | 1/1 | Complete    | 2026-10-30 |

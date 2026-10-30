@@ -1,21 +1,19 @@
 ---
 gsd_state_version: "1.0"
 milestone: v1.65
-current_phase: 252
-current_phase_name: B3 decision
-status: executing
-stopped_at: Phase 251 complete, ready to execute Phase 252
-last_updated: "2026-10-30T08:44:51.928Z"
+status: Awaiting next milestone
+stopped_at: Phase 252 complete — all phases complete
+last_updated: "2026-10-30T09:11:39.912Z"
 last_activity: 2026-10-30
-last_activity_desc: Phase 251 complete, transitioned to Phase 252
-state_head: 77d7904dd300f6045cf99abaeab78ccf45abab7b
+last_activity_desc: Milestone v1.65 completed and archived
+state_head: 3dcef9d5e5e9334a6d8b71631898a911f7025f88
 progress:
   total_phases: 2
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 2
-  completed_plans: 1
-  percent: 50
+  completed_plans: 2
 milestone_name: B3 hot-path benchmark
+current_phase: null
 ---
 
 # Project State
@@ -25,15 +23,14 @@ milestone_name: B3 hot-path benchmark
 See: .planning/PROJECT.md (updated 2026-10-29)
 
 **Core value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
-**Current focus:** v1.65 B3 hot-path benchmark (M172-S01), phase 252.
+**Current focus:** v1.65 B3 hot-path benchmark (M172-S01), complete.
 
 ## Current Position
 
-Phase: 252 — B3 decision
-Plan: 252-01
-Status: Ready — competitor containers running, workload not yet rendered
-Last activity: 2026-10-30 — Phase 251 complete, transitioned to Phase 252
-
+Phase: Milestone v1.65 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-10-30 — Milestone v1.65 completed and archived
 
 ## Accumulated Context
 
@@ -61,7 +58,7 @@ B3 environment is up: FalkorDB `kutha-b3-falkor` (127.0.0.1:6381) and Samyama `k
 ## Session Continuity
 
 Last session: 2026-10-29
-Stopped at: Phase 251 complete, ready to execute Phase 252
+Stopped at: Phase 252 complete — all phases complete
 Resume file: None
 
 ## Operator Next Steps

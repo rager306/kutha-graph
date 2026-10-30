@@ -4,6 +4,19 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-30 — Trajectory: M172-S01 closed (B3 no-gap)
+
+- B3 decision: FalkorDB median 4,779 µs, Samyama 14,511 µs vs Kutha walk-only 161,912 ns / prepared 512,496 ns. Walk-only ≈29.5×/≈89.6×; prepared ≈9.3×/≈28.3× (≈3.1× vs Falkor internal 1.58 ms).
+- **B4 (HNSW) and B5 (planner) are skipped**; no index work without a workload. B6 (Cypher AS OF) still requires M003 and is not thawed.
+- Caveats: transports/output cardinality differ; one same-sitting Kutha run plus phase-251 median; no data-load time; no AS OF comparison. Phase-251 floor is not evaluated by this single run (2N/N 2.292 is +0.5% over the provisional 2.28 cap).
+- GSD v1.65 closed; phases 251–252 archived; `Active Milestone=None`, `L_delivery=M172-S01-closed`. No product/Op/ADR/CI change.
+
+## 2026-10-30 — Process: B3 decision — skip B4/B5
+
+- Same workload (layered relatedTo, 3x256 nodes, fan-out 4, 2-hop count 4096): Kutha walk-only 161,912 ns; prepared path 512,496 ns (walk + 350,584 lease prepare). FalkorDB median 4,779 us (10 runs, raw RESP); Samyama median 14,511 us (10 runs, HTTP). Walk-only ratios ~29.5x/~89.6x; prepared ratios ~9.3x/~28.3x (and ~3.1x vs Falkor internal 1.58 ms).
+- Decision: **skip B4 (HNSW) and B5 (planner)**; no index work without a workload. B6 (Cypher AS OF) still needs M003 and is not thawed.
+- Caveats: different transports and output cardinality, one same-sitting Kutha run plus phase 251 median, no data-load time, no AS OF comparison. Phase-251 floor is not evaluated by this single run; its 2N/N 2.292 is +0.5% over the provisional 2.28 cap. Artifacts: `.compound-engineering/artifacts/research/2026-10-30-b3-decision.md` and `...-runs.json`.
+
 ## 2026-10-30 — Process: B3 competitor environment ready
 
 - Pulled and started `falkordb/falkordb:latest` (digest `sha256:725b74d...`) and `public.ecr.aws/f9f6l5u4/samyama-graph:1.1.0` (digest `sha256:4588950...`). Containers: `kutha-b3-falkor` (127.0.0.1:6381) and `kutha-b3-samyama` (127.0.0.1:6380/8081). Both smoke-tested: Falkor `RETURN 1`, Samyama `/api/query RETURN 1`.
