@@ -6,11 +6,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ## 2026-10-31 — Product: admission-time operator index
 
-- `Runtime` now holds a droppable `OperatorIndex`, rebuilt from the log on hydrate/open/fork and updated on commit, so admission collision detection is O(1) per operator instead of rebuilding every declared set per install.
+- `Runtime` now holds a droppable `OperatorIndex` and `PackLifecycleTracker`, rebuilt from the log on hydrate/open/fork and updated on commit, so admission is O(1) per write instead of rebuilding both from the log per install (measured per-install cost is flat: 255 µs → 287 µs from 400 → 3200 installs; before, 213 µs → 2.33 ms).
 - Admission and replay now use the same indexed rule; retire releases names in both gates.
 - Removed the now-unused `validate_install` log-scan path so one collision rule remains.
 - Added `crates/kutha-runtime/tests/m184_admission_index.rs` (6 tests) including a hand-built foreign log that proves replay rejects the collision admission rejects. Linearity is asserted structurally (the admission path has no log parameter) rather than by wall-clock ratio, which flaked under a parallel workspace run.
-- Tests: admission index 6/6, workspace 822 passed / 0 failed.
+- **Verifier caught a blocking defect in the first attempt:** `hydrate` applied `PackRetire` only after the install loop, so a legal install-after-retire was rebuilt as a collision; a store the runtime had accepted could fail to reopen. Retire is now applied inline in log order, with `retired_name_reuse_survives_every_reopen_path` as the guard.
+- Tests: admission index 8/8, workspace 824 passed / 0 failed.
 
 ## 2026-10-31 — Trajectory: M183-S01 closed (digest falsifiers + index)
 

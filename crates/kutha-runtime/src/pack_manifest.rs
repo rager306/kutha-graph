@@ -5,8 +5,7 @@
 //! operator shape, and cross-pack collisions. This module does not load
 //! dictionaries, rebuild leases, or run an operator.
 
-use crate::pack_lifecycle::{PackLifecycleState, derive_pack_lifecycle};
-use kutha_common::{Event, Op, sha256_hex};
+use kutha_common::{Op, sha256_hex};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt;
 
@@ -183,43 +182,15 @@ pub fn load_manifest(
     PackManifest::parse(bytes)
 }
 
-/// Operators declared by installed/active packs, keyed by pack id.
-pub fn declared_operators(
-    log: &[Event],
-    blobs: &HashMap<String, Vec<u8>>,
-) -> Result<BTreeMap<String, BTreeSet<String>>, PackManifestError> {
-    let states: HashMap<String, PackLifecycleState> = derive_pack_lifecycle(log)
-        .into_iter()
-        .map(|record| (record.pack_id, record.state))
-        .collect();
-    let mut out: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
-    for event in log {
-        let Op::PackInstall {
-            pack_id,
-            name,
-            version,
-            manifest_digest: Some(digest),
-        } = &event.op
-        else {
-            continue;
-        };
-        if states.get(pack_id) == Some(&PackLifecycleState::Retired) {
-            continue;
-        }
-        let manifest = load_manifest(blobs, digest)?;
-        manifest.validate_identity(pack_id, name, version)?;
-        out.entry(pack_id.clone())
-            .or_default()
-            .extend(manifest.operators);
-    }
-    Ok(out)
-}
-
-/// Operators declared by one install, for incremental replay.
-pub fn declared_operators_for(
+/// Validate an install against a blob map and an [`OperatorIndex`].
+///
+/// Collision detection is a single lookup per declared operator, so replay is
+/// linear in packs and operators.
+pub fn validate_install_indexed(
     blobs: &HashMap<String, Vec<u8>>,
     install: &Op,
-) -> Result<BTreeSet<String>, PackManifestError> {
+    index: &OperatorIndex,
+) -> Result<(), PackManifestError> {
     let Op::PackInstall {
         pack_id,
         name,
@@ -227,11 +198,21 @@ pub fn declared_operators_for(
         manifest_digest: Some(digest),
     } = install
     else {
-        return Ok(BTreeSet::new());
+        return Ok(());
     };
     let manifest = load_manifest(blobs, digest)?;
     manifest.validate_identity(pack_id, name, version)?;
-    Ok(manifest.operators.into_iter().collect())
+    for operator in &manifest.operators {
+        if let Some(owner) = index.owner_of(operator) {
+            if owner != pack_id {
+                return Err(PackManifestError::OperatorCollision {
+                    name: operator.clone(),
+                    pack_id: owner.to_string(),
+                });
+            }
+        }
+    }
+    Ok(())
 }
 
 /// Operator → owning pack index used by admission and replay.
@@ -301,15 +282,11 @@ impl OperatorIndex {
     }
 }
 
-/// Validate an install against a blob map and an [`OperatorIndex`].
-///
-/// Collision detection is a single lookup per declared operator, so replay is
-/// linear in packs and operators.
-pub fn validate_install_indexed(
+/// Operators declared by one install, for incremental replay.
+pub fn declared_operators_for(
     blobs: &HashMap<String, Vec<u8>>,
     install: &Op,
-    index: &OperatorIndex,
-) -> Result<(), PackManifestError> {
+) -> Result<BTreeSet<String>, PackManifestError> {
     let Op::PackInstall {
         pack_id,
         name,
@@ -317,19 +294,9 @@ pub fn validate_install_indexed(
         manifest_digest: Some(digest),
     } = install
     else {
-        return Ok(());
+        return Ok(BTreeSet::new());
     };
     let manifest = load_manifest(blobs, digest)?;
     manifest.validate_identity(pack_id, name, version)?;
-    for operator in &manifest.operators {
-        if let Some(owner) = index.owner_of(operator) {
-            if owner != pack_id {
-                return Err(PackManifestError::OperatorCollision {
-                    name: operator.clone(),
-                    pack_id: owner.to_string(),
-                });
-            }
-        }
-    }
-    Ok(())
+    Ok(manifest.operators.into_iter().collect())
 }

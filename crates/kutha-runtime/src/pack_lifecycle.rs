@@ -109,8 +109,11 @@ impl PackLifecycleTracker {
         Ok(tracker)
     }
 
-    /// Apply one op if it is a lifecycle op; other ops are ignored.
-    pub fn replay(&mut self, op: &Op) -> Result<(), crate::RuntimeError> {
+    /// Validate one op against the current state without mutating it.
+    ///
+    /// Admission uses this so it does not rebuild the tracker per write;
+    /// [`Self::replay`] then applies the same op after the check.
+    pub fn check(&self, op: &Op) -> Result<(), crate::RuntimeError> {
         match op {
             Op::PackInstall {
                 pack_id,
@@ -128,10 +131,6 @@ impl PackLifecycleTracker {
                 if self.state.contains_key(pack_id) {
                     return Err(reject(pack_id, "pack_id_already_known"));
                 }
-                self.state.insert(
-                    pack_id.clone(),
-                    (PackLifecycleState::Installed, version.clone()),
-                );
                 Ok(())
             }
             Op::PackActivate { pack_id, version } | Op::PackRetire { pack_id, version } => {
@@ -143,12 +142,10 @@ impl PackLifecycleTracker {
                     return Err(reject(pack_id, "padded_identifier"));
                 }
                 let allowed = match self.state.get(pack_id) {
-                    // Retire is legal from Installed or Active.
                     Some((
                         PackLifecycleState::Installed | PackLifecycleState::Active,
                         installed,
                     )) if retire && installed == version => true,
-                    // Activate is legal only from Installed.
                     Some((PackLifecycleState::Installed, installed)) if installed == version => {
                         true
                     }
@@ -164,16 +161,35 @@ impl PackLifecycleTracker {
                         },
                     ));
                 }
-                let next = if retire {
+                Ok(())
+            }
+            _ => Ok(()),
+        }
+    }
+
+    /// Apply one op if it is a lifecycle op; other ops are ignored.
+    pub fn replay(&mut self, op: &Op) -> Result<(), crate::RuntimeError> {
+        self.check(op)?;
+        match op {
+            Op::PackInstall {
+                pack_id, version, ..
+            } => {
+                self.state.insert(
+                    pack_id.clone(),
+                    (PackLifecycleState::Installed, version.clone()),
+                );
+            }
+            Op::PackActivate { pack_id, version } | Op::PackRetire { pack_id, version } => {
+                let next = if matches!(op, Op::PackRetire { .. }) {
                     PackLifecycleState::Retired
                 } else {
                     PackLifecycleState::Active
                 };
                 self.state.insert(pack_id.clone(), (next, version.clone()));
-                Ok(())
             }
-            _ => Ok(()),
+            _ => {}
         }
+        Ok(())
     }
 
     pub fn state(&self, pack_id: &str) -> Option<PackLifecycleState> {

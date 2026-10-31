@@ -11,15 +11,27 @@ use rustc_hash::{FxHashMap, FxHashSet};
 type IngestMap<K, V> = FxHashMap<K, V>;
 
 impl Runtime {
-    /// Rebuild the droppable operator index from the log. Retired packs release
-    /// their names; a manifest that cannot be loaded leaves the pack unindexed
-    /// here (replay is the gate that fails closed on it).
+    /// Rebuild the droppable operator index from the log, in log order.
+    ///
+    /// Retire is applied inline so a pack that retires and a later pack that
+    /// reuses its name rebuild exactly as admission and replay see them.
+    /// A manifest that cannot be loaded leaves the index incomplete; replay is
+    /// the gate that fails closed on it, so callers that skip `replay_check`
+    /// must not treat the index as authoritative.
     fn rebuild_operator_index(&mut self) {
         let mut index = crate::pack_manifest::OperatorIndex::new();
-        let mut retired: Vec<String> = Vec::new();
+        let mut lifecycle = crate::PackLifecycleTracker::new();
         for event in self.log.iter() {
             match &event.op {
-                Op::PackRetire { pack_id, .. } => retired.push(pack_id.clone()),
+                Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. } => {
+                    // A hand-edited invalid transition leaves the lease short;
+                    // replay_check is the gate that rejects it.
+                    let _ = lifecycle.replay(&event.op);
+                }
+                _ => {}
+            }
+            match &event.op {
+                Op::PackRetire { pack_id, .. } => index.retire(pack_id),
                 Op::PackInstall {
                     pack_id,
                     manifest_digest: Some(_),
@@ -34,10 +46,8 @@ impl Runtime {
                 _ => {}
             }
         }
-        for pack_id in retired {
-            index.retire(&pack_id);
-        }
         self.operators = index;
+        self.lifecycle = lifecycle;
     }
 
     pub(crate) fn hydrate_from_log(&mut self) {
@@ -151,6 +161,7 @@ impl Runtime {
             compacted_behavior_by_id: IngestMap::default(),
             compacted_assert_by_id: IngestMap::default(),
             operators: crate::pack_manifest::OperatorIndex::new(),
+            lifecycle: crate::PackLifecycleTracker::new(),
         };
         rt.hydrate_from_log();
         rt
@@ -207,6 +218,7 @@ impl Runtime {
             compacted_behavior_by_id: IngestMap::default(),
             compacted_assert_by_id: IngestMap::default(),
             operators: crate::pack_manifest::OperatorIndex::new(),
+            lifecycle: crate::PackLifecycleTracker::new(),
         };
         rt.hydrate_from_log();
         Ok(rt)
@@ -266,6 +278,7 @@ impl Runtime {
             compacted_behavior_by_id: IngestMap::default(),
             compacted_assert_by_id: IngestMap::default(),
             operators: crate::pack_manifest::OperatorIndex::new(),
+            lifecycle: crate::PackLifecycleTracker::new(),
         };
         rt.hydrate_from_log();
         Ok(rt)

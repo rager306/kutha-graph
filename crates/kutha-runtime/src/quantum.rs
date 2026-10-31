@@ -365,6 +365,9 @@ pub struct Runtime {
     /// Declared pack operators by name (droppable; rebuilt from the log).
     /// Admission uses it so collision detection is O(1) per operator.
     pub(crate) operators: crate::pack_manifest::OperatorIndex,
+    /// Pack lifecycle state (droppable; rebuilt from the log). Admission checks
+    /// one transition against it instead of replaying the whole log.
+    pub(crate) lifecycle: crate::PackLifecycleTracker,
 }
 
 impl Default for Runtime {
@@ -402,6 +405,7 @@ impl Runtime {
             compacted_behavior_by_id: IngestMap::default(),
             compacted_assert_by_id: IngestMap::default(),
             operators: crate::pack_manifest::OperatorIndex::new(),
+            lifecycle: crate::PackLifecycleTracker::new(),
             unindex_premise_examine: IngestExamine::default(),
             unindex_live_examine: IngestExamine::default(),
         };

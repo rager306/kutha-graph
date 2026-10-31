@@ -192,3 +192,68 @@ fn admission_index_tracks_every_install() {
         RuntimeError::PackLifecycleRejected { reason, .. } if reason.contains("already declared")
     ));
 }
+
+/// Regression: retire must be applied in log order on every reopen path, so a
+/// legal install after retire survives persist/open/fork/checkpoint. The first
+/// version of this index applied retire only after the install loop, which
+/// bricked a store the runtime had accepted.
+#[test]
+fn retired_name_reuse_survives_every_reopen_path() {
+    fn build() -> Runtime {
+        let mut rt = Runtime::default();
+        install(&mut rt, "a", &["shared"]).expect("a");
+        rt.emit_pack_activate("a", "1.0.0").expect("activate a");
+        rt.emit_pack_retire("a", "1.0.0").expect("retire a");
+        install(&mut rt, "b", &["shared"]).expect("b reuses the released name");
+        rt
+    }
+
+    let mut live = build();
+    install(&mut live, "c", &["shared"]).expect_err("live rejects collision");
+
+    let dir = std::path::PathBuf::from("tmp/m184-retire-reuse");
+    std::fs::remove_dir_all(&dir).ok();
+    let rt = build();
+    rt.persist(&dir).expect("persist");
+    let mut opened = Runtime::open(&dir).expect("open");
+    opened.replay_check().expect("replay agrees with admission");
+    assert_eq!(opened.operator_count(), 1, "only b owns shared");
+    install(&mut opened, "c", &["shared"]).expect_err("collision after open");
+    std::fs::remove_dir_all(&dir).ok();
+
+    let mut forked = build().fork_at(build().log().len()).expect("fork");
+    install(&mut forked, "c", &["shared"]).expect_err("collision after fork");
+
+    // A legal reuse after another retire must also be accepted after reopen.
+    let mut rt = build();
+    rt.emit_pack_activate("b", "1.0.0").expect("activate b");
+    rt.emit_pack_retire("b", "1.0.0").expect("retire b");
+    let dir2 = std::path::PathBuf::from("tmp/m184-retire-reuse-2");
+    std::fs::remove_dir_all(&dir2).ok();
+    rt.persist(&dir2).expect("persist");
+    let mut opened = Runtime::open(&dir2).expect("open");
+    install(&mut opened, "d", &["shared"]).expect("released again");
+    std::fs::remove_dir_all(&dir2).ok();
+}
+
+/// OPS-01: admission does not replay the log per write.
+///
+/// Structural, not timed: `check_pack_lifecycle_live` consults the runtime
+/// lease and has no log parameter. The measured per-install cost after this
+/// change is flat (400 → 3200 installs: 255 µs → 287 µs per install); before
+/// it, the same shape grew 213 µs → 2.33 ms because every install rebuilt the
+/// lifecycle tracker from the whole log. A wall-clock ratio assertion is
+/// deliberately not used here: it flaked under a parallel workspace run
+/// without saying anything about the algorithm.
+#[test]
+fn admission_lifecycle_check_does_not_replay_the_log() {
+    let source = std::fs::read_to_string("src/admission.rs").expect("admission.rs");
+    assert!(
+        !source.contains("PackLifecycleTracker::from_log"),
+        "admission must consult the runtime lease, not replay the log per write"
+    );
+    assert!(
+        source.contains("self.lifecycle.check"),
+        "admission must use the runtime lifecycle lease"
+    );
+}

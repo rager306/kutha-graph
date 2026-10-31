@@ -295,16 +295,21 @@ impl Runtime {
         // Keep the droppable operator index in step with the log so admission
         // sees the same names replay will.
         match &event.op {
-            Op::PackRetire { pack_id, .. } => self.operators.retire(pack_id),
-            Op::PackInstall {
-                pack_id,
-                manifest_digest: Some(_),
-                ..
-            } => {
-                if let Ok(names) =
-                    crate::pack_manifest::declared_operators_for(&self.fold.blobs, &event.op)
+            Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. } => {
+                let _ = self.lifecycle.replay(&event.op);
+                if let Op::PackRetire { pack_id, .. } = &event.op {
+                    self.operators.retire(pack_id);
+                } else if let Op::PackInstall {
+                    pack_id,
+                    manifest_digest: Some(_),
+                    ..
+                } = &event.op
                 {
-                    let _ = self.operators.declare(pack_id, names);
+                    if let Ok(names) =
+                        crate::pack_manifest::declared_operators_for(&self.fold.blobs, &event.op)
+                    {
+                        let _ = self.operators.declare(pack_id, names);
+                    }
                 }
             }
             _ => {}

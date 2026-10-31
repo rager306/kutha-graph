@@ -119,7 +119,7 @@ impl Runtime {
             op,
             Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. }
         ) {
-            Self::check_pack_lifecycle(self.log.as_slice(), op)?;
+            self.check_pack_lifecycle_live(op)?;
             if let Op::PackInstall {
                 manifest_digest: Some(_),
                 ..
@@ -204,12 +204,12 @@ impl Runtime {
     ///
     /// One shared state machine ([`crate::PackLifecycleTracker`]) serves both
     /// admission and replay, so the two gates cannot drift apart.
-    pub(crate) fn check_pack_lifecycle(
-        log: &[kutha_common::Event],
-        next: &Op,
-    ) -> Result<(), RuntimeError> {
-        let mut tracker = crate::PackLifecycleTracker::from_log(log)?;
-        tracker.replay(next)
+    /// Admission-side lifecycle check against the runtime's lease.
+    ///
+    /// O(1) in log length: the lease is rebuilt on hydrate and updated on
+    /// commit, so a write does not replay the whole log.
+    fn check_pack_lifecycle_live(&self, next: &Op) -> Result<(), RuntimeError> {
+        self.lifecycle.check(next)
     }
 
     pub(crate) fn admit_claim(&self, op: &Op) -> Result<(), RuntimeError> {
