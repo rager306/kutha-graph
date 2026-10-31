@@ -6,10 +6,11 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ## 2026-10-31 — Process: meta lease overhead A/B
 
-- Measured the per-append lease cost added by v1.77/v1.78 against `4db8770` with an interleaved same-host A/B (6 samples, `KUTHA_BENCH_N=10000`).
-- Medians: `ingest_plain.n` 124.57 → 127.97 ms (**+2.7%**), `as_of.n` 73.6 → 77.8 µs (**+5.7%**). One base `as_of` outlier (253 µs) is named, not dropped.
-- Decision: **keep** the leases. The cost is inside the sample spread and the 10% gate, and it buys removing an O(log) replay per meta write.
-- Recorded in `docs/architecture/benchmark-baseline.md` with the host-noise caveat.
+- Two interleaved same-host A/Bs (6 samples each, `KUTHA_BENCH_N=10000`, bench source unchanged): base `4db8770` isolates v1.78; base `05dfea0` isolates v1.77 + v1.78.
+- Against `4db8770`: `ingest_plain.n` **+2.7%**, `as_of.n` **+5.7%** (one 253 µs base outlier named, not dropped).
+- Against `05dfea0`: `ingest_plain.n` **−6.2%** (faster), `as_of.n` **−7.7%**, but **`as_of.2n` +19.0%** — reproduced at +16.3% in the other A/B, so it is not noise.
+- Decision: **keep** the leases for the write path (they remove an O(n) lifecycle rebuild per meta write), and record `as_of.2n` as an **open, unexplained residual** above the 10% gate. This bench exercises no meta write, so it does not measure the benefit.
+- Recorded in `docs/architecture/benchmark-baseline.md` with base commit ids, spreads, and the host-noise caveat.
 
 ## 2026-10-31 — Trajectory: M185-S01 closed (enrichment admission leases)
 

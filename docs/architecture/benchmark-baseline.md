@@ -84,16 +84,26 @@ After fold ingest indexes (M013 S03).
 
 ## Meta lease overhead A/B (2026-10-31, M186 / v1.79)
 
-v1.77 and v1.78 added a per-append `log_ids` insert plus lease upkeep. This
-measures that cost against the last commit before the leases (`4db8770`).
+v1.77 (`3442ee7`) added per-append operator/lifecycle upkeep and made pack
+admission O(1); v1.78 (`0e0a37f`, `e6d07b2`) added the per-append `log_ids`
+insert and the enrichment leases. This measures both against the last commit
+before either (`05dfea0`, v1.76 close) and against the v1.77 close (`4db8770`).
 
-Method: separate worktree at `4db8770` with its own `CARGO_TARGET_DIR`,
-interleaved base/head runs, `KUTHA_BENCH_N=10000`, 6 samples each, same host.
-Host was busy (load average 7.6–9.9 on 12 cores, B3 containers up), so absolute
-numbers are not comparable across sessions — only the interleaved ratio is.
+Method: `git worktree add` at the base commit with its own `CARGO_TARGET_DIR`,
+interleaved base/head runs, `KUTHA_BENCH_N=10000`, 6 samples each, same host,
+bench source unchanged between arms (`git diff --stat crates/kutha-runtime/benches/`
+empty across `05dfea0..HEAD`). Base commit ids are recorded here because the
+worktrees are removed after the run: `05dfea047b6bed798ef9310d83ac543ef834e531`
+and `4db8770`.
 
-| sample | base ingest_plain.n | head ingest_plain.n | base as_of.n | head as_of.n |
-|--------|--------------------:|--------------------:|-------------:|-------------:|
+Host was busy (load average 7.6–9.9 on 12 cores, B3 containers up) — that is an
+observation from `uptime`, not from the logs. Only the interleaved ratios are
+usable; absolute numbers are not comparable across sessions.
+
+### A/B 1 — base `4db8770` (v1.77 close), isolates v1.78 only
+
+| sample | base ingest.n | head ingest.n | base as_of.n | head as_of.n |
+|--------|--------------:|--------------:|-------------:|-------------:|
 | 1 | 128563725 | 132521267 | 73246 | 113771 |
 | 2 | 112377249 | 135760770 | 73095 | 73256 |
 | 3 | 155129331 | 129119414 | 85709 | 92832 |
@@ -102,16 +112,44 @@ numbers are not comparable across sessions — only the interleaved ratio is.
 | 6 | 120579264 | 125827017 | 74018 | 82393 |
 | **median** | **124571495** | **127965659** | **73632** | **77825** |
 | ratio | — | **1.027** | — | **1.057** |
+| spread | 106.6–155.1M (45.5%) | 107.4–135.8M (26.4%) | 73.1–85.7k | 68.1–113.8k |
 
-Outlier named, not dropped: base sample 4 `as_of.n` 253099 ns is ~3.4x the other
-base samples and inflates nothing (the median is robust); it is kept in the table
-so the reader can see the spread rather than a curated set.
+Named outlier, kept in the table: base sample 4 `as_of.n` 253099 ns is 3.4x the
+base median. Dropping it moves the base median to 73246 and the delta to +6.3%,
+so the median is robust to it.
 
-Decision: **keep**. The measured medians are +2.7% on `ingest_plain.n` and +5.7%
-on `as_of.n`, inside the spread of the samples and inside the 10% gate. The
-leases remove an O(log) replay per meta write, which is the trade this paid for.
-Re-test if the hot path changes again; do not cite these absolute numbers
-against another session.
+### A/B 2 — base `05dfea0` (v1.76 close), isolates v1.77 + v1.78
+
+| metric | pre median | head median | ratio | pre range | head range |
+|--------|-----------:|------------:|------:|-----------|------------|
+| `ingest_plain.n` | 126665566 | 118824960 | **0.938** | 112.3–136.3M | 110.4–132.7M |
+| `as_of.n` | 78536 | 72495 | **0.923** | 73.8–140.7k | 68.6–127.4k |
+| `as_of.2n` | 160599 | 191120 | **1.190** | 147.4–177.3k | 158.6–227.4k |
+| `ingest_plain.4n` | 425505688 | 455890543 | 1.071 | 384.3–505.4M | 434.6–491.9M |
+| `ingest_keyed.n` | 110857378 | 121145614 | 1.093 | 106.5–126.1M | 113.2–139.5M |
+| `persist_append.n` | 5612320 | 7299392 | 1.301 | 3.1–13.6M | 3.9–15.2M |
+
+### Decision: keep, with one named residual
+
+- **`ingest_plain.n` is not regressed**: +2.7% against `4db8770` and **−6.2%**
+  against `05dfea0`, both inside the sample spread and the 10% gate.
+- **`as_of.2n` is +19.0% against `05dfea0` and above the 10% gate.** It also moved
+  +16.3% in A/B 1 (recomputed from those raw logs), so it reproduces across two
+  independent interleaved runs. The cause is **not explained**: the lease upkeep
+  runs on append, and `as_of` is a read path, so there is no obvious mechanism.
+  Candidates worth a follow-up: extra per-event work shifting allocation and
+  cache locality for the read phase, or `as_of.n` being the noisy first call
+  (M169 note) while `2n` picks up that variance.
+- **`as_of.n` is the noisy variant** (its ranges overlap the median); M169 already
+  prefers `2n`/`4n`. That is why the `2n` move is recorded rather than waved away.
+- `persist_append.n` +30% has a spread wider than the delta (base 3.1–13.6M,
+  head 3.9–15.2M), so it is not a usable signal here.
+
+Keeping the leases is still the right call for the write path: they remove an
+O(n) lifecycle rebuild per meta write (v1.77 note: per-install cost 213 µs →
+2.33 ms before, flat afterwards). The `as_of.2n` cost is accepted as an open,
+named residual, not as a measured benefit of the leases — this bench never
+exercises a meta write at all.
 
 ### Visit oracle (IDX-02)
 
