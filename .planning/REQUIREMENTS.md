@@ -5,8 +5,8 @@
 
 ## v1.76 Requirements
 
-- [ ] **DIG-01**: The manifest and enrichment payload digest checks have direct falsifiers — a blob addressed by a policy/rule-body hash that passes the generic `StoreBlob` gate but fails raw SHA-256 must be rejected, and removing the raw check must fail the test.
-- [ ] **DIG-02**: Manifest operator collision detection uses an operator→pack index, so replay is linear in packs and operators, while retired packs still release names and admission/replay stay in agreement.
+- [x] **DIG-01**: The manifest and enrichment payload digest checks have direct falsifiers — a blob addressed by a policy/rule-body hash that passes the generic `StoreBlob` gate but fails raw SHA-256 must be rejected, and removing the raw check must fail the test.
+- [x] **DIG-02**: Manifest operator collision detection uses an operator→pack index, so replay is linear in packs and operators, while retired packs still release names and admission/replay stay in agreement.
 
 ## Explicit non-goals
 
@@ -16,8 +16,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DIG-01 | Phase 270 | Pending |
-| DIG-02 | Phase 271 | Pending |
+| DIG-01 | Phase 270 | Complete |
+| DIG-02 | Phase 271 | Complete |
 
 **Coverage:**
 - v1.76 requirements: 2 total

@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Trajectory: M183-S01 closed (digest falsifiers + index)
+
+- GSD v1.76 closed; phases 270–271 archived. `Active Milestone=None`, `L_delivery=M183-S01-closed`.
+- The v1.75 "transitively covered" digests now have direct falsifiers, and operator collisions use an index; the verifier found stale ownership on re-declare, fixed and unit-tested.
+- Tests: digest falsifiers 5/5, workspace 816 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0.
+
 ## 2026-10-31 — Product: digest falsifiers and linear operator index
 
 - Added direct falsifiers for the raw-SHA-256 meta checks: a blob addressed by a policy hash passes the generic `StoreBlob` gate and is still rejected as a manifest or enrichment payload. Mutation-checked — disabling the raw check fails both tests.

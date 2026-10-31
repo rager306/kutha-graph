@@ -8,11 +8,11 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
-## M183: Digest falsifiers and linear index — ACTIVE (harness lease)
+## M183: Digest falsifiers and linear index — CLOSED (harness lease)
 
-Bounded hardening of the two v1.75 gaps: direct falsifiers for the raw-SHA-256 manifest/payload checks, and an operator→pack index for linear collision detection. No feature, no thaw.
+Bounded hardening delivered: direct falsifiers for the raw-SHA-256 manifest/payload checks, and an operator→pack index for linear collision detection. No feature, no thaw.
 
-- [ ] **S01: digest falsifiers and operator index** `risk:low` `depends:[]`
+- [x] **S01: digest falsifiers and operator index** `risk:low` `depends:[]`
   > After this: each digest check fails independently when removed, and replay collision detection is linear in packs.
 
 ## M182: Meta-surface threat audit — CLOSED (harness lease)

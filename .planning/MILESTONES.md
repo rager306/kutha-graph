@@ -1,5 +1,20 @@
 # Project Milestones: Kutha
 
+## v1.76 Digest falsifiers and linear index (Shipped: 2026-10-31)
+
+**Delivered:** M183. Closes the two gaps v1.75 recorded instead of overclaiming: the raw-SHA-256 meta digest checks now have direct falsifiers, and operator collision detection is indexed.
+
+**Phases completed:** 270–271 (2 plans)
+
+**Key accomplishments:**
+- Policy-hash-addressed blobs pass the generic `StoreBlob` gate and are still rejected as manifests and as enrichment payloads; deleting the raw check fails both tests (mutation-checked).
+- `OperatorIndex` (operator→pack) plus `validate_install_indexed`: one lookup per operator instead of a scan over every declared set. Re-declare and retire release names correctly.
+- Removed the unused `validate_install_against` path so there is one collision rule.
+- Honest limits recorded: admission itself is still O(P) per install; the scaling test is tolerant rather than high-power.
+- Tests: digest falsifiers 5/5, workspace 816 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0.
+
+---
+
 ## v1.75 Meta-surface threat audit (Shipped: 2026-10-31)
 
 **Delivered:** M182. A real security-audit slice: threat register for the C1/C1b/C5 meta surfaces and the replay reader gate, with an adversarial test per mitigated threat. No feature, no thaw.

@@ -14,8 +14,8 @@ This is not a production graph database and not Graphiti / Samyama / Harvey.
 
 | Plane | Where | Now |
 |-------|--------|-----|
-| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | **M183-S01 active** (`L_delivery=M183-S01-open`; digest falsifiers + linear index); harness phase **H5** |
-| GSD planning | [`.planning/STATE.md`](.planning/STATE.md) | **v1.76 digest falsifiers and linear index active** (2026-10-31) on gsd-core **1.19.0**; phases 270–271 |
+| Delivery lease | [`.kutha/STATE.md`](.kutha/STATE.md) | **M183-S01 closed** (`L_delivery=M183-S01-closed`; digest falsifiers + linear index); harness phase **H5** |
+| GSD planning | [`.planning/STATE.md`](.planning/STATE.md) | **v1.76 digest falsifiers and linear index closed** (2026-10-31) on gsd-core **1.19.0**; phases 270–271 |
 | Architecture map | [`docs/ADR/README.md`](docs/ADR/README.md) | Spine + honeycomb **Proposed**, not Accepted |
 | Capability | `crates/kutha-runtime` tests | FF5 green (`as_of(2015) ≠ as_of(2021)` on a statute-shaped fixture) |
 

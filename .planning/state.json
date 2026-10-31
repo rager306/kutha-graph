@@ -3,9 +3,21 @@
   "flavor": "core",
   "milestone": "v1.76",
   "phases": [
-    { "number": "270", "name": "Direct falsifiers for manifest and payload digests", "status": "pending" },
-    { "number": "271", "name": "Linear manifest operator collision index", "status": "pending" }
+    {
+      "number": "270",
+      "name": "Direct falsifiers for manifest and payload digests",
+      "status": "complete"
+    },
+    {
+      "number": "271",
+      "name": "Linear manifest operator collision index",
+      "status": "complete"
+    }
   ],
-  "next": { "command": "/gsd-progress", "label": "Show progress", "reason": "Milestone v1.76 planned" },
-  "updated_at": "2026-10-31T00:00:00.000Z"
+  "next": {
+    "command": "/gsd-progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
+  },
+  "updated_at": "2026-10-31T04:09:47.023Z"
 }

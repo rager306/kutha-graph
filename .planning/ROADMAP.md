@@ -10,8 +10,8 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [ ] **Phase 270: Direct falsifiers for manifest and payload digests** - prove the raw-SHA-256 checks fire on their own
-- [ ] **Phase 271: Linear manifest operator collision index** - operator→pack index, linear replay
+- [x] **Phase 270: Direct falsifiers for manifest and payload digests** - prove the raw-SHA-256 checks fire on their own (completed 2026-10-31)
+- [x] **Phase 271: Linear manifest operator collision index** - operator→pack index, linear replay (completed 2026-10-31)
 
 ## Phase Details
 
@@ -23,7 +23,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
   1. A blob addressed by a policy/rule-body hash that passes the generic gate but fails raw SHA-256 is rejected as a manifest.
   2. The enrichment payload digest check fires on the same construction.
   3. Deleting the raw-SHA-256 check makes those tests fail.
-**Plans**: 1 plan
+**Plans**: 1/0 plans complete
 
 Plans:
 - [ ] 270-01-PLAN.md — adversarial digest fixtures
@@ -36,7 +36,7 @@ Plans:
   1. Collision detection is O(1) per operator, not O(P) per install.
   2. Retire still releases names; admission and replay agree.
   3. A many-pack benchmark shows near-linear replay.
-**Plans**: 1 plan
+**Plans**: 1/0 plans complete
 
 Plans:
 - [ ] 271-01-PLAN.md — operator index and benchmark
@@ -45,5 +45,5 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 270. Direct falsifiers for manifest and payload digests | 0/1 | Pending | — |
-| 271. Linear manifest operator collision index | 0/1 | Pending | — |
+| 270. Direct falsifiers for manifest and payload digests | 1/0 | Complete    | 2026-10-31 |
+| 271. Linear manifest operator collision index | 1/0 | Complete    | 2026-10-31 |
