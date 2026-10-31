@@ -1,5 +1,21 @@
 # Project Milestones: Kutha
 
+## v1.77 Admission operator index (Shipped: 2026-10-31)
+
+**Delivered:** M184. Closes the admission-side complexity gap left by v1.76: the runtime holds droppable operator and lifecycle leases, so pack admission no longer rebuilds either from the log per write.
+
+**Phases completed:** 272 (1 plan)
+
+**Key accomplishments:**
+- `Runtime` holds `OperatorIndex` and `PackLifecycleTracker`, rebuilt from the log on hydrate/open/fork and updated on commit.
+- Measured per-install cost is flat (400 → 3200 installs: 255 µs → 287 µs); before, 213 µs → 2.33 ms.
+- **Blocker caught by the verifier:** the first rebuild applied retire after the install loop, so a legal install-after-retire was rebuilt as a collision and an accepted store could fail to reopen. Fixed inline in log order, guarded on live/open/fork/checkpoint.
+- A constructor that skips `replay_check` now marks leases untrusted and admission fails closed (`meta_leases_untrusted`).
+- `operator_count()` (live names) vs `pack_operators()` (audit rows incl. retired) documented and pinned.
+- Tests: admission index 10/10, workspace 826 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0.
+
+---
+
 ## v1.76 Digest falsifiers and linear index (Shipped: 2026-10-31)
 
 **Delivered:** M183. Closes the two gaps v1.75 recorded instead of overclaiming: the raw-SHA-256 meta digest checks now have direct falsifiers, and operator collision detection is indexed.

@@ -5,7 +5,7 @@
 
 ## v1.77 Requirements
 
-- [ ] **OPS-01**: The runtime keeps an operator index rebuilt from the log on hydrate/open/fork; admission uses it for O(1) collision detection and rejects exactly the collisions replay rejects, with a benchmark showing admission is not super-linear.
+- [x] **OPS-01**: The runtime keeps an operator index rebuilt from the log on hydrate/open/fork; admission uses it for O(1) collision detection and rejects exactly the collisions replay rejects, with a benchmark showing admission is not super-linear.
 
 ## Explicit non-goals
 
@@ -15,7 +15,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| OPS-01 | Phase 272 | Pending |
+| OPS-01 | Phase 272 | Complete |
 
 **Coverage:**
 - v1.77 requirements: 1 total

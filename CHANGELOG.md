@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Trajectory: M184-S01 closed (admission index)
+
+- GSD v1.77 closed; phase 272 archived. `Active Milestone=None`, `L_delivery=M184-S01-closed`.
+- The verifier blocked the first attempt for applying retire out of log order (an accepted store could fail to reopen); fixed inline, plus a fail-closed untrusted-lease guard for constructors that skip `replay_check`.
+- Tests: admission index 10/10, workspace 826 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0.
+
 ## 2026-10-31 — Product: admission-time operator index
 
 - `Runtime` now holds a droppable `OperatorIndex` and `PackLifecycleTracker`, rebuilt from the log on hydrate/open/fork and updated on commit, so pack install/activate/retire admission is O(1) per pack write instead of rebuilding both from the log per install (measured per-install cost is flat: 255 µs → 287 µs from 400 → 3200 installs; before, 213 µs → 2.33 ms).

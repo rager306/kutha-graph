@@ -10,7 +10,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [ ] **Phase 272: Admission-time operator index** - runtime-held index, hydrate rebuild, parity with replay
+- [x] **Phase 272: Admission-time operator index** - runtime-held index, hydrate rebuild, parity with replay (completed 2026-10-31)
 
 ## Phase Details
 
@@ -22,13 +22,13 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
   1. The runtime holds an `OperatorIndex` rebuilt from the log on hydrate/open/fork.
   2. Admission uses it and rejects the same collisions replay rejects.
   3. A many-install benchmark shows admission is not super-linear.
-**Plans**: 1 plan
+**Plans**: 1/1 plans complete
 
 Plans:
-- [ ] 272-01-PLAN.md — runtime index and parity tests
+- [x] 272-01-PLAN.md — runtime index and parity tests
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 272. Admission-time operator index | 0/1 | Pending | — |
+| 272. Admission-time operator index | 1/1 | Complete    | 2026-10-31 |
