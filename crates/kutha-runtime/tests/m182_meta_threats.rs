@@ -4,7 +4,7 @@
 //! `.planning/phases/269-meta-surface-threat-audit-and-adversarial-tests/269-SECURITY.md`.
 
 use kutha_common::{Event, Op};
-use kutha_runtime::{PackLifecycleTracker, PackManifest, Runtime, RuntimeError};
+use kutha_runtime::{PackManifest, Runtime, RuntimeError};
 
 fn dict() -> Vec<String> {
     vec!["knows".into(), "knownBy".into()]
@@ -50,20 +50,17 @@ fn replay_meta_is_not_quadratic() {
             )
         })
         .collect();
-    let tracker = PackLifecycleTracker::from_log(&events).expect("valid log");
-    assert_eq!(
-        tracker.replay_calls(),
-        n,
-        "one replay per op expected; a per-prefix rebuild would re-apply ops"
-    );
     let rt = runtime(events);
-    // Hang guard only: generous by design, so a slow machine cannot flake it.
-    let start = std::time::Instant::now();
-    rt.replay_check().expect("valid log");
-    assert!(
-        start.elapsed() < std::time::Duration::from_secs(60),
-        "meta replay hung for {n} ops; this is a hang guard, not the oracle"
+    let (replays, declarations) = rt.meta_replay_probe().expect("valid log");
+    assert_eq!(
+        replays, n,
+        "one replay per meta op in the product gate; a per-prefix rebuild would re-apply ops"
     );
+    assert_eq!(
+        declarations, 0,
+        "installs without a manifest declare no operators"
+    );
+    rt.replay_check().expect("valid log");
 }
 
 /// T-269-02 (spoofing): a manifest blob whose bytes do not match its digest

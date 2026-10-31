@@ -45,7 +45,7 @@ Plans:
 
 Plans:
 - [ ] 276-01-PLAN.md — tmp isolation, structural oracles, taxonomy
-- [ ] 276-02-PLAN.md — remaining eight fixed scratch sites (m176/m177/m184)
+- [ ] 276-02-PLAN.md — remaining scratch sites, product-path counts, no wall-clock
 
 ## Progress
 

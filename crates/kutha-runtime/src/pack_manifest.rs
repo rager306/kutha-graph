@@ -224,6 +224,7 @@ pub fn validate_install_indexed(
 pub struct OperatorIndex {
     owner: BTreeMap<String, String>,
     by_pack: BTreeMap<String, BTreeSet<String>>,
+    declarations: u64,
 }
 
 impl OperatorIndex {
@@ -256,6 +257,7 @@ impl OperatorIndex {
             self.owner.insert(operator.clone(), pack_id.to_string());
         }
         self.by_pack.insert(pack_id.to_string(), owned);
+        self.declarations = self.declarations.saturating_add(1);
         Ok(())
     }
 
@@ -279,6 +281,12 @@ impl OperatorIndex {
 
     pub fn is_empty(&self) -> bool {
         self.owner.is_empty()
+    }
+
+    /// Test seam: successful declarations recorded by this index.
+    #[doc(hidden)]
+    pub fn declarations(&self) -> u64 {
+        self.declarations
     }
 }
 

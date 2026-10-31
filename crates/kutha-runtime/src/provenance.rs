@@ -90,13 +90,20 @@ impl Runtime {
         Ok(rebuilt)
     }
 
+    /// Test seam: run the same meta replay gate `replay_check` uses and return
+    /// the work it performed (lifecycle replays, operator declarations).
+    #[doc(hidden)]
+    pub fn meta_replay_probe(&self) -> Result<(u64, u64), RuntimeError> {
+        Self::check_meta_replay(self.log.as_slice())
+    }
+
     /// Revalidate C1/C1b/C5 meta in log order.
     ///
     /// Admission is the writer gate; replay is the reader gate. A hand-edited
     /// or foreign-written segment must not open with a silently wrong lease.
     /// Each meta op is checked against the prefix that preceded it, so a blob
     /// that appears after the install it claims to serve fails closed.
-    fn check_meta_replay(events: &[Event]) -> Result<(), RuntimeError> {
+    fn check_meta_replay(events: &[Event]) -> Result<(u64, u64), RuntimeError> {
         let mut blobs: HashMap<String, Vec<u8>> = HashMap::new();
         let mut lifecycle = crate::PackLifecycleTracker::new();
         // A checkpoint compacts the prefix, so proposals copied before it may
@@ -189,7 +196,7 @@ impl Runtime {
             }
             known_ids.insert(event.id);
         }
-        Ok(())
+        Ok((lifecycle.replay_calls(), operators.declarations()))
     }
 
     /// Snapshot-held walls + `ingested_at` vs log `Op::TtAnchor` (D-02). Not fingerprint input.

@@ -7,7 +7,7 @@
 //! meta check still rejects it. Remove the raw check and the test fails.
 
 use kutha_common::{Event, Op};
-use kutha_runtime::{PackLifecycleTracker, PackManifest, Runtime, RuntimeError};
+use kutha_runtime::{PackManifest, Runtime, RuntimeError};
 
 fn dict() -> Vec<String> {
     vec!["knows".into(), "knownBy".into()]
@@ -157,9 +157,9 @@ fn raw_sha256_addressing_still_passes_both_checks() {
 /// pack count rather than quadratically. The pre-index scan compared every new
 /// operator against every previously declared operator set.
 ///
-/// The oracle is the replay count, not wall-clock: every op in the log is
-/// applied through the shared lifecycle tracker exactly once, so 4x packs is 4x
-/// replays. The time bound is a hang guard only.
+/// The oracle is the work the product gate performs, not wall-clock: every meta
+/// op in the log is replayed once and every manifest is declared once, so 4x
+/// packs is 4x replays and 4x declarations.
 #[test]
 fn manifest_replay_scales_linearly_with_packs() {
     fn build(n: usize) -> Vec<Event> {
@@ -195,29 +195,21 @@ fn manifest_replay_scales_linearly_with_packs() {
     let small_events = build(400);
     let large_events = build(1600);
 
-    let small = PackLifecycleTracker::from_log(&small_events).expect("valid");
-    let large = PackLifecycleTracker::from_log(&large_events).expect("valid");
-    assert_eq!(
-        small.replay_calls(),
-        small_events.len() as u64,
-        "one replay per op, not one per prefix element"
-    );
-    assert_eq!(large.replay_calls(), large_events.len() as u64);
+    let small = runtime(small_events);
+    let large = runtime(large_events);
+    let (s_replays, s_decl) = small.meta_replay_probe().expect("valid");
+    let (l_replays, l_decl) = large.meta_replay_probe().expect("valid");
+    assert_eq!(s_decl, 400, "one declaration per manifest install");
+    assert_eq!(l_decl, 1600);
     // 4x the packs. Linear stays at 4x; the old O(P^2) scan was near 16x.
     assert_eq!(
-        large.replay_calls(),
-        4 * small.replay_calls(),
-        "4x packs must be 4x replays, not 16x"
+        l_decl,
+        4 * s_decl,
+        "4x packs must be 4x declarations, not 16x"
     );
-
-    // Hang guard only, generous by design; the counter above is the oracle.
-    let start = std::time::Instant::now();
-    runtime(build(400)).replay_check().expect("valid");
-    runtime(build(1600)).replay_check().expect("valid");
-    assert!(
-        start.elapsed() < std::time::Duration::from_secs(60),
-        "manifest replay hung; this is a hang guard, not the oracle"
-    );
+    assert_eq!(s_replays, 400, "one lifecycle replay per install");
+    assert_eq!(l_replays, 1600);
+    small.replay_check().expect("valid");
 }
 
 /// OperatorIndex unit behaviour: collision, re-declare, retire release.
