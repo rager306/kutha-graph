@@ -3,21 +3,21 @@
 **Defined:** 2026-10-31
 **Core Value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
 
-## v1.78 Requirements
+## v1.79 Requirements
 
-- [x] **ENR-01**: Enrichment proposal admission is O(1) per proposal — no lifecycle or event-id log scan — using runtime-held droppable leases, and accepts/rejects exactly what replay accepts/rejects.
+- [ ] **PERF-274-01**: The per-append meta-lease cost is measured with an interleaved same-host A/B against the pre-lease commit, recorded with medians and spread, and followed by an explicit keep-or-revert decision.
 
 ## Explicit non-goals
 
-- No new Op, no feature, no model call, no derived lease, no legal pack, no grants/capabilities/WASM, no ADR Accepted status.
+- No feature, no new Op, no ADR status change. A revert is an acceptable outcome.
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ENR-01 | Phase 273 | Complete |
+| PERF-274-01 | Phase 274 | Pending |
 
 **Coverage:**
-- v1.78 requirements: 1 total
+- v1.79 requirements: 1 total
 - Mapped to phases: 1
 - Unmapped: 0

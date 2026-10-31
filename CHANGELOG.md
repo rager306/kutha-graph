@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Process: meta lease overhead A/B
+
+- Measured the per-append lease cost added by v1.77/v1.78 against `4db8770` with an interleaved same-host A/B (6 samples, `KUTHA_BENCH_N=10000`).
+- Medians: `ingest_plain.n` 124.57 → 127.97 ms (**+2.7%**), `as_of.n` 73.6 → 77.8 µs (**+5.7%**). One base `as_of` outlier (253 µs) is named, not dropped.
+- Decision: **keep** the leases. The cost is inside the sample spread and the 10% gate, and it buys removing an O(log) replay per meta write.
+- Recorded in `docs/architecture/benchmark-baseline.md` with the host-noise caveat.
+
 ## 2026-10-31 — Trajectory: M185-S01 closed (enrichment admission leases)
 
 - GSD v1.78 closed; phase 273 archived. `Active Milestone=None`, `L_delivery=M185-S01-closed`.

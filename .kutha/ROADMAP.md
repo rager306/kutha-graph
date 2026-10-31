@@ -8,6 +8,13 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
+## M186: Meta lease overhead A/B — ACTIVE (harness lease)
+
+Bounded performance honesty: measure the per-append meta-lease cost against the pre-lease commit and keep or revert on the numbers. No feature, no thaw.
+
+- [ ] **S01: interleaved A/B and decision** `risk:low` `depends:[]`
+  > After this: the lease cost is a recorded number, not an assumption.
+
 ## M185: Enrichment admission leases — CLOSED (harness lease)
 
 Bounded complexity fix delivered: runtime-held lifecycle, visible-log, and cache-key leases make enrichment proposal admission O(1) and identical to replay. No feature, no thaw.

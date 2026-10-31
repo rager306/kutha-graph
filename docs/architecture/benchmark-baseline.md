@@ -82,6 +82,37 @@ Budget is `bytes_per_fact × target N` on Linux VmRSS delta from this run. Indep
 
 After fold ingest indexes (M013 S03).
 
+## Meta lease overhead A/B (2026-10-31, M186 / v1.79)
+
+v1.77 and v1.78 added a per-append `log_ids` insert plus lease upkeep. This
+measures that cost against the last commit before the leases (`4db8770`).
+
+Method: separate worktree at `4db8770` with its own `CARGO_TARGET_DIR`,
+interleaved base/head runs, `KUTHA_BENCH_N=10000`, 6 samples each, same host.
+Host was busy (load average 7.6–9.9 on 12 cores, B3 containers up), so absolute
+numbers are not comparable across sessions — only the interleaved ratio is.
+
+| sample | base ingest_plain.n | head ingest_plain.n | base as_of.n | head as_of.n |
+|--------|--------------------:|--------------------:|-------------:|-------------:|
+| 1 | 128563725 | 132521267 | 73246 | 113771 |
+| 2 | 112377249 | 135760770 | 73095 | 73256 |
+| 3 | 155129331 | 129119414 | 85709 | 92832 |
+| 4 | 137971142 | 107396169 | **253099** | 68077 |
+| 5 | 106649175 | 126811904 | 72133 | 69478 |
+| 6 | 120579264 | 125827017 | 74018 | 82393 |
+| **median** | **124571495** | **127965659** | **73632** | **77825** |
+| ratio | — | **1.027** | — | **1.057** |
+
+Outlier named, not dropped: base sample 4 `as_of.n` 253099 ns is ~3.4x the other
+base samples and inflates nothing (the median is robust); it is kept in the table
+so the reader can see the spread rather than a curated set.
+
+Decision: **keep**. The measured medians are +2.7% on `ingest_plain.n` and +5.7%
+on `as_of.n`, inside the spread of the samples and inside the 10% gate. The
+leases remove an O(log) replay per meta write, which is the trade this paid for.
+Re-test if the hot path changes again; do not cite these absolute numbers
+against another session.
+
 ### Visit oracle (IDX-02)
 
 `green_ingest_visits_constant_in_n` passes: ingest examine count at N=256 ≤ N=64 + 8.

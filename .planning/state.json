@@ -1,18 +1,10 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v1.78",
+  "milestone": "v1.79",
   "phases": [
-    {
-      "number": "273",
-      "name": "Enrichment admission without log replay",
-      "status": "complete"
-    }
+    { "number": "274", "name": "Meta lease overhead A/B evidence", "status": "pending" }
   ],
-  "next": {
-    "command": "/gsd-progress",
-    "label": "Show progress",
-    "reason": "Unsure of state — showing progress"
-  },
-  "updated_at": "2026-10-31T05:22:16.425Z"
+  "next": { "command": "/gsd-progress", "label": "Show progress", "reason": "Milestone v1.79 planned" },
+  "updated_at": "2026-10-31T00:00:00.000Z"
 }

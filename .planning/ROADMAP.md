@@ -2,7 +2,7 @@
 
 ## Overview
 
-v1.78 closes the last recorded super-linear admission path: `Op::EnrichmentProposal` admission still ran `derive_pack_lifecycle` plus a full event-id set per proposal. The runtime already holds a lifecycle lease; this milestone gives the runtime a content-addressed payload set and a cache-key set, so enrichment admission is O(1) per proposal and identical to replay. No new Op, no feature, no thaw.
+v1.79 records the cost of the v1.77/v1.78 meta leases on the hot path. Adding `log_ids` maintenance to every append is a real per-event cost; this milestone measures it with an interleaved same-host A/B against the commit before the leases, records the honest result, and keeps or reverts the change on that evidence. No feature, no thaw.
 
 ## Id map
 
@@ -10,25 +10,25 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [x] **Phase 273: Enrichment admission without log replay** - runtime payload/cache-key leases, O(1) proposal admission, replay parity (completed 2026-10-31)
+- [ ] **Phase 274: Meta lease overhead A/B evidence** - interleaved A/B, recorded medians, keep-or-revert decision
 
 ## Phase Details
 
-### Phase 273: Enrichment admission without log replay
-**Goal**: Make enrichment proposal admission O(1) and identical to replay.
-**Depends on**: Phase 272
-**Requirements**: ENR-01
+### Phase 274: Meta lease overhead A/B evidence
+**Goal**: Know what the meta leases cost on `ingest_plain.n` and `as_of.n`.
+**Depends on**: Phase 273
+**Requirements**: PERF-274-01
 **Success Criteria**:
-  1. The runtime holds a droppable payload-digest set and cache-key set, rebuilt from the log.
-  2. Proposal admission uses them and the lifecycle lease, with no log scan.
-  3. Admission and replay accept/reject the same proposals; a many-proposal benchmark is flat.
-**Plans**: 1/0 plans complete
+  1. Interleaved same-host A/B against the pre-lease commit, at least 5 samples each.
+  2. Medians and spread recorded, with outliers named rather than dropped.
+  3. An explicit keep-or-revert decision with the measured numbers.
+**Plans**: 1 plan
 
 Plans:
-- [ ] 273-01-PLAN.md — runtime leases and parity tests
+- [ ] 274-01-PLAN.md — A/B run and recorded decision
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 273. Enrichment admission without log replay | 1/0 | Complete    | 2026-10-31 |
+| 274. Meta lease overhead A/B evidence | 0/1 | Pending | — |
