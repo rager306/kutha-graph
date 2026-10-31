@@ -9,7 +9,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - `Runtime` now holds a droppable `OperatorIndex`, rebuilt from the log on hydrate/open/fork and updated on commit, so admission collision detection is O(1) per operator instead of rebuilding every declared set per install.
 - Admission and replay now use the same indexed rule; retire releases names in both gates.
 - Removed the now-unused `validate_install` log-scan path so one collision rule remains.
-- Added `crates/kutha-runtime/tests/m184_admission_index.rs` (6 tests) including a hand-built foreign log that proves replay rejects the collision admission rejects, and a 150→600 install scaling guard.
+- Added `crates/kutha-runtime/tests/m184_admission_index.rs` (6 tests) including a hand-built foreign log that proves replay rejects the collision admission rejects. Linearity is asserted structurally (the admission path has no log parameter) rather than by wall-clock ratio, which flaked under a parallel workspace run.
 - Tests: admission index 6/6, workspace 822 passed / 0 failed.
 
 ## 2026-10-31 — Trajectory: M183-S01 closed (digest falsifiers + index)

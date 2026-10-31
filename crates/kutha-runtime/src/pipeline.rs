@@ -577,6 +577,11 @@ impl Runtime {
         crate::pack_lifecycle::derive_pack_lifecycle(self.log.as_slice())
     }
 
+    /// Number of declared operator names in the droppable index (diagnostics).
+    pub fn operator_count(&self) -> usize {
+        self.operators.len()
+    }
+
     /// Return the replay-derived C1b operator registry. No operator executes.
     pub fn pack_operators(&self) -> Result<Vec<crate::PackOperator>, crate::PackManifestError> {
         crate::pack_registry::derive_pack_operators(self.log.as_slice(), &self.fold.blobs)

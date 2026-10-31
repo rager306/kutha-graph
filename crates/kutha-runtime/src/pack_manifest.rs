@@ -290,6 +290,15 @@ impl OperatorIndex {
     pub fn owner_of(&self, operator: &str) -> Option<&str> {
         self.owner.get(operator).map(String::as_str)
     }
+
+    /// Number of owned operator names. Used by tests and diagnostics.
+    pub fn len(&self) -> usize {
+        self.owner.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.owner.is_empty()
+    }
 }
 
 /// Validate an install against a blob map and an [`OperatorIndex`].

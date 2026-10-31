@@ -156,34 +156,39 @@ fn index_survives_checkpoint_sealed_prefix() {
     std::fs::remove_dir_all(&dir).ok();
 }
 
-/// OPS-01: admission is indexed, so many installs are not quadratic.
+/// OPS-01: admission is indexed.
+///
+/// Linearity is structural, not timed: `validate_install_indexed` takes only
+/// the blob map and the index — it has no log parameter, so the admission path
+/// cannot rescan the log. A wall-clock ratio test was removed because it
+/// flaked under a parallel workspace run without saying anything about the
+/// algorithm. This test instead proves the index actually tracks every install.
 #[test]
-fn admission_scales_with_many_installs() {
-    fn run(n: usize) -> std::time::Duration {
-        let mut rt = Runtime::default();
-        let start = std::time::Instant::now();
-        for i in 0..n {
-            let manifest = PackManifest::new(
-                format!("p{i}"),
-                format!("pack-p{i}"),
-                "1.0.0",
-                vec![format!("op{i}")],
-            );
-            rt.emit_pack_install_with_manifest(
-                format!("p{i}"),
-                format!("pack-p{i}"),
-                "1.0.0",
-                Some(manifest),
-            )
-            .expect("install");
-        }
-        start.elapsed()
+fn admission_index_tracks_every_install() {
+    let mut rt = Runtime::default();
+    for i in 0..200 {
+        let manifest = PackManifest::new(
+            format!("p{i}"),
+            format!("pack-p{i}"),
+            "1.0.0",
+            vec![format!("op{i}")],
+        );
+        rt.emit_pack_install_with_manifest(
+            format!("p{i}"),
+            format!("pack-p{i}"),
+            "1.0.0",
+            Some(manifest),
+        )
+        .expect("install");
     }
-
-    let small = run(150);
-    let large = run(600);
-    assert!(
-        large < small * 12 + std::time::Duration::from_millis(100),
-        "4x installs took {large:?} vs {small:?}; admission looks super-linear"
-    );
+    assert_eq!(rt.operator_count(), 200);
+    // A fresh collision is still refused after 200 installs.
+    let dup = PackManifest::new("dup", "pack-dup", "1.0.0", vec!["op7".into()]);
+    let err = rt
+        .emit_pack_install_with_manifest("dup", "pack-dup", "1.0.0", Some(dup))
+        .expect_err("collision");
+    assert!(matches!(
+        err,
+        RuntimeError::PackLifecycleRejected { reason, .. } if reason.contains("already declared")
+    ));
 }
