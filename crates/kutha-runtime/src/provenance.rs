@@ -98,9 +98,12 @@ impl Runtime {
     /// that appears after the install it claims to serve fails closed.
     fn check_meta_replay(events: &[Event]) -> Result<(), RuntimeError> {
         let mut blobs: HashMap<String, Vec<u8>> = HashMap::new();
-        // A checkpoint means product rows may legitimately be absent from the
-        // prefix, so source existence is not rechecked for the whole log.
-        let compacted = events.iter().any(|e| matches!(e.op, Op::Checkpoint { .. }));
+        // Only a proposal that a LATER checkpoint compacts away may cite a
+        // source the rewrite dropped. A tail proposal is judged against the
+        // visible log, exactly like admission.
+        let first_checkpoint = events
+            .iter()
+            .position(|e| matches!(e.op, Op::Checkpoint { .. }));
         for (index, event) in events.iter().enumerate() {
             let prefix = &events[..index];
             match &event.op {
@@ -126,7 +129,7 @@ impl Runtime {
                     }
                 }
                 Op::EnrichmentProposal { .. } => {
-                    let source_check = if compacted {
+                    let source_check = if first_checkpoint.is_some_and(|cut| index < cut) {
                         crate::enrichment::SourceCheck::Compacted
                     } else {
                         crate::enrichment::SourceCheck::Required
@@ -367,5 +370,82 @@ impl Runtime {
     #[cfg(test)]
     pub(crate) fn tamper_inverse_pin(&mut self, pin: &str) {
         self.log.tamper_inverse_pin(pin.to_string());
+    }
+}
+
+#[cfg(test)]
+mod meta_replay_tests {
+    use super::*;
+
+    fn checkpoint(tt: u64) -> Event {
+        Event::new(
+            Op::Checkpoint {
+                first_event_id: kutha_common::EventId::nil(),
+                last_event_id: kutha_common::EventId::nil(),
+                dropped_count: 0,
+                fact_count: 0,
+                fingerprint_hex: "00".repeat(32),
+                blob_digest: "11".repeat(32),
+            },
+            tt,
+        )
+    }
+
+    #[test]
+    fn tail_proposal_after_checkpoint_must_cite_visible_source() {
+        let manifest = crate::PackManifest::new("enrich", "pack-enrich", "1.0.0", vec![]);
+        let bytes = manifest.canonical_bytes();
+        let digest = manifest.digest();
+        let payload = b"summary".to_vec();
+        let payload_digest = kutha_common::sha256_hex(&payload);
+        let events = vec![
+            checkpoint(0),
+            Event::new(
+                Op::StoreBlob {
+                    digest: digest.clone(),
+                    bytes,
+                },
+                1,
+            ),
+            Event::new(
+                Op::PackInstall {
+                    pack_id: "enrich".into(),
+                    name: "pack-enrich".into(),
+                    version: "1.0.0".into(),
+                    manifest_digest: Some(digest),
+                },
+                2,
+            ),
+            Event::new(
+                Op::PackActivate {
+                    pack_id: "enrich".into(),
+                    version: "1.0.0".into(),
+                },
+                3,
+            ),
+            Event::new(
+                Op::StoreBlob {
+                    digest: payload_digest.clone(),
+                    bytes: payload,
+                },
+                4,
+            ),
+            Event::new(
+                Op::EnrichmentProposal {
+                    pack_id: "enrich".into(),
+                    pack_version: "1.0.0".into(),
+                    source_event_ids: vec![kutha_common::EventId::nil()],
+                    model: "m".into(),
+                    prompt: "p".into(),
+                    cache_key: "k".into(),
+                    blob_digest: payload_digest,
+                },
+                5,
+            ),
+        ];
+        assert!(matches!(
+            Runtime::check_meta_replay(&events),
+            Err(RuntimeError::EnrichmentRejected { reason }) if reason.contains("source event")
+        ));
     }
 }

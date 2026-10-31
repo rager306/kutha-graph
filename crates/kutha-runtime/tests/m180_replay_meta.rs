@@ -20,12 +20,25 @@ fn install(pack_id: &str, version: &str, digest: Option<String>) -> Op {
     }
 }
 
-fn at(mut op: Op, tt: u64) -> Event {
-    let mut event = Event::new(op.clone(), tt);
-    // Stable ids keep the fixtures readable; Event::new already minted one.
-    op = event.op.clone();
-    event.op = op;
-    event
+fn at(op: Op, tt: u64) -> Event {
+    Event::new(op, tt)
+}
+
+/// A real product source event, so source-existence checks are actually reached.
+fn source_event(tt: u64) -> Event {
+    Event::new(
+        Op::Assert {
+            subject: 0,
+            relation: 0,
+            object: 1,
+            valid_from: 0,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        },
+        tt,
+    )
 }
 
 #[test]
@@ -210,5 +223,128 @@ fn duplicate_enrichment_cache_key_fails_replay() {
     assert!(matches!(
         rt.replay_check(),
         Err(RuntimeError::EnrichmentRejected { .. })
+    ));
+}
+
+#[test]
+fn enrichment_missing_source_fails_replay() {
+    let manifest = PackManifest::new("enrich", "pack-enrich", "1.0.0", vec![]);
+    let manifest_bytes = manifest.canonical_bytes();
+    let manifest_digest = manifest.digest();
+    let payload = b"summary".to_vec();
+    let digest = kutha_common::sha256_hex(&payload);
+    let events = vec![
+        Event::new(
+            Op::StoreBlob {
+                digest: manifest_digest.clone(),
+                bytes: manifest_bytes,
+            },
+            0,
+        ),
+        at(install("enrich", "1.0.0", Some(manifest_digest)), 1),
+        at(
+            Op::PackActivate {
+                pack_id: "enrich".into(),
+                version: "1.0.0".into(),
+            },
+            2,
+        ),
+        Event::new(
+            Op::StoreBlob {
+                digest: digest.clone(),
+                bytes: payload,
+            },
+            3,
+        ),
+        Event::new(
+            Op::EnrichmentProposal {
+                pack_id: "enrich".into(),
+                pack_version: "1.0.0".into(),
+                source_event_ids: vec![kutha_common::EventId::nil()],
+                model: "m".into(),
+                prompt: "p".into(),
+                cache_key: "k".into(),
+                blob_digest: digest,
+            },
+            4,
+        ),
+    ];
+    let rt = runtime(events).expect("build");
+    assert!(matches!(
+        rt.replay_check(),
+        Err(RuntimeError::EnrichmentRejected { reason }) if reason.contains("source event")
+    ));
+}
+
+#[test]
+fn enrichment_wrong_version_and_retired_pack_fail_replay() {
+    let manifest = PackManifest::new("enrich", "pack-enrich", "1.0.0", vec![]);
+    let manifest_bytes = manifest.canonical_bytes();
+    let manifest_digest = manifest.digest();
+    let payload = b"summary".to_vec();
+    let digest = kutha_common::sha256_hex(&payload);
+    let source = source_event(0);
+    let source_id = source.id;
+    let base = vec![
+        source,
+        Event::new(
+            Op::StoreBlob {
+                digest: manifest_digest.clone(),
+                bytes: manifest_bytes,
+            },
+            1,
+        ),
+        at(install("enrich", "1.0.0", Some(manifest_digest)), 2),
+        at(
+            Op::PackActivate {
+                pack_id: "enrich".into(),
+                version: "1.0.0".into(),
+            },
+            3,
+        ),
+        Event::new(
+            Op::StoreBlob {
+                digest: digest.clone(),
+                bytes: payload.clone(),
+            },
+            4,
+        ),
+    ];
+    let proposal = |version: &str, key: &str, tt: u64| {
+        Event::new(
+            Op::EnrichmentProposal {
+                pack_id: "enrich".into(),
+                pack_version: version.into(),
+                source_event_ids: vec![source_id],
+                model: "m".into(),
+                prompt: "p".into(),
+                cache_key: key.into(),
+                blob_digest: digest.clone(),
+            },
+            tt,
+        )
+    };
+
+    let mut wrong_version = base.clone();
+    wrong_version.push(proposal("2.0.0", "k1", 5));
+    let rt = runtime(wrong_version).expect("build");
+    assert!(matches!(
+        rt.replay_check(),
+        Err(RuntimeError::EnrichmentRejected { .. })
+    ));
+
+    let mut retired = base;
+    retired.push(at(
+        Op::PackRetire {
+            pack_id: "enrich".into(),
+            version: "1.0.0".into(),
+        },
+        5,
+    ));
+    retired.push(proposal("1.0.0", "k2", 6));
+    let rt = runtime(retired).expect("build");
+    assert!(matches!(
+        rt.replay_check(),
+        Err(RuntimeError::EnrichmentRejected { reason }) if reason.contains("retired")
     ));
 }
