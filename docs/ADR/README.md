@@ -90,6 +90,7 @@ YYYY-MM-DD
 | [091](./ADR-091-rvf-portable-capsules.md) | RVF Portable Capsules | Proposed | 2026-08-18 |
 | [092](./ADR-092-naming-and-license.md) | Naming & License | Proposed | 2026-08-18 |
 | [093](./ADR-093-scientific-archive-pack.md) | Scientific Archive Pack — Scholarly Revision AST & Evidence Graph | Proposed | 2026-08-16 |
+| [094](./ADR-094-workspace-shape-as-shipped.md) | Workspace Shape as Shipped | Proposed | 2026-10-31 |
 
 ## Index — honeycomb cells (planned)
 

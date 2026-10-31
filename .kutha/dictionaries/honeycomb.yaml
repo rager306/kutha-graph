@@ -710,4 +710,14 @@ cells:
     depends_on: [ADR-000, ADR-001, ADR-002, ADR-090]
     locks: [D1]
     evidence: []
+  - id: ADR-094
+    axis: Space
+    must: "P0 workspace is common + one runtime crate; records the shipped shape and the revisit trigger"
+    path: docs/ADR/ADR-094-workspace-shape-as-shipped.md
+    map: Proposed
+    delivery: map-only
+    capability: none
+    depends_on: [ADR-000, ADR-020, ADR-022]
+    locks: [D6]
+    evidence: []
 # M010 S01–S03: terms sidecar, durable Define, live intern Define — L_map stays Proposed.
