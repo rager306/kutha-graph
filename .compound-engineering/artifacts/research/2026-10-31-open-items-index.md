@@ -46,7 +46,7 @@ and what needs a governor intake. Nothing here is a capability claim; ADRs stay 
 ## Reports (all durable)
 
 - `.compound-engineering/artifacts/research/2026-10-31-architecture-gap-register.md`
-- `.compound-engineering/artifacts/research/2026-10-31-adr-comformance-and-draft-094.md` (typo-safe name: `adr-conformance-and-draft-094.md`)
+- `.compound-engineering/artifacts/research/2026-10-31-adr-conformance-and-draft-094.md`
 - `.compound-engineering/artifacts/research/2026-10-31-honeycomb-capability-backfill.md`
 - `.compound-engineering/artifacts/research/2026-10-31-c2-dictionaries-design-spike.md`
 - `.compound-engineering/artifacts/research/2026-10-31-security-threat-model.md`
