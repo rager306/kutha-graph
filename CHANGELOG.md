@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Trajectory: M181-S01 closed (eCFR ambiguity)
+
+- GSD v1.74 closed; phase 268 archived. `Active Milestone=None`, `L_delivery=M181-S01-closed`.
+- The M167 edition residual is explained from the source (publication 2017-01-23, effective 2017-03-14) and guarded by a per-section edition-count assertion.
+- No fixture text was fabricated or edited; independent verifier reproduced all nine texts from live eCFR.
+- Tests: eCFR PIT 1/1, workspace 801 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0.
+
 ## 2026-10-31 — Process: eCFR edition ambiguity explained
 
 - Checked the eCFR Versioner list and raw XML for 1 CFR part 304: the 2017-01-23 edition differs from 2015-12-18 only by an `<XREF>` "amendment published" note, which extraction correctly drops. Sections 304.1, 304.2, 304.3, 304.5, 304.6, 304.8, 304.9, and 304.10 all collapse to two distinct extracted texts at these dates.

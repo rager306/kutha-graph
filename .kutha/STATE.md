@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M181
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M181-S01-open
+L_delivery=M181-S01-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M181-S01 active (eCFR distinct editions; GSD v1.74) | Legal pack / corpus coverage |
+| L_delivery | M181-S01 closed (eCFR ambiguity explained; GSD v1.74) | Legal pack / corpus coverage |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M181-S01 is leased under GSD **v1.74 eCFR ambiguity explained**. Scope is bounded: assert the per-section distinct-edition count so the fixture cannot silently change, and document from the source that 2017-01-23 is a citation-only amendment whose XREF note extraction drops. No fabricated third edition, no legal pack, no corpus coverage claim, no new Op, no product feature, no ADR Accepted. M180-S01 remains closed (replay-side meta revalidation). M179/M178/M177/M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residuals stay separate: remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M181-S01 is closed under GSD **v1.74 eCFR ambiguity explained**. The M167 residual is now source-checked and guarded: the 2017-01-23 eCFR edition differs only by an `<XREF>` "amendment published" note, because FR document 2017-00891 was published that day and effective 2017-03-14; extraction correctly drops the note. All eight part-304 sections collapse to two distinct extracted texts at these dates. The PIT probe asserts exactly two distinct texts per section (count assert catches a lost edition; equality asserts catch a gained one), and `docs/architecture/ecfr-edition-ambiguity.md` records the finding plus the consequence that Gate GC / Arc A must not cite the fixture as three normative editions. No fixture text was edited or fabricated; no legal pack, corpus claim, new Op, or product feature. Tests: eCFR PIT 1/1, workspace 801 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0. M180-S01 remains closed (replay-side meta revalidation). M179/M178/M177/M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residual stays separate: remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

@@ -5,7 +5,7 @@
 
 ## v1.74 Requirements
 
-- [ ] **ECFR-01**: The eCFR fixture's edition count is asserted per section and the 2017-01-23 citation-only amendment is documented from the source, so the residual is explained rather than silently accepted or fabricated away.
+- [x] **ECFR-01**: The eCFR fixture's edition count is asserted per section and the 2017-01-23 citation-only amendment is documented from the source, so the residual is explained rather than silently accepted or fabricated away.
 
 ## Explicit non-goals
 
@@ -15,7 +15,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ECFR-01 | Phase 268 | Pending |
+| ECFR-01 | Phase 268 | Complete |
 
 **Coverage:**
 - v1.74 requirements: 1 total

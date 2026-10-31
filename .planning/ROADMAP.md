@@ -10,7 +10,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [ ] **Phase 268: eCFR edition ambiguity explained** - assert two distinct texts per section, record the citation-only finding
+- [x] **Phase 268: eCFR edition ambiguity explained** - assert two distinct texts per section, record the citation-only finding (completed 2026-10-31)
 
 ## Phase Details
 
@@ -22,13 +22,13 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
   1. Every fixture section asserts exactly two distinct extracted texts, so a future third edition fires.
   2. The citation-only 2017-01-23 amendment is documented from the source, not guessed.
   3. Replay/checkpoint parity holds; no fabricated edition, no legal pack.
-**Plans**: 1 plan
+**Plans**: 1/1 plans complete
 
 Plans:
-- [ ] 268-01-PLAN.md — source check, assertion, recorded residual
+- [x] 268-01-PLAN.md — source check, assertion, recorded residual
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 268. eCFR edition ambiguity explained | 0/1 | Pending | — |
+| 268. eCFR edition ambiguity explained | 1/1 | Complete    | 2026-10-31 |
