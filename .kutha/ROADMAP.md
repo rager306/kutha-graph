@@ -8,6 +8,13 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
+## M187: Test honesty — ACTIVE (harness lease)
+
+Close the five test defects found by the 2026-10-31 audits and make the `QueryRejected` taxonomy true: real enrichment replay fixtures, three pack-level replay tests, one eCFR falsifier, unique scratch dirs, counter-based scaling oracles, and one named error mapping in `security.rs`. Test-only plus that mapping; no new `Op`, no graph or log behaviour change, no thaw. GSD v1.80, phases 275–276.
+
+- [ ] **S01: replay oracles, scratch isolation, clock-free scaling, taxonomy** `risk:low` `depends:[]`
+  > After this: every replay gate and the eCFR probe fail for the reason they name, and 257/258 lose `gaps_found`.
+
 ## M186: Meta lease overhead A/B — CLOSED (harness lease)
 
 Bounded performance honesty delivered: the per-append meta-lease cost is measured against two bases; the gate metrics (`ingest_plain.n`, `as_of.n`) stay inside 10%, the secondary `as_of.2n` and `ingest_keyed.n` moves are recorded as unexplained, and the toggle falsification is marked as recorded-but-not-reproducible evidence. No feature, no thaw.

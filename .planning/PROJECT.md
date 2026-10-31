@@ -10,13 +10,13 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.69 C1 pack lifecycle foundation — active (M176)
+## Current Milestone: v1.80 Test honesty — active (M187)
 
-**Goal:** Add typed D021 lifecycle log events and a replay-derived droppable lifecycle lease. No artifact loading, operator registration, dictionary facets, lease rebuilding, WASM, or marketplace.
+**Goal:** Close the five test defects found by the 2026-10-31 audits and the `QueryRejected` error-taxonomy claim (257/258 `gaps_found`). Test-only plus one named mapping in `security.rs`.
 
-**Lease:** `.kutha/STATE.md` is `M176-S01`; phases 259–260. No thaw beyond M003a.
+**Lease:** `.kutha/STATE.md` is `M187` / `S01`; phases 275–276. No thaw.
 
-**Last shipped:** v1.60 Operational honesty (M166, 2026-10-28); v1.59 compacted Horn cause (M165, 2026-10-27). Honeycomb stays Proposed.
+**Last shipped:** v1.79 Meta lease overhead A/B (M186, 2026-10-31); v1.78 Enrichment admission leases (M185); v1.77 Admission operator index (M184). Honeycomb stays Proposed; ADR-094 records the shipped workspace shape.
 
 ## Business Context
 
