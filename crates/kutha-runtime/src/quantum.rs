@@ -555,6 +555,10 @@ impl Runtime {
         if expected_events > 0 {
             self.by_event_id.reserve(expected_events);
             self.by_delivery_key.reserve(expected_events);
+            // Meta leases grow one entry per event/proposal; pre-sizing keeps
+            // the ingest hot path free of rehash-and-copy as the log grows.
+            self.log_ids.reserve(expected_events);
+            self.enrichment_cache_keys.reserve(expected_events);
         }
         self.fold.reserve_ingest_indexes(expected_facts);
     }

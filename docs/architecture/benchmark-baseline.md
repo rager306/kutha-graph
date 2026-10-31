@@ -129,27 +129,36 @@ so the median is robust to it.
 | `ingest_keyed.n` | 110857378 | 121145614 | 1.093 | 106.5–126.1M | 113.2–139.5M |
 | `persist_append.n` | 5612320 | 7299392 | 1.301 | 3.1–13.6M | 3.9–15.2M |
 
-### Decision: keep, with one named residual
+### Decision: keep, and an honest correction about what was measurable
 
-- **`ingest_plain.n` is not regressed**: +2.7% against `4db8770` and **−6.2%**
-  against `05dfea0`, both inside the sample spread and the 10% gate.
-- **`as_of.2n` is +19.0% against `05dfea0` and above the 10% gate.** It also moved
-  +16.3% in A/B 1 (recomputed from those raw logs), so it reproduces across two
-  independent interleaved runs. The cause is **not explained**: the lease upkeep
-  runs on append, and `as_of` is a read path, so there is no obvious mechanism.
-  Candidates worth a follow-up: extra per-event work shifting allocation and
-  cache locality for the read phase, or `as_of.n` being the noisy first call
-  (M169 note) while `2n` picks up that variance.
-- **`as_of.n` is the noisy variant** (its ranges overlap the median); M169 already
-  prefers `2n`/`4n`. That is why the `2n` move is recorded rather than waved away.
-- `persist_append.n` +30% has a spread wider than the delta (base 3.1–13.6M,
-  head 3.9–15.2M), so it is not a usable signal here.
+Follow-up falsification run (same binary, same target dir, `log_ids` insert
+toggled by an env var, 10 interleaved samples):
 
-Keeping the leases is still the right call for the write path: they remove an
-O(n) lifecycle rebuild per meta write (v1.77 note: per-install cost 213 µs →
-2.33 ms before, flat afterwards). The `as_of.2n` cost is accepted as an open,
-named residual, not as a measured benefit of the leases — this bench never
-exercises a meta write at all.
+| metric | lease-ON median | lease-OFF median | delta |
+|--------|----------------:|-----------------:|------:|
+| `ingest_plain.n` | 135,091,050 | 121,275,306 | +11.4% |
+| `as_of.n` | 72,776 | 76,522 | −4.9% |
+| `as_of.2n` | 168,223 | 172,056 | −2.2% |
+
+Two conclusions, one of which corrects this document's earlier claim:
+
+1. **`as_of.2n` does not depend on the leases.** With everything else
+   identical, toggling only the `log_ids` insert moves `as_of.2n` by −2.2% —
+   noise. The earlier +19.0% (A/B 2) and +16.3% (A/B 1) against older bases were
+   **host-load drift between interleaved runs**, not a lease cost. The read path
+   is unchanged between the bases (`git diff 05dfea0..HEAD` on the query/fold
+   files is empty), so there was never a mechanism.
+2. **`ingest_plain.n` carries a real, but small, lease cost**: +11.4% median in
+   the toggled run. A pre-size of the leases (`reserve_ingest_indexes`) did not
+   measurably recover it (median 123.1 ms vs 121.3 ms lease-off), because the
+   spread under load is ±20% and wider than the effect. The cost is accepted:
+   it buys removing an O(n) lifecycle rebuild per meta write.
+
+Honest limit for this whole section: the host's ±20% run-to-run spread is wider
+than every effect measured here. Ratios are recorded because they were
+pre-registered, but only the toggled experiment controls for host state, and
+even that is one host under load. Do not cite any number in this section as a
+regression or an improvement claim.
 
 ### Visit oracle (IDX-02)
 

@@ -11,13 +11,13 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - Second run result: `ingest_plain.n` −6.2% (faster), `as_of.n` −7.7%, `as_of.2n` **+19.0%** — reproduced, above the 10% gate, recorded as an open unexplained residual.
 - Tests: `cargo test --workspace` green; `kutha-gov ci --jobs 1` exit 0.
 
-## 2026-10-31 — Process: meta lease overhead A/B
+## 2026-10-31 — Process: meta lease overhead A/B and toggle falsification
 
-- Two interleaved same-host A/Bs (6 samples each, `KUTHA_BENCH_N=10000`, bench source unchanged): base `4db8770` isolates v1.78; base `05dfea0` isolates v1.77 + v1.78.
-- Against `4db8770`: `ingest_plain.n` **+2.7%**, `as_of.n` **+5.7%** (one 253 µs base outlier named, not dropped).
-- Against `05dfea0`: `ingest_plain.n` **−6.2%** (faster), `as_of.n` **−7.7%**, but **`as_of.2n` +19.0%** — reproduced at +16.3% in the other A/B, so it is not noise.
-- Decision: **keep** the leases for the write path (they remove an O(n) lifecycle rebuild per meta write), and record `as_of.2n` as an **open, unexplained residual** above the 10% gate. This bench exercises no meta write, so it does not measure the benefit.
-- Recorded in `docs/architecture/benchmark-baseline.md` with base commit ids, spreads, and the host-noise caveat.
+- Two interleaved same-host A/Bs (6 samples each, base commit ids recorded) against `4db8770` (v1.78 only) and `05dfea0` (v1.76 close, v1.77+v1.78).
+- A follow-up falsification run toggled only the `log_ids` insert on the same binary (10 interleaved samples): `ingest_plain.n` **+11.4%**, `as_of.n` −4.9%, **`as_of.2n` −2.2%**.
+- **Corrects the earlier read:** the `as_of.2n` moves recorded against older bases were host-load drift between interleaved runs, not a lease cost — the read path is unchanged between the bases and the toggle proves no effect.
+- The real lease cost is ingest-only and small: +11.4% median, not recovered by pre-sizing, accepted in exchange for removing an O(n) lifecycle rebuild per meta write.
+- Host spread is ±20% run-to-run, wider than every effect measured here; recorded so nothing in this section is cited as a regression or improvement claim.
 
 ## 2026-10-31 — Trajectory: M185-S01 closed (enrichment admission leases)
 

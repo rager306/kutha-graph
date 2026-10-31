@@ -14,3 +14,10 @@ requirements: [PERF-274-01]
 - Decision: keep the leases for the write path; this bench exercises no meta write, so the benefit is cited from the v1.77 install measurement, not measured here.
 - Host noise (load 7.6–9.9) recorded as an `uptime` observation, not as log evidence.
 - Gates: `cargo test --workspace` green; `kutha-gov ci --jobs 1` exit 0.
+
+## Falsification follow-up (same binary, toggle-only, 10 interleaved samples)
+
+- `ingest_plain.n` +11.4%, `as_of.n` −4.9%, `as_of.2n` **−2.2%**.
+- Corrects the first read: the `as_of.2n` moves in the A/Bs were host-load drift between interleaved runs, not a lease cost — the read path is unchanged between the bases.
+- The real lease cost is ingest-only and small; accepted.
+- Host spread is ±20% run-to-run, wider than every effect measured here.

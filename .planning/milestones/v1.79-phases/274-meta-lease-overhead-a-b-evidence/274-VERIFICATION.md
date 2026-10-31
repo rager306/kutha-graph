@@ -26,3 +26,14 @@ Fixed before close: a second interleaved A/B against `05dfea0` (v1.76 close) iso
 The second run changed the conclusion in an important way: `ingest_plain.n` is **−6.2%** (faster) against the pre-v1.77 base, but **`as_of.2n` is +19.0%**, reproduced at +16.3% in the other A/B. That is recorded as an **open, unexplained residual** above the 10% gate. It is not attributed to the leases (they act on append; `as_of` is a read), and the bench exercises no meta write at all, so the benefit side is cited from the v1.77 install measurement rather than measured here.
 
 Final gate: `cargo test --workspace` green; `kutha-gov ci --jobs 1` exit 0.
+
+## Post-close falsification correction
+
+After close, a toggle-only falsification run (same binary, env-gated `log_ids`
+insert, 10 interleaved samples) showed `as_of.2n` moves **−2.2%** when the lease
+is off — there is no `as_of` effect at all. The `as_of.2n` moves in the two A/Bs
+against older bases were host-load drift between interleaved runs, not a lease
+cost; the read path is unchanged between the bases. The real lease cost is
+`ingest_plain.n` +11.4%, which pre-sizing does not recover and which is accepted.
+
+Recorded as an honesty correction to the close, not a code change.
