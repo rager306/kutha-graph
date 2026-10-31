@@ -96,11 +96,11 @@ YYYY-MM-DD
 
 All coordinate-band working titles listed in this README are **opened** as Proposed cells. Numbers remain bands, not a waterfall. Clarifications belong in the existing cell without silently rewriting D1–D10. New ADR-100+ cells remain frozen under `.kutha/STATE.md`; this index does not authorize opening them.
 
-This index lists **32** ADR files; all are **Proposed**.
+This index lists **33** ADR files; all are **Proposed**.
 
-## Status recheck (2026-10-23)
+## Status recheck (2026-10-31)
 
-32 files, 32 index rows. Every `## Status` is **Proposed**. None are Accepted, Deprecated, or Superseded. Honeycomb stays a map.
+33 files, 33 index rows. Every `## Status` is **Proposed**. None are Accepted, Deprecated, or Superseded. Honeycomb stays a map.
 
 Evidence in the engine after the 2026-10-18 table below, still not acceptance:
 
@@ -121,7 +121,7 @@ Status stays **Proposed**. This is spike evidence, not acceptance. Source: CBM `
 | 040–041 | CSR lease; leapfrog intersect | GraphBLAS planner |
 | 050 | reserved `kutha:*` facts | six dictionary kinds (frozen) |
 | 060 | `replay_check` fold is the fold `open` keeps; Behavior replay checks VT coverage | full provenance polynomial |
-| 070 / 042 / 080 / 090 / 093 | frozen by `.kutha/STATE.md` thaw map | do not thaw from this note |
+| 042 / 050 / 080 / 081 / 090 / 093 | frozen by `.kutha/STATE.md` thaw map (ADR-070's read-only parser item is marked Thawed at `.kutha/STATE.md:37`; the cell covers the full surface) | do not thaw from this note |
 
 Hot-path notes (Proposed): policy pin election walks `policy_by_ingest` newest-first; Behavior unindex uses `premise_rels_of_behavior` the way M104 used `cause_of_behavior`. Duplicate modern `Define` lines are dropped on Op-wire rewrite when the name is already interned. Warm `known_at` / `as_known_on` walk `tt_by_ingest` (skip later decoys). `rebuild_log_indexes` keeps only live Behavior heads in retract leases. `FoldIndexMode::Lazy` still scans until `ensure_hot_maps` — that thin-write mode is intentional.
 
@@ -137,7 +137,7 @@ Research note (2026-10-19, still Proposed): ADR-040 records a piecewise-linear p
 | **060–069** | Verify | Opened 060–062 (062 optional, default off) |
 | **070–079** | Query | Opened 070–071 |
 | **080–089** | Security / tenancy | Opened 080–081 |
-| **090–099** | Vertical / packaging | Opened 090–093 |
+| **090–099** | Vertical / packaging | Opened 090–094. **ADR-094 is Space-primary** (`honeycomb.yaml` `axis: Space`) though numbered in this Vertical band |
 
 Manifest / algorithms: [`../architecture/stca-guide.md`](../architecture/stca-guide.md).
 
@@ -154,6 +154,6 @@ Semantic-gap review (2026-09-30): [semantic gap review](../architecture/semantic
 
 **Rule:** New work cites ADR-001/002 coordinates; do not silently rewrite ADR-000 D1–D10. Prefer opening a honeycomb cell over expanding vision ADRs indefinitely.
 
-Honeycomb and vision ADRs (000–002, 010–093) are **Proposed**: decisions are named and ready to accept. **Accepted** requires an implemented runtime for that cell. P0 spike covers log/fold/quantum/replay/snapshot/CSR-lease/LFTJ-intersect/WAL-cousin/materializer trait plus SEG-01 (`KUTHASEG` + `manifest.json`) and an optional unwired `rocks-index` locator (`rocks_index::SegmentIndex`). Rocks **event store**, Cypher, HNSW, ABAC remain unaccepted.
+Honeycomb and vision ADRs (000–002, 010–094) are **Proposed**: decisions are named and ready to accept. **Accepted** requires an implemented runtime for that cell. P0 spike covers log/fold/quantum/replay/snapshot/CSR-lease/LFTJ-intersect/WAL-cousin/materializer trait plus SEG-01 (`KUTHASEG` + `manifest.json`) and an optional unwired `rocks-index` locator (`rocks_index::SegmentIndex`). Rocks **event store**, Cypher, HNSW, ABAC remain unaccepted.
 
 Parallel **harness** (not an ADR): [`../process/kutha-harness.md`](../process/kutha-harness.md). Execution pyramid: `.kutha/STATE.md`. Governor: `uv run kutha-gov ci` (Python 3.13 / uv). Python dogfood: `uv run kutha-gov py` (ruff, ty, pyrefly).
