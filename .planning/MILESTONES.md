@@ -86,8 +86,8 @@
 **Key accomplishments:**
 - Raw XML for all eight part-304 sections shows the 2017-01-23 edition differs only by an `<XREF>` "amendment published" note; extraction correctly drops it.
 - FR document 2017-00891 was published 2017-01-23 and effective 2017-03-14, which explains why the middle eCFR row has no text change.
-- The PIT probe asserts exactly two distinct extracted texts per section: the count assert catches a lost edition, the equality asserts catch a gained one.
-- No fixture `.txt` was edited; all nine committed texts reproduce byte-exactly from live eCFR. No legal pack, no corpus claim.
+- The PIT probe's equality asserts catch a lost or gained edition; the added count assert restates them and cannot fail while they pass.
+- No fixture `.txt` was edited; all nine committed texts were checked byte-exactly at the time, but the raw XML is not retained, so that check is not reproducible from the tree. No legal pack, no corpus claim.
 - Tests: eCFR PIT 1/1, workspace 801 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0.
 
 ---

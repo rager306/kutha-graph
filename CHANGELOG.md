@@ -105,7 +105,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - GSD v1.73 closed; phases 266–267 archived. `Active Milestone=None`, `L_delivery=M180-S01-closed`.
 - Replay is now the reader gate for C1/C1b/C5 meta; a hand-edited or foreign-written store fails closed on open instead of deriving a partial lease.
-- Verifier findings fixed: two enrichment tests were vacuous (empty sources) and the compacted-source exemption was log-wide; both are now real and prefix-scoped.
+- Verifier findings: the compacted-source exemption was log-wide and is now prefix-scoped. The two original enrichment tests are **still vacuous** (an empty source list is rejected before the checks they name); two new tests cover the paths, and the originals need a fixture fix — recorded as an open defect, and the v1.73 verification is re-issued as `gaps_found` on 2026-10-31.
 - Tests: replay meta 10/10 + tail unit, workspace 801 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0.
 
 ## 2026-10-31 — Product: replay-side meta revalidation
