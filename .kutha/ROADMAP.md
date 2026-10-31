@@ -8,6 +8,13 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
+## M181: eCFR ambiguity explained — ACTIVE (harness lease)
+
+Bounded fixture honesty: assert the per-section edition count and document that 2017-01-23 is a citation-only amendment. No fabricated edition, no legal pack.
+
+- [ ] **S01: edition-count assertion and source note** `risk:low` `depends:[]`
+  > After this: the fixture cannot silently gain or lose an edition, and the residual is explained from the source.
+
 ## M180: Replay-side meta revalidation — CLOSED (harness lease)
 
 Bounded honesty hardening delivered: replay and open revalidate C1/C1b/C5 meta instead of deriving a silently wrong lease from a hand-edited log. No new Op, feature, or thaw.

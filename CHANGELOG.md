@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Process: eCFR edition ambiguity explained
+
+- Checked the eCFR Versioner list and raw XML for 1 CFR part 304: the 2017-01-23 edition differs from 2015-12-18 only by an `<XREF>` "amendment published" note, which extraction correctly drops. Sections 304.1, 304.2, 304.3, 304.5, 304.6, 304.8, 304.9, and 304.10 all collapse to two distinct extracted texts at these dates.
+- The PIT probe now asserts exactly two distinct extracted texts per section, so a real future edition change fires instead of passing silently.
+- Added `docs/architecture/ecfr-edition-ambiguity.md`; fixture README records the check. No fabricated third edition, no legal pack.
+- Tests: eCFR PIT 1/1, workspace 801 passed / 0 failed.
+
 ## 2026-10-31 — Trajectory: M180-S01 closed (replay meta)
 
 - GSD v1.73 closed; phases 266–267 archived. `Active Milestone=None`, `L_delivery=M180-S01-closed`.

@@ -2,7 +2,7 @@
 
 ## Overview
 
-v1.73 hardens **replay honesty** for the C1/C1b/C5 meta surfaces. Admission already fails closed at write time, but `replay_check` and `Runtime::open` accepted a hand-edited log whose pack lifecycle, manifests, or enrichment proposals were inconsistent. This milestone revalidates those surfaces on replay and rejects the store instead of deriving a silently wrong lease. No new Op, no new feature, no thaw.
+v1.74 resolves the eCFR edition ambiguity left by M167 — by explaining it, not by fabricating a discriminator. The 2017-01-23 edition is a citation-only amendment whose note extraction correctly drops; every part 304 section at these dates has exactly two distinct extracted texts. The fixture now asserts that count, and the residual is recorded so Gate GC and Arc A cannot cite the fixture as three normative editions.
 
 ## Id map
 
@@ -10,40 +10,25 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [x] **Phase 266: Replay-side pack lifecycle revalidation** - lifecycle ordering and manifest identity rechecked on replay (completed 2026-10-31)
-- [x] **Phase 267: Replay-side enrichment validation** - proposal identity, sources, payload, and cache key rechecked on replay (completed 2026-10-31)
+- [ ] **Phase 268: eCFR edition ambiguity explained** - assert two distinct texts per section, record the citation-only finding
 
 ## Phase Details
 
-### Phase 266: Replay-side pack lifecycle revalidation
-**Goal**: Reject a log whose pack lifecycle or manifest is inconsistent, instead of deriving a partial lease.
-**Depends on**: Phase 265
-**Requirements**: RPL-01
+### Phase 268: eCFR edition ambiguity explained
+**Goal**: Replace an unexplained fixture weakness with a checked, falsifiable statement.
+**Depends on**: Phase 267
+**Requirements**: ECFR-01
 **Success Criteria**:
-  1. `replay_check` and `open` reject activate-before-install, duplicate install, retire-of-unknown, and version mismatch.
-  2. A cited manifest must exist, match its digest, and match the install identity.
-  3. A valid store still opens and derives the same lifecycle/registry as before.
-**Plans**: 1/1 plans complete
+  1. Every fixture section asserts exactly two distinct extracted texts, so a future third edition fires.
+  2. The citation-only 2017-01-23 amendment is documented from the source, not guessed.
+  3. Replay/checkpoint parity holds; no fabricated edition, no legal pack.
+**Plans**: 1 plan
 
 Plans:
-- [x] 266-01-PLAN.md — replay validation for lifecycle and manifests
-
-### Phase 267: Replay-side enrichment validation
-**Goal**: Reject a log whose enrichment proposals are inconsistent.
-**Depends on**: Phase 266
-**Requirements**: RPL-02
-**Success Criteria**:
-  1. Replay rejects unknown/retired pack, wrong version, empty pins, missing source, missing/mismatched payload, duplicate cache key.
-  2. A valid store still opens and derives the same ledger.
-  3. Graph facts and fingerprint are unchanged by the new checks.
-**Plans**: 1/1 plans complete
-
-Plans:
-- [x] 267-01-PLAN.md — replay validation for enrichment proposals
+- [ ] 268-01-PLAN.md — source check, assertion, recorded residual
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 266. Replay-side pack lifecycle revalidation | 1/1 | Complete    | 2026-10-31 |
-| 267. Replay-side enrichment validation | 1/1 | Complete    | 2026-10-31 |
+| 268. eCFR edition ambiguity explained | 0/1 | Pending | — |

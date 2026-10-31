@@ -1,23 +1,10 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v1.73",
+  "milestone": "v1.74",
   "phases": [
-    {
-      "number": "266",
-      "name": "Replay-side pack lifecycle revalidation",
-      "status": "complete"
-    },
-    {
-      "number": "267",
-      "name": "Replay-side enrichment validation",
-      "status": "complete"
-    }
+    { "number": "268", "name": "eCFR fourth section distinct editions", "status": "pending" }
   ],
-  "next": {
-    "command": "/gsd-progress",
-    "label": "Show progress",
-    "reason": "Unsure of state — showing progress"
-  },
-  "updated_at": "2026-10-31T02:38:12.063Z"
+  "next": { "command": "/gsd-progress", "label": "Show progress", "reason": "Milestone v1.74 planned" },
+  "updated_at": "2026-10-31T00:00:00.000Z"
 }

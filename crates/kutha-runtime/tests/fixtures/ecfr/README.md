@@ -26,4 +26,13 @@ before any redistribution beyond this research repository.
 - 304.2: 2015-12-18 and 2017-01-23 extracted text is identical; 2017-03-14 differs (about 1071 vs 544 characters).
 - 304.10: 2015-12-18 and 2017-01-23 extracted text is identical; 2017-03-14 differs in one schedule citation (about 801 vs 800 characters).
 
-The probe must preserve these equal/different facts; do not "normalize" the text. Extraction keeps HEAD and P text only, so raw XML citation/XREF lines are dropped; "identical" refers to the committed extracted text, not to the raw edition XML.
+The probe must preserve these equal/different facts; do not "normalize" the text.
+
+**Why the 2017-01-23 edition adds no text (checked 2026-10-31):** the raw XML at
+that date differs from 2015-12-18 by one `<XREF>` note, "Link to an amendment
+published at 82 FR 7632, Jan. 23, 2017." That is a citation-only amendment; the
+operative text is unchanged and extraction drops the note. Sections 304.1,
+304.3, 304.5, 304.6, 304.8, 304.9, and 304.10 were all checked and all collapse
+to two distinct extracted texts at these three dates. See
+`docs/architecture/ecfr-edition-ambiguity.md`. Do not add a fabricated third
+edition to make the fixture look stronger. Extraction keeps HEAD and P text only, so raw XML citation/XREF lines are dropped; "identical" refers to the committed extracted text, not to the raw edition XML.

@@ -2,7 +2,7 @@
 //! This is test data, not a legal pack. Day-scale VT (`YYYYMMDD`) is probe-only.
 
 use kutha_common::{Op, TermId, ValidTime, WallTime};
-use kutha_runtime::{store, NormView, Runtime};
+use kutha_runtime::{NormView, Runtime, store};
 
 mod common;
 
@@ -47,14 +47,22 @@ fn edition_text(section: usize, edition: usize) -> &'static str {
     }
 }
 
-fn object_text(rt: &Runtime, triples: &[(TermId, TermId, TermId)], subject: TermId) -> Option<String> {
+fn object_text(
+    rt: &Runtime,
+    triples: &[(TermId, TermId, TermId)],
+    subject: TermId,
+) -> Option<String> {
     triples
         .iter()
         .find(|(s, _, _)| *s == subject)
         .and_then(|(_, _, o)| rt.dictionary().lookup(*o).map(str::to_string))
 }
 
-fn object_texts(rt: &Runtime, triples: &[(TermId, TermId, TermId)], subject: TermId) -> Vec<String> {
+fn object_texts(
+    rt: &Runtime,
+    triples: &[(TermId, TermId, TermId)],
+    subject: TermId,
+) -> Vec<String> {
     triples
         .iter()
         .filter(|(s, _, _)| *s == subject)
@@ -114,8 +122,10 @@ fn ecfr_pit_probe_reads_three_editions_from_real_text() {
     }
 
     // as_of: force-only cuts, including the day before/at each boundary.
-    // The first two editions are textually equal for all three sections; the
-    // third differs, so 2017-03-13 vs 2017-03-14 is the discriminating pair.
+    // The 2017-01-23 edition is a citation-only amendment: the API adds an
+    // "amendment published" XREF note, which extraction drops. Extracted text
+    // is therefore identical to 2015-12-18, and 2017-03-14 is the only
+    // normative change in this fixture. Do not fabricate a discriminator.
     for (section, subject) in subjects.iter().enumerate() {
         for (cut, expected) in AS_OF.iter() {
             let triples = rt.as_of(ValidTime::from(*cut));
@@ -128,8 +138,25 @@ fn ecfr_pit_probe_reads_three_editions_from_real_text() {
                 ),
             }
         }
+        // Two distinct extracted texts per section, and exactly two: the
+        // 2017-01-23 edition is a citation-only amendment whose XREF note is
+        // dropped by extraction. If a future fetch ever yields a third
+        // distinct text, this assertion fires and the fixture must be
+        // re-read rather than silently accepted.
         assert_eq!(edition_text(section, 0), edition_text(section, 1));
         assert_ne!(edition_text(section, 1), edition_text(section, 2));
+        assert_eq!(
+            [
+                edition_text(section, 0),
+                edition_text(section, 1),
+                edition_text(section, 2)
+            ]
+            .iter()
+            .collect::<std::collections::BTreeSet<_>>()
+            .len(),
+            2,
+            "section {section}: fixture must keep exactly two distinct editions"
+        );
     }
 
     // as_known_on is TT-only: at a later wall it lists every edition known by
@@ -158,7 +185,8 @@ fn ecfr_pit_probe_reads_three_editions_from_real_text() {
             norm_text(&early, *subject, &rt),
             Some(edition_text(section, 0).to_string())
         );
-        let late_force_early_wall = rt.norm_view(ValidTime::from(20170314), WallTime::from(DATES[0]));
+        let late_force_early_wall =
+            rt.norm_view(ValidTime::from(20170314), WallTime::from(DATES[0]));
         assert_ne!(
             norm_text(&late_force_early_wall, *subject, &rt),
             Some(edition_text(section, 2).to_string()),

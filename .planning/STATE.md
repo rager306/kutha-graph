@@ -1,19 +1,19 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.73
-status: Awaiting next milestone
-stopped_at: Phase 267 complete — all phases complete
+milestone: v1.74
+status: planning
+stopped_at: Phase 268 ready to execute
 last_updated: "2026-10-31T02:38:12.044Z"
 last_activity: 2026-10-31
-last_activity_desc: Milestone v1.73 completed and archived
+last_activity_desc: Milestone v1.74 started; eCFR ambiguity phase planned
 state_head: cebd27da008d2de50283a0795a27f4af2fe872a4
 progress:
-  total_phases: 2
-  completed_phases: 2
-  total_plans: 2
-  completed_plans: 2
-milestone_name: Replay-side meta revalidation
-current_phase: null
+  total_phases: 1
+  completed_phases: 0
+  total_plans: 1
+  completed_plans: 0
+milestone_name: eCFR ambiguity explained
+current_phase: 268
 ---
 
 Total Phases: 0
@@ -25,14 +25,14 @@ Total Phases: 0
 See: .planning/PROJECT.md (updated 2026-10-29)
 
 **Core value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
-**Current focus:** v1.73 replay-side meta revalidation (M180-S01), complete.
+**Current focus:** v1.74 eCFR ambiguity explained (M181-S01), phase 268.
 
 ## Current Position
 
-Phase: Milestone v1.73 complete
-Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-10-31 — Milestone v1.73 completed and archived
+Phase: 268 — eCFR edition ambiguity explained
+Plan: 268-01
+Status: Ready to execute
+Last activity: 2026-10-31 — Milestone v1.74 started
 
 ## Accumulated Context
 
@@ -72,4 +72,4 @@ Resume file: None
 
 
 
-- Start the next milestone with /gsd-new-milestone
+- Execute phase 268 with the plan below.

@@ -3,23 +3,21 @@
 **Defined:** 2026-10-31
 **Core Value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
 
-## v1.73 Requirements
+## v1.74 Requirements
 
-- [x] **RPL-01**: `replay_check` and store open reject inconsistent pack lifecycle ordering and manifest identity (missing blob, digest mismatch, identity mismatch) instead of deriving a partial lifecycle or registry.
-- [x] **RPL-02**: Replay rejects inconsistent enrichment proposals (unknown/retired pack, wrong version, empty pins, missing source, missing or mismatched payload, duplicate cache key) while valid stores open unchanged.
+- [ ] **ECFR-01**: The eCFR fixture's edition count is asserted per section and the 2017-01-23 citation-only amendment is documented from the source, so the residual is explained rather than silently accepted or fabricated away.
 
 ## Explicit non-goals
 
-- No new Op, no new feature, no operator execution, no legal pack, no dictionary facets, no HNSW, no WASM, no ADR Accepted status.
+- No fabricated third edition, no legal pack, no corpus coverage claim, no new Op, no product feature, no ADR Accepted status.
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RPL-01 | Phase 266 | Complete |
-| RPL-02 | Phase 267 | Complete |
+| ECFR-01 | Phase 268 | Pending |
 
 **Coverage:**
-- v1.73 requirements: 2 total
-- Mapped to phases: 2
+- v1.74 requirements: 1 total
+- Mapped to phases: 1
 - Unmapped: 0
