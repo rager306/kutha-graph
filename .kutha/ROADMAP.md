@@ -8,11 +8,11 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
-## M186: Meta lease overhead A/B — ACTIVE (harness lease)
+## M186: Meta lease overhead A/B — CLOSED (harness lease)
 
-Bounded performance honesty: measure the per-append meta-lease cost against the pre-lease commit and keep or revert on the numbers. No feature, no thaw.
+Bounded performance honesty delivered: the per-append meta-lease cost is measured against two bases, with an open `as_of.2n` residual recorded rather than explained away. No feature, no thaw.
 
-- [ ] **S01: interleaved A/B and decision** `risk:low` `depends:[]`
+- [x] **S01: interleaved A/B and decision** `risk:low` `depends:[]`
   > After this: the lease cost is a recorded number, not an assumption.
 
 ## M185: Enrichment admission leases — CLOSED (harness lease)

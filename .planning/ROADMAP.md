@@ -10,7 +10,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [ ] **Phase 274: Meta lease overhead A/B evidence** - interleaved A/B, recorded medians, keep-or-revert decision
+- [x] **Phase 274: Meta lease overhead A/B evidence** - interleaved A/B, recorded medians, keep-or-revert decision (completed 2026-10-31)
 
 ## Phase Details
 
@@ -22,13 +22,13 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
   1. Interleaved same-host A/B against the pre-lease commit, at least 5 samples each.
   2. Medians and spread recorded, with outliers named rather than dropped.
   3. An explicit keep-or-revert decision with the measured numbers.
-**Plans**: 1 plan
+**Plans**: 1/1 plans complete
 
 Plans:
-- [ ] 274-01-PLAN.md — A/B run and recorded decision
+- [x] 274-01-PLAN.md — A/B run and recorded decision
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 274. Meta lease overhead A/B evidence | 0/1 | Pending | — |
+| 274. Meta lease overhead A/B evidence | 1/1 | Complete    | 2026-10-31 |

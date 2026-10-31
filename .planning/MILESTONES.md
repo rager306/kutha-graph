@@ -1,5 +1,20 @@
 # Project Milestones: Kutha
 
+## v1.79 Meta lease overhead A/B (Shipped: 2026-10-31)
+
+**Delivered:** M186. Performance honesty: the per-append meta-lease cost is a measured number with an open residual, not an assumption.
+
+**Phases completed:** 274 (1 plan)
+
+**Key accomplishments:**
+- Two interleaved same-host A/Bs (6 samples each), base `4db8770` for v1.78-only and `05dfea0` for v1.77+v1.78; base commit ids recorded because the worktrees are removed.
+- Against `4db8770`: `ingest_plain.n` +2.7%, `as_of.n` +5.7%; one 253 µs base outlier named, not dropped.
+- Against `05dfea0`: `ingest_plain.n` **−6.2%** (faster), `as_of.n` −7.7%, but **`as_of.2n` +19.0%**, reproduced at +16.3% in the other A/B.
+- Decision: keep the leases for the write path, and record `as_of.2n` as an **open, unexplained residual** above the 10% gate rather than as a lease cost — the bench exercises no meta write.
+- **Verifier caught a false scope claim** (the first A/B measured v1.78 only, not v1.77+v1.78) and a deleted baseline worktree; both fixed by the second run and recorded commit ids.
+
+---
+
 ## v1.78 Enrichment admission leases (Shipped: 2026-10-31)
 
 **Delivered:** M184→M185 sequence's last step: enrichment proposal admission uses runtime leases instead of replaying the log per write. No new Op, no feature.

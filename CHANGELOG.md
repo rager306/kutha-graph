@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Trajectory: M186-S01 closed (lease overhead A/B)
+
+- GSD v1.79 closed; phase 274 archived. `Active Milestone=None`, `L_delivery=M186-S01-closed`.
+- The first verifier blocked a false scope claim: the initial A/B used the v1.77 close as base, so it measured v1.78 only. A second A/B against `05dfea0` (v1.76 close) now isolates both milestones, with base commit ids recorded.
+- Second run result: `ingest_plain.n` −6.2% (faster), `as_of.n` −7.7%, `as_of.2n` **+19.0%** — reproduced, above the 10% gate, recorded as an open unexplained residual.
+- Tests: `cargo test --workspace` green; `kutha-gov ci --jobs 1` exit 0.
+
 ## 2026-10-31 — Process: meta lease overhead A/B
 
 - Two interleaved same-host A/Bs (6 samples each, `KUTHA_BENCH_N=10000`, bench source unchanged): base `4db8770` isolates v1.78; base `05dfea0` isolates v1.77 + v1.78.
