@@ -41,14 +41,15 @@ Plans:
   1. No test under `crates/` writes a fixed relative `tmp/` path; two concurrent runs of each affected binary both pass.
   2. `replay_meta_is_not_quadratic` and `manifest_replay_scales_linearly_with_packs` assert counters or op counts, not elapsed time.
   3. `SecurityError::QueryRejected` is constructed by `from_query_error` with a test, or removed; the 257/258 records match.
-**Plans**: 1/1 plans
+**Plans**: 2 plans
 
 Plans:
 - [ ] 276-01-PLAN.md — tmp isolation, structural oracles, taxonomy
+- [ ] 276-02-PLAN.md — remaining eight fixed scratch sites (m176/m177/m184)
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 275. Replay oracles and the eCFR falsifier | 0/1 | Planned | — |
-| 276. Scratch isolation, clock-free oracles, error taxonomy | 0/1 | Planned | — |
+| 276. Scratch isolation, clock-free oracles, error taxonomy | 0/2 | Planned | — |
