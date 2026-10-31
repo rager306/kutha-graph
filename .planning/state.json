@@ -3,9 +3,21 @@
   "flavor": "core",
   "milestone": "v1.73",
   "phases": [
-    { "number": "266", "name": "Replay-side pack lifecycle revalidation", "status": "pending" },
-    { "number": "267", "name": "Replay-side enrichment validation", "status": "pending" }
+    {
+      "number": "266",
+      "name": "Replay-side pack lifecycle revalidation",
+      "status": "complete"
+    },
+    {
+      "number": "267",
+      "name": "Replay-side enrichment validation",
+      "status": "complete"
+    }
   ],
-  "next": { "command": "/gsd-progress", "label": "Show progress", "reason": "Milestone v1.73 planned" },
-  "updated_at": "2026-10-31T00:00:00.000Z"
+  "next": {
+    "command": "/gsd-progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
+  },
+  "updated_at": "2026-10-31T02:38:12.063Z"
 }

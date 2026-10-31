@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M180
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M180-S01-open
+L_delivery=M180-S01-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M180-S01 active (replay-side meta revalidation; GSD v1.73) | New product capability |
+| L_delivery | M180-S01 closed (replay-side meta revalidation; GSD v1.73) | New product capability |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M180-S01 is leased under GSD **v1.73 replay-side meta revalidation**. Scope is bounded: `replay_check` and store open revalidate pack lifecycle ordering, manifest identity, and enrichment proposal consistency instead of deriving a silently wrong lease. No new Op, feature, operator execution, legal pack, dictionary facets, HNSW, WASM, marketplace, or ADR Accepted. M179-S01 remains closed (Gate GC toy-pack probe). M178/M177/M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M180-S01 is closed under GSD **v1.73 replay-side meta revalidation**. Delivered `Runtime::check_meta_replay` inside `replay_check`: the log is walked in order and each C1 lifecycle, C1b manifest, and C5 enrichment op is validated against the exact prefix before it, reusing the writer-side rules. Replay now rejects activate-before-install, duplicate install, retire-unknown, version mismatch, missing/mismatched manifests, unknown/retired/inactive enrichment packs, empty pins, missing sources, missing/mismatched payloads, and duplicate cache keys. Source existence is required for every proposal after the first checkpoint; only proposals a later checkpoint compacts away are exempt. `open` routes every reconstruction branch through `replay_check`, so a bad store cannot open, fork from disk, or verify post-migrate. Valid stores derive the same lifecycle/registry/ledger; no graph fact or fingerprint change. Tests: replay meta 10/10 + tail unit, workspace 801 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0. No new Op, feature, operator execution, legal pack, dictionary facets, HNSW, WASM, marketplace, schema SMO, or ADR Accepted. M179-S01 remains closed (Gate GC toy-pack probe). M178/M177/M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residuals stay separate: eCFR edition ambiguity, remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

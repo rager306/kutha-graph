@@ -5,8 +5,8 @@
 
 ## v1.73 Requirements
 
-- [ ] **RPL-01**: `replay_check` and store open reject inconsistent pack lifecycle ordering and manifest identity (missing blob, digest mismatch, identity mismatch) instead of deriving a partial lifecycle or registry.
-- [ ] **RPL-02**: Replay rejects inconsistent enrichment proposals (unknown/retired pack, wrong version, empty pins, missing source, missing or mismatched payload, duplicate cache key) while valid stores open unchanged.
+- [x] **RPL-01**: `replay_check` and store open reject inconsistent pack lifecycle ordering and manifest identity (missing blob, digest mismatch, identity mismatch) instead of deriving a partial lifecycle or registry.
+- [x] **RPL-02**: Replay rejects inconsistent enrichment proposals (unknown/retired pack, wrong version, empty pins, missing source, missing or mismatched payload, duplicate cache key) while valid stores open unchanged.
 
 ## Explicit non-goals
 
@@ -16,8 +16,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RPL-01 | Phase 266 | Pending |
-| RPL-02 | Phase 267 | Pending |
+| RPL-01 | Phase 266 | Complete |
+| RPL-02 | Phase 267 | Complete |
 
 **Coverage:**
 - v1.73 requirements: 2 total

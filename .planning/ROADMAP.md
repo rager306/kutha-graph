@@ -10,8 +10,8 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [ ] **Phase 266: Replay-side pack lifecycle revalidation** - lifecycle ordering and manifest identity rechecked on replay
-- [ ] **Phase 267: Replay-side enrichment validation** - proposal identity, sources, payload, and cache key rechecked on replay
+- [x] **Phase 266: Replay-side pack lifecycle revalidation** - lifecycle ordering and manifest identity rechecked on replay (completed 2026-10-31)
+- [x] **Phase 267: Replay-side enrichment validation** - proposal identity, sources, payload, and cache key rechecked on replay (completed 2026-10-31)
 
 ## Phase Details
 
@@ -23,10 +23,10 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
   1. `replay_check` and `open` reject activate-before-install, duplicate install, retire-of-unknown, and version mismatch.
   2. A cited manifest must exist, match its digest, and match the install identity.
   3. A valid store still opens and derives the same lifecycle/registry as before.
-**Plans**: 1 plan
+**Plans**: 1/1 plans complete
 
 Plans:
-- [ ] 266-01-PLAN.md — replay validation for lifecycle and manifests
+- [x] 266-01-PLAN.md — replay validation for lifecycle and manifests
 
 ### Phase 267: Replay-side enrichment validation
 **Goal**: Reject a log whose enrichment proposals are inconsistent.
@@ -36,14 +36,14 @@ Plans:
   1. Replay rejects unknown/retired pack, wrong version, empty pins, missing source, missing/mismatched payload, duplicate cache key.
   2. A valid store still opens and derives the same ledger.
   3. Graph facts and fingerprint are unchanged by the new checks.
-**Plans**: 1 plan
+**Plans**: 1/1 plans complete
 
 Plans:
-- [ ] 267-01-PLAN.md — replay validation for enrichment proposals
+- [x] 267-01-PLAN.md — replay validation for enrichment proposals
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 266. Replay-side pack lifecycle revalidation | 0/1 | Pending | — |
-| 267. Replay-side enrichment validation | 0/1 | Pending | — |
+| 266. Replay-side pack lifecycle revalidation | 1/1 | Complete    | 2026-10-31 |
+| 267. Replay-side enrichment validation | 1/1 | Complete    | 2026-10-31 |

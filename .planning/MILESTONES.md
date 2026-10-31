@@ -1,5 +1,20 @@
 # Project Milestones: Kutha
 
+## v1.73 Replay-side meta revalidation (Shipped: 2026-10-31)
+
+**Delivered:** M180. Reader-gate hardening: replay and store open revalidate C1 lifecycle, C1b manifest identity, and C5 enrichment proposals instead of deriving a silently wrong lease. No new Op and no feature.
+
+**Phases completed:** 266–267 (2 plans)
+
+**Key accomplishments:**
+- `Runtime::check_meta_replay` validates each meta op against the exact log prefix before it, reusing writer-side rules.
+- Rejects activate-before-install, duplicate install, retire-unknown, version mismatch, and missing/mismatched manifests; rejects unknown/retired/inactive pack, wrong version, empty pins, missing source, missing/mismatched payload, and duplicate cache key for enrichment.
+- Source existence is required for every proposal after the first checkpoint; only proposals a later checkpoint compacts away are exempt.
+- `open` routes every reconstruction branch through `replay_check`, so a bad store cannot be opened, forked from disk, or verified post-migrate.
+- Tests: replay meta 10/10 plus a tail-rule unit test; workspace 801 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0.
+
+---
+
 ## v1.72 Gate GC toy-pack probe (Shipped: 2026-10-31)
 
 **Delivered:** M179. Gate GC answered with a read-only probe: a toy non-legal pack installs, product facts answer GPML `AS OF` at two cuts, the pack retires, and a reopened store matches. Zero production edits.
