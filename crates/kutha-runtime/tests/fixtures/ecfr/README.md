@@ -16,9 +16,11 @@ advice, and not a claim of complete regulatory coverage.
 ## Status of the text
 
 eCFR is a work of the US federal government. Under 17 U.S.C. §105, US
-government works are not subject to copyright in the United States; the eCFR
-site describes the content as public domain. Re-check the current eCFR terms
-before any redistribution beyond this research repository.
+government works are not subject to copyright in the United States; GPO's
+GovInfo notice states the same for federal material. The eCFR server-rendered
+pages checked on 2026-10-31 carry no explicit public-domain statement, so the
+statutory basis is cited instead of a site claim. Re-check the current eCFR
+terms before any redistribution beyond this research repository.
 
 ## Boundaries
 
