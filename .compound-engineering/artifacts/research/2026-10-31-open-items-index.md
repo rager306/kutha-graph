@@ -37,11 +37,14 @@ and what needs a governor intake. Nothing here is a capability claim; ADRs stay 
 
 ## Decisions pending (owner)
 
+**M187 is leased (2026-10-31).** `.kutha/STATE.md` is `M187` / `S01`; GSD **v1.80 Test honesty**, phases 275–276
+(plans written, executors running). C2 becomes **M188 / v1.81 / phases 277–279** and waits for this lease to close.
+
 **Identity collision resolved by proposal, not by a lease.** Both sketches claimed M187 / v1.80. The M187
 sketch (`2026-10-31-m187-test-honesty-sketch.md`) argues test honesty first, because its defect 4 (fixed
 relative `tmp/` dirs) fails 5 of 6 concurrent runs of `m179_gate_gc`, which the C2 sketch uses as a Phase 276
 gate. Recommended order: **M187 test-honesty = v1.80 (phases 275–276)**, then **C2 = M188 / v1.81 (277–279)**.
-The C2 sketch carries the numbering note; nothing is leased yet.
+The C2 sketch carries the numbering note; M187 is now leased (see above) and C2 waits for it to close.
 
 1. **Lease `M187` test-honesty** — closes items 1–5 above; the plan is
    `2026-10-31-m187-test-honesty-sketch.md` (lease text, phases 275–276, test-only).
