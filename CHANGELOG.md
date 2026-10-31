@@ -8,14 +8,14 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - GSD v1.79 closed; phase 274 archived. `Active Milestone=None`, `L_delivery=M186-S01-closed`.
 - The first verifier blocked a false scope claim: the initial A/B used the v1.77 close as base, so it measured v1.78 only. A second A/B against `05dfea0` (v1.76 close) now isolates both milestones, with base commit ids recorded.
-- Second run result: `ingest_plain.n` −6.2% (faster), `as_of.n` −7.7%, `as_of.2n` **+19.0%** — reproduced, above the 10% gate, recorded as an open unexplained residual.
+- Second run result (corrected 2026-10-31 from sorted samples): `ingest_plain.n` −4.2% (faster), `as_of.n` +1.7%, `as_of.2n` **+19.0%** (reproduced), `ingest_keyed.n` +12.1%. The AGENTS.md stop gate covers `ingest_plain.n` and `as_of.n` only, both inside 10%; `as_of.2n` and `ingest_keyed.n` are secondary metrics and are recorded as such.
 - Tests: `cargo test --workspace` green; `kutha-gov ci --jobs 1` exit 0.
 
 ## 2026-10-31 — Process: meta lease overhead A/B and toggle falsification
 
-- Two interleaved same-host A/Bs (6 samples each, base commit ids recorded) against `4db8770` (v1.78 only) and `05dfea0` (v1.76 close, v1.77+v1.78).
-- A follow-up falsification run toggled only the `log_ids` insert on the same binary (10 interleaved samples): `ingest_plain.n` **+11.4%**, `as_of.n` −4.9%, **`as_of.2n` −2.2%**.
-- **Corrects the earlier read:** the `as_of.2n` moves recorded against older bases were host-load drift between interleaved runs, not a lease cost — the read path is unchanged between the bases and the toggle proves no effect.
+- Two interleaved same-host A/Bs (6 samples each, base commit ids recorded) against `4db8770` (v1.78 only) and `05dfea0` (v1.76 close, v1.77+v1.78). A/B2, corrected 2026-10-31 from sorted samples: `ingest_plain.n` −4.2%, `as_of.n` +1.7%, `as_of.2n` +19.0%, `ingest_keyed.n` +12.1% (secondary signal above the 10% stop line; not a gate metric — the gate covers `ingest_plain.n` and `as_of.n`).
+- A follow-up falsification run toggled only the `log_ids` insert on one binary (hash `baseline-ad506c2ed323b589`, 10+10 interleaved samples): `ingest_plain.n` **+11.4%**, `as_of.n` −4.9%, **`as_of.2n` −2.2%**.
+- **Corrects the earlier read:** the `as_of.2n` moves recorded against older bases were host-load drift between interleaved runs, not a lease cost — the read path (`fold.rs`, `leapfrog.rs`, `fold_query.rs`) is unchanged between the bases, and the toggle shows no effect on the read path. The toggle patch was not preserved, so that run is recorded evidence, not a reproducible procedure; the structural diff carries the argument.
 - The real lease cost is ingest-only and small: +11.4% median, not recovered by pre-sizing, accepted in exchange for removing an O(n) lifecycle rebuild per meta write.
 - Host spread is ±20% run-to-run, wider than every effect measured here; recorded so nothing in this section is cited as a regression or improvement claim.
 

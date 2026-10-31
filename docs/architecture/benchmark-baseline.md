@@ -122,17 +122,30 @@ so the median is robust to it.
 
 | metric | pre median | head median | ratio | pre range | head range |
 |--------|-----------:|------------:|------:|-----------|------------|
-| `ingest_plain.n` | 126665566 | 118824960 | **0.938** | 112.3–136.3M | 110.4–132.7M |
-| `as_of.n` | 78536 | 72495 | **0.923** | 73.8–140.7k | 68.6–127.4k |
-| `as_of.2n` | 160599 | 191120 | **1.190** | 147.4–177.3k | 158.6–227.4k |
-| `ingest_plain.4n` | 425505688 | 455890543 | 1.071 | 384.3–505.4M | 434.6–491.9M |
-| `ingest_keyed.n` | 110857378 | 121145614 | 1.093 | 106.5–126.1M | 113.2–139.5M |
-| `persist_append.n` | 5612320 | 7299392 | 1.301 | 3.1–13.6M | 3.9–15.2M |
+| `ingest_plain.n` | 126665566 | 121352717 | **0.958** | 112.3–136.3M | 110.4–132.7M |
+| `as_of.n` | 78536 | 79908.5 | **1.017** | 73.8–140.7k | 68.6–127.4k |
+| `as_of.2n` | 160599 | 191120.5 | **1.190** | 147.4–177.3k | 158.6–227.4k |
+| `ingest_plain.4n` | 425505688 | 450096298.5 | 1.058 | 384.3–505.4M | 434.6–491.9M |
+| `ingest_keyed.n` | 110857378 | 124302089.5 | 1.121 | 106.5–126.1M | 113.2–139.5M |
+| `persist_append.n` | 5612320 | 7299392.5 | 1.301 | 3.1–13.6M | 3.9–15.2M |
+
+**Correction (2026-10-31, post-close audit).** Four of the six head medians above
+were first published from unsorted positional samples. The table is now
+recomputed from the retained logs as sorted-sample medians (even counts, so the
+median is the mean of the two middle samples). Corrected ratios:
+`ingest_plain.n` −4.2% (was −6.2%), `as_of.n` +1.7% (was −7.7%),
+`ingest_plain.4n` +5.8% (was +7.1%), `ingest_keyed.n` +12.1% (was +9.3%).
+`as_of.2n` and `persist_append.n` are unchanged. The bench gate in AGENTS.md
+covers `ingest_plain.n` and `as_of.n` only: the first is faster and the second
+moves +1.7%, so the M186 keep decision stands. `ingest_keyed.n` **+12.1%** is
+above the 10% stop line and is recorded as a secondary signal, not a gate
+failure. Per-sample values and provenance:
+`.compound-engineering/artifacts/research/2026-10-31-m186-ab-samples.md`.
 
 ### Decision: keep, and an honest correction about what was measurable
 
-Follow-up falsification run (same binary, same target dir, `log_ids` insert
-toggled by an env var, 10 interleaved samples):
+Follow-up falsification run (one binary, hash `baseline-ad506c2ed323b589`,
+`log_ids` insert toggled at runtime, 10 interleaved samples each way):
 
 | metric | lease-ON median | lease-OFF median | delta |
 |--------|----------------:|-----------------:|------:|
@@ -153,6 +166,16 @@ Two conclusions, one of which corrects this document's earlier claim:
    measurably recover it (median 123.1 ms vs 121.3 ms lease-off), because the
    spread under load is ±20% and wider than the effect. The cost is accepted:
    it buys removing an O(n) lifecycle rebuild per meta write.
+
+**Reproducibility status.** The 20 probe logs are retained (`tmp/probe-on-*`,
+`tmp/probe-off-*`, gitignored) and their numbers are copied into
+`.compound-engineering/artifacts/research/2026-10-31-m186-ab-samples.md`. The
+build that carried the toggle was a temporary patch: the variable name and the
+patch were not preserved and the probe target directory was deleted, so this
+run can be cited as recorded evidence but cannot be re-executed from the tree.
+Treat it as advisory, not as a reproducible procedure. The structural argument
+does not depend on it: `fold.rs`, `leapfrog.rs`, and `fold_query.rs` are
+unchanged between `05dfea0` and HEAD.
 
 Honest limit for this whole section: the host's ±20% run-to-run spread is wider
 than every effect measured here. Ratios are recorded because they were

@@ -31,7 +31,7 @@ provider rejects the request with HTTP 400.
 | Do not set `max-fn-params-bools = 0`. | 17 bool parameters in `src`; several are deliberate API flags. The default threshold, or no bool lint, is less noisy. |
 | Do not make `cargo fmt --check` a gate. | HEAD is not rustfmt-clean: 81 files, 143 hunks. Formatting is a separate slice, not a side effect of review. |
 | Do not use `--all-features` for CI clippy. | It compiles `librocksdb-sys`. Kutha CI runs with `KUTHA_GOV_SKIP_ROCKS=1` on a 7 GB runner. Use default features or a dedicated job. |
-| Do not treat `rust_review` counts as bug counts. | The runtime inventory reports 48 `unwrap`, but only 4 are production sites once tests are excluded (`wal.rs:209-218`, `leapfrog.rs:50-54` twice). It also reports 95 `.clone()` without judging redundancy. |
+| Do not treat `rust_review` counts as bug counts. | The runtime inventory reports 48 `unwrap`, but at HEAD no production `unwrap` remains: the four production panic sites are `expect` calls (`wal.rs:209-218`, `leapfrog.rs:50-54` twice). It also reports 95 `.clone()` without judging redundancy. |
 | Do not use `rust-port` for `tools/` or harness Python. | Python stays on the harness plane; porting it to Rust would collapse the product/harness split. |
 | Do not add a CI phase or governor check from this document alone. | A new CI phase requires the `.kutha/META.md` and `docs/process/governor-intake.md` intake. This document changes no gate. |
 

@@ -9,8 +9,8 @@
 **Key accomplishments:**
 - Two interleaved same-host A/Bs (6 samples each), base `4db8770` for v1.78-only and `05dfea0` for v1.77+v1.78; base commit ids recorded because the worktrees are removed.
 - Against `4db8770`: `ingest_plain.n` +2.7%, `as_of.n` +5.7%; one 253 µs base outlier named, not dropped.
-- Against `05dfea0`: `ingest_plain.n` **−6.2%** (faster), `as_of.n` −7.7%, but **`as_of.2n` +19.0%**, reproduced at +16.3% in the other A/B.
-- Decision: keep the leases for the write path, and record `as_of.2n` as an **open, unexplained residual** above the 10% gate rather than as a lease cost — the bench exercises no meta write.
+- Against `05dfea0` (corrected 2026-10-31 from sorted samples): `ingest_plain.n` **−4.2%** (faster), `as_of.n` +1.7%, **`as_of.2n` +19.0%** (reproduced at +16.3% in the other A/B), `ingest_keyed.n` +12.1%.
+- Decision: keep the leases for the write path; the gate metrics (`ingest_plain.n`, `as_of.n`) stay inside 10%, and the secondary `as_of.2n` / `ingest_keyed.n` moves are recorded as unexplained, with no structural mechanism (read path unchanged).
 - **Verifier caught a false scope claim** (the first A/B measured v1.78 only, not v1.77+v1.78) and a deleted baseline worktree; both fixed by the second run and recorded commit ids.
 
 ---
