@@ -43,7 +43,9 @@ Native fold cut (not the Cypher skin): `GraphFold::as_of(vt)` and `Runtime::csr_
 
 Three distinct cuts exist: `GraphFold::as_of(vt)` (= `live_at(tt=MAX, vt)`), `GraphFold::live_at(tt, vt)`, and `Runtime::as_known_on(wall)` (TT-only via `known_at`). This cell's P0 text names only `as_of` / `csr_lease_at`. Cypher AS OF does not cover `as_known_on`. No Cypher/GPML parser exists (frozen until M003 is leased; see `.kutha/STATE.md` Thaw map). This subsection does not rewrite D070-1…D070-4 and does not mark this cell Accepted.
 
-### D070-3. Writes are typed operators, not free MERGE-as-truth
+### Clarification (2026-10-31; Proposed)
+
+The 2026-10-03 clarification above is historical. The read-only GPML subset parser was leased (M003a, 2026-10-30) and shipped as `crates/kutha-runtime/src/gpml.rs` (`parse_gpml`; `MATCH … AS OF <vt> [TT <tt>] RETURN … [LIMIT n]`), covered by 13 named tests (`m003a_gpml.rs` 7, `m003a_gpml_differential.rs` 5, `m174_gate_gb.rs::gate_gb_ff5_b3_ecfr_parity`). The binder/planner surface (D070-1), the Cypher skin, hybrid operators, and authenticated write syntax remain absent; for those parts the cell stays Proposed and frozen. This subsection does not rewrite D070-1…D070-4.
 
 Assert/retract/correct (010/TGMS) may have Cypher-shaped syntax later; they still validate through dictionaries (050) and grants (080). LLM-produced Cypher is a proposal.
 

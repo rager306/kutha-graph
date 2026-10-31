@@ -29,14 +29,14 @@ M186-S01 is closed under GSD **v1.79 meta lease overhead A/B**. Two interleaved 
 
 ## Thaw map
 
-The freeze list came from agent-assisted commits (`1ee5942`, `85db1f7`, 2026-08-18, Cursor co-authored); the owner states he did not decide it. M002 is thawed (2026-10-03, owner's request). Every other item keeps its own named gate; nothing is thawed by "an M002 lease".
+The freeze list came from agent-assisted commits (`1ee5942`, `85db1f7`, 2026-08-18, Cursor co-authored); the owner states he did not decide it. M002 is thawed (2026-10-03, owner's request). Every other item keeps its own named gate; nothing is thawed by "an M002 lease". No row below is active at HEAD (`Active Milestone: None`): each entry states the future gate, not a current lease.
 
 | Item | Thaws when |
 |------|------------|
 | RocksDB crate | Thawed (Phase 51/55): optional dependency `rocksdb` in kutha-runtime only; `freeze-rocks` is a durable rule (optional dependencies only) |
 | Cypher/GPML parser | Thawed (M003a leased 2026-10-30): read-only subset parser; M003b binder swap stays gated on C2 |
-| HNSW | M005 is leased |
-| ADR-050 six dictionaries | SIX-01 is leased |
+| HNSW | a milestone the owner names M005 is leased |
+| ADR-050 six dictionaries | a milestone whose slice names SIX-01 is leased |
 | ADR-080/081 | a security milestone is leased (after M003) |
 | full ADR-090 ontology | STATE names a legal pack (`I-legal-pack-not-next`) |
 | ADR-093 | a science pack is leased (M004) |

@@ -12,6 +12,10 @@ Product writes use live `Op` variants; Retract/Correct/justification cite `Event
 
 Shipped `Op` kinds also include `Checkpoint` (M154 sealed-prefix receipt via `store::checkpoint_sealed_prefix`; prefix `StoreBlob`, `QuantumOutcome`, `JustificationCite`, and D021 `PackInstall` / `PackActivate` / `PackRetire` kept verbatim). The 2026-10-08 D011-1 pointer listed kinds through `TtAnchor`. This note does not rewrite D011-1…D011-4. Status stays **Proposed**.
 
+### Evidence (2026-10-31; Proposed)
+
+`Op::EnrichmentProposal` (`event.rs:271`, M178) is a shipped variant covered by neither the 2026-10-08 pointer nor the 2026-10-23 note. The shipped set at HEAD is 15 variants: Assert, Retract, Correct, CorrectInterval, Behavior, Define, QuantumOutcome, JustificationCite, StoreBlob, TtAnchor, PackInstall, PackActivate, PackRetire, EnrichmentProposal, Checkpoint. Also: `Op::Assert` is binary (`subject`/`relation`/`object`); D011-1's “an event may reference N objects” describes the event model (payloads may carry N ids, e.g. `source_event_ids`), not Assert arity. This note does not rewrite D011-1…D011-4; status stays **Proposed**.
+
 ## Date
 
 2026-08-18

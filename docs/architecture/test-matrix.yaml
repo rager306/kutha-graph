@@ -3,6 +3,10 @@ adr: ADR-023
 # Map of oracles, not a coverage number. Governor green on test-matrix means
 # named oracles exist and statuses are internally consistent — not "the product
 # is tested". Do not mark killed unless the test exists and a mutation is recorded.
+# Known absences (no oracle). Recorded here rather than as rows because a `gap`
+# row must name a real ROADMAP slice owner; a row appears when a lease names it:
+# ADR-030, ADR-031, ADR-042, ADR-062, ADR-071, ADR-081, ADR-091, ADR-093.
+# Source: .compound-engineering/artifacts/research/2026-10-31-architecture-gap-register.md.
 rows:
   # --- M002 / persist durability (audit-code-tests §2) ---
   - id: DUR-sidecar-atomic

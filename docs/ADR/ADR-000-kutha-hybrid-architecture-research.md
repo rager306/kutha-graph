@@ -179,7 +179,7 @@ RVF-like containers: portable agent memory, sealed knowledge units, checkpoint/f
 
 | Layer | Choice | Why |
 |------|--------|--------|
-| Core engine | **Rust + Tokio + RocksDB (event store)** | No GC, workspaces=boundaries, serde, channels |
+| Core engine | **Rust + Tokio + RocksDB (event store)** (historical — see the superseded note below) | No GC, workspaces=boundaries, serde, channels |
 | Agent I/O / early composition | A TS/Cordis-like SDK is admissible | I/O-bound LLM; not a materializer |
 | Java / C# | Enterprise app wrapping | Not the engine core |
 

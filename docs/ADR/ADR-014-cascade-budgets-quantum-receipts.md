@@ -4,6 +4,10 @@
 
 **Proposed** (Time/Composition/Verify — bound the quantum; constant-size evidence per emit→idle)
 
+### Clarification (2026-10-31; Proposed)
+
+D014-1's “constant-size” applies to the evidence item's commitment: `QuantumReceipt.digest` is a fixed `[u8; 32]` (`receipt.rs:13`). The type also carries `event_ids: Vec<EventId>` as a resume lease; its own doc comment records that this “may expose quantum width” and that stripping it is a later format bump. Reading D014-1 as “the receipt record is fixed-width” is therefore wrong. This subsection does not rewrite D014-1…D014-5.
+
 ### Evidence (2026-10-02; Proposed)
 
 Historical (superseded by the 2026-10-04 blocks below): Same persist story as ADR-012: `events.jsonl` rename-atomic; `OUTCOMES_REL` / `JUSTIFICATIONS_REL` sidecars still written on `persist` (`store.rs`). Receipt stays on the in-log quantum path via `pipeline`. **2026-10-03 note:** snapshot/WAL in-place truncate is false; see Evidence 2026-10-03.
