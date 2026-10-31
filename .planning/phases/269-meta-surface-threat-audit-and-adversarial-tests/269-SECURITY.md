@@ -28,14 +28,14 @@ created: "2026-10-31"
 
 | Threat ID | Category | Component | Severity | Disposition | Mitigation | Status |
 |-----------|----------|-----------|----------|-------------|------------|--------|
-| T-269-01 | Denial of service | `replay_check` meta walk | high | mitigate | Single-pass tracker; `m182_meta_threats::replay_meta_is_not_quadratic` (4000 ops < 3 s; was ~2.18 s at 2000) | closed |
-| T-269-02 | Spoofing | manifest digest | high | mitigate | Raw SHA-256 re-verified in `load_manifest`; `manifest_blob_digest_mismatch_fails_closed` | closed |
+| T-269-01 | Denial of service | `replay_check` meta walk | high | mitigate | Single-pass tracker for lifecycle/enrichment; `replay_meta_is_not_quadratic` (4000 ops < 3 s; was ~2.18 s at 2000). Operator-collision scan is O(P²) over manifest-bearing packs: bounded by pack count, not linear. | closed |
+| T-269-02 | Spoofing | manifest digest | high | mitigate | Raw SHA-256 re-verified in `load_manifest`. Covered transitively by the generic `StoreBlob` digest gate before meta validation; no test yet constructs a policy-hash-addressed blob that passes the generic gate but fails raw SHA-256. | closed — transitively covered |
 | T-269-03 | Tampering | manifest order | high | mitigate | Prefix-scoped replay; `manifest_blob_after_install_fails_closed` | closed |
 | T-269-04 | Elevation of privilege | operator namespace | medium | mitigate | Cross-pack collision check; `cross_pack_operator_collision_fails_on_replay` | closed |
 | T-269-05 | Spoofing | pack identity | high | mitigate | Exact id/name/version match; `manifest_identity_spoof_fails_on_replay` | closed |
 | T-269-06 | Repudiation / forgery | public `emit` | high | mitigate | `reject_forged_meta`; `user_forged_meta_ops_are_rejected` | closed |
-| T-269-07 | Tampering | enrichment payload | medium | mitigate | `StoreBlob` digest + replay digest check; `enrichment_payload_tamper_fails_on_replay` | closed |
-| T-269-08 | Inconsistent enforcement | admission vs replay | medium | mitigate | One shared `PackLifecycleTracker`; `admission_and_replay_agree_on_lifecycle` | closed |
+| T-269-07 | Tampering | enrichment payload | medium | mitigate | `StoreBlob` digest gate plus `check_proposal` digest check. Same transitive-coverage caveat as T-269-02. | closed — transitively covered |
+| T-269-08 | Inconsistent enforcement | admission vs replay | medium | mitigate | Shared `PackLifecycleTracker` and shared `check_proposal`; both directions tested (`admission_accepted_log_reopens_after_retire`, `replay_rejects_what_admission_rejects`). `derive_pack_lifecycle` remains a separate non-validating read model — do not use it as a gate. | closed |
 | T-269-09 | Information disclosure | enrichment source ids | low | accept | See accepted risks | closed |
 | T-269-10 | Elevation of privilege | operator execution | high | accept | No executor exists; a future executor needs C3/C6 | closed |
 
@@ -49,7 +49,7 @@ created: "2026-10-31"
 | Risk ID | Threat Ref | Rationale | Accepted By | Date |
 |---------|------------|-----------|-------------|------|
 | R-269-01 | T-269-09 | Enrichment source ids are existence-only and global cache keys are unique; a proposal can reveal that some event id exists. Enrichment is derived data, never kernel truth, and no cross-tenant boundary exists yet. Revisit when tenant slices land. | owner-lease M182-S01 | 2026-10-31 |
-| R-269-02 | T-269-10 | The manifest names operators but nothing resolves or executes them, so there is no code-execution surface to attack. Accepting this is only sound while no executor exists; C3/C6 must re-open it. | owner-lease M182-S01 | 2026-10-31 |
+| R-269-02 | T-269-10 | The manifest names operators but nothing resolves or executes them, so there is no code-execution surface to attack. Accepting this is only sound while no executor exists; C3/C6 must re-open it. **Re-open trigger:** any code path that resolves a manifest operator to a callable, or any new `Op` that carries executable payload. | owner-lease M182-S01 | 2026-10-31 |
 
 ---
 

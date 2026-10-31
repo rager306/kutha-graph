@@ -253,8 +253,42 @@ fn enrichment_payload_tamper_fails_on_replay() {
     // still fail-closed, which is the property under test.
     assert!(matches!(
         rt.replay_check(),
-        Err(RuntimeError::UnknownRuleVersion { .. })
-            | Err(RuntimeError::EnrichmentRejected { .. })
+        Err(RuntimeError::UnknownRuleVersion { .. }) | Err(RuntimeError::EnrichmentRejected { .. })
+    ));
+}
+
+/// T-269-08 (replay/emit drift): a log that admission accepted must reopen.
+/// Regression guard for the retired-pack operator release.
+#[test]
+fn admission_accepted_log_reopens_after_retire() {
+    let mut rt = Runtime::default();
+    let first = PackManifest::new("core", "pack-core", "1.0.0", vec!["normalize".into()]);
+    rt.emit_pack_install_with_manifest("core", "pack-core", "1.0.0", Some(first))
+        .expect("install");
+    rt.emit_pack_activate("core", "1.0.0").expect("activate");
+    rt.emit_pack_retire("core", "1.0.0").expect("retire");
+    let second = PackManifest::new("extra", "pack-extra", "1.0.0", vec!["normalize".into()]);
+    rt.emit_pack_install_with_manifest("extra", "pack-extra", "1.0.0", Some(second))
+        .expect("retired pack releases the name");
+    rt.replay_check()
+        .expect("replay must accept a log admission accepted");
+}
+
+/// T-269-08 (replay/emit drift): replay must also reject what admission
+/// rejects, not merely accept what admission accepts.
+#[test]
+fn replay_rejects_what_admission_rejects() {
+    let events = vec![Event::new(
+        Op::PackActivate {
+            pack_id: "ghost".into(),
+            version: "1.0.0".into(),
+        },
+        0,
+    )];
+    let rt = runtime(events);
+    assert!(matches!(
+        rt.replay_check(),
+        Err(RuntimeError::PackLifecycleRejected { .. })
     ));
 }
 

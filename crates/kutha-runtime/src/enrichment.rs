@@ -89,16 +89,50 @@ pub fn validate_proposal_with_payload(
     proposal: &Op,
     pending: Option<(&str, &[u8])>,
 ) -> Result<(), EnrichmentError> {
-    validate_proposal_inner(log, blobs, proposal, pending, true)
+    let lifecycle = derive_pack_lifecycle(log);
+    let state = match &*proposal {
+        Op::EnrichmentProposal { pack_id, .. } => lifecycle
+            .iter()
+            .find(|record| &record.pack_id == pack_id)
+            .map(|record| (record.state, record.version.clone())),
+        _ => None,
+    };
+    let known: std::collections::HashSet<EventId> = log.iter().map(|event| event.id).collect();
+    let mut cache_keys: std::collections::HashSet<String> = log
+        .iter()
+        .filter_map(|event| match &event.op {
+            Op::EnrichmentProposal { cache_key, .. } => Some(cache_key.clone()),
+            _ => None,
+        })
+        .collect();
+    let pending_bytes = pending
+        .filter(|(digest, _)| matches!(&*proposal, Op::EnrichmentProposal { blob_digest, .. } if digest == blob_digest))
+        .map(|(_, bytes)| bytes);
+    check_proposal(
+        proposal,
+        state,
+        &mut |id| known.contains(&id),
+        pending_bytes.or_else(|| match &*proposal {
+            Op::EnrichmentProposal { blob_digest, .. } => {
+                blobs.get(blob_digest).map(|b| b.as_slice())
+            }
+            _ => None,
+        }),
+        &mut cache_keys,
+    )
 }
 
-/// Validate with an explicit source-existence mode.
-pub(crate) fn validate_proposal_inner(
-    log: &[Event],
-    blobs: &HashMap<String, Vec<u8>>,
+/// One shared proposal check used by admission and replay.
+///
+/// The caller supplies the pack state, a source-existence predicate, the
+/// payload bytes (if resolvable), and the cache-key set, so both gates apply
+/// the same rules without re-walking the log.
+pub(crate) fn check_proposal(
     proposal: &Op,
-    pending: Option<(&str, &[u8])>,
-    require_sources: bool,
+    pack_state: Option<(PackLifecycleState, String)>,
+    source_known: &mut dyn FnMut(EventId) -> bool,
+    payload: Option<&[u8]>,
+    cache_keys: &mut std::collections::HashSet<String>,
 ) -> Result<(), EnrichmentError> {
     let Op::EnrichmentProposal {
         pack_id,
@@ -129,13 +163,12 @@ pub(crate) fn validate_proposal_inner(
             field: "source_event_ids",
         });
     }
-    let lifecycle = derive_pack_lifecycle(log);
-    let Some(record) = lifecycle.iter().find(|record| &record.pack_id == pack_id) else {
+    let Some((state, version)) = pack_state else {
         return Err(EnrichmentError::UnknownPack {
             pack_id: pack_id.clone(),
         });
     };
-    match record.state {
+    match state {
         PackLifecycleState::Active => {}
         PackLifecycleState::Retired => {
             return Err(EnrichmentError::RetiredPack {
@@ -148,44 +181,29 @@ pub(crate) fn validate_proposal_inner(
             });
         }
     }
-    if &record.version != pack_version {
+    if version != *pack_version {
         return Err(EnrichmentError::VersionMismatch {
             pack_id: pack_id.clone(),
         });
     }
-    if require_sources {
-        let known: std::collections::HashSet<EventId> = log.iter().map(|event| event.id).collect();
-        for event_id in source_event_ids {
-            if !known.contains(event_id) {
-                return Err(EnrichmentError::MissingSource {
-                    event_id: *event_id,
-                });
-            }
-        }
-    }
-    let pending_bytes = pending
-        .filter(|(digest, _)| digest == blob_digest)
-        .map(|(_, bytes)| bytes);
-    let bytes = match (blobs.get(blob_digest), pending_bytes) {
-        (Some(bytes), _) => bytes,
-        (None, Some(bytes)) => bytes,
-        (None, None) => {
-            return Err(EnrichmentError::MissingBlob {
-                digest: blob_digest.clone(),
+    for event_id in source_event_ids {
+        if !source_known(*event_id) {
+            return Err(EnrichmentError::MissingSource {
+                event_id: *event_id,
             });
         }
+    }
+    let Some(bytes) = payload else {
+        return Err(EnrichmentError::MissingBlob {
+            digest: blob_digest.clone(),
+        });
     };
     if sha256_hex(bytes) != *blob_digest {
         return Err(EnrichmentError::DigestMismatch {
             digest: blob_digest.clone(),
         });
     }
-    if log.iter().any(|event| {
-        matches!(
-            &event.op,
-            Op::EnrichmentProposal { cache_key: existing, .. } if existing == cache_key
-        )
-    }) {
+    if !cache_keys.insert(cache_key.clone()) {
         return Err(EnrichmentError::DuplicateProposal {
             cache_key: cache_key.clone(),
         });

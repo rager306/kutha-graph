@@ -1,6 +1,5 @@
 //! Replay and provenance (ADR-060). Not a MATCH compiler.
 use crate::fold::{GraphFold, checkpoint_prefix_meta_op, checkpoint_snapshot_if_receipt_ok};
-use crate::pack_lifecycle::PackLifecycleState;
 use crate::quantum::{Runtime, RuntimeError};
 use crate::receipt::digest_to_hex;
 use kutha_common::{Event, EventId, Op, TransactionTime, ValidTime, blob_digest_matches};
@@ -108,7 +107,7 @@ impl Runtime {
             .position(|e| matches!(e.op, Op::Checkpoint { .. }));
         let mut declared: std::collections::BTreeMap<String, std::collections::BTreeSet<String>> =
             std::collections::BTreeMap::new();
-        let mut cache_keys: std::collections::HashSet<&str> = std::collections::HashSet::new();
+        let mut cache_keys: std::collections::HashSet<String> = std::collections::HashSet::new();
         let mut known_ids: std::collections::HashSet<kutha_common::EventId> =
             std::collections::HashSet::new();
 
@@ -119,6 +118,12 @@ impl Runtime {
                 }
                 Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. } => {
                     lifecycle.replay(&event.op)?;
+                    // A retired pack releases its operator names, exactly as
+                    // admission's `declared_operators` does. Without this drop,
+                    // a log that admission accepted can fail to reopen.
+                    if let Op::PackRetire { pack_id, .. } = &event.op {
+                        declared.remove(pack_id);
+                    }
                     if let Op::PackInstall {
                         pack_id,
                         manifest_digest: Some(_),
@@ -134,82 +139,39 @@ impl Runtime {
                                 reason: format!("replay manifest: {err}"),
                             }
                         })?;
-                        if let Ok(operators) =
+                        let operators =
                             crate::pack_manifest::declared_operators_for(&blobs, &event.op)
-                        {
-                            declared.insert(pack_id.clone(), operators);
-                        }
+                                .map_err(|err| RuntimeError::PackLifecycleRejected {
+                                    pack_id: pack_id.clone(),
+                                    reason: format!("replay manifest: {err}"),
+                                })?;
+                        declared.insert(pack_id.clone(), operators);
                     }
                 }
                 Op::EnrichmentProposal {
                     pack_id,
-                    pack_version,
-                    source_event_ids,
-                    model,
-                    prompt,
-                    cache_key,
                     blob_digest,
+                    ..
                 } => {
-                    if [pack_id, pack_version, model, prompt, cache_key, blob_digest]
-                        .iter()
-                        .any(|value| value.trim().is_empty() || value.as_str() != value.trim())
-                    {
-                        return Err(RuntimeError::EnrichmentRejected {
-                            reason: "replay: empty enrichment pin".to_string(),
-                        });
-                    }
-                    if source_event_ids.is_empty() {
-                        return Err(RuntimeError::EnrichmentRejected {
-                            reason: "replay: empty source_event_ids".to_string(),
-                        });
-                    }
-                    match lifecycle.state(pack_id) {
-                        Some(PackLifecycleState::Active) => {}
-                        Some(PackLifecycleState::Retired) => {
-                            return Err(RuntimeError::EnrichmentRejected {
-                                reason: format!("replay: enrichment pack {pack_id} is retired"),
-                            });
-                        }
-                        _ => {
-                            return Err(RuntimeError::EnrichmentRejected {
-                                reason: format!("replay: enrichment pack {pack_id} is not active"),
-                            });
-                        }
-                    }
-                    if lifecycle.version(pack_id) != Some(pack_version.as_str()) {
-                        return Err(RuntimeError::EnrichmentRejected {
-                            reason: format!("replay: enrichment pack {pack_id} version mismatch"),
-                        });
-                    }
+                    let state = lifecycle
+                        .state(pack_id)
+                        .map(|state| (state, lifecycle.version(pack_id).unwrap_or("").to_string()));
                     let compacted = first_checkpoint.is_some_and(|cut| index < cut);
-                    if !compacted {
-                        for source in source_event_ids {
-                            if !known_ids.contains(source) {
-                                return Err(RuntimeError::EnrichmentRejected {
-                                    reason: format!(
-                                        "replay: enrichment source event {source} is not in the log"
-                                    ),
-                                });
-                            }
-                        }
-                    }
-                    let Some(bytes) = blobs.get(blob_digest) else {
-                        return Err(RuntimeError::EnrichmentRejected {
-                            reason: format!("replay: enrichment payload {blob_digest} is missing"),
-                        });
-                    };
-                    if kutha_common::sha256_hex(bytes) != *blob_digest {
-                        return Err(RuntimeError::EnrichmentRejected {
-                            reason: format!(
-                                "replay: enrichment payload does not match {blob_digest}"
-                            ),
-                        });
-                    }
-                    if !cache_keys.insert(cache_key.as_str()) {
-                        return Err(RuntimeError::EnrichmentRejected {
-                            reason: format!("replay: enrichment cache key {cache_key} repeats"),
-                        });
-                    }
+                    let mut source_known =
+                        |id: kutha_common::EventId| compacted || known_ids.contains(&id);
+                    let payload = blobs.get(blob_digest);
+                    // The cache-key set is shared across proposals, so a repeat
+                    // is rejected exactly as admission rejects it.
+                    crate::enrichment::check_proposal(
+                        &event.op,
+                        state,
+                        &mut source_known,
+                        payload.map(|bytes| bytes.as_slice()),
+                        &mut cache_keys,
+                    )
+                    .map_err(|err| RuntimeError::EnrichmentRejected {
+                        reason: format!("replay: {err}"),
+                    })?;
                 }
                 _ => {}
             }

@@ -8,9 +8,9 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 - Added the phase security register (`269-SECURITY.md`) for the C1/C1b/C5 meta surfaces and the replay reader gate: 10 threats, 8 mitigated with adversarial tests, 2 accepted with re-open conditions.
 - **Fixed a real defect found by the audit:** meta replay was O(n²) because each lifecycle op re-walked the log. 2000 pack installs took ~2.18 s on open; a single-pass tracker plus incremental manifest checks bring it to ~13 ms.
-- Admission and replay now share one `PackLifecycleTracker`, so the two gates cannot drift apart.
-- Added `crates/kutha-runtime/tests/m182_meta_threats.rs` (8 adversarial tests).
-- Tests: threats 8/8, workspace 809 passed / 0 failed.
+- Admission and replay now share one `PackLifecycleTracker` and one `check_proposal`, so the two gates cannot drift apart. The first attempt regressed retired-pack operator release on replay; the verifier caught it and the fix plus a regression test are included.
+- Added `crates/kutha-runtime/tests/m182_meta_threats.rs` (10 adversarial tests).
+- Tests: threats 10/10, workspace 811 passed / 0 failed.
 
 ## 2026-10-31 — Trajectory: M181-S01 closed (eCFR ambiguity)
 
