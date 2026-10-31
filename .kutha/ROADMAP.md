@@ -8,6 +8,13 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
+## M184: Admission operator index — ACTIVE (harness lease)
+
+Bounded complexity fix: the runtime keeps an operator index rebuilt from the log, so admission collision detection is O(1) per operator. No feature, no thaw.
+
+- [ ] **S01: runtime operator index** `risk:low` `depends:[]`
+  > After this: admission and replay share one collision index and reject the same collisions.
+
 ## M183: Digest falsifiers and linear index — CLOSED (harness lease)
 
 Bounded hardening delivered: direct falsifiers for the raw-SHA-256 manifest/payload checks, and an operator→pack index for linear collision detection. No feature, no thaw.

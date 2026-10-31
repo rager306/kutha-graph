@@ -183,42 +183,6 @@ pub fn load_manifest(
     PackManifest::parse(bytes)
 }
 
-/// Validate the manifest pinned by `install` against the replayed log.
-///
-/// Cross-pack collision is checked against operators declared by packs whose
-/// replayed lifecycle is `Installed` or `Active`; a retired pack releases its
-/// names. The installing pack is excluded from its own collision set.
-pub fn validate_install(
-    log: &[Event],
-    blobs: &HashMap<String, Vec<u8>>,
-    install: &Op,
-) -> Result<(), PackManifestError> {
-    let Op::PackInstall {
-        pack_id,
-        name,
-        version,
-        manifest_digest: Some(digest),
-    } = install
-    else {
-        return Ok(());
-    };
-    let manifest = load_manifest(blobs, digest)?;
-    manifest.validate_identity(pack_id, name, version)?;
-    let declared = declared_operators(log, blobs)?;
-    for operator in &manifest.operators {
-        if let Some((owner, _)) = declared
-            .iter()
-            .find(|(other, ops)| *other != pack_id && ops.contains(operator))
-        {
-            return Err(PackManifestError::OperatorCollision {
-                name: operator.clone(),
-                pack_id: owner.clone(),
-            });
-        }
-    }
-    Ok(())
-}
-
 /// Operators declared by installed/active packs, keyed by pack id.
 pub fn declared_operators(
     log: &[Event],

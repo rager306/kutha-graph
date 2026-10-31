@@ -292,6 +292,23 @@ impl Runtime {
 
     pub(crate) fn commit_event(&mut self, event: Event) {
         self.fold.apply(&event);
+        // Keep the droppable operator index in step with the log so admission
+        // sees the same names replay will.
+        match &event.op {
+            Op::PackRetire { pack_id, .. } => self.operators.retire(pack_id),
+            Op::PackInstall {
+                pack_id,
+                manifest_digest: Some(_),
+                ..
+            } => {
+                if let Ok(names) =
+                    crate::pack_manifest::declared_operators_for(&self.fold.blobs, &event.op)
+                {
+                    let _ = self.operators.declare(pack_id, names);
+                }
+            }
+            _ => {}
+        }
         self.append_indexed(event);
     }
 

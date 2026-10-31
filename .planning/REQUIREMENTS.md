@@ -3,10 +3,9 @@
 **Defined:** 2026-10-31
 **Core Value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
 
-## v1.76 Requirements
+## v1.77 Requirements
 
-- [x] **DIG-01**: The manifest and enrichment payload digest checks have direct falsifiers — a blob addressed by a policy/rule-body hash that passes the generic `StoreBlob` gate but fails raw SHA-256 must be rejected, and removing the raw check must fail the test.
-- [x] **DIG-02**: Manifest operator collision detection uses an operator→pack index, so replay is linear in packs and operators, while retired packs still release names and admission/replay stay in agreement.
+- [ ] **OPS-01**: The runtime keeps an operator index rebuilt from the log on hydrate/open/fork; admission uses it for O(1) collision detection and rejects exactly the collisions replay rejects, with a benchmark showing admission is not super-linear.
 
 ## Explicit non-goals
 
@@ -16,10 +15,9 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DIG-01 | Phase 270 | Complete |
-| DIG-02 | Phase 271 | Complete |
+| OPS-01 | Phase 272 | Pending |
 
 **Coverage:**
-- v1.76 requirements: 2 total
-- Mapped to phases: 2
+- v1.77 requirements: 1 total
+- Mapped to phases: 1
 - Unmapped: 0

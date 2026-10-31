@@ -362,6 +362,9 @@ pub struct Runtime {
     /// Event was dropped by the sealed-prefix rewrite (delivery-key retry).
     /// Droppable; rebuilt on hydrate. Not fingerprint / JSON.
     pub(crate) compacted_assert_by_id: IngestMap<EventId, Event>,
+    /// Declared pack operators by name (droppable; rebuilt from the log).
+    /// Admission uses it so collision detection is O(1) per operator.
+    pub(crate) operators: crate::pack_manifest::OperatorIndex,
 }
 
 impl Default for Runtime {
@@ -398,6 +401,7 @@ impl Runtime {
             premise_facts_of_behavior: IngestMap::default(),
             compacted_behavior_by_id: IngestMap::default(),
             compacted_assert_by_id: IngestMap::default(),
+            operators: crate::pack_manifest::OperatorIndex::new(),
             unindex_premise_examine: IngestExamine::default(),
             unindex_live_examine: IngestExamine::default(),
         };

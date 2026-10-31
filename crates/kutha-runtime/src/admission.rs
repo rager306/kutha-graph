@@ -125,8 +125,12 @@ impl Runtime {
                 ..
             } = op
             {
-                crate::pack_manifest::validate_install(self.log.as_slice(), &self.fold.blobs, op)
-                    .map_err(|err| RuntimeError::PackLifecycleRejected {
+                crate::pack_manifest::validate_install_indexed(
+                    &self.fold.blobs,
+                    op,
+                    &self.operators,
+                )
+                .map_err(|err| RuntimeError::PackLifecycleRejected {
                     pack_id: match op {
                         Op::PackInstall { pack_id, .. } => pack_id.clone(),
                         _ => String::new(),

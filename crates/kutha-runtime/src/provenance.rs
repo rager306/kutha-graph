@@ -130,26 +130,25 @@ impl Runtime {
                     } = &event.op
                     {
                         crate::pack_manifest::validate_install_indexed(
-                            &blobs,
-                            &event.op,
-                            &operators,
+                            &blobs, &event.op, &operators,
                         )
-                        .map_err(|err| RuntimeError::PackLifecycleRejected {
-                            pack_id: pack_id.clone(),
-                            reason: format!("replay manifest: {err}"),
+                        .map_err(|err| {
+                            RuntimeError::PackLifecycleRejected {
+                                pack_id: pack_id.clone(),
+                                reason: format!("replay manifest: {err}"),
+                            }
                         })?;
-                        let names =
-                            crate::pack_manifest::declared_operators_for(&blobs, &event.op)
-                                .map_err(|err| RuntimeError::PackLifecycleRejected {
-                                    pack_id: pack_id.clone(),
-                                    reason: format!("replay manifest: {err}"),
-                                })?;
-                        operators
-                            .declare(pack_id, names)
+                        let names = crate::pack_manifest::declared_operators_for(&blobs, &event.op)
                             .map_err(|err| RuntimeError::PackLifecycleRejected {
                                 pack_id: pack_id.clone(),
                                 reason: format!("replay manifest: {err}"),
                             })?;
+                        operators.declare(pack_id, names).map_err(|err| {
+                            RuntimeError::PackLifecycleRejected {
+                                pack_id: pack_id.clone(),
+                                reason: format!("replay manifest: {err}"),
+                            }
+                        })?;
                     }
                 }
                 Op::EnrichmentProposal {

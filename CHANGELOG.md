@@ -4,6 +4,14 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Product: admission-time operator index
+
+- `Runtime` now holds a droppable `OperatorIndex`, rebuilt from the log on hydrate/open/fork and updated on commit, so admission collision detection is O(1) per operator instead of rebuilding every declared set per install.
+- Admission and replay now use the same indexed rule; retire releases names in both gates.
+- Removed the now-unused `validate_install` log-scan path so one collision rule remains.
+- Added `crates/kutha-runtime/tests/m184_admission_index.rs` (6 tests) including a hand-built foreign log that proves replay rejects the collision admission rejects, and a 150→600 install scaling guard.
+- Tests: admission index 6/6, workspace 822 passed / 0 failed.
+
 ## 2026-10-31 — Trajectory: M183-S01 closed (digest falsifiers + index)
 
 - GSD v1.76 closed; phases 270–271 archived. `Active Milestone=None`, `L_delivery=M183-S01-closed`.

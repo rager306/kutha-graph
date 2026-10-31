@@ -11,11 +11,41 @@ use rustc_hash::{FxHashMap, FxHashSet};
 type IngestMap<K, V> = FxHashMap<K, V>;
 
 impl Runtime {
+    /// Rebuild the droppable operator index from the log. Retired packs release
+    /// their names; a manifest that cannot be loaded leaves the pack unindexed
+    /// here (replay is the gate that fails closed on it).
+    fn rebuild_operator_index(&mut self) {
+        let mut index = crate::pack_manifest::OperatorIndex::new();
+        let mut retired: Vec<String> = Vec::new();
+        for event in self.log.iter() {
+            match &event.op {
+                Op::PackRetire { pack_id, .. } => retired.push(pack_id.clone()),
+                Op::PackInstall {
+                    pack_id,
+                    manifest_digest: Some(_),
+                    ..
+                } => {
+                    if let Ok(names) =
+                        crate::pack_manifest::declared_operators_for(&self.fold.blobs, &event.op)
+                    {
+                        let _ = index.declare(pack_id, names);
+                    }
+                }
+                _ => {}
+            }
+        }
+        for pack_id in retired {
+            index.retire(&pack_id);
+        }
+        self.operators = index;
+    }
+
     pub(crate) fn hydrate_from_log(&mut self) {
         self.outcomes = outcomes_from_events(self.log.iter());
         self.fold.rebuild_blobs(self.log.as_slice());
         self.fold.rebuild_tt_anchors(self.log.as_slice());
         self.fold.bind_reserved(&self.dict);
+        self.rebuild_operator_index();
         self.rebuild_log_indexes();
     }
 }
@@ -120,6 +150,7 @@ impl Runtime {
             premise_facts_of_behavior: IngestMap::default(),
             compacted_behavior_by_id: IngestMap::default(),
             compacted_assert_by_id: IngestMap::default(),
+            operators: crate::pack_manifest::OperatorIndex::new(),
         };
         rt.hydrate_from_log();
         rt
@@ -175,6 +206,7 @@ impl Runtime {
             premise_facts_of_behavior: IngestMap::default(),
             compacted_behavior_by_id: IngestMap::default(),
             compacted_assert_by_id: IngestMap::default(),
+            operators: crate::pack_manifest::OperatorIndex::new(),
         };
         rt.hydrate_from_log();
         Ok(rt)
@@ -233,6 +265,7 @@ impl Runtime {
             premise_facts_of_behavior: IngestMap::default(),
             compacted_behavior_by_id: IngestMap::default(),
             compacted_assert_by_id: IngestMap::default(),
+            operators: crate::pack_manifest::OperatorIndex::new(),
         };
         rt.hydrate_from_log();
         Ok(rt)
