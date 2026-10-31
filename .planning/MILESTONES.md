@@ -174,7 +174,7 @@
 **Key accomplishments:**
 - `crates/kutha-runtime/src/security.rs`: closed-default `PathPolicy`; scan/unlabeled/zero-hop deny unless explicitly allowed; labeled hops require every relation to resolve and be policy-allowed.
 - `compile_path_policy` decides before `prepare`; denied queries never materialize leases or rows.
-- `execute_authorized` preserves authorized GPML/typed results; denied queries return typed `SecurityError::PolicyDenied`; post-policy query failures use distinct `SecurityError::QueryRejected`.
+- `execute_authorized` preserves authorized GPML/typed results; denied queries return typed `SecurityError::PolicyDenied`; `QueryRejected` is reserved and never constructed — post-policy failures map to `PolicyDenied`/`UnknownRelation`.
 - Tests: policy 5/5, integration 4/4, workspace 753 passed / 0 failed. Security ADRs stay Proposed.
 
 ---

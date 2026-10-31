@@ -158,7 +158,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ## 2026-10-31 — Trajectory: M176-S01 closed (C1 foundation)
 
 - Delivered typed D021 lifecycle events (`PackInstall` / `PackActivate` / `PackRetire`) and `Runtime::pack_lifecycle()` replay-derived lease. Lifecycle events are meta-only, graph-neutral, and fail closed on invalid ordering/empty identifiers/user forgery; checkpoint preserves prefix lifecycle state.
-- Tests: schema 4/4, runtime 5/5, workspace 762 passed / 0 failed. Bench at close: `as_of.n` 502,546 / 76,282 ns (first is a load outlier), `ingest_plain.n` 118,958,583 / 119,958,215 ns; C1 touches no ingest/fold hot path. Replay does not revalidate lifecycle ordering; admission is the gate, and a hand-edited log can open with orphan transitions (explicit foundation limitation).
+- Tests: schema 4/4, runtime 5/5, workspace 762 passed / 0 failed. Bench at close: `as_of.n` 502,546 / 76,282 ns (first is a load outlier), `ingest_plain.n` 118,958,583 / 119,958,215 ns; C1 touches no ingest/fold hot path. Replay does not revalidate lifecycle ordering at this close; admission is the gate, and a hand-edited log can open with orphan transitions (explicit foundation limitation). **Superseded by M180** (`572809d`): `replay_check` now validates meta ops against the exact prefix.
 - GSD v1.69 closed; phases 259–260 archived; `Active Milestone=None`, `L_delivery=M176-S01-closed`. No pack artifact loading, operator registration, dictionary facets, lease rebuild, WASM, marketplace, schema SMO, or ADR Accepted.
 
 ## 2026-10-30 — Product: C1 pack lifecycle foundation
@@ -167,7 +167,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - Admission replays D021 lifecycle events and rejects duplicate install, activate without install/version mismatch, retire without install/version mismatch, repeated activate/retire. Runtime exposes dictionary-mode `emit_pack_*` constructors.
 - Added `pack_lifecycle.rs` and `Runtime::pack_lifecycle()`: replay-derived installed/active/retired lease, graph-neutral, persist/open and fork-prefix parity. No pack artifact loading, operator registration, dictionary facets, lease rebuild, WASM, marketplace, schema SMO, or ADR Accepted.
 - Tests: schema 5/5 (including digest length-collision guard), runtime 5/5 (Pack* forced into the sealed prefix before checkpoint), workspace 763 passed / 0 failed. Checkpoint copies prefix Pack* events verbatim; empty identifiers and user-forged Pack* are rejected.
-- Bench at close (N=10000, same host): two runs `as_of.n` 502,546 / 76,282 ns and `ingest_plain.n` 118,958,583 / 119,958,215 ns. The first `as_of` is a load outlier; the second is in the normal band. C1 touches no ingest/fold hot path. Replay does not revalidate lifecycle ordering; admission is the gate, and a hand-edited log can open with orphan transitions (explicit foundation limitation).
+- Bench at close (N=10000, same host): two runs `as_of.n` 502,546 / 76,282 ns and `ingest_plain.n` 118,958,583 / 119,958,215 ns. The first `as_of` is a load outlier; the second is in the normal band. C1 touches no ingest/fold hot path. Replay does not revalidate lifecycle ordering at this close; admission is the gate, and a hand-edited log can open with orphan transitions (explicit foundation limitation). **Superseded by M180** (`572809d`): `replay_check` now validates meta ops against the exact prefix.
 
 ## 2026-10-30 — Process: GSD v1.69 and M176-S01 C1 foundation
 
@@ -178,14 +178,14 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ## 2026-10-30 — Trajectory: M175-S01 closed (C4 foundation)
 
 - Delivered `crates/kutha-runtime/src/security.rs`: closed-default `PathPolicy` over existing typed QueryIr. `Scan`, unlabeled walks, and zero-hop queries deny by default; labeled hops require every relation to resolve and be policy-allowed.
-- `compile_path_policy` decides before `prepare`; `execute_authorized` preserves authorized GPML/typed results. Denied queries return `SecurityError::PolicyDenied`, never empty rows; post-policy query failures use distinct `SecurityError::QueryRejected`.
+- `compile_path_policy` decides before `prepare`; `execute_authorized` preserves authorized GPML/typed results. Denied queries return `SecurityError::PolicyDenied`, never empty rows. `SecurityError::QueryRejected` is defined but never constructed: post-policy query errors map to `PolicyDenied` (unknown term / relation shape) or `UnknownRelation` (`from_query_error`, `security.rs:147-157`).
 - Tests: policy 5/5, integration 4/4, workspace 753 passed / 0 failed; independent verifiers PASS.
 - GSD v1.68 closed; phases 257–258 archived; `Active Milestone=None`, `L_delivery=M175-S01-closed`. Security ADR-080/081 stay Proposed; no grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, full ABAC, or ADR Accepted.
 
 ## 2026-10-30 — Product: C4 path-policy foundation
 
 - Added read-only `crates/kutha-runtime/src/security.rs`: closed-default `PathPolicy` compiler over existing typed `QueryIr`. `Scan`, unlabeled walks, and zero-hop queries deny by default; labeled hops require every relation to resolve and be policy-allowed.
-- Added `compile_path_policy` and `execute_authorized`: denied queries return `SecurityError::PolicyDenied` before `prepare`/execute and never become empty rows. Post-policy query-engine failures use a distinct `SecurityError::QueryRejected`.
+- Added `compile_path_policy` and `execute_authorized`: denied queries return `SecurityError::PolicyDenied` before `prepare`/execute and never become empty rows. `SecurityError::QueryRejected` is reserved and never constructed; `from_query_error` maps post-policy failures to `PolicyDenied`/`UnknownRelation`.
 - Added 5 policy tests and 4 integration tests; authorized GPML/typed results match direct execution. Workspace 753 passed / 0 failed.
 - Explicitly excluded: grants-as-facts, tenant slices, vacuum authority, capabilities, WASM, full ABAC policy language, ADR Accepted, global enforcement of direct `execute`/`prepare`.
 
