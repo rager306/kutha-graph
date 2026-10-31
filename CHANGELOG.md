@@ -81,7 +81,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ## 2026-10-31 — Security: meta-surface threat audit
 
-- Added the phase security register (`269-SECURITY.md`) for the C1/C1b/C5 meta surfaces and the replay reader gate: 10 threats, 8 mitigated with adversarial tests, 2 accepted with re-open conditions.
+- Added the phase security register (`269-SECURITY.md`) for the C1/C1b/C5 meta surfaces and the replay reader gate: 10 threats, 6 mitigated with direct adversarial tests at close, 2 transitively covered at close (direct falsifiers added in M183), 2 accepted with re-open conditions.
 - **Fixed a real defect found by the audit:** meta replay was O(n²) because each lifecycle op re-walked the log. 2000 pack installs took ~2.18 s on open; a single-pass tracker plus incremental manifest checks bring it to ~13 ms.
 - Admission and replay now share one `PackLifecycleTracker` and one `check_proposal`, so the two gates cannot drift apart. The first attempt regressed retired-pack operator release on replay; the verifier caught it and the fix plus a regression test are included.
 - Added `crates/kutha-runtime/tests/m182_meta_threats.rs` (10 adversarial tests).
@@ -97,7 +97,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 ## 2026-10-31 — Process: eCFR edition ambiguity explained
 
 - Checked the eCFR Versioner list and raw XML for 1 CFR part 304: the 2017-01-23 edition differs from 2015-12-18 only by an `<XREF>` "amendment published" note, which extraction correctly drops. Sections 304.1, 304.2, 304.3, 304.5, 304.6, 304.8, 304.9, and 304.10 all collapse to two distinct extracted texts at these dates.
-- The PIT probe now asserts exactly two distinct extracted texts per section, so a real future edition change fires instead of passing silently.
+- The PIT probe's equality asserts fail on a lost or gained edition; the added `len == 2` assert restates them and is not an independent falsifier.
 - Added `docs/architecture/ecfr-edition-ambiguity.md`; fixture README records the check. No fabricated third edition, no legal pack.
 - Tests: eCFR PIT 1/1, workspace 801 passed / 0 failed.
 

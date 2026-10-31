@@ -47,8 +47,8 @@ is 2017-03-14. The two evidence sources are named because they are not equal.
 Do **not** fabricate a third edition, and do not relabel the citation-only
 amendment as a normative change. Keep the fixture honest:
 
-- the probe asserts exactly two distinct extracted texts per section, which
-  catches a *lost* edition; the existing equality asserts catch a *gained* one;
+- the equality asserts catch a *lost* and a *gained* edition; the `len == 2`
+  assert restates them and cannot fail while they pass;
 - the 2017-03-14 boundary is the discriminating pair;
 - `as_known_on` still shows the 2017-01-23 row, because the log records that
   edition was published even though its operative text did not change.

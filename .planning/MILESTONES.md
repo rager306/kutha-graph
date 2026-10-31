@@ -64,12 +64,12 @@
 
 ## v1.75 Meta-surface threat audit (Shipped: 2026-10-31)
 
-**Delivered:** M182. A real security-audit slice: threat register for the C1/C1b/C5 meta surfaces and the replay reader gate, with an adversarial test per mitigated threat. No feature, no thaw.
+**Delivered:** M182. A real security-audit slice: threat register for the C1/C1b/C5 meta surfaces and the replay reader gate; at close 6 threats had a direct adversarial test and 2 were transitively covered (direct falsifiers added in M183). No feature, no thaw.
 
 **Phases completed:** 269 (1 plan)
 
 **Key accomplishments:**
-- Register: 10 threats, 4 trust boundaries, 8 mitigated, 2 accepted with re-open triggers.
+- Register: 10 threats, 4 trust boundaries; at close 6 direct, 2 transitive (direct falsifiers in M183), 2 accepted with re-open triggers.
 - **Defect found and fixed:** meta replay was O(n²) (2000 pack installs ≈ 2.18 s on open); single-pass tracker plus incremental manifest checks bring it to ~13 ms.
 - Admission and replay share `PackLifecycleTracker` and `check_proposal`; the verifier caught that the first unification dropped retired-pack operator release, and the fix plus a regression test are in.
 - Two threats are recorded as transitively covered by the generic `StoreBlob` digest gate rather than claimed as direct tests.
