@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Product: replay-side meta revalidation
+
+- `replay_check` (and therefore `open`) now revalidates C1 pack lifecycle ordering, C1b manifest identity, and C5 enrichment proposals in log order. A hand-edited or foreign-written segment fails closed instead of deriving a silently wrong lease.
+- Source existence for enrichment is rechecked only on an uncompacted log: a checkpoint may legitimately drop the cited product rows.
+- Added `crates/kutha-runtime/tests/m180_replay_meta.rs` (8 tests). No new Op and no graph-fact change.
+- Tests: replay meta 8/8, workspace 798 passed / 0 failed.
+
 ## 2026-10-31 — Trajectory: M179-S01 closed (Gate GC)
 
 - GSD v1.72 closed; phase 265 archived. `Active Milestone=None`, `L_delivery=M179-S01-closed`.

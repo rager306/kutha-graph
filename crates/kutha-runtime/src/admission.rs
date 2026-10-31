@@ -197,7 +197,10 @@ impl Runtime {
 
     /// Replay D021 lifecycle facts from the existing log and validate the next
     /// transition. Lifecycle state is meta-only and never enters the graph fold.
-    fn check_pack_lifecycle(log: &[kutha_common::Event], next: &Op) -> Result<(), RuntimeError> {
+    pub(crate) fn check_pack_lifecycle(
+        log: &[kutha_common::Event],
+        next: &Op,
+    ) -> Result<(), RuntimeError> {
         use kutha_common::Op;
 
         #[derive(Clone, Copy, PartialEq, Eq)]

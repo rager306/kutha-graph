@@ -2,7 +2,7 @@
 
 ## Overview
 
-v1.72 answers **Gate GC** with a read-only probe: a toy (non-legal) pack installs, is queried through GPML `AS OF`, retires, and replays with zero core edits. The probe uses only the C1/C1b surfaces and the existing query IR; it does not use C5. No operator execution, no dictionary facets, no HNSW, no WASM, no legal pack, no ADR Accepted.
+v1.73 hardens **replay honesty** for the C1/C1b/C5 meta surfaces. Admission already fails closed at write time, but `replay_check` and `Runtime::open` accepted a hand-edited log whose pack lifecycle, manifests, or enrichment proposals were inconsistent. This milestone revalidates those surfaces on replay and rejects the store instead of deriving a silently wrong lease. No new Op, no new feature, no thaw.
 
 ## Id map
 
@@ -10,25 +10,40 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [x] **Phase 265: Gate GC toy-pack zero-core-edit probe** - install, GPML AS OF query, retire, replay parity; zero core edits (completed 2026-10-31)
+- [ ] **Phase 266: Replay-side pack lifecycle revalidation** - lifecycle ordering and manifest identity rechecked on replay
+- [ ] **Phase 267: Replay-side enrichment validation** - proposal identity, sources, payload, and cache key rechecked on replay
 
 ## Phase Details
 
-### Phase 265: Gate GC toy-pack zero-core-edit probe
-**Goal**: Prove a toy pack installs, queries through GPML AS OF, and retires with zero core edits.
-**Depends on**: Phase 264
-**Requirements**: GC-01
+### Phase 266: Replay-side pack lifecycle revalidation
+**Goal**: Reject a log whose pack lifecycle or manifest is inconsistent, instead of deriving a partial lease.
+**Depends on**: Phase 265
+**Requirements**: RPL-01
 **Success Criteria**:
-  1. A toy pack installs with a manifest and active lifecycle; product facts remain pack-agnostic.
-  2. GPML `AS OF` returns the expected cut before and after retire; no core file changes for the probe.
-  3. Retire + replay is parity-equal on facts, fingerprint, lifecycle, and operator registry.
-**Plans**: 1/1 plans complete
+  1. `replay_check` and `open` reject activate-before-install, duplicate install, retire-of-unknown, and version mismatch.
+  2. A cited manifest must exist, match its digest, and match the install identity.
+  3. A valid store still opens and derives the same lifecycle/registry as before.
+**Plans**: 1 plan
 
 Plans:
-- [x] 265-01-PLAN.md — Gate GC probe and recorded evidence
+- [ ] 266-01-PLAN.md — replay validation for lifecycle and manifests
+
+### Phase 267: Replay-side enrichment validation
+**Goal**: Reject a log whose enrichment proposals are inconsistent.
+**Depends on**: Phase 266
+**Requirements**: RPL-02
+**Success Criteria**:
+  1. Replay rejects unknown/retired pack, wrong version, empty pins, missing source, missing/mismatched payload, duplicate cache key.
+  2. A valid store still opens and derives the same ledger.
+  3. Graph facts and fingerprint are unchanged by the new checks.
+**Plans**: 1 plan
+
+Plans:
+- [ ] 267-01-PLAN.md — replay validation for enrichment proposals
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 265. Gate GC toy-pack zero-core-edit probe | 1/1 | Complete    | 2026-10-31 |
+| 266. Replay-side pack lifecycle revalidation | 0/1 | Pending | — |
+| 267. Replay-side enrichment validation | 0/1 | Pending | — |

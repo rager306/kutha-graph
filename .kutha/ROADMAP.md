@@ -8,6 +8,13 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
+## M180: Replay-side meta revalidation — ACTIVE (harness lease)
+
+Bounded honesty hardening: replay and open revalidate C1/C1b/C5 meta instead of deriving a silently wrong lease from a hand-edited log. No new Op, feature, or thaw.
+
+- [ ] **S01: replay lifecycle, manifest, and enrichment checks** `risk:medium` `depends:[]`
+  > After this: an inconsistent meta log fails closed on open; a valid store opens unchanged.
+
 ## M179: Gate GC toy-pack probe — CLOSED (harness lease)
 
 Bounded Gate GC evidence delivered: a toy non-legal pack installs, product facts answer GPML AS OF, the pack retires, and replay is parity-equal with zero core edits. No legal pack, operator execution, HNSW, WASM, or marketplace.

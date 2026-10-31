@@ -78,6 +78,15 @@ pub fn validate_proposal(
     validate_proposal_with_payload(log, blobs, proposal, None)
 }
 
+/// Validation mode for replay. A checkpoint may legitimately drop the product
+/// rows a proposal cited, so source existence is only rechecked on a log that
+/// has not been compacted.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SourceCheck {
+    Required,
+    Compacted,
+}
+
 /// Validate a proposal whose payload has not been appended yet.
 ///
 /// `pending` is the `(digest, bytes)` the caller is about to store. It is used
@@ -88,6 +97,17 @@ pub fn validate_proposal_with_payload(
     blobs: &HashMap<String, Vec<u8>>,
     proposal: &Op,
     pending: Option<(&str, &[u8])>,
+) -> Result<(), EnrichmentError> {
+    validate_proposal_with_mode(log, blobs, proposal, pending, SourceCheck::Required)
+}
+
+/// Validate with an explicit source-existence mode.
+pub fn validate_proposal_with_mode(
+    log: &[Event],
+    blobs: &HashMap<String, Vec<u8>>,
+    proposal: &Op,
+    pending: Option<(&str, &[u8])>,
+    source_check: SourceCheck,
 ) -> Result<(), EnrichmentError> {
     let Op::EnrichmentProposal {
         pack_id,
@@ -142,12 +162,14 @@ pub fn validate_proposal_with_payload(
             pack_id: pack_id.clone(),
         });
     }
-    let known: std::collections::HashSet<EventId> = log.iter().map(|event| event.id).collect();
-    for event_id in source_event_ids {
-        if !known.contains(event_id) {
-            return Err(EnrichmentError::MissingSource {
-                event_id: *event_id,
-            });
+    if source_check == SourceCheck::Required {
+        let known: std::collections::HashSet<EventId> = log.iter().map(|event| event.id).collect();
+        for event_id in source_event_ids {
+            if !known.contains(event_id) {
+                return Err(EnrichmentError::MissingSource {
+                    event_id: *event_id,
+                });
+            }
         }
     }
     let pending_bytes = pending

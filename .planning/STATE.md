@@ -1,19 +1,19 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.72
-status: Awaiting next milestone
-stopped_at: Phase 265 complete — all phases complete
+milestone: v1.73
+status: planning
+stopped_at: Phase 266 ready to execute
 last_updated: "2026-10-30T19:43:19.113Z"
 last_activity: 2026-10-31
-last_activity_desc: Milestone v1.72 completed and archived
+last_activity_desc: Milestone v1.73 started; replay revalidation planned
 state_head: aa8238972e7f05594dec52b4b25cdcd82ef5bcd3
 progress:
-  total_phases: 1
-  completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
-milestone_name: Gate GC toy-pack probe
-current_phase: null
+  total_phases: 2
+  completed_phases: 0
+  total_plans: 2
+  completed_plans: 0
+milestone_name: Replay-side meta revalidation
+current_phase: 266
 ---
 
 Total Phases: 0
@@ -25,14 +25,14 @@ Total Phases: 0
 See: .planning/PROJECT.md (updated 2026-10-29)
 
 **Core value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
-**Current focus:** v1.72 Gate GC toy-pack probe (M179-S01), complete.
+**Current focus:** v1.73 replay-side meta revalidation (M180-S01), phase 266.
 
 ## Current Position
 
-Phase: Milestone v1.72 complete
-Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-10-31 — Milestone v1.72 completed and archived
+Phase: 266 — Replay-side pack lifecycle revalidation
+Plan: 266-01
+Status: Ready to execute
+Last activity: 2026-10-31 — Milestone v1.73 started; replay revalidation planned
 
 ## Accumulated Context
 
@@ -71,4 +71,4 @@ Resume file: None
 
 
 
-- Start the next milestone with /gsd-new-milestone
+- Execute phase 266 with the plan below.

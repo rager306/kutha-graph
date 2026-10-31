@@ -86,7 +86,66 @@ impl Runtime {
                 }
             }
         }
+        Self::check_meta_replay(self.log.as_slice())?;
         Ok(rebuilt)
+    }
+
+    /// Revalidate C1/C1b/C5 meta in log order.
+    ///
+    /// Admission is the writer gate; replay is the reader gate. A hand-edited
+    /// or foreign-written segment must not open with a silently wrong lease.
+    /// Each meta op is checked against the prefix that preceded it, so a blob
+    /// that appears after the install it claims to serve fails closed.
+    fn check_meta_replay(events: &[Event]) -> Result<(), RuntimeError> {
+        let mut blobs: HashMap<String, Vec<u8>> = HashMap::new();
+        // A checkpoint means product rows may legitimately be absent from the
+        // prefix, so source existence is not rechecked for the whole log.
+        let compacted = events.iter().any(|e| matches!(e.op, Op::Checkpoint { .. }));
+        for (index, event) in events.iter().enumerate() {
+            let prefix = &events[..index];
+            match &event.op {
+                Op::StoreBlob { digest, bytes } => {
+                    blobs.insert(digest.clone(), bytes.clone());
+                }
+                Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. } => {
+                    Self::check_pack_lifecycle(prefix, &event.op)?;
+                    if let Op::PackInstall {
+                        manifest_digest: Some(_),
+                        ..
+                    } = &event.op
+                    {
+                        crate::pack_manifest::validate_install(prefix, &blobs, &event.op).map_err(
+                            |err| RuntimeError::PackLifecycleRejected {
+                                pack_id: match &event.op {
+                                    Op::PackInstall { pack_id, .. } => pack_id.clone(),
+                                    _ => String::new(),
+                                },
+                                reason: format!("replay manifest: {err}"),
+                            },
+                        )?;
+                    }
+                }
+                Op::EnrichmentProposal { .. } => {
+                    let source_check = if compacted {
+                        crate::enrichment::SourceCheck::Compacted
+                    } else {
+                        crate::enrichment::SourceCheck::Required
+                    };
+                    crate::enrichment::validate_proposal_with_mode(
+                        prefix,
+                        &blobs,
+                        &event.op,
+                        None,
+                        source_check,
+                    )
+                    .map_err(|err| RuntimeError::EnrichmentRejected {
+                        reason: format!("replay: {err}"),
+                    })?;
+                }
+                _ => {}
+            }
+        }
+        Ok(())
     }
 
     /// Snapshot-held walls + `ingested_at` vs log `Op::TtAnchor` (D-02). Not fingerprint input.
