@@ -221,38 +221,92 @@ fn cache_key_lease_is_updated_on_commit() {
     assert_eq!(rt.enrichment_ledger().len(), 1);
 }
 
-/// F3: a proposal citing a source that only exists as a compacted row must be
-/// rejected by admission too, not just by replay.
+/// F3: a real checkpointed store. A tail proposal citing a source that the
+/// checkpoint dropped must be rejected by admission and by replay alike.
 #[test]
-fn compacted_source_is_not_a_valid_source_for_admission() {
+fn checkpoint_tail_proposal_cannot_cite_a_dropped_source() {
+    use kutha_runtime::store;
+
+    struct Reset;
+    impl Drop for Reset {
+        fn drop(&mut self) {
+            store::reset_test_segment_limits();
+        }
+    }
+    let _reset = Reset;
+    store::set_test_segment_limits(Some(4096), Some(2));
+
     let mut rt = Runtime::default();
     install_and_activate(&mut rt);
     let src = source(&mut rt);
-    // A fresh proposal citing an id that was never in the log is refused.
-    let err = rt
+    let dir = std::path::PathBuf::from("tmp/m185-checkpoint-source");
+    std::fs::remove_dir_all(&dir).ok();
+    rt.persist(&dir).expect("persist");
+    let article = rt.intern("article");
+    let relation = rt.intern("relatedTo");
+    let object = rt.intern("value");
+    for _ in 0..6 {
+        rt.emit(Op::Assert {
+            subject: article,
+            relation,
+            object,
+            valid_from: 2011,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .expect("assert");
+    }
+    rt.persist(&dir).expect("persist sealed");
+    store::checkpoint_sealed_prefix(&dir).expect("checkpoint");
+
+    let mut opened = Runtime::open(&dir).expect("open");
+    // The cited source row was compacted away, so it is not a visible source.
+    let err = opened
         .emit_enrichment_proposal(
             "enrich",
             "1.0.0",
-            vec![kutha_common::EventId::nil()],
+            vec![src],
             "m",
             "p",
-            "k",
+            "tail",
             b"payload".to_vec(),
         )
-        .expect_err("unknown source");
-    assert!(matches!(
-        err,
-        RuntimeError::EnrichmentRejected { reason } if reason.contains("source event")
-    ));
-    // The real source still works.
-    rt.emit_enrichment_proposal(
-        "enrich",
-        "1.0.0",
-        vec![src],
-        "m",
-        "p",
-        "k2",
-        b"payload".to_vec(),
-    )
-    .expect("visible source");
+        .expect_err("dropped source");
+    assert!(
+        matches!(
+            &err,
+            RuntimeError::EnrichmentRejected { reason } if reason.contains("source event")
+        ),
+        "unexpected error: {err:?}"
+    );
+    // A tail source that is visible still works, and replay agrees.
+    let tail = opened
+        .emit(Op::Assert {
+            subject: article,
+            relation,
+            object,
+            valid_from: 2012,
+            valid_to: None,
+            claim: None,
+            delivery_key: None,
+            polarity: None,
+        })
+        .expect("tail assert")
+        .receipt
+        .event_ids[0];
+    opened
+        .emit_enrichment_proposal(
+            "enrich",
+            "1.0.0",
+            vec![tail],
+            "m",
+            "p",
+            "tail-ok",
+            b"payload".to_vec(),
+        )
+        .expect("visible tail source");
+    opened.replay_check().expect("replay agrees");
+    std::fs::remove_dir_all(&dir).ok();
 }

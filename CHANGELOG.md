@@ -10,7 +10,8 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - Admission and replay now share `check_proposal`; the log-scanning `validate_proposal`/`validate_proposal_with_payload` wrappers were removed so there is one rule.
 - The cache-key and log-id leases are rebuilt on hydrate/open/fork and updated on commit.
 - **Verifier blocker, fixed:** the first attempt never updated the cache-key lease on commit, cloned the whole key set per write, and used a source predicate broader than replay's. All three are fixed; `check_proposal` is read-only and the caller inserts after commit.
-- Added `crates/kutha-runtime/tests/m185_enrichment_admission.rs` (6 tests), including 200 proposals, commit-side lease update, and compacted-source parity.
+- Added `crates/kutha-runtime/tests/m185_enrichment_admission.rs` (6 tests), including 200 proposals, commit-side lease update, and a real checkpointed store whose tail proposal citing a dropped source is rejected by admission and replay alike.
+- `intern` now records its `Op::Define` id in the visible-log lease (every append path passes `append_indexed`), so a live lease matches a hydrated one.
 - Tests: enrichment admission 6/6, workspace 832 passed / 0 failed.
 
 ## 2026-10-31 — Trajectory: M184-S01 closed (admission index)

@@ -160,6 +160,11 @@ impl Runtime {
                     let state = lifecycle
                         .state(pack_id)
                         .map(|state| (state, lifecycle.version(pack_id).unwrap_or("").to_string()));
+                    // The kept prefix copies proposals verbatim, and a proposal
+                    // may only cite rows that were visible when it was written.
+                    // A checkpoint can drop the cited product rows, so a
+                    // pre-checkpoint proposal is exempt; a tail proposal is
+                    // judged against the visible log, as admission does.
                     let compacted = first_checkpoint.is_some_and(|cut| index < cut);
                     let mut source_known =
                         |id: kutha_common::EventId| compacted || known_ids.contains(&id);

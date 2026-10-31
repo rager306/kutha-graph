@@ -240,6 +240,9 @@ impl Runtime {
     pub(crate) fn append_indexed(&mut self, event: Event) {
         let pos = self.log.len();
         self.by_event_id.insert(event.id, pos);
+        // Every append path reaches here, including `intern`'s `Op::Define`,
+        // so the visible-log lease stays a faithful mirror.
+        self.log_ids.insert(event.id);
         if let Op::Assert {
             relation,
             delivery_key: Some(k),
@@ -291,7 +294,6 @@ impl Runtime {
     }
 
     pub(crate) fn commit_event(&mut self, event: Event) {
-        self.log_ids.insert(event.id);
         self.fold.apply(&event);
         // Keep the droppable operator index in step with the log so admission
         // sees the same names replay will.
