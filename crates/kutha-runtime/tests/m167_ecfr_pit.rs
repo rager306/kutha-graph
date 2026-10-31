@@ -139,10 +139,10 @@ fn ecfr_pit_probe_reads_three_editions_from_real_text() {
             }
         }
         // Two distinct extracted texts per section, and exactly two: the
-        // 2017-01-23 edition is a citation-only amendment whose XREF note is
-        // dropped by extraction. If a future fetch ever yields a third
-        // distinct text, this assertion fires and the fixture must be
-        // re-read rather than silently accepted.
+        // 2017-01-23 edition is a citation-only amendment (published then,
+        // effective 2017-03-14) whose XREF note extraction drops. This count
+        // assert is what catches a LOST edition; a gained edition trips the
+        // equality asserts above instead.
         assert_eq!(edition_text(section, 0), edition_text(section, 1));
         assert_ne!(edition_text(section, 1), edition_text(section, 2));
         assert_eq!(

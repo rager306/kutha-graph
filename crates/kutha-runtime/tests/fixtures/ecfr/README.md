@@ -31,7 +31,7 @@ The probe must preserve these equal/different facts; do not "normalize" the text
 **Why the 2017-01-23 edition adds no text (checked 2026-10-31):** the raw XML at
 that date differs from 2015-12-18 by one `<XREF>` note, "Link to an amendment
 published at 82 FR 7632, Jan. 23, 2017." That is a citation-only amendment; the
-operative text is unchanged and extraction drops the note. Sections 304.1,
+operative text is unchanged and extraction drops the note. Sections 304.1, 304.2,
 304.3, 304.5, 304.6, 304.8, 304.9, and 304.10 were all checked and all collapse
 to two distinct extracted texts at these three dates. See
 `docs/architecture/ecfr-edition-ambiguity.md`. Do not add a fabricated third

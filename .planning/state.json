@@ -3,7 +3,7 @@
   "flavor": "core",
   "milestone": "v1.74",
   "phases": [
-    { "number": "268", "name": "eCFR fourth section distinct editions", "status": "pending" }
+    { "number": "268", "name": "eCFR edition ambiguity explained", "status": "pending" }
   ],
   "next": { "command": "/gsd-progress", "label": "Show progress", "reason": "Milestone v1.74 planned" },
   "updated_at": "2026-10-31T00:00:00.000Z"
