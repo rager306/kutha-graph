@@ -1,39 +1,76 @@
 ---
 phase: 274-meta-lease-overhead-a-b-evidence
 independent: true
-status: passed
-verifier_model: codebuddy/deepseek-v4.1-flash
+status: gaps_found
+verifier_model: glm-5.3
 commands:
+  - cmd: uv run python tmp/m186-verify/recompute.py
+    exit: 0
   - cmd: uv run kutha-gov precommit
-    exit: 0
-  - cmd: cargo test --workspace
-    exit: 0
-  - cmd: uv run kutha-gov ci --jobs 1
     exit: 0
 read_only_inputs:
   - docs/architecture/benchmark-baseline.md
   - CHANGELOG.md
-  - .planning/phases/274-meta-lease-overhead-a-b-evidence/274-01-PLAN.md
   - .kutha/STATE.md
+  - .planning/MILESTONES.md
+  - .planning/milestones/v1.79-REQUIREMENTS.md
+  - .compound-engineering/artifacts/research/2026-10-31-m186-ab-samples.md
 ---
 
-# Phase 274 verification — lease overhead A/B
+# Phase 274 verification — lease overhead A/B (re-verified after the correction)
 
-The first independent verifier **blocked** this slice and was right: the recorded numbers matched the raw logs exactly, but the scope claim was false. `4db8770` is the v1.77 close, so it already contained v1.77's per-append upkeep; the A/B measured **v1.78 only** while the doc and CHANGELOG said "v1.77 and v1.78". The base worktree was also deleted, so the baseline arm could not be audited from disk.
+**Scope history, kept.** The first independent verifier blocked this slice and
+was right: the scope claim was false. `4db8770` is the v1.77 close, so the first
+A/B measured **v1.78 only** while the documents said v1.77 + v1.78, and the base
+worktree had been deleted. Fixed before close: a second interleaved A/B against
+`05dfea0` (v1.76 close) isolates both milestones, both base commit ids resolve,
+and spreads are stated.
 
-Fixed before close: a second interleaved A/B against `05dfea0` (v1.76 close) isolates v1.77 + v1.78; base commit ids are recorded in the doc because the worktrees are removed; spreads are stated; and the doc now distinguishes the pre-registered keys from the ones that move further.
+**Retraction.** An earlier version of this file said "the recorded numbers
+matched the raw logs exactly". That sentence was **wrong**. Four of the six A/B2
+head medians had not been computed from sorted samples; recomputing them moved
+`ingest_plain.n` from −6.2% to −4.2%, `as_of.n` from −7.7% to +1.7%,
+`ingest_plain.4n` from +7.1% to +5.8%, and `ingest_keyed.n` from +9.3% to +12.1%.
+Only `as_of.2n` (+19.0%) and `persist_append.n` (+30.1%) were already right.
 
-The second run changed the conclusion in an important way: `ingest_plain.n` is **−6.2%** (faster) against the pre-v1.77 base, but **`as_of.2n` is +19.0%**, reproduced at +16.3% in the other A/B. That is recorded as an **open, unexplained residual** above the 10% gate. It is not attributed to the leases (they act on append; `as_of` is a read), and the bench exercises no meta write at all, so the benefit side is cited from the v1.77 install measurement rather than measured here.
+**What this re-verification checked.** A fresh script recomputed all 36 medians
+(6 metrics x 6 arms) from the 44 retained logs as sorted-sample medians; every
+value matches `.compound-engineering/artifacts/research/2026-10-31-m186-ab-samples.md`.
+A/B2 ratios recompute to −4.19%, +1.75%, +19.00%, +5.78%, +12.13%, +30.06%
+(documents: −4.2%, +1.7%, +19.0%, +5.8%, +12.1%, +30.1%); A/B1 to +2.72%,
++5.69%, +16.31% (stated +2.7%, +5.7%, +16.3%); the toggle to +11.39%, −4.90%,
+−2.23% (stated +11.4%, −4.9%, −2.2%).
 
-Final gate: `cargo test --workspace` green; `kutha-gov ci --jobs 1` exit 0.
+The gate framing is now correct: AGENTS.md gates `ingest_plain.n` and `as_of.n`
+with a 10% stop, no document calls `as_of.2n` or `ingest_keyed.n` "the 10% gate",
+and `ingest_keyed.n` +12.1% is labelled secondary in `.kutha/STATE.md`,
+`CHANGELOG.md`, `.planning/MILESTONES.md`, the milestone requirements and the
+phase summary. No canonical document still cites 118824960, 121145614 or
+455890543; those three now survive only in the audit review, and the old ratios
+only in the intentional "(was ...)" history.
 
-## Post-close falsification correction
+The reproducibility claim holds: no env-gated `log_ids` toggle exists in the tree
+(`pipeline.rs` inserts unconditionally; the env reads in `crates/kutha-runtime/src`
+are the pre-existing `KUTHA_FOLD_INDEX_MODE`, `KUTHA_MAX_CASCADE`, the migration
+and tenant binaries, and the harness allow-file path), the probe target directory
+and binary are gone, and the documents call the toggle run "recorded evidence, not
+a reproducible procedure". The structural argument is verified: the
+`05dfea0..HEAD` diff on `fold.rs`, `leapfrog.rs` and `fold_query.rs` is empty, as
+is the benches diff.
 
-After close, a toggle-only falsification run (same binary, env-gated `log_ids`
-insert, 10 interleaved samples) showed `as_of.2n` moves **−2.2%** when the lease
-is off — there is no `as_of` effect at all. The `as_of.2n` moves in the two A/Bs
-against older bases were host-load drift between interleaved runs, not a lease
-cost; the read path is unchanged between the bases. The real lease cost is
-`ingest_plain.n` +11.4%, which pre-sizing does not recover and which is accepted.
+**Gap — why this file is `gaps_found`, not `passed`.** Two head-range minima in
+the same A/B2 table still do not match the retained logs: `ingest_keyed.n` reads
+113.2–139.5M but the retained minimum is 119,831,330 (119.8M), and
+`persist_append.n` reads 3.9–15.2M but the retained minimum is 4,443,268 (4.4M).
+Ten of twelve range cells match exactly, and the medians and ratios are correct;
+these two cells predate the correction and were not recomputed. Correcting them
+to 119.8M and 4.4M is a documentation edit and makes this file `passed`. Minor,
+non-blocking: `as_of.n` pre median is printed 78536 while the exact value is
+78536.5; the A/B1 base `as_of` spread cell excludes the kept 253,099 outlier; and
+the "unsorted positional samples" diagnosis is exact for `ingest_plain.n`
+(118,824,960 = mean of samples 3+4) but the other two old values cannot be
+reconstructed from any subset of the retained six.
 
-Recorded as an honesty correction to the close, not a code change.
+**Gate.** `uv run kutha-gov precommit` exit 0 (`run_high=0`), run after the
+correction. No cargo run: no code changed. Command log, exit statuses and the
+recomputation table: `.compound-engineering/artifacts/reviews/2026-10-31-m186-correction-verification.md`.

@@ -112,7 +112,7 @@ usable; absolute numbers are not comparable across sessions.
 | 6 | 120579264 | 125827017 | 74018 | 82393 |
 | **median** | **124571495** | **127965659** | **73632** | **77825** |
 | ratio | — | **1.027** | — | **1.057** |
-| spread | 106.6–155.1M (45.5%) | 107.4–135.8M (26.4%) | 73.1–85.7k | 68.1–113.8k |
+| spread | 106.6–155.1M (45.5%) | 107.4–135.8M (26.4%) | 73.1–253.1k | 68.1–113.8k |
 
 Named outlier, kept in the table: base sample 4 `as_of.n` 253099 ns is 3.4x the
 base median. Dropping it moves the base median to 73246 and the delta to +6.3%,
@@ -123,11 +123,11 @@ so the median is robust to it.
 | metric | pre median | head median | ratio | pre range | head range |
 |--------|-----------:|------------:|------:|-----------|------------|
 | `ingest_plain.n` | 126665566 | 121352717 | **0.958** | 112.3–136.3M | 110.4–132.7M |
-| `as_of.n` | 78536 | 79908.5 | **1.017** | 73.8–140.7k | 68.6–127.4k |
+| `as_of.n` | 78536.5 | 79908.5 | **1.017** | 73.8–140.7k | 68.6–127.4k |
 | `as_of.2n` | 160599 | 191120.5 | **1.190** | 147.4–177.3k | 158.6–227.4k |
 | `ingest_plain.4n` | 425505688 | 450096298.5 | 1.058 | 384.3–505.4M | 434.6–491.9M |
-| `ingest_keyed.n` | 110857378 | 124302089.5 | 1.121 | 106.5–126.1M | 113.2–139.5M |
-| `persist_append.n` | 5612320 | 7299392.5 | 1.301 | 3.1–13.6M | 3.9–15.2M |
+| `ingest_keyed.n` | 110857378 | 124302089.5 | 1.121 | 106.5–126.1M | 119.8–139.5M |
+| `persist_append.n` | 5612320 | 7299392.5 | 1.301 | 3.1–13.6M | 4.4–15.2M |
 
 **Correction (2026-10-31, post-close audit).** Four of the six head medians above
 were first published from unsorted positional samples. The table is now
