@@ -1,5 +1,21 @@
 # Project Milestones: Kutha
 
+## v1.80 Test honesty (Shipped: 2026-10-31)
+
+**Delivered:** M187. The five test defects from the 2026-10-31 audit wave, plus the `QueryRejected` error-taxonomy claim, are closed with tests that fail for the reason they name.
+
+**Phases completed:** 275–276 (3 plans)
+
+**Key accomplishments:**
+- Enrichment replay tests use a real source event and assert "not installed" / "cache key"; three pack-level replay tests cover version-mismatch activate, second activate and second retire.
+- The eCFR probe's equality asserts are the falsifier; the redundant `len == 2` assert is gone.
+- Eleven fixed relative `tmp/` sites use `common::PersistScratch`; concurrent runs of the six affected binaries pass.
+- The scaling oracles count product-gate work (thread-local replay counter, `OperatorIndex::declarations`); a per-prefix rebuild fails (8,002,000 vs 4,000), and no wall-clock assertion remains.
+- `SecurityError::QueryRejected` is constructed by `from_query_error` with two tests; 257/258 re-verified as passed.
+- Tests: 11 targeted binaries 74/0; workspace 837 passed / 0 failed; `kutha-gov precommit` exit 0; independent verifier PASS (round 3).
+
+---
+
 ## v1.79 Meta lease overhead A/B (Shipped: 2026-10-31)
 
 **Delivered:** M186. Performance honesty: the per-append meta-lease cost is a measured number with an open residual, not an assumption.

@@ -14,17 +14,17 @@ and what needs a governor intake. Nothing here is a capability claim; ADRs stay 
 | `89bc325`, `8acee31` | v1.73–v1.75 claim wording corrected; v1.73/v1.74 verification re-issued as `gaps_found` after mutation checks |
 | `4141abe`, `35d2930` | eCFR third-edition recon (no edition added), licensing basis corrected, C2 milestone sketch |
 
-## Open defects — need a product lease (crates/)
+## Closed defects (M187, 2026-10-31)
 
-1. **v1.73 vacuity**: `m180_replay_meta.rs:164,190` still pass `source_event_ids: vec![]`; `enrichment.rs:108`
+1. **v1.73 vacuity** — **closed in M187**: `m180_replay_meta.rs:164,190` still pass `source_event_ids: vec![]`; `enrichment.rs:108`
    rejects before the checks they name. Fix: real `source_event(0).id` + assert reason.
-2. **v1.73 replay gaps**: pack-level version mismatch and double activate/retire have no replay test.
-3. **v1.74 falsifier**: `m167_ecfr_pit.rs:141-159` — keep the count assert and drop the equality asserts,
+2. **v1.73 replay gaps** — **closed in M187**: pack-level version mismatch and double activate/retire have no replay test.
+3. **v1.74 falsifier** — **closed in M187**: `m167_ecfr_pit.rs:141-159` — keep the count assert and drop the equality asserts,
    or drop the count assert; the comment at `:141-145` states the false direction.
-4. **Cross-run tmp collisions**: `m178_enrichment.rs:199,223`, `m179_gate_gc.rs:102,127`,
+4. **Cross-run tmp collisions** — **closed in M187**: `m178_enrichment.rs:199,223`, `m179_gate_gc.rs:102,127`,
    `m185_enrichment_admission.rs:242` use fixed relative `tmp/` dirs plus `remove_dir_all`; concurrent
    workspace runs delete a peer's store. Make them unique or serialise.
-5. **Wall-clock oracles**: `m182_meta_threats.rs::replay_meta_is_not_quadratic` (3 s absolute) and
+5. **Wall-clock oracles** — **closed in M187**: `m182_meta_threats.rs::replay_meta_is_not_quadratic` (3 s absolute) and
    `m183_digest_falsifiers.rs::manifest_replay_scales_linearly_with_packs` (ratio + 50 ms) — replace with
    structural assertions (counters/op counts), as M184 did.
 
@@ -37,8 +37,7 @@ and what needs a governor intake. Nothing here is a capability claim; ADRs stay 
 
 ## Decisions pending (owner)
 
-**M187 is leased (2026-10-31).** `.kutha/STATE.md` is `M187` / `S01`; GSD **v1.80 Test honesty**, phases 275–276
-(plans written, executors running). C2 becomes **M188 / v1.81 / phases 277–279** and waits for this lease to close.
+**M187 closed (2026-10-31).** GSD **v1.80 Test honesty**, phases 275–276, independent verifier round 3 PASS. C2 is next: **M188 / v1.81 / phases 277–279**.
 
 **Identity collision resolved by proposal, not by a lease.** Both sketches claimed M187 / v1.80. The M187
 sketch (`2026-10-31-m187-test-honesty-sketch.md`) argues test honesty first, because its defect 4 (fixed

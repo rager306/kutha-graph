@@ -4,6 +4,14 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Trajectory: M187-S01 closed (test honesty, v1.80)
+
+- Closed the five test defects found by the 2026-10-31 audit wave. Phase 275: the two enrichment replay tests pass a real source event and assert "not installed" / "cache key"; three pack-level replay tests (version-mismatch activate, second activate, second retire); the redundant eCFR count assert removed so the equality asserts are the falsifier.
+- Phase 276: fixed relative `tmp/` paths replaced by `common::PersistScratch` in 11 sites (m176–m179, m184, m185); the scaling oracles measure the product gate through a thread-local replay counter read by `Runtime::meta_replay_probe()`, so a per-prefix rebuild fails (8,002,000 vs 4,000) and no wall-clock assertion remains. `SecurityError::QueryRejected` is now constructed by `from_query_error` (UnknownTerm/RelsShape) with two tests; 257/258 re-verified.
+- Bench (host-contended; no claim): `ingest_plain.n` 145.3→114.6 ms median, `as_of.n` 79.8→86.0 µs, `as_of.2n` 190.4→164.2 µs, `ingest_keyed.n` 155.4→135.4 ms; no hot-path file changed. Record: `.compound-engineering/artifacts/research/2026-10-31-v180-bench-record.md`.
+- Tests: 11 targeted binaries 74/0; workspace 837 passed / 0 failed (185 suites); `kutha-gov precommit` exit 0; independent verifier round 3 PASS on both phases.
+- GSD v1.80 closed; phases 275–276 archived; `Active Milestone=None`, `L_delivery=M187-S01-closed`. No thaw; honeycomb stays Proposed.
+
 ## 2026-10-31 — Process: Python tooling gate green, ty 0.0.92
 
 - `uv run kutha-gov py` now exits 0: `ruff check`, `ruff format --check`, `ty check`, and `pyrefly check` all OK. It had been red on `work/main-line` with the previous lock, and CI runs only `kutha-gov ci`, so this is a local harness gate, not a remote one.

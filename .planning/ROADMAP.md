@@ -13,8 +13,8 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [ ] **Phase 275: Replay oracles and the eCFR falsifier** - real enrichment fixtures, three lifecycle replay tests, an eCFR assert that cannot lie
-- [ ] **Phase 276: Scratch isolation, clock-free oracles, error taxonomy** - unique tmp dirs, structural scaling oracles, QueryRejected made true or removed
+- [x] **Phase 275: Replay oracles and the eCFR falsifier** - real enrichment fixtures, three lifecycle replay tests, an eCFR assert that cannot lie (completed 2026-10-31)
+- [x] **Phase 276: Scratch isolation, clock-free oracles, error taxonomy** - unique tmp dirs, structural scaling oracles, QueryRejected made true or removed (completed 2026-10-31)
 
 ## Phase Details
 
@@ -30,7 +30,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 **Plans**: 1/1 plans
 
 Plans:
-- [ ] 275-01-PLAN.md — fixtures, lifecycle replay tests, eCFR assert
+- [x] 275-01-PLAN.md — fixtures, lifecycle replay tests, eCFR assert
 
 ### Phase 276: Scratch isolation, clock-free oracles, error taxonomy
 
@@ -44,12 +44,12 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 276-01-PLAN.md — tmp isolation, structural oracles, taxonomy
-- [ ] 276-02-PLAN.md — remaining scratch sites, product-path counts, no wall-clock
+- [x] 276-01-PLAN.md — tmp isolation, structural oracles, taxonomy
+- [x] 276-02-PLAN.md — remaining scratch sites, product-path counts, no wall-clock
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 275. Replay oracles and the eCFR falsifier | 0/1 | Planned | — |
-| 276. Scratch isolation, clock-free oracles, error taxonomy | 0/2 | Planned | — |
+| 275. Replay oracles and the eCFR falsifier | 1/1 | Complete | 2026-10-31 |
+| 276. Scratch isolation, clock-free oracles, error taxonomy | 2/2 | Complete | 2026-10-31 |

@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M187
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,25 +13,25 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M187-S01
+L_delivery=M187-S01-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M187-S01 leased (GSD v1.80 test honesty) | New capability / ADR Accepted |
+| L_delivery | M187-S01 closed (test honesty; GSD v1.80) | New capability / ADR Accepted |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-**Active Milestone:** M187 · **Active Slice:** S01 — test honesty. Close the five test defects recorded in `.compound-engineering/artifacts/research/2026-10-31-open-items-index.md` (v1.73 vacuous enrichment tests, pack-level replay gaps, v1.74 eCFR assert, fixed `tmp/` collisions, wall-clock oracles) and the `QueryRejected` error-taxonomy decision that 257/258-VERIFICATION now record as `gaps_found`. Test-only plus one small, named error-taxonomy change: no new `Op`, no graph or log behaviour change, no thaw, no ADR Accepted. The M186 close record below is unchanged.
+**Active Milestone:** None. M187-S01 is closed under GSD **v1.80 test honesty**: the five audit defects are fixed, the scaling oracles count product-gate work (a per-prefix rebuild fails at 8,002,000 vs 4,000), `SecurityError::QueryRejected` is constructed by `from_query_error` with two tests, and 257/258 are re-verified as passed. Bench is host-contended and recorded without a claim. No thaw, no ADR Accepted. Next lease: **C2 dictionaries (M188 / v1.81, phases 277–279, vocabulary-first)**.
 
 M186-S01 is closed under GSD **v1.79 meta lease overhead A/B**. Two interleaved same-host A/Bs (6 samples each, `KUTHA_BENCH_N=10000`, bench source unchanged, separate target dirs, base commit ids recorded) measured the v1.77/v1.78 meta leases. Against `4db8770` (v1.77 close, isolates v1.78): `ingest_plain.n` +2.7%, `as_of.n` +5.7%, one 253 µs base outlier named not dropped. Against `05dfea0` (v1.76 close, isolates v1.77+v1.78): `ingest_plain.n` −4.2% (faster), `as_of.n` +1.7%, `as_of.2n` +19.0% (reproduced at +16.3% in the other A/B), `ingest_keyed.n` +12.1%. The bench gate in AGENTS.md covers `ingest_plain.n` and `as_of.n` only: both stay inside the 10% stop line, so the M186 keep decision stands; `ingest_keyed.n` **+12.1%** is above that line and is recorded as a secondary signal, not a gate failure. Decision: keep the leases for the write path (they remove an O(n) lifecycle rebuild per meta write); the benefit is cited from the v1.77 install measurement, not measured here. `as_of.2n` +19.0% has no structural mechanism: `fold.rs`, `leapfrog.rs`, and `fold_query.rs` are unchanged from `05dfea0` to HEAD, and a same-binary toggle run (10+10 samples) moved `as_of.2n` by −2.2% while costing `ingest_plain.n` +11.4%; the toggle patch was not preserved, so that run is recorded evidence, not a reproducible procedure. Post-close audit (2026-10-31) found four of six A/B2 head medians had been computed from unsorted positional samples; the corrected values are above and the per-sample record is `.compound-engineering/artifacts/research/2026-10-31-m186-ab-samples.md`. The first verifier blocked a false scope claim (the initial A/B measured v1.78 only) and a deleted baseline worktree; both are fixed. M185-S01 remains closed (enrichment admission leases). M184/M183/M182/M181/M180/M179/M178/M177/M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residual stays separate: remote rocks observe skipped. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 
-The freeze list came from agent-assisted commits (`1ee5942`, `85db1f7`, 2026-08-18, Cursor co-authored); the owner states he did not decide it. M002 is thawed (2026-10-03, owner's request). Every other item keeps its own named gate; nothing is thawed by "an M002 lease". M187 thaws nothing: no row below is active for the current lease; each entry states the future gate.
+The freeze list came from agent-assisted commits (`1ee5942`, `85db1f7`, 2026-08-18, Cursor co-authored); the owner states he did not decide it. M002 is thawed (2026-10-03, owner's request). Every other item keeps its own named gate; nothing is thawed by "an M002 lease". M187 thawed nothing. No row below is active at HEAD (`Active Milestone: None`); each entry states the future gate.
 
 | Item | Thaws when |
 |------|------------|

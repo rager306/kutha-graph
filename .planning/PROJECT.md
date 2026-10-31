@@ -10,13 +10,13 @@ Two orthogonal planes: **product** (`crates/kutha-common`, `crates/kutha-runtime
 
 A developer can prove **legal point-in-time** on a named statute-shaped fixture (`as_of(2015) ≠ as_of(2021)`), keep governor CI **honest**, and advance **one Active Slice at a time** — not “ship the honeycomb.”
 
-## Current Milestone: v1.80 Test honesty — active (M187)
+## Current Milestone: none active — v1.80 complete (M187)
 
-**Goal:** Close the five test defects found by the 2026-10-31 audits and the `QueryRejected` error-taxonomy claim (257/258 `gaps_found`). Test-only plus one named mapping in `security.rs`.
+**Next lease:** C2 dictionaries (M188 / v1.81, phases 277–279), vocabulary-first. Sketch: `.compound-engineering/artifacts/plans/2026-10-31-c2-vocabulary-milestone-sketch.md`.
 
-**Lease:** `.kutha/STATE.md` is `M187` / `S01`; phases 275–276. No thaw.
+**Lease:** `.kutha/STATE.md` is `Active Milestone=None` after M187 closed; no thaw taken by M187.
 
-**Last shipped:** v1.79 Meta lease overhead A/B (M186, 2026-10-31); v1.78 Enrichment admission leases (M185); v1.77 Admission operator index (M184). Honeycomb stays Proposed; ADR-094 records the shipped workspace shape.
+**Last shipped:** v1.80 Test honesty (M187, 2026-10-31); v1.79 Meta lease overhead A/B (M186); v1.78 Enrichment admission leases (M185). Honeycomb stays Proposed; ADR-094 records the shipped workspace shape.
 
 ## Business Context
 
