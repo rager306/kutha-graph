@@ -9,7 +9,7 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 - Added direct falsifiers for the raw-SHA-256 meta checks: a blob addressed by a policy hash passes the generic `StoreBlob` gate and is still rejected as a manifest or enrichment payload. Mutation-checked — disabling the raw check fails both tests.
 - Added `OperatorIndex` (operator→pack) and `validate_install_indexed`; replay collision detection is now O(1) per operator instead of a scan over all declared sets. A 400→1600 pack benchmark guards linearity.
 - Removed the unused `validate_install_against` path so there is one collision rule, not two.
-- Tests: digest falsifiers 4/4, workspace 815 passed / 0 failed.
+- Tests: digest falsifiers 5/5 (including an `OperatorIndex` re-declare/retire unit test), workspace 816 passed / 0 failed.
 
 ## 2026-10-31 — Trajectory: M182-S01 closed (meta-surface security)
 

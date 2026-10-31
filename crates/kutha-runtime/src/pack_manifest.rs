@@ -304,6 +304,9 @@ impl OperatorIndex {
             }
             owned.insert(operator);
         }
+        // Re-declaring replaces the previous set: drop names the pack no longer
+        // claims so ownership cannot go stale.
+        self.retire(pack_id);
         for operator in &owned {
             self.owner.insert(operator.clone(), pack_id.to_string());
         }
@@ -323,7 +326,6 @@ impl OperatorIndex {
     pub fn owner_of(&self, operator: &str) -> Option<&str> {
         self.owner.get(operator).map(String::as_str)
     }
-
 }
 
 /// Validate an install against a blob map and an [`OperatorIndex`].

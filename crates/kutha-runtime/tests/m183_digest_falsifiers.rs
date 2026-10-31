@@ -204,3 +204,34 @@ fn manifest_replay_scales_linearly_with_packs() {
         "4x packs took {t_large:?} vs {t_small:?}; collision scan looks super-linear"
     );
 }
+
+/// OperatorIndex unit behaviour: collision, re-declare, retire release.
+#[test]
+fn operator_index_handles_redeclare_and_retire() {
+    use kutha_runtime::{OperatorIndex, PackManifestError};
+
+    let mut index = OperatorIndex::new();
+    index
+        .declare("a", vec!["one".into(), "two".into()])
+        .expect("first");
+    assert_eq!(index.owner_of("one"), Some("a"));
+
+    // Another pack cannot take an owned name.
+    assert!(matches!(
+        index.declare("b", vec!["one".into()]),
+        Err(PackManifestError::OperatorCollision { .. })
+    ));
+    assert_eq!(index.owner_of("one"), Some("a"));
+
+    // Re-declaring a smaller set drops the names no longer claimed.
+    index.declare("a", vec!["one".into()]).expect("redeclare");
+    assert_eq!(index.owner_of("two"), None);
+    index.declare("b", vec!["two".into()]).expect("released");
+
+    // Retire releases everything the pack owned.
+    index.retire("a");
+    assert_eq!(index.owner_of("one"), None);
+    index
+        .declare("c", vec!["one".into()])
+        .expect("released by retire");
+}
