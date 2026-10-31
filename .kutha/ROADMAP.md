@@ -10,7 +10,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto th
 
 ## M186: Meta lease overhead A/B — CLOSED (harness lease)
 
-Bounded performance honesty delivered: the per-append meta-lease cost is measured against two bases, with an open `as_of.2n` residual recorded rather than explained away. No feature, no thaw.
+Bounded performance honesty delivered: the per-append meta-lease cost is measured against two bases; the gate metrics (`ingest_plain.n`, `as_of.n`) stay inside 10%, the secondary `as_of.2n` and `ingest_keyed.n` moves are recorded as unexplained, and the toggle falsification is marked as recorded-but-not-reproducible evidence. No feature, no thaw.
 
 - [x] **S01: interleaved A/B and decision** `risk:low` `depends:[]`
   > After this: the lease cost is a recorded number, not an assumption.
