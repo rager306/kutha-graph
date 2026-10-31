@@ -149,7 +149,7 @@ cells:
     path: docs/ADR/ADR-010-event-log-runtime-quantum.md
     map: Proposed
     delivery: spike
-    capability: none
+    capability: named
     depends_on: [ADR-000, ADR-001, ADR-002]
     locks: [D1, D2, D9]
     # durability spike, cell still Proposed
@@ -195,7 +195,7 @@ cells:
     path: docs/ADR/ADR-012-snapshots-tiers-vacuum.md
     map: Proposed
     delivery: spike
-    capability: none
+    capability: named
     depends_on: [ADR-000, ADR-010]
     locks: [D1, D5]
     # durability spike, cell still Proposed
@@ -222,6 +222,7 @@ cells:
       - open_for_append_heals_after_rollover_new_header_crash
       # Phase 228 / M154 S01 — sealed-prefix checkpoint receipt; cell still Proposed
       - checkpoint_sealed_prefix_preserves_fingerprint_and_pit
+      - snapshot_ahead_of_committed_prefix_fails_closed
 
   - id: ADR-013
     axis: Time
@@ -312,7 +313,7 @@ cells:
     path: docs/ADR/ADR-014-cascade-budgets-quantum-receipts.md
     map: Proposed
     delivery: spike
-    capability: none
+    capability: named
     depends_on: [ADR-000, ADR-002, ADR-010]
     locks: [D2, D3, D9]
     evidence:
@@ -336,6 +337,7 @@ cells:
       # Phase 88 / M028 S01 — dict Retract SelfCommit; cell still Proposed
       - trailing_emit_retract_dict_survives_persist_open
       - trailing_dict_retract_without_user_qo_survives_open
+      - receipt_digest_len_constant_across_cascade_widths
 
   - id: ADR-020
     axis: Space
@@ -354,10 +356,18 @@ cells:
     path: docs/ADR/ADR-021-pack-plugin-lifecycle.md
     map: Proposed
     delivery: map-only
-    capability: none
+    capability: named
     depends_on: [ADR-000, ADR-010, ADR-020, ADR-040]
     locks: [D5]
-    evidence: []
+    evidence:
+      - lifecycle_state_is_replay_derived_and_graph_neutral
+      - lifecycle_state_survives_persist_open
+      - lifecycle_ops_are_meta_and_do_not_create_graph_facts
+      - manifest_is_content_addressed_and_roundtrips
+      - cross_pack_operator_collision_fails_closed
+      - retired_pack_releases_operator_names
+      - toy_pack_installs_queries_retires_and_replays_without_core_edits
+      - pack_retire_then_replay_is_parity_equal_to_reopen
 
   - id: ADR-022
     axis: Space
@@ -434,7 +444,7 @@ cells:
     path: docs/ADR/ADR-040-materialization-plugin-protocol.md
     map: Proposed
     delivery: spike
-    capability: none
+    capability: named
     depends_on: [ADR-000, ADR-010, ADR-014]
     locks: [D5]
     evidence:
@@ -446,6 +456,7 @@ cells:
       - csr_lease_at_builds_via_materializer
       - green_ingest_visits_constant_in_n
       - lazy_as_of_matches_eager_after_same_ingest
+      - csr_materializer_build_unload
 
   - id: ADR-041
     axis: Data
@@ -453,7 +464,7 @@ cells:
     path: docs/ADR/ADR-041-csr-graphblas-hot-path.md
     map: Proposed
     delivery: spike
-    capability: none
+    capability: named
     depends_on: [ADR-000, ADR-011, ADR-040]
     locks: [D5, D6]
     evidence:
@@ -468,6 +479,9 @@ cells:
       - csr_fold_diff_persist_rebuild_layouts
       # Phase 48 / M018 S04 — I-F15 visit bound; cell still Proposed
       - extra_relatedto_horn_visits_constant_in_n
+      - leapfrog_three_lists
+      - leapfrog_common_neighbors_on_csr
+      - leapfrog_empty_short_circuits
 
   - id: ADR-042
     axis: Data
@@ -528,10 +542,16 @@ cells:
     path: docs/ADR/ADR-052-genai-enrichment-pack.md
     map: Proposed
     delivery: map-only
-    capability: none
+    capability: named
     depends_on: [ADR-010, ADR-050, ADR-040]
     locks: []
-    evidence: []
+    evidence:
+      - proposal_is_typed_meta_and_does_not_change_facts
+      - retired_or_inactive_pack_fails_closed
+      - unknown_source_and_duplicate_key_fail_closed
+      - enrichment_missing_source_fails_replay
+      - enrichment_payload_tamper_fails_on_replay
+      - policy_hash_addressed_enrichment_payload_is_rejected
 
   - id: ADR-060
     axis: Verify
@@ -539,7 +559,7 @@ cells:
     path: docs/ADR/ADR-060-strict-replay.md
     map: Proposed
     delivery: spike
-    capability: none
+    capability: named
     depends_on: [ADR-000, ADR-010, ADR-014]
     locks: [D9]
     evidence:
@@ -564,7 +584,7 @@ cells:
     path: docs/ADR/ADR-061-fork-and-diff.md
     map: Proposed
     delivery: spike
-    capability: none
+    capability: named
     depends_on: [ADR-000, ADR-010, ADR-060]
     locks: [D9]
     evidence:
@@ -572,6 +592,10 @@ cells:
       - justification_cites_source_event_ids_survive_fork
       - rebuilt_fold_renumbered_seqs_apply_same_retract_and_cite_payloads
       - runtime_diff_explains_scan_on_fork
+      - fork_at_isolates_prefix
+      - r1_fork_cut_bounds_and_no_interior_reconstruction
+      - diff_fold_vs_fork_at_matches_post_cut_mints
+      - kill_runtime_diff_equals_diff_folds_aa_empty_and_mirror
 
   - id: ADR-062
     axis: Verify
@@ -591,10 +615,15 @@ cells:
     map: Proposed
     delivery: frozen
     freeze_as: Cypher
-    capability: none
+    capability: named
     depends_on: [ADR-013, ADR-041, ADR-043, ADR-050]
     locks: []
-    evidence: []
+    evidence:
+      - parses_one_hop_to_query_ir_and_executes_as_of
+      - typed_cut_is_not_stringly_and_prepare_matches_handwritten_ir
+      - b3_workload_render_parse_parity
+      - ff5_gpml_as_of_matches_typed_facade
+      - typed_tt_and_limit_are_preserved
 
   - id: ADR-071
     axis: Query
