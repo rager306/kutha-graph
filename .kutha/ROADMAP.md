@@ -8,11 +8,11 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
-## M182: Meta-surface threat audit — ACTIVE (harness lease)
+## M182: Meta-surface threat audit — CLOSED (harness lease)
 
-Bounded security audit: a threat register for the C1/C1b/C5 meta surfaces and the replay reader gate, with an adversarial test per mitigated threat. No feature, no thaw, no ADR Accepted.
+Bounded security audit delivered: a threat register for the C1/C1b/C5 meta surfaces and the replay reader gate, with an adversarial test per mitigated threat. Found and fixed an O(n²) replay path. No feature, no thaw, no ADR Accepted.
 
-- [ ] **S01: threat register and adversarial tests** `risk:medium` `depends:[]`
+- [x] **S01: threat register and adversarial tests** `risk:medium` `depends:[]`
   > After this: every mitigated meta threat has a test that fails if the control regresses; accepted risks are recorded with rationale.
 
 ## M181: eCFR ambiguity explained — CLOSED (harness lease)

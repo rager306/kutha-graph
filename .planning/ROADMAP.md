@@ -10,7 +10,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [ ] **Phase 269: Meta-surface threat audit and adversarial tests** - STRIDE register, adversarial tests, recorded residual risks
+- [x] **Phase 269: Meta-surface threat audit and adversarial tests** - STRIDE register, adversarial tests, recorded residual risks (completed 2026-10-31)
 
 ## Phase Details
 
@@ -22,13 +22,13 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
   1. A phase security register covers the meta trust boundaries with dispositions.
   2. Each mitigate threat has an adversarial test that fails if the control regresses.
   3. Accepted risks are recorded with rationale; no threat is left silently open.
-**Plans**: 1 plan
+**Plans**: 1/1 plans complete
 
 Plans:
-- [ ] 269-01-PLAN.md — register, adversarial tests, SECURITY record
+- [x] 269-01-PLAN.md — register, adversarial tests, SECURITY record
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 269. Meta-surface threat audit and adversarial tests | 0/1 | Pending | — |
+| 269. Meta-surface threat audit and adversarial tests | 1/1 | Complete    | 2026-10-31 |

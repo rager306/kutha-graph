@@ -4,6 +4,13 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Trajectory: M182-S01 closed (meta-surface security)
+
+- GSD v1.75 closed; phase 269 archived. `Active Milestone=None`, `L_delivery=M182-S01-closed`.
+- The audit found a real O(n²) replay path and fixed it; the verifier then blocked the first fix for dropping retired-pack operator release, which is fixed and guarded.
+- Register: 10 threats, 8 mitigated with tests, 2 accepted with re-open triggers.
+- Tests: threats 10/10, workspace 811 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0.
+
 ## 2026-10-31 — Security: meta-surface threat audit
 
 - Added the phase security register (`269-SECURITY.md`) for the C1/C1b/C5 meta surfaces and the replay reader gate: 10 threats, 8 mitigated with adversarial tests, 2 accepted with re-open conditions.
