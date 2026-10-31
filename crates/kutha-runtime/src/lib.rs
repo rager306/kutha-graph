@@ -44,10 +44,12 @@ pub use gpml::{GpmlError, RuntimeBinder, VocabBinder, parse_gpml};
 pub use leapfrog::{AdjacencyIter, leapfrog_intersect};
 pub use log::EventLog;
 pub use materializer::{CsrMaterializer, Materializer};
-pub use pack_lifecycle::{PackLifecycle, PackLifecycleState, derive_pack_lifecycle};
+pub use pack_lifecycle::{
+    PackLifecycle, PackLifecycleState, PackLifecycleTracker, derive_pack_lifecycle,
+};
 pub use pack_manifest::{
-    PACK_MANIFEST_SCHEMA, PackManifest, PackManifestError, declared_operators, load_manifest,
-    valid_operator_name,
+    PACK_MANIFEST_SCHEMA, PackManifest, PackManifestError, declared_operators,
+    declared_operators_for, load_manifest, valid_operator_name, validate_install_against,
 };
 pub use pack_registry::{PackOperator, derive_pack_operators};
 pub use quantum::{

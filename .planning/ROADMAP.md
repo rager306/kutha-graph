@@ -2,7 +2,7 @@
 
 ## Overview
 
-v1.74 resolves the eCFR edition ambiguity left by M167 — by explaining it, not by fabricating a discriminator. The 2017-01-23 edition is a citation-only amendment whose note extraction correctly drops; every part 304 section at these dates has exactly two distinct extracted texts. The fixture now asserts that count, and the residual is recorded so Gate GC and Arc A cannot cite the fixture as three normative editions.
+v1.75 is a security-audit slice, not a feature slice. It builds the per-phase threat register that GSD has been warning is missing, applies it to the meta surfaces added in C1/C1b/C5 and the replay reader gate, and converts each credible threat into an adversarial test. No new Op, no product feature, no ADR Accepted.
 
 ## Id map
 
@@ -10,25 +10,25 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [x] **Phase 268: eCFR edition ambiguity explained** - assert two distinct texts per section, record the citation-only finding (completed 2026-10-31)
+- [ ] **Phase 269: Meta-surface threat audit and adversarial tests** - STRIDE register, adversarial tests, recorded residual risks
 
 ## Phase Details
 
-### Phase 268: eCFR edition ambiguity explained
-**Goal**: Replace an unexplained fixture weakness with a checked, falsifiable statement.
-**Depends on**: Phase 267
-**Requirements**: ECFR-01
+### Phase 269: Meta-surface threat audit and adversarial tests
+**Goal**: Give the meta surfaces an explicit threat register and prove the credible attacks fail closed.
+**Depends on**: Phase 268
+**Requirements**: SEC-269-01
 **Success Criteria**:
-  1. Every fixture section asserts exactly two distinct extracted texts, so a future third edition fires.
-  2. The citation-only 2017-01-23 amendment is documented from the source, not guessed.
-  3. Replay/checkpoint parity holds; no fabricated edition, no legal pack.
-**Plans**: 1/1 plans complete
+  1. A phase security register covers the meta trust boundaries with dispositions.
+  2. Each mitigate threat has an adversarial test that fails if the control regresses.
+  3. Accepted risks are recorded with rationale; no threat is left silently open.
+**Plans**: 1 plan
 
 Plans:
-- [x] 268-01-PLAN.md — source check, assertion, recorded residual
+- [ ] 269-01-PLAN.md — register, adversarial tests, SECURITY record
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 268. eCFR edition ambiguity explained | 1/1 | Complete    | 2026-10-31 |
+| 269. Meta-surface threat audit and adversarial tests | 0/1 | Pending | — |

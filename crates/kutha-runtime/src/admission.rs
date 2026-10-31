@@ -197,128 +197,15 @@ impl Runtime {
 
     /// Replay D021 lifecycle facts from the existing log and validate the next
     /// transition. Lifecycle state is meta-only and never enters the graph fold.
+    ///
+    /// One shared state machine ([`crate::PackLifecycleTracker`]) serves both
+    /// admission and replay, so the two gates cannot drift apart.
     pub(crate) fn check_pack_lifecycle(
         log: &[kutha_common::Event],
         next: &Op,
     ) -> Result<(), RuntimeError> {
-        use kutha_common::Op;
-
-        #[derive(Clone, Copy, PartialEq, Eq)]
-        enum PackState {
-            Installed,
-            Active,
-            Retired,
-        }
-
-        let (next_pack_id, next_name, next_version) = match next {
-            Op::PackInstall {
-                pack_id,
-                name,
-                version,
-                ..
-            } => (pack_id.as_str(), Some(name.as_str()), version.as_str()),
-            Op::PackActivate { pack_id, version } | Op::PackRetire { pack_id, version } => {
-                (pack_id.as_str(), None, version.as_str())
-            }
-            _ => return Ok(()),
-        };
-        if next_pack_id.trim().is_empty()
-            || next_version.trim().is_empty()
-            || next_name.is_some_and(|name| name.trim().is_empty())
-        {
-            return Err(RuntimeError::PackLifecycleRejected {
-                pack_id: next_pack_id.to_string(),
-                reason: "empty_identifier".to_string(),
-            });
-        }
-        // Exact spelling is identity: a padded id must not alias a clean one.
-        if next_pack_id != next_pack_id.trim()
-            || next_version != next_version.trim()
-            || next_name.is_some_and(|name| name != name.trim())
-        {
-            return Err(RuntimeError::PackLifecycleRejected {
-                pack_id: next_pack_id.to_string(),
-                reason: "padded_identifier".to_string(),
-            });
-        }
-
-        let mut state: std::collections::BTreeMap<&str, (PackState, &str)> =
-            std::collections::BTreeMap::new();
-        for event in log {
-            match &event.op {
-                Op::PackInstall {
-                    pack_id, version, ..
-                } => {
-                    if state
-                        .insert(pack_id.as_str(), (PackState::Installed, version.as_str()))
-                        .is_some()
-                    {
-                        return Err(RuntimeError::PackLifecycleRejected {
-                            pack_id: pack_id.clone(),
-                            reason: "pack_id_already_known".to_string(),
-                        });
-                    }
-                }
-                Op::PackActivate { pack_id, version } => match state.get(pack_id.as_str()) {
-                    Some((PackState::Installed, installed_version))
-                        if installed_version == &version =>
-                    {
-                        state.insert(pack_id, (PackState::Active, version));
-                    }
-                    _ => {
-                        return Err(RuntimeError::PackLifecycleRejected {
-                            pack_id: pack_id.clone(),
-                            reason: "activate_requires_same_installed_version".to_string(),
-                        });
-                    }
-                },
-                Op::PackRetire { pack_id, version } => match state.get(pack_id.as_str()) {
-                    Some((PackState::Installed | PackState::Active, installed_version))
-                        if installed_version == &version =>
-                    {
-                        state.insert(pack_id, (PackState::Retired, version));
-                    }
-                    _ => {
-                        return Err(RuntimeError::PackLifecycleRejected {
-                            pack_id: pack_id.clone(),
-                            reason: "retire_requires_same_installed_version".to_string(),
-                        });
-                    }
-                },
-                _ => {}
-            }
-        }
-        match next {
-            Op::PackInstall { pack_id, .. } if state.contains_key(pack_id.as_str()) => {
-                Err(RuntimeError::PackLifecycleRejected {
-                    pack_id: pack_id.clone(),
-                    reason: "pack_id_already_known".to_string(),
-                })
-            }
-            Op::PackActivate { pack_id, version } => match state.get(pack_id.as_str()) {
-                Some((PackState::Installed, installed_version))
-                    if installed_version == &version =>
-                {
-                    Ok(())
-                }
-                _ => Err(RuntimeError::PackLifecycleRejected {
-                    pack_id: pack_id.clone(),
-                    reason: "activate_requires_same_installed_version".to_string(),
-                }),
-            },
-            Op::PackRetire { pack_id, version } => match state.get(pack_id.as_str()) {
-                Some((PackState::Installed | PackState::Active, installed_version))
-                    if installed_version == &version =>
-                {
-                    Ok(())
-                }
-                _ => Err(RuntimeError::PackLifecycleRejected {
-                    pack_id: pack_id.clone(),
-                    reason: "retire_requires_same_installed_version".to_string(),
-                }),
-            },
-            _ => Ok(()),
-        }
+        let mut tracker = crate::PackLifecycleTracker::from_log(log)?;
+        tracker.replay(next)
     }
 
     pub(crate) fn admit_claim(&self, op: &Op) -> Result<(), RuntimeError> {

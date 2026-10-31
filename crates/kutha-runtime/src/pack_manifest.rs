@@ -250,3 +250,56 @@ pub fn declared_operators(
     }
     Ok(out)
 }
+
+/// Validate an install against a blob map and an already-derived operator map.
+///
+/// Used by the replay reader gate, which carries both incrementally instead of
+/// re-walking the log per event.
+pub fn validate_install_against(
+    blobs: &HashMap<String, Vec<u8>>,
+    install: &Op,
+    declared: &BTreeMap<String, BTreeSet<String>>,
+) -> Result<(), PackManifestError> {
+    let Op::PackInstall {
+        pack_id,
+        name,
+        version,
+        manifest_digest: Some(digest),
+    } = install
+    else {
+        return Ok(());
+    };
+    let manifest = load_manifest(blobs, digest)?;
+    manifest.validate_identity(pack_id, name, version)?;
+    for operator in &manifest.operators {
+        if let Some((owner, _)) = declared
+            .iter()
+            .find(|(other, ops)| *other != pack_id && ops.contains(operator))
+        {
+            return Err(PackManifestError::OperatorCollision {
+                name: operator.clone(),
+                pack_id: owner.clone(),
+            });
+        }
+    }
+    Ok(())
+}
+
+/// Operators declared by one install, for incremental replay.
+pub fn declared_operators_for(
+    blobs: &HashMap<String, Vec<u8>>,
+    install: &Op,
+) -> Result<BTreeSet<String>, PackManifestError> {
+    let Op::PackInstall {
+        pack_id,
+        name,
+        version,
+        manifest_digest: Some(digest),
+    } = install
+    else {
+        return Ok(BTreeSet::new());
+    };
+    let manifest = load_manifest(blobs, digest)?;
+    manifest.validate_identity(pack_id, name, version)?;
+    Ok(manifest.operators.into_iter().collect())
+}

@@ -1,5 +1,6 @@
 //! Replay and provenance (ADR-060). Not a MATCH compiler.
 use crate::fold::{GraphFold, checkpoint_prefix_meta_op, checkpoint_snapshot_if_receipt_ok};
+use crate::pack_lifecycle::PackLifecycleState;
 use crate::quantum::{Runtime, RuntimeError};
 use crate::receipt::digest_to_hex;
 use kutha_common::{Event, EventId, Op, TransactionTime, ValidTime, blob_digest_matches};
@@ -98,55 +99,121 @@ impl Runtime {
     /// that appears after the install it claims to serve fails closed.
     fn check_meta_replay(events: &[Event]) -> Result<(), RuntimeError> {
         let mut blobs: HashMap<String, Vec<u8>> = HashMap::new();
-        // Only a proposal that a LATER checkpoint compacts away may cite a
-        // source the rewrite dropped. A tail proposal is judged against the
-        // visible log, exactly like admission.
+        let mut lifecycle = crate::PackLifecycleTracker::new();
+        // A checkpoint compacts the prefix, so proposals copied before it may
+        // cite product rows the rewrite dropped. Tail proposals are judged
+        // against the visible log, exactly like admission.
         let first_checkpoint = events
             .iter()
             .position(|e| matches!(e.op, Op::Checkpoint { .. }));
+        let mut declared: std::collections::BTreeMap<String, std::collections::BTreeSet<String>> =
+            std::collections::BTreeMap::new();
+        let mut cache_keys: std::collections::HashSet<&str> = std::collections::HashSet::new();
+        let mut known_ids: std::collections::HashSet<kutha_common::EventId> =
+            std::collections::HashSet::new();
+
         for (index, event) in events.iter().enumerate() {
-            let prefix = &events[..index];
             match &event.op {
                 Op::StoreBlob { digest, bytes } => {
                     blobs.insert(digest.clone(), bytes.clone());
                 }
                 Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. } => {
-                    Self::check_pack_lifecycle(prefix, &event.op)?;
+                    lifecycle.replay(&event.op)?;
                     if let Op::PackInstall {
+                        pack_id,
                         manifest_digest: Some(_),
                         ..
                     } = &event.op
                     {
-                        crate::pack_manifest::validate_install(prefix, &blobs, &event.op).map_err(
-                            |err| RuntimeError::PackLifecycleRejected {
-                                pack_id: match &event.op {
-                                    Op::PackInstall { pack_id, .. } => pack_id.clone(),
-                                    _ => String::new(),
-                                },
+                        crate::pack_manifest::validate_install_against(
+                            &blobs, &event.op, &declared,
+                        )
+                        .map_err(|err| {
+                            RuntimeError::PackLifecycleRejected {
+                                pack_id: pack_id.clone(),
                                 reason: format!("replay manifest: {err}"),
-                            },
-                        )?;
+                            }
+                        })?;
+                        if let Ok(operators) =
+                            crate::pack_manifest::declared_operators_for(&blobs, &event.op)
+                        {
+                            declared.insert(pack_id.clone(), operators);
+                        }
                     }
                 }
-                Op::EnrichmentProposal { .. } => {
-                    let source_check = if first_checkpoint.is_some_and(|cut| index < cut) {
-                        crate::enrichment::SourceCheck::Compacted
-                    } else {
-                        crate::enrichment::SourceCheck::Required
+                Op::EnrichmentProposal {
+                    pack_id,
+                    pack_version,
+                    source_event_ids,
+                    model,
+                    prompt,
+                    cache_key,
+                    blob_digest,
+                } => {
+                    if [pack_id, pack_version, model, prompt, cache_key, blob_digest]
+                        .iter()
+                        .any(|value| value.trim().is_empty() || value.as_str() != value.trim())
+                    {
+                        return Err(RuntimeError::EnrichmentRejected {
+                            reason: "replay: empty enrichment pin".to_string(),
+                        });
+                    }
+                    if source_event_ids.is_empty() {
+                        return Err(RuntimeError::EnrichmentRejected {
+                            reason: "replay: empty source_event_ids".to_string(),
+                        });
+                    }
+                    match lifecycle.state(pack_id) {
+                        Some(PackLifecycleState::Active) => {}
+                        Some(PackLifecycleState::Retired) => {
+                            return Err(RuntimeError::EnrichmentRejected {
+                                reason: format!("replay: enrichment pack {pack_id} is retired"),
+                            });
+                        }
+                        _ => {
+                            return Err(RuntimeError::EnrichmentRejected {
+                                reason: format!("replay: enrichment pack {pack_id} is not active"),
+                            });
+                        }
+                    }
+                    if lifecycle.version(pack_id) != Some(pack_version.as_str()) {
+                        return Err(RuntimeError::EnrichmentRejected {
+                            reason: format!("replay: enrichment pack {pack_id} version mismatch"),
+                        });
+                    }
+                    let compacted = first_checkpoint.is_some_and(|cut| index < cut);
+                    if !compacted {
+                        for source in source_event_ids {
+                            if !known_ids.contains(source) {
+                                return Err(RuntimeError::EnrichmentRejected {
+                                    reason: format!(
+                                        "replay: enrichment source event {source} is not in the log"
+                                    ),
+                                });
+                            }
+                        }
+                    }
+                    let Some(bytes) = blobs.get(blob_digest) else {
+                        return Err(RuntimeError::EnrichmentRejected {
+                            reason: format!("replay: enrichment payload {blob_digest} is missing"),
+                        });
                     };
-                    crate::enrichment::validate_proposal_with_mode(
-                        prefix,
-                        &blobs,
-                        &event.op,
-                        None,
-                        source_check,
-                    )
-                    .map_err(|err| RuntimeError::EnrichmentRejected {
-                        reason: format!("replay: {err}"),
-                    })?;
+                    if kutha_common::sha256_hex(bytes) != *blob_digest {
+                        return Err(RuntimeError::EnrichmentRejected {
+                            reason: format!(
+                                "replay: enrichment payload does not match {blob_digest}"
+                            ),
+                        });
+                    }
+                    if !cache_keys.insert(cache_key.as_str()) {
+                        return Err(RuntimeError::EnrichmentRejected {
+                            reason: format!("replay: enrichment cache key {cache_key} repeats"),
+                        });
+                    }
                 }
                 _ => {}
             }
+            known_ids.insert(event.id);
         }
         Ok(())
     }

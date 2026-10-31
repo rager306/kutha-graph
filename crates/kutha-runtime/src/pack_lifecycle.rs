@@ -84,3 +84,110 @@ pub fn derive_pack_lifecycle(events: &[Event]) -> Vec<PackLifecycle> {
         .filter_map(|pack_id| records.remove(&pack_id))
         .collect()
 }
+
+/// Incremental lifecycle state machine, shared by admission and replay.
+///
+/// Admission builds it from the log once and applies one op; replay applies
+/// every op in order. Keeping one implementation prevents the two gates from
+/// drifting apart.
+#[derive(Clone, Debug, Default)]
+pub struct PackLifecycleTracker {
+    state: std::collections::BTreeMap<String, (PackLifecycleState, String)>,
+}
+
+impl PackLifecycleTracker {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Replay every lifecycle event in `events`, failing on an invalid one.
+    pub fn from_log(events: &[Event]) -> Result<Self, crate::RuntimeError> {
+        let mut tracker = Self::new();
+        for event in events {
+            tracker.replay(&event.op)?;
+        }
+        Ok(tracker)
+    }
+
+    /// Apply one op if it is a lifecycle op; other ops are ignored.
+    pub fn replay(&mut self, op: &Op) -> Result<(), crate::RuntimeError> {
+        match op {
+            Op::PackInstall {
+                pack_id,
+                name,
+                version,
+                ..
+            } => {
+                if pack_id.trim().is_empty() || version.trim().is_empty() || name.trim().is_empty()
+                {
+                    return Err(reject(pack_id, "empty_identifier"));
+                }
+                if pack_id != pack_id.trim() || version != version.trim() || name != name.trim() {
+                    return Err(reject(pack_id, "padded_identifier"));
+                }
+                if self.state.contains_key(pack_id) {
+                    return Err(reject(pack_id, "pack_id_already_known"));
+                }
+                self.state.insert(
+                    pack_id.clone(),
+                    (PackLifecycleState::Installed, version.clone()),
+                );
+                Ok(())
+            }
+            Op::PackActivate { pack_id, version } | Op::PackRetire { pack_id, version } => {
+                let retire = matches!(op, Op::PackRetire { .. });
+                if pack_id.trim().is_empty() || version.trim().is_empty() {
+                    return Err(reject(pack_id, "empty_identifier"));
+                }
+                if pack_id != pack_id.trim() || version != version.trim() {
+                    return Err(reject(pack_id, "padded_identifier"));
+                }
+                let allowed = match self.state.get(pack_id) {
+                    // Retire is legal from Installed or Active.
+                    Some((
+                        PackLifecycleState::Installed | PackLifecycleState::Active,
+                        installed,
+                    )) if retire && installed == version => true,
+                    // Activate is legal only from Installed.
+                    Some((PackLifecycleState::Installed, installed)) if installed == version => {
+                        true
+                    }
+                    _ => false,
+                };
+                if !allowed {
+                    return Err(reject(
+                        pack_id,
+                        if retire {
+                            "retire_requires_same_installed_version"
+                        } else {
+                            "activate_requires_same_installed_version"
+                        },
+                    ));
+                }
+                let next = if retire {
+                    PackLifecycleState::Retired
+                } else {
+                    PackLifecycleState::Active
+                };
+                self.state.insert(pack_id.clone(), (next, version.clone()));
+                Ok(())
+            }
+            _ => Ok(()),
+        }
+    }
+
+    pub fn state(&self, pack_id: &str) -> Option<PackLifecycleState> {
+        self.state.get(pack_id).map(|(state, _)| *state)
+    }
+
+    pub fn version(&self, pack_id: &str) -> Option<&str> {
+        self.state.get(pack_id).map(|(_, version)| version.as_str())
+    }
+}
+
+fn reject(pack_id: &str, reason: &str) -> crate::RuntimeError {
+    crate::RuntimeError::PackLifecycleRejected {
+        pack_id: pack_id.to_string(),
+        reason: reason.to_string(),
+    }
+}

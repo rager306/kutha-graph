@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M182
+**Active Slice:** S01
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M181-S01-closed
+L_delivery=M182-S01-open
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M181-S01 closed (eCFR ambiguity explained; GSD v1.74) | Legal pack / corpus coverage |
+| L_delivery | M182-S01 active (meta-surface threat audit; GSD v1.75) | Security implementation / ADR Accepted |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M181-S01 is closed under GSD **v1.74 eCFR ambiguity explained**. The M167 residual is now source-checked and guarded: the 2017-01-23 eCFR edition differs only by an `<XREF>` "amendment published" note, because FR document 2017-00891 was published that day and effective 2017-03-14; extraction correctly drops the note. All eight part-304 sections collapse to two distinct extracted texts at these dates. The PIT probe asserts exactly two distinct texts per section (count assert catches a lost edition; equality asserts catch a gained one), and `docs/architecture/ecfr-edition-ambiguity.md` records the finding plus the consequence that Gate GC / Arc A must not cite the fixture as three normative editions. No fixture text was edited or fabricated; no legal pack, corpus claim, new Op, or product feature. Tests: eCFR PIT 1/1, workspace 801 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0. M180-S01 remains closed (replay-side meta revalidation). M179/M178/M177/M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residual stays separate: remote rocks observe skipped, GSD security audit warning. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M182-S01 is leased under GSD **v1.75 meta-surface threat audit**. Scope is bounded: build the per-phase threat register GSD has been warning is missing, apply it to the C1/C1b/C5 meta surfaces and the replay reader gate, and convert every mitigated threat into an adversarial test. No new Op, no product feature, no grants/capabilities/WASM/ABAC implementation, no legal pack, no ADR Accepted. M181-S01 remains closed (eCFR ambiguity explained). M180/M179/M178/M177/M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residual stays separate: remote rocks observe skipped. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

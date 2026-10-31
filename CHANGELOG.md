@@ -4,6 +4,14 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Security: meta-surface threat audit
+
+- Added the phase security register (`269-SECURITY.md`) for the C1/C1b/C5 meta surfaces and the replay reader gate: 10 threats, 8 mitigated with adversarial tests, 2 accepted with re-open conditions.
+- **Fixed a real defect found by the audit:** meta replay was O(n²) because each lifecycle op re-walked the log. 2000 pack installs took ~2.18 s on open; a single-pass tracker plus incremental manifest checks bring it to ~13 ms.
+- Admission and replay now share one `PackLifecycleTracker`, so the two gates cannot drift apart.
+- Added `crates/kutha-runtime/tests/m182_meta_threats.rs` (8 adversarial tests).
+- Tests: threats 8/8, workspace 809 passed / 0 failed.
+
 ## 2026-10-31 — Trajectory: M181-S01 closed (eCFR ambiguity)
 
 - GSD v1.74 closed; phase 268 archived. `Active Milestone=None`, `L_delivery=M181-S01-closed`.

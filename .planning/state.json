@@ -1,18 +1,10 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v1.74",
+  "milestone": "v1.75",
   "phases": [
-    {
-      "number": "268",
-      "name": "eCFR edition ambiguity explained",
-      "status": "complete"
-    }
+    { "number": "269", "name": "Meta-surface threat audit and adversarial tests", "status": "pending" }
   ],
-  "next": {
-    "command": "/gsd-progress",
-    "label": "Show progress",
-    "reason": "Unsure of state — showing progress"
-  },
-  "updated_at": "2026-10-31T03:00:33.785Z"
+  "next": { "command": "/gsd-progress", "label": "Show progress", "reason": "Milestone v1.75 planned" },
+  "updated_at": "2026-10-31T00:00:00.000Z"
 }

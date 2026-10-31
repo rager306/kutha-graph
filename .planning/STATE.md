@@ -1,19 +1,19 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.74
-status: Awaiting next milestone
-stopped_at: Phase 268 complete — all phases complete
+milestone: v1.75
+status: planning
+stopped_at: Phase 269 ready to execute
 last_updated: "2026-10-31T03:00:33.722Z"
 last_activity: 2026-10-31
-last_activity_desc: Milestone v1.74 completed and archived
+last_activity_desc: Milestone v1.75 started; meta-surface security audit planned
 state_head: a2733266eb491ad6a2c6a35f4706da2d782517f5
 progress:
   total_phases: 1
-  completed_phases: 1
+  completed_phases: 0
   total_plans: 1
-  completed_plans: 1
-milestone_name: eCFR ambiguity explained
-current_phase: null
+  completed_plans: 0
+milestone_name: Meta-surface threat audit
+current_phase: 269
 ---
 
 Total Phases: 0
@@ -25,14 +25,14 @@ Total Phases: 0
 See: .planning/PROJECT.md (updated 2026-10-29)
 
 **Core value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
-**Current focus:** v1.74 eCFR ambiguity explained (M181-S01), complete.
+**Current focus:** v1.75 meta-surface threat audit (M182-S01), phase 269.
 
 ## Current Position
 
-Phase: Milestone v1.74 complete
-Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-10-31 — Milestone v1.74 completed and archived
+Phase: 269 — Meta-surface threat audit and adversarial tests
+Plan: 269-01
+Status: Ready to execute
+Last activity: 2026-10-31 — Milestone v1.75 started
 
 ## Accumulated Context
 
@@ -73,4 +73,4 @@ Resume file: None
 
 
 
-- Start the next milestone with /gsd-new-milestone
+- Execute phase 269 with the plan below.
