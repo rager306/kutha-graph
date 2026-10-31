@@ -3,21 +3,23 @@
 **Defined:** 2026-10-31
 **Core Value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
 
-## v1.75 Requirements
+## v1.76 Requirements
 
-- [ ] **SEC-269-01**: The meta surfaces (pack lifecycle, pack manifest, enrichment proposal, replay reader gate) have an explicit threat register with dispositions, and every mitigated threat has an adversarial test that fails if the control regresses.
+- [ ] **DIG-01**: The manifest and enrichment payload digest checks have direct falsifiers — a blob addressed by a policy/rule-body hash that passes the generic `StoreBlob` gate but fails raw SHA-256 must be rejected, and removing the raw check must fail the test.
+- [ ] **DIG-02**: Manifest operator collision detection uses an operator→pack index, so replay is linear in packs and operators, while retired packs still release names and admission/replay stay in agreement.
 
 ## Explicit non-goals
 
-- No new Op, no product feature, no grants/capabilities/WASM/ABAC implementation, no legal pack, no ADR Accepted status. The register documents the current surface, it does not expand it.
+- No new Op, no feature, no operator execution, no legal pack, no grants/capabilities/WASM, no ADR Accepted status.
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SEC-269-01 | Phase 269 | Pending |
+| DIG-01 | Phase 270 | Pending |
+| DIG-02 | Phase 271 | Pending |
 
 **Coverage:**
-- v1.75 requirements: 1 total
-- Mapped to phases: 1
+- v1.76 requirements: 2 total
+- Mapped to phases: 2
 - Unmapped: 0

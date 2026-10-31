@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** None
-**Active Slice:** None
+**Active Milestone:** M183
+**Active Slice:** S01
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M182-S01-closed
+L_delivery=M183-S01-open
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M182-S01 closed (meta-surface threat audit; GSD v1.75) | Security implementation / ADR Accepted |
+| L_delivery | M183-S01 active (digest falsifiers + linear index; GSD v1.76) | New capability / ADR Accepted |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M182-S01 is closed under GSD **v1.75 meta-surface threat audit**. Delivered the phase security register (`269-SECURITY.md`): 10 threats across four trust boundaries, 8 mitigated with adversarial tests, 2 accepted with re-open triggers. The audit found and fixed a real defect: meta replay was O(n²) (2000 pack installs ~2.18 s on open; now ~13 ms via a single-pass `PackLifecycleTracker` plus incremental manifest checks). Admission and replay now share `PackLifecycleTracker` and `check_proposal`; the independent verifier caught that the first unification dropped retired-pack operator release on replay, and the fix plus `admission_accepted_log_reopens_after_retire` are in. `declared_operators_for` errors are propagated, not swallowed. Two threats are recorded as transitively covered by the generic `StoreBlob` digest gate instead of overclaimed. Tests: threats 10/10, workspace 811 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0. No new Op, feature, grants/capabilities/WASM/ABAC implementation, legal pack, or ADR Accepted. M181-S01 remains closed (eCFR ambiguity explained). M180/M179/M178/M177/M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residual stays separate: remote rocks observe skipped. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M183-S01 is leased under GSD **v1.76 digest falsifiers and linear index**. Scope is bounded: give the manifest and enrichment digest checks direct falsifiers (a policy/rule-hash-addressed blob that passes the generic `StoreBlob` gate but fails raw SHA-256), and replace the per-install operator scan with an operator→pack index so replay is linear while retired packs still release names. No new Op, feature, operator execution, legal pack, grants/capabilities/WASM, or ADR Accepted. M182-S01 remains closed (meta-surface threat audit). M181/M180/M179/M178/M177/M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residual stays separate: remote rocks observe skipped. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 

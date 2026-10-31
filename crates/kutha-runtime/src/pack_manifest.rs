@@ -251,40 +251,6 @@ pub fn declared_operators(
     Ok(out)
 }
 
-/// Validate an install against a blob map and an already-derived operator map.
-///
-/// Used by the replay reader gate, which carries both incrementally instead of
-/// re-walking the log per event.
-pub fn validate_install_against(
-    blobs: &HashMap<String, Vec<u8>>,
-    install: &Op,
-    declared: &BTreeMap<String, BTreeSet<String>>,
-) -> Result<(), PackManifestError> {
-    let Op::PackInstall {
-        pack_id,
-        name,
-        version,
-        manifest_digest: Some(digest),
-    } = install
-    else {
-        return Ok(());
-    };
-    let manifest = load_manifest(blobs, digest)?;
-    manifest.validate_identity(pack_id, name, version)?;
-    for operator in &manifest.operators {
-        if let Some((owner, _)) = declared
-            .iter()
-            .find(|(other, ops)| *other != pack_id && ops.contains(operator))
-        {
-            return Err(PackManifestError::OperatorCollision {
-                name: operator.clone(),
-                pack_id: owner.clone(),
-            });
-        }
-    }
-    Ok(())
-}
-
 /// Operators declared by one install, for incremental replay.
 pub fn declared_operators_for(
     blobs: &HashMap<String, Vec<u8>>,
@@ -302,4 +268,93 @@ pub fn declared_operators_for(
     let manifest = load_manifest(blobs, digest)?;
     manifest.validate_identity(pack_id, name, version)?;
     Ok(manifest.operators.into_iter().collect())
+}
+
+/// Operator → owning pack index used by admission and replay.
+///
+/// Replaces the per-install scan of every declared operator set. Each operator
+/// maps to the pack that declared it, so collision detection is O(1) per name
+/// and a retire drops that pack's names in one pass.
+#[derive(Clone, Debug, Default)]
+pub struct OperatorIndex {
+    owner: BTreeMap<String, String>,
+    by_pack: BTreeMap<String, BTreeSet<String>>,
+}
+
+impl OperatorIndex {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Register a pack's operators. Fails on a name already owned elsewhere.
+    pub fn declare(
+        &mut self,
+        pack_id: &str,
+        operators: impl IntoIterator<Item = String>,
+    ) -> Result<(), PackManifestError> {
+        let mut owned = BTreeSet::new();
+        for operator in operators {
+            if let Some(existing) = self.owner.get(&operator) {
+                if existing != pack_id {
+                    return Err(PackManifestError::OperatorCollision {
+                        name: operator,
+                        pack_id: existing.clone(),
+                    });
+                }
+            }
+            owned.insert(operator);
+        }
+        for operator in &owned {
+            self.owner.insert(operator.clone(), pack_id.to_string());
+        }
+        self.by_pack.insert(pack_id.to_string(), owned);
+        Ok(())
+    }
+
+    /// Release every name a retired pack owned.
+    pub fn retire(&mut self, pack_id: &str) {
+        if let Some(names) = self.by_pack.remove(pack_id) {
+            for name in names {
+                self.owner.remove(&name);
+            }
+        }
+    }
+
+    pub fn owner_of(&self, operator: &str) -> Option<&str> {
+        self.owner.get(operator).map(String::as_str)
+    }
+
+}
+
+/// Validate an install against a blob map and an [`OperatorIndex`].
+///
+/// Collision detection is a single lookup per declared operator, so replay is
+/// linear in packs and operators.
+pub fn validate_install_indexed(
+    blobs: &HashMap<String, Vec<u8>>,
+    install: &Op,
+    index: &OperatorIndex,
+) -> Result<(), PackManifestError> {
+    let Op::PackInstall {
+        pack_id,
+        name,
+        version,
+        manifest_digest: Some(digest),
+    } = install
+    else {
+        return Ok(());
+    };
+    let manifest = load_manifest(blobs, digest)?;
+    manifest.validate_identity(pack_id, name, version)?;
+    for operator in &manifest.operators {
+        if let Some(owner) = index.owner_of(operator) {
+            if owner != pack_id {
+                return Err(PackManifestError::OperatorCollision {
+                    name: operator.clone(),
+                    pack_id: owner.to_string(),
+                });
+            }
+        }
+    }
+    Ok(())
 }

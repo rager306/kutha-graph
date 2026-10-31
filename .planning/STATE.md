@@ -1,19 +1,19 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.75
-status: Awaiting next milestone
-stopped_at: Phase 269 complete — all phases complete
+milestone: v1.76
+status: planning
+stopped_at: Phase 270 ready to execute
 last_updated: "2026-10-31T03:29:43.166Z"
 last_activity: 2026-10-31
-last_activity_desc: Milestone v1.75 completed and archived
+last_activity_desc: Milestone v1.76 started; digest falsifiers and linear index planned
 state_head: d1c8697441b84f89a2456e2a9542fe7ee83760fd
 progress:
-  total_phases: 1
-  completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
-milestone_name: Meta-surface threat audit
-current_phase: null
+  total_phases: 2
+  completed_phases: 0
+  total_plans: 2
+  completed_plans: 0
+milestone_name: Digest falsifiers and linear index
+current_phase: 270
 ---
 
 Total Phases: 0
@@ -25,14 +25,14 @@ Total Phases: 0
 See: .planning/PROJECT.md (updated 2026-10-29)
 
 **Core value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
-**Current focus:** v1.75 meta-surface threat audit (M182-S01), complete.
+**Current focus:** v1.76 digest falsifiers and linear index (M183-S01), phase 270.
 
 ## Current Position
 
-Phase: Milestone v1.75 complete
-Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-10-31 — Milestone v1.75 completed and archived
+Phase: 270 — Direct falsifiers for manifest and payload digests
+Plan: 270-01
+Status: Ready to execute
+Last activity: 2026-10-31 — Milestone v1.76 started
 
 ## Accumulated Context
 
@@ -74,4 +74,4 @@ Resume file: None
 
 
 
-- Start the next milestone with /gsd-new-milestone
+- Execute phase 270 with the plan below.

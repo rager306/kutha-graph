@@ -105,8 +105,7 @@ impl Runtime {
         let first_checkpoint = events
             .iter()
             .position(|e| matches!(e.op, Op::Checkpoint { .. }));
-        let mut declared: std::collections::BTreeMap<String, std::collections::BTreeSet<String>> =
-            std::collections::BTreeMap::new();
+        let mut operators = crate::pack_manifest::OperatorIndex::new();
         let mut cache_keys: std::collections::HashSet<String> = std::collections::HashSet::new();
         let mut known_ids: std::collections::HashSet<kutha_common::EventId> =
             std::collections::HashSet::new();
@@ -122,7 +121,7 @@ impl Runtime {
                     // admission's `declared_operators` does. Without this drop,
                     // a log that admission accepted can fail to reopen.
                     if let Op::PackRetire { pack_id, .. } = &event.op {
-                        declared.remove(pack_id);
+                        operators.retire(pack_id);
                     }
                     if let Op::PackInstall {
                         pack_id,
@@ -130,22 +129,27 @@ impl Runtime {
                         ..
                     } = &event.op
                     {
-                        crate::pack_manifest::validate_install_against(
-                            &blobs, &event.op, &declared,
+                        crate::pack_manifest::validate_install_indexed(
+                            &blobs,
+                            &event.op,
+                            &operators,
                         )
-                        .map_err(|err| {
-                            RuntimeError::PackLifecycleRejected {
-                                pack_id: pack_id.clone(),
-                                reason: format!("replay manifest: {err}"),
-                            }
+                        .map_err(|err| RuntimeError::PackLifecycleRejected {
+                            pack_id: pack_id.clone(),
+                            reason: format!("replay manifest: {err}"),
                         })?;
-                        let operators =
+                        let names =
                             crate::pack_manifest::declared_operators_for(&blobs, &event.op)
                                 .map_err(|err| RuntimeError::PackLifecycleRejected {
                                     pack_id: pack_id.clone(),
                                     reason: format!("replay manifest: {err}"),
                                 })?;
-                        declared.insert(pack_id.clone(), operators);
+                        operators
+                            .declare(pack_id, names)
+                            .map_err(|err| RuntimeError::PackLifecycleRejected {
+                                pack_id: pack_id.clone(),
+                                reason: format!("replay manifest: {err}"),
+                            })?;
                     }
                 }
                 Op::EnrichmentProposal {
