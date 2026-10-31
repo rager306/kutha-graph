@@ -1,13 +1,13 @@
 ---
 phase: 274-meta-lease-overhead-a-b-evidence
 independent: true
-status: gaps_found
+status: passed
 verifier_model: glm-5.3
 commands:
   - cmd: uv run python tmp/m186-verify/recompute.py
     exit: 0
   - cmd: uv run python tmp/m186-verify/check_five.py
-    exit: 1
+    exit: 0
   - cmd: uv run kutha-gov precommit
     exit: 0
 read_only_inputs:
@@ -61,29 +61,25 @@ a reproducible procedure". The structural argument is verified: the
 `05dfea0..HEAD` diff on `fold.rs`, `leapfrog.rs` and `fold_query.rs` is empty, as
 is the benches diff.
 
-**Re-verification of the fixes (HEAD `5c899e2`).** Three of the five flagged
-cells are now correct against the logs: `as_of.n` pre median 78536.5,
-`ingest_keyed.n` head minimum 119.8M (119,831,330) and `persist_append.n` head
-minimum 4.4M (4,443,268). The correction wording now says the four medians
-"did not match the retained logs" and calls the positional cause exact only for
-`ingest_plain.n`; that matches this verifier's finding. Two cells remain wrong:
-the A/B1 base `as_of` spread still starts at 73.1k although the retained minimum
-is 72,133 (72.1k), and `beautifulrust.md` still says "the six production panic
-sites" although HEAD has 18 production `expect` sites (`eval.rs:14-24` seven,
-`gpml.rs:494`, `leapfrog.rs:52-53`, `pack_manifest.rs:95`,
-`pipeline.rs:451/537`, `quantum.rs:434/437/602`, `wal.rs:210/215`). No production
-`unwrap` remains, so that row should count former `unwrap` sites, not all panic
-sites.
+**Re-verification of the fixes — two correction rounds.** Round 1 (`2070e1e`,
+`5c899e2`) fixed the A/B2 `as_of.n` pre median (78536.5), the `ingest_keyed.n`
+head minimum (119.8M = 119,831,330), the `persist_append.n` head minimum
+(4.4M = 4,443,268), and reworded the median cause as unproven rather than
+certain. Round 2 (`79c1640`) fixed the A/B1 base `as_of` spread lower bound
+(72.1-253.1k; retained minimum 72,133) and the panic-site inventory (18
+production `expect` calls with the file:line list). All five follow-up cells were
+re-checked against the logs by `tmp/m186-verify/check_five.py`, which now exits
+0. The count was independently recounted before the first top-level
+`#[cfg(test)]` in each file: 7+1+2+1+2+3+2 = 18, every listed line is an
+`expect` call, and `quantum_invariants.rs` is included only through
+`quantum.rs:867` under `#[cfg(test)]`. No production `unwrap` remains (0).
 
-**Gaps — why this file is `gaps_found`, not `passed`.** The six corrected A/B2
-medians and ratios are right, and three of the five follow-up cells are fixed.
-What remains is documentation-only: the A/B1 spread lower bound (72.1k, not
-73.1k) and the panic-site count (18, or restate the row as the four former
-production `unwrap` sites, now `expect` calls). Fixing those two cells makes
-this file `passed`; no benchmark rerun is needed.
+**Status.** `passed`. No open gaps: the six A/B2 medians and ratios, the A/B1
+and toggle numbers, the gate framing, the reproducibility limit, the structural
+argument and both correction rounds verify against the retained logs. The
+changes are documentation-only; no benchmark rerun was needed or done.
 
 **Gate.** `uv run kutha-gov precommit` exit 0 (`run_high=0`), run after the
-correction. `check_five.py` exits 1 by design while the two cells above remain
-wrong; it returns 0 once they are fixed. No cargo run: no code changed. Command
-log, exit statuses and the recomputation table:
+corrections; `check_five.py` exit 0. No cargo run: no code changed. Command log,
+exit statuses and the recomputation table:
 `.compound-engineering/artifacts/reviews/2026-10-31-m186-correction-verification.md`.
