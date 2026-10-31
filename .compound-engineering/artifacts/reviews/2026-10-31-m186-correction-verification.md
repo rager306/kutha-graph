@@ -1,7 +1,9 @@
 # M186 evidence correction — independent verification (2026-10-31)
 
 Subject: commit `957a8d5` "docs(bench): correct M186 A/B2 medians and record
-reproducibility limits", branch `work/main-line`, repo `/root/kutha-graph`.
+reproducibility limits", plus follow-ups `2070e1e` (range cells) and `5c899e2`
+(cause wording), branch `work/main-line`, repo `/root/kutha-graph`. Re-verified
+at HEAD `5c899e2`.
 Verifier context: fresh subagent, did not write the correction. Repository was
 read-only for this pass; the only repo files changed are this report and
 `.planning/milestones/v1.79-phases/274-meta-lease-overhead-a-b-evidence/274-VERIFICATION.md`.
@@ -31,6 +33,9 @@ Disk at start: `df -h /root` -> 8.7G available (97% used).
 | 13 | `node .cursor/gsd-core/bin/gsd-tools.cjs validate health --raw` | 0 (`healthy`) |
 | 14 | `uv run kutha-gov precommit` | 0 (105 checks OK, no nonzero `high`) |
 | 15 | `git status --porcelain` (final) | 0 (only this report + the VERIFICATION file) |
+| 16 | `git log --oneline -4` (HEAD `5c899e2`) | 0 |
+| 17 | `uv run python tmp/m186-verify/check_five.py` (five-cell re-check) | 1 (two cells still wrong, see below) |
+| 18 | `uv run kutha-gov precommit` (after the re-verification edits) | 0 (105 checks OK) |
 
 No cargo was run: no code changed. No `graph index`, no `.kutha` writes.
 
@@ -77,46 +82,58 @@ samples 3+4 (119,019,318 and 118,630,602), i.e. the unsorted positional median;
 samples, so the "unsorted positional samples" diagnosis is exact for one old
 value, near-exact for a second, and unproven for two (see M5).
 
-## Findings
+## Findings (original pass at `957a8d5`; status re-checked at HEAD `5c899e2`)
 
-**M1 (gap, canonical doc).** `docs/architecture/benchmark-baseline.md:129` gives
-the A/B2 head range for `ingest_keyed.n` as 113.2-139.5M. Retained minimum is
-119,831,330 (119.8M); the maximum 139,478,938 matches. The 113.2M value appears in
-no retained log and in no other arm.
+**M1 — FIXED.** The A/B2 head range for `ingest_keyed.n` said 113.2-139.5M; the
+retained minimum is 119,831,330 (119.8M). HEAD now reads 119.8-139.5M.
 
-**M2 (gap, canonical doc).** `docs/architecture/benchmark-baseline.md:130` gives
-the A/B2 head range for `persist_append.n` as 3.9-15.2M. Retained minimum is
-4,443,268 (4.4M); the maximum 15,189,087 matches. 3.9M appears in no retained log.
-The now-removed decision bullet repeated "head 3.9-15.2M".
+**M2 — FIXED.** The A/B2 head range for `persist_append.n` said 3.9-15.2M; the
+retained minimum is 4,443,268 (4.4M). HEAD now reads 4.4-15.2M.
 
-M1 and M2 are the only substantive numeric mismatches found. Both predate commit `957a8d5`
-(introduced in `57d03c2`) and were not in the correction's recomputed scope
-(medians and ratios). They are documentation-only and fixable by writing 119.8M
-and 4.4M. Because a canonical table still carries two false numbers, the phase
-verification is `gaps_found`, not `passed`.
+**M3 — FIXED.** The `as_of.n` pre median now reads 78536.5 (exact value). The
+`ingest_plain.n` pre median still prints 126665566 from an exact 126665565.5; that
+is a half-up display round, not a wrong number.
 
-**M3 (cosmetic).** The A/B2 table prints the `as_of.n` pre median as 78536 (exact
-78536.5) and `ingest_plain.n` as 126665566 (exact 126665565.5). Half-values are
-rounded inconsistently across cells; other cells keep `.5`.
+**M4 — HALF FIXED.** The A/B1 base `as_of` spread is now 73.1-253.1k. The upper
+bound is right (253,099 is now inside the range), but the lower bound is still
+wrong: the retained minimum is 72,133 (72.1k), and 73.1k is the second-smallest
+sample (73,095). Correct cell: 72.1-253.1k.
 
-**M4 (cosmetic).** The A/B1 "spread" row prints base `as_of` as 73.1-85.7k while
-the same table keeps sample 4 at 253,099. The prose explains the outlier but the
-cell does not say it is the cluster range.
+**M5 — FIXED.** The correction note now says the four medians "did not match the
+retained logs — they appear to have been taken from unsorted positional samples"
+and names only `ingest_plain.n` as the exact positional case (118,824,960 = mean
+of positional samples 3 and 4). That matches the evidence. The samples artifact
+carries the same wording.
 
-**M5 (provenance narrative).** `four of six head medians ... computed from
-unsorted positional samples` is supported for `ingest_plain.n` exactly and for
-`ingest_keyed.n` approximately; `as_of.n` 72,495 and `ingest_plain.4n` 455,890,543
-cannot be reconstructed from the retained six. The corrected numbers are right;
-the causal story is only partly checkable.
+**O1 — NOT FIXED.** `docs/process/beautifulrust.md` now says "the six production
+panic sites", adding `pipeline.rs:451` and `pipeline.rs:537`. Those two are real
+production `expect` calls, but the count is still wrong: HEAD has **18**
+production `expect` sites (before the top-level `#[cfg(test)]` boundary, excluding
+the test-only `quantum_invariants.rs`): `eval.rs:14,15,17,20,21,23,24` (7),
+`gpml.rs:494`, `leapfrog.rs:52,53`, `pack_manifest.rs:95`, `pipeline.rs:451,537`,
+`quantum.rs:434,437,602`, `wal.rs:210,215`. No production `unwrap` remains (0).
+The row should either say 18 or stop counting: "the four production `unwrap` sites
+are now `expect` calls", which is what the original four referred to.
 
-**O1 (outside the enumerated checks; same commit).** `docs/process/beautifulrust.md`
-changed "only 4 are production sites" to "the four production panic sites are
-`expect` calls". The direction is right — no production `unwrap` remains (the
-`leapfrog.rs:103`, `materializer.rs:88` and `allow.rs:119` unwraps are inside
-`#[cfg(test)]`) — but "the four production panic sites" undercounts:
-`pipeline.rs:451` and `pipeline.rs:537` are production `expect` calls too, so HEAD
-has six. Consider "the four production `unwrap` sites are now `expect` calls"
-instead. This does not touch the M186 numbers.
+**Open at HEAD `5c899e2`: M4 (lower bound) and O1 (count).** M1, M2, M3 and M5 are
+closed. Both open items are documentation-only.
+
+## Re-verification of the five fixed cells (HEAD `5c899e2`)
+
+`tmp/m186-verify/check_five.py` parses the doc cells and compares them with the
+logs; it exits 0 only when all five are correct (currently 1).
+
+| # | cell | doc at HEAD | recomputed | verdict |
+|---|------|-------------|------------|---------|
+| 1 | `as_of.n` pre median | 78536.5 | 78536.5 | OK |
+| 2 | `ingest_keyed.n` head range min | 119.8M | 119,831,330 -> 119.8M | OK |
+| 3 | `persist_append.n` head range min | 4.4M | 4,443,268 -> 4.4M | OK |
+| 4 | A/B1 base `as_of` spread min | 73.1k | 72,133 -> 72.1k | MISMATCH |
+| 5 | beautifulrust panic-site count | six | 18 production expects | MISMATCH |
+
+The wording change at `5c899e2` (medians "did not match the retained logs";
+positional cause exact only for `ingest_plain.n`) was checked against the logs and
+the old values: it is accurate.
 
 ## Gate framing, reproducibility, stale copies
 
@@ -146,9 +163,12 @@ instead. This does not touch the M186 numbers.
 
 **PASS on the correction.** Every A/B2 median, every ratio in the six-metric
 table, the A/B1 and toggle numbers, the gate framing, the reproducibility limit,
-and the structural argument verify against the retained logs.
+the structural argument, and the new cause wording verify against the retained
+logs. Three of the five follow-up cells are fixed; a fourth is half fixed (upper
+bound only).
 
-**BLOCKED (narrow, documentation-only) on the phase document** because two
-head-range minima in the same canonical table are still false (M1: 113.2M vs
-119.8M; M2: 3.9M vs 4.4M). Fix those two cells and the verification can be
-re-issued as `passed`; no benchmark rerun is needed.
+**BLOCKED (narrow, documentation-only) on two cells at HEAD `5c899e2`:** the
+A/B1 base `as_of` spread lower bound (doc 73.1k, logs 72.1k) and the
+`beautifulrust.md` panic-site count (doc six, tree 18; or restate the row as the
+four former production `unwrap` sites). Fix those two and the phase verification
+becomes `passed`; no benchmark rerun is needed.

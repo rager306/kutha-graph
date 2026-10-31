@@ -6,6 +6,8 @@ verifier_model: glm-5.3
 commands:
   - cmd: uv run python tmp/m186-verify/recompute.py
     exit: 0
+  - cmd: uv run python tmp/m186-verify/check_five.py
+    exit: 1
   - cmd: uv run kutha-gov precommit
     exit: 0
 read_only_inputs:
@@ -15,6 +17,7 @@ read_only_inputs:
   - .planning/MILESTONES.md
   - .planning/milestones/v1.79-REQUIREMENTS.md
   - .compound-engineering/artifacts/research/2026-10-31-m186-ab-samples.md
+  - docs/process/beautifulrust.md
 ---
 
 # Phase 274 verification — lease overhead A/B (re-verified after the correction)
@@ -58,19 +61,29 @@ a reproducible procedure". The structural argument is verified: the
 `05dfea0..HEAD` diff on `fold.rs`, `leapfrog.rs` and `fold_query.rs` is empty, as
 is the benches diff.
 
-**Gap — why this file is `gaps_found`, not `passed`.** Two head-range minima in
-the same A/B2 table still do not match the retained logs: `ingest_keyed.n` reads
-113.2–139.5M but the retained minimum is 119,831,330 (119.8M), and
-`persist_append.n` reads 3.9–15.2M but the retained minimum is 4,443,268 (4.4M).
-Ten of twelve range cells match exactly, and the medians and ratios are correct;
-these two cells predate the correction and were not recomputed. Correcting them
-to 119.8M and 4.4M is a documentation edit and makes this file `passed`. Minor,
-non-blocking: `as_of.n` pre median is printed 78536 while the exact value is
-78536.5; the A/B1 base `as_of` spread cell excludes the kept 253,099 outlier; and
-the "unsorted positional samples" diagnosis is exact for `ingest_plain.n`
-(118,824,960 = mean of samples 3+4) but the other two old values cannot be
-reconstructed from any subset of the retained six.
+**Re-verification of the fixes (HEAD `5c899e2`).** Three of the five flagged
+cells are now correct against the logs: `as_of.n` pre median 78536.5,
+`ingest_keyed.n` head minimum 119.8M (119,831,330) and `persist_append.n` head
+minimum 4.4M (4,443,268). The correction wording now says the four medians
+"did not match the retained logs" and calls the positional cause exact only for
+`ingest_plain.n`; that matches this verifier's finding. Two cells remain wrong:
+the A/B1 base `as_of` spread still starts at 73.1k although the retained minimum
+is 72,133 (72.1k), and `beautifulrust.md` still says "the six production panic
+sites" although HEAD has 18 production `expect` sites (`eval.rs:14-24` seven,
+`gpml.rs:494`, `leapfrog.rs:52-53`, `pack_manifest.rs:95`,
+`pipeline.rs:451/537`, `quantum.rs:434/437/602`, `wal.rs:210/215`). No production
+`unwrap` remains, so that row should count former `unwrap` sites, not all panic
+sites.
+
+**Gaps — why this file is `gaps_found`, not `passed`.** The six corrected A/B2
+medians and ratios are right, and three of the five follow-up cells are fixed.
+What remains is documentation-only: the A/B1 spread lower bound (72.1k, not
+73.1k) and the panic-site count (18, or restate the row as the four former
+production `unwrap` sites, now `expect` calls). Fixing those two cells makes
+this file `passed`; no benchmark rerun is needed.
 
 **Gate.** `uv run kutha-gov precommit` exit 0 (`run_high=0`), run after the
-correction. No cargo run: no code changed. Command log, exit statuses and the
-recomputation table: `.compound-engineering/artifacts/reviews/2026-10-31-m186-correction-verification.md`.
+correction. `check_five.py` exits 1 by design while the two cells above remain
+wrong; it returns 0 once they are fixed. No cargo run: no code changed. Command
+log, exit statuses and the recomputation table:
+`.compound-engineering/artifacts/reviews/2026-10-31-m186-correction-verification.md`.

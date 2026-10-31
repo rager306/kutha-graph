@@ -112,7 +112,7 @@ usable; absolute numbers are not comparable across sessions.
 | 6 | 120579264 | 125827017 | 74018 | 82393 |
 | **median** | **124571495** | **127965659** | **73632** | **77825** |
 | ratio | — | **1.027** | — | **1.057** |
-| spread | 106.6–155.1M (45.5%) | 107.4–135.8M (26.4%) | 73.1–253.1k | 68.1–113.8k |
+| spread | 106.6–155.1M (45.5%) | 107.4–135.8M (26.4%) | 72.1–253.1k | 68.1–113.8k |
 
 Named outlier, kept in the table: base sample 4 `as_of.n` 253099 ns is 3.4x the
 base median. Dropping it moves the base median to 73246 and the delta to +6.3%,
