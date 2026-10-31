@@ -130,9 +130,11 @@ so the median is robust to it.
 | `persist_append.n` | 5612320 | 7299392.5 | 1.301 | 3.1–13.6M | 4.4–15.2M |
 
 **Correction (2026-10-31, post-close audit).** Four of the six head medians above
-were first published from unsorted positional samples. The table is now
-recomputed from the retained logs as sorted-sample medians (even counts, so the
-median is the mean of the two middle samples). Corrected ratios:
+did not match the retained logs — they appear to have been taken from unsorted
+positional samples rather than sorted medians (the `ingest_plain.n` value equals
+the mean of positional samples 3 and 4). The table is now recomputed from the
+logs as sorted-sample medians (even counts, so the median is the mean of the two
+middle samples). Corrected ratios:
 `ingest_plain.n` −4.2% (was −6.2%), `as_of.n` +1.7% (was −7.7%),
 `ingest_plain.4n` +5.8% (was +7.1%), `ingest_keyed.n` +12.1% (was +9.3%).
 `as_of.2n` and `persist_append.n` are unchanged. The bench gate in AGENTS.md
