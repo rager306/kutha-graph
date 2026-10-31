@@ -37,8 +37,14 @@ and what needs a governor intake. Nothing here is a capability claim; ADRs stay 
 
 ## Decisions pending (owner)
 
-1. **Lease `M187` test-honesty** — closes items 1–5 above; sketch of the work is in
-   `2026-10-31-c2-vocabulary-milestone-sketch.md` §1.1 (lease text) and needs its own small plan.
+**Identity collision resolved by proposal, not by a lease.** Both sketches claimed M187 / v1.80. The M187
+sketch (`2026-10-31-m187-test-honesty-sketch.md`) argues test honesty first, because its defect 4 (fixed
+relative `tmp/` dirs) fails 5 of 6 concurrent runs of `m179_gate_gc`, which the C2 sketch uses as a Phase 276
+gate. Recommended order: **M187 test-honesty = v1.80 (phases 275–276)**, then **C2 = M188 / v1.81 (277–279)**.
+The C2 sketch carries the numbering note; nothing is leased yet.
+
+1. **Lease `M187` test-honesty** — closes items 1–5 above; the plan is
+   `2026-10-31-m187-test-honesty-sketch.md` (lease text, phases 275–276, test-only).
 2. **Lease `C2 dictionaries` (vocabulary-first)** — sketch ready; GSD dry-run confirmed v1.80 / phases 275–277.
 3. **ADR-094** — already recorded as Proposed; accepting it is a separate act and changes nothing in code.
 4. **eCFR** — no third edition for 1 CFR 304; a real three-state corpus is A1/A2 with a new source (12 CFR 1003.3 candidate).

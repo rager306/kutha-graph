@@ -18,7 +18,7 @@ spike's proposed oracles (§6 of the spike); **T13–T18** are new here and mark
 
 | Item | Value | Basis |
 |---|---|---|
-| Harness milestone | **M187** (`S01`) | last closed is M186 (`.kutha/STATE.md` § Next action) |
+| Harness milestone | **M187** (`S01`) — *identity depends on ordering*: if the test-honesty milestone goes first (recommended in `2026-10-31-m187-test-honesty-sketch.md`, because its defect 4 breaks this sketch's Phase 276 gate under concurrency), this becomes **M188 / v1.81 / phases 277–279** and every `DICT-27x-01` id shifts by two. | last closed is M186 (`.kutha/STATE.md` § Next action) |
 | GSD milestone | **v1.80**, name `C2 vocabulary dictionaries` | `init new-milestone`: `latest_completed_milestone` = `v1.79`, `phase_archive_path` = `.planning/milestones/v1.79-phases` |
 | GSD phases | **275, 276, 277** | last roadmap phase is 274 (`.planning/ROADMAP.md` § Phases). Keep default numbering; do **not** pass `--reset-phase-numbers` |
 | Requirement IDs | `DICT-275-01` … `DICT-277-01` | format precedent `PERF-274-01` (`.planning/REQUIREMENTS.md:8`) |
