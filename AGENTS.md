@@ -13,6 +13,7 @@ Operating contract for **AllSpark** agents (prime-agent runtime). Chat with the 
 - Children do **not** inherit this file. Paste the relevant contract (lease, thaw map, owned files, verification rule) into every child prompt. Give each child disjoint file ownership. The parent owns integration, shared files, graph indexing, and the final Russian reply.
 - AllSpark-owned state under `~/.allspark-home/` (sessions, leases, `graph.db`) is not repository content; do not edit or commit it.
 - Durable artifacts go to `.compound-engineering/artifacts/`; one-shot scratch goes to repo-local gitignored `tmp/`. Never use system `/tmp`, `$TMPDIR`, or `.tmp` for surviving output. GSD experiments use `tmp/planning-probe/`, never the live `.planning/`.
+- Custom model providers: `/root/.allspark-home/.prime/agent/models.json` (`providers.<name>` with `api: openai-completions`, `baseUrl`, `apiKey` — mandatory even when the key also sits in `auth.json` via `/login`, or the loader drops the provider with a warning — and `models[]` with `contextWindow`/`maxTokens`/`cost` from models.dev). Verify with `allspark model list <name>` from a clean shell; a preset `PRIME_AGENT_CODING_AGENT_DIR` makes the CLI resolve a doubled `.allspark-home` path. Configured: `cline` (api.cline.bot, OpenAI-compatible; `cline-pass/deepseek-v4.1-flash-1017`, `cline-pass/qwen3.7-max`).
 
 ## Rust review: BeautifulRust (advisory)
 
