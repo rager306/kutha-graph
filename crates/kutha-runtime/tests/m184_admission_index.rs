@@ -126,6 +126,9 @@ fn index_survives_checkpoint_sealed_prefix() {
 
     let mut rt = Runtime::default();
     install(&mut rt, "a", &["shared"]).expect("install");
+    rt.emit_pack_activate("a", "1.0.0").expect("activate");
+    rt.emit_pack_retire("a", "1.0.0").expect("retire");
+    install(&mut rt, "b", &["shared"]).expect("reuse after retire");
     let dir = std::path::PathBuf::from("tmp/m184-admission-index-cp");
     std::fs::remove_dir_all(&dir).ok();
     rt.persist(&dir).expect("persist");
@@ -148,7 +151,12 @@ fn index_survives_checkpoint_sealed_prefix() {
     rt.persist(&dir).expect("persist sealed");
     store::checkpoint_sealed_prefix(&dir).expect("checkpoint");
     let mut opened = Runtime::open(&dir).expect("open");
-    let err = install(&mut opened, "b", &["shared"]).expect_err("collision after checkpoint");
+    assert_eq!(
+        opened.operator_count(),
+        1,
+        "only b owns shared after checkpoint"
+    );
+    let err = install(&mut opened, "c", &["shared"]).expect_err("collision after checkpoint");
     assert!(matches!(
         err,
         RuntimeError::PackLifecycleRejected { reason, .. } if reason.contains("already declared")
@@ -255,5 +263,78 @@ fn admission_lifecycle_check_does_not_replay_the_log() {
     assert!(
         source.contains("self.lifecycle.check"),
         "admission must use the runtime lifecycle lease"
+    );
+}
+
+/// F1: a constructor that skips `replay_check` must not let admission trust a
+/// short index. A foreign log with a colliding install leaves the lease
+/// incomplete, and admission then fails closed instead of accepting writes.
+#[test]
+fn untrusted_meta_lease_fails_admission_closed() {
+    use kutha_common::Event;
+
+    let a = PackManifest::new("a", "pack-a", "1.0.0", vec!["shared".into()]);
+    let b = PackManifest::new("b", "pack-b", "1.0.0", vec!["shared".into()]);
+    let events = vec![
+        Event::new(
+            Op::StoreBlob {
+                digest: a.digest(),
+                bytes: a.canonical_bytes(),
+            },
+            0,
+        ),
+        Event::new(
+            Op::PackInstall {
+                pack_id: "a".into(),
+                name: "pack-a".into(),
+                version: "1.0.0".into(),
+                manifest_digest: Some(a.digest()),
+            },
+            1,
+        ),
+        Event::new(
+            Op::StoreBlob {
+                digest: b.digest(),
+                bytes: b.canonical_bytes(),
+            },
+            2,
+        ),
+        Event::new(
+            Op::PackInstall {
+                pack_id: "b".into(),
+                name: "pack-b".into(),
+                version: "1.0.0".into(),
+                manifest_digest: Some(b.digest()),
+            },
+            3,
+        ),
+    ];
+    let mut foreign =
+        Runtime::from_dict_and_events(vec!["knows".into(), "knownBy".into()], events, 32)
+            .expect("build");
+    let manifest = PackManifest::new("c", "pack-c", "1.0.0", vec!["fresh".into()]);
+    let err = foreign
+        .emit_pack_install_with_manifest("c", "pack-c", "1.0.0", Some(manifest))
+        .expect_err("untrusted lease must fail closed");
+    match &err {
+        RuntimeError::PackLifecycleRejected { reason, .. } => {
+            assert_eq!(reason, "meta_leases_untrusted")
+        }
+        other => panic!("unexpected error: {other:?}"),
+    }
+}
+
+/// F5: the two operator views differ by design.
+#[test]
+fn live_name_count_and_audit_rows_differ_for_a_retired_pack() {
+    let mut rt = Runtime::default();
+    install(&mut rt, "a", &["one", "two"]).expect("install");
+    rt.emit_pack_activate("a", "1.0.0").expect("activate");
+    rt.emit_pack_retire("a", "1.0.0").expect("retire");
+    assert_eq!(rt.operator_count(), 0, "retired names are released");
+    assert_eq!(
+        rt.pack_operators().expect("registry").len(),
+        2,
+        "audit rows keep retired packs"
     );
 }

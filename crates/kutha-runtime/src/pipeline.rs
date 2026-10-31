@@ -582,12 +582,20 @@ impl Runtime {
         crate::pack_lifecycle::derive_pack_lifecycle(self.log.as_slice())
     }
 
-    /// Number of declared operator names in the droppable index (diagnostics).
+    /// Live owned operator names in the droppable index.
+    ///
+    /// A retired pack releases its names, so it contributes zero. Contrast
+    /// [`Self::pack_operators`], which returns audit rows including retired
+    /// packs. The two answers differ by design; do not swap them.
     pub fn operator_count(&self) -> usize {
         self.operators.len()
     }
 
     /// Return the replay-derived C1b operator registry. No operator executes.
+    ///
+    /// Audit view: retired packs keep their rows with `state = Retired`, so
+    /// this count includes them. Contrast [`Self::operator_count`], which is
+    /// the live name set.
     pub fn pack_operators(&self) -> Result<Vec<crate::PackOperator>, crate::PackManifestError> {
         crate::pack_registry::derive_pack_operators(self.log.as_slice(), &self.fold.blobs)
     }

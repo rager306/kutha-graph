@@ -109,6 +109,21 @@ impl Runtime {
             }
             return Ok(());
         }
+        if matches!(
+            op,
+            Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. }
+        ) && !self.meta_leases_trusted
+        {
+            return Err(RuntimeError::PackLifecycleRejected {
+                pack_id: match op {
+                    Op::PackInstall { pack_id, .. }
+                    | Op::PackActivate { pack_id, .. }
+                    | Op::PackRetire { pack_id, .. } => pack_id.clone(),
+                    _ => String::new(),
+                },
+                reason: "meta_leases_untrusted".to_string(),
+            });
+        }
         if matches!(op, Op::EnrichmentProposal { .. }) {
             return crate::enrichment::validate_proposal(self.log.as_slice(), &self.fold.blobs, op)
                 .map_err(|err| RuntimeError::EnrichmentRejected {

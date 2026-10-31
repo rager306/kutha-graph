@@ -48,7 +48,8 @@ pub use pack_lifecycle::{
     PackLifecycle, PackLifecycleState, PackLifecycleTracker, derive_pack_lifecycle,
 };
 pub use pack_manifest::{
-    OperatorIndex, PACK_MANIFEST_SCHEMA, PackManifest, PackManifestError, declared_operators_for, load_manifest, valid_operator_name, validate_install_indexed,
+    OperatorIndex, PACK_MANIFEST_SCHEMA, PackManifest, PackManifestError, declared_operators_for,
+    load_manifest, valid_operator_name, validate_install_indexed,
 };
 pub use pack_registry::{PackOperator, derive_pack_operators};
 pub use quantum::{

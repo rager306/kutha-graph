@@ -21,12 +21,17 @@ impl Runtime {
     fn rebuild_operator_index(&mut self) {
         let mut index = crate::pack_manifest::OperatorIndex::new();
         let mut lifecycle = crate::PackLifecycleTracker::new();
+        let mut trusted = true;
         for event in self.log.iter() {
             match &event.op {
                 Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. } => {
-                    // A hand-edited invalid transition leaves the lease short;
-                    // replay_check is the gate that rejects it.
-                    let _ = lifecycle.replay(&event.op);
+                    // A hand-edited invalid transition leaves the lease short.
+                    // `replay_check` rejects it on the store path; a caller
+                    // that skips it makes admission fail closed via
+                    // `meta_leases_trusted`.
+                    if lifecycle.replay(&event.op).is_err() {
+                        trusted = false;
+                    }
                 }
                 _ => {}
             }
@@ -37,10 +42,14 @@ impl Runtime {
                     manifest_digest: Some(_),
                     ..
                 } => {
-                    if let Ok(names) =
-                        crate::pack_manifest::declared_operators_for(&self.fold.blobs, &event.op)
+                    match crate::pack_manifest::declared_operators_for(&self.fold.blobs, &event.op)
                     {
-                        let _ = index.declare(pack_id, names);
+                        Ok(names) => {
+                            if index.declare(pack_id, names).is_err() {
+                                trusted = false;
+                            }
+                        }
+                        Err(_) => trusted = false,
                     }
                 }
                 _ => {}
@@ -48,6 +57,7 @@ impl Runtime {
         }
         self.operators = index;
         self.lifecycle = lifecycle;
+        self.meta_leases_trusted = trusted;
     }
 
     pub(crate) fn hydrate_from_log(&mut self) {
@@ -162,6 +172,7 @@ impl Runtime {
             compacted_assert_by_id: IngestMap::default(),
             operators: crate::pack_manifest::OperatorIndex::new(),
             lifecycle: crate::PackLifecycleTracker::new(),
+            meta_leases_trusted: true,
         };
         rt.hydrate_from_log();
         rt
@@ -219,6 +230,7 @@ impl Runtime {
             compacted_assert_by_id: IngestMap::default(),
             operators: crate::pack_manifest::OperatorIndex::new(),
             lifecycle: crate::PackLifecycleTracker::new(),
+            meta_leases_trusted: true,
         };
         rt.hydrate_from_log();
         Ok(rt)
@@ -279,6 +291,7 @@ impl Runtime {
             compacted_assert_by_id: IngestMap::default(),
             operators: crate::pack_manifest::OperatorIndex::new(),
             lifecycle: crate::PackLifecycleTracker::new(),
+            meta_leases_trusted: true,
         };
         rt.hydrate_from_log();
         Ok(rt)
