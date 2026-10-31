@@ -6,6 +6,25 @@
 
 use kutha_common::{Event, Op};
 
+thread_local! {
+    /// Test seam: actual `replay` executions on this thread. A counter stored on
+    /// the tracker cannot see work done by a per-prefix rebuild, because the
+    /// rebuilt tracker starts at zero; this counter sees every call.
+    static REPLAY_CALLS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+}
+
+/// Test seam: replay calls executed on this thread since the last reset.
+#[doc(hidden)]
+pub fn thread_replay_calls() -> u64 {
+    REPLAY_CALLS.with(std::cell::Cell::get)
+}
+
+/// Test seam: reset this thread's replay counter.
+#[doc(hidden)]
+pub fn reset_thread_replay_calls() {
+    REPLAY_CALLS.with(|calls| calls.set(0));
+}
+
 /// Replay-derived lifecycle state for one pack id.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PackLifecycle {
@@ -170,6 +189,7 @@ impl PackLifecycleTracker {
 
     /// Apply one op if it is a lifecycle op; other ops are ignored.
     pub fn replay(&mut self, op: &Op) -> Result<(), crate::RuntimeError> {
+        REPLAY_CALLS.with(|calls| calls.set(calls.get().saturating_add(1)));
         self.check(op)?;
         self.replay_calls += 1;
         match op {

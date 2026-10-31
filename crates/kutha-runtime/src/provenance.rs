@@ -94,7 +94,10 @@ impl Runtime {
     /// the work it performed (lifecycle replays, operator declarations).
     #[doc(hidden)]
     pub fn meta_replay_probe(&self) -> Result<(u64, u64), RuntimeError> {
-        Self::check_meta_replay(self.log.as_slice())
+        crate::pack_lifecycle::reset_thread_replay_calls();
+        let result = Self::check_meta_replay(self.log.as_slice());
+        let replays = crate::pack_lifecycle::thread_replay_calls();
+        result.map(|(_, declarations)| (replays, declarations))
     }
 
     /// Revalidate C1/C1b/C5 meta in log order.
