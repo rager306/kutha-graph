@@ -1,5 +1,21 @@
 # Project Milestones: Kutha
 
+## v1.78 Enrichment admission leases (Shipped: 2026-10-31)
+
+**Delivered:** M184→M185 sequence's last step: enrichment proposal admission uses runtime leases instead of replaying the log per write. No new Op, no feature.
+
+**Phases completed:** 273 (1 plan)
+
+**Key accomplishments:**
+- Proposal admission and the emit pre-check use `PackLifecycleTracker`, a visible-log id set, the blob map, and a borrowed cache-key set — no `derive_pack_lifecycle`, no full event-id scan.
+- `check_proposal` is read-only; the caller inserts the key after commit, so a rejected proposal cannot poison the lease and admission does not clone the key set.
+- Leases are rebuilt on hydrate/open/fork and updated on every append, including `intern`'s `Op::Define`.
+- **Two verifier rounds:** the first blocked for a never-updated key lease, a per-write clone, and a source predicate broader than replay's; the second found `intern` bypassing the append choke point and a test that never created a checkpoint. All fixed.
+- Recorded limit: replay exempts pre-checkpoint proposals from source existence, because the rewrite may drop the cited rows.
+- Tests: enrichment admission 6/6, workspace 832 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0.
+
+---
+
 ## v1.77 Admission operator index (Shipped: 2026-10-31)
 
 **Delivered:** M184. Closes the admission-side complexity gap left by v1.76: the runtime holds droppable operator and lifecycle leases, so pack admission no longer rebuilds either from the log per write.

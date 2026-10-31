@@ -4,6 +4,12 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Trajectory: M185-S01 closed (enrichment admission leases)
+
+- GSD v1.78 closed; phase 273 archived. `Active Milestone=None`, `L_delivery=M185-S01-closed`.
+- Two verifier rounds blocked the first attempts for a never-updated key lease, a per-write clone, a source predicate broader than replay's, `intern` bypassing the append choke point, and a checkpoint test that never created a checkpoint. All fixed.
+- Tests: enrichment admission 6/6, workspace 832 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0.
+
 ## 2026-10-31 — Product: enrichment admission leases
 
 - Enrichment proposal admission no longer scans the log: it uses the runtime lifecycle lease, the visible-log id lease, the content-addressed blob map, and a borrowed cache-key set, so a proposal costs O(1) instead of `derive_pack_lifecycle` plus a full event-id set. The emit pre-check uses the same leases.

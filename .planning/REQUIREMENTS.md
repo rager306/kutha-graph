@@ -5,7 +5,7 @@
 
 ## v1.78 Requirements
 
-- [ ] **ENR-01**: Enrichment proposal admission is O(1) per proposal — no lifecycle or event-id log scan — using runtime-held droppable leases, and accepts/rejects exactly what replay accepts/rejects.
+- [x] **ENR-01**: Enrichment proposal admission is O(1) per proposal — no lifecycle or event-id log scan — using runtime-held droppable leases, and accepts/rejects exactly what replay accepts/rejects.
 
 ## Explicit non-goals
 
@@ -15,7 +15,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ENR-01 | Phase 273 | Pending |
+| ENR-01 | Phase 273 | Complete |
 
 **Coverage:**
 - v1.78 requirements: 1 total

@@ -10,7 +10,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
 
 ## Phases
 
-- [ ] **Phase 273: Enrichment admission without log replay** - runtime payload/cache-key leases, O(1) proposal admission, replay parity
+- [x] **Phase 273: Enrichment admission without log replay** - runtime payload/cache-key leases, O(1) proposal admission, replay parity (completed 2026-10-31)
 
 ## Phase Details
 
@@ -22,7 +22,7 @@ See `docs/process/gsd-auto-contract.md` § Id map. Do not restate the table here
   1. The runtime holds a droppable payload-digest set and cache-key set, rebuilt from the log.
   2. Proposal admission uses them and the lifecycle lease, with no log scan.
   3. Admission and replay accept/reject the same proposals; a many-proposal benchmark is flat.
-**Plans**: 1 plan
+**Plans**: 1/0 plans complete
 
 Plans:
 - [ ] 273-01-PLAN.md — runtime leases and parity tests
@@ -31,4 +31,4 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 273. Enrichment admission without log replay | 0/1 | Pending | — |
+| 273. Enrichment admission without log replay | 1/0 | Complete    | 2026-10-31 |

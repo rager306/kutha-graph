@@ -3,8 +3,16 @@
   "flavor": "core",
   "milestone": "v1.78",
   "phases": [
-    { "number": "273", "name": "Enrichment admission without log replay", "status": "pending" }
+    {
+      "number": "273",
+      "name": "Enrichment admission without log replay",
+      "status": "complete"
+    }
   ],
-  "next": { "command": "/gsd-progress", "label": "Show progress", "reason": "Milestone v1.78 planned" },
-  "updated_at": "2026-10-31T00:00:00.000Z"
+  "next": {
+    "command": "/gsd-progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
+  },
+  "updated_at": "2026-10-31T05:22:16.425Z"
 }

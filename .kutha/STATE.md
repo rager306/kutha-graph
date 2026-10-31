@@ -4,8 +4,8 @@
 
 **STCA plane:** Space = check slices; Time = harness JSONL; Composition = `--budget`.
 
-**Active Milestone:** M185
-**Active Slice:** S01
+**Active Milestone:** None
+**Active Slice:** None
 **Phase:** H5
 **Release:** 0.0.01 (`VERSION`, format `N.N.NN`). Packaging SemVer in Cargo and pyproject is `0.0.1` because Cargo rejects a leading zero. `publish` stays false.
 
@@ -13,19 +13,19 @@
 
 ```text
 L_map=honeycomb-proposed
-L_delivery=M185-S01-open
+L_delivery=M185-S01-closed
 L_capability=ff5-green
 ```
 
 | Lifecycle | Current | Must not read as |
 |-----------|---------|------------------|
 | L_map | ADR-000–002 and 010–093 are **Proposed** | Product ready / Accepted |
-| L_delivery | M185-S01 active (enrichment admission leases; GSD v1.78) | New capability / ADR Accepted |
+| L_delivery | M185-S01 closed (enrichment admission leases; GSD v1.78) | New capability / ADR Accepted |
 | L_capability | FF5 green (`as_of(2015) ≠ as_of(2021)` on statute fixture) | Governor CI green |
 
 ## Next action
 
-M185-S01 is leased under GSD **v1.78 enrichment admission leases**. Scope is bounded: the runtime keeps droppable payload-digest and cache-key sets rebuilt from the log, so enrichment proposal admission is O(1) and accepts/rejects exactly what replay does. No new Op, feature, model call, derived lease, legal pack, grants/capabilities/WASM, or ADR Accepted. M184-S01 remains closed (admission operator index). M183/M182/M181/M180/M179/M178/M177/M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residual stays separate: remote rocks observe skipped. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
+M185-S01 is closed under GSD **v1.78 enrichment admission leases**. Enrichment proposal admission and the emit pre-check now use runtime leases (`PackLifecycleTracker`, visible-log id set, blob map, borrowed cache-key set) instead of `derive_pack_lifecycle` plus a full event-id set, so a proposal costs O(1) in log length. `check_proposal` is read-only and the caller inserts the key after commit, so a rejected proposal cannot poison the lease and admission does not clone the set. Leases are rebuilt on hydrate/open/fork and updated on every append, including `intern`'s `Op::Define`. Two verifier rounds: the first blocked for a never-updated key lease, a per-write clone, and a source predicate broader than replay's; the second found `intern` bypassing the append choke point and a checkpoint test that never created a checkpoint. All fixed, with a real checkpointed-store parity test. Recorded limit: replay exempts pre-checkpoint proposals from source existence, because the rewrite may drop the cited rows (documented at the call site, derived data only). Tests: enrichment admission 6/6, workspace 832 passed / 0 failed; `kutha-gov ci --jobs 1` exit 0. No new Op, feature, model call, derived lease, legal pack, grants/capabilities/WASM, or ADR Accepted. M184-S01 remains closed (admission operator index). M183/M182/M181/M180/M179/M178/M177/M176/M175/M174/M173/M172 remain closed. M171/M170 residuals stay non-blocking. Residual stays separate: remote rocks observe skipped. Honeycomb stays Proposed; `I-legal-pack-not-next` stays.
 
 ## Thaw map
 
