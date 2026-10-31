@@ -69,15 +69,6 @@ impl std::fmt::Display for EnrichmentError {
 
 impl std::error::Error for EnrichmentError {}
 
-/// Validate one proposal against the current log and blob set.
-pub fn validate_proposal(
-    log: &[Event],
-    blobs: &HashMap<String, Vec<u8>>,
-    proposal: &Op,
-) -> Result<(), EnrichmentError> {
-    validate_proposal_with_payload(log, blobs, proposal, None)
-}
-
 /// Validate a proposal whose payload has not been appended yet.
 ///
 /// `pending` is the `(digest, bytes)` the caller is about to store. It is used

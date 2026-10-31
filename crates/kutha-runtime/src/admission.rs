@@ -125,10 +125,37 @@ impl Runtime {
             });
         }
         if matches!(op, Op::EnrichmentProposal { .. }) {
-            return crate::enrichment::validate_proposal(self.log.as_slice(), &self.fold.blobs, op)
-                .map_err(|err| RuntimeError::EnrichmentRejected {
-                    reason: err.to_string(),
-                });
+            let Op::EnrichmentProposal {
+                pack_id,
+                pack_version,
+                source_event_ids,
+                model,
+                prompt,
+                cache_key: _,
+                blob_digest,
+            } = op
+            else {
+                unreachable!("guarded by matches!");
+            };
+            let state = self
+                .lifecycle
+                .state(pack_id)
+                .map(|state| (state, self.lifecycle.version(pack_id).unwrap_or("").to_string()));
+            // Sources are existence-only on the live path: the log is visible.
+            let mut source_known = |id: kutha_common::EventId| self.event_by_id(id).is_some();
+            let mut cache_keys = self.enrichment_cache_keys.clone();
+            let payload = self.fold.blobs.get(blob_digest);
+            let _ = (pack_version, source_event_ids, model, prompt);
+            return crate::enrichment::check_proposal(
+                op,
+                state,
+                &mut source_known,
+                payload.map(|bytes| bytes.as_slice()),
+                &mut cache_keys,
+            )
+            .map_err(|err| RuntimeError::EnrichmentRejected {
+                reason: err.to_string(),
+            });
         }
         if matches!(
             op,

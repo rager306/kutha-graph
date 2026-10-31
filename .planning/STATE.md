@@ -1,19 +1,19 @@
 ---
 gsd_state_version: "1.0"
-milestone: v1.77
-status: Awaiting next milestone
-stopped_at: Phase 272 complete — all phases complete
+milestone: v1.78
+status: planning
+stopped_at: Phase 273 ready to execute
 last_updated: "2026-10-31T04:49:38.134Z"
 last_activity: 2026-10-31
-last_activity_desc: Milestone v1.77 completed and archived
+last_activity_desc: Milestone v1.78 started; enrichment admission leases planned
 state_head: 3932416a5253dbf8578c7b7fc6191b2efc2d5eec
 progress:
   total_phases: 1
-  completed_phases: 1
+  completed_phases: 0
   total_plans: 1
-  completed_plans: 1
-milestone_name: Admission operator index
-current_phase: null
+  completed_plans: 0
+milestone_name: Enrichment admission leases
+current_phase: 273
 ---
 
 Total Phases: 0
@@ -25,14 +25,14 @@ Total Phases: 0
 See: .planning/PROJECT.md (updated 2026-10-29)
 
 **Core value:** Prove legal point-in-time on a named statute-shaped fixture while keeping governor CI honest and advancing one Active Slice at a time.
-**Current focus:** v1.77 admission operator index (M184-S01), complete.
+**Current focus:** v1.78 enrichment admission leases (M185-S01), phase 273.
 
 ## Current Position
 
-Phase: Milestone v1.77 complete
-Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-10-31 — Milestone v1.77 completed and archived
+Phase: 273 — Enrichment admission without log replay
+Plan: 273-01
+Status: Ready to execute
+Last activity: 2026-10-31 — Milestone v1.78 started
 
 ## Accumulated Context
 
@@ -76,4 +76,4 @@ Resume file: None
 
 
 
-- Start the next milestone with /gsd-new-milestone
+- Execute phase 273 with the plan below.

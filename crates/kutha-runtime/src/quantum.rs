@@ -368,6 +368,8 @@ pub struct Runtime {
     /// Pack lifecycle state (droppable; rebuilt from the log). Admission checks
     /// one transition against it instead of replaying the whole log.
     pub(crate) lifecycle: crate::PackLifecycleTracker,
+    /// Enrichment cache keys already proposed (droppable).
+    pub(crate) enrichment_cache_keys: std::collections::HashSet<String>,
     /// Whether the operator/lifecycle leases were built from a clean log.
     /// Constructors that skip `replay_check` may leave it false; admission then
     /// fails closed instead of trusting a short index.
@@ -411,6 +413,7 @@ impl Runtime {
             operators: crate::pack_manifest::OperatorIndex::new(),
             lifecycle: crate::PackLifecycleTracker::new(),
             meta_leases_trusted: true,
+            enrichment_cache_keys: std::collections::HashSet::default(),
             unindex_premise_examine: IngestExamine::default(),
             unindex_live_examine: IngestExamine::default(),
         };

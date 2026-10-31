@@ -1,18 +1,10 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v1.77",
+  "milestone": "v1.78",
   "phases": [
-    {
-      "number": "272",
-      "name": "Admission-time operator index",
-      "status": "complete"
-    }
+    { "number": "273", "name": "Enrichment admission without log replay", "status": "pending" }
   ],
-  "next": {
-    "command": "/gsd-progress",
-    "label": "Show progress",
-    "reason": "Unsure of state — showing progress"
-  },
-  "updated_at": "2026-10-31T04:49:38.158Z"
+  "next": { "command": "/gsd-progress", "label": "Show progress", "reason": "Milestone v1.78 planned" },
+  "updated_at": "2026-10-31T00:00:00.000Z"
 }

@@ -22,6 +22,7 @@ impl Runtime {
         let mut index = crate::pack_manifest::OperatorIndex::new();
         let mut lifecycle = crate::PackLifecycleTracker::new();
         let mut trusted = true;
+        let mut enrichment_cache_keys = std::collections::HashSet::default();
         for event in self.log.iter() {
             match &event.op {
                 Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. } => {
@@ -32,6 +33,12 @@ impl Runtime {
                     if lifecycle.replay(&event.op).is_err() {
                         trusted = false;
                     }
+                }
+                _ => {}
+            }
+            match &event.op {
+                Op::EnrichmentProposal { cache_key, .. } => {
+                    enrichment_cache_keys.insert(cache_key.clone());
                 }
                 _ => {}
             }
@@ -58,6 +65,7 @@ impl Runtime {
         self.operators = index;
         self.lifecycle = lifecycle;
         self.meta_leases_trusted = trusted;
+        self.enrichment_cache_keys = enrichment_cache_keys;
     }
 
     pub(crate) fn hydrate_from_log(&mut self) {
@@ -173,6 +181,7 @@ impl Runtime {
             operators: crate::pack_manifest::OperatorIndex::new(),
             lifecycle: crate::PackLifecycleTracker::new(),
             meta_leases_trusted: true,
+            enrichment_cache_keys: std::collections::HashSet::default(),
         };
         rt.hydrate_from_log();
         rt
@@ -231,6 +240,7 @@ impl Runtime {
             operators: crate::pack_manifest::OperatorIndex::new(),
             lifecycle: crate::PackLifecycleTracker::new(),
             meta_leases_trusted: true,
+            enrichment_cache_keys: std::collections::HashSet::default(),
         };
         rt.hydrate_from_log();
         Ok(rt)
@@ -292,6 +302,7 @@ impl Runtime {
             operators: crate::pack_manifest::OperatorIndex::new(),
             lifecycle: crate::PackLifecycleTracker::new(),
             meta_leases_trusted: true,
+            enrichment_cache_keys: std::collections::HashSet::default(),
         };
         rt.hydrate_from_log();
         Ok(rt)

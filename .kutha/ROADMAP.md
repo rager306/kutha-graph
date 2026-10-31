@@ -8,6 +8,13 @@ Non-authoritative delivery pyramid. Architecture SoT remains `docs/ADR/`. Honeyc
 
 See `docs/process/gsd-auto-contract.md` § Id map. Do not copy the table onto this ROADMAP. Controller protocol lives in the same file.
 
+## M185: Enrichment admission leases — ACTIVE (harness lease)
+
+Bounded complexity fix: runtime-held payload and cache-key leases make enrichment proposal admission O(1) and identical to replay. No feature, no thaw.
+
+- [ ] **S01: enrichment admission leases** `risk:low` `depends:[]`
+  > After this: proposal admission does not scan the log, and admission/replay agree on every proposal.
+
 ## M184: Admission operator index — CLOSED (harness lease)
 
 Bounded complexity fix delivered: the runtime keeps operator and lifecycle leases rebuilt from the log, so pack admission is O(1) per pack write. No feature, no thaw.

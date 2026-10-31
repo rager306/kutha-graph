@@ -4,6 +4,14 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Product: enrichment admission leases
+
+- Enrichment proposal admission no longer scans the log: it uses the runtime lifecycle lease, the content-addressed blob map, and a droppable cache-key set, so a proposal costs O(1) instead of `derive_pack_lifecycle` plus a full event-id set.
+- Admission and replay now share `check_proposal`; the log-scanning `validate_proposal` was removed so there is one rule.
+- The cache-key lease is rebuilt on hydrate/open/fork and updated on commit.
+- Added `crates/kutha-runtime/tests/m185_enrichment_admission.rs` (4 tests), including 200 proposals kept in step and a foreign-log parity case.
+- Tests: enrichment admission 4/4, workspace 830 passed / 0 failed.
+
 ## 2026-10-31 — Trajectory: M184-S01 closed (admission index)
 
 - GSD v1.77 closed; phase 272 archived. `Active Milestone=None`, `L_delivery=M184-S01-closed`.
