@@ -204,9 +204,7 @@ def _run_selftest_parallel(root: Path, selected: dict[str, Check], jobs: int) ->
             submit_exc: BaseException | None = None
             for name in names:
                 try:
-                    fut = pool.submit(
-                        _eval_selftest_worker, (name, str(root), str(template))
-                    )
+                    fut = pool.submit(_eval_selftest_worker, (name, str(root), str(template)))
                 except Exception as exc:
                     submit_exc = exc
                     break
@@ -415,9 +413,7 @@ def _unit_error(work: Path, unit: list[Mutation]) -> str:
         # M112: `with` that still contains the pattern leaves file_contains green
         # (VACUOUS). Fail closed before apply so authors see UNPROVEN, not silence.
         if op == "replace_regex":
-            err = replace_regex_substring_error(
-                _str(mutation, "pattern"), mutation.get("with", "")
-            )
+            err = replace_regex_substring_error(_str(mutation, "pattern"), mutation.get("with", ""))
             if err:
                 return err
     return ""

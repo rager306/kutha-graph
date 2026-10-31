@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from collections.abc import Callable, Mapping, Sequence
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
@@ -36,7 +37,9 @@ from kutha_gov.selftest import (  # noqa: E402
 )
 
 
-def _write_mini(checks: list[dict[str, object]], files: dict[str, str] | None = None) -> Path:
+def _write_mini(
+    checks: Sequence[Mapping[str, object]], files: dict[str, str] | None = None
+) -> Path:
     raw = tempfile.mkdtemp(prefix="kutha-selftest-mini-")
     atexit.register(shutil.rmtree, raw, ignore_errors=True)
     root = Path(raw)
@@ -269,8 +272,7 @@ class SelftestTests(unittest.TestCase):
             ],
             {
                 "crates/k/src/lib.rs": (
-                    'PathBuf::from("x")\n        .join("tmp")\n'
-                    '        .join(format!("leaf-{n}"))\n'
+                    'PathBuf::from("x")\n        .join("tmp")\n        .join(format!("leaf-{n}"))\n'
                 ),
             },
         )
@@ -837,12 +839,12 @@ class SelftestTests(unittest.TestCase):
             def __exit__(self, *args: object) -> bool:
                 return False
 
-            def submit(self, fn: object, payload: object) -> Future:
+            def submit(self, fn: Callable[[object], object], payload: object) -> Future:
                 self.n += 1
                 if self.n > 1:
                     raise RuntimeError("submit-after-first-success")
                 fut: Future = Future()
-                fut.set_result(fn(payload))  # type: ignore[misc, operator]
+                fut.set_result(fn(payload))
                 return fut
 
         with patch("kutha_gov.selftest.ProcessPoolExecutor", FailAfterFirstPool):

@@ -1089,8 +1089,7 @@ class GlobRegexAbsentTests(unittest.TestCase):
         root = _rust_tree(
             {
                 "crates/k/src/lib.rs": (
-                    'PathBuf::from("x")\n        .join("tmp")\n'
-                    '        .join(format!("leaf-{n}"))\n'
+                    'PathBuf::from("x")\n        .join("tmp")\n        .join(format!("leaf-{n}"))\n'
                 ),
             }
         )
@@ -2102,12 +2101,7 @@ class ArtifactBudgetHonestyTests(unittest.TestCase):
             }
         )
         units = _derive_mutations([_PLAN_BUDGET_STEP], root)
-        deletes = [
-            m.get("path")
-            for unit in units
-            for m in unit
-            if m.get("op") == "delete_file"
-        ]
+        deletes = [m.get("path") for unit in units for m in unit if m.get("op") == "delete_file"]
         self.assertTrue(
             any(str(path).endswith("-PLAN.md") for path in deletes),
             msg=f"expected PLAN delete_file mutation, got {units!r}",
@@ -2122,9 +2116,7 @@ class LeaseBundleHonestyTests(unittest.TestCase):
     """M056 S01: lease must keep trajectory/state-readme green (bundle)."""
 
     def test_contract_names_lease_bundle_surfaces(self) -> None:
-        text = (ROOT / "docs" / "process" / "gsd-auto-contract.md").read_text(
-            encoding="utf-8"
-        )
+        text = (ROOT / "docs" / "process" / "gsd-auto-contract.md").read_text(encoding="utf-8")
         self.assertIn("Lease (bundle)", text)
         self.assertIn("ROADMAP.md", text)
         self.assertIn("README.md", text)
@@ -2132,16 +2124,13 @@ class LeaseBundleHonestyTests(unittest.TestCase):
 
     def test_trajectory_require_message_cites_lease_bundle(self) -> None:
         loaded = yaml.safe_load(
-            (ROOT / ".kutha" / "dictionaries" / "checks.yaml").read_text(
-                encoding="utf-8"
-            )
+            (ROOT / ".kutha" / "dictionaries" / "checks.yaml").read_text(encoding="utf-8")
         )
         row = next(c for c in loaded["checks"] if c.get("id") == "trajectory")
         step = next(
             s
             for s in row["steps"]
-            if s.get("kind") == "pointer_in_other_file"
-            and "require_template" in s
+            if s.get("kind") == "pointer_in_other_file" and "require_template" in s
         )
         msg = str(step.get("require_message", ""))
         self.assertIn("lease bundle", msg)
@@ -2151,14 +2140,9 @@ class LeaseBundleHonestyTests(unittest.TestCase):
         root = _rust_tree(
             {
                 ".kutha/STATE.md": (
-                    "**Active Milestone:** M056\n"
-                    "**Active Slice:** S01\n"
-                    "**Phase:** H5\n"
+                    "**Active Milestone:** M056\n**Active Slice:** S01\n**Phase:** H5\n"
                 ),
-                ".kutha/ROADMAP.md": (
-                    "## M056: x\n"
-                    "- [x] **S01: done already**\n"
-                ),
+                ".kutha/ROADMAP.md": ("## M056: x\n- [x] **S01: done already**\n"),
                 "README.md": "M056\nH5\n",
             }
         )
@@ -2254,9 +2238,7 @@ class BudgetTemplateAlignTests(unittest.TestCase):
         root = _rust_tree(
             {
                 ".kutha/dictionaries/fsm.yaml": (
-                    "schema: kutha-harness-fsm/v1\n"
-                    "defaults:\n"
-                    "  budget: 80\n"
+                    "schema: kutha-harness-fsm/v1\ndefaults:\n  budget: 80\n"
                 ),
                 ".env.example": "KUTHA_GOV_BUDGET=79\n",
             }
@@ -2316,9 +2298,7 @@ class LeaseRoadmapCouplingTests(unittest.TestCase):
     def test_state_diff_without_roadmap_is_high(self) -> None:
         ctx = Context(
             root=ROOT,
-            changed_paths=frozenset(
-                {".kutha/STATE.md", "CHANGELOG.md", "README.md"}
-            ),
+            changed_paths=frozenset({".kutha/STATE.md", "CHANGELOG.md", "README.md"}),
         )
         result = get_checks(ROOT)["docs-coupling"].run(ctx)
         highs = [f.message for f in result.findings if f.severity is Severity.HIGH]

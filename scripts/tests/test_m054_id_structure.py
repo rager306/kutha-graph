@@ -33,9 +33,7 @@ class KindsFamilySplitTests(unittest.TestCase):
 
         self.assertIs(kinds.RUNNERS["test_matrix"], _kind_test_matrix)
         self.assertIs(kinds.RUNNERS["cargo_dep_constraint"], _kind_cargo_dep_constraint)
-        self.assertIs(
-            kinds.RUNNERS["frontmatter_paths_exist"], _kind_frontmatter_paths_exist
-        )
+        self.assertIs(kinds.RUNNERS["frontmatter_paths_exist"], _kind_frontmatter_paths_exist)
 
     def test_policy_families_live_in_sibling_modules(self) -> None:
         self.assertTrue((GOV / "kind_planning.py").is_file())

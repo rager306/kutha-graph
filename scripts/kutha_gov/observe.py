@@ -7,7 +7,7 @@ import os
 import re
 import subprocess
 import time
-from collections.abc import Iterator, Mapping, Sequence
+from collections.abc import Generator, Mapping, Sequence
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -92,7 +92,7 @@ def _has_observe_incomplete(findings: Sequence[Finding]) -> bool:
 
 
 @contextmanager
-def _exclusive_cargo_lock(cwd: Path) -> Iterator[None]:
+def _exclusive_cargo_lock(cwd: Path) -> Generator[None]:
     """M114: serialize observe Cargo against concurrent cargo/bench on the same target."""
     target = _cargo_target_dir(cwd)
     target.mkdir(parents=True, exist_ok=True)

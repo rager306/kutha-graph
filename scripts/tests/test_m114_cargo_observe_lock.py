@@ -133,10 +133,7 @@ class CargoObserveLockTests(unittest.TestCase):
         # Prefer repo scripts/ on PYTHONPATH for kutha_gov.
         scripts = str(Path(__file__).resolve().parents[1])
         env["PYTHONPATH"] = scripts + os.pathsep + env.get("PYTHONPATH", "")
-        procs = [
-            subprocess.Popen([sys.executable, "-c", worker], env=env)
-            for _ in range(2)
-        ]
+        procs = [subprocess.Popen([sys.executable, "-c", worker], env=env) for _ in range(2)]
         codes = [p.wait(timeout=30) for p in procs]
         self.assertEqual([0, 0], codes)
         lines = log.read_text(encoding="utf-8").splitlines()

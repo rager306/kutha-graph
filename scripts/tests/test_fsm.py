@@ -1063,9 +1063,11 @@ class ObserveBuildTests(unittest.TestCase):
             "build": {"bin": "cargo", "args": ["build", "--offline"]},
             "required": ["foo"],
         }
-        with patch.dict(os.environ, {"KUTHA_GOV_CARGO_OBSERVE_RETRIES": "2"}):
-            with patch("kutha_gov.observe.subprocess.run", side_effect=fake_run):
-                code, _seen, findings = run_cargo_observation(ROOT, spec)
+        with (
+            patch.dict(os.environ, {"KUTHA_GOV_CARGO_OBSERVE_RETRIES": "2"}),
+            patch("kutha_gov.observe.subprocess.run", side_effect=fake_run),
+        ):
+            code, _seen, findings = run_cargo_observation(ROOT, spec)
         self.assertEqual(124, code)
         self.assertEqual(1, len(calls))
         self.assertTrue(any(f.category == "observe-error" for f in findings))

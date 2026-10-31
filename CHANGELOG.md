@@ -4,6 +4,14 @@ All notable changes to **this repository** are recorded here. This is project hi
 
 Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries may also use a **Trajectory** subsection so L_map / L_delivery / L_capability are not collapsed. New entries prefer Keep a Changelog groups (`Added` / `Changed` / `Fixed`) inside those plane headings.
 
+## 2026-10-31 — Process: Python tooling gate green, ty 0.0.92
+
+- `uv run kutha-gov py` now exits 0: `ruff check`, `ruff format --check`, `ty check`, and `pyrefly check` all OK. It had been red on `work/main-line` with the previous lock, and CI runs only `kutha-gov ci`, so this is a local harness gate, not a remote one.
+- `ty` 0.0.92 (dependabot PR #20, lockfile-only, cherry-picked as `c9c43f4`) raises one new diagnostic: the `@contextmanager` return annotation in `scripts/kutha_gov/observe.py` moved from `Iterator[None]` to `Generator[None]` (`Generator[None, None, None]` normalized by ruff UP043). 0.0.92 then reports the same four pre-existing diagnostics as 0.0.72.
+- Ruff: import sorting, unused `noqa` removal, nested `with` combined, ambiguous en dash in a comment replaced; 10 files reformatted.
+- Typing fixes with no behaviour change: the fake pools type `submit(fn: Callable[[object], object])`; `_write_mini` accepts `Sequence[Mapping[str, object]]`; the `LoadErrorCheck._message` read casts the base `Check`.
+- Scope: `scripts/` only. Product crates, event log, and bench code untouched.
+
 ## 2026-10-31 — Trajectory: M186-S01 closed (lease overhead A/B)
 
 - GSD v1.79 closed; phase 274 archived. `Active Milestone=None`, `L_delivery=M186-S01-closed`.

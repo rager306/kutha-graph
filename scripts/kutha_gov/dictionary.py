@@ -120,7 +120,7 @@ def get_checks(root: Path | None = None) -> dict[str, Check]:
     if not isinstance(rows, list):
         return {LoadErrorCheck.name: LoadErrorCheck("dictionary.checks must be a list")}
     found: dict[str, Check] = {}
-    # Keep valid checks; fail closed via LoadError alongside them (CE #20 / #6–#8).
+    # Keep valid checks; fail closed via LoadError alongside them (CE #20 / #6-#8).
     load_errors: list[str] = []
     for index, row in enumerate(rows):
         if not isinstance(row, dict):
@@ -135,14 +135,10 @@ def get_checks(root: Path | None = None) -> dict[str, Check]:
             continue
         raw_steps = row.get("steps", [])
         if not isinstance(raw_steps, list) or not raw_steps:
-            load_errors.append(
-                f"dictionary check {check.name!r} needs a non-empty steps list"
-            )
+            load_errors.append(f"dictionary check {check.name!r} needs a non-empty steps list")
             continue
         if not check.steps:
-            load_errors.append(
-                f"dictionary check {check.name!r} has no mapping steps"
-            )
+            load_errors.append(f"dictionary check {check.name!r} has no mapping steps")
             continue
         load_errors.extend(selftest_declared_mutation_errors(check.name, row.get("selftest")))
         found[check.name] = check

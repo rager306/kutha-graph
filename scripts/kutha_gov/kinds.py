@@ -2188,9 +2188,7 @@ def disk_free_mutation_target(step: Step, root: Path) -> tuple[str, str, str] | 
     return path, r"min_free_gib:\s*\d+", "min_free_gib: 999999"
 
 
-def _kind_budget_covers_checks(
-    check: str, step: Step, ctx: Context, result: CheckResult
-) -> None:
+def _kind_budget_covers_checks(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
     """Fail HIGH when fsm defaults.budget is below the dictionary check count."""
     from kutha_gov.checks import get_checks
     from kutha_gov.fsm import load_machine
@@ -2213,9 +2211,7 @@ def _kind_budget_covers_checks(
         try:
             budget = load_machine(ctx.root).budget_default
         except ValueError as exc:
-            result.findings.append(
-                Finding(check, Severity.HIGH, "budget-covers", str(exc))
-            )
+            result.findings.append(Finding(check, Severity.HIGH, "budget-covers", str(exc)))
             return
     if budget >= n:
         return
@@ -2234,9 +2230,7 @@ def _kind_budget_covers_checks(
     )
 
 
-def budget_covers_checks_mutation_target(
-    step: Step, root: Path
-) -> tuple[str, str, str] | None:
+def budget_covers_checks_mutation_target(step: Step, root: Path) -> tuple[str, str, str] | None:
     """Lower fsm defaults.budget so the live check count fails the floor."""
     del step  # step has no path; always mutate fsm.yaml
     path = ".kutha/dictionaries/fsm.yaml"
@@ -2245,9 +2239,7 @@ def budget_covers_checks_mutation_target(
     return path, r"(?m)^(  budget:\s*)\d+\s*$", r"\g<1>1"
 
 
-def _env_int_floor(
-    check: str, step: Step, ctx: Context, result: CheckResult
-) -> int | None:
+def _env_int_floor(check: str, step: Step, ctx: Context, result: CheckResult) -> int | None:
     at_least = step.get("at_least")
     if isinstance(at_least, int):
         return at_least
@@ -2312,16 +2304,12 @@ def _env_int_floor(
         return None
 
 
-def _kind_env_int_at_least(
-    check: str, step: Step, ctx: Context, result: CheckResult
-) -> None:
+def _kind_env_int_at_least(check: str, step: Step, ctx: Context, result: CheckResult) -> None:
     """Fail HIGH when a set env int is below a YAML floor (unset passes)."""
     result.scanned += 1
     env_name = _str(step, "env")
     if not env_name:
-        result.findings.append(
-            Finding(check, Severity.HIGH, "env-int-floor", "env is required")
-        )
+        result.findings.append(Finding(check, Severity.HIGH, "env-int-floor", "env is required"))
         return
     floor = _env_int_floor(check, step, ctx, result)
     if floor is None:
@@ -2365,9 +2353,7 @@ def _kind_env_int_at_least(
     )
 
 
-def env_int_at_least_mutation_target(
-    step: Step, root: Path
-) -> tuple[str, str, str] | None:
+def env_int_at_least_mutation_target(step: Step, root: Path) -> tuple[str, str, str] | None:
     """Inject a short step value so the live env floor fails without touching os.environ."""
     del step
     path = ".kutha/dictionaries/checks.yaml"

@@ -5,6 +5,7 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
+from typing import cast
 
 import yaml
 
@@ -65,7 +66,7 @@ class SelftestMutationStaticTests(unittest.TestCase):
         loaded = get_checks(root)
         self.assertIn("ok-check", loaded)
         self.assertIn(LoadErrorCheck.name, loaded)
-        msg = loaded[LoadErrorCheck.name]._message  # noqa: SLF001
+        msg = cast(LoadErrorCheck, loaded[LoadErrorCheck.name])._message
         self.assertIn("vacuous-selftest", msg)
         self.assertIn("substring", msg.lower())
 

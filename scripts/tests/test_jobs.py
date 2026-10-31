@@ -8,6 +8,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+from collections.abc import Callable
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
@@ -233,9 +234,7 @@ class JobsParityTests(unittest.TestCase):
             def run(self, ctx: Context) -> CheckResult:
                 raise RuntimeError("force boom")
 
-        result = _eval_check_worker(
-            (Boom(), str(ROOT), False, "auto", False, True, None)
-        )
+        result = _eval_check_worker((Boom(), str(ROOT), False, "auto", False, True, None))
         cats = [f.category for f in result.findings]
         self.assertIn("check-error", cats)
         self.assertNotIn("worker-error", cats)
@@ -413,12 +412,12 @@ class JobsAtMostOnceTests(unittest.TestCase):
             def __exit__(self, *args: object) -> bool:
                 return False
 
-            def submit(self, fn: object, payload: object) -> Future:
+            def submit(self, fn: Callable[[object], object], payload: object) -> Future:
                 self.n += 1
                 if self.n > 1:
                     raise RuntimeError("submit-after-first-success")
                 fut: Future = Future()
-                fut.set_result(fn(payload))  # type: ignore[misc, operator]
+                fut.set_result(fn(payload))
                 return fut
 
         alpha = CountingCheck("alpha")

@@ -35,9 +35,7 @@ def changed_relpaths(root: Path, against: str) -> set[str] | None:
         # HEAD~1 false-positives docs-coupling when only checks.yaml landed in tip.
         base = _clean_tree_diff_base(root)
         if base:
-            return _name_only(
-                root, ["diff", "--name-only", "--diff-filter=ACMR", f"{base}...HEAD"]
-            )
+            return _name_only(root, ["diff", "--name-only", "--diff-filter=ACMR", f"{base}...HEAD"])
         return _name_only(root, ["diff", "--name-only", "--diff-filter=ACMR", "HEAD~1"])
     return None
 

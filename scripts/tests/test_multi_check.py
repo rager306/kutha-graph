@@ -9,7 +9,6 @@ from pathlib import Path
 
 from kutha_gov.__main__ import _parse_check_ids, _select_checks, main
 
-
 ROOT = Path(__file__).resolve().parents[2]
 
 
@@ -58,9 +57,7 @@ class MultiCheckSelectTests(unittest.TestCase):
     def test_precommit_empty_token_is_contract_error(self) -> None:
         err = io.StringIO()
         with redirect_stderr(err):
-            code = main(
-                ["--root", str(ROOT), "--check", "docs-entry,", "precommit"]
-            )
+            code = main(["--root", str(ROOT), "--check", "docs-entry,", "precommit"])
         self.assertEqual(2, code)
         self.assertIn("empty check id", err.getvalue())
 
@@ -206,9 +203,7 @@ class MultiCheckSelectTests(unittest.TestCase):
         self.assertIsNone(_join_check_flags(None))
         self.assertEqual(
             "docs-entry,version-freeze,agents-lean",
-            _join_check_flags(
-                ["docs-entry,version-freeze", "agents-lean"]
-            ),
+            _join_check_flags(["docs-entry,version-freeze", "agents-lean"]),
         )
 
 
