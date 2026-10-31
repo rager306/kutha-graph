@@ -2,6 +2,17 @@
 
 use kutha_common::Op;
 use kutha_runtime::{PackLifecycleState, Runtime, derive_pack_lifecycle, store};
+use std::sync::atomic::{AtomicU64, Ordering};
+
+mod common;
+
+/// Repo-local `tmp/` scratch with pid + nanos + seq (`m019_dur_a` idiom), so two
+/// concurrent runs of this binary never share a store directory.
+fn scratch(label: &str) -> common::PersistScratch {
+    static N: AtomicU64 = AtomicU64::new(0);
+    let seq = N.fetch_add(1, Ordering::Relaxed);
+    common::PersistScratch::new(&format!("m176-{label}-{seq}"))
+}
 
 fn build_runtime() -> Runtime {
     let mut rt = Runtime::default();
@@ -34,12 +45,10 @@ fn lifecycle_state_is_replay_derived_and_graph_neutral() {
 #[test]
 fn lifecycle_state_survives_persist_open() {
     let rt = build_runtime();
-    let dir = std::path::PathBuf::from("tmp/m176-lifecycle-persist");
-    std::fs::remove_dir_all(&dir).ok();
+    let dir = scratch("lifecycle-persist");
     rt.persist(&dir).expect("persist");
     let opened = Runtime::open(&dir).expect("open");
     assert_eq!(opened.pack_lifecycle(), rt.pack_lifecycle());
-    std::fs::remove_dir_all(&dir).ok();
 }
 
 #[test]
@@ -92,8 +101,7 @@ fn lifecycle_state_survives_checkpoint_sealed_prefix() {
     store::set_test_segment_limits(Some(4096), Some(2));
 
     let mut rt = build_runtime();
-    let dir = std::path::PathBuf::from("tmp/m176-lifecycle-checkpoint");
-    std::fs::remove_dir_all(&dir).ok();
+    let dir = scratch("lifecycle-checkpoint");
     rt.persist(&dir).expect("persist lifecycle prefix");
     // Force the Pack* events into a sealed prefix: append product events and
     // persist again, so the checkpoint boundary includes the lifecycle events.
@@ -121,5 +129,4 @@ fn lifecycle_state_survives_checkpoint_sealed_prefix() {
         opened.pack_lifecycle().last().map(|p| p.state),
         Some(PackLifecycleState::Active)
     );
-    std::fs::remove_dir_all(&dir).ok();
 }

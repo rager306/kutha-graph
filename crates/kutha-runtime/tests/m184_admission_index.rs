@@ -2,6 +2,17 @@
 
 use kutha_common::Op;
 use kutha_runtime::{PackManifest, Runtime, RuntimeError, store};
+use std::sync::atomic::{AtomicU64, Ordering};
+
+mod common;
+
+/// Repo-local `tmp/` scratch with pid + nanos + seq (`m019_dur_a` idiom), so two
+/// concurrent runs of this binary never share a store directory.
+fn scratch(label: &str) -> common::PersistScratch {
+    static N: AtomicU64 = AtomicU64::new(0);
+    let seq = N.fetch_add(1, Ordering::Relaxed);
+    common::PersistScratch::new(&format!("m184-{label}-{seq}"))
+}
 
 fn install(rt: &mut Runtime, pack_id: &str, ops: &[&str]) -> Result<(), RuntimeError> {
     let manifest = PackManifest::new(
@@ -94,8 +105,7 @@ fn retire_releases_names_for_admission() {
 fn index_is_rebuilt_on_open_and_fork() {
     let mut rt = Runtime::default();
     install(&mut rt, "a", &["shared"]).expect("install");
-    let dir = std::path::PathBuf::from("tmp/m184-admission-index");
-    std::fs::remove_dir_all(&dir).ok();
+    let dir = scratch("admission-index");
     rt.persist(&dir).expect("persist");
     let mut opened = Runtime::open(&dir).expect("open");
     let err = install(&mut opened, "b", &["shared"]).expect_err("collision after open");
@@ -110,7 +120,6 @@ fn index_is_rebuilt_on_open_and_fork() {
         err,
         RuntimeError::PackLifecycleRejected { reason, .. } if reason.contains("already declared")
     ));
-    std::fs::remove_dir_all(&dir).ok();
 }
 
 #[test]
@@ -129,8 +138,7 @@ fn index_survives_checkpoint_sealed_prefix() {
     rt.emit_pack_activate("a", "1.0.0").expect("activate");
     rt.emit_pack_retire("a", "1.0.0").expect("retire");
     install(&mut rt, "b", &["shared"]).expect("reuse after retire");
-    let dir = std::path::PathBuf::from("tmp/m184-admission-index-cp");
-    std::fs::remove_dir_all(&dir).ok();
+    let dir = scratch("admission-index-cp");
     rt.persist(&dir).expect("persist");
     let article = rt.intern("article");
     let relation = rt.intern("relatedTo");
@@ -161,7 +169,6 @@ fn index_survives_checkpoint_sealed_prefix() {
         err,
         RuntimeError::PackLifecycleRejected { reason, .. } if reason.contains("already declared")
     ));
-    std::fs::remove_dir_all(&dir).ok();
 }
 
 /// OPS-01: admission is indexed.
@@ -219,15 +226,13 @@ fn retired_name_reuse_survives_every_reopen_path() {
     let mut live = build();
     install(&mut live, "c", &["shared"]).expect_err("live rejects collision");
 
-    let dir = std::path::PathBuf::from("tmp/m184-retire-reuse");
-    std::fs::remove_dir_all(&dir).ok();
+    let dir = scratch("retire-reuse");
     let rt = build();
     rt.persist(&dir).expect("persist");
     let mut opened = Runtime::open(&dir).expect("open");
     opened.replay_check().expect("replay agrees with admission");
     assert_eq!(opened.operator_count(), 1, "only b owns shared");
     install(&mut opened, "c", &["shared"]).expect_err("collision after open");
-    std::fs::remove_dir_all(&dir).ok();
 
     let mut forked = build().fork_at(build().log().len()).expect("fork");
     install(&mut forked, "c", &["shared"]).expect_err("collision after fork");
@@ -236,12 +241,10 @@ fn retired_name_reuse_survives_every_reopen_path() {
     let mut rt = build();
     rt.emit_pack_activate("b", "1.0.0").expect("activate b");
     rt.emit_pack_retire("b", "1.0.0").expect("retire b");
-    let dir2 = std::path::PathBuf::from("tmp/m184-retire-reuse-2");
-    std::fs::remove_dir_all(&dir2).ok();
+    let dir2 = scratch("retire-reuse-2");
     rt.persist(&dir2).expect("persist");
     let mut opened = Runtime::open(&dir2).expect("open");
     install(&mut opened, "d", &["shared"]).expect("released again");
-    std::fs::remove_dir_all(&dir2).ok();
 }
 
 /// OPS-01: admission does not replay the log per write.

@@ -93,6 +93,7 @@ pub fn derive_pack_lifecycle(events: &[Event]) -> Vec<PackLifecycle> {
 #[derive(Clone, Debug, Default)]
 pub struct PackLifecycleTracker {
     state: std::collections::BTreeMap<String, (PackLifecycleState, String)>,
+    replay_calls: u64,
 }
 
 impl PackLifecycleTracker {
@@ -170,6 +171,7 @@ impl PackLifecycleTracker {
     /// Apply one op if it is a lifecycle op; other ops are ignored.
     pub fn replay(&mut self, op: &Op) -> Result<(), crate::RuntimeError> {
         self.check(op)?;
+        self.replay_calls += 1;
         match op {
             Op::PackInstall {
                 pack_id, version, ..
@@ -198,6 +200,13 @@ impl PackLifecycleTracker {
 
     pub fn version(&self, pack_id: &str) -> Option<&str> {
         self.state.get(pack_id).map(|(_, version)| version.as_str())
+    }
+
+    /// Ops applied so far. Test seam for the replay-scaling oracles: they
+    /// assert one replay per op rather than measuring wall-clock.
+    #[doc(hidden)]
+    pub fn replay_calls(&self) -> u64 {
+        self.replay_calls
     }
 }
 

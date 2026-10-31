@@ -13,6 +13,17 @@ use kutha_common::Op;
 use kutha_runtime::{
     PackLifecycleState, PackManifest, QueryRows, Runtime, RuntimeBinder, execute, parse_gpml,
 };
+use std::sync::atomic::{AtomicU64, Ordering};
+
+mod common;
+
+/// Repo-local `tmp/` scratch with pid + nanos + seq (`m019_dur_a` idiom), so two
+/// concurrent runs of this binary never share a store directory.
+fn scratch(label: &str) -> common::PersistScratch {
+    static N: AtomicU64 = AtomicU64::new(0);
+    let seq = N.fetch_add(1, Ordering::Relaxed);
+    common::PersistScratch::new(&format!("m179-{label}-{seq}"))
+}
 
 const T_OLD: u64 = 2015;
 const T_NEW: u64 = 2020;
@@ -99,8 +110,7 @@ fn toy_pack_installs_queries_retires_and_replays_without_core_edits() {
     assert_eq!(as_of(&rt, T_OLD), old, "retire does not change AS OF");
     assert_eq!(as_of(&rt, T_NEW), new);
 
-    let dir = std::path::PathBuf::from("tmp/m179-gate-gc");
-    std::fs::remove_dir_all(&dir).ok();
+    let dir = scratch("gate-gc");
     rt.persist(&dir).expect("persist");
     let opened = Runtime::open(&dir).expect("open");
     assert_eq!(opened.fold().facts().len(), rt.fold().facts().len());
@@ -112,7 +122,6 @@ fn toy_pack_installs_queries_retires_and_replays_without_core_edits() {
     );
     assert_eq!(as_of(&opened, T_OLD), old);
     assert_eq!(as_of(&opened, T_NEW), new);
-    std::fs::remove_dir_all(&dir).ok();
 }
 
 #[test]
@@ -124,13 +133,11 @@ fn pack_retire_then_replay_is_parity_equal_to_reopen() {
     rt.emit_pack_retire("toy", "1.0.0").expect("retire");
     let retired = rt.pack_lifecycle();
 
-    let dir = std::path::PathBuf::from("tmp/m179-gate-gc-replay");
-    std::fs::remove_dir_all(&dir).ok();
+    let dir = scratch("gate-gc-replay");
     rt.persist(&dir).expect("persist");
     let opened = Runtime::open(&dir).expect("open");
     assert_eq!(opened.pack_lifecycle(), retired);
     assert_ne!(opened.pack_lifecycle(), active);
     assert_eq!(opened.fold().fingerprint(), rt.fold().fingerprint());
     assert_eq!(opened.fold().facts(), rt.fold().facts());
-    std::fs::remove_dir_all(&dir).ok();
 }

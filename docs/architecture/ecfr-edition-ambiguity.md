@@ -47,8 +47,10 @@ is 2017-03-14. The two evidence sources are named because they are not equal.
 Do **not** fabricate a third edition, and do not relabel the citation-only
 amendment as a normative change. Keep the fixture honest:
 
-- the equality asserts catch a *lost* and a *gained* edition; the `len == 2`
-  assert restates them and cannot fail while they pass;
+- the equality asserts are the falsifier: `assert_eq!` on the identical pair
+  catches a *gained* edition, `assert_ne!` on the 2017-03-14 pair catches a
+  *lost* one. A `len == 2` count assert restated both and could not fail while
+  they passed, so it was removed;
 - the 2017-03-14 boundary is the discriminating pair;
 - `as_known_on` still shows the 2017-01-23 row, because the log records that
   edition was published even though its operative text did not change.

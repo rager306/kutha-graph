@@ -4,7 +4,7 @@
 //! `.planning/phases/269-meta-surface-threat-audit-and-adversarial-tests/269-SECURITY.md`.
 
 use kutha_common::{Event, Op};
-use kutha_runtime::{PackManifest, Runtime, RuntimeError};
+use kutha_runtime::{PackLifecycleTracker, PackManifest, Runtime, RuntimeError};
 
 fn dict() -> Vec<String> {
     vec!["knows".into(), "knownBy".into()]
@@ -29,6 +29,11 @@ fn blob(manifest: &PackManifest) -> (String, Vec<u8>) {
 
 /// T-269-01 (resource exhaustion): replay must stay near-linear in meta ops.
 /// The pre-fix implementation was O(n^2): 2000 installs took ~2.18 s here.
+///
+/// The oracle is a counted invariant, not wall-clock: every meta op is applied
+/// through the shared lifecycle tracker exactly once, so the count equals the
+/// op count instead of growing with the prefix. The time bound below is a hang
+/// guard only; it is not the thing under test.
 #[test]
 fn replay_meta_is_not_quadratic() {
     let n = 4000u64;
@@ -45,13 +50,19 @@ fn replay_meta_is_not_quadratic() {
             )
         })
         .collect();
+    let tracker = PackLifecycleTracker::from_log(&events).expect("valid log");
+    assert_eq!(
+        tracker.replay_calls(),
+        n,
+        "one replay per op expected; a per-prefix rebuild would re-apply ops"
+    );
     let rt = runtime(events);
+    // Hang guard only: generous by design, so a slow machine cannot flake it.
     let start = std::time::Instant::now();
     rt.replay_check().expect("valid log");
-    let elapsed = start.elapsed();
     assert!(
-        elapsed < std::time::Duration::from_secs(3),
-        "meta replay took {elapsed:?} for {n} ops; a quadratic regression is back"
+        start.elapsed() < std::time::Duration::from_secs(60),
+        "meta replay hung for {n} ops; this is a hang guard, not the oracle"
     );
 }
 

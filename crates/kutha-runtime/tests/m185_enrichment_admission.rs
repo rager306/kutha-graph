@@ -2,6 +2,17 @@
 
 use kutha_common::{Event, Op};
 use kutha_runtime::{PackManifest, Runtime, RuntimeError};
+use std::sync::atomic::{AtomicU64, Ordering};
+
+mod common;
+
+/// Repo-local `tmp/` scratch with pid + nanos + seq (`m019_dur_a` idiom), so two
+/// concurrent runs of this binary never share a store directory.
+fn scratch(label: &str) -> common::PersistScratch {
+    static N: AtomicU64 = AtomicU64::new(0);
+    let seq = N.fetch_add(1, Ordering::Relaxed);
+    common::PersistScratch::new(&format!("m185-{label}-{seq}"))
+}
 
 fn install_and_activate(rt: &mut Runtime) {
     let manifest = PackManifest::new("enrich", "pack-enrich", "1.0.0", vec![]);
@@ -239,8 +250,7 @@ fn checkpoint_tail_proposal_cannot_cite_a_dropped_source() {
     let mut rt = Runtime::default();
     install_and_activate(&mut rt);
     let src = source(&mut rt);
-    let dir = std::path::PathBuf::from("tmp/m185-checkpoint-source");
-    std::fs::remove_dir_all(&dir).ok();
+    let dir = scratch("checkpoint-source");
     rt.persist(&dir).expect("persist");
     let article = rt.intern("article");
     let relation = rt.intern("relatedTo");
@@ -308,5 +318,4 @@ fn checkpoint_tail_proposal_cannot_cite_a_dropped_source() {
         )
         .expect("visible tail source");
     opened.replay_check().expect("replay agrees");
-    std::fs::remove_dir_all(&dir).ok();
 }

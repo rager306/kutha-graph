@@ -147,10 +147,10 @@ impl SecurityError {
     fn from_query_error(err: crate::query_ir::QueryError) -> Self {
         match err {
             crate::query_ir::QueryError::UnknownRelation { name } => Self::UnknownRelation { name },
-            crate::query_ir::QueryError::UnknownTerm { name } => Self::PolicyDenied {
+            crate::query_ir::QueryError::UnknownTerm { name } => Self::QueryRejected {
                 reason: format!("unknown term {name}"),
             },
-            crate::query_ir::QueryError::RelsShape { rels, k } => Self::PolicyDenied {
+            crate::query_ir::QueryError::RelsShape { rels, k } => Self::QueryRejected {
                 reason: format!("invalid relation shape rels={rels} k={k}"),
             },
         }

@@ -4,6 +4,17 @@ use kutha_common::Op;
 use kutha_runtime::{
     EnrichmentError, PackLifecycleState, PackManifest, Runtime, RuntimeError, store,
 };
+use std::sync::atomic::{AtomicU64, Ordering};
+
+mod common;
+
+/// Repo-local `tmp/` scratch with pid + nanos + seq (`m019_dur_a` idiom), so two
+/// concurrent runs of this binary never share a store directory.
+fn scratch(label: &str) -> common::PersistScratch {
+    static N: AtomicU64 = AtomicU64::new(0);
+    let seq = N.fetch_add(1, Ordering::Relaxed);
+    common::PersistScratch::new(&format!("m178-{label}-{seq}"))
+}
 
 fn build_runtime() -> Runtime {
     let mut rt = Runtime::default();
@@ -196,14 +207,12 @@ fn ledger_survives_persist_open() {
     let mut rt = build_runtime();
     let source = source(&mut rt);
     propose(&mut rt, source, "cache-persist").expect("proposal");
-    let dir = std::path::PathBuf::from("tmp/m178-enrichment-persist");
-    std::fs::remove_dir_all(&dir).ok();
+    let dir = scratch("enrichment-persist");
     rt.persist(&dir).expect("persist");
     let opened = Runtime::open(&dir).expect("open");
     let ledger = opened.enrichment_ledger();
     assert_eq!(ledger.len(), 1);
     assert_eq!(ledger, rt.enrichment_ledger());
-    std::fs::remove_dir_all(&dir).ok();
 }
 
 #[test]
@@ -220,8 +229,7 @@ fn ledger_survives_checkpoint_sealed_prefix() {
     let mut rt = build_runtime();
     let source = source(&mut rt);
     propose(&mut rt, source, "cache-checkpoint").expect("proposal");
-    let dir = std::path::PathBuf::from("tmp/m178-enrichment-checkpoint");
-    std::fs::remove_dir_all(&dir).ok();
+    let dir = scratch("enrichment-checkpoint");
     rt.persist(&dir).expect("persist proposal prefix");
     let article = rt.intern("article");
     let relation = rt.intern("relatedTo");
@@ -245,7 +253,6 @@ fn ledger_survives_checkpoint_sealed_prefix() {
     let ledger = opened.enrichment_ledger();
     assert_eq!(ledger.len(), 1);
     assert_eq!(ledger[0].cache_key, "cache-checkpoint");
-    std::fs::remove_dir_all(&dir).ok();
 }
 
 #[test]

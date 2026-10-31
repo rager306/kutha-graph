@@ -5,7 +5,8 @@
 
 use kutha_common::{Op, TransactionTime, ValidTime};
 use kutha_runtime::{
-    AuthorizedQuery, PathPolicy, QueryIr, Runtime, compile_path_policy, try_hops_named,
+    AuthorizedQuery, PathPolicy, QueryIr, Runtime, SecurityError, compile_path_policy,
+    execute_authorized, try_hops_named,
 };
 
 fn statute_runtime() -> Runtime {
@@ -151,5 +152,60 @@ fn multi_hop_requires_every_relation() {
         Ok(AuthorizedQuery::Denied {
             reason: "relation 50-kmh is not allowed".to_string(),
         })
+    );
+}
+
+/// `QueryRejected` is the post-policy arm: the path policy allowed the query,
+/// then the query engine refused it. Two rels under `k=3` is not the 0, 1, or k
+/// shape, so `prepare` rejects it after authorization. Reverting the mapping to
+/// `PolicyDenied` fails this test.
+#[test]
+fn post_policy_rels_shape_failure_is_query_rejected() {
+    let rt = statute_runtime();
+    let start = rt.dictionary().id("art-12-speed").expect("article");
+    let in_force = rt.dictionary().id("inForceAs").expect("inForceAs");
+    let q = QueryIr::Hops {
+        start,
+        rels: vec![in_force, in_force],
+        k: 3,
+        tt: TransactionTime::MAX,
+        vt: ValidTime::from(2015),
+        limit: 0,
+    };
+    let policy = PathPolicy::closed().allow_relations(["inForceAs"]);
+    assert_eq!(
+        compile_path_policy(&rt, &q, &policy),
+        Ok(AuthorizedQuery::Allowed(q.clone()))
+    );
+    let err = execute_authorized(&rt, &q, &policy).expect_err("rels shape must be rejected");
+    assert!(
+        matches!(&err, SecurityError::QueryRejected { reason } if reason.contains("invalid relation shape")),
+        "post-policy shape failure must be QueryRejected; got {err:?}"
+    );
+}
+
+/// The other mapped arm: the path policy inspects relations only, so an
+/// unknown start term passes it and is refused by `prepare`.
+#[test]
+fn post_policy_unknown_term_is_query_rejected() {
+    let rt = statute_runtime();
+    let in_force = rt.dictionary().id("inForceAs").expect("inForceAs");
+    let q = QueryIr::Hops {
+        start: kutha_common::TermId::MAX,
+        rels: vec![in_force],
+        k: 1,
+        tt: TransactionTime::MAX,
+        vt: ValidTime::from(2015),
+        limit: 0,
+    };
+    let policy = PathPolicy::closed().allow_relations(["inForceAs"]);
+    assert_eq!(
+        compile_path_policy(&rt, &q, &policy),
+        Ok(AuthorizedQuery::Allowed(q.clone()))
+    );
+    let err = execute_authorized(&rt, &q, &policy).expect_err("unknown start must be rejected");
+    assert!(
+        matches!(&err, SecurityError::QueryRejected { reason } if reason.contains("unknown term")),
+        "post-policy unknown term must be QueryRejected; got {err:?}"
     );
 }

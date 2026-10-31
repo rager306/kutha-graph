@@ -138,25 +138,14 @@ fn ecfr_pit_probe_reads_three_editions_from_real_text() {
                 ),
             }
         }
-        // Two distinct extracted texts per section, and exactly two: the
-        // 2017-01-23 edition is a citation-only amendment (published then,
-        // effective 2017-03-14) whose XREF note extraction drops. This count
-        // assert is what catches a LOST edition; a gained edition trips the
-        // equality asserts above instead.
+        // The 2017-01-23 edition is a citation-only amendment (published then,
+        // effective 2017-03-14) whose XREF note extraction drops, so the first
+        // two extracted texts must stay identical and the third must differ.
+        // These two equality asserts carry both directions: a gained edition
+        // at 2017-01-23 trips the first, a lost 2017-03-14 change trips the
+        // second.
         assert_eq!(edition_text(section, 0), edition_text(section, 1));
         assert_ne!(edition_text(section, 1), edition_text(section, 2));
-        assert_eq!(
-            [
-                edition_text(section, 0),
-                edition_text(section, 1),
-                edition_text(section, 2)
-            ]
-            .iter()
-            .collect::<std::collections::BTreeSet<_>>()
-            .len(),
-            2,
-            "section {section}: fixture must keep exactly two distinct editions"
-        );
     }
 
     // as_known_on is TT-only: at a later wall it lists every edition known by

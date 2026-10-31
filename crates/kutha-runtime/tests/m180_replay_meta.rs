@@ -114,6 +114,86 @@ fn retire_unknown_pack_fails_replay() {
 }
 
 #[test]
+fn activate_with_wrong_version_fails_replay() {
+    // pack_lifecycle.rs:144-163: an activate is allowed only from Installed
+    // at the version the activation names.
+    let events = vec![
+        at(install("core", "1.0.0", None), 0),
+        at(
+            Op::PackActivate {
+                pack_id: "core".into(),
+                version: "2.0.0".into(),
+            },
+            1,
+        ),
+    ];
+    let rt = runtime(events).expect("build");
+    assert!(matches!(
+        rt.replay_check(),
+        Err(RuntimeError::PackLifecycleRejected { pack_id, reason })
+            if pack_id == "core" && reason == "activate_requires_same_installed_version"
+    ));
+}
+
+#[test]
+fn second_activate_fails_replay() {
+    // pack_lifecycle.rs:144-163: only Installed transitions to Active, so an
+    // already active pack rejects a further activate.
+    let events = vec![
+        at(install("core", "1.0.0", None), 0),
+        at(
+            Op::PackActivate {
+                pack_id: "core".into(),
+                version: "1.0.0".into(),
+            },
+            1,
+        ),
+        at(
+            Op::PackActivate {
+                pack_id: "core".into(),
+                version: "1.0.0".into(),
+            },
+            2,
+        ),
+    ];
+    let rt = runtime(events).expect("build");
+    assert!(matches!(
+        rt.replay_check(),
+        Err(RuntimeError::PackLifecycleRejected { pack_id, reason })
+            if pack_id == "core" && reason == "activate_requires_same_installed_version"
+    ));
+}
+
+#[test]
+fn second_retire_fails_replay() {
+    // pack_lifecycle.rs:144-163: only Installed and Active may retire, so a
+    // second retire of the same pack is rejected.
+    let events = vec![
+        at(install("core", "1.0.0", None), 0),
+        at(
+            Op::PackRetire {
+                pack_id: "core".into(),
+                version: "1.0.0".into(),
+            },
+            1,
+        ),
+        at(
+            Op::PackRetire {
+                pack_id: "core".into(),
+                version: "1.0.0".into(),
+            },
+            2,
+        ),
+    ];
+    let rt = runtime(events).expect("build");
+    assert!(matches!(
+        rt.replay_check(),
+        Err(RuntimeError::PackLifecycleRejected { pack_id, reason })
+            if pack_id == "core" && reason == "retire_requires_same_installed_version"
+    ));
+}
+
+#[test]
 fn install_with_missing_manifest_blob_fails_replay() {
     let events = vec![at(install("core", "1.0.0", Some("ab".repeat(32))), 0)];
     let rt = runtime(events).expect("build");
@@ -149,31 +229,35 @@ fn install_with_wrong_manifest_identity_fails_replay() {
 fn enrichment_for_unknown_pack_fails_replay() {
     let payload = b"summary".to_vec();
     let digest = kutha_common::sha256_hex(&payload);
+    let source = source_event(0);
+    let source_id = source.id;
     let events = vec![
+        source,
         Event::new(
             Op::StoreBlob {
                 digest: digest.clone(),
                 bytes: payload,
             },
-            0,
+            1,
         ),
         Event::new(
             Op::EnrichmentProposal {
                 pack_id: "ghost".into(),
                 pack_version: "1.0.0".into(),
-                source_event_ids: vec![],
+                source_event_ids: vec![source_id],
                 model: "m".into(),
                 prompt: "p".into(),
                 cache_key: "k".into(),
                 blob_digest: digest,
             },
-            1,
+            2,
         ),
     ];
     let rt = runtime(events).expect("build");
     assert!(matches!(
         rt.replay_check(),
-        Err(RuntimeError::EnrichmentRejected { .. })
+        Err(RuntimeError::EnrichmentRejected { reason })
+            if reason.contains("not installed")
     ));
 }
 
@@ -184,45 +268,48 @@ fn duplicate_enrichment_cache_key_fails_replay() {
     let manifest_digest = manifest.digest();
     let payload = b"summary".to_vec();
     let digest = kutha_common::sha256_hex(&payload);
+    let source = source_event(0);
+    let source_id = source.id;
     let proposal = || Op::EnrichmentProposal {
         pack_id: "enrich".into(),
         pack_version: "1.0.0".into(),
-        source_event_ids: vec![],
+        source_event_ids: vec![source_id],
         model: "m".into(),
         prompt: "p".into(),
         cache_key: "same".into(),
         blob_digest: digest.clone(),
     };
     let events = vec![
+        source,
         Event::new(
             Op::StoreBlob {
                 digest: manifest_digest.clone(),
                 bytes: manifest_bytes,
             },
-            0,
+            1,
         ),
-        at(install("enrich", "1.0.0", Some(manifest_digest)), 1),
+        at(install("enrich", "1.0.0", Some(manifest_digest)), 2),
         at(
             Op::PackActivate {
                 pack_id: "enrich".into(),
                 version: "1.0.0".into(),
             },
-            2,
+            3,
         ),
         Event::new(
             Op::StoreBlob {
                 digest: digest.clone(),
                 bytes: payload,
             },
-            3,
+            4,
         ),
-        Event::new(proposal(), 4),
         Event::new(proposal(), 5),
+        Event::new(proposal(), 6),
     ];
     let rt = runtime(events).expect("build");
     assert!(matches!(
         rt.replay_check(),
-        Err(RuntimeError::EnrichmentRejected { .. })
+        Err(RuntimeError::EnrichmentRejected { reason }) if reason.contains("cache key")
     ));
 }
 
