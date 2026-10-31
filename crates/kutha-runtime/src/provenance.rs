@@ -154,6 +154,7 @@ impl Runtime {
                 Op::EnrichmentProposal {
                     pack_id,
                     blob_digest,
+                    cache_key,
                     ..
                 } => {
                     let state = lifecycle
@@ -170,8 +171,11 @@ impl Runtime {
                         state,
                         &mut source_known,
                         payload.map(|bytes| bytes.as_slice()),
-                        &mut cache_keys,
+                        &cache_keys,
                     )
+                    .map(|()| {
+                        cache_keys.insert(cache_key.clone());
+                    })
                     .map_err(|err| RuntimeError::EnrichmentRejected {
                         reason: format!("replay: {err}"),
                     })?;

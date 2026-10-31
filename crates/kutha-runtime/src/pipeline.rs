@@ -291,10 +291,14 @@ impl Runtime {
     }
 
     pub(crate) fn commit_event(&mut self, event: Event) {
+        self.log_ids.insert(event.id);
         self.fold.apply(&event);
         // Keep the droppable operator index in step with the log so admission
         // sees the same names replay will.
         match &event.op {
+            Op::EnrichmentProposal { cache_key, .. } => {
+                self.enrichment_cache_keys.insert(cache_key.clone());
+            }
             Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. } => {
                 let _ = self.lifecycle.replay(&event.op);
                 if let Op::PackRetire { pack_id, .. } = &event.op {
@@ -635,16 +639,29 @@ impl Runtime {
             blob_digest: digest.clone(),
         };
         // Validate before the blob append so a rejected proposal leaves no
-        // orphan `StoreBlob` behind. Admission re-checks with the blob present.
-        crate::enrichment::validate_proposal_with_payload(
-            self.log.as_slice(),
-            &self.fold.blobs,
-            &proposal,
-            Some((&digest, &payload)),
-        )
-        .map_err(|err| RuntimeError::EnrichmentRejected {
-            reason: err.to_string(),
-        })?;
+        // orphan `StoreBlob` behind, using the same runtime leases admission
+        // uses — no log scan. Admission re-checks with the blob present.
+        {
+            let pack_id = match &proposal {
+                Op::EnrichmentProposal { pack_id, .. } => pack_id.clone(),
+                _ => unreachable!(),
+            };
+            let state = self
+                .lifecycle
+                .state(&pack_id)
+                .map(|state| (state, self.lifecycle.version(&pack_id).unwrap_or("").to_string()));
+            let mut source_known = |id: kutha_common::EventId| self.log_ids.contains(&id);
+            crate::enrichment::check_proposal(
+                &proposal,
+                state,
+                &mut source_known,
+                Some(&payload),
+                &self.enrichment_cache_keys,
+            )
+            .map_err(|err| RuntimeError::EnrichmentRejected {
+                reason: err.to_string(),
+            })?;
+        }
         self.pipeline_kind(
             Op::StoreBlob {
                 digest: digest.clone(),

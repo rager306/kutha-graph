@@ -8,7 +8,7 @@
 
 use crate::pack_lifecycle::{PackLifecycleState, derive_pack_lifecycle};
 use kutha_common::{Event, EventId, Op, sha256_hex};
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
 /// One admitted enrichment proposal with its pack lifecycle state.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -69,50 +69,6 @@ impl std::fmt::Display for EnrichmentError {
 
 impl std::error::Error for EnrichmentError {}
 
-/// Validate a proposal whose payload has not been appended yet.
-///
-/// `pending` is the `(digest, bytes)` the caller is about to store. It is used
-/// only when the digest is absent from `blobs`, so a rejected proposal does not
-/// leave an orphan `StoreBlob` on the log.
-pub fn validate_proposal_with_payload(
-    log: &[Event],
-    blobs: &HashMap<String, Vec<u8>>,
-    proposal: &Op,
-    pending: Option<(&str, &[u8])>,
-) -> Result<(), EnrichmentError> {
-    let lifecycle = derive_pack_lifecycle(log);
-    let state = match &*proposal {
-        Op::EnrichmentProposal { pack_id, .. } => lifecycle
-            .iter()
-            .find(|record| &record.pack_id == pack_id)
-            .map(|record| (record.state, record.version.clone())),
-        _ => None,
-    };
-    let known: std::collections::HashSet<EventId> = log.iter().map(|event| event.id).collect();
-    let mut cache_keys: std::collections::HashSet<String> = log
-        .iter()
-        .filter_map(|event| match &event.op {
-            Op::EnrichmentProposal { cache_key, .. } => Some(cache_key.clone()),
-            _ => None,
-        })
-        .collect();
-    let pending_bytes = pending
-        .filter(|(digest, _)| matches!(&*proposal, Op::EnrichmentProposal { blob_digest, .. } if digest == blob_digest))
-        .map(|(_, bytes)| bytes);
-    check_proposal(
-        proposal,
-        state,
-        &mut |id| known.contains(&id),
-        pending_bytes.or_else(|| match &*proposal {
-            Op::EnrichmentProposal { blob_digest, .. } => {
-                blobs.get(blob_digest).map(|b| b.as_slice())
-            }
-            _ => None,
-        }),
-        &mut cache_keys,
-    )
-}
-
 /// One shared proposal check used by admission and replay.
 ///
 /// The caller supplies the pack state, a source-existence predicate, the
@@ -123,7 +79,7 @@ pub(crate) fn check_proposal(
     pack_state: Option<(PackLifecycleState, String)>,
     source_known: &mut dyn FnMut(EventId) -> bool,
     payload: Option<&[u8]>,
-    cache_keys: &mut std::collections::HashSet<String>,
+    cache_keys: &std::collections::HashSet<String>,
 ) -> Result<(), EnrichmentError> {
     let Op::EnrichmentProposal {
         pack_id,
@@ -194,7 +150,9 @@ pub(crate) fn check_proposal(
             digest: blob_digest.clone(),
         });
     }
-    if !cache_keys.insert(cache_key.clone()) {
+    // Read-only: the caller inserts after the proposal is committed, so a
+    // rejected proposal cannot poison the lease and admission stays O(1).
+    if cache_keys.contains(cache_key) {
         return Err(EnrichmentError::DuplicateProposal {
             cache_key: cache_key.clone(),
         });

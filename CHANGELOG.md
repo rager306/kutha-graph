@@ -6,11 +6,12 @@ Keep **product** (`crates/`) and **process** (harness) distinct. Dated entries m
 
 ## 2026-10-31 — Product: enrichment admission leases
 
-- Enrichment proposal admission no longer scans the log: it uses the runtime lifecycle lease, the content-addressed blob map, and a droppable cache-key set, so a proposal costs O(1) instead of `derive_pack_lifecycle` plus a full event-id set.
-- Admission and replay now share `check_proposal`; the log-scanning `validate_proposal` was removed so there is one rule.
-- The cache-key lease is rebuilt on hydrate/open/fork and updated on commit.
-- Added `crates/kutha-runtime/tests/m185_enrichment_admission.rs` (4 tests), including 200 proposals kept in step and a foreign-log parity case.
-- Tests: enrichment admission 4/4, workspace 830 passed / 0 failed.
+- Enrichment proposal admission no longer scans the log: it uses the runtime lifecycle lease, the visible-log id lease, the content-addressed blob map, and a borrowed cache-key set, so a proposal costs O(1) instead of `derive_pack_lifecycle` plus a full event-id set. The emit pre-check uses the same leases.
+- Admission and replay now share `check_proposal`; the log-scanning `validate_proposal`/`validate_proposal_with_payload` wrappers were removed so there is one rule.
+- The cache-key and log-id leases are rebuilt on hydrate/open/fork and updated on commit.
+- **Verifier blocker, fixed:** the first attempt never updated the cache-key lease on commit, cloned the whole key set per write, and used a source predicate broader than replay's. All three are fixed; `check_proposal` is read-only and the caller inserts after commit.
+- Added `crates/kutha-runtime/tests/m185_enrichment_admission.rs` (6 tests), including 200 proposals, commit-side lease update, and compacted-source parity.
+- Tests: enrichment admission 6/6, workspace 832 passed / 0 failed.
 
 ## 2026-10-31 — Trajectory: M184-S01 closed (admission index)
 

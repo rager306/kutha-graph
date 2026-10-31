@@ -370,6 +370,9 @@ pub struct Runtime {
     pub(crate) lifecycle: crate::PackLifecycleTracker,
     /// Enrichment cache keys already proposed (droppable).
     pub(crate) enrichment_cache_keys: std::collections::HashSet<String>,
+    /// Event ids visible in the log (droppable). Enrichment admission checks
+    /// source existence against this, matching replay's visible-log rule.
+    pub(crate) log_ids: rustc_hash::FxHashSet<EventId>,
     /// Whether the operator/lifecycle leases were built from a clean log.
     /// Constructors that skip `replay_check` may leave it false; admission then
     /// fails closed instead of trusting a short index.
@@ -414,6 +417,7 @@ impl Runtime {
             lifecycle: crate::PackLifecycleTracker::new(),
             meta_leases_trusted: true,
             enrichment_cache_keys: std::collections::HashSet::default(),
+            log_ids: rustc_hash::FxHashSet::default(),
             unindex_premise_examine: IngestExamine::default(),
             unindex_live_examine: IngestExamine::default(),
         };

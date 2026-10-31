@@ -127,12 +127,8 @@ impl Runtime {
         if matches!(op, Op::EnrichmentProposal { .. }) {
             let Op::EnrichmentProposal {
                 pack_id,
-                pack_version,
-                source_event_ids,
-                model,
-                prompt,
-                cache_key: _,
                 blob_digest,
+                ..
             } = op
             else {
                 unreachable!("guarded by matches!");
@@ -141,17 +137,16 @@ impl Runtime {
                 .lifecycle
                 .state(pack_id)
                 .map(|state| (state, self.lifecycle.version(pack_id).unwrap_or("").to_string()));
-            // Sources are existence-only on the live path: the log is visible.
-            let mut source_known = |id: kutha_common::EventId| self.event_by_id(id).is_some();
-            let mut cache_keys = self.enrichment_cache_keys.clone();
+            // Same visible-log rule as replay: compacted rows do not count as
+            // sources, so admission cannot accept a proposal replay rejects.
+            let mut source_known = |id: kutha_common::EventId| self.log_ids.contains(&id);
             let payload = self.fold.blobs.get(blob_digest);
-            let _ = (pack_version, source_event_ids, model, prompt);
             return crate::enrichment::check_proposal(
                 op,
                 state,
                 &mut source_known,
                 payload.map(|bytes| bytes.as_slice()),
-                &mut cache_keys,
+                &self.enrichment_cache_keys,
             )
             .map_err(|err| RuntimeError::EnrichmentRejected {
                 reason: err.to_string(),

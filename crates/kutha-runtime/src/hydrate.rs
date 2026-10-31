@@ -23,6 +23,7 @@ impl Runtime {
         let mut lifecycle = crate::PackLifecycleTracker::new();
         let mut trusted = true;
         let mut enrichment_cache_keys = std::collections::HashSet::default();
+        let mut log_ids = rustc_hash::FxHashSet::default();
         for event in self.log.iter() {
             match &event.op {
                 Op::PackInstall { .. } | Op::PackActivate { .. } | Op::PackRetire { .. } => {
@@ -42,6 +43,7 @@ impl Runtime {
                 }
                 _ => {}
             }
+            log_ids.insert(event.id);
             match &event.op {
                 Op::PackRetire { pack_id, .. } => index.retire(pack_id),
                 Op::PackInstall {
@@ -66,6 +68,7 @@ impl Runtime {
         self.lifecycle = lifecycle;
         self.meta_leases_trusted = trusted;
         self.enrichment_cache_keys = enrichment_cache_keys;
+        self.log_ids = log_ids;
     }
 
     pub(crate) fn hydrate_from_log(&mut self) {
@@ -182,6 +185,7 @@ impl Runtime {
             lifecycle: crate::PackLifecycleTracker::new(),
             meta_leases_trusted: true,
             enrichment_cache_keys: std::collections::HashSet::default(),
+            log_ids: rustc_hash::FxHashSet::default(),
         };
         rt.hydrate_from_log();
         rt
@@ -241,6 +245,7 @@ impl Runtime {
             lifecycle: crate::PackLifecycleTracker::new(),
             meta_leases_trusted: true,
             enrichment_cache_keys: std::collections::HashSet::default(),
+            log_ids: rustc_hash::FxHashSet::default(),
         };
         rt.hydrate_from_log();
         Ok(rt)
@@ -303,6 +308,7 @@ impl Runtime {
             lifecycle: crate::PackLifecycleTracker::new(),
             meta_leases_trusted: true,
             enrichment_cache_keys: std::collections::HashSet::default(),
+            log_ids: rustc_hash::FxHashSet::default(),
         };
         rt.hydrate_from_log();
         Ok(rt)
